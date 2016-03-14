@@ -8,8 +8,8 @@ CONFIG		+= warn_on qt thread staticlib c++11
 INCLUDEPATH	+= c:\projects\DELIA\GTpo\src
 QT		+= core widgets gui xml qml quick quickwidgets
 
-include(../QuickProperties2/quickproperties2.pri)
-INCLUDEPATH += ../QuickProperties2
+include(../QuickProperties/src/quickproperties2.pri)
+INCLUDEPATH += ../QuickProperties/src
 
 # Export that to QuickQanava2.pri
 GTPO_LIBDIR_DEBUG   =c:\projects\DELIA\build-GTpo-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\build
