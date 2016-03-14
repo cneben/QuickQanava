@@ -23,8 +23,8 @@ HEADERS	+=  ./qanStyleSample.h
 
 OTHER_FILES   +=  main.qml
 
-RESOURCES   +=  ../../QuickProperties2/QuickProperties2.qrc     \
-                ../../src/QuickQanava2.qrc                      \
+RESOURCES   +=  ../../QuickProperties/src/QuickProperties2.qrc      \
+                ../../src/QuickQanava2.qrc                          \
                 style.qrc
 
 QT_PRIVATE_HEADERS=

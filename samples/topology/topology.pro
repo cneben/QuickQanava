@@ -32,8 +32,8 @@ OTHER_FILES +=  main.qml        \
                 gtpo.proto      \
                 topology.proto
 
-RESOURCES   +=  ../../QuickProperties2/QuickProperties2.qrc     \
-                ../../src/QuickQanava2.qrc                       \
+RESOURCES   +=  ../../QuickProperties/src/QuickProperties2.qrc  \
+                ../../src/QuickQanava2.qrc                      \
                 topology.qrc
 
 CONFIG(release, debug|release) {
