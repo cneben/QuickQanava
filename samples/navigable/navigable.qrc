@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>navigable.qml</file>
+        <file>image.jpg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,21 @@
+syntax = "proto3"; 
+import "quickproperties.proto";
+
+package qan.pb;
+
+message Style {
+    int32               id           = 1;
+    string              meta_target  = 2;
+    string              name         = 3;
+    string              target       = 4;
+    qps.pb.Properties   properties   = 5;
+    repeated int32      node_ids     = 6; // Id of node where this style apply
+    repeated int32      edge_ids     = 7; // Id of node where this style apply
+}
+
+message StyleManager {
+    int32       style_count                 = 1;
+    repeated    Style styles                = 2;
+    map<string, int32> default_node_styles  = 3;
+    map<string, int32> default_edge_styles  = 4;
+}
