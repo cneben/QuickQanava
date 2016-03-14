@@ -1,0 +1,19 @@
+syntax = "proto3"; 
+//import "google/protobuf/any.proto";
+
+package qps.pb;
+
+message Property {
+    string  name=1;
+    int32   type=2;
+    string  value=3;
+    // Here TVM.
+}
+
+message Properties {
+    string  object_name=1;
+    int32   hidden_static_properties_count=2;
+    int32   static_property_count=3;
+    int32   dynamic_property_count=4;
+    repeated Property properties = 5;
+}

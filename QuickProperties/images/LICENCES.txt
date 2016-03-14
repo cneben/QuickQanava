@@ -1,0 +1,2 @@
+go-next.svg and window-close.svg are extracted from Breeze Icon set, from https://github.com/NitruxSA/breeze-icon-theme and are 
+under LGPL v3 licence.

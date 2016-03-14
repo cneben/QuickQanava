@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>propslist.qml</file>
+    </qresource>
+</RCC>
