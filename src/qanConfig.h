@@ -45,7 +45,7 @@
 #include <GTpoQt>
 
 // QuickProperties headers
-#include "../QuickProperties2/qpsContainerListModel.h"
+#include "../QuickProperties/src/qpsContainerListModel.h"
 
 struct QpsContainerConfig : public gtpo::ContainerConfig
 {

@@ -22,11 +22,11 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/GTpoQt.h                  \
             $$PWD/GTpoStd.h
 
-SOURCES +=  $$PWD/gtpo.pb.cc                \
+SOURCES +=  $$PWD/gtpoIDInterface.cpp       \
+            $$PWD/gtpo.pb.cc                \
             $$PWD/pugixml/src/pugixml.cpp
 
 OTHER_FILES += $$PWD/GTpo          \
                 $$PWD/GTpoStd       \
                 $$PWD/GTpoQt        \
                 $$PWD/gtpo.proto
-

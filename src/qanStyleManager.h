@@ -33,7 +33,7 @@
 #include <QQuickImageProvider>
 
 // QuickProperties headers
-#include "../QuickProperties2/qpsPropertiesList.h"
+#include "../QuickProperties/src/qpsPropertiesList.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"

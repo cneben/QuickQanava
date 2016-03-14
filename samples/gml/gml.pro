@@ -6,10 +6,12 @@ DEFINES		+= QANAVA
 LANGUAGE	= C++
 QT		+= widgets core gui qml quick quickwidgets
 INCLUDEPATH     +=  ../../src
+INCLUDEPATH     +=  ../../QuickProperties/src
 
 GTPO_LIBDIR_DEBUG   =c:\projects\DELIA\build-GTpo-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\build
-GTPO_DIR            =c:\projects\DELIA\GTpo\src
+GTPO_DIR            =../../GTpo/src
 INCLUDEPATH	+=$$GTPO_DIR
+
 INCLUDEPATH     +=c:\projects\DELIA\libs\protobuf3\src
 
 SOURCES	+=  ./gml.cpp

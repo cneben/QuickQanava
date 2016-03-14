@@ -6,11 +6,11 @@ DEFINES		+= QANAVA
 LANGUAGE        = C++
 QT              += widgets core gui qml quick quickwidgets
 INCLUDEPATH     +=  ../../src
-INCLUDEPATH     +=  ../../QuickProperties2
+INCLUDEPATH     +=  ../../QuickProperties/src
 
 # Export that to QuickQanava2.pri
-GTPO_LIBDIR_DEBUG   =c:\projects\DELIA\build-GTpo-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\build
-GTPO_DIR            =c:\projects\DELIA\GTpo\src
+#GTPO_LIBDIR_DEBUG   =c:\projects\DELIA\build-GTpo-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\build
+GTPO_DIR            =../../GTpo/src
 INCLUDEPATH	+=$$GTPO_DIR
 DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
 
@@ -48,8 +48,9 @@ CONFIG(debug, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2d
     android:        LIBS	+= -L../../build/ -lquickqanava2d
     win32-msvc*:    PRE_TARGETDEPS += ../../build/quickqanava2d.lib
-    win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib $$GTPO_LIBDIR_DEBUG/gtpod.lib $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
-    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d 
+    #win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib $$GTPO_LIBDIR_DEBUG/gtpod.lib $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
+    win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
+    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d
 }
 
 

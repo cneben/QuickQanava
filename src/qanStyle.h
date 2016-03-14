@@ -21,15 +21,15 @@
 // This file is a part of the Qanava software.
 //
 // \file    qanStyle.h
-// \author	benoit@qanava.org
-// \date	2015 06 05
+// \author  benoit@qanava.org
+// \date    2015 06 05
 //-----------------------------------------------------------------------------
 
 #ifndef qanStyle_h
 #define qanStyle_h
 
 // QuickProperties headers
-#include "../QuickProperties2/qpsProperties.h"
+#include "../QuickProperties/src/qpsProperties.h"
 
 // QT headers
 #include <QColor>

@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------
 
 // QuickProperties headers
-#include "../../QuickProperties2/QuickProperties2.h"
+#include "../../QuickProperties/src/QuickProperties2.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
