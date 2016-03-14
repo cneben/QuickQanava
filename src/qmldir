@@ -1,0 +1,7 @@
+module QuickProperties2
+
+PropertiesEditor 2.0 PropertiesEditor.qml
+PropertiesCreate 2.0 PropertiesEditor.qml
+PropertiesListView 2.0 PropertiesListView.qml
+PropertiesView 2.0 PropertiesView.qml
+
