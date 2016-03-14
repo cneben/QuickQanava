@@ -7,8 +7,12 @@ GTpo is not a generic library in the Boot Graph Library sense, but rather an hig
 ease of use an maximum performances over "genericity". GTpo heavily rely on C++11/C++17 functionnalities to hide template complexity from the user. GTpo
 root namespace 'gtpo' contains generic code, user not interested in using specific containers could use one of the following namespaces for accessing a 
 "concrete GTpo library" directly:
-\li 'stpo': Direct use of GTpo with C++ standard library.
-\li 'qtpo': Direct use of GTpo for Qt/QML.
+	* 'stpo': Direct use of GTpo with C++ standard library.
+	* 'qtpo': Direct use of GTpo for Qt/QML.
+
+Dependencies:
+* Protocol Buffer v3: https://developers.google.com/protocol-buffers/ and https://github.com/google/protobuf
+* Googletest: https://github.com/google/googletest/
 
 GTpo is highly alpha.
 
