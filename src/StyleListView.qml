@@ -72,12 +72,6 @@ Qps.PropertiesListView {
             property var    listView:           styleListView
             property var    styleIndex:         index
             property var    styleProperties:    itemData
-            onStylePropertiesChanged: {
-                console.debug( "Component.Loader styleProperties=" + item );
-                console.debug( "Component.Loader item.name=" + itemData.name );
-                console.debug( "Component.Loader item.metaTarget=" + itemData.metaTarget );
-            }
-
             sourceComponent: selectStyleDelegate( itemData != null ? itemData.target : "",
                                                   itemData != null ? itemData.metaTarget : "" )
         }
