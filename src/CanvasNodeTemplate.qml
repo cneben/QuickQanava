@@ -63,13 +63,13 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
-        horizontalOffset: node.shadowOffset.width
-        verticalOffset: node.shadowOffset.height
+        horizontalOffset: node.style.shadowOffset.width
+        verticalOffset: node.style.shadowOffset.height
         radius: 8.0
         samples: 16
         smooth: true
-        color: node.shadowColor
-        visible: node.hasShadow
+        color: node.style.shadowColor
+        visible: node.style.hasShadow
         transparentBorder: true
     }
 
@@ -86,7 +86,7 @@ Item {
             Layout.margins: 5
             verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
             text: node.label
-            font: node.labelFont
+            font: node.style.labelFont
             wrapMode: Text.Wrap
             elide: Text.ElideRight
         }

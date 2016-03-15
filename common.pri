@@ -1,0 +1,9 @@
+
+PROTOCOL_BUFFER3_DIR=C:/projects/DELIA/libs/protobuf3
+
+INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
+PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
+PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+
+# Remove C4100 unreferenced formal parameter
+win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34100

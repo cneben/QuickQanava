@@ -7,19 +7,16 @@ DESTDIR		= ../build
 CONFIG		+= warn_on qt thread staticlib c++11
 QT		+= core widgets gui xml qml quick quickwidgets
 
+include(../common.pri)
 include(../GTpo/src/gtpo.pri)
 include(../QuickProperties/src/quickproperties2.pri)
 INCLUDEPATH += ../QuickProperties/src
 
 # Export that to QuickQanava2.pri
 INCLUDEPATH	+= ..\GTpo\src
-GTPO_DIR        = ..\GTpo\src
-INCLUDEPATH	+=$$GTPO_DIR
+GTPO_DIR        =  ..\GTpo\src
+INCLUDEPATH	+= $$GTPO_DIR
 DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
-
-INCLUDEPATH     += c:\projects\DELIA\libs\protobuf3\src
-#PROTOCOL_BUFFER_LIBDIR_RELEASE  = C:/projects/DELIA/libs/protobuf3/cmake/build/Release
-#PROTOCOL_BUFFER_LIBDIR_DEBUG    = C:/projects/DELIA/libs/protobuf3/cmake/build/Debug
 
 HEADERS +=  ./QuickQanava.h         \
             ./qanConfig.h           \

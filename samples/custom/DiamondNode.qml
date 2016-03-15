@@ -63,8 +63,8 @@ Qan.AbstractNode {
                 ctx.lineTo( w2, 1 )
                 ctx.stroke( )
                 var gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0.1, Qt.lighter( diamondNode.backColor, 1.8 )  );
-                gradient.addColorStop(0.9, diamondNode.backColor );
+                gradient.addColorStop(0.1, Qt.lighter( diamondNode.style.backColor, 1.8 )  );
+                gradient.addColorStop(0.9, diamondNode.style.backColor );
                 ctx.fillStyle = gradient
                 ctx.fill( )
             }
@@ -86,8 +86,4 @@ Qan.AbstractNode {
             }
         }
     }
-
-    // QuickQanava interface
-    // FIXME
-    //onStyleModified: { template.requestPaint( ) }
 }

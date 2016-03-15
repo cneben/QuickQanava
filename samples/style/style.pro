@@ -5,18 +5,15 @@ CONFIG		+= qt warn_on thread c++11
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
 QT              += widgets core gui qml quick quickwidgets
+
 INCLUDEPATH     +=  ../../src
 INCLUDEPATH     +=  ../../QuickProperties/src
 
-GTPO_LIBDIR_DEBUG   =c:\projects\DELIA\build-GTpo-Desktop_Qt_5_6_0_MSVC2015_64bit-Debug\build
-GTPO_DIR            =../../GTpo/src
-INCLUDEPATH	+=$$GTPO_DIR
-DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
+include(../../common.pri)
 
-PROTOCOL_BUFFER3_DIR=C:/projects/DELIA/libs/protobuf3
-INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
-PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
-PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+GTPO_DIR        =  ../../GTpo/src
+INCLUDEPATH	+= $$GTPO_DIR
+DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
 
 SOURCES	+=  ./qanStyleSample.cpp
 HEADERS	+=  ./qanStyleSample.h
