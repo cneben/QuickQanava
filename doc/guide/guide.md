@@ -14,10 +14,10 @@ QuickQanava is primarily developed with Qt >= 5.6 and Qt Creator with MSVC 2015 
 For any questions, please contact: benoit@qanava.org
 
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
-| -------------             | :------------- :  | :-------------:                 | :-------------: |
-| GTpo                      | **Yes**             |       **Yes**                     |      MIT        |
-| Pugy XML                  | No                |       **Yes**                     |      MIT        |
-| QuickProperties2          | **Yes**             |       **Yes**                     |      LPGL       |
+| ---                       | :---:             | :---:                           | :---:           |
+| GTpo                      | **Yes**           |       **Yes**                   |      MIT        |
+| Pugy XML                  | No                |       **Yes**                   |      MIT        |
+| QuickProperties2          | **Yes**           |       **Yes**                   |      LPGL       |
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
