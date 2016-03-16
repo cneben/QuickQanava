@@ -1184,7 +1184,11 @@ HTML_EXTRA_FILES       = 20141229_NP_qanava-logo.png \
                          20150806_NP_basic-custom-control.png \
                          20150823_NP_class-diagram-groups.png \
                          20150825_NP_basic-custom-diamond.png \
-                         ConnectorDropNode.png
+                         ConnectorDropNode.png \
+                         samples/custom.png \
+                         samples/navigable.png \
+                         samples/style.png \
+                         samples/topology.png
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

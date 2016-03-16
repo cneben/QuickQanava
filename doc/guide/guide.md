@@ -54,7 +54,7 @@ The simplest way of using QuickQanava is to statically integrate the library as 
 git remote add QuickQanava https://github.com/cneben/QuickQanava
 
 // Then in your project root, use the following command:
-git subtree add --prefix=./\QuickProperties --squash \QuickProperties master (avec \QuickProperties installé en remote avant...)
+git subtree add --prefix=./QuickQanava --squash QuickQanava master 
 ~~~~~~~~~~~~~
 
 Once GIT has download the whole subtree, QuickQanava and its dependencies (GTpo) projects files could be included directly in your main
