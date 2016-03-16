@@ -4,7 +4,9 @@ QuickQanava Samples  {#samples}
 "custom" - Custom Nodes
 ------------------
 
-![alt tag](http://www.delia-strategie.fr/doc/qan/custom.png)
+Demonstrate how to define node with custom graphic content using QuickQanava node QML templates.
+
+![custom sample](http://www.delia-strategie.fr/doc/qan/custom.png)
 
 "gml" - Graph Markup Language Export: 
 ------------------
@@ -12,17 +14,19 @@ QuickQanava Samples  {#samples}
 "navigable" - Navigable Area: 
 ------------------
 
-![alt tag](http://www.delia-strategie.fr/doc/qan/navigable.png)
+Demonstrate use of qan::Navigable.
+
+![navigable sample](http://www.delia-strategie.fr/doc/qan/navigable.png)
 
 "style" - Style Management: 
 ------------------
 
-![alt tag](http://www.delia-strategie.fr/doc/qan/style.png)
+![style sample](http://www.delia-strategie.fr/doc/qan/style.png)
 
 "topology" - Topology Sample: 
 ------------------
 
-![alt tag](http://www.delia-strategie.fr/doc/qan/topology.png)
+![topology sample](http://www.delia-strategie.fr/doc/qan/topology.png)
 
 
 

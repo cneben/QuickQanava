@@ -3,13 +3,16 @@ QuickQanava Developper Guide  {#mainpage}
 
 QuickQanava2 is an open-source C++11/QML library designed to display graphs in a Qt QML application. QuickQanava provide classes to generate various layouts of directed graphs and visualize their nodes with custom styles on a graphic canvas. 
 
-QuickQanava2 is released under LGPL v3, and is shipped with GTpo library (distributed under MIT licence). 
+QuickQanava2 is released under LGPL v3, and is shipped with *GTpo* library (distributed under MIT licence). 
 
 QuickQanava2 source repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
 QuickQanava2 use code from the QuickProperties project on: https://github.com/cneben/quickproperties (code is actually shipped as a subtree in main QuickQanava source tree).
 
 QuickQanava is primarily developed with Qt >= 5.6 and Qt Creator with MSVC 2015 but should compiles well with g++ for Linux and GCC-ARM for Android. 
+
++ Project homepage: http://www.qanava.org/
++ Reference documentation: http://www.delia-strategie.fr/doc/qan/index.html
 
 For any questions, please contact: benoit@qanava.org
 
@@ -21,7 +24,7 @@ For any questions, please contact: benoit@qanava.org
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-PugiXML source beeing distributed under an MIT licence, it is compatible with GTpo an is thus included directly in the GTpo source tree. For more informations on PugyXML, see:
+*PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugyXML*, see:
 + PugiXML homepage: http://pugixml.org/
 + PugiXML GitHub: https://github.com/zeux/pugixml
 
@@ -29,7 +32,7 @@ Google Protocol Buffer is used for binary serialization of graph, it is not a ma
 + Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
 + Protocol Buffer v3 GitHub: https://github.com/google/protobuf
 
-Google Test is a GTpo dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
+Google Test is a *GTpo* dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
 + Google Test GitHub: https://github.com/google/googletest/
 
 [TOC]
@@ -69,7 +72,7 @@ include(./QuickQanava/src/quickqanava.pri)
 Samples
 ------------------
 
-
+[Samples overview](@ref samples)
 
 Displaying a Simple Directed Graph
 ------------------
@@ -95,6 +98,37 @@ Defining Styles
 Serializing Topology
 -------------
 
+Preferred way for dealing with persistance in QuickQanava is writing to Protocol Buffer repository with the qan::ProtoSerializer class:
+
+1. Define a protobuf v3 message for your custom topology (usually a class inheriting from qan::Node)
+2. Compile your message.
+3. Register in/out functors in qan::ProtoSerializer to write your custom messages.
+4. Call qan::ProtoSerializer saveGraphTo() or loadGraphFrom().
+
+For example, if you have defined a custom "image node" called qan::ImageNode, write a protobuf3 message to store persistent data:
+~~~~~~~~~~~~~{.cpp}
+// File custom.proto
+syntax = "proto3"; 
+import "gtpo.proto";
+import "quickqanava.proto";
+package qan.pb;
+
+message QanImgNode {
+    .gtpo.pb.GTpoNode base=1;
+    int32   img_data_size=4;
+    bytes   img_data=5;
+}
+~~~~~~~~~~~~~
+
+Compile this Protobuf IDL file with the following command:
+~~~~~~~~~~~~~{.cpp}
+$ protoc custom.proto --cpp_out=.
+~~~~~~~~~~~~~
+
+> Note: It might be necessary to manually copy "gtpo.proto" and "quickqanava.proto" in your .proto directory before calling `protoc`, theses files could be removed once custom.pb.cc and custom.pb.h have been generated.
+
+You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configuration file, and register custom in/out functors in a qan::ProtoSerializer:
+
 ~~~~~~~~~~~~~{.cpp}
 #include <QuickQanava>
  // ...
@@ -118,20 +152,6 @@ Serializing Topology
 				}
 			}
 	}
-~~~~~~~~~~~~~
-
-Exemple Protocol Buffer v3 configuration file for custom node serialization:
-
-~~~~~~~~~~~~~{.cpp}
-syntax = "proto3"; 
-import "gtpo.proto";
-package qan.pb;
-
-message QanImgNode {
-    .gtpo.pb.GTpoNode base=1;
-    int32   img_data_size=4;
-    bytes   img_data=5;
-}
 ~~~~~~~~~~~~~
 
 
