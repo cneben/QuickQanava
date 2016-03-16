@@ -41,19 +41,12 @@ Qan.Navigable {
 
         Component.onCompleted: {
             var n1 = graph.insertNode( )
+            n1.label = "Rectangle"
             graph.insertNode( customNodeDelegate )
             var n2 = graph.insertNode( diamondNodeDelegate )
+            n2.label = "Diamond"
+
             graph.insertEdge( edgeDelegate, n1, n2 )
-
-            //graph.insertNode( "Default Node", Qt.point( 15, 15 ) )    // Create a default QanRectNode
-            //graph.insertNode( "Custom Node", Qt.point( 180, 15 ), "", "qan::CustomNode" ) // Create a QanCustomNode
-            //graph.insertNode( "Control Node", Qt.point( 330, 15 ), "", "qan::ControlNode" )
-
-            //var diamond = graph.insertNode( "Diamond Node", Qt.point( 15, 100 ), "", "qan::DiamondNode" ) // Create a QanDiamonNode
-            //diamond.label = "Diamond node"
-            //var src = graph.insertNode( "Src", Qt.point( 180, 100 ) )    // Create a default QanRectNode
-            //graph.insertEdge( src, diamond )
-            //graph.insertNode( connectorDropNode )
         }
     }
 }

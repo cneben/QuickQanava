@@ -37,6 +37,34 @@ Google Test is a GTpo dependency, it is not mandatory for QuickQanava until you 
 Installation
 ------------------
 
+QuickQanava use _qmake_ to manage build process, dependencies are configured in the root directory _common.pri_ file:
+
+~~~~~~~~~~~~~{.cpp}
+PROTOCOL_BUFFER3_DIR= **path to protocol buffer**
+
+INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
+PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
+PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+~~~~~~~~~~~~~
+
+The simplest way of using QuickQanava is to statically integrate the library as a GIT subtree in your own project:
+
+~~~~~~~~~~~~~{.cpp}
+// Install QuickQanava as a remote repository:
+git remote add QuickQanava https://github.com/cneben/QuickQanava
+
+// Then in your project root, use the following command:
+git subtree add --prefix=./\QuickProperties --squash \QuickProperties master (avec \QuickProperties installé en remote avant...)
+~~~~~~~~~~~~~
+
+Once GIT has download the whole subtree, QuickQanava and its dependencies (GTpo) projects files could be included directly in your main
+qmake .pro file:
+
+~~~~~~~~~~~~~{.cpp}
+# in your project main .pro qmake configuration file
+include(./QuickQanava/GTpo/src/gtpo.pri)
+include(./QuickQanava/src/quickqanava.pri)
+~~~~~~~~~~~~~
 
 Samples
 ------------------
