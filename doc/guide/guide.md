@@ -1,7 +1,9 @@
 QuickQanava Developper Guide  {#mainpage}
 ============================
 
-QuickQanava2 is a GPL open-source C++11/QML library designed to display graphs in a Qt QML application. QuickQanava provide classes to generate various layouts of directed graphs and visualize their nodes with custom styles on a graphic canvas. 
+QuickQanava2 is an open-source C++11/QML library designed to display graphs in a Qt QML application. QuickQanava provide classes to generate various layouts of directed graphs and visualize their nodes with custom styles on a graphic canvas. 
+
+QuickQanava2 is released under LGPL v3, and is shipped with GTpo library (distributed under MIT licence). 
 
 QuickQanava2 source repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
@@ -11,13 +13,13 @@ QuickQanava is primarily developed with Qt >= 5.6 and Qt Creator with MSVC 2015 
 
 For any questions, please contact: benoit@qanava.org
 
-Dependency                | Mandatory         |   Included in source tree       |   Licence      
--------------             | :------------- :  | :-------------:                 | :-------------:
-GTpo                      | *Yes*             |       *Yes*                     |      MIT
-Pugy XML                  | No                |       *Yes*                     |      MIT
-QuickProperties2          | *Yes*             |       *Yes*                     |      LPGL
-G**gle Protocol Buffer v3 | No                |       No                        |    Permissive
-G**gle Test/Mock          | No                |       No                        |    Permissive
+| Dependency                | Mandatory         |   Included in source tree       |   Licence       |
+| -------------             | :------------- :  | :-------------:                 | :-------------: |
+| GTpo                      | *Yes*             |       *Yes*                     |      MIT        |
+| Pugy XML                  | No                |       *Yes*                     |      MIT        |
+| QuickProperties2          | *Yes*             |       *Yes*                     |      LPGL       |
+| G**gle Protocol Buffer v3 | No                |       No                        |    Permissive   |
+| G**gle Test/Mock          | No                |       No                        |    Permissive   |
 
 PugiXML source beeing distributed under an MIT licence, it is compatible with GTpo an is thus included directly in the GTpo source tree. For more informations on PugyXML, see:
 + PugiXML homepage: http://pugixml.org/

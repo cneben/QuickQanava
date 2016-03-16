@@ -43,6 +43,10 @@
 
 namespace qan { // ::qan
 
+/*! \brief Serialize a QuickQanava graph to Protocol Buffer v3 repository.
+ *
+ * \nosubgrouping
+ */
 class ProtoSerializer : public QObject,
                         public gtpo::ProtoSerializer< QGraphConfig, qan::ProgressNotifier >
 {

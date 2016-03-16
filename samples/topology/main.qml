@@ -241,9 +241,9 @@ Item {
                     ColumnLayout {
                         anchors.fill: parent
                         id: edgeLayout
-                        Text { text: "Label: " + item.label }
-                        Text { text: "  Src: " + item.sourceItem.label }
-                        Text { text: "  Dst: " + item.destinationItem.label }
+                        Text { text: "Label: " + itemData.label }
+                        Text { text: "  Src: " + itemData.sourceItem.label }
+                        Text { text: "  Dst: " + itemData.destinationItem.label }
                     }
                     MouseArea { anchors.fill: parent; onClicked: { edgeDelegate.ListView.view.currentIndex = index } }
                 }
@@ -282,7 +282,7 @@ Item {
                 delegate: Item {
                     id: nodeDelegate
                     width: ListView.view.width; height: 30;
-                    Text { id: nodeLabel; text: "Label: " + item.label }
+                    Text { id: nodeLabel; text: "Label: " + itemData.label }
                     MouseArea {
                         anchors.fill: nodeDelegate
                         onClicked: { nodeDelegate.ListView.view.currentIndex = index }
@@ -292,7 +292,7 @@ Item {
             ComboBox {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 model: graph.nodes
-                textRole: "label"
+                textRole: "itemLabel"
             }
         }
     }
