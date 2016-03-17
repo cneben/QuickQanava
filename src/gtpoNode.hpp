@@ -42,10 +42,9 @@ auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
     if ( outEdge ) {
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->setSrc( node );
-        // FIXME
-        //Config::insert< WeakEdges >::into( _outEdges, sharedOutEdge );
-        //if ( !outEdge->getDst().expired() )
-        //    Config::insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
+        Config::template insert< WeakEdges >::into( _outEdges, sharedOutEdge );
+        if ( !outEdge->getDst().expired() )
+            Config::template insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
     }
 }
 
@@ -59,10 +58,9 @@ auto GenNode< Config >::addInEdge( WeakEdge sharedInEdge ) -> void
     if ( inEdge ) {
         if ( !inEdgeDst || inEdgeDst != node ) // In edge destination should point to target node
             inEdge->setDst( node );
-        // FIXME
-        //Config::insert< WeakEdges >::into( _inEdges, sharedInEdge );
-        //if ( !inEdge->getSrc().expired() )
-        //    Config::insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
+        Config::template insert< WeakEdges >::into( _inEdges, sharedInEdge );
+        if ( !inEdge->getSrc().expired() )
+            Config::template insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
     }
 }
 
@@ -70,16 +68,15 @@ template < class Config >
 auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
 {
     gtpo::assert_throw( !outEdge.expired(), "gtpo::GenNode<>::removeOutEdge(): Error: Out edge has expired" );
-    SharedNode sharedNode = this->shared_from_this(); // FIXME g++ need this->
+    SharedNode sharedNode = this->shared_from_this();
     SharedEdge ownedOutEdge = outEdge.lock( );
     SharedNode ownedOutEdgeSrc = ownedOutEdge->getSrc().lock();
     gtpo::assert_throw( ownedOutEdgeSrc != nullptr &&    // Out edge src must be this node
                         ownedOutEdgeSrc == sharedNode, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
     auto ownedOutEdgeDst = ownedOutEdge->getDst().lock();
     gtpo::assert_throw( ownedOutEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
-    // FIXME
-    //Config::remove< WeakEdges >::from( _outEdges, outEdge );
-    //Config::remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
+    Config::template remove< WeakEdges >::from( _outEdges, outEdge );
+    Config::template remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
@@ -99,9 +96,8 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 
     auto ownedInEdgeSrc = ownedInEdge->getSrc().lock();
     gtpo::assert_throw( ownedInEdgeSrc != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
-    // FIXME
-    //Config::remove< WeakEdges >::from( _inEdges, inEdge );
-    //Config::remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
+    Config::template remove< WeakEdges >::from( _inEdges, inEdge );
+    Config::template remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
