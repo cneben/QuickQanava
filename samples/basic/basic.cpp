@@ -61,9 +61,9 @@ int	main( int /*argc*/, char** /*argv*/ )
 
     //auto e1 = sg.createEdge();
     try {
-        gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "test.xml" );
-        gmlOut.serializeOut( sg );
-        gmlOut.finishOut();
+        //gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "test.xml" );
+        //gmlOut.serializeOut( sg );
+        //gmlOut.finishOut();
     } catch (...) { }
 
 /*

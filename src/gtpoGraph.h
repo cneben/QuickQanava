@@ -171,7 +171,7 @@ template <class Config = DefaultConfig>
 class GenEdge : public Config::EdgeBase,
                 public std::enable_shared_from_this<typename Config::Edge>
 {
-    friend typename GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend GenGraph<Config>;   // GenGraph need access to setGraph()
 public:
     using Graph         = GenGraph<Config>;
     using WeakNode      = std::weak_ptr< typename Config::Node >;
@@ -218,7 +218,7 @@ template <class Config = DefaultConfig>
 class GenNode : public Config::NodeBase,
                 public std::enable_shared_from_this<typename Config::Node>
 {
-    friend typename GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
     /*! \name Node Management *///---------------------------------------------
     //@{

@@ -54,20 +54,20 @@ namespace gtpo { // ::gtpo
  * Primer http://graphml.graphdrawing.org/primer/graphml-primer.html#ParseInfo).
  *
  */
-template < class GraphConfig = DefaultConfig,
+/*template < class GraphConfig = DefaultConfig,
            class Notifier = EmptyProgressNotifier >
 class OutGmlSerializer : public OutSerializer< GraphConfig, Notifier >
 {
 public:
     OutGmlSerializer( std::string xmlFileName);
-
+*/
     /*! \brief Serialize \c graph out to an in-memory PugyXML DOM tree.
      *
      * XML DOM tree is not written to disk until finish() is called.
      *
      * \throw std::exception if an error occurs.
      */
-    virtual void    serializeOut( Graph& graph, Notifier* progress = nullptr ) override;
+/*    virtual void    serializeOut( Graph& graph, Notifier* progress = nullptr ) override;
     //! Write the GML XML DOM to the \c filename set in ctor.
     virtual void    finishOut( );
 
@@ -76,7 +76,7 @@ protected:
     void            serializeNodeAttribute( pugi::xml_node& nodeNode, const std::string& id, const std::string& value );
 
     void            serializeEdge( const WeakEdge& edge ) noexcept( false );
-
+*/
     /*! \brief Generate a GraphML \c key node.
      *
      * Params \c name, \c target, \c type and \c def will be expended in the following way:
@@ -92,14 +92,14 @@ protected:
      * \param graphNode main graph node.
      * \throw std::runtime_error with an error message if graphNode is invalid or node creation fails.
      */
-    void    serializeAttribute( pugi::xml_node& graphNode, const std::string& name, const std::string& target,
+/*    void    serializeAttribute( pugi::xml_node& graphNode, const std::string& name, const std::string& target,
                                 const std::string& type, const std::string& def );
 
 private:
     std::string         _xmlFileName;
     pugi::xml_document  _xmlDoc;
     pugi::xml_node      _xmlCurrentParent;
-};
+};*/
 
 /*! \brief Serialize a graph in GraphML XML format.
  *
@@ -114,7 +114,7 @@ private:
  * Primer http://graphml.graphdrawing.org/primer/graphml-primer.html#ParseInfo).
  *
  */
-template < class GraphConfig = DefaultConfig,
+/*template < class GraphConfig = DefaultConfig,
            class Notifier = EmptyProgressNotifier >
 class InGmlSerializer : public InSerializer< GraphConfig, Notifier >
 {
@@ -132,7 +132,7 @@ protected:
 private:
     pugi::xml_document  _xmlDoc;
     pugi::xml_node      _xmlCurrentParent;
-};
+};*/
 
 } // ::gtpo
 

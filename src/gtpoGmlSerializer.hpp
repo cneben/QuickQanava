@@ -34,7 +34,7 @@
 #include <stdexcept>
 
 namespace gtpo { // ::gtpo
-
+/*
 template < class GraphConfig, class Notifier >
 OutGmlSerializer< GraphConfig, Notifier >::OutGmlSerializer( std::string xmlFileName ) :
     _xmlFileName( xmlFileName )
@@ -195,6 +195,7 @@ void    InGmlSerializer< GraphConfig, Notifier >::finishIn( )
 {
     // No cleanups necessary
 }
+*/
 
 } // ::gtpo
 

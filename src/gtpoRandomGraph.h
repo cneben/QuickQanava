@@ -58,7 +58,7 @@ public:
         if ( !config.isValid() )
             return;
 
-        std::vector< Graph::WeakNode > nodes;
+        std::vector< typename Graph::WeakNode > nodes;
         for ( int n = 0; n < config.nodeCount; ++n ) {
             auto node = graph.createNode( config.nodeClassName );
             if ( !node.expired() )
@@ -84,7 +84,7 @@ public:
         std::uniform_real_distribution< double > widthDist( config.widthRng.first, config.widthRng.second );
         std::uniform_real_distribution< double > heightDist( config.heightRng.first, config.heightRng.second );
         for ( auto weakNode: nodes ) {
-            Graph::SharedNode node = weakNode.lock();
+            typename Graph::SharedNode node = weakNode.lock();
             if ( node ) {
                 Graph::Configuration::setNodeX( node, xDist( gen ) );
                 Graph::Configuration::setNodeY( node, yDist( gen ) );

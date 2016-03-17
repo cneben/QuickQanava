@@ -19,12 +19,9 @@ SOURCES	+=  gtpoTests.cpp
 HEADERS	+=  
 
 CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -L../build/ -lgtpod 
+    linux-g++*:     LIBS	+= -L../build/ -lgtpod -lgtest -lprotobuf
     win32-msvc*:    PRE_TARGETDEPS +=  ../build/gtpod.lib
     win32-msvc*:    LIBS	+= ../build/gtpod.lib $$GTEST_DIR/msvc/x64/Debug/gtestd.lib $$GMOCK_DIR/msvc/x64/Debug/gmock.lib $$PROTOCOL_BUFFER_LIBDIR_DEBUG/libprotobufd.lib
     win32-g++*:     LIBS	+= -L../build/ -lgtpod
 }
-
-
-
 

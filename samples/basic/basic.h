@@ -40,7 +40,7 @@
 #include <QSet>
 
 // GTpo headers
-#include <GTpo>
+//#include <GTpo>
 #include <GTpoStd>
 
 namespace qtpo {

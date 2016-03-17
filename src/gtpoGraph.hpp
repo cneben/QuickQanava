@@ -64,7 +64,7 @@ auto GenGraph< Config >::createNode( ) -> WeakNode
 {
     WeakNode weakNode;
     try {
-        auto node = std::make_shared< Config::Node >();
+        auto node = std::make_shared< typename Config::Node >();
         weakNode = insertNode( node );
     } catch (...) { gtpo::assert_throw( false, "GenGraph<>::createNode(): Error: can't insert node in graph." ); }
     return weakNode;
@@ -86,9 +86,9 @@ auto    GenGraph< Config >::insertNode( SharedNode node ) -> WeakNode
     try {
         weakNode = node;
         node->setGraph( this );
-        Config::insert< SharedNodes >::into( _nodes, node );
-        Config::insert< WeakNodesSearch >::into( _nodesSearch, weakNode );
-        Config::insert< WeakNodes >::into( _rootNodes, weakNode );
+        Config::template insert< SharedNodes >::into( _nodes, node );
+        Config::template insert< WeakNodesSearch >::into( _nodesSearch, weakNode );
+        Config::template insert< WeakNodes >::into( _rootNodes, weakNode );
         notifyBehaviours( &Behaviour::nodeInserted, weakNode );
     } catch (...) { gtpo::assert_throw( false, "GenGraph<>::insertNode(): Error: can't insert node in graph." ); }
     return weakNode;
@@ -122,10 +122,10 @@ auto    GenGraph< Config >::removeNode( WeakNode weakNode ) -> void
         removeEdge( outEdge );
 
     // Remove node from main graph containers (it will generate node destruction)
-    Config::remove<WeakNodesSearch>::from( _nodesSearch, weakNode );
-    Config::remove<WeakNodes>::from( _rootNodes, weakNode );
+    Config::template remove<WeakNodesSearch>::from( _nodesSearch, weakNode );
+    Config::template remove<WeakNodes>::from( _rootNodes, weakNode );
     node->setGraph( nullptr );
-    Config::remove<SharedNodes>::from( _nodes, node );
+    Config::template remove<SharedNodes>::from( _nodes, node );
 }
 
 template < class Config >
@@ -134,7 +134,8 @@ auto    GenGraph< Config >::installRootNode( WeakNode node ) -> void
     assert_throw( !node.expired(), "gtpo::GenGraph<>::setRootNode(): Error: node is expired." );
     SharedNode sharedNode = node.lock();
     assert_throw( sharedNode->getInDegree() == 0, "gtpo::GenGraph<>::setRootNode(): Error: trying to set a node with non 0 in degree as a root node." );
-    Config::insert<WeakNodes>::into( _rootNodes, node );
+
+    Config::template insert<WeakNodes>::into( _rootNodes, node );
 }
 
 template < class Config >
@@ -162,9 +163,9 @@ auto    GenGraph< Config >::createEdge( WeakNode src, WeakNode dst ) -> WeakEdge
 {
     WeakEdge edge;
     try {
-        auto sharedEdge = std::make_shared< Config::Edge >();
+        auto sharedEdge = std::make_shared< typename Config::Edge >();
         sharedEdge->setGraph( this );
-        Config::insert< SharedEdges >::into( _edges, sharedEdge );
+        Config::template insert< SharedEdges >::into( _edges, sharedEdge );
         sharedEdge->setSrc( src );
         sharedEdge->setDst( dst );
         edge = sharedEdge;
@@ -178,7 +179,7 @@ auto    GenGraph< Config >::createEdge( WeakNode src, WeakNode dst ) -> WeakEdge
                 destination->addInEdge( edge );
 
             if ( source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
-                Config::remove<WeakNodes>::from( _rootNodes, dst );    // Otherwise destination is no longer a root node
+                Config::template remove<WeakNodes>::from( _rootNodes, dst );    // Otherwise destination is no longer a root node
             notifyBehaviours( &Behaviour::edgeInserted, edge );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
@@ -209,13 +210,13 @@ auto    GenGraph< Config >::insertEdge( SharedEdge sharedEdge ) -> WeakEdge
     WeakEdge edge;
     try {
         sharedEdge->setGraph( this );
-        Config::insert<SharedEdges>::into( _edges, sharedEdge );
+        Config::template insert<SharedEdges>::into( _edges, sharedEdge );
         edge = sharedEdge;
         try {
             ownedSource->addOutEdge( edge );
             ownedDestination->addInEdge( edge );
             if ( ownedSource != ownedDestination ) // If edge define is a trivial circuit, do not remove destination from root nodes
-                Config::remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
+                Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
             notifyBehaviours( &Behaviour::edgeInserted, edge );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
@@ -266,7 +267,7 @@ void    GenGraph< Config >::removeEdge( WeakEdge edge )
     source->removeOutEdge( edge );
     destination->removeInEdge( edge );
     sharedEdge->setGraph( nullptr );
-    Config::remove<SharedEdges>::from( _edges, sharedEdge );
+    Config::template remove<SharedEdges>::from( _edges, sharedEdge );
 }
 
 template < class Config >
@@ -317,7 +318,7 @@ template < class Config >
 auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakNode), WeakNode arg ) -> void
 {
     // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
-    // For calling pointer on member functions.
+    // For calling pointer on memg++ template template parameter template keywordber functions.
     // std::unique_ptr has no overload for .* or ->* operator
     // (*behaviour) == (*behaviour.get())
     // Equivalent to: ((*behaviour.get()).*method)(arg)
@@ -343,9 +344,10 @@ auto    GenGraph< Config >::serializeToGml( std::string fileName ) -> void
     if ( fileName.size() == 0 )
         return;
     try {
-        gtpo::OutGmlPugiSerializer<Config> gmlOut( fileName );
-        gmlOut.serializeOut( *this );
-        gmlOut.finishOut();
+        // FIXME
+        //gtpo::OutGmlPugiSerializer<Config> gmlOut( fileName );
+        //gmlOut.serializeOut( *this );
+        //gmlOut.finishOut();
     } catch (...) { }
 }
 //-----------------------------------------------------------------------------

@@ -47,8 +47,8 @@ class Graph;
 
 template < typename Node, typename Edge >
 struct PropertiesConfig {
-    using SharedNode = std::shared_ptr< typename Node >;
-    using SharedEdge = std::shared_ptr< typename Edge >;
+    using SharedNode = std::shared_ptr< Node >;
+    using SharedEdge = std::shared_ptr< Edge >;
 
     static inline double   getNodeX( const SharedNode& n ) { return n->getX(); }
     static inline void     setNodeX( SharedNode& n, double x ) { n->setX( x ); }
@@ -64,7 +64,7 @@ struct PropertiesConfig {
 
     static inline double    getEdgeWeight( const Edge& e ) { return 0.; }
     static inline void      setEdgeWeight( const SharedEdge& e, double w ) { e->setWeight( w ); }
-    static inline void      setEdgeWeight( Edge& e, double w ) { e->setWeight( x ); }
+    static inline void      setEdgeWeight( Edge& e, double w ) { e.setWeight( w ); }
 };
 
 

@@ -36,15 +36,16 @@ template < class Config >
 auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
 {
     assert( !sharedOutEdge.expired() );
-    SharedNode node = shared_from_this();
+    SharedNode node = this->shared_from_this(); // FIXME g++: this-> necessary
     SharedEdge outEdge = sharedOutEdge.lock( );
     SharedNode outEdgeSrc = outEdge->getSrc().lock();
     if ( outEdge ) {
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->setSrc( node );
-        Config::insert< WeakEdges >::into( _outEdges, sharedOutEdge );
-        if ( !outEdge->getDst().expired() )
-            Config::insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
+        // FIXME
+        //Config::insert< WeakEdges >::into( _outEdges, sharedOutEdge );
+        //if ( !outEdge->getDst().expired() )
+        //    Config::insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
     }
 }
 
@@ -52,15 +53,16 @@ template < class Config >
 auto GenNode< Config >::addInEdge( WeakEdge sharedInEdge ) -> void
 {
     assert( !sharedInEdge.expired() );
-    SharedNode node = shared_from_this();
+    SharedNode node = this->shared_from_this();
     SharedEdge inEdge = sharedInEdge.lock( );
     SharedNode inEdgeDst = inEdge->getDst().lock();
     if ( inEdge ) {
         if ( !inEdgeDst || inEdgeDst != node ) // In edge destination should point to target node
             inEdge->setDst( node );
-        Config::insert< WeakEdges >::into( _inEdges, sharedInEdge );
-        if ( !inEdge->getSrc().expired() )
-            Config::insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
+        // FIXME
+        //Config::insert< WeakEdges >::into( _inEdges, sharedInEdge );
+        //if ( !inEdge->getSrc().expired() )
+        //    Config::insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
     }
 }
 
@@ -68,15 +70,16 @@ template < class Config >
 auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
 {
     gtpo::assert_throw( !outEdge.expired(), "gtpo::GenNode<>::removeOutEdge(): Error: Out edge has expired" );
-    SharedNode sharedNode = shared_from_this();
+    SharedNode sharedNode = this->shared_from_this(); // FIXME g++ need this->
     SharedEdge ownedOutEdge = outEdge.lock( );
     SharedNode ownedOutEdgeSrc = ownedOutEdge->getSrc().lock();
     gtpo::assert_throw( ownedOutEdgeSrc != nullptr &&    // Out edge src must be this node
                         ownedOutEdgeSrc == sharedNode, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
     auto ownedOutEdgeDst = ownedOutEdge->getDst().lock();
     gtpo::assert_throw( ownedOutEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
-    Config::remove< WeakEdges >::from( _outEdges, outEdge );
-    Config::remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
+    // FIXME
+    //Config::remove< WeakEdges >::from( _outEdges, outEdge );
+    //Config::remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
@@ -88,7 +91,7 @@ template < class Config >
 auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 {
     gtpo::assert_throw( !inEdge.expired(), "gtpo::GenNode<>::removeInEdge(): Error: In edge has expired" );
-    SharedNode sharedNode = shared_from_this();
+    SharedNode sharedNode = this->shared_from_this();
     SharedEdge ownedInEdge = inEdge.lock( );
     SharedNode ownedInEdgeDst = ownedInEdge->getDst().lock();
     gtpo::assert_throw( ownedInEdgeDst != nullptr &&    // in edge dst must be this node
@@ -96,8 +99,9 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 
     auto ownedInEdgeSrc = ownedInEdge->getSrc().lock();
     gtpo::assert_throw( ownedInEdgeSrc != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
-    Config::remove< WeakEdges >::from( _inEdges, inEdge );
-    Config::remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
+    // FIXME
+    //Config::remove< WeakEdges >::from( _inEdges, inEdge );
+    //Config::remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
