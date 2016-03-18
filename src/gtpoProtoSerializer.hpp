@@ -177,6 +177,8 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
 
     int serializedNodeCout = 0;
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
+        if ( !node->isSerializable() )   // Don't serialize control nodes
+            continue;
         auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
             ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );

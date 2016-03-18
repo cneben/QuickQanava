@@ -66,16 +66,6 @@ int	main( int /*argc*/, char** /*argv*/ )
         //gmlOut.finishOut();
     } catch (...) { }
 
-/*
-    std::cout << "Creating qtpo::Graph..." << std::endl;
-    qtpo::Graph qg;
-    std::cout << "calling insertNode()" << std::endl;
-    auto n = qg.insertNode();
-    std::cout << "n->setX()" << std::endl;
-    n->setX( 10. );
-    n->getX();
-    std::cout << "n->getX()=" << n->getX( ) << std::endl;
-*/
     return 0;
 }
 

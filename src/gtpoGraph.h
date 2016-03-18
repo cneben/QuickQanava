@@ -260,6 +260,21 @@ private:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Node Meta Properties *///----------------------------------------
+    //@{
+public:
+    //! Get the node current serializable property (false=not serializable, for example a control node).
+    inline  auto    getSerializable( ) const -> bool { return _serializable; }
+    //! Shortcut to getSerializable().
+    inline  auto    isSerializable( ) const -> bool { return getSerializable(); }
+    //! Change the node serializable property (it will not trigger a node changed call in graph behaviour).
+    inline  auto    setSerializable( bool serializable ) -> void { _serializable = serializable; }
+private:
+    //! Node serializable property (default to true ie serializable).
+    bool            _serializable = true;
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
