@@ -19,4 +19,4 @@ test-style.depends  = quickqanava2
 test-topology.subdir   = samples/topology
 test-topology.depends  = quickqanava2
 
-SUBDIRS     +=  quickqanava2 test-navigable test-custom test-gml test-style test-topology
+SUBDIRS +=  quickqanava2 test-navigable test-custom test-gml test-style test-topology
