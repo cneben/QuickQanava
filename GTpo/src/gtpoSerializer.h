@@ -114,7 +114,8 @@ protected:
     //! \copydoc EmptyProgressNotifier::setProgress()
     void    setProgress( double progress ) { _progress = progress; }
 private:
-    std::atomic< double >   _progress       = 0.;
+    // FIXME: std::atomic<double> invalid on g++ (normal...)
+    double  _progress       = 0.;
 
 public:
     //! \copydoc EmptyProgressNotifier::setPhaseCount()
@@ -198,7 +199,7 @@ template < class GraphConfig = gtpo::DefaultConfig,
            class Notifier = EmptyProgressNotifier >
 class OutSerializer {
 public:
-    using Graph         = const typename GenGraph< GraphConfig >;
+    using Graph         = const gtpo::GenGraph< GraphConfig >;
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
@@ -223,7 +224,7 @@ template < class GraphConfig = DefaultConfig,
            class Notifier = EmptyProgressNotifier >
 class InSerializer {
 public:
-    using Graph = typename GenGraph< GraphConfig >;
+    using Graph = GenGraph< GraphConfig >;
     using Node  = typename GraphConfig::Node;
     using Edge  = typename GraphConfig::Edge;
 
@@ -247,7 +248,7 @@ class Serializer : public InSerializer< GraphConfig >,
                      public OutSerializer< GraphConfig >
 {
 public:
-    using Graph         = typename GenGraph< GraphConfig >;
+    using Graph         = GenGraph< GraphConfig >;
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;

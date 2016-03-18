@@ -59,6 +59,13 @@ template < class GraphConfig = DefaultConfig,
 class OutGmlSerializer : public OutSerializer< GraphConfig, Notifier >
 {
 public:
+    using Graph         = const gtpo::GenGraph< GraphConfig >;
+    using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
+    using Node          = typename GraphConfig::Node;
+    using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
+    using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
+    using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+
     OutGmlSerializer( std::string xmlFileName);
 
     /*! \brief Serialize \c graph out to an in-memory PugyXML DOM tree.
@@ -121,15 +128,18 @@ class InGmlSerializer : public InSerializer< GraphConfig, Notifier >
 public:
     InGmlSerializer( std::string fileName);
 
+    using Graph = typename InGmlSerializer::Graph;
     virtual void    serializeIn( Graph& graph, Notifier* progress = nullptr ) override;
     //! Do nothing in the actual implementation, should be called for out serialization symetry.
     virtual void    finishIn( );
 
 protected:
+    using Node = typename InGmlSerializer::Node;
     void            serializeNode( Node& node ) noexcept( false );
     void            serializeEdge( Node& node ) noexcept( false );
 
 private:
+    std::string         _xmlFileName = "";
     pugi::xml_document  _xmlDoc;
     pugi::xml_node      _xmlCurrentParent;
 };

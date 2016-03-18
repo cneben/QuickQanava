@@ -132,8 +132,8 @@ ProtoSerializer< GraphConfig, Notifier >::ProtoSerializer( std::string nodeDefau
                         void* sourceObject = idObjectMap.at( pbEdge.src_node_id() );
                         void* destinationObject = idObjectMap.at( pbEdge.dst_node_id() );
                         if ( sourceObject != nullptr && destinationObject != 0 ) {
-                            WeakNode source       = reinterpret_cast< GraphConfig::Node* >( sourceObject )->shared_from_this();
-                            WeakNode destination  = reinterpret_cast< GraphConfig::Node* >( destinationObject )->shared_from_this();
+                            WeakNode source       = reinterpret_cast< typename GraphConfig::Node* >( sourceObject )->shared_from_this();
+                            WeakNode destination  = reinterpret_cast< typename GraphConfig::Node* >( destinationObject )->shared_from_this();
                             weakEdge = graph.createEdge( getEdgeDefaultName(), source, destination );
                             if ( !weakEdge.expired() ) {
                                 SharedEdge edge = weakEdge.lock();
@@ -177,6 +177,8 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
 
     int serializedNodeCout = 0;
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
+        if ( !node->isSerializable() )   // Don't serialize control nodes
+            continue;
         auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
             ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );

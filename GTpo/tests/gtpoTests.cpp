@@ -128,7 +128,7 @@ TEST(GTpo, createEdge)
     // Testing that when creating a circuit with a root node, node is still
     // a root one after an edge has been created to itself.
     gtpo::GenGraph<> g2;
-    auto& g2n1 = g2.createNode();
+    auto g2n1 = g2.createNode();
     g2.createEdge( g2n1, g2n1 );
     EXPECT_TRUE( g2.getRootNodeCount() == 1 );
     g2.clear();
@@ -304,7 +304,7 @@ TEST(GTpo, stpoCreateNodeNodesCount)
 TEST(GTpo, stpoRemoveNodeNodesCount)
 {
     stpo::Graph g;
-    stpo::Graph::WeakNode& n = g.createNode();
+    stpo::Graph::WeakNode n = g.createNode();
     auto nc = g.getNodeCount();
     auto rnc = g.getRootNodeCount();
     g.removeNode( n );

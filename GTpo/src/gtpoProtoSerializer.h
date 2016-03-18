@@ -88,6 +88,13 @@ private:
     /*! \name Out Serialization *///-------------------------------------------
     //@{
 public:
+    using Graph         = GenGraph< GraphConfig >;
+    using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
+    using Node          = typename GraphConfig::Node;
+    using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
+    using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
+    using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+
     using   ObjectIdMap = std::unordered_map< void*, int >;
 
     /*! Generate an int ID mapping between \c graph nodes/edges/groups.

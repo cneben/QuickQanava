@@ -47,8 +47,8 @@ class Graph;
 
 template < typename Node, typename Edge >
 struct PropertiesConfig {
-    using SharedNode = std::shared_ptr< typename Node >;
-    using SharedEdge = std::shared_ptr< typename Edge >;
+    using SharedNode = std::shared_ptr< Node >;
+    using SharedEdge = std::shared_ptr< Edge >;
 
     static inline double   getNodeX( const SharedNode& n ) { return n->getX(); }
     static inline void     setNodeX( SharedNode& n, double x ) { n->setX( x ); }
@@ -64,7 +64,7 @@ struct PropertiesConfig {
 
     static inline double    getEdgeWeight( const Edge& e ) { return 0.; }
     static inline void      setEdgeWeight( const SharedEdge& e, double w ) { e->setWeight( w ); }
-    static inline void      setEdgeWeight( Edge& e, double w ) { e->setWeight( x ); }
+    static inline void      setEdgeWeight( Edge& e, double w ) { e.setWeight( w ); }
 };
 
 
@@ -95,47 +95,47 @@ class Graph : public gtpo::GenGraph< SConfig >
 class Edge : public gtpo::GenEdge< SConfig >
 {
 public:
-    qreal   getWeight( ) const { return _weight; }
-    void    setWeight( qreal weight ) {
+    double   getWeight( ) const { return _weight; }
+    void    setWeight( double weight ) {
         _weight = weight;
         getGraph()->notifyEdgeModified( shared_from_this() );
     }
 private:
-    qreal   _weight = 0.;
+    double   _weight = 0.;
 };
 
 class Node : public gtpo::GenNode< SConfig >
 {
 public:    
-    qreal   getX( ) const { return _x; }
-    void    setX( qreal x ) {
+    double   getX( ) const { return _x; }
+    void    setX( double x ) {
         _x = x;
         getGraph()->notifyNodeModified( shared_from_this() );
     }
 
-    qreal   getY( ) const { return _y; }
-    void    setY( qreal y ) {
+    double   getY( ) const { return _y; }
+    void    setY( double y ) {
         _y = y;
         getGraph()->notifyNodeModified( shared_from_this() );
     }
 
-    qreal   getWidth( ) const { return _width; }
-    void    setWidth( qreal width ) {
+    double   getWidth( ) const { return _width; }
+    void    setWidth( double width ) {
         _width = width;
         getGraph()->notifyNodeModified( shared_from_this() );
     }
 
-    qreal   getHeight( ) const { return _height; }
-    void    setHeight( qreal height ) {
+    double   getHeight( ) const { return _height; }
+    void    setHeight( double height ) {
         _height = height;
         getGraph()->notifyNodeModified( shared_from_this() );
     }
 
 private:
-    qreal   _x  = 0.;
-    qreal   _y  = 0.;
-    qreal   _width  = 0.;
-    qreal   _height = 0.;
+    double   _x  = 0.;
+    double   _y  = 0.;
+    double   _width  = 0.;
+    double   _height = 0.;
 };
 
 } // ::stpo STD Topo
