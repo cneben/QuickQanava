@@ -51,7 +51,7 @@ private:
     Q_DISABLE_COPY( Serializer )
     //Serializer( const Serializer& ) = delete;
 public:
-    Q_INVOKABLE virtual void    open( QString source ) { }
+    Q_INVOKABLE virtual void    open( QString source ) { Q_UNUSED( source ); }
     Q_INVOKABLE virtual void    serialize( qps::TimeValueMap* tvm, int id ) { Q_UNUSED(tvm); Q_UNUSED(id); }
     Q_INVOKABLE virtual void    close() { }
     //@}

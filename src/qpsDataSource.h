@@ -29,7 +29,7 @@
 #define qpsDataSource_h
 
 // Qt headers
-#include <QTQml>
+#include <QtQml>
 #include <QThread>
 #include <QTime>
 #include <QTimer>

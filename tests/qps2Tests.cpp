@@ -29,7 +29,7 @@
 #include <QScopedPointer>
 
 // QuickProperties2 headers
-#include "./qps2tests.h"
+#include "./qps2Tests.h"
 #include "qpsSerializer.h"
 
 // Google Test

@@ -6,11 +6,7 @@ DESTDIR     = ../build
 CONFIG      += warn_on qt thread staticlib c++11
 QT          += core widgets gui qml quick
 
-DEFINES             += "QUICKPROPERTIES_HAVE_PROTOCOL_BUFFER"
-PROTOCOL_BUFFER3_DIR=C:/projects/DELIA/libs/protobuf3
-INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
-PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
-PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+include(../common.pri)
 
 HEADERS +=  ./qpsLimit.h                \
             ./qpsSerializer.h           \

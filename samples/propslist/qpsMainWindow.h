@@ -29,6 +29,8 @@
 #define qpsMainWindow_h
 
 // Qt headers
+#include <QObject>
+#include <QGuiApplication>
 #include <QQuickView>
 
 // QuickProperties headers
@@ -102,10 +104,6 @@ protected:
     QColor      _borderColor;
 };
 
-//! 
-/*!
-	\nosubgrouping
-*/
 class MainView : public QQuickView
 {
     Q_OBJECT

@@ -49,7 +49,7 @@ class DisplayRoleWatcher : public QAbstractListModel
 public:
     DisplayRoleWatcher( QObject* parent = nullptr );
 
-    DisplayRoleWatcher( const DisplayRoleWatcher& displayRoleWatcher ) :
+    DisplayRoleWatcher( const DisplayRoleWatcher& displayRoleWatcher ) : QAbstractListModel( nullptr ),
         _displayRoleProperty( displayRoleWatcher._displayRoleProperty ) { }
 
     /*! \name QML Container Interface *///-------------------------------------
@@ -194,23 +194,23 @@ private:
     using weak_ptr_type             = std::integral_constant<int, 7>;
     using weak_ptr_qobject_type     = std::integral_constant<int, 8>;
 
-    template < typename T >
-    struct item_type : std::conditional< std::is_pointer<T>::value,
-                                                typename std::conditional< std::is_base_of< QObject, typename std::remove_pointer< T >::type >::value,
+    template < class ItemT >
+    struct item_type : std::conditional< std::is_pointer<ItemT>::value,
+                                                typename std::conditional< std::is_base_of< QObject, typename std::remove_pointer< ItemT >::type >::value,
                                                                                     ptr_qobject_type,
                                                                                     ptr_type            >::type,
-                                                typename std::conditional< std::is_base_of< QObject, T >::value,
+                                                typename std::conditional< std::is_base_of< QObject, ItemT >::value,
                                                                                     non_ptr_qobject_type,
                                                                                     non_ptr_type        >::type
                                                                         >::type {};
 
-    template < typename T >
-    struct item_type< std::shared_ptr<T> > : std::conditional< std::is_base_of< QObject, T >::value,
+    template < typename ItemT >
+    struct item_type< std::shared_ptr<ItemT> > : std::conditional< std::is_base_of< QObject, ItemT >::value,
                                                                                     shared_ptr_qobject_type,
                                                                                     shared_ptr_type >::type {};
 
-    template < typename T >
-    struct item_type< std::weak_ptr<T> > : std::conditional< std::is_base_of< QObject, T >::value,
+    template < typename ItemT >
+    struct item_type< std::weak_ptr<ItemT> > : std::conditional< std::is_base_of< QObject, ItemT >::value,
                                                                                     weak_ptr_qobject_type,
                                                                                     weak_ptr_type >::type {};
 private:
@@ -444,10 +444,10 @@ protected:
     virtual void    itemRemoved( T ) { }
 
 protected:
-    Container< typename T >&    getList( ) { return _list; }
+    Container< T >&             getList( ) { return _list; }
     const Container< T >&       getList( ) const { return _list; }
 private:
-    Container< typename T >     _list;
+    Container< T >     _list;
     //@}
     //-------------------------------------------------------------------------
 
@@ -492,14 +492,17 @@ protected:
     }
 private:
     inline auto indexOfItemImpl( QObject* qItem, non_ptr_type )            const -> int {
+        Q_UNUSED( qItem );
         Q_ASSERT( false && "indexOfItemImpl(QObject*) unsupported for non_ptr_type" );
         return -1;
     }
     inline auto indexOfItemImpl( QObject* qItem, non_ptr_qobject_type )    const -> int {
+        Q_UNUSED( qItem );
         Q_ASSERT( false && "indexOfItemImpl(QObject*) unsupported for non_ptr_qobject_type" );
         return -1;
     }
     inline auto indexOfItemImpl( QObject* qItem, ptr_type )                const -> int {
+        Q_UNUSED( qItem );
         Q_ASSERT( false && "indexOfItemImpl(QObject*) unsupported for ptr_type" );
         return -1;
     }
@@ -536,7 +539,7 @@ private:
         qDebug() << "dataDisplayRole(ptr_type) row=" << row;
 #endif
         T ptrItem = at( row );
-        return ( ptrItem != nullptr ? QVariant::from_value<std::remove_ptr<T>::type>( *ptrItem ) :
+        return ( ptrItem != nullptr ? QVariant::fromValue<std::remove_pointer<T>::type>( *ptrItem ) :
                                       QVariant() );
     }
     inline auto dataDisplayRole( int row, ptr_qobject_type )        const -> QVariant {
@@ -552,7 +555,7 @@ private:
         qDebug() << "dataDisplayRole(shared_ptr_type) row=" << row;
 #endif
         T item = at( index.row() );
-        return ( item ? QVariant::from_value<std::remove_ptr<T::element_type>::type>( *item.get() ) :
+        return ( item ? QVariant::fromValue<std::remove_pointer<typename T::element_type>::type>( *item.get() ) :
                         QVariant() );
     }
     inline auto dataDisplayRole( int row, shared_ptr_qobject_type ) const -> QVariant {

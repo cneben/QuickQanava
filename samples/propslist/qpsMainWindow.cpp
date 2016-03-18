@@ -26,7 +26,6 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
-#include <QGuiApplication>
 #include <QVariant>
 #include <QQmlContext>
 

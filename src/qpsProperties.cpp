@@ -52,6 +52,8 @@ Properties::~Properties( )
 
 qps::Properties*    Properties::duplicate( QObject* copyParent )
 {
+    Q_UNUSED( copyParent );
+
 /*    qps::Properties* destination = new qps::Properties( copyParent );
     Q_ASSERT( destination != nullptr );
     return ( duplicateTo( destination ) ? destination : nullptr );*/
