@@ -40,7 +40,7 @@ Google Test is a *GTpo* dependency, it is not mandatory for QuickQanava until yo
 Installation
 ------------------
 
-QuickQanava use _qmake_ to manage build process, dependencies are configured in the root directory _common.pri_ file:
+QuickQanava use _qmake_ as its main build configuration system, dependencies are configured in the root directory _common.pri_ file:
 
 ~~~~~~~~~~~~~{.cpp}
 PROTOCOL_BUFFER3_DIR= **path to protocol buffer**
@@ -127,7 +127,7 @@ $ protoc custom.proto --cpp_out=.
 
 > Note: It might be necessary to manually copy "gtpo.proto" and "quickqanava.proto" in your .proto directory before calling `protoc`, theses files could be removed once custom.pb.cc and custom.pb.h have been generated.
 
-You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configuration file, and register custom in/out functors in a qan::ProtoSerializer:
+You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configuration file, and register custom in/out functors in a qan::ProtoSerializer. Mapping between functors and the target node is done via the first string parameter of registerNodeOutFunctor(), the value must correspond to qan::Node::getDynamicClassName().
 
 ~~~~~~~~~~~~~{.cpp}
 #include <QuickQanava>
@@ -153,5 +153,8 @@ You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configur
 			}
 	}
 ~~~~~~~~~~~~~
+
+See the topology sample for a compilable example.
+
 
 
