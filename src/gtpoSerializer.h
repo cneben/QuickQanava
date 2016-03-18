@@ -199,7 +199,6 @@ template < class GraphConfig = gtpo::DefaultConfig,
            class Notifier = EmptyProgressNotifier >
 class OutSerializer {
 public:
-    // FIXME: typename not allowed on g++
     using Graph         = const gtpo::GenGraph< GraphConfig >;
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;

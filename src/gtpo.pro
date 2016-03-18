@@ -23,7 +23,6 @@ HEADERS +=  ./gtpoUtils.h               \
             ./gtpoProtoSerializer.h     \
             ./gtpoProtoSerializer.hpp   \
             ./gtpoNode.hpp              \
-            ./gtpoIDInterface.h         \
             ./GTpo.h                    \
             ./GTpoQt.h                  \
             ./GTpoStd.h
@@ -33,8 +32,7 @@ OTHER_FILES +=  ./GTpo          \
                 ./GTpoQt        \
                 ./gtpo.proto
 
-SOURCES +=  ./gtpoIDInterface.cpp       \
-            ./gtpo.pb.cc                \
+SOURCES +=  ./gtpo.pb.cc                \
             ./pugixml/src/pugixml.cpp
 
 CONFIG(release, debug|release) {
