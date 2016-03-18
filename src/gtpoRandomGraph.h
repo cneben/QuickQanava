@@ -30,7 +30,7 @@
 
 // STD headers
 #include <random>
-
+#include <cstdlib>
 
 class RandomGraph
 {
@@ -47,8 +47,8 @@ public:
         std::pair<double, double>   heightRng{ 40., 50. };
 
         auto    isValid() const -> bool {
-            return ( ( qAbs( widthRng.first - widthRng.second ) ) > 0.000001 &&
-                     ( qAbs( heightRng.first -  heightRng.second ) > 0.000001 ) );  // We do not need precise epsilon comparison here
+            return ( ( std::abs( widthRng.first - widthRng.second ) ) > 0.000001 &&
+                     ( std::abs( heightRng.first -  heightRng.second ) > 0.000001 ) );  // We do not need precise epsilon comparison here
         }
     };
 

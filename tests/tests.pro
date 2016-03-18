@@ -6,14 +6,12 @@ QT          += core
 DEPENDPATH  += ../src
 INCLUDEPATH += ../src
 
-DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
-INCLUDEPATH += c:/projects/DELIA/libs/protobuf3/src
+include (../common.pri)
 
-GMOCK_DIR       =  c:/projects/DELIA/libs/googletest-master/googlemock
-GTEST_DIR       =  c:/projects/DELIA/libs/googletest-master/googletest
-INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
-PROTOCOL_BUFFER_LIBDIR_RELEASE = C:/projects/DELIA/libs/protobuf3/cmake/build/Release
-PROTOCOL_BUFFER_LIBDIR_DEBUG = C:/projects/DELIA/libs/protobuf3/cmake/build/Debug
+# On win32, set Google Test and Mock source and library directories manually
+win32-msvc*:GMOCK_DIR       =  c:/projects/DELIA/libs/googletest-master/googlemock
+win32-msvc*:GTEST_DIR       =  c:/projects/DELIA/libs/googletest-master/googletest
+win32-msvc*:INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
 
 SOURCES	+=  gtpoTests.cpp
 HEADERS	+=  

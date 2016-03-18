@@ -10,10 +10,7 @@ INCLUDEPATH +=  ../../src
 SOURCES	+=  basic.cpp
 HEADERS	+=  basic.h
 
-DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
-INCLUDEPATH +=C:/projects/DELIA/libs/protobuf3/src
-PROTOCOL_BUFFER_LIBDIR_RELEASE = C:/projects/DELIA/libs/protobuf3/cmake/build/Release
-PROTOCOL_BUFFER_LIBDIR_DEBUG = C:/projects/DELIA/libs/protobuf3/cmake/build/Debug
+include (../../common.pri)
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lgtpo

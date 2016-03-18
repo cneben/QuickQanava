@@ -43,7 +43,6 @@
 
 // Qan.Topo headers
 #include "./gtpoUtils.h"
-#include "./gtpoIDInterface.h"
 #include "./gtpoBehaviour.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
