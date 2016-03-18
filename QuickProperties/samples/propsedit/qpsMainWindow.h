@@ -30,6 +30,7 @@
 
 // Qt headers
 #include <QQuickView>
+#include <QGuiApplication>
 
 // QuickProperties headers
 #include "../../src/QuickProperties2.h"
