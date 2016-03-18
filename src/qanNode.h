@@ -245,5 +245,7 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Node )
+Q_DECLARE_METATYPE( std::shared_ptr<qan::Node> )
+Q_DECLARE_METATYPE( std::weak_ptr<qan::Node> )
 
 #endif // qanNode_h

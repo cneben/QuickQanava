@@ -12,12 +12,6 @@ include(../GTpo/src/gtpo.pri)
 include(../QuickProperties/src/quickproperties2.pri)
 INCLUDEPATH += ../QuickProperties/src
 
-# Export that to QuickQanava2.pri
-INCLUDEPATH	+= ..\GTpo\src
-GTPO_DIR        =  ..\GTpo\src
-INCLUDEPATH	+= $$GTPO_DIR
-DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
-
 HEADERS +=  ./QuickQanava.h         \
             ./qanConfig.h           \
             ./qanEdge.h             \

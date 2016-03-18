@@ -241,7 +241,7 @@ signals:
     /*! \name Graph Serialization Management *///------------------------------
     //@{
 public:
-    Q_INVOKABLE void    saveToGml( QString fileName ) { /*serializeToGml( fileName.toStdString( ) );*/ }
+    Q_INVOKABLE void    saveToGml( QString fileName ) { Q_UNUSED( fileName); /*serializeToGml( fileName.toStdString( ) );*/ }
     //@}
     //-------------------------------------------------------------------------
 
@@ -257,11 +257,9 @@ public:
     //-------------------------------------------------------------------------
 };
 
-QML_DECLARE_TYPE( qan::Graph::WeakNode )
-
 } // ::qan
 
-
+QML_DECLARE_TYPE( qan::Graph::WeakNode )
 
 #endif // qanGraph_h
 
