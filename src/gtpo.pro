@@ -1,14 +1,12 @@
 
 TEMPLATE	= lib
 LANGUAGE	= C++
-DEFINES		+= QANAVA
 TARGET		= gtpo
 DESTDIR		= ../build
 CONFIG		+= warn_on thread staticlib c++11
 QT		+= core 
 
-DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
-INCLUDEPATH += c:/projects/DELIA/libs/protobuf3/src
+include (../common.pri)
 
 HEADERS +=  ./gtpoUtils.h               \
             ./gtpoEdge.hpp              \
@@ -23,7 +21,6 @@ HEADERS +=  ./gtpoUtils.h               \
             ./gtpoProtoSerializer.h     \
             ./gtpoProtoSerializer.hpp   \
             ./gtpoNode.hpp              \
-            ./gtpoIDInterface.h         \
             ./GTpo.h                    \
             ./GTpoQt.h                  \
             ./GTpoStd.h
@@ -31,10 +28,10 @@ HEADERS +=  ./gtpoUtils.h               \
 OTHER_FILES +=  ./GTpo          \
                 ./GTpoStd       \
                 ./GTpoQt        \
-                ./gtpo.proto
+                ./gtpo.proto    \
+                ../common.pri
 
-SOURCES +=  ./gtpoIDInterface.cpp       \
-            ./gtpo.pb.cc                \
+SOURCES +=  ./gtpo.pb.cc                \
             ./pugixml/src/pugixml.cpp
 
 CONFIG(release, debug|release) {

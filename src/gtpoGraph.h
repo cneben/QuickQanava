@@ -43,7 +43,6 @@
 
 // Qan.Topo headers
 #include "./gtpoUtils.h"
-#include "./gtpoIDInterface.h"
 #include "./gtpoBehaviour.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
@@ -171,7 +170,7 @@ template <class Config = DefaultConfig>
 class GenEdge : public Config::EdgeBase,
                 public std::enable_shared_from_this<typename Config::Edge>
 {
-    friend typename GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend GenGraph<Config>;   // GenGraph need access to setGraph()
 public:
     using Graph         = GenGraph<Config>;
     using WeakNode      = std::weak_ptr< typename Config::Node >;
@@ -218,7 +217,7 @@ template <class Config = DefaultConfig>
 class GenNode : public Config::NodeBase,
                 public std::enable_shared_from_this<typename Config::Node>
 {
-    friend typename GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
     /*! \name Node Management *///---------------------------------------------
     //@{
@@ -258,6 +257,21 @@ protected:
 private:
     void        setGraph( Graph* graph ) { _graph = graph; }
     Graph*      _graph = nullptr;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Node Meta Properties *///----------------------------------------
+    //@{
+public:
+    //! Get the node current serializable property (false=not serializable, for example a control node).
+    inline  auto    getSerializable( ) const -> bool { return _serializable; }
+    //! Shortcut to getSerializable().
+    inline  auto    isSerializable( ) const -> bool { return getSerializable(); }
+    //! Change the node serializable property (it will not trigger a node changed call in graph behaviour).
+    inline  auto    setSerializable( bool serializable ) -> void { _serializable = serializable; }
+private:
+    //! Node serializable property (default to true ie serializable).
+    bool            _serializable = true;
     //@}
     //-------------------------------------------------------------------------
 

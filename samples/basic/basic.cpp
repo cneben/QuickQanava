@@ -61,21 +61,11 @@ int	main( int /*argc*/, char** /*argv*/ )
 
     //auto e1 = sg.createEdge();
     try {
-        gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "test.xml" );
-        gmlOut.serializeOut( sg );
-        gmlOut.finishOut();
+        //gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "test.xml" );
+        //gmlOut.serializeOut( sg );
+        //gmlOut.finishOut();
     } catch (...) { }
 
-/*
-    std::cout << "Creating qtpo::Graph..." << std::endl;
-    qtpo::Graph qg;
-    std::cout << "calling insertNode()" << std::endl;
-    auto n = qg.insertNode();
-    std::cout << "n->setX()" << std::endl;
-    n->setX( 10. );
-    n->getX();
-    std::cout << "n->getX()=" << n->getX( ) << std::endl;
-*/
     return 0;
 }
 

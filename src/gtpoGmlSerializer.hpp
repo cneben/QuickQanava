@@ -159,15 +159,15 @@ void    OutGmlSerializer< GraphConfig, Notifier >::finishOut( )
 
 template < class GraphConfig, class Notifier >
 InGmlSerializer< GraphConfig, Notifier >::InGmlSerializer( std::string fileName ) :
-    _fileName( fileName )
+    _xmlFileName( fileName )
 {
-    std::assert( fileName.length() > 0 );
+    gtpo::assert_throw( fileName.length() > 0, "gtpo::InGmlSerializer<>::InGmlSerializer(): Error: Trying to serialize an empty file name" );
     pugi::xml_parse_result result = _xmlDoc.load_file( fileName.c_str() );
     if ( !result ) {
-        std::cout << "qtpo::InGmlPugiSerializer<>::InGmlPugiSerializer(): XML " << fileName.c_str() << " parsed with errors" << std::endl;
-        std::cout << "\tDescription: " << result.description() << std::endl;
-        std::cout << "\tOffset: " << result.offset << std::endl;
-        throw std::expection;
+        std::cerr << "qtpo::InGmlPugiSerializer<>::InGmlPugiSerializer(): XML " << fileName.c_str() << " parsed with errors" << std::endl;
+        std::cerr << "\tDescription: " << result.description() << std::endl;
+        std::cerr << "\tOffset: " << result.offset << std::endl;
+        gtpo::assert_throw( false, "gtpo::InGmlSerializer<>::InGmlSerializer(): Error: PugyXML parse error." );
     }
 }
 
@@ -175,19 +175,19 @@ template < class GraphConfig, class Notifier >
 void    InGmlSerializer< GraphConfig, Notifier >::serializeIn( Graph& graph, Notifier* notifier )
 {
     try {
-        for ( pugi::xml_node xmlNode: tools.children("node") ) {
+        /*for ( pugi::xml_node xmlNode: tool.children("node") ) {
             auto node = graph.createNode();
             serializeNode( node );
-        }
+        }*/
     } catch ( std::exception const& ) { }
 }
 
 template < class GraphConfig, class Notifier >
 void    InGmlSerializer< GraphConfig, Notifier >::serializeNode( Node& node )
 {
-    if ( !_xmlCurrentNode )
+    /*if ( !_xmlCurrentNode )
         throw std::exception;
-
+    */
 }
 
 template < class GraphConfig, class Notifier >
