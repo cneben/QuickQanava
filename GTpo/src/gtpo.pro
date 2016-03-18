@@ -29,7 +29,8 @@ OTHER_FILES +=  ./GTpo          \
                 ./GTpoStd       \
                 ./GTpoQt        \
                 ./gtpo.proto    \
-                ../common.pri
+                ../common.pri   \
+                ./GTpo.pri
 
 SOURCES +=  ./gtpo.pb.cc                \
             ./pugixml/src/pugixml.cpp

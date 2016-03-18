@@ -1,6 +1,6 @@
 
 CONFIG      += warn_on qt thread c++11
-QT          += core widgets gui qml quick
+QT          += core gui
 
 INCLUDEPATH += $$PWD
 
