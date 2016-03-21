@@ -74,6 +74,13 @@ signals:
 public:
     auto            getClassName() -> std::string { return getDynamicClassName(); }
     virtual auto    getDynamicClassName() -> std::string { return "qan::Node"; }
+
+public:
+    // Qt property for gtpo::Node serializable standard property.
+    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
+    void             setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
+signals:
+    void    serializableChanged();
     //@}
     //-------------------------------------------------------------------------
 

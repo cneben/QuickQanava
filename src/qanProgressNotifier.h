@@ -68,9 +68,22 @@ public:
     double          getGtpoProgress() const { return gtpo::VirtualProgressNotifier::getProgress(); }
 
     //! Called from task, force show of associed progress dialog.
-    void    beginProgress() { qDebug() << "qan::ProgressNotifier::beginProgress()"; emit showProgress(); QCoreApplication::processEvents( ); }
+    void    beginProgress() {
+        qDebug() << "qan::ProgressNotifier::beginProgress()";
+        emit showProgress();
+        QCoreApplication::processEvents( );
+        QCoreApplication::processEvents( );
+        QCoreApplication::processEvents( );
+        QCoreApplication::processEvents( );
+        QCoreApplication::processEvents( );
+        qDebug() << "\tprogress shown...";
+    }
     //! Called from task, force progress end and hide associed dialog.
-    void    endProgress() { qDebug() << "qan::ProgressNotifier::endProgress()"; emit hideProgress(); QCoreApplication::processEvents( ); }
+    void    endProgress() {
+        qDebug() << "qan::ProgressNotifier::endProgress()";
+        emit hideProgress();
+        QCoreApplication::processEvents( );
+    }
 signals:
     //! \sa progress
     void            progressChanged();
@@ -79,7 +92,13 @@ signals:
 
 protected:
     //! Called whenever the overall progress change.
-    virtual void    progressModified() { emit progressChanged(); QCoreApplication::processEvents( ); }
+    virtual void    progressModified() override {
+        qDebug() << "progressModified() from GTpo;";
+        qDebug() << "\tphaseProgress=" << gtpo::VirtualProgressNotifier::getPhaseProgress();
+        qDebug() << "\tprogress=" << gtpo::VirtualProgressNotifier::getProgress();
+        emit progressChanged();
+        QCoreApplication::processEvents( );
+    }
 
 public:
     /*! Read-only progress value for current phase between 0. (action 0% done) and 1. (action 100% done), or -1 if progression is unknown.

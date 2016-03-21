@@ -67,7 +67,7 @@ namespace gtpo { // ::gtpo
  * \sa ProgressNotifier for a default static implementation based on std::atomic.
  * \sa VirtualProgressNotifier for a ProgressNotifier extended with virtual notification calls.
  */
-class EmptyProgressNotifier
+class ProgressNotifier
 {
 public:
     //! Construct a default notifiyer with 0.0 progress and 0 \c phaseCount.
@@ -75,14 +75,17 @@ public:
 
 public:
     //! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
-    double  getProgress() const { return 0.; }
+    virtual double  getProgress() const { return 0.; }
+
     //! Called at the start of the monitored process, indicate to an eventually associed progress display that it must be shown.
-    void    beginProgress() { }
+    virtual void    beginProgress() { }
+
     //! Called at the end of the monitored process or if the process has been interrupted, indicate to an eventually associed progress display that it must be shut down.
-    void    endProgress() { }
+    virtual void    endProgress() { }
+
 protected:
     //! Set the current overall progress.
-    void    setProgress( double ) { }
+    virtual void    setProgress( double ) { }
 
 public:
     //! Set the previsible number of phase in the monitored task (default to 0, ie overall progress equal phase 0 progress).
@@ -92,16 +95,19 @@ public:
      * \note The total number of calls to nextPhase() must equal the value of \c phaseCount set when beginning startup monitoring with setPhaseCount().
      * \note The sum for all \c phaseWeight for the \c phaseCount calls to nextPhase() must equalt 1.0.
      */
-    void    nextPhase( double phaseWeight ) { (void)phaseWeight; }
+    virtual void    nextPhase( double phaseWeight ) { (void)phaseWeight; }
+
     //! Return the current phase number (int between 0 and phaseCount - 1).
-    int     getPhase() const { return 0; }
+    virtual int     getPhase() const { return 0; }
+
     //! Return current phase progress into the (0.0, 1.0) range.
-    double  getPhaseProgress() const { return 0.; }
+    virtual double  getPhaseProgress() const { return 0.; }
+
     //! Set the current phase progress (\c phaseProgress must be in the (0.0, 1.0) range.
-    void    setPhaseProgress( double phaseProgress ) { (void)phaseProgress; }
+    virtual void    setPhaseProgress( double phaseProgress ) { (void)phaseProgress; }
 };
 
-//! Simple functionnal progress notifier.
+//! Simple empty implementation of progress notifier.
 class ProgressNotifier : public EmptyProgressNotifier
 {
 public:
@@ -172,7 +178,11 @@ public:
 
 protected:
     //! \copydoc EmptyProgressNotifier::setProgress()
-    void    setProgress( double progress ) { ProgressNotifier::setProgress( progress ); progressModified(); }
+    void    setProgress( double progress ) {
+        std::cout << "gtpo:VirtualProgressNotifier::setProgress(): progress=" << progress << std::endl;
+        ProgressNotifier::setProgress( progress );
+        progressModified();
+    }
 
     //! Called whenever the overall progress change.
     virtual void    progressModified() = 0;

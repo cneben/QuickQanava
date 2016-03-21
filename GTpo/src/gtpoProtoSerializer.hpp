@@ -176,6 +176,11 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
     gtpo::pb::GTpoGraph pbGraph;
 
     int serializedNodeCout = 0;
+    if ( progress != nullptr ) {
+        progress->setPhaseCount( 2 );
+        progress->nextPhase( 0.5 );
+    }
+    double p = 0;
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
         if ( !node->isSerializable() )   // Don't serialize control nodes
             continue;
@@ -185,8 +190,13 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
             ++serializedNodeCout;
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for node class:" << node->getClassName() << std::endl;
+
+        if ( progress != nullptr )
+            progress->setPhaseProgress( serializedNodeCout / graph.getNodes().size() );
     }
 
+    if ( progress != nullptr )
+        progress->nextPhase( 0.5 );
     int serializedEdgeCout = 0;
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
         auto edgeOutFunctor = _edgeOutFunctors.find( edge->getClassName() );
@@ -195,6 +205,8 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
                 ++serializedEdgeCout;
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for edge class:" << edge->getClassName() << std::endl;
+        if ( progress != nullptr )
+            progress->setPhaseProgress( serializedEdgeCout / graph.getEdges().size() );
     }
 
     pbGraph.set_node_count( ( int )graph.getNodeCount() );

@@ -299,13 +299,16 @@ Item {
 
     Qan.ProgressNotifier {
         id: progressNotifier
-        onShowProgress: { progressDialog.visible = true; }
-        onHideProgress: { progressDialog.visible = false; }
+        onShowProgress: { console.debug( "Qan.ProgressNotifier.onShowProgress()..." ); progressDialog.visible = true; }
+        onHideProgress: { console.debug( "Qan.ProgressNotifier.onHideProgress()..." ); progressDialog.visible = false; }
+
+
     }
     Item {
         id: progressDialog
         anchors.fill: parent
         visible: false
+        onVisibleChanged: console.debug( "progressDialog.visible=" + visible )
         Rectangle {     // Background
             anchors.fill: parent
             color: "black"

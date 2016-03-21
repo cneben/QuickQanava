@@ -66,6 +66,8 @@ void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::
     generateObjectIdMap( *graph ); // Force generation of internal graph primitive / ID map before serializing style manager
     saveStyleManager( *graph, graph->styleManager(), pbStyleManager, getObjectIdMap() );
     serializeOut( *graph, os, progress, &pbStyleManager );
+    if ( progress != nullptr )
+        progress->endProgress();
     if ( os.is_open() )
         os.close();
 }
