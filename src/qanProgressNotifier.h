@@ -43,7 +43,7 @@ namespace qan { // ::qan
  * \sa qan::Graph::serializeIn(), qan::Graph::serializeOut()
  */
 class ProgressNotifier : public QObject,
-                         public gtpo::VirtualProgressNotifier
+                         public gtpo::ProgressNotifier
 {
     /*! \name ProgressNotyfier Object Management *///--------------------------
     //@{
@@ -63,9 +63,7 @@ public:
     /*! Read-only value of the current overall progress between 0.0 (action 0% done) and 1.0 (action 100% done).
      *
      */
-    Q_PROPERTY( double progress READ getGtpoProgress NOTIFY progressChanged )
-    //! \sa progress
-    double          getGtpoProgress() const { return gtpo::VirtualProgressNotifier::getProgress(); }
+    Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged )
 
     //! Called from task, force show of associed progress dialog.
     void    beginProgress() {
@@ -92,10 +90,10 @@ signals:
 
 protected:
     //! Called whenever the overall progress change.
-    virtual void    progressModified() override {
+    virtual void    onProgressChanged() override {
         qDebug() << "progressModified() from GTpo;";
-        qDebug() << "\tphaseProgress=" << gtpo::VirtualProgressNotifier::getPhaseProgress();
-        qDebug() << "\tprogress=" << gtpo::VirtualProgressNotifier::getProgress();
+        qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
+        qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
         emit progressChanged();
         QCoreApplication::processEvents( );
     }
@@ -105,13 +103,12 @@ public:
      *
      * The action currently monitored could eventually be cancelled with a call to cancel() if the receiver supports it.
      */
-    Q_PROPERTY( double phaseProgress READ getGtpoPhaseProgress NOTIFY phaseProgressChanged )
-    //! \sa progress
-    double          getGtpoPhaseProgress() const { return gtpo::VirtualProgressNotifier::getPhaseProgress(); }
+    Q_PROPERTY( double phaseProgress READ getPhaseProgress NOTIFY phaseProgressChanged )
 signals:
     //! \sa phaseProgress
     void            phaseProgressChanged();
 protected:
+    // FIXME
     virtual void    phaseProgressModified() { emit phaseProgressChanged(); QCoreApplication::processEvents( ); }
 
 public:

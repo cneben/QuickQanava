@@ -48,13 +48,13 @@ namespace qan { // ::qan
  * \nosubgrouping
  */
 class ProtoSerializer : public QObject,
-                        public gtpo::ProtoSerializer< QGraphConfig, qan::ProgressNotifier >
+                        public gtpo::ProtoSerializer< QGraphConfig >
 {
     Q_OBJECT
 public:
     ProtoSerializer( QObject* parent = nullptr )  :
         QObject( parent ),
-        gtpo::ProtoSerializer< QGraphConfig, qan::ProgressNotifier >( "qan::Node", "qan::Edge" ) { }
+        gtpo::ProtoSerializer< QGraphConfig >( "qan::Node", "qan::Edge" ) { }
 
     virtual ~ProtoSerializer() { }
 private:

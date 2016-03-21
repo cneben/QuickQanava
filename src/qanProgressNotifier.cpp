@@ -32,7 +32,7 @@ namespace qan { // ::qan
 
 ProgressNotifier::ProgressNotifier( QObject* parent ) :
     QObject( parent ),
-    gtpo::VirtualProgressNotifier()
+    gtpo::ProgressNotifier( nullptr )
 {
 }
 

@@ -65,7 +65,12 @@ void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::
     qan::pb::StyleManager pbStyleManager;
     generateObjectIdMap( *graph ); // Force generation of internal graph primitive / ID map before serializing style manager
     saveStyleManager( *graph, graph->styleManager(), pbStyleManager, getObjectIdMap() );
-    serializeOut( *graph, os, progress, &pbStyleManager );
+
+    gtpo::IProgressNotifier* gtpoProgress = progress;
+    gtpo::ProgressNotifier voidProgressNotifier;
+    if ( gtpoProgress == nullptr )
+        gtpoProgress = &voidProgressNotifier;
+    serializeOut( *graph, os, *gtpoProgress, &pbStyleManager );
     if ( progress != nullptr )
         progress->endProgress();
     if ( os.is_open() )
@@ -92,7 +97,11 @@ void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan
         return;
     }
     qan::pb::StyleManager pbStyleManager;
-    serializeIn( is, *graph, progress, &pbStyleManager );
+    gtpo::IProgressNotifier* gtpoProgress = progress;
+    gtpo::ProgressNotifier voidProgressNotifier;
+    if ( gtpoProgress == nullptr )
+        gtpoProgress = &voidProgressNotifier;
+    serializeIn( is, *graph, *gtpoProgress, &pbStyleManager );
     loadStyleManager( pbStyleManager, *graph->getStyleManager(), getIdObjectMap() );
     if ( is.is_open() )
         is.close();
