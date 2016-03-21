@@ -90,8 +90,8 @@ signals:
 
 protected:
     //! Called whenever the overall progress change.
-    virtual void    onProgressChanged() override {
-        qDebug() << "progressModified() from GTpo;";
+    virtual void    notifyProgressChanged() override {
+        qDebug() << "progressChanged() from GTpo;";
         qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
         qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
         emit progressChanged();
@@ -108,8 +108,12 @@ signals:
     //! \sa phaseProgress
     void            phaseProgressChanged();
 protected:
-    // FIXME
-    virtual void    phaseProgressModified() { emit phaseProgressChanged(); QCoreApplication::processEvents( ); }
+    virtual void    notifyPhaseProgressChanged() override {
+        qDebug() << "phaseProgressChanged() from GTpo;";
+        qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
+        qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
+        emit phaseProgressChanged(); QCoreApplication::processEvents( );
+    }
 
 public:
     /*! Label for the current progress phase, usually set in beginPhase().
@@ -127,7 +131,7 @@ signals:
     //! \sa phaseLabel
     void            phaseLabelChanged();
 protected:
-    virtual void    phaseModified() { /* FIXME update phase label... */ QCoreApplication::processEvents( ); }
+    virtual void    notifyPhaseChanged() override { /* FIXME update phase label... */ QCoreApplication::processEvents( ); }
     //@}
     //-------------------------------------------------------------------------
 };
