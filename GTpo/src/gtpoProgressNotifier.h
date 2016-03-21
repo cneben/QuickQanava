@@ -143,7 +143,9 @@ public:
     //! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
     virtual double  getProgress() const { return 0.; }
     //! Called when internal progress change for notification purposes (default implentation does nothing).
-    virtual void    onProgressChanged() { }
+    virtual void    notifyProgressChanged() { }
+    //! Called when internal phase progress change for notification purposes (default implentation does nothing).
+    virtual void    notifyPhaseProgressChanged() { }
     //! Called at the start of the monitored process, indicate to an eventually associed progress display that it must be shown (call reset() automatically).
     virtual void    beginProgress() { reset(); }
     //! Called at the end of the monitored process or if the process has been interrupted, indicate to an eventually associed progress display that it must be shut down.
@@ -213,6 +215,8 @@ public:
         _phaseWeight    = 0.0;
         _phaseBeginProgress = 0.0;
         _phaseCount     = 1;
+        notifyPhaseProgressChanged();
+        notifyProgressChanged();
     }
 
     virtual IProgressNotifier*  getSubProgress() {
@@ -238,7 +242,7 @@ public:
         _globalProgress = _progress / getLevelCount();
         if ( getSuperProgress() != nullptr )
             getSuperProgress()->update();
-        onProgressChanged();
+        notifyProgressChanged();
     }
 private:
     //! Used when there is sub progress notifier attached to this progress notifier (otherwise it is the same than _progress).
@@ -253,6 +257,8 @@ public:
         _phaseBeginProgress = (double)_progress;
         _phaseWeight = phaseWeight;
         _phaseProgress = 0.;
+        notifyPhaseProgressChanged();
+        notifyProgressChanged();
     }
 
     //! \copydoc IProgressNotifier::setNextPhase()
@@ -262,6 +268,7 @@ public:
 
         _phaseWeight = phaseWeight;
         _phaseProgress = 0.;
+        notifyPhaseProgressChanged();
     }
 
     //! \copydoc IProgressNotifier::getPhase()
@@ -273,6 +280,7 @@ public:
     //! \copydoc IProgressNotifier::setPhaseProgress()
     virtual void    setPhaseProgress( double phaseProgress ) override {
         _phaseProgress = phaseProgress;
+        notifyPhaseProgressChanged();
         if ( phaseProgress >= 0. ) {   // phase progress could be -1 if progression can't be evaluated
             double phasePercentage = _phaseWeight;
             if ( phasePercentage <= 0 ) // If no phasePercentage has been specified in beginPhase(), consider
@@ -313,8 +321,11 @@ public:
         ProgressNotifier( superProgress ) { }
 
 public:
-    virtual void    onProgressChanged() override {
-        std::cout << "progress=" << getProgress() << std::endl;
+    virtual void    notifyProgressChanged() override {
+        std::cout << "Progress=" << getProgress() << std::endl;
+    }
+    virtual void    notifyPhaseProgressChanged() override {
+        std::cout << "Phase progress=" << getProgress() << std::endl;
     }
 };
 

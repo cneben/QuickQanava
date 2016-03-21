@@ -154,7 +154,7 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
 template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
                                                       std::ostream& os,
-                                                      gtpo::IProgressNotifier* progressNotifier = nullptr  ) -> void
+                                                      gtpo::IProgressNotifier* progressNotifier ) -> void
 {
     gtpo::IProgressNotifier voidNotifier;
     if ( progressNotifier == nullptr )

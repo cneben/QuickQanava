@@ -43,7 +43,7 @@ OutGmlSerializer< GraphConfig >::OutGmlSerializer( std::string xmlFileName ) :
 }
 
 template < class GraphConfig >
-void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProgressNotifier* progress = nullptr )
+void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProgressNotifier* progress )
 {
     gtpo::IProgressNotifier voidNotifier;
     if ( progress == nullptr )
@@ -186,7 +186,7 @@ InGmlSerializer< GraphConfig >::InGmlSerializer( std::string fileName ) :
 }
 
 template < class GraphConfig >
-void    InGmlSerializer< GraphConfig >::serializeIn( Graph& graph, gtpo::IProgressNotifier* progress = nullptr )
+void    InGmlSerializer< GraphConfig >::serializeIn( Graph& graph, gtpo::IProgressNotifier* progress )
 {
     (void)graph;
     (void)progress;
