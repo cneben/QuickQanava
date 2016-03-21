@@ -25,40 +25,16 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	basic.cpp
+// \file	serializer.h
 // \author	benoit@qanava.org
-// \date	2016 01 25
+// \date	2016 03 21
 //-----------------------------------------------------------------------------
 
-// STD headers
-#include <random>
+#ifndef serializer_h
+#define serializer_h
 
 // GTpo headers
-#include "gtpoGmlSerializer.h"
-#include "gtpoRandomGraph.h"
-#include "basic.h"
+#include <GTpoStd>
 
-int	main( int /*argc*/, char** /*argv*/ )
-{
-    stpo::Graph sg;
-    auto n1 = sg.createNode();
-
-    RandomGraph::RandomConfig rc;
-    rc.nodeCount = 10;
-    rc.outNodeRng = std::make_pair( 1, 3 );
-    RandomGraph::generate( sg, rc );
-
-    stpo::Graph::SharedNode ownedN1 = n1.lock();
-    if ( ownedN1 ) {
-        double nx = stpo::SConfig::getNodeX( ownedN1 );
-        double ny = stpo::SConfig::getNodeY( ownedN1 );
-        double nw = stpo::SConfig::getNodeWidth( ownedN1 );
-        double nh = stpo::SConfig::getNodeHeight( ownedN1 );
-        std::cout << "nx=" << nx << " ny=" << ny << " nw=" << nw << " nh=" << nh << std::endl;
-    }
-    auto n2 = sg.createNode();
-    std::cout << sg.getRootNodeCount() << std::endl;
-
-    return 0;
-}
+#endif // serializer_h
 

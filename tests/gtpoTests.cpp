@@ -34,6 +34,7 @@
 #include <GTpo>
 #include <GTpoStd>
 #include <gtpoProtoSerializer.h>
+#include <gtpoProgressNotifier.h>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -282,6 +283,106 @@ TEST(GTpo, protobufInOut)
     EXPECT_EQ( go.getNodeCount(), gi.getNodeCount() );
     EXPECT_EQ( go.getEdges().size(), gi.getEdges().size() );
     EXPECT_TRUE( true );
+}
+
+//-----------------------------------------------------------------------------
+// GTpo Progress Notifier Tests
+//-----------------------------------------------------------------------------
+
+TEST(GTpo, progressNotifier)
+{
+    {   // Initial values and progress reporting with a unique phase
+        gtpo::ProgressNotifier progress;
+
+        // Test default initial progress values
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0. );
+        EXPECT_EQ( progress.getPhase(), 0 );
+        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0. );
+
+        // Test progress reporting with a single phase
+        // Expectation: with no phase specified, setProgress() and
+        // setPhaseProgress() should impact global progress directly.
+        progress.setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.5 );
+        progress.setPhaseProgress( 0.7 );
+        EXPECT_NEAR( progress.getProgress(), 0.7, 0.09 );
+        EXPECT_NEAR( progress.getPhaseProgress(), 0.7, 0.09);
+    }
+
+    {   // Test progress reporting with multiple phases
+        gtpo::ProgressNotifier progress;
+        progress.setPhaseCount( 2, 0.5 );
+        EXPECT_EQ( progress.getPhase(), 0 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
+        progress.nextPhase( 0.5 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
+        EXPECT_EQ( progress.getProgress(), 0.75 );  // Warning phase1.progress=1.0 because of the nextPhase() call, so
+                // progress= 1. * 0.5 + 0.5 * 0.5 = 0.75   (and not 0.5*0.5 + 0.5*0.5)
+    }
+
+    {   // Test reporting with multiple levels
+        gtpo::ProgressNotifier progress;
+        gtpo::IProgressNotifier* progress2 = progress.getSubProgress();
+        EXPECT_DOUBLE_EQ( progress.getLevelCount(), 2.0 );
+
+        // Level 1
+        progress.setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.25 );
+        // Level 2
+        progress2->setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress2->getProgress(), 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.5 );
+    }
+
+    {   // Test reporting with multiple levels with multiple phases
+        gtpo::ProgressNotifier progress;
+        gtpo::IProgressNotifier* progress2 = progress.getSubProgress();
+        EXPECT_DOUBLE_EQ( progress.getLevelCount(), 2.0 );
+
+        // Level 1
+        progress.setPhaseCount( 2, 0.5 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
+        progress.nextPhase( 0.5 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.375 );
+                // progress local progress is 0.75, with 2 levels it should be 0.75/2=0.375
+
+        // Level 2
+        progress2->setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress2->getProgress(), 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.625 );  // superProgress=0.375, progress2 local progress is 0.5, so
+            // Global progress should be superProgress + progress2.progress / 2 = 0.375 + ( 0.5 / 2 ) = 0.625
+    }
+
+    {   // Test reporting with multiple levels with multiple phases at multiple levels
+        gtpo::ProgressNotifier progress;
+        gtpo::IProgressNotifier* progress2 = progress.getSubProgress();
+        EXPECT_DOUBLE_EQ( progress.getLevelCount(), 2.0 );
+
+        // Level 1
+        progress.setPhaseCount( 2, 0.5 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
+        progress.nextPhase( 0.5 );
+        progress.setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.375 );
+                // progress local progress is 0.75, with 2 levels it should be 0.75/2=0.375
+
+        // Level 2
+        progress2->setPhaseCount( 2, 0.5 );
+        progress2->setProgress( 0.5 );
+        progress2->setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress2->getPhaseProgress(), 0.5 );
+        progress2->nextPhase( 0.5 );
+        progress2->setPhaseProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( progress2->getProgress(), 0.75 );
+
+        EXPECT_DOUBLE_EQ( progress.getProgress(), 0.75 );  // superProgress=0.375, progress2 local progress is 0.75, so
+            // Global progress should be superProgress + progress2->progress / 2 = 0.375 + ( 0.75 / 2 ) = 0.75
+    }
 }
 
 //-----------------------------------------------------------------------------

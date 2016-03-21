@@ -36,22 +36,22 @@
 
 namespace gtpo { // ::gtpo
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::initProtocolBuffer() -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::initProtocolBuffer() -> void
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::shutDownProtocolBuffer() -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::shutDownProtocolBuffer() -> void
 {
     google::protobuf::ShutdownProtobufLibrary();
 }
 
-template < class GraphConfig, class Notifier >
-ProtoSerializer< GraphConfig, Notifier >::ProtoSerializer( std::string nodeDefaultName ,
-                                                           std::string edgeDefaultName ) :
-    gtpo::Serializer< GraphConfig, Notifier >( ),
+template < class GraphConfig >
+ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
+                                                 std::string edgeDefaultName ) :
+    gtpo::Serializer< GraphConfig >( ),
     _nodeDefaultName( nodeDefaultName ),
     _edgeDefaultName( edgeDefaultName )
 {
@@ -151,23 +151,22 @@ ProtoSerializer< GraphConfig, Notifier >::ProtoSerializer( std::string nodeDefau
         } );
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& graph,
-                                                                std::ostream& os,
-                                                                Notifier* progress ) -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
+                                                      std::ostream& os ) -> void
 {
-    serializeOut( graph, os, progress, nullptr, nullptr );
+    serializeOut( graph, os, nullptr, nullptr );
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& graph,
-                                                                std::ostream& os,
-                                                                Notifier* progress,
-                                                                const ::google::protobuf::Message* user1,
-                                                                const ::google::protobuf::Message* user2 ) -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
+                                                      std::ostream& os,
+                                                      const ::google::protobuf::Message* user1,
+                                                      const ::google::protobuf::Message* user2 ) -> void
 {
-    if ( progress != nullptr )
-        progress->beginProgress();
+    // FIXME progress
+//    if ( progress != nullptr )
+//        progress->beginProgress();
 
     if ( getObjectIdMap().size() == 0 )
         generateObjectIdMap( graph );
@@ -214,12 +213,13 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeOut( const Graph& gra
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
 
-    if ( progress != nullptr )
-        progress->endProgress();
+    // FIXME progress
+    //if ( progress != nullptr )
+    //    progress->endProgress();
 }
 
-template < class GraphConfig, class Notifier >
-void    ProtoSerializer< GraphConfig, Notifier >::serializeGTpoNodeOut( const WeakNode& weakNode, gtpo::pb::GTpoNode& pbNode, const ObjectIdMap& objectIdMap )
+template < class GraphConfig >
+void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& weakNode, gtpo::pb::GTpoNode& pbNode, const ObjectIdMap& objectIdMap )
 {
     if ( objectIdMap.size() == 0 ) {
         std::cerr << "ProtoSerializer<>::serializeGTpoNodeOut(): Warning: Method called with an empty object ID map." << std::endl;
@@ -238,22 +238,22 @@ void    ProtoSerializer< GraphConfig, Notifier >::serializeGTpoNodeOut( const We
     } catch( ... ) { pbNode.set_node_id( -1 ); }
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::registerNodeOutFunctor( std::string nodeClassName,
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::registerNodeOutFunctor( std::string nodeClassName,
                                                                 NodeOutFunctor nodeOutFunctor ) -> void
 {
     _nodeOutFunctors.insert( std::make_pair( nodeClassName, nodeOutFunctor ) );
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::registerEdgeOutFunctor( std::string edgeClassName,
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::registerEdgeOutFunctor( std::string edgeClassName,
                                                                                  EdgeOutFunctor edgeOutFunctor ) -> void
 {
     _edgeOutFunctors.insert( std::make_pair( edgeClassName, edgeOutFunctor ) );
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&
 {
     _objectIdMap.clear();
     int id = 0;
@@ -266,23 +266,22 @@ auto    ProtoSerializer< GraphConfig, Notifier >::generateObjectIdMap( const Gra
     return _objectIdMap;
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::serializeIn( std::istream& is,
-                                                               Graph& graph,
-                                                               Notifier* progress ) -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
+                                                               Graph& graph ) -> void
 {
-    serializeIn< gtpo::pb::GTpoVoid >( is, graph, progress, nullptr );
+    serializeIn< gtpo::pb::GTpoVoid >( is, graph, nullptr );
 }
 
-template < class GraphConfig, class Notifier >
+template < class GraphConfig >
 template < class User1 >
-auto    ProtoSerializer< GraphConfig, Notifier >::serializeIn( std::istream& is,
-                                                               Graph& graph,
-                                                               Notifier* progress,
-                                                               User1* user1 ) -> void
+auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
+                                                     Graph& graph,
+                                                     User1* user1 ) -> void
 {
-    if ( progress != nullptr )
-        progress->beginProgress();
+    // FIXME progress
+    //if ( progress != nullptr )
+    //    progress->beginProgress();
 
     IdObjectMap& idObjectMap = getIdObjectMap();
     idObjectMap.clear();
@@ -333,14 +332,15 @@ auto    ProtoSerializer< GraphConfig, Notifier >::serializeIn( std::istream& is,
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << inGraph.edge_count() << " edges in graph" << std::endl;
 
-    if ( progress != nullptr )
-        progress->endProgress();
+    // FIXME progress
+    //if ( progress != nullptr )
+    //    progress->endProgress();
 }
 
-template < class GraphConfig, class Notifier >
-void    ProtoSerializer< GraphConfig, Notifier >::serializeGTpoNodeIn( const gtpo::pb::GTpoNode& pbNode,
-                                                                       WeakNode& weakNode,
-                                                                       IdObjectMap& idObjectMap )
+template < class GraphConfig >
+void    ProtoSerializer< GraphConfig >::serializeGTpoNodeIn( const gtpo::pb::GTpoNode& pbNode,
+                                                             WeakNode& weakNode,
+                                                             IdObjectMap& idObjectMap )
 {
     SharedNode node = weakNode.lock();
     if ( node ) {    // Feed the newly created node with PB node data
@@ -353,14 +353,14 @@ void    ProtoSerializer< GraphConfig, Notifier >::serializeGTpoNodeIn( const gtp
     }
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::registerNodeInFunctor( NodeInFunctor nodeInFunctor ) -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::registerNodeInFunctor( NodeInFunctor nodeInFunctor ) -> void
 {
     _nodeInFunctors.push_back( nodeInFunctor );
 }
 
-template < class GraphConfig, class Notifier >
-auto    ProtoSerializer< GraphConfig, Notifier >::registerEdgeInFunctor( EdgeInFunctor edgeInFunctor ) -> void
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::registerEdgeInFunctor( EdgeInFunctor edgeInFunctor ) -> void
 {
     _edgeInFunctors.push_back( edgeInFunctor );
 }

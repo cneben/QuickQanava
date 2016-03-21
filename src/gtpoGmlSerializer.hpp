@@ -35,17 +35,19 @@
 
 namespace gtpo { // ::gtpo
 
-template < class GraphConfig, class Notifier >
-OutGmlSerializer< GraphConfig, Notifier >::OutGmlSerializer( std::string xmlFileName ) :
+template < class GraphConfig >
+OutGmlSerializer< GraphConfig >::OutGmlSerializer( std::string xmlFileName ) :
     _xmlFileName( xmlFileName )
 {
     assert( xmlFileName.length() > 0 );
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::serializeOut( Graph& graph, Notifier* notifier )
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProgressNotifier* progress = nullptr )
 {
-    ( void )notifier;
+    gtpo::IProgressNotifier voidNotifier;
+    if ( progress == nullptr )
+        progress = &voidNotifier;
     try {
         auto graphmlNode = _xmlDoc.append_child( "graphml" );
         if ( !graphmlNode )
@@ -58,6 +60,7 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeOut( Graph& graph, N
         _xmlCurrentParent = graphNode;
 
         // Serialize GTpo default attributes
+        progress->beginProgress();
         serializeAttribute( graphNode, "x", "node", "double", "0." );
         serializeAttribute( graphNode, "y", "node", "double", "0." );
         serializeAttribute( graphNode, "width", "node", "double", "0." );
@@ -66,17 +69,28 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeOut( Graph& graph, N
         serializeAttribute( graphNode, "weight", "edge", "double", "0." );
 
         // FIXME 20160208 virer getNodes()
-        for ( auto node : graph.getNodes() )
+        progress->setPhaseCount( 2, 0.5 );
+        int     primitive = 0;
+        double  primitiveCount = static_cast< double >( graph.getNodes().size() );
+        for ( auto node : graph.getNodes() ) {
             serializeNode( node );
-        for ( auto edge : graph.getEdges() )
+            progress->setPhaseProgress( ++primitive / primitiveCount );
+        }
+        progress->nextPhase( 0.5 );
+        primitive = 0;
+        primitiveCount = static_cast< double >( graph.getEdges().size() );
+        for ( auto edge : graph.getEdges() ) {
             serializeEdge( edge );
+            progress->setPhaseProgress( ++primitive / primitiveCount );
+        }
     } catch ( std::exception const& ) {
-
+        progress->endProgress();
     }
+    progress->endProgress();
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::serializeNode( const WeakNode& node )
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::serializeNode( const WeakNode& node )
 {
     SharedNode sharedNode = node.lock();
     if ( !sharedNode )
@@ -94,8 +108,8 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeNode( const WeakNode
     serializeNodeAttribute( nodeNode, "height", std::to_string( GraphConfig::getNodeHeight( sharedNode ) ) );
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::serializeNodeAttribute( pugi::xml_node& nodeNode, const std::string& id, const std::string& value )
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::serializeNodeAttribute( pugi::xml_node& nodeNode, const std::string& id, const std::string& value )
 {
     auto dataNode = nodeNode.append_child( "data" );
     if ( !dataNode )
@@ -106,8 +120,8 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeNodeAttribute( pugi:
     dataNode.append_child( pugi::node_pcdata ).set_value( value.c_str() );
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::serializeEdge( const WeakEdge& edge ) noexcept( false )
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::serializeEdge( const WeakEdge& edge ) noexcept( false )
 {
     SharedEdge sharedEdge = edge.lock();
     gtpo::assert_throw( sharedEdge != nullptr, "gtpo::OutGmlPugiSerializer<>::serializeEdge(): Error: Can't lock edge." );
@@ -128,8 +142,8 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeEdge( const WeakEdge
 
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::serializeAttribute( pugi::xml_node& graphNode, const std::string& name, const std::string& target,
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::serializeAttribute( pugi::xml_node& graphNode, const std::string& name, const std::string& target,
                                                              const std::string& type, const std::string& def )
 {
     auto keyNode = graphNode.append_child( "key" );
@@ -150,15 +164,15 @@ void    OutGmlSerializer< GraphConfig, Notifier >::serializeAttribute( pugi::xml
     defaultNode.append_child( pugi::node_pcdata ).set_value( def.c_str() );
 }
 
-template < class GraphConfig, class Notifier >
-void    OutGmlSerializer< GraphConfig, Notifier >::finishOut( )
+template < class GraphConfig >
+void    OutGmlSerializer< GraphConfig >::finishOut( )
 {
     assert( _xmlFileName.length() > 0 );
     _xmlDoc.save_file( _xmlFileName.c_str() );
 }
 
-template < class GraphConfig, class Notifier >
-InGmlSerializer< GraphConfig, Notifier >::InGmlSerializer( std::string fileName ) :
+template < class GraphConfig >
+InGmlSerializer< GraphConfig >::InGmlSerializer( std::string fileName ) :
     _xmlFileName( fileName )
 {
     gtpo::assert_throw( fileName.length() > 0, "gtpo::InGmlSerializer<>::InGmlSerializer(): Error: Trying to serialize an empty file name" );
@@ -171,27 +185,20 @@ InGmlSerializer< GraphConfig, Notifier >::InGmlSerializer( std::string fileName 
     }
 }
 
-template < class GraphConfig, class Notifier >
-void    InGmlSerializer< GraphConfig, Notifier >::serializeIn( Graph& graph, Notifier* notifier )
+template < class GraphConfig >
+void    InGmlSerializer< GraphConfig >::serializeIn( Graph& graph, gtpo::IProgressNotifier* progress = nullptr )
 {
-    try {
-        /*for ( pugi::xml_node xmlNode: tool.children("node") ) {
-            auto node = graph.createNode();
-            serializeNode( node );
-        }*/
-    } catch ( std::exception const& ) { }
+    (void)graph;
+    (void)progress;
 }
 
-template < class GraphConfig, class Notifier >
-void    InGmlSerializer< GraphConfig, Notifier >::serializeNode( Node& node )
+template < class GraphConfig >
+void    InGmlSerializer< GraphConfig >::serializeNode( Node& node )
 {
-    /*if ( !_xmlCurrentNode )
-        throw std::exception;
-    */
 }
 
-template < class GraphConfig, class Notifier >
-void    InGmlSerializer< GraphConfig, Notifier >::finishIn( )
+template < class GraphConfig >
+void    InGmlSerializer< GraphConfig >::finishIn( )
 {
     // No cleanups necessary
 }

@@ -58,9 +58,8 @@ namespace gtpo { // ::gtpo
  *
  * \nosubgrouping
  */
-template < class GraphConfig = DefaultConfig,
-           class Notifier = EmptyProgressNotifier >
-class ProtoSerializer : public gtpo::Serializer< GraphConfig, Notifier >
+template < class GraphConfig = DefaultConfig >
+class ProtoSerializer : public gtpo::Serializer< GraphConfig >
 {
     /*! \name Protocol Buffer Serializer Object Management *///----------------
     //@{
@@ -144,13 +143,11 @@ public:
      */
     auto            serializeOut( const Graph& graph,
                                   std::ostream& os,
-                                  Notifier* progress = nullptr,
                                   const ::google::protobuf::Message* user1 = nullptr,
                                   const ::google::protobuf::Message* user2 = nullptr  ) -> void;
     //! \copydoc serializeOut()
     virtual auto    serializeOut( const Graph& graph,
-                                  std::ostream& os,
-                                  Notifier* progress = nullptr ) -> void override;
+                                  std::ostream& os ) -> void override;
 
     /*! Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.GTpoNode \c pbNode.
      *
@@ -183,12 +180,10 @@ public:
     template < class User1 = gtpo::pb::GTpoVoid >
     auto            serializeIn( std::istream& is,
                                  Graph& graph,
-                                 Notifier* progress = nullptr,
                                  User1* user1 = nullptr ) -> void;
 
     virtual auto    serializeIn( std::istream& is,
-                                 Graph& graph,
-                                 Notifier* progress = nullptr ) -> void override;
+                                 Graph& graph ) -> void override;
 
     /*! Serialize Protocol Buffer gtpo.pb.GTpoNode \c pbNode to GTpo node \c weakNode.
      *
