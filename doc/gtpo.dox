@@ -1,0 +1,51 @@
+﻿/*! \mainpage Qan.Topo Documentation
+\tableofcontents
+
+GTpo (stands for Generic Topology) is the graph topology C++11 library used in QuickQanava2 graph visualization library. GTpo is available under the 
+MIT licence.
+
+GTpo is not a generic library in the Boot Graph Library sense, but rather an highly configurable graph modelling library designed for
+ease of use an performance over "genericity". GTpo heavily rely on C++11/C++17 functionnalities to hide template complexity from the user. GTpo
+root namespace 'gtpo' contains generic code, user not interested in using specific containers could use one of the following namespaces for accessing a 
+concrete GTpo directly:
+\li 'stpo': Direct use of GTpo with C++ standard library.
+\li 'qtpo': Direct use of GTpo for Qt/QML.
+
+GTpo include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine (PugiXML: https://github.com/zeux/pugixml).
+
+\section datamodel Data Model
+
+\image html graph-datamodel.png
+
+\li *BaseClass* Optional base class for the main graph class.
+
+\li *SearchContainer*: Specify what kind of container is use for "fast" node search methods such as qtpo::Graph::hasNode(). It is usually a std::set wich returns faster
+than a search on *NodeContainer* returned by qtpo::Graph::getNodes(). The standard use case is when you integrate QTpo nodes in a graphical user interface with selection enabled, to
+ensure that a user selected "graphical item" is a node registered in the graph or not. In simple system with no user interface and need for selecting nodes, it could be set to 
+qtpo::VoidContainer, to remove any associed cost during node insertion or deletion.
+
+\section memmanage Memory Management
+
+\code
+    using OwnedNode = std::shared_ptr< typename GraphConfig::Node >;
+    using OwnedEdge = std::shared_ptr< typename GraphConfig::Edge >;
+    using SharedNode = std::weak_ptr< typename GraphConfig::Node >;
+    using SharedEdge = std::weak_ptr< typename GraphConfig::Edge >;
+
+    using OwnedNodes        = typename GraphConfig::template NodeContainer< OwnedNode >;
+    using SharedNodes       = typename GraphConfig::template NodeContainer< SharedNode >;
+    using SharedNodesSearch = typename GraphConfig::template SearchContainer< SharedNode >;
+    using OwnedEdges        = typename GraphConfig::template EdgeContainer< OwnedEdge >;
+\endcode
+
+\warning std::hash and std::equal specialized for std::weak_ptr.
+
+\section libdev Library Developpers Notes
+
+\note gtpo::GenNode::_graph and gtpo::GenEdge::_graph are used as flag to detect destruction before suppression.
+
+\note GTpo make heavy use of standard containers for shared_ptr or weak_ptr, please keep in mind that theses classes not necessarilly have the required operators (== and <) for STL or Qt container: http://en.cppreference.com/w/cpp/memory/owner_less. GTpo provide specializations of std::hash and std::equal_to in the std namespace for any template <typename T> std::weak_ptr<T> type which might interfere with user code: be carefull when including gtpo.h. Template function gtpo::compare_weak_ptr<> could also be used for comparing std::weak_ptr used to model shared ressources in GTpo, but theses shared ressources must have been tested against expiration before using comparison function and should not contains nullptr values.
+
+\note Developpers adding features to the library should use gtpo::assert_throw that throw an exception when an assert fails even when GTpo is compiled in release mode. Use of the standard ::assert() function is strongly discouraged in GTpo. 
+
+*/
