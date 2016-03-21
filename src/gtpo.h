@@ -37,5 +37,7 @@
 #include "./gtpoBehaviour.h"
 #include "./gtpoGraph.h"
 #include "./gtpoSerializer.h"
+#include "./gtpoRandomGraph.h"
+#include "./gtpoProgressNotifier.h"
 
 #endif // GTpo_h

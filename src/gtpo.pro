@@ -16,6 +16,7 @@ HEADERS +=  ./gtpoUtils.h               \
             ./gtpoBehaviour.h           \
             ./gtpoBehaviour.hpp         \
             ./gtpoSerializer.h          \
+            ./gtpoProgressNotifier.h    \
             ./gtpoGmlSerializer.h       \
             ./gtpoGmlSerializer.hpp     \
             ./gtpoProtoSerializer.h     \

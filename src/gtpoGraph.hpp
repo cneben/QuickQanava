@@ -232,14 +232,17 @@ void    GenGraph< Config >::removeEdge( WeakNode source, WeakNode destination )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Topology error." );
 
     // Find the edge associed with source / destination
-    auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                    [=](const SharedEdge& e ){
-                                        return ( compare_weak_ptr<>( e->getSrc(), source ) &&
-                                                 compare_weak_ptr<>( e->getDst(), destination ) );
-                                    } );
-    if ( edgeIter == _edges.end() )
-        throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Can't find an existing edge between source and destination" );
-    removeEdge( *edgeIter );
+    auto edgeIter = _edges.end();
+    if ( _edges.begin() != _edges.end( ) ) {
+        edgeIter = std::find_if( _edges.begin(), _edges.end(),
+                                 [=](const SharedEdge& e ){
+                                    return ( compare_weak_ptr<>( e->getSrc(), source ) &&
+                                             compare_weak_ptr<>( e->getDst(), destination ) );
+                                    }
+        );
+    }
+    if ( edgeIter != _edges.end() )
+        removeEdge( *edgeIter );
 }
 
 template < class Config >

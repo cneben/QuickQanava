@@ -54,9 +54,8 @@ namespace gtpo { // ::gtpo
  * Primer http://graphml.graphdrawing.org/primer/graphml-primer.html#ParseInfo).
  *
  */
-template < class GraphConfig = DefaultConfig,
-           class Notifier = EmptyProgressNotifier >
-class OutGmlSerializer : public OutSerializer< GraphConfig, Notifier >
+template < class GraphConfig = DefaultConfig >
+class OutGmlSerializer : public OutSerializer< GraphConfig >
 {
 public:
     using Graph         = const gtpo::GenGraph< GraphConfig >;
@@ -74,7 +73,7 @@ public:
      *
      * \throw std::exception if an error occurs.
      */
-    virtual void    serializeOut( Graph& graph, Notifier* progress = nullptr ) override;
+    virtual void    serializeOut( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) override;
     //! Write the GML XML DOM to the \c filename set in ctor.
     virtual void    finishOut( );
 
@@ -121,15 +120,14 @@ private:
  * Primer http://graphml.graphdrawing.org/primer/graphml-primer.html#ParseInfo).
  *
  */
-template < class GraphConfig = DefaultConfig,
-           class Notifier = EmptyProgressNotifier >
-class InGmlSerializer : public InSerializer< GraphConfig, Notifier >
+template < class GraphConfig = DefaultConfig >
+class InGmlSerializer : public InSerializer< GraphConfig >
 {
 public:
     InGmlSerializer( std::string fileName);
 
     using Graph = typename InGmlSerializer::Graph;
-    virtual void    serializeIn( Graph& graph, Notifier* progress = nullptr ) override;
+    virtual void    serializeIn( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) override;
     //! Do nothing in the actual implementation, should be called for out serialization symetry.
     virtual void    finishIn( );
 

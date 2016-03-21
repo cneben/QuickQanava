@@ -25,9 +25,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	basic.cpp
+// \file	serializer.cpp
 // \author	benoit@qanava.org
-// \date	2016 01 25
+// \date	2016 03 21
 //-----------------------------------------------------------------------------
 
 // STD headers
@@ -35,29 +35,33 @@
 
 // GTpo headers
 #include "gtpoGmlSerializer.h"
-#include "gtpoRandomGraph.h"
-#include "basic.h"
+#include "gtpoProtoSerializer.h"
+#include "serializer.h"
 
 int	main( int /*argc*/, char** /*argv*/ )
 {
     stpo::Graph sg;
-    auto n1 = sg.createNode();
-
     RandomGraph::RandomConfig rc;
     rc.nodeCount = 10;
     rc.outNodeRng = std::make_pair( 1, 3 );
     RandomGraph::generate( sg, rc );
 
-    stpo::Graph::SharedNode ownedN1 = n1.lock();
-    if ( ownedN1 ) {
-        double nx = stpo::SConfig::getNodeX( ownedN1 );
-        double ny = stpo::SConfig::getNodeY( ownedN1 );
-        double nw = stpo::SConfig::getNodeWidth( ownedN1 );
-        double nh = stpo::SConfig::getNodeHeight( ownedN1 );
-        std::cout << "nx=" << nx << " ny=" << ny << " nw=" << nw << " nh=" << nh << std::endl;
+    { // GraphML OUT serialization
+        try {
+            // Create a std::cout progress notifier and register it to GraphML out serializer
+            gtpo::EchoProgressNotifier progressNotifier;
+            gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "gmlout.graphml" );
+            gmlOut.serializeOut( sg, &progressNotifier );
+            gmlOut.finishOut();
+        } catch (...) { }
     }
-    auto n2 = sg.createNode();
-    std::cout << sg.getRootNodeCount() << std::endl;
+
+    { // Protocol Buffer IN/OUT serialization
+        stpo::Graph sgi;
+        gtpo::ProtoSerializer<stpo::SConfig> ps;
+        ps.serializeOutTo( sg, std::string( "test.gtpo" ) );
+        ps.serializeInFrom( std::string( "test.gtpo" ), sgi );
+    }
 
     return 0;
 }

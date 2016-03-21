@@ -181,9 +181,9 @@ public:
     explicit GenEdge( WeakNode& src, WeakNode& dst ) :
         _src{ src }, _dst{ dst } { }
     virtual ~GenEdge() {
-        std::cout << "GenEdge::~GenEdge()" << this << std::endl;
+        //std::cout << "GenEdge::~GenEdge()" << this << std::endl;
         if ( _graph != nullptr ) {
-            std::cout << "GenEdge::~GenEdge(): Error, an edge has been deleted before beeing " <<
+            std::cerr << "GenEdge::~GenEdge(): Error, an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
             //_graph->removeEdge( static_cast< typename Config::Edge& >( *this ) );
         }
@@ -232,7 +232,7 @@ public:
     virtual ~GenNode() {
         _inEdges.clear(); _outEdges.clear();
         _inNodes.clear(); _outNodes.clear();
-        std::cout << "GenNode::~GenNode()" << this << std::endl;
+        //std::cout << "GenNode::~GenNode()" << this << std::endl;
         if ( _graph != nullptr ) {
             //_graph->removeNode( static_cast< typename Config::Node& >( *this ) );
             //std::shared_ptr<GenNode<Config>>
@@ -240,7 +240,7 @@ public:
             SharedNode ownedSelf = self->shared_from_this();
             std::weak_ptr<GenNode<Config>> sharedSelf = self;
             _graph->removeNode( sharedSelf );*/
-            std::cout << "~GenNode(): A node has been destroyed before beeing removed " <<
+            std::cerr << "~GenNode(): A node has been destroyed before beeing removed " <<
                          "from the graph, something bas happen, GTpo will try to recover " <<
                          "graph topology." << std::endl;
         }
