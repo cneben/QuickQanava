@@ -178,6 +178,10 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     gtpo::pb::GTpoGraph pbGraph;
 
     int serializedNodeCout = 0;
+
+    progressNotifier.setPhaseCount( 2, 0.5 );
+    int     primitive = 0;
+    double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
         if ( !node->isSerializable() )   // Don't serialize control nodes
             continue;
@@ -185,16 +189,22 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
             ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
             ++serializedNodeCout;
+            progressNotifier.setPhaseProgress( ++primitive / primitiveCount );
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for node class:" << node->getClassName() << std::endl;
     }
 
     int serializedEdgeCout = 0;
+    progressNotifier.nextPhase( 0.5 );
+    primitive = 0;
+    primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
         auto edgeOutFunctor = _edgeOutFunctors.find( edge->getClassName() );
         if ( edgeOutFunctor != _edgeOutFunctors.end() ) {
-            if ( ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) )
+            if ( ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
                 ++serializedEdgeCout;
+                progressNotifier.setPhaseProgress( ++primitive / primitiveCount );
+            }
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for edge class:" << edge->getClassName() << std::endl;
     }
@@ -215,10 +225,6 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedNodeCout << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
-
-    // FIXME progress
-    //if ( progress != nullptr )
-    //    progress->endProgress();
 }
 
 template < class GraphConfig >
