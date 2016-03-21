@@ -48,6 +48,9 @@ int	main( int /*argc*/, char** /*argv*/ )
 
     { // GraphML OUT serialization
         try {
+            std::cout << "*****************************************************" << std::endl;
+            std::cout << "Serializing GraphML OUT" << std::endl;
+
             // Create a std::cout progress notifier and register it to GraphML out serializer
             gtpo::EchoProgressNotifier progressNotifier;
             gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "gmlout.graphml" );
@@ -57,9 +60,21 @@ int	main( int /*argc*/, char** /*argv*/ )
     }
 
     { // Protocol Buffer IN/OUT serialization
+        std::cout << "*****************************************************" << std::endl;
+        std::cout << "Serializing Protocol Buffer OUT" << std::endl;
+        gtpo::EchoProgressNotifier progressNotifier;
+        std::cout << "User serialization:" << std::endl;
+        progressNotifier.setProgress( 0.1 );
+        progressNotifier.setProgress( 0.5 );
+        progressNotifier.setProgress( 0.99 );
+        std::cout << "GTpo serialization:" << std::endl;
         stpo::Graph sgi;
         gtpo::ProtoSerializer<stpo::SConfig> ps;
-        ps.serializeOutTo( sg, std::string( "test.gtpo" ) );
+        gtpo::IProgressNotifier* subProgressNotifier = progressNotifier.getSubProgress();
+        ps.serializeOutTo( sg, std::string( "test.gtpo" ), subProgressNotifier );
+
+        std::cout << "*****************************************************" << std::endl;
+        std::cout << "Serializing Protocol Buffer IN" << std::endl;
         ps.serializeInFrom( std::string( "test.gtpo" ), sgi );
     }
 
