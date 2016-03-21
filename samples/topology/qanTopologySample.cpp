@@ -25,6 +25,9 @@
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
 
+// STD headers
+#include <cstring>   // std::memcpy on g++5.2 ...
+
 // QuickProperties headers
 #include "../../QuickProperties/src/QuickProperties2.h"
 

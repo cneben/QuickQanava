@@ -307,7 +307,7 @@ void    Graph::initializeRandom( int nodeCount,
     rc.nodeCount = nodeCount;
     rc.outNodeRng = std::make_pair( minOutNodes, maxOutNodes );
     rc.widthRng = std::make_pair( minWidth, maxWidth );
-    rc.heightRng = std::make_pair( minWidth, maxWidth );
+    rc.heightRng = std::make_pair( minHeight, maxHeight );
     rc.xRng = std::make_pair( 0, br.width() - maxWidth );
     rc.yRng = std::make_pair( 0, br.height() - maxHeight );
     RandomGraph::generate< qan::Graph >( *this, rc );

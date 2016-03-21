@@ -54,20 +54,20 @@ struct QtContainerConfig : public gtpo::ContainerConfig
 
     template < typename T >
     struct insert< QList<T> > {
-        template <typename T>
-        static void  into( QList<T>& c, T t ) { c.append( t ); }
+        template <typename ItemT>
+        static void  into( QList<T>& c, ItemT t ) { c.append( t ); }
     };
 
     template < typename T >
     struct insert< QVector<T> > {
-        template <typename T>
-        static void  into( QVector<T>& c, T t ) { c.append( t ); }
+        template <typename ItemT>
+        static void  into( QVector<T>& c, ItemT t ) { c.append( t ); }
     };
 
     template <typename T >
     struct insert< QSet<T> > {
-        template <typename T>
-        static void  into( QSet<T>& c, T t ) { c.insert( t ); }
+        template <typename ItemT>
+        static void  into( QSet<T>& c, ItemT t ) { c.insert( t ); }
     };
 
     template < typename T >

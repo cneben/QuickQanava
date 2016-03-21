@@ -32,6 +32,9 @@
 #include <random>
 #include <cstdlib>
 
+// GTPO headers
+#include "./gtpoUtils.h"
+
 class RandomGraph
 {
 public:

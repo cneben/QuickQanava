@@ -35,8 +35,6 @@ namespace qan { // ::qan
 
 Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem( parent ),
-    _containerItem( nullptr ),
-    _leftButtonPressed( false ),
     _autoFitMode( NoAutoFit ),
     _panModified( false ),
     _zoomModified( false ),
@@ -45,6 +43,8 @@ Navigable::Navigable( QQuickItem* parent ) :
     _zoomOrigin( QQuickItem::Center ),
     _zoomMax( -1.0 ),
     _zoomMin( 0.1 ),
+    _containerItem( nullptr ),
+    _leftButtonPressed( false ),
     _lastPan( )
 {
     _containerItem = new QQuickItem( this );

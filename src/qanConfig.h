@@ -54,26 +54,26 @@ struct QpsContainerConfig : public gtpo::ContainerConfig
 
     template < typename T >
     struct insert< QList<T> > {
-        template <typename T>
-        static void  into( QList<T>& c, T t ) { c.append( t ); }
+        template <typename ItemT>
+        static void  into( QList<T>& c, ItemT t ) { c.append( t ); }
     };
 
     template < typename T >
     struct insert< QVector<T> > {
-        template <typename T>
-        static void  into( QVector<T>& c, T t ) { c.append( t ); }
+        template <typename ItemT>
+        static void  into( QVector<T>& c, ItemT t ) { c.append( t ); }
     };
 
     template < typename T >
     struct insert< qps::ContainerListModel<QVector, T> > {
-        template <typename T>
-        static void  into( qps::ContainerListModel<QVector, T>& c, T t ) { c.append( t ); }
+        template <typename ItemT>
+        static void  into( qps::ContainerListModel<QVector, T>& c, ItemT t ) { c.append( t ); }
     };
 
     template <typename T >
     struct insert< QSet<T> > {
-        template <typename T>
-        static void  into( QSet<T>& c, T t ) { c.insert( t ); }
+        template <typename ItemT>
+        static void  into( QSet<T>& c, ItemT t ) { c.insert( t ); }
     };
 
     template < typename T >
@@ -91,8 +91,8 @@ struct QpsContainerConfig : public gtpo::ContainerConfig
 
     template < typename T >
     struct remove< qps::ContainerListModel<QVector, T> > {
-        template <typename T>
-        static void  from( qps::ContainerListModel<QVector, T>& c, T t ) { c.removeAll( t ); }
+        template <typename ItemT>
+        static void  from( qps::ContainerListModel<QVector, T>& c, ItemT t ) { c.removeAll( t ); }
     };
 
     template < typename T >
@@ -138,14 +138,10 @@ struct QanPropertiesConfig {
     static inline double   getNodeHeight( const WeakNode& n ) { return n->height(); }
     static inline void     setNodeHeight( WeakNode& n, double h ) { n->setHeight( h ); }
 
-    static inline double   getEdgeWeight( const SharedEdge& e ) { return 0.; }
-    static inline void     setEdgeWeight( SharedEdge& e, double w ) { }
+    static inline double   getEdgeWeight( const SharedEdge& e ) { Q_UNUSED( e ); return 0.; }
+    static inline void     setEdgeWeight( SharedEdge& e, double w ) { Q_UNUSED( e ); Q_UNUSED( w ); }
 };
 
-Q_DECLARE_METATYPE( std::shared_ptr<qan::Node> )
-Q_DECLARE_METATYPE( std::weak_ptr<qan::Node> )
-
-//class QGraphConfig final : public gtpo::QtContainerConfig,
 class QGraphConfig final : public QpsContainerConfig,
                            public QanPropertiesConfig<typename qan::Node, typename qan::Edge>
 {
