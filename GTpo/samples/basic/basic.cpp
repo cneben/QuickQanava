@@ -59,13 +59,6 @@ int	main( int /*argc*/, char** /*argv*/ )
     auto n2 = sg.createNode();
     std::cout << sg.getRootNodeCount() << std::endl;
 
-    //auto e1 = sg.createEdge();
-    try {
-        //gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "test.xml" );
-        //gmlOut.serializeOut( sg );
-        //gmlOut.finishOut();
-    } catch (...) { }
-
     return 0;
 }
 

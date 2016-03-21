@@ -25,14 +25,44 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoBehaviour.hpp
+// \file	serializer.cpp
 // \author	benoit@qanava.org
-// \date	2016 02 08
+// \date	2016 03 21
 //-----------------------------------------------------------------------------
 
-#include <iostream>
+// STD headers
+#include <random>
 
-namespace gtpo { // ::gtpo
+// GTpo headers
+#include "gtpoGmlSerializer.h"
+#include "gtpoProtoSerializer.h"
+#include "serializer.h"
 
-} // ::gtpo
+int	main( int /*argc*/, char** /*argv*/ )
+{
+    stpo::Graph sg;
+    RandomGraph::RandomConfig rc;
+    rc.nodeCount = 10;
+    rc.outNodeRng = std::make_pair( 1, 3 );
+    RandomGraph::generate( sg, rc );
+
+    { // GraphML OUT serialization
+        try {
+            // Create a std::cout progress notifier and register it to GraphML out serializer
+            gtpo::EchoProgressNotifier progressNotifier;
+            gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "gmlout.graphml" );
+            gmlOut.serializeOut( sg, &progressNotifier );
+            gmlOut.finishOut();
+        } catch (...) { }
+    }
+
+    { // Protocol Buffer IN/OUT serialization
+        stpo::Graph sgi;
+        gtpo::ProtoSerializer<stpo::SConfig> ps;
+        ps.serializeOutTo( sg, std::string( "test.gtpo" ) );
+        ps.serializeInFrom( std::string( "test.gtpo" ), sgi );
+    }
+
+    return 0;
+}
 

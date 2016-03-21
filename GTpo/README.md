@@ -20,6 +20,18 @@ GTpo is highly alpha.
 ## Dependencies:
 * Protocol Buffer v3: https://developers.google.com/protocol-buffers/ and https://github.com/google/protobuf
 * Googletest: https://github.com/google/googletest/ 
+* PugiXML: https://github.com/zeux/pugixml
+	GTpo include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine.
+
+## Roadmap:
+
+- [x] Basic directed graph topology support with custom containers and property support.
+- [x] Topology serialization using Protocol Buffer v3.
+- [x] Basic GraphML support (OUT).
+- [ ] Gephi GEXF file format IN/OUT support.
+- [ ] Complete asynchronous graph access with a read/write graph view MUTEX protection.
+- [ ] Advanced asynchronous graph access with Intel TBD thread safe containers.
+- [ ] Graph search algorithms (Djikstra/A-Star).
 
 ## Installation:
 GTpo use _qmake_ as its main build configuration system, dependencies are configured in the root directory _common.pri_ file:

@@ -25,11 +25,16 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoEdge.hpp
+// \file	serializer.h
 // \author	benoit@qanava.org
-// \date	2016 01 22
+// \date	2016 03 21
 //-----------------------------------------------------------------------------
 
-namespace gtpo { // ::gtpo
+#ifndef serializer_h
+#define serializer_h
 
-} // ::gtpo
+// GTpo headers
+#include <GTpoStd>
+
+#endif // serializer_h
+

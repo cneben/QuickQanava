@@ -11,6 +11,8 @@ concrete GTpo directly:
 \li 'stpo': Direct use of GTpo with C++ standard library.
 \li 'qtpo': Direct use of GTpo for Qt/QML.
 
+GTpo include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine (PugiXML: https://github.com/zeux/pugixml).
+
 \section datamodel Data Model
 
 \image html graph-datamodel.png
