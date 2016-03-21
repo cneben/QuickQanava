@@ -104,68 +104,24 @@ public:
     using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
     using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
 
-    Serializer() :
-        _progressNotifier{ new IProgressNotifier( ) }
-    {
-
-    }
+    Serializer() = default;
     virtual ~Serializer() = default;
     Serializer( const Serializer< GraphConfig >& ) = delete;
-
-public:
-    /*! Register a progress notifier in this serializer.
-     *
-     * \code
-     * ConcreteSerializer serializer;
-     * serializer.registerProgressNotifier( std::make_unique<gtpo::ProgressNotifier>( ) );  // Avoid any eventual leak if an exception is thrown
-     * \endcode
-     *
-     * \arg progressNotifier progress notifier that should be used by this serializer, serializer get ownership for the notifier.
-     * \note Any previously registered notifier is destroyed.
-     */
-    auto            registerProgressNotifier( std::unique_ptr< gtpo::IProgressNotifier > progressNotifier ) -> void {
-        if ( progressNotifier == nullptr )
-            return;
-        _progressNotifier.swap( progressNotifier );
-    }
-    /*! \copybrief registerProgressNotifier()
-     *
-     * Preferred way to register a new progress notifier is by using the sink method with unique_ptr.
-     */
-    auto            registerProgressNotifier( gtpo::IProgressNotifier* progressNotifier ) -> void {
-        if ( progressNotifier == nullptr )
-            return;
-        _progressNotifier.swap( std::unique_ptr< gtpo::IProgressNotifier >( progressNotifier ) );
-    }
-    /*! Return this serializer currently registered progress notifier.
-     *
-     * \note Even if a custom notifier has not been installed with registerProgressNotifier(), this method will never
-     * return nullptr (it's default value is a a void IProgressNotifier interface).
-     */
-    auto            getProgressNotifier() -> gtpo::IProgressNotifier* {
-        gtpo::assert_throw( _progressNotifier == nullptr, "gtpo::Serializer<>::getProgressNotifier(): Internal error: serializer progress notifier can't be nullptr." );
-        return _progressNotifier.get();
-    }
-    //! Const shortcut to getProgressNotifier().
-    auto            getProgressNotifier() const -> const gtpo::IProgressNotifier* { return _progressNotifier.get(); }
-
-private:
-    std::unique_ptr< gtpo::IProgressNotifier >  _progressNotifier;
 
 public:
     /*! Serialize \c graph out.
      *
      * \throw std::exception if an error occurs.
      */
-    virtual auto    serializeOut( const Graph& graph, std::ostream& os ) -> void { (void)graph; (void)os; }
+    virtual auto    serializeOut( const Graph& graph, std::ostream& os, gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void { (void)graph; (void)os; (void)progressNotifier; }
     //! Shortcut to serializeOut( const Graph&, std::ostream& ) with a file name instead of an output stream.
-    virtual auto    serializeOutTo( const Graph& graph, std::string fileName ) -> void {
+    virtual auto    serializeOutTo( const Graph& graph, std::string fileName, gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void {
         std::ofstream os( fileName, std::ios::out | std::ios::trunc | std::ios::binary );
         if ( !os ) {
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): Error: Can't open output stream " << fileName << std::endl;
             return;
         }
-        serializeOut( graph, os );
+        serializeOut( graph, os, progressNotifier );
         if ( os.is_open() )
             os.close();
     }
@@ -174,15 +130,15 @@ public:
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */
-    virtual auto    serializeIn( std::istream& is, Graph& graph ) noexcept( false )  -> void { (void)is; (void)graph; }
+    virtual auto    serializeIn( std::istream& is, Graph& graph, gtpo::IProgressNotifier* progressNotifier = nullptr ) noexcept( false )  -> void { (void)is; (void)graph; (void)progressNotifier; }
     //! Shortcut to serializeIn( std::istream&, Graph& ) with a file name instead of an input stream.
-    virtual auto    serializeInFrom( std::string fileName, Graph& graph ) noexcept( false ) -> void {
+    virtual auto    serializeInFrom( std::string fileName, Graph& graph, gtpo::IProgressNotifier* progressNotifier = nullptr ) noexcept( false ) -> void {
         std::ifstream is( fileName, std::ios::in | std::ios::binary );
         if ( !is ) {
             std::cerr << "gtpo::ProtoSerializer::serializeIn(): Error: Can't open input stream " << fileName << std::endl;
             return;
         }
-        serializeIn( is, graph );
+        serializeIn( is, graph, progressNotifier );
         if ( is.is_open() )
             is.close();
     }

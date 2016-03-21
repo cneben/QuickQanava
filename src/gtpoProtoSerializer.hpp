@@ -153,21 +153,24 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
 
 template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
-                                                      std::ostream& os ) -> void
+                                                      std::ostream& os,
+                                                      gtpo::IProgressNotifier* progressNotifier = nullptr  ) -> void
 {
-    serializeOut( graph, os, nullptr, nullptr );
+    gtpo::IProgressNotifier voidNotifier;
+    if ( progressNotifier == nullptr )
+        progressNotifier = &voidNotifier;
+    progressNotifier->beginProgress();
+    serializeOut( graph, os, *progressNotifier, nullptr, nullptr );
+    progressNotifier->endProgress();
 }
 
 template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
                                                       std::ostream& os,
+                                                      gtpo::IProgressNotifier& progressNotifier,
                                                       const ::google::protobuf::Message* user1,
                                                       const ::google::protobuf::Message* user2 ) -> void
 {
-    // FIXME progress
-//    if ( progress != nullptr )
-//        progress->beginProgress();
-
     if ( getObjectIdMap().size() == 0 )
         generateObjectIdMap( graph );
     ObjectIdMap& objectIdMap = getObjectIdMap();
@@ -268,20 +271,25 @@ auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph 
 
 template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
-                                                               Graph& graph ) -> void
+                                                     Graph& graph,
+                                                     gtpo::IProgressNotifier* progressNotifier ) -> void
 {
-    serializeIn< gtpo::pb::GTpoVoid >( is, graph, nullptr );
+    gtpo::IProgressNotifier voidNotifier;
+    if ( progressNotifier == nullptr )
+        progressNotifier = &voidNotifier;
+    progressNotifier->beginProgress();
+    serializeIn< gtpo::pb::GTpoVoid >( is, graph, *progressNotifier, nullptr );
+    progressNotifier->endProgress();
 }
 
 template < class GraphConfig >
 template < class User1 >
 auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                                                      Graph& graph,
+                                                     gtpo::IProgressNotifier& progressNotifier,
                                                      User1* user1 ) -> void
 {
-    // FIXME progress
-    //if ( progress != nullptr )
-    //    progress->beginProgress();
+    progressNotifier.beginProgress();
 
     IdObjectMap& idObjectMap = getIdObjectMap();
     idObjectMap.clear();

@@ -143,11 +143,13 @@ public:
      */
     auto            serializeOut( const Graph& graph,
                                   std::ostream& os,
+                                  gtpo::IProgressNotifier& progressNotifier,
                                   const ::google::protobuf::Message* user1 = nullptr,
                                   const ::google::protobuf::Message* user2 = nullptr  ) -> void;
     //! \copydoc serializeOut()
     virtual auto    serializeOut( const Graph& graph,
-                                  std::ostream& os ) -> void override;
+                                  std::ostream& os,
+                                  gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void override;
 
     /*! Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.GTpoNode \c pbNode.
      *
@@ -180,10 +182,12 @@ public:
     template < class User1 = gtpo::pb::GTpoVoid >
     auto            serializeIn( std::istream& is,
                                  Graph& graph,
+                                 gtpo::IProgressNotifier& progressNotifier,
                                  User1* user1 = nullptr ) -> void;
 
     virtual auto    serializeIn( std::istream& is,
-                                 Graph& graph ) -> void override;
+                                 Graph& graph,
+                                 gtpo::IProgressNotifier* progressNotifier = nullptr  ) -> void override;
 
     /*! Serialize Protocol Buffer gtpo.pb.GTpoNode \c pbNode to GTpo node \c weakNode.
      *
