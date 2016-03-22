@@ -42,10 +42,11 @@ qtpo::VoidContainer, to remove any associed cost during node insertion or deleti
 
 \section libdev Library Developpers Notes
 
-\note gtpo::GenNode::_graph and gtpo::GenEdge::_graph are used as flag to detect destruction before suppression.
+\note gtpo::GenNode::\_graph and gtpo::GenEdge::\_graph are used as flag to detect destruction before suppression.
 
 \note GTpo make heavy use of standard containers for shared_ptr or weak_ptr, please keep in mind that theses classes not necessarilly have the required operators (== and <) for STL or Qt container: http://en.cppreference.com/w/cpp/memory/owner_less. GTpo provide specializations of std::hash and std::equal_to in the std namespace for any template <typename T> std::weak_ptr<T> type which might interfere with user code: be carefull when including gtpo.h. Template function gtpo::compare_weak_ptr<> could also be used for comparing std::weak_ptr used to model shared ressources in GTpo, but theses shared ressources must have been tested against expiration before using comparison function and should not contains nullptr values.
 
 \note Developpers adding features to the library should use gtpo::assert_throw that throw an exception when an assert fails even when GTpo is compiled in release mode. Use of the standard ::assert() function is strongly discouraged in GTpo. 
 
 */
+

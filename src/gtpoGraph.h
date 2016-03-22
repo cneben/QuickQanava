@@ -484,7 +484,7 @@ private:
     /*! \name Graph Edge Management *///---------------------------------------
     //@{
 public:
-    /*! \brief Create a directed edge between \c source and \destination node.
+    /*! \brief Create a directed edge between \c source and \c destination node.
      *
      * Complexity is O(1).
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
@@ -492,7 +492,7 @@ public:
      */
     auto        createEdge( WeakNode source, WeakNode destination ) noexcept( false ) -> WeakEdge;
 
-    /*! \brief Create a directed edge of a given \c className between \c source and \destination node.
+    /*! \brief Create a directed edge of a given \c className between \c source and \c destination node.
      *
      * Do not use this method until you are writing a serializer input functor with complex edge virtual hierarchy.
      *
@@ -510,7 +510,7 @@ public:
      */
     auto        insertEdge( SharedEdge edge ) noexcept( false ) -> WeakEdge;
 
-    /*! \brief Remove first directed edge found between \c source and \destination node.
+    /*! \brief Remove first directed edge found between \c source and \c destination node.
      *
      * If the current GenGraph<> Config::EdgeContainer and Config::NodeContainer allow parrallel edges support, the first
      * edge found between \c source and \c destination will be removed.
@@ -520,7 +520,7 @@ public:
      */
     auto        removeEdge( WeakNode source, WeakNode destination ) noexcept( false ) -> void;
 
-    /*! \brief Remove all directed edge between \c source and \destination node.
+    /*! \brief Remove all directed edge between \c source and \c destination node.
      *
      * If the current GenGraph<> Config::EdgeContainer and Config::NodeContainer allow parrallel edges support, the first
      * edge found between \c source and \c destination will be removed.
