@@ -70,9 +70,9 @@ void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::
     gtpo::ProgressNotifier voidProgressNotifier;
     if ( gtpoProgress == nullptr )
         gtpoProgress = &voidProgressNotifier;
+    progress->beginProgress();
     serializeOut( *graph, os, *gtpoProgress, &pbStyleManager );
-    if ( progress != nullptr )
-        progress->endProgress();
+    progress->endProgress();
     if ( os.is_open() )
         os.close();
 }
@@ -101,6 +101,7 @@ void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan
     gtpo::ProgressNotifier voidProgressNotifier;
     if ( gtpoProgress == nullptr )
         gtpoProgress = &voidProgressNotifier;
+    progress->beginProgress();
     serializeIn( is, *graph, *gtpoProgress, &pbStyleManager );
     loadStyleManager( pbStyleManager, *graph->getStyleManager(), getIdObjectMap() );
     if ( is.is_open() )
