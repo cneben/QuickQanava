@@ -189,10 +189,15 @@ public:
     virtual void    nextPhase( double phaseWeight, const std::string& phaseLabel = "" ) { (void)phaseWeight; (void)phaseLabel; }
     //! Return the current phase number (int between 0 and phaseCount - 1).
     virtual int     getPhase() const { return 0; }
+    //! Return current phase label.
+    virtual const std::string&    getPhaseLabel() const { return _phaseLabel; }
     //! Return current phase progress into the (0.0, 1.0) range.
     virtual double  getPhaseProgress() const { return 0.; }
     //! Set the current phase progress (\c phaseProgress must be in the (0.0, 1.0) range.
     virtual void    setPhaseProgress( double phaseProgress ) { (void)phaseProgress; }
+protected:
+    //! Current phase label.
+    std::string _phaseLabel         = "";
 };
 
 //! Multi levels, multi phases progress notifier (basic concrete implementation of IProgressNotifier).
@@ -293,6 +298,9 @@ public:
     //! \copydoc IProgressNotifier::getPhase()
     virtual int     getPhase( ) const override { return _phase; }
 
+    //! \copydoc IProgressNotifier::getPhaseLabel()
+    virtual const std::string&    getPhaseLabel() const override { return _phaseLabel; }
+
     //! \copydoc IProgressNotifier::getPhaseProgress()
     virtual double  getPhaseProgress() const override { return _phaseProgress; }
 
@@ -314,8 +322,6 @@ private:
     double      _phaseProgress      = 0.;
     //! Current phase index.
     int         _phase              = 0;
-    //! Current phase label.
-    std::string _phaseLabel         = "";
     //! Current phase weight.
     double      _phaseWeight        = 0.0;
     //! Overall progress at current phase start (when nextPhase() has been called).
