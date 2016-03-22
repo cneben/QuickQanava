@@ -179,7 +179,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
 
     int serializedNodeCout = 0;
 
-    progressNotifier.setPhaseCount( 2, 0.5 );
+    progressNotifier.setPhaseCount( 2, 0.5, "Saving nodes" );
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
@@ -195,7 +195,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     }
 
     int serializedEdgeCout = 0;
-    progressNotifier.nextPhase( 0.5 );
+    progressNotifier.nextPhase( 0.5, "Saving edges" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
