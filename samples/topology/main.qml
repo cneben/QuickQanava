@@ -329,7 +329,7 @@ Item {
             }
             Text {
                 Layout.alignment: Layout.Center
-                text: "Serializing..." /*progressNotyfier.phaseLabel*/
+                text: progressNotifier.phaseLabel
             }
         }
     }

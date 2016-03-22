@@ -120,18 +120,13 @@ public:
      *
      * FIXME: Reactivate phase label support in Qan2...
      */
-    Q_PROPERTY( QString phaseLabel READ getPhaseLabel WRITE setPhaseLabel NOTIFY phaseLabelChanged )
-    //! \sa phaseLabel
-    QString         getPhaseLabel() const { return _phaseLabel; }
-    void            setPhaseLabel( QString phaseLabel ) { _phaseLabel = phaseLabel; emit phaseLabelChanged( ); }
-protected:
-    //! \sa phaseLabel
-    QString         _phaseLabel = QString( "" );
+    Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged )
+    QString         getQmlPhaseLabel() const { return QString::fromStdString( getPhaseLabel() ); }
 signals:
     //! \sa phaseLabel
     void            phaseLabelChanged();
 protected:
-    virtual void    notifyPhaseChanged() override { /* FIXME update phase label... */ QCoreApplication::processEvents( ); }
+    virtual void    notifyPhaseLabelChanged() override { emit phaseLabelChanged(); QCoreApplication::processEvents( ); }
     //@}
     //-------------------------------------------------------------------------
 };
