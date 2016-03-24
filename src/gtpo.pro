@@ -9,9 +9,11 @@ QT		+= core
 include (../common.pri)
 
 HEADERS +=  ./gtpoUtils.h               \
-            ./gtpoEdge.hpp              \
             ./gtpoGraph.h               \
             ./gtpoGraph.hpp             \
+            ./gtpoEdge.hpp              \
+            ./gtpoNode.hpp              \
+            ./gtpoGroup.hpp             \
             ./gtpoRandomGraph.h         \
             ./gtpoBehaviour.h           \
             ./gtpoBehaviour.hpp         \
@@ -21,7 +23,6 @@ HEADERS +=  ./gtpoUtils.h               \
             ./gtpoGmlSerializer.hpp     \
             ./gtpoProtoSerializer.h     \
             ./gtpoProtoSerializer.hpp   \
-            ./gtpoNode.hpp              \
             ./GTpo.h                    \
             ./GTpoQt.h                  \
             ./GTpoStd.h
