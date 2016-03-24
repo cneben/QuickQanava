@@ -43,7 +43,7 @@ GenGraph< Config >::~GenGraph()
 template < class Config >
 void    GenGraph< Config >::clear()
 {
-    // Note 20160104: First edges, then nodes (help maintaining topology if
+    // Note 20160104: First edges, then nodes (it helps maintaining topology if
     // womething went wrong during destruction
     for ( auto edge: _edges )   // Do not maintain topology during edge deletion
         edge->_graph = nullptr;
@@ -54,6 +54,8 @@ void    GenGraph< Config >::clear()
     _nodesSearch.clear();
     _nodes.clear();
 
+    // Clearing groups and behaviours
+    _groups.clear();
     _behaviours.clear();
 }
 //-----------------------------------------------------------------------------

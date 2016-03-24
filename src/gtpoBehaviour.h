@@ -104,9 +104,7 @@ class Behaviour
 {
 public:
     Behaviour() = default;
-    virtual ~Behaviour() {
-        std::cerr << "gtpo::Behaviour::~Behaviour()" << std::endl;
-    }
+    virtual ~Behaviour() { }
 
     explicit Behaviour( const Behaviour& ) = default;
     Behaviour& operator=( const Behaviour& ) = delete;

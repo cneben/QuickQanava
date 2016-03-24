@@ -108,7 +108,7 @@ public:
     double   getWeight( ) const { return _weight; }
     void    setWeight( double weight ) {
         _weight = weight;
-        getGraph()->notifyEdgeModified( WeakEdge{ shared_from_this() } );
+        getGraph()->notifyEdgeModified( WeakEdge{ this->shared_from_this() } );
     }
 private:
     double   _weight = 0.;
@@ -120,7 +120,7 @@ public:
     const std::string&  getLabel( ) const { return _label; }
     void                setLabel( const std::string& label ) {
         _label = label;
-        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
+        getGraph()->notifyNodeModified( WeakNode{ this->shared_from_this() } );
     }
 
     double  getX( ) const { return _x; }
