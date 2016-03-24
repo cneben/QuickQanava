@@ -94,18 +94,88 @@ public:
     virtual auto    edgeModified( Edge edge ) -> void { (void)edge; }
 };
 
+
+/*! \brief Base class for concrete behaviours.
+ *
+ */
+class Behaviour
+{
+public:
+    Behaviour() = default;
+    ~Behaviour() = default;
+    explicit Behaviour( const Behaviour& ) = default;
+    Behaviour& operator=( const Behaviour& ) = delete;
+
+public:
+    /*! Enable this behaviour until it is disabled again with a call to disable().
+     *
+     * \note enabling a disabled behaviour does not apply behaviour on changes made
+     *       while it was disabled.
+     * \sa isEnabled() for enabled state description.
+     */
+    auto    enable( ) -> void { _enabled = true; notifyEnabledChanged(); }
+    /*! Disable this behaviour until it is enabled back wit a call to enable().
+     *
+     * \sa isEnabled() for enabled state description.
+     */
+    auto    disable( ) -> void { _enabled = false; notifyEnabledChanged(); }
+    /*! Return the actual "enabled" state for this behaviour.
+     *
+     *  This method could be usefull in very specific use cases, such as serialization or insertion of a large number
+     *  of nodes in a graph or group where this behaviour is applied.
+     *  A behaviour is enabled by default after its creation.
+     *
+     *  \return true if enable() has been called, false if disable() has been called.
+     */
+    auto    isEnabled( ) const -> bool { return _enabled; }
+
+    //! Optionnal notifier for the enabled property.
+    virtual void    notifyEnabledChanged() { }
+
+protected:
+    bool            _enabled = true;
+};
+
+
+/*! \brief Define an observer interface to catch changes in a gtpo::GenGroup.
+ *
+ */
+template < class Node, class Edge, class Group >
+class GroupBehaviour :  public NodeBehaviour< Node >,
+                        public EdgeBehaviour< Edge >
+{
+public:
+    GroupBehaviour() = default;
+    ~GroupBehaviour() = default;
+    explicit GroupBehaviour( const GroupBehaviour& ) = default;
+    GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
+
+public:
+    /*! Called whenever group \c group has been modified.
+     *
+     * Called in the following situations:
+     * \li node or edge inserted or removed from group
+     * \li group label changed
+     */
+    virtual auto    groupModified( Group group ) -> void { (void)group; }
+};
+
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
  *
  */
-template < class Node, class Edge >
-class GraphBehaviour :  public NodeBehaviour< Node >,
-                        public EdgeBehaviour< Edge >
+template < class Node, class Edge, class Group >
+class GraphBehaviour :  public GroupBehaviour< Node, Edge, Group >
 {
 public:
     GraphBehaviour() = default;
     ~GraphBehaviour() = default;
     explicit GraphBehaviour( const GraphBehaviour& ) = default;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
+
+    //! Called immediatly after group \c group has been inserted in graph.
+    virtual auto    groupInserted( Group group ) -> void { (void)group; }
+    //! Called immediatly before group \c group has been removed from graph.
+    virtual auto    groupRemoved( Group group ) -> void { (void)group; }
 };
 
 } // ::gtpo
