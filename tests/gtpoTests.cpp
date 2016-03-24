@@ -51,7 +51,6 @@ int main(int argc, char **argv) {
 // GTpo utils tests
 //-----------------------------------------------------------------------------
 
-//TEST_CASE( "Generic insert/remove working", "[utilsGenericInsertRemove]" )
 TEST(GTpoUtils, utilsGenericInsertRemove)
 {
     using IntList = std::list< std::shared_ptr<int> >;
@@ -110,9 +109,7 @@ TEST(GTpo, removeNodeNodesCount)
     EXPECT_TRUE( ( g.getNodeCount() == nc - 1 ) );
     EXPECT_TRUE( ( g.getRootNodeCount() == rnc - 1 ) ) ;
     g.createNode();
-    std::cout << "Clearing...";
     g.clear();
-    std::cout << "Cleared...";
 }
 
 TEST(GTpo, createEdge)
@@ -219,43 +216,6 @@ TEST(GTpo, parallelTopology)
     g.removeAllEdges(n2, n3);
     EXPECT_TRUE( g.getEdgeCount(n2, n3) == 0 ) ;
     g.clear();
-}
-
-//-----------------------------------------------------------------------------
-// GTpo Behaviour test
-//-----------------------------------------------------------------------------
-
-template < class Node, class Edge >
-class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge >
-{
-public:
-    GraphBehaviourMock() { }
-protected:
-    void    nodeInserted( Node& ) { mockNodeInserted(); }
-    void    nodeRemoved( Node& ) { mockNodeRemoved(); }
-    void    edgeInserted( Edge& ) { mockEdgeInserted(); }
-    void    edgeRemoved( Edge& ) { mockEdgeRemoved(); }
-
-public:
-    MOCK_METHOD0(mockNodeInserted, void(void));
-    MOCK_METHOD0(mockNodeRemoved, void(void));
-    MOCK_METHOD0(mockEdgeInserted, void(void));
-    MOCK_METHOD0(mockEdgeRemoved, void(void));
-};
-
-using testing::AtLeast;
-
-TEST(GTpo, echoBehaviour)
-{
-/*    gtpo::GenGraph<> g;
-    using MockBehaviour = GraphBehaviourMock< gtpo::GenGraph<>::WeakNode,
-                                              gtpo::GenGraph<>::WeakEdge >;
-    auto mockBehaviour = new MockBehaviour();
-    g.addBehaviour( std::unique_ptr< MockBehaviour >( mockBehaviour ) );
-    EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));
-    //g.insertNode(sharedNode);
-    g.createNode();
-    g.clear();*/
 }
 
 //-----------------------------------------------------------------------------
@@ -383,6 +343,154 @@ TEST(GTpo, progressNotifier)
         EXPECT_DOUBLE_EQ( progress.getProgress(), 0.75 );  // superProgress=0.375, progress2 local progress is 0.75, so
             // Global progress should be superProgress + progress2->progress / 2 = 0.375 + ( 0.75 / 2 ) = 0.75
     }
+}
+
+//-----------------------------------------------------------------------------
+// GTpo Behaviour test (using STpo)
+//-----------------------------------------------------------------------------
+
+template < class Node, class Edge, class Group >
+class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge, Group >
+{
+public:
+    GraphBehaviourMock() { }
+    virtual ~GraphBehaviourMock() { }
+protected:
+    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
+    virtual void    groupInserted( Group& ) override { mockGroupInserted(); }
+    virtual void    groupRemoved( Group& ) override { mockGroupRemoved(); }
+    virtual void    groupModified( Group& ) override { mockGroupModified(); }
+
+public:
+    MOCK_METHOD0(mockNodeInserted, void(void));
+    MOCK_METHOD0(mockNodeRemoved, void(void));
+    MOCK_METHOD0(mockNodeModified, void(void));
+    MOCK_METHOD0(mockEdgeInserted, void(void));
+    MOCK_METHOD0(mockEdgeRemoved, void(void));
+    MOCK_METHOD0(mockEdgeModified, void(void));
+    MOCK_METHOD0(mockGroupInserted, void(void));
+    MOCK_METHOD0(mockGroupRemoved, void(void));
+    MOCK_METHOD0(mockGroupModified, void(void));
+};
+
+template < class Node, class Edge, class Group >
+class GroupBehaviourMock : public gtpo::GroupBehaviour< Node, Edge, Group >
+{
+public:
+    GroupBehaviourMock() { }
+    virtual ~GroupBehaviourMock() { }
+protected:
+    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
+    virtual void    groupModified( Group& ) override { mockGroupModified(); }
+
+public:
+    MOCK_METHOD0(mockNodeInserted, void(void));
+    MOCK_METHOD0(mockNodeRemoved, void(void));
+    MOCK_METHOD0(mockNodeModified, void(void));
+    MOCK_METHOD0(mockEdgeInserted, void(void));
+    MOCK_METHOD0(mockEdgeRemoved, void(void));
+    MOCK_METHOD0(mockEdgeModified, void(void));
+    MOCK_METHOD0(mockGroupModified, void(void));
+};
+
+
+using testing::AtLeast;
+
+TEST(GTpo, stpoEchoBehaviour)
+{
+    stpo::Graph g;
+
+    { // Testing graph behaviour
+        using MockGraphBehaviour = GraphBehaviourMock< stpo::Graph::WeakNode,
+                                                       stpo::Graph::WeakEdge,
+                                                       stpo::Graph::WeakGroup >;
+        auto mockBehaviour = new MockGraphBehaviour();  // Wan't use unique_ptr here because of gmock
+
+        // Test basic enable/disable behaviour property
+        EXPECT_TRUE( mockBehaviour->isEnabled() );
+        mockBehaviour->disable();
+        EXPECT_TRUE( !mockBehaviour->isEnabled() );
+        mockBehaviour->enable();
+
+        // Behaviour notify virtual methods should be called when graph topology changes
+        g.addBehaviour( mockBehaviour );
+
+        // nodeInserted() notification
+        EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));
+        auto n = g.createNode();
+
+        // nodeModified() notification
+        EXPECT_CALL(*mockBehaviour, mockNodeModified()).Times(AtLeast(1));
+        stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
+
+        // nodeInserted() notification
+        EXPECT_CALL(*mockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
+        g.removeNode( n );
+
+        // edgeInserted() notification
+        auto s = g.createNode();
+        auto d = g.createNode();
+        EXPECT_CALL(*mockBehaviour, mockEdgeInserted()).Times(AtLeast(1));
+        auto e = g.createEdge(s, d);
+
+        // edgeModified() notification
+        EXPECT_CALL(*mockBehaviour, mockEdgeModified()).Times(AtLeast(1));
+        stpo::Graph::Configuration::setEdgeWeight( e.lock(), 0.5 );
+
+        // edgeRemoved() notification
+        EXPECT_CALL(*mockBehaviour, mockEdgeRemoved()).Times(AtLeast(1));
+        g.removeEdge(e);
+
+        // groupInserted() notification
+        EXPECT_CALL(*mockBehaviour, mockGroupInserted()).Times(AtLeast(1));
+        auto gg = g.createGroup();
+
+        // groupModified() notification
+        EXPECT_CALL(*mockBehaviour, mockGroupModified()).Times(AtLeast(2));
+        if ( !s.expired() &&
+             !gg.expired() ) {
+            gg.lock()->insertNode( s );                 // First mockGroupModified() call
+            EXPECT_EQ( gg.lock()->getNodeCount(), 1 );
+            gg.lock()->removeNode( s );                 // Second mockGroupModified() call
+            EXPECT_EQ( gg.lock()->getNodeCount(), 0 );
+        }
+
+        // groupRemoved() notification
+        EXPECT_CALL(*mockBehaviour, mockGroupRemoved()).Times(AtLeast(1));
+        g.removeGroup( gg );
+
+        { // Testing group behaviour
+            using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::WeakNode,
+                                                           stpo::Graph::WeakEdge,
+                                                           stpo::Graph::WeakGroup >;
+            auto group2 = g.createGroup();
+            auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
+            group2.lock()->addBehaviour( groupMockBehaviour );
+
+            // nodeInserted() notification
+            EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(AtLeast(1));
+            group2.lock()->insertNode( s );
+
+            // nodeModified() notification
+            //EXPECT_CALL(*groupMockBehaviour, mockNodeModified()).Times(AtLeast(1));
+            //stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
+
+            // nodeInserted() notification
+            EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
+            group2.lock()->removeNode( s );
+        }
+    }
+    g.clear();  // Mock behaviour will be automatically destroyed
 }
 
 //-----------------------------------------------------------------------------

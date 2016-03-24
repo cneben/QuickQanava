@@ -44,6 +44,7 @@ namespace stpo {
 class Node;
 class Edge;
 class Graph;
+class Group;
 
 template < typename Node, typename Edge >
 struct PropertiesConfig {
@@ -79,6 +80,7 @@ class SConfig final :   public gtpo::BaseConfig,
 public:
     using Node = stpo::Node;
     using Edge = stpo::Edge;
+    using Group = stpo::Group;
 
     template <class...Ts>
     using NodeContainer = std::vector<Ts...>;
@@ -95,13 +97,18 @@ class Graph : public gtpo::GenGraph< SConfig >
 
 };
 
+class Group : public gtpo::GenGroup< SConfig >
+{
+public:
+};
+
 class Edge : public gtpo::GenEdge< SConfig >
 {
 public:
     double   getWeight( ) const { return _weight; }
     void    setWeight( double weight ) {
         _weight = weight;
-        getGraph()->notifyEdgeModified( shared_from_this() );
+        getGraph()->notifyEdgeModified( WeakEdge{ this->shared_from_this() } );
     }
 private:
     double   _weight = 0.;
@@ -113,31 +120,31 @@ public:
     const std::string&  getLabel( ) const { return _label; }
     void                setLabel( const std::string& label ) {
         _label = label;
-        getGraph()->notifyNodeModified( shared_from_this() );
+        getGraph()->notifyNodeModified( WeakNode{ this->shared_from_this() } );
     }
 
     double  getX( ) const { return _x; }
     void    setX( double x ) {
         _x = x;
-        getGraph()->notifyNodeModified( shared_from_this() );
+        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
     }
 
     double  getY( ) const { return _y; }
     void    setY( double y ) {
         _y = y;
-        getGraph()->notifyNodeModified( shared_from_this() );
+        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
     }
 
     double  getWidth( ) const { return _width; }
     void    setWidth( double width ) {
         _width = width;
-        getGraph()->notifyNodeModified( shared_from_this() );
+        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
     }
 
     double  getHeight( ) const { return _height; }
     void    setHeight( double height ) {
         _height = height;
-        getGraph()->notifyNodeModified( shared_from_this() );
+        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
     }
 
 private:

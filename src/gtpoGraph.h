@@ -58,6 +58,9 @@ class GenNode;
 template <class Config>
 class GenEdge;
 
+template <class Config>
+class GenGroup;
+
 template < typename T >
 using Owned = std::shared_ptr< T >;
 
@@ -142,6 +145,7 @@ struct BaseConfig {
     using GraphBase = Empty;
     using NodeBase = Empty;
     using EdgeBase = Empty;
+    using GroupBase = Empty;
 };
 
 struct DefaultConfig :  public BaseConfig,
@@ -151,6 +155,7 @@ struct DefaultConfig :  public BaseConfig,
 {
     using Node = GenNode<DefaultConfig>;
     using Edge = GenEdge<DefaultConfig>;
+    using Group = GenGroup<DefaultConfig>;
 
     template <class...Ts>
     using NodeContainer = std::vector<Ts...>;
@@ -175,6 +180,7 @@ public:
     using Graph         = GenGraph<Config>;
     using WeakNode      = std::weak_ptr< typename Config::Node >;
     using SharedNode    = std::shared_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
 
     GenEdge() : Config::EdgeBase( ) { }
     explicit GenEdge( typename Config::EdgeBase* parent ) : Config::EdgeBase( parent ) { }
@@ -182,11 +188,9 @@ public:
         _src{ src }, _dst{ dst } { }
     virtual ~GenEdge() {
         //std::cout << "GenEdge::~GenEdge()" << this << std::endl;
-        if ( _graph != nullptr ) {
-            std::cerr << "GenEdge::~GenEdge(): Error, an edge has been deleted before beeing " <<
+        if ( _graph != nullptr )
+            std::cerr << "gtpo::GenEdge<>::~GenEdge(): Warning: an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
-            //_graph->removeEdge( static_cast< typename Config::Edge& >( *this ) );
-        }
         _graph = nullptr;
     }
 
@@ -209,10 +213,10 @@ private:
     Graph*      _graph = nullptr;
 };
 
-/*! \brief Base class for modelling nodes with an in/out edges list in a qan::Graph graph.
+/*! \brief Base class for modelling nodes with an in/out edges list in a qtpo::GenGraph graph.
  *
  * \nosubgrouping
-*/
+ */
 template <class Config = DefaultConfig>
 class GenNode : public Config::NodeBase,
                 public std::enable_shared_from_this<typename Config::Node>
@@ -232,17 +236,8 @@ public:
     virtual ~GenNode() {
         _inEdges.clear(); _outEdges.clear();
         _inNodes.clear(); _outNodes.clear();
-        //std::cout << "GenNode::~GenNode()" << this << std::endl;
         if ( _graph != nullptr ) {
-            //_graph->removeNode( static_cast< typename Config::Node& >( *this ) );
-            //std::shared_ptr<GenNode<Config>>
-            /*typename Config::Node* self = static_cast< typename Config::Node* >( this );
-            SharedNode ownedSelf = self->shared_from_this();
-            std::weak_ptr<GenNode<Config>> sharedSelf = self;
-            _graph->removeNode( sharedSelf );*/
-            std::cerr << "~GenNode(): A node has been destroyed before beeing removed " <<
-                         "from the graph, something bas happen, GTpo will try to recover " <<
-                         "graph topology." << std::endl;
+            std::cerr << "gtpo::GenNode<>::~GenNode(): Warning: Node has been destroyed before beeing removed from the graph." << std::endl;
         }
         _graph = nullptr;
     }
@@ -309,8 +304,8 @@ public:
     auto    getInNodes() const -> const WeakNodes& { return _inNodes; }
     auto    getOutNodes() const -> const WeakNodes& { return _outNodes; }
 
-    auto    getInDegree() -> typename WeakEdges::size_type const { return _inEdges.size(); }
-    auto    getOutDegree() -> typename WeakEdges::size_type const { return _outEdges.size(); }
+    auto    getInDegree() -> unsigned int const { return static_cast<int>( _inEdges.size() ); }
+    auto    getOutDegree() -> unsigned int const { return static_cast<int>( _outEdges.size() ); }
 private:
     WeakEdges   _inEdges;
     WeakEdges   _outEdges;
@@ -318,7 +313,105 @@ private:
     WeakNodes   _outNodes;
     //@}
     //-------------------------------------------------------------------------
+
+    /*! \name Node Edges Management *///---------------------------------------
+    //@{
+public:
+    using WeakGroup = std::weak_ptr< typename Config::Group >;
+    auto        setGroup( WeakGroup& group ) -> void { _group = group; }
+    auto        getGroup( ) -> WeakGroup& { return _group; }
+private:
+    WeakGroup   _group;
+    //@}
+    //-------------------------------------------------------------------------
 };
+
+
+/*! \brief Base class for modelling groups of nodes in a gtpo::GenGraph graph.
+ *
+ * \nosubgrouping
+*/
+template <class Config = DefaultConfig>
+class GenGroup : public Config::GroupBase,
+                 public gtpo::Behaviourable< gtpo::GroupBehaviour< std::weak_ptr< typename Config::Node >,
+                                                                   std::weak_ptr< typename Config::Edge >,
+                                                                   std::weak_ptr< typename Config::Group > > >,
+                 public std::enable_shared_from_this<typename Config::Group>
+{
+    friend GenGraph<Config>;   // GenGraph need access to setGraph()
+
+    /*! \name Node Management *///---------------------------------------------
+    //@{
+public:
+    using Graph         = GenGraph<Config>;
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using SharedNode    = std::shared_ptr< typename Config::Node >;
+    using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+
+    GenGroup() : Config::GroupBase( ) { }
+    explicit GenGroup( typename Config::GroupBase* parent ) : Config::GroupBase( parent ) { }
+    virtual ~GenGroup() {
+        if ( _graph != nullptr )
+            std::cerr << "gtpo::GenGroup<>::~GenGroup(): Warning: Group has been destroyed before beeing removed from the graph." << std::endl;
+        _graph = nullptr;
+    }
+    GenGroup(const GenGroup& node ) = delete;
+    GenGroup& operator=( GenGroup const& ) = delete;
+
+    //! Return group class name (default to "gtpo::Group").
+    std::string getClassName() const { return "gtpo::Group"; }
+
+protected:
+    Graph*      getGraph() { return _graph; }
+private:
+    void        setGraph( Graph* graph ) { _graph = graph; }
+    Graph*      _graph = nullptr;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group Nodes Management *///--------------------------------------
+    //@{
+public:
+    /*! \brief Insert node \c weakNode in this group.
+     *
+     * \note \c weakNode getGroup() will return this if insertion succeed.
+     */
+    auto        insertNode( WeakNode weakNode ) noexcept( false ) -> void;
+    auto        removeNode( const WeakNode& weakNode ) noexcept( false ) -> void;
+
+    //! Return group's nodes.
+    auto        getNodes() -> const typename WeakNodes& { return _nodes; }
+
+    //! Return true if group contains \c node.
+    auto        hasNode( const WeakNode& node ) const -> bool;
+    //! Return group registered node count.
+    auto        getNodeCount( ) const -> int { return static_cast< int >( _nodes.size() ); }
+private:
+    WeakNodes   _nodes;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Behaviours Management *///---------------------------------------
+    //@{
+public:
+    //! User friendly shortcut to this group concrete behaviour.
+    using Behaviour = GroupBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    //! User friendly shortcut type to this group concrete Behaviourable base type.
+    using Behaviourable = Behaviourable<Behaviour>;
+
+public:
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    auto    notifyNodeModified( WeakNode& node ) -> void;
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
+    //! Notify all behaviors that group \c group has been modified.
+    auto    notifyGroupModified( WeakGroup& group ) -> void;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *
@@ -331,24 +424,38 @@ private:
  *
  */
 template < class Config = DefaultConfig >
-class GenGraph : public Config::GraphBase
+class GenGraph : public Config::GraphBase,
+                 public gtpo::Behaviourable< gtpo::GraphBehaviour< std::weak_ptr< typename Config::Node >,
+                                                                   std::weak_ptr< typename Config::Edge >,
+                                                                   std::weak_ptr< typename Config::Group > > >
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
 public:
     using Configuration = Config;
-    using Node = typename Config::Node;
-    using SharedNode = std::shared_ptr< typename Config::Node >;
-    using SharedEdge = std::shared_ptr< typename Config::Edge >;
-    using WeakNode  = std::weak_ptr< typename Config::Node >;
-    using WeakEdge  = std::weak_ptr< typename Config::Edge >;
-    using WeakEdges = typename Config::template EdgeContainer< WeakEdge >;
+
     using Graph     = GenGraph<Config>;
 
+    using Node              = typename Config::Node;
+    using SharedNode        = std::shared_ptr< typename Config::Node >;
+    using SharedEdge        = std::shared_ptr< typename Config::Edge >;
+    using WeakNode          = std::weak_ptr< typename Config::Node >;
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
-    using SharedEdges       = typename Config::template EdgeContainer< SharedEdge >;
+
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
+    using SharedEdges   = typename Config::template EdgeContainer< SharedEdge >;
+
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+    using SharedGroups  = typename Config::template NodeContainer< SharedGroup >;
+
+    //! User friendly shortcut to this concrete graph behaviour.
+    using Behaviour = GraphBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    //! User friendly shortcut type to this concrete graph Behaviourable base type.
+    using Behaviourable = Behaviourable<Behaviour>;
 
 public:
     using Size  = typename SharedNodes::size_type;
@@ -360,7 +467,7 @@ public:
     GenGraph( GenGraph const& ) = delete;
     GenGraph& operator=( GenGraph const& ) = delete;
 
-    /*! Clear the graph from all its content (nodes, edges, groups, behaviours, layouts).
+    /*! Clear the graph from all its content (nodes, edges, groups, behaviours).
      *
      * \note Graph behaviours are cleared after the topology, if you do not want to take into account topology
      * changes when clearing the graph, disable all behaviours before calling clear().
@@ -484,7 +591,7 @@ private:
     /*! \name Graph Edge Management *///---------------------------------------
     //@{
 public:
-    /*! \brief Create a directed edge between \c source and \c destination node.
+    /*! \brief Create a directed edge between \c source and \c destination node and insert it into the graph.
      *
      * Complexity is O(1).
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
@@ -492,13 +599,13 @@ public:
      */
     auto        createEdge( WeakNode source, WeakNode destination ) noexcept( false ) -> WeakEdge;
 
-    /*! \brief Create a directed edge of a given \c className between \c source and \c destination node.
+    /*! \brief Create a directed edge of a given \c className between \c source and \c destination node and insert it into the graph.
      *
      * Do not use this method until you are writing a serializer input functor with complex edge virtual hierarchy.
      *
      * Complexity is O(1).
-     * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if suppression fails (either \c source or \c destination does not exists).
+     * \return the inserted edge (if an error occurs a gtpo::bad_topology_error is thrown).
+     * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
     virtual auto    createEdge( const std::string& className, WeakNode source, WeakNode destination ) noexcept( false ) -> WeakEdge;
 
@@ -552,7 +659,7 @@ public:
      */
     auto        hasEdge( WeakNode source, WeakNode destination ) const noexcept( false ) -> bool;
     //! Return the number of edges currently existing in graph.
-    auto        getEdgeCount( ) const noexcept -> unsigned int { return (int)_edges.size(); }
+    auto        getEdgeCount( ) const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
     /*! \brief Return the number of (parallel) directed edges between nodes \c source and \c destination.
      *
      * Graph EdgeContainer should support multiple insertions (std::vector, std::list) to enable
@@ -565,7 +672,7 @@ public:
     auto        getEdgeCount( WeakNode source, WeakNode destination ) const noexcept( false ) -> unsigned int;
 
     //! Graph main edges container.
-    auto    getEdges() const -> const SharedEdges& { return _edges; }
+    auto        getEdges() const -> const SharedEdges& { return _edges; }
     //! Return a const begin iterator over graph SharedEdge edges.
     auto        cbeginEdges() const -> typename SharedEdges::const_iterator { return _edges.cbegin(); }
     //! Return a const end iterator over graph SharedEdge edges.
@@ -575,32 +682,59 @@ private:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Behaviours Management *///---------------------------------------
+    /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    using Behaviour = GraphBehaviour<WeakNode,WeakEdge>;
-    /*! \brief Add a behaviour to this graph (graph get ownership for behaviour).
+    /*! \brief Create a new node group and insert it into the graph.
      *
-     * \param behaviour Graph will get behaviour ownership.
+     * Complexity is O(1).
+     * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
+     * \throw a gtpo::bad_topology_error if insertion fails.
      */
-    auto    addBehaviour( Behaviour* behaviour ) -> void {
-        _behaviours.push_back( std::unique_ptr< Behaviour >( behaviour ) );
-    }
+    auto        createGroup( ) noexcept( false ) -> WeakGroup;
 
-    auto    notifyNodeModified( WeakNode node ) -> void;
-    auto    notifyEdgeModified( WeakEdge edge ) -> void;
+    /*! Insert a node group into the graph.
+     *
+     * \throw gtpo::bad_topology_error with an error description if insertion fails.
+     */
+    auto        insertGroup( SharedGroup group ) noexcept( false ) -> WeakGroup;
+
+    /*! \brief Remove node group \c group.
+     *
+     * Group content (ie group's nodes) are not removed from the graph, but ungrouped (ie moved from
+     * the group to the graph).
+     *
+     * Worst case complexity is O(group count).
+     * \throw a gtpo::bad_topology_error if suppression fails (\c group does not exists).
+     */
+    auto        removeGroup( WeakGroup group ) noexcept( false ) -> void;
+
+    //! Return true if a given group \c group is registered in the graph.
+    auto        hasGroup( const WeakGroup& group ) const -> bool;
+
+    //! Return the number of edges currently existing in graph.
+    inline auto getGroupCount( ) const noexcept -> unsigned int { return static_cast<int>( _groups.size() ); }
+
+    //! Graph main edges container.
+    inline auto getGroups() const -> const SharedGroups& { return _groups; }
+    //! Return a const begin iterator over graph SharedGroups groups.
+    inline auto cbeginGroups() const -> typename SharedGroups::const_iterator { return _groups.cbegin(); }
+    //! Return a const end iterator over graph SharedGroups groups.
+    inline auto cendGroups() const -> typename SharedGroups::const_iterator { return _groups.cend(); }
 private:
-    std::vector< std::unique_ptr< Behaviour > >  _behaviours;
-private:
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakNode), WeakNode arg ) -> void;
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakEdge), WeakEdge arg ) -> void;
+    SharedGroups  _groups;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Serialization Management *///------------------------------------
+    /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
-    auto        serializeToGml( std::string fileName ) -> void;
+    //! Notify all behaviors that node \c node has been modified.
+    auto    notifyNodeModified( WeakNode& node ) -> void;
+    //! Notify all behaviors that node \c node has been modified.
+    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
+    //! Notify all behaviors that group \c group has been modified.
+    auto    notifyGroupModified( WeakGroup& group ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -609,6 +743,7 @@ public:
 
 #include "./gtpoEdge.hpp"
 #include "./gtpoNode.hpp"
+#include "./gtpoGroup.hpp"
 #include "./gtpoGraph.hpp"
 
 #endif // gtpoGraph_h

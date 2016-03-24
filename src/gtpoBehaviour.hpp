@@ -30,9 +30,21 @@
 // \date	2016 02 08
 //-----------------------------------------------------------------------------
 
-#include <iostream>
-
 namespace gtpo { // ::gtpo
+
+template < class Behaviour >
+template < class T >
+auto    Behaviourable< Behaviour >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
+{
+    // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
+    // For calling pointer on memg++ template template parameter template keywordber functions.
+    // std::unique_ptr has no overload for .* or ->* operator
+    // (*behaviour) == (*behaviour.get())
+    // Equivalent to: ((*behaviour.get()).*method)(arg)
+    for ( auto& behaviour : _behaviours )
+        if ( behaviour != nullptr )
+            ((*behaviour).*method)(arg);
+}
 
 } // ::gtpo
 

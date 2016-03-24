@@ -41,20 +41,20 @@
 class EchoBehaviour : public stpo::Graph::Behaviour
 {
 public:
-    void    nodeInserted( stpo::Graph::WeakNode node ) override { std::cout << "EchoBehaviour::nodeInserted() node=" << node.lock() << std::endl; }
-    void    nodeRemoved( stpo::Graph::WeakNode node ) override { std::cout << "EchoBehaviour::nodeRemoved() node=" << node.lock() << std::endl; }
-    void    nodeModified( stpo::Graph::WeakNode node ) override { std::cout << "EchoBehaviour::nodeModified() node=" << node.lock() << std::endl; }
-    void    edgeInserted( stpo::Graph::WeakEdge edge ) override { std::cout << "EchoBehaviour::edgeInserted() edge=" << edge.lock() << std::endl; }
-    void    edgeRemoved( stpo::Graph::WeakEdge edge ) override { std::cout << "EchoBehaviour::edgeRemoved() edge=" << edge.lock() << std::endl; }
-    void    edgeModified( stpo::Graph::WeakEdge edge ) override { std::cout << "EchoBehaviour::edgeModified() edge=" << edge.lock() << std::endl; }
+    void    nodeInserted( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeInserted() node=" << node.lock() << std::endl; }
+    void    nodeRemoved( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeRemoved() node=" << node.lock() << std::endl; }
+    void    nodeModified( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeModified() node=" << node.lock() << std::endl; }
+    void    edgeInserted( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeInserted() edge=" << edge.lock() << std::endl; }
+    void    edgeRemoved( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeRemoved() edge=" << edge.lock() << std::endl; }
+    void    edgeModified( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeModified() edge=" << edge.lock() << std::endl; }
 };
 
 int	main( int /*argc*/, char** /*argv*/ )
 {
     stpo::Graph sg;
 
-    auto echoBehaviour = new EchoBehaviour();
-    sg.addBehaviour( echoBehaviour );
+    auto echoBehaviour = std::make_unique< EchoBehaviour >( );
+    sg.addBehaviour( echoBehaviour.release() );
 
     std::cout << "Expecting nodeInserted() call" << std::endl;
     auto n1 = sg.createNode();
