@@ -358,10 +358,10 @@ public:
     GraphBehaviourMock() { }
     virtual ~GraphBehaviourMock() { std::cerr << "~GraphBehaviourMock()" << std::endl; }
 protected:
-    void    nodeInserted( Node& ) { mockNodeInserted(); }
-    void    nodeRemoved( Node& ) { mockNodeRemoved(); }
-    void    edgeInserted( Edge& ) { mockEdgeInserted(); }
-    void    edgeRemoved( Edge& ) { mockEdgeRemoved(); }
+    virtual void    nodeInserted( Node& ) override { std::cerr << "GraphBehaviourMock::nodeInserted()" << std::endl; mockNodeInserted(); }
+    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
+    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));

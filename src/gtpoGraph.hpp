@@ -358,19 +358,19 @@ auto    GenGraph< Config >::hasGroup( const WeakGroup& group ) const -> bool
 
 /* Behaviours Management *///--------------------------------------------------
 template < class Config >
-auto    GenGraph< Config >::notifyNodeModified( WeakNode node ) -> void
+auto    GenGraph< Config >::notifyNodeModified( WeakNode& node ) -> void
 {
     notifyBehaviours( &Behaviour::nodeModified, node );
 }
 
 template < class Config >
-auto    GenGraph< Config >::notifyEdgeModified( WeakEdge edge ) -> void
+auto    GenGraph< Config >::notifyEdgeModified( WeakEdge& edge ) -> void
 {
     notifyBehaviours( &Behaviour::edgeModified, edge );
 }
 
 template < class Config >
-auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakNode), WeakNode arg ) -> void
+auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakNode&), WeakNode& arg ) -> void
 {
     // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
     // For calling pointer on memg++ template template parameter template keywordber functions.
@@ -383,7 +383,7 @@ auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakNode
 }
 
 template < class Config >
-auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakEdge), WeakEdge arg ) -> void
+auto    GenGraph< Config >::notifyBehaviours( void (Behaviour::*method)(WeakEdge&), WeakEdge& arg ) -> void
 {
     // Note 20160314: See note for notifyBehaviours( Node )
     for ( auto& behaviour : _behaviours )

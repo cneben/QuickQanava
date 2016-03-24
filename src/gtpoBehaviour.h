@@ -55,9 +55,9 @@ public:
     NodeBehaviour& operator=( const NodeBehaviour& ) = default;
 
     //! Called immediatly after \c node has been inserted.
-    virtual auto nodeInserted( Node node ) -> void { (void)node; }
+    virtual auto nodeInserted( Node& node ) -> void { (void)node; }
     //! Called when \c node is about to be removed.
-    virtual auto nodeRemoved( Node node ) -> void { (void)node; }
+    virtual auto nodeRemoved( Node& node ) -> void { (void)node; }
     /*! \brief Called immedialty after \c node has been modified.
      *
      * Creating, inserting or removing a node does not generate a nodeModified() call.
@@ -65,7 +65,7 @@ public:
      * A call to nodeModified() usually follow a node property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    nodeModified( Node node ) -> void { (void)node; }
+    virtual auto    nodeModified( Node& node ) -> void { (void)node; }
 };
 
 /*! \brief Define an edge observer interface.
@@ -81,9 +81,9 @@ public:
     EdgeBehaviour& operator=( const EdgeBehaviour& ) = default;
 
     //! Called immediatly after \c edge has been inserted.
-    virtual auto    edgeInserted( Edge edge ) -> void { (void)edge; }
+    virtual auto    edgeInserted( Edge& edge ) -> void { (void)edge; }
     //! Called when \c edge is about to be removed.
-    virtual auto    edgeRemoved( Edge edge ) -> void { (void)edge; }
+    virtual auto    edgeRemoved( Edge& edge ) -> void { (void)edge; }
     /*! \brief Called immediatly after \c edge has been modified.
      *
      * Creating, inserting or removing an edge does not generate an edgeModified() call.
@@ -91,11 +91,13 @@ public:
      * A call to edgeModified() usually follow an edge property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    edgeModified( Edge edge ) -> void { (void)edge; }
+    virtual auto    edgeModified( Edge& edge ) -> void { (void)edge; }
 };
 
 
 /*! \brief Base class for concrete behaviours.
+ *
+ * \image html behaviour-class.png
  *
  */
 class Behaviour
@@ -161,7 +163,7 @@ public:
      * \li node or edge inserted or removed from group
      * \li group label changed
      */
-    virtual auto    groupModified( Group group ) -> void { (void)group; }
+    virtual auto    groupModified( Group& group ) -> void { (void)group; }
 };
 
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
@@ -177,9 +179,9 @@ public:
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
     //! Called immediatly after group \c group has been inserted in graph.
-    virtual auto    groupInserted( Group group ) -> void { (void)group; }
+    virtual auto    groupInserted( Group& group ) -> void { (void)group; }
     //! Called immediatly before group \c group has been removed from graph.
-    virtual auto    groupRemoved( Group group ) -> void { (void)group; }
+    virtual auto    groupRemoved( Group& group ) -> void { (void)group; }
 };
 
 } // ::gtpo

@@ -180,6 +180,7 @@ public:
     using Graph         = GenGraph<Config>;
     using WeakNode      = std::weak_ptr< typename Config::Node >;
     using SharedNode    = std::shared_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
 
     GenEdge() : Config::EdgeBase( ) { }
     explicit GenEdge( typename Config::EdgeBase* parent ) : Config::EdgeBase( parent ) { }
@@ -706,13 +707,13 @@ public:
         _behaviours.push_back( std::unique_ptr< Behaviour >( behaviour ) );
     }
 
-    auto    notifyNodeModified( WeakNode node ) -> void;
-    auto    notifyEdgeModified( WeakEdge edge ) -> void;
+    auto    notifyNodeModified( WeakNode& node ) -> void;
+    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
 private:
     std::vector< std::unique_ptr< Behaviour > >  _behaviours;
 private:
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakNode), WeakNode arg ) -> void;
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakEdge), WeakEdge arg ) -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)(WeakNode&), WeakNode& arg ) -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)(WeakEdge&), WeakEdge& arg ) -> void;
     //@}
     //-------------------------------------------------------------------------
 

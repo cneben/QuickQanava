@@ -1,4 +1,4 @@
-GTpo Developper Manuale  
+GTpo Developper Manual
 ============================
 
 + Reference documentation: http://www.delia-strategie.fr/doc/gtpo/index.html
@@ -44,6 +44,17 @@ Groups
 
 Behaviours
 -------------
+
+  Behaviour in GTpo are the preferred way to observe and validate topology change in graph and groups. Behaviour could be attached to either
+groups or graph with addBehaviour() methods.
+
++ Observation interface: all behaviour interface expose 'inserted', 'removed' and 'modified' pure virtual methods that could be used to
+ observe topological changes in graph and groups.
++ Validation interface: FIXME.
+
+![GTpo behaviour class diagram](https://github.com/cneben/GTpo/blob/master/doc/manual/behaviour-class.png)
+
+ See the 'behaviour' sample for a simple example behaviour that echo every topology changes in graph to std::cout.
 
 Persistence
 -------------
