@@ -53,8 +53,8 @@ int	main( int /*argc*/, char** /*argv*/ )
 {
     stpo::Graph sg;
 
-    auto echoBehaviour = new EchoBehaviour();
-    sg.addBehaviour( echoBehaviour );
+    auto echoBehaviour = std::make_unique< EchoBehaviour >( );
+    sg.addBehaviour( echoBehaviour.release() );
 
     std::cout << "Expecting nodeInserted() call" << std::endl;
     auto n1 = sg.createNode();

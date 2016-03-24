@@ -42,6 +42,7 @@ Memory management
   Memory in GTpo is managed exclusively with std::shared_ptr and std::weak_ptr, using definition in graph types are prefixed with either *Shared* or *Weak* according
 to the concrete container.
 
+  The user is reponsible for checking smart pointers returned by gtpo::GenGraph<> "factory methods", for example:
 ~~~~~~~~~~~~~{.cpp}
   stpo::Graph g;
   auto n = g.createNode();	// typeid(n) = stpo::Graph::WeakNode, ie std::weak_ptr<stpo::Graph::Configuration::Node>, ie std::weak_ptr<stpo::Node>
@@ -82,6 +83,14 @@ groups or graph with addBehaviour() methods.
  Behaviours could be disabled by calling gtpo::Behaviour::disable() method, it is usually preferrable to disable all behaviours before calling gtpo::GenGraph::clear() or
  gtpo::GenGroup::clear() methods or when you are serializing a graph in or out.
 
+ Method gtpo::Behaviorable::addBehaviour() is the only "sink" method in GTpo that is not protected using smart pointer, consider using the following code when registering 
+~~~~~~~~~~~~~{.cpp}
+new behaviours with gtpo::GenGraph::addBehaviour() or gtpo::GenGroup::addBehaviour():
+stpo::Graph sg;
+auto myBehaviour = std::make_unique< MyBehaviour >( );
+sg.addBehaviour( myBehaviour.release() );
+~~~~~~~~~~~~~
+ 
  See the 'behaviour' sample for a simple example behaviour that echo every topology changes in graph to std::cout.
 
 Persistence

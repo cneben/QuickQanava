@@ -35,7 +35,7 @@
 
 // STD headers
 #include <functional>       // std::function
-#include <fstream>          // std::ofstream
+#include <vector>
 
 // Qan.Topo headers
 // Nil
@@ -67,6 +67,7 @@ public:
      */
     virtual auto    nodeModified( Node& node ) -> void { (void)node; }
 };
+
 
 /*! \brief Define an edge observer interface.
  *
@@ -182,9 +183,77 @@ public:
     virtual auto    groupRemoved( Group& group ) -> void { (void)group; }
 };
 
+
+/*! \brief Base class for all type supporting behaviours (actually gtpo::GenGraph and gtpo::GenGroup).
+ *
+ * \nosubgrouping
+ */
+template < class Behaviour >
+class Behaviourable
+{
+    /*! \name Behaviorable Object Management *///------------------------------
+    //@{
+public:
+    Behaviourable() = default;
+    ~Behaviourable() { _behaviours.clear(); }
+    explicit Behaviourable( const Behaviourable& ) = default;
+    Behaviourable& operator=( const Behaviourable& ) = delete;
+
+public:
+    //! Clear all actually regsitered behaviours (they are automatically deleted).
+    inline  auto    clear( ) -> void { _behaviours.clear(); }
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Behaviours Management *///---------------------------------------
+    //@{
+public:
+    /*! \brief Add a behaviour to this graph (graph get ownership for behaviour).
+     *
+     * \note This is a sink method, Behaviourable get ownership for \c behaviour, since it is
+     * difficult to "downcast" unique_ptr, use the following code for calling:
+     * \code
+     *   stpo::Graph sg;
+     *   auto myBehaviour = std::make_unique< MyBehaviour >( );
+     *   sg.addBehaviour( myBehaviour.release() );
+     * \endcode
+     *
+     * \param behaviour Graph will get behaviour ownership.
+     */
+    auto    addBehaviour( Behaviour* behaviour ) -> void {
+        _behaviours.emplace_back( std::move( behaviour ) );
+    }
+
+    //! std::vector of std::unique_ptr pointers on Behaviour.
+    using Behaviours = std::vector< std::unique_ptr< Behaviour > >;
+
+public:
+    //! Return true if a behaviours is currently registered (ie getBehaviours().size()>0).
+    auto    hasBehaviours() const -> bool { return _behaviours.size() > 0; }
+
+    //! Return a read only container of actually registered behaviours.
+    auto    getBehaviours() const -> Behaviours& { return _behaviours; }
+
+protected:
+    /*! Apply a method pointer on all registered behaviours.
+     *
+     * Example use:
+     * \code
+     *    // For a given NodeBehaviour method: auto    notifyNodeModified( WeakNode& node ) -> void;
+     *    notifyBehaviours< WeakNode >( &Behaviour::nodeModified, node );
+     * \endcode
+     */
+    template < class T >
+    auto    notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void;
+
+private:
+    Behaviours  _behaviours;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
 } // ::gtpo
 
 #include "./gtpoBehaviour.hpp"
 
 #endif // gtpoBehaviour_h
-

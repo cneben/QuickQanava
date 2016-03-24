@@ -333,6 +333,9 @@ private:
 */
 template <class Config = DefaultConfig>
 class GenGroup : public Config::GroupBase,
+                 public gtpo::Behaviourable< gtpo::GroupBehaviour< std::weak_ptr< typename Config::Node >,
+                                                                   std::weak_ptr< typename Config::Edge >,
+                                                                   std::weak_ptr< typename Config::Group > > >,
                  public std::enable_shared_from_this<typename Config::Group>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
@@ -344,6 +347,7 @@ public:
     using WeakNode      = std::weak_ptr< typename Config::Node >;
     using SharedNode    = std::shared_ptr< typename Config::Node >;
     using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
     GenGroup() : Config::GroupBase( ) { }
@@ -382,8 +386,28 @@ public:
 
     //! Return true if group contains \c node.
     auto        hasNode( const WeakNode& node ) const -> bool;
+    //! Return group registered node count.
+    auto        getNodeCount( ) const -> int { return static_cast< int >( _nodes.size() ); }
 private:
     WeakNodes   _nodes;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Behaviours Management *///---------------------------------------
+    //@{
+public:
+    //! User friendly shortcut to this group concrete behaviour.
+    using Behaviour = GroupBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    //! User friendly shortcut type to this group concrete Behaviourable base type.
+    using Behaviourable = Behaviourable<Behaviour>;
+
+public:
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    auto    notifyNodeModified( WeakNode& node ) -> void;
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
+    //! Notify all behaviors that group \c group has been modified.
+    auto    notifyGroupModified( WeakGroup& group ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -400,7 +424,10 @@ private:
  *
  */
 template < class Config = DefaultConfig >
-class GenGraph : public Config::GraphBase
+class GenGraph : public Config::GraphBase,
+                 public gtpo::Behaviourable< gtpo::GraphBehaviour< std::weak_ptr< typename Config::Node >,
+                                                                   std::weak_ptr< typename Config::Edge >,
+                                                                   std::weak_ptr< typename Config::Group > > >
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
@@ -424,6 +451,11 @@ public:
     using SharedGroup   = std::shared_ptr< typename Config::Group >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
     using SharedGroups  = typename Config::template NodeContainer< SharedGroup >;
+
+    //! User friendly shortcut to this concrete graph behaviour.
+    using Behaviour = GraphBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    //! User friendly shortcut type to this concrete graph Behaviourable base type.
+    using Behaviourable = Behaviourable<Behaviour>;
 
 public:
     using Size  = typename SharedNodes::size_type;
@@ -665,7 +697,7 @@ public:
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    auto        insertGroup( SharedGroup group ) noexcept( false ) -> void;
+    auto        insertGroup( SharedGroup group ) noexcept( false ) -> WeakGroup;
 
     /*! \brief Remove node group \c group.
      *
@@ -694,33 +726,15 @@ private:
     //@}
     //-------------------------------------------------------------------------
 
-
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
-    using Behaviour = GraphBehaviour<WeakNode,WeakEdge,WeakGroup>;
-    /*! \brief Add a behaviour to this graph (graph get ownership for behaviour).
-     *
-     * \param behaviour Graph will get behaviour ownership.
-     */
-    auto    addBehaviour( Behaviour* behaviour ) -> void {
-        _behaviours.push_back( std::unique_ptr< Behaviour >( behaviour ) );
-    }
-
+    //! Notify all behaviors that node \c node has been modified.
     auto    notifyNodeModified( WeakNode& node ) -> void;
+    //! Notify all behaviors that node \c node has been modified.
     auto    notifyEdgeModified( WeakEdge& edge ) -> void;
-private:
-    std::vector< std::unique_ptr< Behaviour > >  _behaviours;
-private:
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakNode&), WeakNode& arg ) -> void;
-    auto    notifyBehaviours( void (Behaviour::*method)(WeakEdge&), WeakEdge& arg ) -> void;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Serialization Management *///------------------------------------
-    //@{
-public:
-    auto        serializeToGml( std::string fileName ) -> void;
+    //! Notify all behaviors that group \c group has been modified.
+    auto    notifyGroupModified( WeakGroup& group ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
