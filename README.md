@@ -18,6 +18,7 @@ GTpo is **highly** alpha.
 
 + Project homepage: http://www.qanava.org/
 + Reference documentation: http://www.delia-strategie.fr/doc/gtpo/index.html
++ Developper manual: https://github.com/cneben/GTpo/blob/master/doc/manual/manual.md
 
 ## Dependencies:
 * Protocol Buffer v3: https://developers.google.com/protocol-buffers/ and https://github.com/google/protobuf
