@@ -17,6 +17,7 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/gtpoProtoSerializer.h     \
             $$PWD/gtpoProtoSerializer.hpp   \
             $$PWD/gtpoNode.hpp              \
+            $$PWD/gtpoGroup.hpp             \
             $$PWD/GTpo.h                    \
             $$PWD/GTpoQt.h                  \
             $$PWD/GTpoStd.h

@@ -90,17 +90,17 @@ auto    GenGraph< Config >::insertNode( SharedNode node ) -> WeakNode
         Config::template insert< WeakNodesSearch >::into( _nodesSearch, weakNode );
         Config::template insert< WeakNodes >::into( _rootNodes, weakNode );
         notifyBehaviours( &Behaviour::nodeInserted, weakNode );
-    } catch (...) { gtpo::assert_throw( false, "GenGraph<>::insertNode(): Error: can't insert node in graph." ); }
+    } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::insertNode(): Error: can't insert node in graph." ); }
     return weakNode;
 }
 
 template < class Config >
 auto    GenGraph< Config >::removeNode( WeakNode weakNode ) -> void
 {
-    gtpo::assert_throw( !weakNode.expired(), "GenGraph<>::removeNode(): Error: node is expired." );
+    gtpo::assert_throw( !weakNode.expired(), "gtpo::GenGraph<>::removeNode(): Error: trying to remove an expired node." );
     SharedNode node = weakNode.lock();
     if ( !node )
-        gtpo::assert_throw( false, "GenGraph<>::removeNode(): Error: node is expired." );
+        gtpo::assert_throw( false, "gtpo::GenGraph<>::removeNode(): Error: node is expired." );
 
     notifyBehaviours( &Behaviour::nodeRemoved, weakNode );
 
@@ -301,6 +301,58 @@ auto    GenGraph< Config >::getEdgeCount( WeakNode source, WeakNode destination 
                                                             ++edgeCount;
                                                     } );
     return edgeCount;
+}
+//-----------------------------------------------------------------------------
+
+/* Graph Group Management *///-------------------------------------------------
+template < class Config >
+auto    GenGraph< Config >::createGroup( ) noexcept( false ) -> WeakGroup
+{
+    WeakGroup weakGroup;
+    try {
+        auto group = std::make_shared< typename Config::Group >();
+        weakNode = insertGroup( group );
+    } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::createGroup(): Error: can't insert group in graph." ); }
+    return weakGroup;
+}
+
+template < class Config >
+auto    GenGraph< Config >::insertGroup( SharedGroup group ) noexcept( false ) -> void
+{
+    assert_throw( group != nullptr && "gtpo::GenGraph<>::insertGroup(): Error: trying to insert a nullptr SharedGroup" );
+    try {
+        group->setGraph( this );
+        Config::template insert<SharedGroups>::into( _groups, group );
+
+        // FIXME
+        //notifyBehaviours( &Behaviour::groupInserted, edge );
+    } catch (...) { throw gtpo::bad_topology_error( "gtpo::GenGraph<>::insertGroup(): Insertion of group failed" ); }
+}
+
+template < class Config >
+auto    GenGraph< Config >::removeGroup( WeakGroup weakGroup ) noexcept( false ) -> void
+{
+    gtpo::assert_throw( !weakGroup.expired(), "gtpo::GenGraph<>::removeGroup(): Error: trying to remove an expired group." );
+    SharedGroup group = weakGroup.lock();
+    if ( !group )
+        gtpo::assert_throw( false, "GenGraph<>::removeGroup(): Error: trying to remove and expired group." );
+
+    // FIXME
+    //notifyBehaviours( &Behaviour::groupRemoved, weakGroup );
+
+    // Remove node from main graph containers (it will generate node destruction)
+    group->setGraph( nullptr );
+    Config::template remove<SharedGroups>::from( _groups, group );
+}
+
+template < class Config >
+auto    GenGraph< Config >::hasGroup( const WeakGroup& group ) const -> bool
+{
+    if ( group.expired() )
+        return false;
+    auto groupIter = std::find_if( _groups.begin(), _groups.end(),
+                                        [=](const WeakGroup& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
+    return groupIter != _groups.end();
 }
 //-----------------------------------------------------------------------------
 
