@@ -99,6 +99,15 @@ void    Graph::registerEdgeDelegate( QString edgeClass, QQmlComponent* edgeCompo
     _edgeClassComponents.insert( edgeClass, edgeComponent );
 }
 
+void    Graph::registerGroupDelegate( QString groupClass, QQmlComponent* groupComponent )
+{
+    if ( groupClass.isEmpty() || groupComponent == nullptr ) {
+        qDebug() << "qan::Graph::registerGroupDelegate(): Error: Trying to register a group delegate with empty class name or null delegate component";
+        return;
+    }
+    _groupClassComponents.insert( groupClass, groupComponent );
+}
+
 QQuickItem* Graph::createNodeItem( QString nodeClass )
 {
     if ( _nodeClassComponents.contains( nodeClass ) )
@@ -289,6 +298,43 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
         sharedDestination = WeakNode{ destination->shared_from_this() };
     } catch ( std::bad_weak_ptr e ) { return false; }
     return GTpoGraph::hasEdge( sharedSource, sharedDestination );
+}
+//-----------------------------------------------------------------------------
+
+/* Graph Group Management *///-------------------------------------------------
+qan::Group* Graph::insertGroup( QQmlComponent* groupComponent )
+{
+    if ( groupComponent == nullptr ) {
+        if ( _groupClassComponents.contains( "qan::Group" ) )
+            groupComponent = _groupClassComponents.value( "qan::Group", nullptr );
+    }
+    if ( groupComponent == nullptr ) {
+        qDebug() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
+        return nullptr;
+    }
+    qan::Group* group = static_cast< qan::Group* >( createFromDelegate( groupComponent ) );
+    if ( group != nullptr ) {
+        GTpoGraph::insertGroup( std::shared_ptr<qan::Group>{group} );
+    } else
+        qDebug() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
+
+    return group;
+}
+
+void    Graph::removeGroup( qan::Group* group )
+{
+    // FIXME
+}
+
+bool    Graph::hasGroup( qan::Group* group ) const
+{
+    if ( group == nullptr )
+        return false;
+    WeakGroup weakGroup;
+    try {
+        weakGroup = WeakGroup{ group->shared_from_this() };
+    } catch ( std::bad_weak_ptr ) { return false; }
+    return gtpo::GenGraph< QGraphConfig >::hasGroup( weakGroup );
 }
 //-----------------------------------------------------------------------------
 

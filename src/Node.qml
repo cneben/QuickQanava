@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the Qanava software. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	QanRectNode.qml
+// \file	Node.qml
 // \author	benoit@qanava.org
 // \date	2015 06 16
 //-----------------------------------------------------------------------------

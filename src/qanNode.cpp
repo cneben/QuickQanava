@@ -54,6 +54,11 @@ Node::~Node( )
             child->setParent( nullptr );
     }
 }
+
+qan::Graph* Node::getGraph()
+{
+    return qobject_cast< qan::Graph* >( gtpo::GenNode< QGraphConfig >::getGraph() );
+}
 //-----------------------------------------------------------------------------
 
 /* Content Management *///-----------------------------------------------------
@@ -124,6 +129,49 @@ void    Node::setBoundingShape( QVariantList boundingShape )
 bool    Node::isInsideBoundingShape( QPointF p )
 {
     return _boundingShape.containsPoint( p, Qt::OddEvenFill );
+}
+//-----------------------------------------------------------------------------
+
+/* Node Group Management *///--------------------------------------------------
+void    Node::dropNode( QQuickItem* target )
+{
+    // FIXME
+//    emitNodeModified( );    // dropNode() is called everytime the node has been dragged.
+    if ( target == nullptr )
+        return;
+
+    qan::Group* group = qobject_cast< qan::Group* >( target );
+    if ( group != nullptr && getGraph()->hasGroup( group ) )
+        group->insertNode( this );
+}
+
+void    Node::proposeNodeDrop( QQuickItem* target )
+{
+    qDebug() << "qan::Node::proposeNodeDrop(): target=" << target;
+    // FIXME
+    //    emitNodeModified( );    // proposeNodeDrop() is called everytime the node has been dragged.
+    if ( target == nullptr )
+        return;
+
+    qan::Group* group = qobject_cast< qan::Group* >( target );
+    if ( group != nullptr && getGraph()->hasGroup( group ) )
+        group->proposeNodeDrop( group->getContainer( ), this );
+}
+
+void    Node::ungroup( )
+{
+    if ( getGroup() != nullptr && getGraph()->hasGroup( getGroup() ) )
+        getGroup()->removeNode( this );
+    // FIXME
+    //    emitNodeModified( );
+}
+
+qan::Group* Node::getGroup( )
+{
+    WeakGroup weakGroup = gtpo::GenNode<QGraphConfig>::getGroup();
+    if ( weakGroup.expired() )
+        return nullptr;
+    return weakGroup.lock().get();
 }
 //-----------------------------------------------------------------------------
 

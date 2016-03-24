@@ -37,6 +37,8 @@ Qan.AbstractGraph {
     property Component  nodeDelegate: Qt.createComponent( "qrc:/QuickQanava/Node.qml" )
     //! Default delegate for qan::Edge and Qan.Edge edges.
     property Component  edgeDelegate: Qt.createComponent( "qrc:/QuickQanava/Edge.qml" )
+    //! Default delegate for qan::Group and Qan.Group groups.
+    property Component  groupDelegate: Qt.createComponent( "qrc:/QuickQanava/Group.qml" )
     //! Set to true to enable visual edge creation via a droppable connector control (default to true).
     property bool   enableConnectorDropNode: false
 
@@ -68,5 +70,6 @@ Qan.AbstractGraph {
     Component.onCompleted: {
         graph.registerNodeDelegate( "qan::Node", nodeDelegate )
         graph.registerEdgeDelegate( "qan::Edge", edgeDelegate )
+        graph.registerGroupDelegate( "qan::Group", groupDelegate )
     }
 }

@@ -37,6 +37,7 @@
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
+#include "./qanGroup.h"
 
 // QT headers
 #include <QQuickItem>
@@ -81,7 +82,7 @@ public:
     //@{
 public:
     //! Clear the currently regsitered delegates.
-    void                    clearDelegates( ) { _nodeClassComponents.clear(); _edgeClassComponents.clear(); }
+    void                    clearDelegates( ) { _nodeClassComponents.clear(); _edgeClassComponents.clear(); _groupClassComponents.clear(); }
 
     /*! \brief Register a QML component that should be used as a delegate for a class nodes referred as \c nodeClass.
      *
@@ -94,6 +95,12 @@ public:
      * Graph keep ownership for \c nodeComponent.
      */
     Q_INVOKABLE void        registerEdgeDelegate( QString edgeClass, QQmlComponent* edgeComponent );
+
+    /*! \brief Register a QML component that should be used as a delegate for a class of groups referred as \c groupClass.
+     *
+     * Graph keep ownership for \c groupComponent.
+     */
+    Q_INVOKABLE void        registerGroupDelegate( QString groupClass, QQmlComponent* groupComponent );
 
     /*! \brief Create a node item using the delegate component currently registered under \c nodeClass.
      *
@@ -116,6 +123,7 @@ protected:
 private:
     QMap< QString, QQmlComponent* > _nodeClassComponents;
     QMap< QString, QQmlComponent* > _edgeClassComponents;
+    QMap< QString, QQmlComponent* > _groupClassComponents;
     //@}
     //-------------------------------------------------------------------------
 
@@ -219,6 +227,20 @@ signals:
      *  \sa nodeDoubleClicked()
      */
     void            edgeDoubleClicked( QVariant edge, QVariant pos );
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Graph Group Management *///--------------------------------------
+    //@{
+public:
+    //! Shortcut to gtpo::GenGraph<>::insertGroup().
+    Q_INVOKABLE qan::Group* insertGroup( QQmlComponent* groupComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::removeGroup().
+    Q_INVOKABLE void        removeGroup( qan::Group* group );
+
+    //! Return true if \c group is registered in graph.
+    bool                    hasGroup( qan::Group* group ) const;
     //@}
     //-------------------------------------------------------------------------
 

@@ -16,7 +16,9 @@ HEADERS +=  ./QuickQanava.h         \
             ./qanConfig.h           \
             ./qanEdge.h             \
             ./qanNode.h             \
+            ./qanGroup.h            \
             ./qanGraph.h            \
+            ./qanLayout.h           \
             ./qanProgressNotifier.h \
             ./qanStyle.h            \
             ./qanStyleManager.h     \
@@ -26,7 +28,9 @@ HEADERS +=  ./QuickQanava.h         \
 
 SOURCES +=  ./qanEdge.cpp               \
             ./qanNode.cpp               \
+            ./qanGroup.cpp              \
             ./qanGraph.cpp              \
+            ./qanLayout.cpp             \
             ./qanProgressNotifier.cpp   \
             ./qanStyle.cpp              \
             ./qanStyleManager.cpp       \
@@ -39,6 +43,7 @@ OTHER_FILES +=  quickqanava.proto       \
                 Graph.qml               \
                 RectNodeTemplate.qml    \
                 CanvasNodeTemplate.qml  \
+                Group.qml               \
                 Node.qml                \
                 Edge.qml                \
                 StyleListView.qml       \

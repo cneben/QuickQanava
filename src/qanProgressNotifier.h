@@ -95,6 +95,7 @@ protected:
         qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
         qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
         emit progressChanged();
+        QThread::sleep( 1 );
         QCoreApplication::processEvents( );
     }
 

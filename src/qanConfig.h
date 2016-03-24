@@ -117,6 +117,7 @@ public:
 
 class Node;
 class Edge;
+class Group;
 
 template < typename Node, typename Edge >
 struct QanPropertiesConfig {
@@ -146,14 +147,9 @@ class QGraphConfig final : public QpsContainerConfig,
                            public QanPropertiesConfig<typename qan::Node, typename qan::Edge>
 {
 public:
-    using Node = qan::Node;
-    using Edge = qan::Edge;
-
-    /*template <class ...Args>
-    using NodeContainer = QVector< Args... >;
-
-    template <class ...Args>
-    using EdgeContainer = QVector< Args... >;*/
+    using Node  = qan::Node;
+    using Edge  = qan::Edge;
+    using Group = qan::Group;
 
     template <class ...Args>
     using NodeContainer = qps::ContainerListModel< QVector, Args... >;
@@ -168,13 +164,7 @@ public:
     using GraphBase = QQuickItem;
     using NodeBase = QQuickItem;
     using EdgeBase = QQuickPaintedItem;
-
-/*    template < typename N >
-    static inline double   getNodeX( const N& n ) { return static_cast< const QGraphConfig::Node&>( n ).getQX( ); }
-
-    template < typename N >
-    static inline void     setNodeX( N& n, double x ) { return static_cast< Node&>( n ).setQX( x ); }
-*/
+    using GroupBase = QQuickItem;
 };
 
 } // ::qan

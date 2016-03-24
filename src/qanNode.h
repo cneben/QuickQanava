@@ -40,6 +40,7 @@
 //! Main QuickQanava namespace
 namespace qan { // ::qan
 
+class Graph;
 class Group;
 
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
@@ -71,16 +72,20 @@ signals:
      * \sa qan::Graph::nodeModified()
      */
     void            modified( qan::Node* );
+    // ^^^^ FIXME 20160323 remove that, notification is made trough behaviours not direct signals.
 public:
     auto            getClassName() -> std::string { return getDynamicClassName(); }
     virtual auto    getDynamicClassName() -> std::string { return "qan::Node"; }
+public:
+    //! Shortcut to gtpo::GenNode<>::getGraph().
+    qan::Graph*     getGraph();
 
 public:
     // Qt property for gtpo::Node serializable standard property.
     Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
-    void             setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
+    void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
 signals:
-    void    serializableChanged();
+    void            serializableChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -231,6 +236,53 @@ protected:
      *  \sa setBoundShapeFrom()
      */
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Node Group Management *///---------------------------------------
+    //@{
+public:
+    /*! Must be called by the QML component modelling concrete node when a node is dropped on another quick item.
+     *
+     * For example, on a concrete node item configured that way:
+     * \code
+     * QanNode { //...
+     *     id: rectNode
+     *     Drag.active: nodeDragArea.drag.active
+     *     Drag.dragType: Drag.Internal
+     *     // ...
+     * \endcode
+     * The corresponding MouseArea that actually implement dragging must call dropNode with the following code:
+     * \code
+     * MouseArea { //...
+     * id: nodeDragArea
+     * drag.target: rectNode
+     * onReleased: { rectNode.dropNode( rectNode.Drag.target ); }
+     * }
+     * //...
+     * }
+     * \endcode
+     *
+     *  \param target item on which this node has been dropped on (could be nullptr...)
+     */
+    Q_INVOKABLE virtual void    dropNode( QQuickItem* target );
+
+    /*! Called from a concrete node QML component to inform that a node drop over a target currently occurs (similar to a dropMoveEvent()).
+     *
+     * \sa qan::Layout::proposeNodeDrop() and qan::Group::proposeNodeDrop() for a more detailled description.
+     */
+    Q_INVOKABLE virtual void    proposeNodeDrop( QQuickItem* target );
+
+    /*! Ungroup this node from its current group.
+     *
+     * Method can be called even if the node is not actually part of a group.
+     * \sa qan::Group::ungroup()
+     * \sa qan::Graph::insertNode()
+     */
+    Q_INVOKABLE virtual void    ungroup( );
+
+    //! Shortcut to gtpo::GenNode<>::getGroup().
+    qan::Group*                 getGroup( );
     //@}
     //-------------------------------------------------------------------------
 

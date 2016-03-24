@@ -45,6 +45,7 @@ struct QuickQanava {
     static void initialize() {
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");
+        qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");

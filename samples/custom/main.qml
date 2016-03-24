@@ -47,6 +47,8 @@ Qan.Navigable {
             n2.label = "Diamond"
 
             graph.insertEdge( edgeDelegate, n1, n2 )
+
+            var g = graph.insertGroup( )
         }
     }
 }

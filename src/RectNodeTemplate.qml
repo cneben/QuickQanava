@@ -96,16 +96,11 @@ Item {
             if ( mouse.accepted )
                 node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
         }
-        onReleased: {
-            // FIXME 20160211
-            //node.dropNode( node.Drag.target );
-
-        }
         // Quick Qanava node drag and drop to groups management
+        onReleased: { node.dropNode( node.Drag.target ); }
         onPositionChanged: {
-            // FIXME 20160211
-            //if ( node.Drag.target !== null )
-            //    node.proposeNodeDrop( node.Drag.target )
+            if ( node.Drag.target !== null )
+                node.proposeNodeDrop( node.Drag.target )
         }
         onClicked: {
             if ( mouse.button == Qt.LeftButton )
