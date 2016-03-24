@@ -34,6 +34,7 @@ Samples
 Data model
 ------------------
 
+![GTpo data model schema](https://github.com/cneben/GTpo/blob/master/doc/graph-datamodel.png)
 
 Topology
 ------------------
@@ -45,12 +46,12 @@ Groups
 Behaviours
 -------------
 
-  Behaviour in GTpo are the preferred way to observe and validate topology change in graph and groups. Behaviour could be attached to either
+  Behaviour in GTpo are the preferred way to observe and validate changes in graph and groups topology. Behaviours could be attached to either
 groups or graph with addBehaviour() methods.
 
-+ Observation interface: all behaviour interface expose 'inserted', 'removed' and 'modified' pure virtual methods that could be used to
++ **Observation interface**: all behaviour interface expose 'inserted', 'removed' and 'modified' pure virtual methods that could be used to
  observe topological changes in graph and groups.
-+ Validation interface: FIXME.
++ **Validation interface**: FIXME.
 
 ![GTpo behaviour class diagram](https://github.com/cneben/GTpo/blob/master/doc/manual/behaviour-class.png)
 
