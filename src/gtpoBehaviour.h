@@ -50,7 +50,7 @@ class NodeBehaviour
 {
 public:
     NodeBehaviour() = default;
-    ~NodeBehaviour() = default;
+    virtual ~NodeBehaviour() = default;
     explicit NodeBehaviour( const NodeBehaviour& ) = default;
     NodeBehaviour& operator=( const NodeBehaviour& ) = default;
 
@@ -76,7 +76,7 @@ class EdgeBehaviour
 {
 public:
     EdgeBehaviour() = default;
-    ~EdgeBehaviour() = default;
+    virtual ~EdgeBehaviour() = default;
     explicit EdgeBehaviour( const EdgeBehaviour& ) = default;
     EdgeBehaviour& operator=( const EdgeBehaviour& ) = default;
 
@@ -102,7 +102,10 @@ class Behaviour
 {
 public:
     Behaviour() = default;
-    ~Behaviour() = default;
+    virtual ~Behaviour() {
+        std::cerr << "gtpo::Behaviour::~Behaviour()" << std::endl;
+    }
+
     explicit Behaviour( const Behaviour& ) = default;
     Behaviour& operator=( const Behaviour& ) = delete;
 
@@ -141,12 +144,13 @@ protected:
  *
  */
 template < class Node, class Edge, class Group >
-class GroupBehaviour :  public NodeBehaviour< Node >,
+class GroupBehaviour :  public Behaviour,
+                        public NodeBehaviour< Node >,
                         public EdgeBehaviour< Edge >
 {
 public:
     GroupBehaviour() = default;
-    ~GroupBehaviour() = default;
+    virtual ~GroupBehaviour() = default;
     explicit GroupBehaviour( const GroupBehaviour& ) = default;
     GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
 
@@ -168,7 +172,7 @@ class GraphBehaviour :  public GroupBehaviour< Node, Edge, Group >
 {
 public:
     GraphBehaviour() = default;
-    ~GraphBehaviour() = default;
+    virtual ~GraphBehaviour() = default;
     explicit GraphBehaviour( const GraphBehaviour& ) = default;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 

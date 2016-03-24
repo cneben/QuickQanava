@@ -434,7 +434,7 @@ public:
     GenGraph( GenGraph const& ) = delete;
     GenGraph& operator=( GenGraph const& ) = delete;
 
-    /*! Clear the graph from all its content (nodes, edges, groups, behaviours, layouts).
+    /*! Clear the graph from all its content (nodes, edges, groups, behaviours).
      *
      * \note Graph behaviours are cleared after the topology, if you do not want to take into account topology
      * changes when clearing the graph, disable all behaviours before calling clear().

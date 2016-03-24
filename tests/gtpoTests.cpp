@@ -51,7 +51,6 @@ int main(int argc, char **argv) {
 // GTpo utils tests
 //-----------------------------------------------------------------------------
 
-//TEST_CASE( "Generic insert/remove working", "[utilsGenericInsertRemove]" )
 TEST(GTpoUtils, utilsGenericInsertRemove)
 {
     using IntList = std::list< std::shared_ptr<int> >;
@@ -222,43 +221,6 @@ TEST(GTpo, parallelTopology)
 }
 
 //-----------------------------------------------------------------------------
-// GTpo Behaviour test
-//-----------------------------------------------------------------------------
-
-template < class Node, class Edge >
-class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge >
-{
-public:
-    GraphBehaviourMock() { }
-protected:
-    void    nodeInserted( Node& ) { mockNodeInserted(); }
-    void    nodeRemoved( Node& ) { mockNodeRemoved(); }
-    void    edgeInserted( Edge& ) { mockEdgeInserted(); }
-    void    edgeRemoved( Edge& ) { mockEdgeRemoved(); }
-
-public:
-    MOCK_METHOD0(mockNodeInserted, void(void));
-    MOCK_METHOD0(mockNodeRemoved, void(void));
-    MOCK_METHOD0(mockEdgeInserted, void(void));
-    MOCK_METHOD0(mockEdgeRemoved, void(void));
-};
-
-using testing::AtLeast;
-
-TEST(GTpo, echoBehaviour)
-{
-/*    gtpo::GenGraph<> g;
-    using MockBehaviour = GraphBehaviourMock< gtpo::GenGraph<>::WeakNode,
-                                              gtpo::GenGraph<>::WeakEdge >;
-    auto mockBehaviour = new MockBehaviour();
-    g.addBehaviour( std::unique_ptr< MockBehaviour >( mockBehaviour ) );
-    EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));
-    //g.insertNode(sharedNode);
-    g.createNode();
-    g.clear();*/
-}
-
-//-----------------------------------------------------------------------------
 // GTpo serialization tests
 //-----------------------------------------------------------------------------
 
@@ -383,6 +345,45 @@ TEST(GTpo, progressNotifier)
         EXPECT_DOUBLE_EQ( progress.getProgress(), 0.75 );  // superProgress=0.375, progress2 local progress is 0.75, so
             // Global progress should be superProgress + progress2->progress / 2 = 0.375 + ( 0.75 / 2 ) = 0.75
     }
+}
+
+//-----------------------------------------------------------------------------
+// GTpo Behaviour test (using STpo)
+//-----------------------------------------------------------------------------
+
+template < class Node, class Edge, class Group >
+class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge, Group >
+{
+public:
+    GraphBehaviourMock() { }
+    virtual ~GraphBehaviourMock() { std::cerr << "~GraphBehaviourMock()" << std::endl; }
+protected:
+    void    nodeInserted( Node& ) { mockNodeInserted(); }
+    void    nodeRemoved( Node& ) { mockNodeRemoved(); }
+    void    edgeInserted( Edge& ) { mockEdgeInserted(); }
+    void    edgeRemoved( Edge& ) { mockEdgeRemoved(); }
+
+public:
+    MOCK_METHOD0(mockNodeInserted, void(void));
+    MOCK_METHOD0(mockNodeRemoved, void(void));
+    MOCK_METHOD0(mockEdgeInserted, void(void));
+    MOCK_METHOD0(mockEdgeRemoved, void(void));
+};
+
+using testing::AtLeast;
+
+TEST(GTpo, stpoEchoBehaviour)
+{
+    stpo::Graph g;
+    using MockBehaviour = GraphBehaviourMock< stpo::Graph::WeakNode,
+                                              stpo::Graph::WeakEdge,
+                                              stpo::Graph::WeakGroup >;
+    auto mockBehaviour = new MockBehaviour();
+    g.addBehaviour( mockBehaviour );
+    EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));
+
+    g.createNode();
+    g.clear();
 }
 
 //-----------------------------------------------------------------------------

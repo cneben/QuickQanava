@@ -44,6 +44,7 @@ namespace stpo {
 class Node;
 class Edge;
 class Graph;
+class Group;
 
 template < typename Node, typename Edge >
 struct PropertiesConfig {
@@ -79,6 +80,7 @@ class SConfig final :   public gtpo::BaseConfig,
 public:
     using Node = stpo::Node;
     using Edge = stpo::Edge;
+    using Group = stpo::Group;
 
     template <class...Ts>
     using NodeContainer = std::vector<Ts...>;
@@ -93,6 +95,11 @@ public:
 class Graph : public gtpo::GenGraph< SConfig >
 {
 
+};
+
+class Group : public gtpo::GenGroup< SConfig >
+{
+public:
 };
 
 class Edge : public gtpo::GenEdge< SConfig >
