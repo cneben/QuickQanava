@@ -40,7 +40,8 @@ auto GenGroup< Config >::insertNode( WeakNode weakNode ) -> void
     SharedNode node = weakNode.lock();
     gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::removeNode(): Error: trying to insert an expired node in group." );
     try {
-        WeakGroup weakGroup{ this->shared_from_this() };
+        SharedGroup group{ this->shared_from_this() };
+        WeakGroup weakGroup{ group };
         node->setGroup( weakGroup );
         Config::template insert<WeakNodes>::into( _nodes, node );
 

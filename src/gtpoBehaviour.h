@@ -186,7 +186,7 @@ public:
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
 // There is more complex O(N) solutions available on SO
 template< class F, class...Ts, std::size_t...Is >
-void for_each_in_tuple( const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ) {
+void for_each_in_tuple( std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ) {
     (void)tuple; // Avoid C4100 warning for size 1 std::tuple with MSVC2015
     (void)func;  // Avoid C4100 warning for size 1 std::tuple with MSVC2015
     using expander = int[];
@@ -194,7 +194,7 @@ void for_each_in_tuple( const std::tuple<Ts...> & tuple, F func, std::index_sequ
 }
 
 template< class F, class...Ts >
-void for_each_in_tuple( const std::tuple<Ts...>& tuple, F func ){
+void for_each_in_tuple( std::tuple<Ts...>& tuple, F func ) {
     for_each_in_tuple( tuple, func, std::make_index_sequence<sizeof...(Ts)>() );
 }
 
@@ -283,7 +283,7 @@ public:
      * \endcode
      */
     template < class Functor >
-    auto    sNotifyBehaviours(  Functor f ) -> void {
+    auto    sNotifyBehaviours( Functor f ) -> void {
         for_each_in_tuple( _sBehaviours, f );
     }
 
@@ -343,8 +343,8 @@ public:
 
 public:
     virtual auto    groupModified( Group& group ) -> void override { (void)group; }
-    virtual auto 	nodeInserted( Node& node ) -> void override;
-    virtual auto 	nodeRemoved( Node& node ) -> void override;
+    virtual auto    nodeInserted( Node& node ) -> void override;
+    virtual auto    nodeRemoved( Node& node ) -> void override;
     //-------------------------------------------------------------------------
 };
 

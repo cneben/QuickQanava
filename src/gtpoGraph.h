@@ -204,7 +204,9 @@ struct DefaultConfig :  public GraphConfig,
     using GraphBehaviours = std::tuple<>;
 
     //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
-    using GroupBehaviours = std::tuple< GroupEdgeSetBehaviour<Node, Edge, Group> >;
+    using GroupBehaviours = std::tuple< gtpo::GroupEdgeSetBehaviour< std::weak_ptr<Node>,
+                                                                     std::weak_ptr<Edge>,
+                                                                     std::weak_ptr<Group> > >;
 
     //! Define the container used to store nodes (default to std::vector).
     template <class...Ts>
@@ -402,6 +404,7 @@ public:
     using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
     using WeakEdge      = std::weak_ptr< typename Config::Edge >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
 
     GenGroup() : Config::GroupBase( ) { }
     explicit GenGroup( typename Config::GroupBase* parent ) : Config::GroupBase( parent ) { }
