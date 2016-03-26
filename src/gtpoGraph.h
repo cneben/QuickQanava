@@ -111,6 +111,9 @@ struct StdContainerAccessors : public ContainerAccessors {
     };
 };
 
+//! Empty interface for graph primitive properties accessors.
+struct IPropertiesAccessors { };
+
 /*! Default properties accessor interface for GTpo topology primitives (GenNode, GenEdge and GenGroup).
  *
  *  Properties are usually sets via the gtpo::GenGraph<> interface (for example gtpo::GenGraph::setNodeLabel() and so on...), using
@@ -119,7 +122,7 @@ struct StdContainerAccessors : public ContainerAccessors {
  *  or layouts).
  */
 template < typename Node, typename Edge, typename Group >
-struct PropertiesAccessors{
+struct PropertiesAccessors : public IPropertiesAccessors {
     static inline const std::string&    getNodeLabel( const Node*) { return _gtpoVoidString; }
     static inline void                  setNodeLabel( Node*, const std::string& ) { }
 

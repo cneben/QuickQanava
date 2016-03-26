@@ -196,12 +196,20 @@ void for_each_in_tuple( const std::tuple<Ts...>& tuple, F func ){
     for_each_in_tuple( tuple, func, std::make_index_sequence<sizeof...(Ts)>() );
 }
 
+//! Empty interface definition for graph primitives supporting behaviour concept.
+struct IBehaviorable {
+    IBehaviorable() = default;
+    ~IBehaviorable() = default;
+    explicit IBehaviorable( const IBehaviorable& ) = default;
+    IBehaviorable& operator=( const IBehaviorable& ) = delete;
+};
+
 /*! \brief Base class for all type supporting behaviours (actually gtpo::GenGraph and gtpo::GenGroup).
  *
  * \nosubgrouping
  */
 template < class Behaviour, class SBehaviours >
-class Behaviourable
+class Behaviourable : public IBehaviorable
 {
     /*! \name Behaviorable Object Management *///------------------------------
     //@{
