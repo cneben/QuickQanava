@@ -73,7 +73,7 @@ struct PropertiesConfig {
 
 
 class SConfig final :   public gtpo::BaseConfig,
-                        public gtpo::StdContainerConfig,
+                        public gtpo::StdContainerAccessors,
                         public stpo::PropertiesConfig<stpo::Node,
                                                       stpo::Edge>
 {

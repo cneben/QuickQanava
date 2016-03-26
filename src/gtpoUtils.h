@@ -84,7 +84,7 @@ auto    compare_weak_ptr( const std::weak_ptr<T>& left, const std::weak_ptr<T>& 
  * gtpo::StdContainerConfig (DefaultConfig inherits STDContainerConfig to provide
  * default implementations for accessors working with most STL containers.
  */
-struct ContainerConfig {
+struct ContainerAccessors {
     /*! Generic "item inserter" for list/set/vector, specialize for your custom container types.
      */
     template <typename T>

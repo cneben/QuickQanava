@@ -67,7 +67,7 @@ using Owned = std::shared_ptr< T >;
 /*! Configuration interface for accessing standard library (STL) containers.
  *
  */
-struct StdContainerConfig : public ContainerConfig {
+struct StdContainerAccessors : public ContainerAccessors {
     template <typename T>
     struct insert { };
 
@@ -111,58 +111,107 @@ struct StdContainerConfig : public ContainerConfig {
     };
 };
 
-/*! Default empty "no-action" accessors for GTpo primitives base classes (GenNode and GenEdge).
+/*! Default properties accessor interface for GTpo topology primitives (GenNode, GenEdge and GenGroup).
  *
+ *  Properties are usually sets via the gtpo::GenGraph<> interface (for example gtpo::GenGraph::setNodeLabel() and so on...), using
+ *  a specialized PropertiesConfig interface accessors directly does not enforce graph behaviours update (advanced users could use direct
+ *  properties access in very specific scenarios where maximum performance is necessary and where change notification does not matters, ie serialization
+ *  or layouts).
  */
-template < typename Node, typename Edge >
-struct PropertiesConfig {
-    using SharedNode = std::shared_ptr< Node >;
-    using SharedEdge = std::shared_ptr< Edge >;
+template < typename Node, typename Edge, typename Group >
+struct PropertiesAccessors{
+    static inline const std::string&    getNodeLabel( const Node* /*n*/ ) { return std::string( "" ); }
+    static inline void                  setNodeLabel( Node* /*n*/, const std::string& ) { }
 
-    static inline std::string   getNodeLabel( const SharedNode& /*n*/ ) { return std::string( "" ); }
-    static inline void          setNodeLabel( SharedNode& /*n*/, const std::string& ) { }
+    static inline double        getNodeX( const Node* ) { return 0.; }
+    static inline void          setNodeX( Node*, double ) { }
 
-    static inline double        getNodeX( const SharedNode& /*n*/ ) { return 0.; }
-    static inline void          setNodeX( SharedNode& /*n*/, double /*x*/ ) { }
+    static inline double        getNodeY( const Node* ) { return 0.; }
+    static inline void          setNodeY( Node*, double ) { }
 
-    static inline double        getNodeY( const SharedNode& /*n*/ ) { return 0.; }
-    static inline void          setNodeY( SharedNode& /*n*/, double /*y*/ ) { }
+    static inline double        getNodeWidth( const Node* ) { return 0.; }
+    static inline void          setNodeWidth( Node*, double ) { }
 
-    static inline double        getNodeWidth( const SharedNode& /*n*/ ) { return 0.; }
-    static inline void          setNodeWidth( SharedNode& /*n*/, double /*w*/ ) { }
+    static inline double        getNodeHeight( const Node* ) { return 0.; }
+    static inline void          setNodeHeight( Node*, double ) { }
 
-    static inline double        getNodeHeight( const SharedNode& /*n*/ ) { return 0.; }
-    static inline void          setNodeHeight( SharedNode& /*n*/, double /*h*/ ) { }
+    static inline double        getEdgeWeight( const Edge* ) { return 0.; }
+    static inline void          setEdgeWeight( Edge*, double ) { }
 
-    static inline double        getEdgeWeight( const SharedEdge& /*e*/ ) { return 0.; }
-    static inline void          setEdgeWeight( SharedEdge& /*e*/, double /*w*/ ) { }
+    static inline const std::string&    setGroupLabel( const Group* ) { return _gtpoVoidString; }
+    static inline void                  setGroupLabel( Group*, const std::string& ) { }
+
+    static std::string _gtpoVoidString;
 };
 
-/*! Default configuration for GTpo primitives base classes.
+template < typename Node, typename Edge, typename Group >
+std::string PropertiesAccessors<Node, Edge, Group>::_gtpoVoidString = std::string("");
+
+
+/*! Default configuration for GTpo primitive, containers and behaviours.
  *
  */
-struct BaseConfig {
-    using GraphBase = Empty;
-    using NodeBase = Empty;
-    using EdgeBase = Empty;
-    using GroupBase = Empty;
-};
-
-struct DefaultConfig :  public BaseConfig,
-                        public StdContainerConfig,
-                        public PropertiesConfig<GenNode<DefaultConfig>,
-                                                GenEdge<DefaultConfig>>
+struct GraphConfig
 {
-    using Node = GenNode<DefaultConfig>;
-    using Edge = GenEdge<DefaultConfig>;
-    using Group = GenGroup<DefaultConfig>;
+    //! Define gtpo::GenGraph base class.
+    using GraphBase = Empty;
+    //! Define gtpo::GenNode base class.
+    using NodeBase = Empty;
+    //! Define gtpo::GenEdge base class.
+    using EdgeBase = Empty;
+    //! Define gtpo::GenGroup base class.
+    using GroupBase = Empty;
 
+    //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
+    using GraphBehaviours = std::tuple<>;
+
+    //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
+    using GroupBehaviours = std::tuple<>;
+
+    //! Define the container used to store nodes (default to std::vector).
     template <class...Ts>
     using NodeContainer = std::vector<Ts...>;
 
+    //! Define the container used to store edges (default to std::vector).
     template <class...Ts>
     using EdgeContainer = std::vector<Ts...>;
 
+    //! Define the unordered container used to search for edges and nodes (default to std::unordered_set).
+    template <class T>
+    using SearchContainer = std::unordered_set<T>;
+};
+
+/*! Default configuration for GTpo primitive, containers and behaviours.
+ *
+ */
+struct DefaultConfig :  public GraphConfig,
+                        public StdContainerAccessors,
+                        public PropertiesAccessors< GenNode<DefaultConfig>,
+                                                    GenEdge<DefaultConfig>,
+                                                    GenGroup<DefaultConfig> >
+{
+    //! Concrete final node primitive type.
+    using Node = GenNode<DefaultConfig>;
+    //! Concrete final edge primitive type.
+    using Edge = GenEdge<DefaultConfig>;
+    //! Concrete final group primitive type.
+    using Group = GenGroup<DefaultConfig>;
+
+    //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
+    using GraphBehaviours = std::tuple<>;
+
+    //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
+    using GroupBehaviours = std::tuple<>;
+
+    //! Define the container used to store nodes (default to std::vector).
+    template <class...Ts>
+    using NodeContainer = std::vector<Ts...>;
+
+    //! Define the container used to store edges (default to std::vector).
+    template <class...Ts>
+    using EdgeContainer = std::vector<Ts...>;
+
+    //! Define the unordered container used to search for edges and nodes (default to std::unordered_set).
     template <class T>
     using SearchContainer = std::unordered_set<T>;
 };
@@ -335,7 +384,8 @@ template <class Config = DefaultConfig>
 class GenGroup : public Config::GroupBase,
                  public gtpo::Behaviourable< gtpo::GroupBehaviour< std::weak_ptr< typename Config::Node >,
                                                                    std::weak_ptr< typename Config::Edge >,
-                                                                   std::weak_ptr< typename Config::Group > > >,
+                                                                   std::weak_ptr< typename Config::Group > >,
+                                             typename Config::GroupBehaviours >,
                  public std::enable_shared_from_this<typename Config::Group>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
@@ -399,7 +449,7 @@ public:
     //! User friendly shortcut to this group concrete behaviour.
     using Behaviour = GroupBehaviour<WeakNode,WeakEdge,WeakGroup>;
     //! User friendly shortcut type to this group concrete Behaviourable base type.
-    using Behaviourable = Behaviourable<Behaviour>;
+    using Behaviourable = Behaviourable<Behaviour, typename Config::GraphBehaviours>;
 
 public:
     //! Notify all behaviors that node \c node inside this group has been modified.
@@ -427,7 +477,8 @@ template < class Config = DefaultConfig >
 class GenGraph : public Config::GraphBase,
                  public gtpo::Behaviourable< gtpo::GraphBehaviour< std::weak_ptr< typename Config::Node >,
                                                                    std::weak_ptr< typename Config::Edge >,
-                                                                   std::weak_ptr< typename Config::Group > > >
+                                                                   std::weak_ptr< typename Config::Group > >,
+                                             typename Config::GraphBehaviours >
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
@@ -455,7 +506,7 @@ public:
     //! User friendly shortcut to this concrete graph behaviour.
     using Behaviour = GraphBehaviour<WeakNode,WeakEdge,WeakGroup>;
     //! User friendly shortcut type to this concrete graph Behaviourable base type.
-    using Behaviourable = Behaviourable<Behaviour>;
+    using Behaviourable = Behaviourable<Behaviour, typename Config::GraphBehaviours >;
 
 public:
     using Size  = typename SharedNodes::size_type;
@@ -735,6 +786,67 @@ public:
     auto    notifyEdgeModified( WeakEdge& edge ) -> void;
     //! Notify all behaviors that group \c group has been modified.
     auto    notifyGroupModified( WeakGroup& group ) -> void;
+
+    // Experimental static behaviour support (C++14 only)
+public:
+    //auto    sNotify( ) -> void;
+    //template < typename T, typename NotifyFunct >
+    //auto    sNotifyBehaviours( T, NotifyFunct f) -> void;
+    //std::tuple<Args...>    _sBehaviours;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Properties Management *///---------------------------------------
+    //@{
+public:
+    inline std::string   getNodeLabel( const SharedNode& n ) const {
+        return Config::getNodeLabel( n );
+    }
+    inline void          setNodeLabel( SharedNode& n, const std::string& l ) {
+        Config::setNodeLabel( n, l );
+    }
+
+    inline double        getNodeX( const SharedNode& n ) const {
+        return Config::getNodeX( n );
+    }
+    inline void          setNodeX( SharedNode& n, double x ) const {
+        Config::setNodeX( n, x );
+    }
+
+    inline double        getNodeY( const SharedNode& n ) const {
+        return Config::getNodeX( n );
+    }
+    inline void          setNodeY( SharedNode& n, double y ) {
+        Config::setNodeY( n, y );
+    }
+
+    inline double        getNodeWidth( const SharedNode& n ) const {
+        return Config::getNodeWidth( n );
+    }
+    inline void          setNodeWidth( SharedNode& n, double w ) {
+        Config::setNodeWidth( n, w );
+    }
+
+    inline double        getNodeHeight( const SharedNode& n ) const {
+        return Config::getNodeHeight( n );
+    }
+    inline void          setNodeHeight( SharedNode& n, double h ) {
+        Config::setNodeHeight( n, h );
+    }
+
+    inline double        getEdgeWeight( const SharedEdge& e ) const {
+        return Config::getEdgeWeight( e );
+    }
+    inline void          setEdgeWeight( SharedEdge& e, double w ) {
+        Config::setEdgeWeight( e, w );
+    }
+
+    inline std::string   setGroupLabel( const SharedGroup& g ) const {
+        return Config::getGroupLabel( g );
+    }
+    inline void          setGroupLabel( SharedGroup& g, const std::string& l ) {
+        Config::setGroupLabel( g, l );
+    }
     //@}
     //-------------------------------------------------------------------------
 };

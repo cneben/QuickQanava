@@ -89,10 +89,10 @@ public:
         for ( auto weakNode: nodes ) {
             typename Graph::SharedNode node = weakNode.lock();
             if ( node ) {
-                Graph::Configuration::setNodeX( node, xDist( gen ) );
-                Graph::Configuration::setNodeY( node, yDist( gen ) );
-                Graph::Configuration::setNodeWidth( node, widthDist( gen ) );
-                Graph::Configuration::setNodeHeight( node, heightDist( gen ) );
+                Graph::Configuration::setNodeX( node.get(), xDist( gen ) );
+                Graph::Configuration::setNodeY( node.get(), yDist( gen ) );
+                Graph::Configuration::setNodeWidth( node.get(), widthDist( gen ) );
+                Graph::Configuration::setNodeHeight( node.get(), heightDist( gen ) );
             }
         }
     }

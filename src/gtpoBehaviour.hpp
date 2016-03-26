@@ -32,9 +32,9 @@
 
 namespace gtpo { // ::gtpo
 
-template < class Behaviour >
+template < class Behaviour, class SBehaviours  >
 template < class T >
-auto    Behaviourable< Behaviour >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
 {
     // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
     // For calling pointer on memg++ template template parameter template keywordber functions.

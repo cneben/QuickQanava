@@ -112,7 +112,7 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
                 if ( srcNodeId != -1 && dstNodeId != -1 ) {
                     pbEdge.set_src_node_id(srcNodeId);
                     pbEdge.set_dst_node_id(dstNodeId);
-                    pbEdge.set_weight( GraphConfig::getEdgeWeight( sharedEdge ) );
+                    pbEdge.set_weight( GraphConfig::getEdgeWeight( sharedEdge.get() ) );
                     anyEdges->PackFrom( pbEdge );
                     return true;
                 }
@@ -139,7 +139,7 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
                                 SharedEdge edge = weakEdge.lock();
                                 if ( edge ) {
                                     idObjectMap.insert( std::make_pair( pbEdge.edge_id(), edge.get() ) );
-                                    GraphConfig::setEdgeWeight( edge, pbEdge.weight() );
+                                    GraphConfig::setEdgeWeight( edge.get(), pbEdge.weight() );
                                 }
                                 return edge.get();  // FIXME 20160213: return shared edge
                             }
@@ -237,11 +237,11 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& we
     SharedNode node = weakNode.lock();
     if ( !node )
         return;
-    pbNode.set_label( GraphConfig::getNodeLabel( node ) );
-    pbNode.set_x( GraphConfig::getNodeX( node ) );
-    pbNode.set_y( GraphConfig::getNodeY( node ) );
-    pbNode.set_width( GraphConfig::getNodeWidth( node ) );
-    pbNode.set_height( GraphConfig::getNodeHeight( node ) );
+    pbNode.set_label( GraphConfig::getNodeLabel( node.get() ) );
+    pbNode.set_x( GraphConfig::getNodeX( node.get() ) );
+    pbNode.set_y( GraphConfig::getNodeY( node.get() ) );
+    pbNode.set_width( GraphConfig::getNodeWidth( node.get() ) );
+    pbNode.set_height( GraphConfig::getNodeHeight( node.get() ) );
     try {
         pbNode.set_node_id( objectIdMap.at( node.get() ) );
     } catch( ... ) { pbNode.set_node_id( -1 ); }
@@ -359,11 +359,11 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeIn( const gtpo::pb::GTp
     SharedNode node = weakNode.lock();
     if ( node ) {    // Feed the newly created node with PB node data
         idObjectMap.insert( std::make_pair( pbNode.node_id(), node.get() ) );
-        GraphConfig::setNodeLabel( node, pbNode.label() );
-        GraphConfig::setNodeX( node, pbNode.x() );
-        GraphConfig::setNodeY( node, pbNode.y() );
-        GraphConfig::setNodeWidth( node, pbNode.width() );
-        GraphConfig::setNodeHeight( node, pbNode.height() );
+        GraphConfig::setNodeLabel( node.get(), pbNode.label() );
+        GraphConfig::setNodeX( node.get(), pbNode.x() );
+        GraphConfig::setNodeY( node.get(), pbNode.y() );
+        GraphConfig::setNodeWidth( node.get(), pbNode.width() );
+        GraphConfig::setNodeHeight( node.get(), pbNode.height() );
     }
 }
 
