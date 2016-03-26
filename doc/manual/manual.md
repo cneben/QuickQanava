@@ -64,6 +64,14 @@ to the concrete container.
 Topology
 ------------------
 
+
+Group topology
+
+When a gtpo::GroupEdgeSetBehaviour is registered in graph (ie added in gtpo::GraphConfig::GroupBehaviours std::tuple), edges and adjacent edges of a group could be searched 
+with gtpo::GenGroup<>::getEdges() and gtpo::GenGroup<>::getAdjacentEdges():
+
+![GTpo group adjacent edges](https://github.com/cneben/GTpo/blob/master/doc/group-adjacent-edges.png)
+
 Groups
 ------------------
 
@@ -76,17 +84,16 @@ There is two way to access graph primitives properties in GTpo:
 + Define efficient accessors in your own code and access it directly when no notification reporting is necessary or to access user defined properties uninteresting for the framework.
 
 | Primitive       | Name         |   Type         |   Accessors                                            |   Description       |
-| ---             | :---:        | :---:          | :---:                                                  | :---:               |
 | gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
 | gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
 | gtpo::GenNode   | x            | double         | GenGraph::setNodeX(), GenGraph::getNodeX()             |                     |
 | gtpo::GenNode   | y            | double         | GenGraph::setNodeY(), GenGraph::getNodeY()             |                     |
 | gtpo::GenNode   | width        | double         | GenGraph::setNodeWidth(), GenGraph::getNodeWidth()     |                     |
 | gtpo::GenNode   | height       | double         | GenGraph::setNodeHeight(), GenGraph::getNodeHeight()   |                     |
-| ---             | :---:        | :---:          | :---:                                                  | :---:               |
+|                 |              |                |                                                        |                     |
 | gtpo::GenEdge   | label        | std::string    | GenGraph::setEdgeLabel(), GenGraph::getEdgeLabel()     |                     |
 | gtpo::GenEdge   | weight       | double         | GenGraph::setEdgeWeight(), GenGraph::getEdgeWeight()   |                     |
-| ---             | :---:        | :---:          | :---:                                                  | :---:               |
+|                 |              |                |                                                        |                     |
 | gtpo::GenGroup  | label        | std::string    | GenGraph::setGroupLabel(), GenGraph::getGroupLabel()   |                     |
 | gtpo::GenGroup  | x            | double         | GenGraph::setGroupX(), GenGraph::getGroupX()           |                     |
 | gtpo::GenGroup  | y            | double         | GenGraph::setGroupY(), GenGraph::getGroupY()           |                     |

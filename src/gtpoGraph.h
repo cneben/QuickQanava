@@ -398,13 +398,17 @@ class GenGroup : public Config::GroupBase,
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
-    using Graph         = GenGraph<Config>;
-    using WeakNode      = std::weak_ptr< typename Config::Node >;
-    using SharedNode    = std::shared_ptr< typename Config::Node >;
-    using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
-    using WeakGroup     = std::weak_ptr< typename Config::Group >;
-    using SharedGroup   = std::shared_ptr< typename Config::Group >;
+    using Graph             = GenGraph<Config>;
+
+    using WeakNode          = std::weak_ptr< typename Config::Node >;
+    using SharedNode        = std::shared_ptr< typename Config::Node >;
+    using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
+
+    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+
+    using WeakGroup         = std::weak_ptr< typename Config::Group >;
+    using SharedGroup       = std::shared_ptr< typename Config::Group >;
 
     GenGroup() : Config::GroupBase( ) { }
     explicit GenGroup( typename Config::GroupBase* parent ) : Config::GroupBase( parent ) { }
@@ -446,6 +450,21 @@ public:
     auto        getNodeCount( ) const -> int { return static_cast< int >( _nodes.size() ); }
 private:
     WeakNodes   _nodes;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Adjacent Edges *///----------------------------------------------
+    //@{
+public:
+    auto    getEdges() -> WeakEdgesSearch& { return _edges; }
+    auto    getEdges() const -> const WeakEdgesSearch& { return _edges; }
+
+    auto    getAdjacentEdges() -> WeakEdgesSearch& { return _adjacentEdges; }
+    auto    getAdjacentEdges() const -> const WeakEdgesSearch& { return _adjacentEdges; }
+
+protected:
+    WeakEdgesSearch _edges;
+    WeakEdgesSearch _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 

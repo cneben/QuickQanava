@@ -129,14 +129,14 @@ template < class Node, class Edge, class Group >
 auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeInserted( Node& node ) -> void
 {
     (void)node;
-    std::cerr << "GroupEdgeSetBEhaviour::nodeInserted()..." << std::endl;
+    std::cerr << "GroupEdgeSetBehaviour::nodeInserted()..." << std::endl;
 }
 
 template < class Node, class Edge, class Group >
 auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeRemoved( Node& node ) -> void
 {
     (void)node;
-    std::cerr << "GroupEdgeSetBEhaviour::nodeRemoved()..." << std::endl;
+    std::cerr << "GroupEdgeSetBehaviour::nodeRemoved()..." << std::endl;
 }
 //-----------------------------------------------------------------------------
 
