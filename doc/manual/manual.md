@@ -84,6 +84,7 @@ There is two way to access graph primitives properties in GTpo:
 + Define efficient accessors in your own code and access it directly when no notification reporting is necessary or to access user defined properties uninteresting for the framework.
 
 | Primitive       | Name         |   Type         |   Accessors                                            |   Description       |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
 | gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
 | gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
 | gtpo::GenNode   | x            | double         | GenGraph::setNodeX(), GenGraph::getNodeX()             |                     |
