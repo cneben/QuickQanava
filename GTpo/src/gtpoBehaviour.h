@@ -183,12 +183,24 @@ public:
     virtual auto    groupRemoved( Group& group ) -> void { (void)group; }
 };
 
+// C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
+// There is more complex O(N) solutions available on SO
+template< class F, class...Ts, std::size_t...Is >
+void for_each_in_tuple( const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ){
+    using expander = int[];
+    (void)expander { 0, ((void)func(std::get<Is>(tuple)), 0)... };
+}
+
+template< class F, class...Ts >
+void for_each_in_tuple( const std::tuple<Ts...>& tuple, F func ){
+    for_each_in_tuple( tuple, func, std::make_index_sequence<sizeof...(Ts)>() );
+}
 
 /*! \brief Base class for all type supporting behaviours (actually gtpo::GenGraph and gtpo::GenGroup).
  *
  * \nosubgrouping
  */
-template < class Behaviour >
+template < class Behaviour, class SBehaviours >
 class Behaviourable
 {
     /*! \name Behaviorable Object Management *///------------------------------
@@ -205,7 +217,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Behaviours Management *///---------------------------------------
+    /*! \name Virtual Behaviours Management *///-------------------------------
     //@{
 public:
     /*! \brief Add a behaviour to this graph (graph get ownership for behaviour).
@@ -248,6 +260,25 @@ protected:
 
 private:
     Behaviours  _behaviours;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Static Behaviours Management *///--------------------------------
+    //@{
+public:
+    /*! Apply a functor on all registered static behaviours.
+     *
+     * Example use:
+     * \code
+     * \endcode
+     */
+    template < class Functor >
+    auto    sNotifyBehaviours(  Functor f ) -> void {
+        for_each_in_tuple( _sBehaviours, f );
+    }
+
+private:
+    SBehaviours  _sBehaviours;
     //@}
     //-------------------------------------------------------------------------
 };

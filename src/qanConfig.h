@@ -47,7 +47,9 @@
 // QuickProperties headers
 #include "../QuickProperties/src/qpsContainerListModel.h"
 
-struct QpsContainerConfig : public gtpo::ContainerConfig
+namespace qan { // ::qan
+
+struct ContainerAccessors : public gtpo::ContainerAccessors
 {
     template < typename C >
     struct insert { };
@@ -101,8 +103,6 @@ struct QpsContainerConfig : public gtpo::ContainerConfig
     };
 };
 
-namespace qan { // ::qan
-
 /*! \brief Exception thrown by QuickQanava to notify runtime error (nullptr assert, etc.).
  *
  * Use what() to have a detailled error description.
@@ -119,34 +119,45 @@ class Node;
 class Edge;
 class Group;
 
-template < typename Node, typename Edge >
-struct QanPropertiesConfig {
-    using WeakNode = std::shared_ptr< Node >;
-    using SharedEdge = std::shared_ptr< Edge >;
+template < typename Node, typename Edge, typename Group >
+struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group > {
 
-    static inline std::string   getNodeLabel( const WeakNode& n ) { return n->getLabel().toStdString(); }
-    static inline void          setNodeLabel( WeakNode& n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
+    static inline std::string   getNodeLabel( const Node* n ) { return n->getLabel().toStdString(); }
+    static inline void          setNodeLabel( Node* n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
 
-    static inline double   getNodeX( const WeakNode& n ) { return n->x(); }
-    static inline void     setNodeX( WeakNode& n, double x ) { n->setX( x ); }
+    static inline double   getNodeX( const Node* n ) { return n->x(); }
+    static inline void     setNodeX( Node* n, double x ) { n->setX( x ); }
 
-    static inline double   getNodeY( const WeakNode& n ) { return n->y();; }
-    static inline void     setNodeY( WeakNode& n, double y ) { n->setY( y ); }
+    static inline double   getNodeY( const Node* n ) { return n->y();; }
+    static inline void     setNodeY( Node* n, double y ) { n->setY( y ); }
 
-    static inline double   getNodeWidth( const WeakNode& n ) { return n->width();; }
-    static inline void     setNodeWidth( WeakNode& n, double w ) { n->setWidth( w ); }
+    static inline double   getNodeWidth( const Node* n ) { return n->width();; }
+    static inline void     setNodeWidth( Node* n, double w ) { n->setWidth( w ); }
 
-    static inline double   getNodeHeight( const WeakNode& n ) { return n->height(); }
-    static inline void     setNodeHeight( WeakNode& n, double h ) { n->setHeight( h ); }
+    static inline double   getNodeHeight( const Node* n ) { return n->height(); }
+    static inline void     setNodeHeight( Node* n, double h ) { n->setHeight( h ); }
 
-    static inline double   getEdgeWeight( const SharedEdge& e ) { Q_UNUSED( e ); return 0.; }
-    static inline void     setEdgeWeight( SharedEdge& e, double w ) { Q_UNUSED( e ); Q_UNUSED( w ); }
+    static inline double   getEdgeWeight( const Edge* e ) { Q_UNUSED( e ); return 0.; }
+    static inline void     setEdgeWeight( Edge* e, double w ) { Q_UNUSED( e ); Q_UNUSED( w ); }
+
+    static inline std::string   getGroupLabel( const Group* n ) { return n->getLabel().toStdString(); }
+    static inline void          setGroupLabel( Node* n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
 };
 
-class QGraphConfig final : public QpsContainerConfig,
-                           public QanPropertiesConfig<typename qan::Node, typename qan::Edge>
+class Config final : public gtpo::GraphConfig,
+                     public qan::ContainerAccessors,
+                     public qan::PropertiesAccessors<typename qan::Node, typename qan::Edge, typename qan::Group >
 {
 public:
+    // Base config
+    using GraphBase = QQuickItem;
+    using NodeBase = QQuickItem;
+    using EdgeBase = QQuickPaintedItem;
+    using GroupBase = QQuickItem;
+
+    using GraphBehaviours = std::tuple<>;
+    using GroupBehaviours = std::tuple<>;
+
     using Node  = qan::Node;
     using Edge  = qan::Edge;
     using Group = qan::Group;
@@ -159,12 +170,6 @@ public:
 
     template < class ...Args >
     using SearchContainer = QSet< Args... >;
-
-    // Base config
-    using GraphBase = QQuickItem;
-    using NodeBase = QQuickItem;
-    using EdgeBase = QQuickPaintedItem;
-    using GroupBase = QQuickItem;
 };
 
 } // ::qan

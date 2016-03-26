@@ -20,13 +20,13 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the Qanava software.
 //
-// \file	gml.h
+// \file	groups.h
 // \author	benoit@qanava.org
-// \date	2014 10 19
+// \date	2016 03 23
 //-----------------------------------------------------------------------------
 
-#ifndef qanGml_h
-#define qanGml_h
+#ifndef qanGroups_h
+#define qanGroups_h
 
 // QuickQanava headers
 #include <QuickQanava>
@@ -37,12 +37,14 @@
 class MainView : public QQuickView
 {
     Q_OBJECT
+
 public:
     MainView( );
     virtual ~MainView( ) { }
+
 protected:
     qan::Graph*			_graph;
 };
 
-#endif // qanGml_h
+#endif // qanGroups_h
 

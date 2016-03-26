@@ -43,7 +43,7 @@ class Node;
 /*!
     \nosubgrouping
  */
-class Edge : public gtpo::GenEdge< QGraphConfig >
+class Edge : public gtpo::GenEdge< qan::Config >
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{

@@ -38,7 +38,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node( QQuickItem* parent ) :
-    gtpo::GenNode< QGraphConfig >( parent ),
+    gtpo::GenNode< qan::Config >( parent ),
     _defaultStyle{ new qan::NodeStyle{ "", "qan::Node" } },
     _style{ nullptr }
 {
@@ -57,7 +57,7 @@ Node::~Node( )
 
 qan::Graph* Node::getGraph()
 {
-    return qobject_cast< qan::Graph* >( gtpo::GenNode< QGraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::GenNode< qan::Config >::getGraph() );
 }
 //-----------------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ void    Node::ungroup( )
 
 qan::Group* Node::getGroup( )
 {
-    WeakGroup weakGroup = gtpo::GenNode<QGraphConfig>::getGroup();
+    WeakGroup weakGroup = gtpo::GenNode<qan::Config>::getGroup();
     if ( weakGroup.expired() )
         return nullptr;
     return weakGroup.lock().get();

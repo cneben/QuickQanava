@@ -53,15 +53,14 @@ Qan.AbstractGroup {
 
     // See qan::Group::container property documentation
     container: content
-
     Text {
         id: nameText
         x: 0
         y: -contentHeight - 3
         text: group.label
-        //font.pointSize: group.nameTextSize
-        //font.bold: group.nameTextBold
-        //color: group.nameTextColor
+        font.pointSize: group.nameTextSize
+        font.bold: group.nameTextBold
+        color: group.nameTextColor
     }
 
     Rectangle {
@@ -86,11 +85,25 @@ Qan.AbstractGroup {
 
     Item {
         id: content
-        x: 2
-        y: 2
-        z: 2
-        width: Math.max( 150, childrenRect.width + 10 )
-        height: Math.max( 80, childrenRect.height + 10 )
+        x: 2; y: 2; z: 2
+
+        width: Math.max( groupWidth, minimumWidth )
+        height: Math.max( groupHeight, minimumHeight )
+
+        property real   minimumWidth: childrenRect.width + 10
+        property real   minimumHeight: childrenRect.height + 10
+
+        property real groupWidth: 150
+        property real groupHeight: 80
+
+        BottomRightResizer {
+            target: content
+            minimumSize: Qt.size( content.minimumWidth, content.minimumHeight )
+            targetWidth: 150
+            targetHeight: 80
+            targetWidthName: "groupWidth"
+            targetHeightName: "groupHeight"
+        }
     }
 
     // Emitted by qan::Group when node dragging start
@@ -101,11 +114,4 @@ Qan.AbstractGroup {
     onNodeDragLeave: {
         groupBackground.color = group.backColor
     }
-
-    /*Rectangle {
-        width: 100
-        height: 100
-        border.color: "violet"
-        border.width: 1
-    }*/
 }

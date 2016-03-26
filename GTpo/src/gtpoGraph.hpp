@@ -182,6 +182,7 @@ auto    GenGraph< Config >::createEdge( WeakNode src, WeakNode dst ) -> WeakEdge
             if ( source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template remove<WeakNodes>::from( _rootNodes, dst );    // Otherwise destination is no longer a root node
             notifyBehaviours( &Behaviour::edgeInserted, edge );
+            //sNotifyBehaviours( edge, [](auto x) { x.edgeInserted( e ); } );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
         }
@@ -374,6 +375,13 @@ auto    GenGraph< Config >::notifyGroupModified( WeakGroup& group ) -> void
 {
     notifyBehaviours< WeakGroup >( &Behaviour::groupModified, group );
 }
+
+/*template < class Config >
+template < typename T, typename NotifyFunct >
+auto    GenGraph< Config >::sNotifyBehaviours( T, NotifyFunct f)
+{
+    std::cerr << "sNotifyBehaviours()..." << std::endl;
+}*/
 //-----------------------------------------------------------------------------
 
 } // ::gtpo

@@ -49,11 +49,11 @@ namespace qan { // ::qan
  *
  * \nosubgrouping
 */
-class Graph : public gtpo::GenGraph< QGraphConfig >
+class Graph : public gtpo::GenGraph< qan::Config >
 {
     Q_OBJECT
 
-    using GTpoGraph = gtpo::GenGraph< QGraphConfig >;
+    using GTpoGraph = gtpo::GenGraph< qan::Config >;
 
     /*! \name Graph Object Management *///-------------------------------------
     //@{

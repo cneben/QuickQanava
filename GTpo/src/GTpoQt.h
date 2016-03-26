@@ -42,12 +42,12 @@
 // GTpo headers
 #include "./gtpoUtils.h"
 
-namespace gtpo { // ::gtpo
+namespace qtpo { // ::qtpo
 
 /*! Configuration interface for accessing standard library (STL) containers.
  *
  */
-struct QtContainerConfig : public gtpo::ContainerConfig
+struct ContainerAccessors : public gtpo::ContainerAccessors
 {
     template < typename C >
     struct insert { };
@@ -89,7 +89,7 @@ struct QtContainerConfig : public gtpo::ContainerConfig
     };
 };
 
-} // ::gtpo
+} // ::qtpo
 
 template< typename T >
 inline bool operator==(const std::weak_ptr<T>& e1, const std::weak_ptr<T>& e2)

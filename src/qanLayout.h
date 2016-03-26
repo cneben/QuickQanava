@@ -48,7 +48,9 @@ namespace qan { // ::qan
  * \nosubgrouping
  */
 class Layout : public QObject,
-                public gtpo::Behaviour
+               public gtpo::GroupBehaviour< std::weak_ptr< typename qan::Config::Node >,
+                                            std::weak_ptr< typename qan::Config::Edge >,
+                                            std::weak_ptr< typename qan::Config::Group > >
 {
     /*! \name Layout Object Management *///------------------------------------
     //@{

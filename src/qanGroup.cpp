@@ -33,14 +33,19 @@
 // Qanava headers
 #include "./qanGroup.h"
 #include "./qanGraph.h"
+#include "./qanLinear.h"
 
 namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
 Group::Group( QQuickItem* parent ) :
-    gtpo::GenGroup< QGraphConfig >( parent )
+    gtpo::GenGroup< qan::Config >( parent )
 {
     setAcceptDrops( true );
+
+    // Force group connected edges update when the group is moved
+    connect( this, SIGNAL( xChanged( ) ), this, SLOT( groupMoved( ) ) );
+    connect( this, SIGNAL( yChanged( ) ), this, SLOT( groupMoved( ) ) );
 }
 
 Group::~Group( )
@@ -54,7 +59,7 @@ Group::~Group( )
 
 qan::Graph* Group::getGraph()
 {
-    return qobject_cast<qan::Graph* >( gtpo::GenGroup< QGraphConfig >::getGraph() );
+    return qobject_cast<qan::Graph* >( gtpo::GenGroup< qan::Config >::getGraph() );
 }
 //-----------------------------------------------------------------------------
 
@@ -68,7 +73,7 @@ auto    Group::insertNode( qan::Node* node ) -> void
     WeakNode weakNode;
     try {
         weakNode = WeakNode{ node->shared_from_this() };
-        gtpo::GenGroup< QGraphConfig >::insertNode( weakNode );
+        gtpo::GenGroup< qan::Config >::insertNode( weakNode );
 
         if ( getContainer( ) == nullptr )   // A container must have configured in concrete QML group component
             return;
@@ -115,10 +120,17 @@ auto    Group::removeNode( const qan::Node* node ) -> void
 {
     if ( node == nullptr )
         return;
+    qan::Node* mutableNode = const_cast< qan::Node* >( node );
     WeakNode weakNode;
-    try {
+    try {        
+        mutableNode->setParentItem( getGraph() );
+        if ( getContainer( ) != nullptr )   // Convert actual node position in group to scene position
+            mutableNode->setPosition( getContainer( )->mapToScene( node->position( ) ) ); // Note 20150908: node->mapToScene( 0, 0) don't work on Qt 5.5 beta.
+        mutableNode->setDraggable( true );
+        mutableNode->setDropable( true );
+
         weakNode = WeakNode{ const_cast< qan::Node* >( node )->shared_from_this() };
-        gtpo::GenGroup< QGraphConfig >::removeNode( weakNode );
+        gtpo::GenGroup< qan::Config >::removeNode( weakNode );
     } catch ( std::bad_weak_ptr ) { return; }
 }
 
@@ -130,7 +142,50 @@ bool    Group::hasNode( qan::Node* node ) const
     try {
         weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return false; }
-    return gtpo::GenGroup< QGraphConfig >::hasNode( weakNode );
+    return gtpo::GenGroup< qan::Config >::hasNode( weakNode );
+}
+//-----------------------------------------------------------------------------
+
+/* Group Behaviour/Layout Management *///--------------------------------------
+void    Group::setLayout( qan::Layout* layout )
+{
+    if ( _layout != nullptr ) {
+        // FIXME
+        //removeBehaviour( _layout );
+        _layout = nullptr;  // gtpo::Behaviourable take care of layout destruction
+        emit layoutChanged();
+    }
+    if ( _layout == nullptr ) {
+        addBehaviour( layout );
+        //if ( hasLayout( layout ) )
+        _layout = layout;
+        emit layoutChanged();
+    }
+}
+
+void    Group::setLinearLayout()
+{
+    setLayout( new qan::Linear() );
+}
+
+void    Group::groupMoved( )
+{
+    // Group node adjacent edges must be updated manually since node are children of this group,
+    // their x an y position does not change and is no longer monitored by their edges.
+    /*for ( auto node : getNodes() ) {
+
+    }*/
+
+    /*qan::Edge::Set edgeSet;
+    foreach ( qan::Node* node, _nodes )
+    {
+        edgeSet.unite( node->getInEdges( ).toSet( ) );
+        edgeSet.unite( node->getOutEdges( ).toSet( ) );
+    }
+    foreach ( qan::Edge* edge, edgeSet )
+        edge->updateEdge( );
+    if ( _graph != nullptr )        // Note 20151013: _graph can be null sometime, investigate that...
+        emit _graph->groupModified( this );*/
 }
 //-----------------------------------------------------------------------------
 
@@ -141,15 +196,15 @@ void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
     if ( !getHilightDrag( ) )
         return;
 
-    // FIXME
-//    if ( _layout == nullptr )   // Can't make a drop proposition without a layout configured in the group
-//        return;
-
     // If node is already member of the group we are in front of a group "inside" drag and drop,
     // or a group removal via drag and drop, so just remove the node from group and use the normal
     // drag and drop code.
-//    if( _nodes.contains( node ) )
-//        removeNode( node ); // removeNode take care or layout() call and node position change...
+    if( hasNode( node ) )
+        removeNode( node ); // removeNode take care or layout() call and node position change...
+
+    // FIXME
+//    if ( _layout == nullptr )   // Can't make a drop proposition without a layout configured in the group
+//        return;
 
     // Configure a shadow drop node if it has still not been inserted
     if ( _shadowDropNode == nullptr )
@@ -181,7 +236,6 @@ void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
 
 void    Group::dragEnterEvent( QDragEnterEvent* event )
 {
-    //qDebug( ) << "Group::dragEnterEvent() " << event->source( );
     event->acceptProposedAction( );
     event->accept( );
     emit nodeDragEnter( );
@@ -189,7 +243,6 @@ void    Group::dragEnterEvent( QDragEnterEvent* event )
 
 void	Group::dragMoveEvent( QDragMoveEvent* event )
 {
-    //qDebug( ) << "Group::dragMoveEvent(): event->source=" << event->source( );
     event->acceptProposedAction( );
     event->accept();
 

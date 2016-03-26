@@ -35,6 +35,7 @@
 // QuickQanava headers
 #include "./qanConfig.h"
 #include "./qanNode.h"
+#include "./qanLayout.h"
 
 namespace qan { // ::qan
 
@@ -43,8 +44,8 @@ class Group;
 /*! \brief Model a graphics group of nodes.
  *
  * \nosubgrouping
-*/
-class Group : public gtpo::GenGroup< QGraphConfig >
+ */
+class Group : public gtpo::GenGroup< qan::Config >
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
@@ -70,14 +71,35 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    //! Shortcut to gtpo::GenGroup<QGraphConfig>::insertNode().
+    //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
     auto                insertNode( qan::Node* node ) -> void;
 
-    //! Shortcut to gtpo::GenGroup<QGraphConfig>::removeNode().
+    //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
     auto                removeNode( const qan::Node* node ) -> void;
 
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<QGraphConfig>::hasNode().
+    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group Behaviour/Layout Management *///---------------------------
+    //@{
+public:
+    Q_PROPERTY( qan::Layout* layout READ getLayout WRITE setLayout NOTIFY layoutChanged )
+    qan::Layout*    getLayout( ) { return _layout; }
+    void            setLayout( qan::Layout* layout );
+
+    //! Set this group layout to a new linear layout.
+    Q_INVOKABLE void    setLinearLayout();
+
+signals:
+    void            layoutChanged();
+protected:
+    qan::Layout*    _layout = nullptr;
+
+protected slots:
+    //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
+    void            groupMoved( );
     //@}
     //-------------------------------------------------------------------------
 
@@ -134,11 +156,11 @@ signals:
     /*! \name Drag'nDrop Management  *///--------------------------------------
     //@{
 public:
-    /*! Define if the group could should hilight a node insertion while the user is dragging a node across the group (might be costly).
+    /*! Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
      *
      *  When sets to true, group will use a shadow node (_shadowDropNode) to hilight the position of a node that is actually dragged over
      *  this group to show its position when dropped and inserted in the group (it is quite costly, and the group layout must include support for
-     *  qan::Layout::proposeNodeDrop( ), such as qan::Linear and qan::HierarchyTree).
+     *  qan::Layout::proposeNodeDrop( ), such as qan::Linear and qan::OrderedTree).
      *
      *  When hilightDrag is set to true, your concrete QML qan::Node should call qan::dropNode() and qan::Node::proposeNodeDrop().
      *  Default to true.

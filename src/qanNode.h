@@ -50,7 +50,7 @@ class Group;
  *
  * \nosubgrouping
 */
-class Node : public gtpo::GenNode< QGraphConfig >
+class Node : public gtpo::GenNode< qan::Config >
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{

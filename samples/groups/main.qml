@@ -37,6 +37,7 @@ Item {
             id: graph
             objectName: "graph"
             anchors.fill: parent
+
             Component.onCompleted: {
                 var n1 = graph.insertNode( )
                 n1.label = "N1"
@@ -54,22 +55,18 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         width: 300
+
         Button {
-            text: "Load GML"
-        }
-        Button {
-            text: "Save GML"
-            onClicked: { graph.saveToGml( "test.gml" ) }
-        }
-        Button {
-            text: "Load QAN"
-        }
-        Button {
-            text: "Save Qan"
+            text: "Linear Group"
+            onClicked: {
+                var gg = graph.insertGroup();
+                gg.label = "Group"
+                gg.setLinearLayout();
+            }
         }
         Button {
             text: "Insert Node"
-            onClicked: { graph.insertNode() }
+            onClicked: { var n = graph.insertNode( ); n.label = "Node" }
         }
     }
 }

@@ -19,6 +19,7 @@ HEADERS +=  ./QuickQanava.h         \
             ./qanGroup.h            \
             ./qanGraph.h            \
             ./qanLayout.h           \
+            ./qanLinear.h           \
             ./qanProgressNotifier.h \
             ./qanStyle.h            \
             ./qanStyleManager.h     \
@@ -31,6 +32,7 @@ SOURCES +=  ./qanEdge.cpp               \
             ./qanGroup.cpp              \
             ./qanGraph.cpp              \
             ./qanLayout.cpp             \
+            ./qanLinear.cpp             \
             ./qanProgressNotifier.cpp   \
             ./qanStyle.cpp              \
             ./qanStyleManager.cpp       \
@@ -47,7 +49,8 @@ OTHER_FILES +=  quickqanava.proto       \
                 Node.qml                \
                 Edge.qml                \
                 StyleListView.qml       \
-                ConnectorDropNode.qml
+                ConnectorDropNode.qml   \
+                BottomRightResizer.qml
 
 TRANSLATIONS = ./quickqanava-fr_FR.ts
 lupdate_only {

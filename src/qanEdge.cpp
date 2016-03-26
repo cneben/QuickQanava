@@ -38,7 +38,7 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge( QQuickItem* parent ) :
-    gtpo::GenEdge< QGraphConfig >( ),
+    gtpo::GenEdge< qan::Config >( ),
     _line( ),
     _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } },
     _style{ nullptr }

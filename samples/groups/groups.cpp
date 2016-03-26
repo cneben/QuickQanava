@@ -20,29 +20,40 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the Qanava software.
 //
-// \file	gml.h
+// \file	groups.cpp
 // \author	benoit@qanava.org
-// \date	2014 10 19
+// \date	2016 03 23
 //-----------------------------------------------------------------------------
 
-#ifndef qanGml_h
-#define qanGml_h
-
 // QuickQanava headers
-#include <QuickQanava>
+#include "./groups.h"
 
-// QT headers
-#include <QQuickView>
+// Qt headers
+#include <QGuiApplication>
 
-class MainView : public QQuickView
+using namespace qan;
+
+//-----------------------------------------------------------------------------
+MainView::MainView( ) :
+    QQuickView( )
 {
-    Q_OBJECT
-public:
-    MainView( );
-    virtual ~MainView( ) { }
-protected:
-    qan::Graph*			_graph;
-};
+    QuickQanava::initialize();
 
-#endif // qanGml_h
+    setSource( QUrl( "qrc:/main.qml" ) );
+    qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
+    Q_ASSERT( g != nullptr );
+}
+//-----------------------------------------------------------------------------
+
+int	main( int argc, char** argv )
+{
+    QGuiApplication app(argc, argv);
+
+    MainView mainView;
+    mainView.setResizeMode( QQuickView::SizeRootObjectToView );
+    mainView.resize( 1024, 700 );
+    mainView.show( );
+
+    return app.exec( );
+}
 

@@ -41,7 +41,7 @@ namespace qan { // ::qan
 
 /* Graph Object Management *///------------------------------------------------
 Graph::Graph( QQuickItem* parent ) :
-    gtpo::GenGraph< QGraphConfig >( parent ),
+    gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
 {
 
@@ -49,7 +49,7 @@ Graph::Graph( QQuickItem* parent ) :
 
 void    Graph::clear( )
 {
-    gtpo::GenGraph< QGraphConfig >::clear();
+    gtpo::GenGraph< qan::Config >::clear();
     _styleManager.clear();
 }
 //-----------------------------------------------------------------------------
@@ -334,7 +334,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
     try {
         weakGroup = WeakGroup{ group->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return false; }
-    return gtpo::GenGraph< QGraphConfig >::hasGroup( weakGroup );
+    return gtpo::GenGraph< qan::Config >::hasGroup( weakGroup );
 }
 //-----------------------------------------------------------------------------
 
