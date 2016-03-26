@@ -67,16 +67,49 @@ Topology
 Groups
 ------------------
 
+Properties
+------------------
+
+There is two way to access graph primitives properties in GTpo:
++ Direct access to properties trough the gtpo::PropertiesConfig interface.
++ Access via gtpo::GenGraph accessors: it will enforce correct properties changes notifications to graph/node/edge and groups behaviours.
++ Define efficient accessors in your own code and access it directly when no notification reporting is necessary or to access user defined properties uninteresting for the framework.
+
+| Primitive       | Name         |   Type         |   Accessors                                            |   Description       |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
+| gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
+| gtpo::GenNode   | label        | std::string    | GenGraph::setNodeLabel(), GenGraph::getNodeLabel()     |                     |
+| gtpo::GenNode   | x            | double         | GenGraph::setNodeX(), GenGraph::getNodeX()             |                     |
+| gtpo::GenNode   | y            | double         | GenGraph::setNodeY(), GenGraph::getNodeY()             |                     |
+| gtpo::GenNode   | width        | double         | GenGraph::setNodeWidth(), GenGraph::getNodeWidth()     |                     |
+| gtpo::GenNode   | height       | double         | GenGraph::setNodeHeight(), GenGraph::getNodeHeight()   |                     |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
+| gtpo::GenEdge   | label        | std::string    | GenGraph::setEdgeLabel(), GenGraph::getEdgeLabel()     |                     |
+| gtpo::GenEdge   | weight       | double         | GenGraph::setEdgeWeight(), GenGraph::getEdgeWeight()   |                     |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
+| gtpo::GenGroup  | label        | std::string    | GenGraph::setGroupLabel(), GenGraph::getGroupLabel()   |                     |
+| gtpo::GenGroup  | x            | double         | GenGraph::setGroupX(), GenGraph::getGroupX()           |                     |
+| gtpo::GenGroup  | y            | double         | GenGraph::setGroupY(), GenGraph::getGroupY()           |                     |
+| gtpo::GenGroup  | width        | double         | GenGraph::setGroupWidth(), GenGraph::getGroupWidth()   |                     |
+| gtpo::GenGroup  | height       | double         | GenGraph::setGroupHeight(), GenGraph::getGroupHeight() |                     |
+
+Note: It is often better to use accessors with a gtpo::Shared* type versus a gtpo::Weak* one, it avoid costly locking of weak pointer before accessing properties.
 
 Behaviours
 -------------
 
   Behaviour in GTpo are the preferred way to observe and validate changes in graph and groups topology. Behaviours could be attached to either
-groups or graph with addBehaviour() methods.
-
+groups or graph with addBehaviour() methods.  Behaviours have two distinct interfaces:
 + **Observation interface**: all behaviour interface expose 'inserted', 'removed' and 'modified' pure virtual methods that could be used to
  observe topological changes in graph and groups.
 + **Validation interface**: FIXME.
+
+   GTpo actually support both virtual behaviours that could be modified dynamically and static behaviours with full template code that could be configured
+by modifying graph definition:
++ **Virtual behaviours**: FIXME.
++ **Static behaviours**: FIXME.
+
+See the gtpo::Behaviour class documentation for reference documentation: gtpo::Behaviour.
 
 ![GTpo behaviour class diagram](https://github.com/cneben/GTpo/blob/master/doc/manual/behaviour-class.png)
 
@@ -95,5 +128,9 @@ sg.addBehaviour( myBehaviour.release() );
 
 Persistence
 -------------
+
+Custom Graph Configuration
+-------------
+
 
 
