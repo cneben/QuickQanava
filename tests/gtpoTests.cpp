@@ -403,7 +403,6 @@ public:
     MOCK_METHOD0(mockGroupModified, void(void));
 };
 
-
 using testing::AtLeast;
 
 TEST(GTpo, stpoEchoBehaviour)
@@ -479,10 +478,10 @@ TEST(GTpo, stpoEchoBehaviour)
 
             // nodeInserted() notification
             EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(AtLeast(1));
+            EXPECT_CALL(*groupMockBehaviour, mockGroupModified()).Times(AtLeast(1));
             group2.lock()->insertNode( s );
 
             // nodeModified() notification
-            //EXPECT_CALL(*groupMockBehaviour, mockNodeModified()).Times(AtLeast(1));
             //stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
 
             // nodeInserted() notification

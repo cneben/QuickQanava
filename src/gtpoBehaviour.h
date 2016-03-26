@@ -186,7 +186,9 @@ public:
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
 // There is more complex O(N) solutions available on SO
 template< class F, class...Ts, std::size_t...Is >
-void for_each_in_tuple( const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ){
+void for_each_in_tuple( const std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ) {
+    (void)tuple; // Avoid C4100 warning for size 1 std::tuple with MSVC2015
+    (void)func;  // Avoid C4100 warning for size 1 std::tuple with MSVC2015
     using expander = int[];
     (void)expander { 0, ((void)func(std::get<Is>(tuple)), 0)... };
 }
@@ -288,6 +290,61 @@ public:
 private:
     SBehaviours  _sBehaviours;
     //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Notification Helper Methods *///---------------------------------
+    //@{
+public:
+    template < class Node >
+    auto    notifyNodeInserted( Node& node ) -> void;
+
+    template < class Node >
+    auto    notifyNodeRemoved( Node& node ) -> void;
+
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    template < class Node >
+    auto    notifyNodeModified( Node& node ) -> void;
+
+    template < class Edge >
+    auto    notifyEdgeInserted( Edge& edge ) -> void;
+
+    template < class Edge >
+    auto    notifyEdgeRemoved( Edge& edge ) -> void;
+
+    //! Notify all behaviors that node \c node inside this group has been modified.
+    template < class Edge >
+    auto    notifyEdgeModified( Edge& edge ) -> void;
+
+    template < class Group >
+    auto    notifyGroupInserted( Group& group ) -> void;
+
+    template < class Group >
+    auto    notifyGroupRemoved( Group& group ) -> void;
+
+    //! Notify all behaviors that group \c group has been modified.
+    template < class Group >
+    auto    notifyGroupModified( Group& group ) -> void;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+/*! \brief Collect and maintain a group adjacent edge set and group edge set.
+ *
+ */
+template < class Node, class Edge, class Group >
+class GroupEdgeSetBehaviour :  public GroupBehaviour< Node, Edge, Group >
+{
+    /* Group Edge Set Behaviour *///-------------------------------------------
+public:
+    GroupEdgeSetBehaviour() = default;
+    virtual ~GroupEdgeSetBehaviour() = default;
+    explicit GroupEdgeSetBehaviour( const GroupEdgeSetBehaviour& ) = default;
+    GroupEdgeSetBehaviour& operator=( const GroupEdgeSetBehaviour& ) = delete;
+
+public:
+    virtual auto    groupModified( Group& group ) -> void override { (void)group; }
+    virtual auto 	nodeInserted( Node& node ) -> void override;
+    virtual auto 	nodeRemoved( Node& node ) -> void override;
     //-------------------------------------------------------------------------
 };
 

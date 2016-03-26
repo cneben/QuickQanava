@@ -32,6 +32,7 @@
 
 namespace gtpo { // ::gtpo
 
+/* Virtual Behaviours Management *///------------------------------------------
 template < class Behaviour, class SBehaviours  >
 template < class T >
 auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
@@ -45,6 +46,97 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
         if ( behaviour != nullptr )
             ((*behaviour).*method)(arg);
 }
+//-----------------------------------------------------------------------------
+
+
+/* Notification Helper Methods *///--------------------------------------------
+template < class Behaviour, class SBehaviours  >
+template < class Node >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) -> void
+{
+    notifyBehaviours< Node >( &Behaviour::nodeInserted, node );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.nodeInserted( node ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Node >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) -> void
+{
+    notifyBehaviours< Node >( &Behaviour::nodeRemoved, node );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.nodeRemoved( node ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Node >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeModified( Node& node ) -> void
+{
+    notifyBehaviours< Node >( &Behaviour::nodeModified, node );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.nodeModified( node ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Edge >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeInserted( Edge& edge ) -> void
+{
+    notifyBehaviours< Edge >( &Behaviour::edgeInserted, edge );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.edgeInserted( edge ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Edge >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeRemoved( Edge& edge ) -> void
+{
+    notifyBehaviours< Edge >( &Behaviour::edgeRemoved, edge );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.edgeRemoved( edge ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Edge >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeModified( Edge& edge ) -> void
+{
+    notifyBehaviours< Edge >( &Behaviour::edgeModified, edge );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.edgeModified( edge ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Group >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) -> void
+{
+    notifyBehaviours< Group >( &Behaviour::groupInserted, group );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.groupInserted( group ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Group >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) -> void
+{
+    notifyBehaviours< Group >( &Behaviour::groupRemoved, group );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.groupRemoved( group ); } );
+}
+
+template < class Behaviour, class SBehaviours  >
+template < class Group >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( Group& group ) -> void
+{
+    notifyBehaviours< Group >( &Behaviour::groupModified, group );
+    sNotifyBehaviours( [&](auto behaviour) { behaviour.groupModified( group ); } );
+}
+//-----------------------------------------------------------------------------
+
+
+/* Group Edge Set Behaviour *///-------------------------------------------
+template < class Node, class Edge, class Group >
+auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeInserted( Node& node ) -> void
+{
+    std::cerr << "GroupEdgeSetBEhaviour::nodeInserted()...";
+}
+
+template < class Node, class Edge, class Group >
+auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeRemoved( Node& node ) -> void
+{
+    std::cerr << "GroupEdgeSetBEhaviour::nodeRemoved()...";
+}
+//-----------------------------------------------------------------------------
 
 } // ::gtpo
 

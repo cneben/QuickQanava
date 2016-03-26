@@ -117,7 +117,7 @@ struct IPropertiesAccessors { };
 /*! Default properties accessor interface for GTpo topology primitives (GenNode, GenEdge and GenGroup).
  *
  *  Properties are usually sets via the gtpo::GenGraph<> interface (for example gtpo::GenGraph::setNodeLabel() and so on...), using
- *  a specialized PropertiesConfig interface accessors directly does not enforce graph behaviours update (advanced users could use direct
+ *  a specialized PropertiesAccessors interface accessors directly does not enforce graph behaviours update (advanced users could use direct
  *  properties access in very specific scenarios where maximum performance is necessary and where change notification does not matters, ie serialization
  *  or layouts).
  */
@@ -204,7 +204,7 @@ struct DefaultConfig :  public GraphConfig,
     using GraphBehaviours = std::tuple<>;
 
     //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
-    using GroupBehaviours = std::tuple<>;
+    using GroupBehaviours = std::tuple< GroupEdgeSetBehaviour<Node, Edge, Group> >;
 
     //! Define the container used to store nodes (default to std::vector).
     template <class...Ts>
@@ -453,14 +453,6 @@ public:
     using Behaviour = GroupBehaviour<WeakNode,WeakEdge,WeakGroup>;
     //! User friendly shortcut type to this group concrete Behaviourable base type.
     using Behaviourable = Behaviourable<Behaviour, typename Config::GraphBehaviours>;
-
-public:
-    //! Notify all behaviors that node \c node inside this group has been modified.
-    auto    notifyNodeModified( WeakNode& node ) -> void;
-    //! Notify all behaviors that node \c node inside this group has been modified.
-    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
-    //! Notify all behaviors that group \c group has been modified.
-    auto    notifyGroupModified( WeakGroup& group ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -777,25 +769,6 @@ public:
     inline auto cendGroups() const -> typename SharedGroups::const_iterator { return _groups.cend(); }
 private:
     SharedGroups  _groups;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Behaviours Management *///---------------------------------------
-    //@{
-public:
-    //! Notify all behaviors that node \c node has been modified.
-    auto    notifyNodeModified( WeakNode& node ) -> void;
-    //! Notify all behaviors that node \c node has been modified.
-    auto    notifyEdgeModified( WeakEdge& edge ) -> void;
-    //! Notify all behaviors that group \c group has been modified.
-    auto    notifyGroupModified( WeakGroup& group ) -> void;
-
-    // Experimental static behaviour support (C++14 only)
-public:
-    //auto    sNotify( ) -> void;
-    //template < typename T, typename NotifyFunct >
-    //auto    sNotifyBehaviours( T, NotifyFunct f) -> void;
-    //std::tuple<Args...>    _sBehaviours;
     //@}
     //-------------------------------------------------------------------------
 
