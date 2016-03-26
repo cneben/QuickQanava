@@ -65,12 +65,12 @@ Topology
 ------------------
 
 
-Group topology
+### Group topology
 
 When a gtpo::GroupEdgeSetBehaviour is registered in graph (ie added in gtpo::GraphConfig::GroupBehaviours std::tuple), edges and adjacent edges of a group could be searched 
 with gtpo::GenGroup<>::getEdges() and gtpo::GenGroup<>::getAdjacentEdges():
 
-![GTpo group adjacent edges](https://github.com/cneben/GTpo/blob/master/doc/group-adjacent-edges.png)
+![GTpo group adjacent edges](https://github.com/cneben/GTpo/blob/master/doc/manual/group-adjacent-edges.png)
 
 Groups
 ------------------

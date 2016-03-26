@@ -28,14 +28,14 @@ GTpo is **highly** alpha.
 
 ## Roadmap:
 
-- [x] Basic directed graph topology support with custom containers and property support.
-- [x] Topology serialization using Protocol Buffer v3.
-- [x] Basic GraphML support (OUT).
+- [X] Basic directed graph topology support with custom containers and property support.
+- [X] Topology serialization using Protocol Buffer v3.
+- [X] Basic GraphML support (OUT).
 - [X] Virtual behaviours/layouts/observers support.
 - [ ] Gephi GEXF file format IN/OUT support.
 - [ ] Complete asynchronous graph access with a read/write graph view MUTEX protection.
 - [ ] Advanced asynchronous graph access with Intel TBD thread safe containers.
-- [ ] Behaviour/layourts/observer static support.
+- [X] Static behaviours/layouts/observers support (C++14 only).
 - [ ] Graph search algorithms (Djikstra/A-Star).
 
 ## Installation:
