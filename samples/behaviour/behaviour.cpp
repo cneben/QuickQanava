@@ -61,13 +61,13 @@ int	main( int /*argc*/, char** /*argv*/ )
     stpo::Graph::SharedNode sharedN1 = n1.lock();
     if ( sharedN1 ) {
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::SConfig::setNodeX( sharedN1, 1.0 );
+        stpo::Config::setNodeX( sharedN1.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::SConfig::setNodeY( sharedN1, 1.0 );
+        stpo::Config::setNodeY( sharedN1.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::SConfig::setNodeWidth( sharedN1, 1.0 );
+        stpo::Config::setNodeWidth( sharedN1.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::SConfig::setNodeHeight( sharedN1, 1.0 );
+        stpo::Config::setNodeHeight( sharedN1.get(), 1.0 );
     }
 
     std::cout << "Expecting nodeInserted() call" << std::endl;
@@ -78,7 +78,7 @@ int	main( int /*argc*/, char** /*argv*/ )
     auto e1 = sg.createEdge( n1, n2 );
     std::cout << "Expecting edgeModified() call" << std::endl;
     stpo::Graph::SharedEdge sharedE1 = e1.lock();
-    stpo::SConfig::setEdgeWeight( sharedE1, 1.0 );
+    stpo::Config::setEdgeWeight( sharedE1.get(), 1.0 );
 
     std::cout << "Expecting edgeRemoved() call" << std::endl;
     sg.removeEdge( e1 );

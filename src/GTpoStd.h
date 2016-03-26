@@ -46,36 +46,32 @@ class Edge;
 class Graph;
 class Group;
 
-template < typename Node, typename Edge >
-struct PropertiesConfig {
-    using SharedNode = std::shared_ptr< Node >;
-    using SharedEdge = std::shared_ptr< Edge >;
+template < typename Node, typename Edge, typename Group >
+struct PropertiesAccessors : public gtpo::PropertiesAccessors<Node, Edge, Group> {
 
-    static inline const std::string& getNodeLabel( const SharedNode& n ) { return n->getLabel(); }
-    static inline void               setNodeLabel( SharedNode& n, const std::string& label ) { n->setLabel( label ); }
+    static inline const std::string& getNodeLabel( const Node* n ) { return n->getLabel(); }
+    static inline void               setNodeLabel( Node* n, const std::string& label ) { n->setLabel( label ); }
 
-    static inline double    getNodeX( const SharedNode& n ) { return n->getX(); }
-    static inline void      setNodeX( SharedNode& n, double x ) { n->setX( x ); }
+    static inline double    getNodeX( const Node* n ) { return n->getX(); }
+    static inline void      setNodeX( Node* n, double x ) { n->setX( x ); }
 
-    static inline double    getNodeY( const SharedNode& n ) { return n->getY(); }
-    static inline void      setNodeY( SharedNode& n, double y ) { n->setY( y ); }
+    static inline double    getNodeY( const Node* n ) { return n->getY(); }
+    static inline void      setNodeY( Node* n, double y ) { n->setY( y ); }
 
-    static inline double    getNodeWidth( const SharedNode& n ) { return n->getWidth(); }
-    static inline void      setNodeWidth( SharedNode& n, double w ) { n->setWidth( w ); }
+    static inline double    getNodeWidth( const Node* n ) { return n->getWidth(); }
+    static inline void      setNodeWidth( Node* n, double w ) { n->setWidth( w ); }
 
-    static inline double    getNodeHeight( const SharedNode& n ) { return n->getHeight(); }
-    static inline void      setNodeHeight( SharedNode& n, double h ) { n->setHeight( h ); }
+    static inline double    getNodeHeight( const Node* n ) { return n->getHeight(); }
+    static inline void      setNodeHeight( Node* n, double h ) { n->setHeight( h ); }
 
-    static inline double    getEdgeWeight( const SharedEdge& e ) { return e->getWeight(); }
-    static inline void      setEdgeWeight( const SharedEdge& e, double w ) { e->setWeight( w ); }
-    static inline void      setEdgeWeight( Edge& e, double w ) { e.setWeight( w ); }
+    static inline double    getEdgeWeight( const Edge* e ) { return e->getWeight(); }
+    static inline void      setEdgeWeight( Edge* e, double w ) { e->setWeight( w ); }
 };
 
 
-class SConfig final :   public gtpo::BaseConfig,
-                        public gtpo::StdContainerAccessors,
-                        public stpo::PropertiesConfig<stpo::Node,
-                                                      stpo::Edge>
+class Config final :   public gtpo::GraphConfig,
+                       public gtpo::StdContainerAccessors,
+                       public stpo::PropertiesAccessors<stpo::Node, stpo::Edge, stpo::Group>
 {
 public:
     using Node = stpo::Node;
@@ -92,17 +88,17 @@ public:
     using SearchContainer = std::unordered_set<T>;
 };
 
-class Graph : public gtpo::GenGraph< SConfig >
+class Graph : public gtpo::GenGraph< stpo::Config >
 {
 
 };
 
-class Group : public gtpo::GenGroup< SConfig >
+class Group : public gtpo::GenGroup< stpo::Config >
 {
 public:
 };
 
-class Edge : public gtpo::GenEdge< SConfig >
+class Edge : public gtpo::GenEdge< stpo::Config >
 {
 public:
     double   getWeight( ) const { return _weight; }
@@ -114,7 +110,7 @@ private:
     double   _weight = 0.;
 };
 
-class Node : public gtpo::GenNode< SConfig >
+class Node : public gtpo::GenNode< stpo::Config >
 {
 public:    
     const std::string&  getLabel( ) const { return _label; }

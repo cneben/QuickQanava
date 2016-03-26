@@ -50,10 +50,10 @@ int	main( int /*argc*/, char** /*argv*/ )
 
     stpo::Graph::SharedNode ownedN1 = n1.lock();
     if ( ownedN1 ) {
-        double nx = stpo::SConfig::getNodeX( ownedN1 );
-        double ny = stpo::SConfig::getNodeY( ownedN1 );
-        double nw = stpo::SConfig::getNodeWidth( ownedN1 );
-        double nh = stpo::SConfig::getNodeHeight( ownedN1 );
+        double nx = stpo::Config::getNodeX( ownedN1.get() );
+        double ny = stpo::Config::getNodeY( ownedN1.get() );
+        double nw = stpo::Config::getNodeWidth( ownedN1.get() );
+        double nh = stpo::Config::getNodeHeight( ownedN1.get() );
         std::cout << "nx=" << nx << " ny=" << ny << " nw=" << nw << " nh=" << nh << std::endl;
     }
     auto n2 = sg.createNode();

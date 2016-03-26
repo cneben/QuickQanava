@@ -102,10 +102,10 @@ void    OutGmlSerializer< GraphConfig >::serializeNode( const WeakNode& node )
         throw std::exception();
     auto idAttr = nodeNode.append_attribute( "id" );
     idAttr.set_value( std::to_string( reinterpret_cast<uint64_t>( sharedNode.get() ) ).c_str() );
-    serializeNodeAttribute( nodeNode, "x", std::to_string( GraphConfig::getNodeX( sharedNode ) ) );
-    serializeNodeAttribute( nodeNode, "y", std::to_string( GraphConfig::getNodeY( sharedNode ) ) );
-    serializeNodeAttribute( nodeNode, "width", std::to_string( GraphConfig::getNodeWidth( sharedNode ) ) );
-    serializeNodeAttribute( nodeNode, "height", std::to_string( GraphConfig::getNodeHeight( sharedNode ) ) );
+    serializeNodeAttribute( nodeNode, "x", std::to_string( GraphConfig::getNodeX( sharedNode.get() ) ) );
+    serializeNodeAttribute( nodeNode, "y", std::to_string( GraphConfig::getNodeY( sharedNode.get() ) ) );
+    serializeNodeAttribute( nodeNode, "width", std::to_string( GraphConfig::getNodeWidth( sharedNode.get() ) ) );
+    serializeNodeAttribute( nodeNode, "height", std::to_string( GraphConfig::getNodeHeight( sharedNode.get() ) ) );
 }
 
 template < class GraphConfig >

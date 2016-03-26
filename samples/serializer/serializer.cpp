@@ -53,7 +53,7 @@ int	main( int /*argc*/, char** /*argv*/ )
 
             // Create a std::cout progress notifier and register it to GraphML out serializer
             gtpo::EchoProgressNotifier progressNotifier;
-            gtpo::OutGmlSerializer<stpo::SConfig> gmlOut( "gmlout.graphml" );
+            gtpo::OutGmlSerializer<stpo::Config> gmlOut( "gmlout.graphml" );
             gmlOut.serializeOut( sg, &progressNotifier );
             gmlOut.finishOut();
         } catch (...) { }
@@ -69,7 +69,7 @@ int	main( int /*argc*/, char** /*argv*/ )
         progressNotifier.setProgress( 0.99 );
         std::cout << "GTpo serialization:" << std::endl;
         stpo::Graph sgi;
-        gtpo::ProtoSerializer<stpo::SConfig> ps;
+        gtpo::ProtoSerializer<stpo::Config> ps;
         gtpo::IProgressNotifier* subProgressNotifier = progressNotifier.getSubProgress();
         ps.serializeOutTo( sg, std::string( "test.gtpo" ), subProgressNotifier );
 

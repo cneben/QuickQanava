@@ -120,8 +120,8 @@ struct StdContainerAccessors : public ContainerAccessors {
  */
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors{
-    static inline const std::string&    getNodeLabel( const Node* /*n*/ ) { return std::string( "" ); }
-    static inline void                  setNodeLabel( Node* /*n*/, const std::string& ) { }
+    static inline const std::string&    getNodeLabel( const Node*) { return _gtpoVoidString; }
+    static inline void                  setNodeLabel( Node*, const std::string& ) { }
 
     static inline double        getNodeX( const Node* ) { return 0.; }
     static inline void          setNodeX( Node*, double ) { }
@@ -156,9 +156,9 @@ struct GraphConfig
     //! Define gtpo::GenGraph base class.
     using GraphBase = Empty;
     //! Define gtpo::GenNode base class.
-    using NodeBase = Empty;
+    using NodeBase  = Empty;
     //! Define gtpo::GenEdge base class.
-    using EdgeBase = Empty;
+    using EdgeBase  = Empty;
     //! Define gtpo::GenGroup base class.
     using GroupBase = Empty;
 

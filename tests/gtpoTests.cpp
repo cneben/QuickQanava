@@ -431,7 +431,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // nodeModified() notification
         EXPECT_CALL(*mockBehaviour, mockNodeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
+        stpo::Graph::Configuration::setNodeLabel( n.lock().get(), "test" );
 
         // nodeInserted() notification
         EXPECT_CALL(*mockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
@@ -445,7 +445,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // edgeModified() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setEdgeWeight( e.lock(), 0.5 );
+        stpo::Graph::Configuration::setEdgeWeight( e.lock().get(), 0.5 );
 
         // edgeRemoved() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeRemoved()).Times(AtLeast(1));
