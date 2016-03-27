@@ -125,18 +125,23 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( Group& gro
 
 
 /* Group Edge Set Behaviour *///-------------------------------------------
-template < class Node, class Edge, class Group >
-auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeInserted( Node& node ) -> void
+template < class Config >
+auto GroupEdgeSetBehaviour< Config >::nodeInserted( WeakNode& node ) -> void
 {
-    (void)node;
-    std::cerr << "GroupEdgeSetBehaviour::nodeInserted()..." << std::endl;
+    if ( !node.expired() ) {
+        SharedNode sharedNode = node.lock();
+        if ( sharedNode != nullptr ) {
+            /*WeakGroup group = node.getGroup();
+            // Add all node edges to adjacent edge set
+            for ( auto inEdge : sharedNode.getInEdges() )
+                group.addAdjacentEdge( group.getAdjacentEdgeSet(), inEdge );*/
+        }
+    }
 }
 
-template < class Node, class Edge, class Group >
-auto GroupEdgeSetBehaviour< Node, Edge, Group >::nodeRemoved( Node& node ) -> void
+template < class Config >
+auto GroupEdgeSetBehaviour< Config >::nodeRemoved( WeakNode& node ) -> void
 {
-    (void)node;
-    std::cerr << "GroupEdgeSetBehaviour::nodeRemoved()..." << std::endl;
 }
 //-----------------------------------------------------------------------------
 

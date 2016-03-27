@@ -37,7 +37,7 @@
 #include <functional>       // std::function
 #include <vector>
 
-// Qan.Topo headers
+// GTpo headers
 // Nil
 
 namespace gtpo { // ::gtpo
@@ -45,7 +45,7 @@ namespace gtpo { // ::gtpo
 /*! \brief Define a node observer interface.
  *
  */
-template < class Node >
+template < class Config >
 class NodeBehaviour
 {
 public:
@@ -54,10 +54,15 @@ public:
     explicit NodeBehaviour( const NodeBehaviour& ) = default;
     NodeBehaviour& operator=( const NodeBehaviour& ) = default;
 
+    using WeakNode          = std::weak_ptr< typename Config::Node >;
+    using SharedNode        = std::shared_ptr< typename Config::Node >;
+    using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
+    using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
+
     //! Called immediatly after \c node has been inserted.
-    virtual auto nodeInserted( Node& node ) -> void { (void)node; }
+    virtual auto nodeInserted( WeakNode& node ) -> void { (void)node; }
     //! Called when \c node is about to be removed.
-    virtual auto nodeRemoved( Node& node ) -> void { (void)node; }
+    virtual auto nodeRemoved( WeakNode& node ) -> void { (void)node; }
     /*! \brief Called immedialty after \c node has been modified.
      *
      * Creating, inserting or removing a node does not generate a nodeModified() call.
@@ -65,14 +70,14 @@ public:
      * A call to nodeModified() usually follow a node property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    nodeModified( Node& node ) -> void { (void)node; }
+    virtual auto    nodeModified( WeakNode& node ) -> void { (void)node; }
 };
 
 
 /*! \brief Define an edge observer interface.
  *
  */
-template < class Edge >
+template < class Config >
 class EdgeBehaviour
 {
 public:
@@ -81,10 +86,16 @@ public:
     explicit EdgeBehaviour( const EdgeBehaviour& ) = default;
     EdgeBehaviour& operator=( const EdgeBehaviour& ) = default;
 
+    using Edge          = typename Config::Edge;
+    using SharedEdge    = std::shared_ptr< typename Config::Edge >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
+    using SharedEdges   = typename Config::template EdgeContainer< SharedEdge >;
+
     //! Called immediatly after \c edge has been inserted.
-    virtual auto    edgeInserted( Edge& edge ) -> void { (void)edge; }
+    virtual auto    edgeInserted( WeakEdge& edge ) -> void { (void)edge; }
     //! Called when \c edge is about to be removed.
-    virtual auto    edgeRemoved( Edge& edge ) -> void { (void)edge; }
+    virtual auto    edgeRemoved( WeakEdge& edge ) -> void { (void)edge; }
     /*! \brief Called immediatly after \c edge has been modified.
      *
      * Creating, inserting or removing an edge does not generate an edgeModified() call.
@@ -92,7 +103,7 @@ public:
      * A call to edgeModified() usually follow an edge property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    edgeModified( Edge& edge ) -> void { (void)edge; }
+    virtual auto    edgeModified( WeakEdge& edge ) -> void { (void)edge; }
 };
 
 
@@ -101,6 +112,7 @@ public:
  * \image html behaviour-class.png
  *
  */
+template <class Config >
 class Behaviour
 {
 public:
@@ -140,20 +152,23 @@ protected:
     bool            _enabled = true;
 };
 
-
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGroup.
  *
  */
-template < class Node, class Edge, class Group >
-class GroupBehaviour :  public Behaviour,
-                        public NodeBehaviour< Node >,
-                        public EdgeBehaviour< Edge >
+template < class Config >
+class GroupBehaviour :  public Behaviour< Config >,
+                        public NodeBehaviour< Config >,
+                        public EdgeBehaviour< Config >
 {
 public:
     GroupBehaviour() = default;
     virtual ~GroupBehaviour() = default;
     explicit GroupBehaviour( const GroupBehaviour& ) = default;
     GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
+
+    using Group         = typename Config::Group;
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
 public:
     /*! Called whenever group \c group has been modified.
@@ -162,14 +177,14 @@ public:
      * \li node or edge inserted or removed from group
      * \li group label changed
      */
-    virtual auto    groupModified( Group& group ) -> void { (void)group; }
+    virtual auto    groupModified( WeakGroup& group ) -> void { (void)group; }
 };
 
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
  *
  */
-template < class Node, class Edge, class Group >
-class GraphBehaviour :  public GroupBehaviour< Node, Edge, Group >
+template < class Config >
+class GraphBehaviour :  public GroupBehaviour< Config >
 {
 public:
     GraphBehaviour() = default;
@@ -178,9 +193,9 @@ public:
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
     //! Called immediatly after group \c group has been inserted in graph.
-    virtual auto    groupInserted( Group& group ) -> void { (void)group; }
+    virtual auto    groupInserted( WeakGroup& group ) -> void { (void)group; }
     //! Called immediatly before group \c group has been removed from graph.
-    virtual auto    groupRemoved( Group& group ) -> void { (void)group; }
+    virtual auto    groupRemoved( WeakGroup& group ) -> void { (void)group; }
 };
 
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
@@ -331,8 +346,8 @@ public:
 /*! \brief Collect and maintain a group adjacent edge set and group edge set.
  *
  */
-template < class Node, class Edge, class Group >
-class GroupEdgeSetBehaviour :  public GroupBehaviour< Node, Edge, Group >
+template < class Config >
+class GroupEdgeSetBehaviour : public GroupBehaviour< Config >
 {
     /* Group Edge Set Behaviour *///-------------------------------------------
 public:
@@ -342,9 +357,9 @@ public:
     GroupEdgeSetBehaviour& operator=( const GroupEdgeSetBehaviour& ) = delete;
 
 public:
-    virtual auto    groupModified( Group& group ) -> void override { (void)group; }
-    virtual auto    nodeInserted( Node& node ) -> void override;
-    virtual auto    nodeRemoved( Node& node ) -> void override;
+    virtual auto    groupModified( WeakGroup& group ) -> void override { (void)group; }
+    virtual auto    nodeInserted( WeakNode& node ) -> void override;
+    virtual auto    nodeRemoved( WeakNode& node ) -> void override;
     //-------------------------------------------------------------------------
 };
 

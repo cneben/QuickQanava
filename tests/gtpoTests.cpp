@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the Qan.Topo software.
+// This file is a part of the GTpo software.
 //
 // \file	qtpoTests.cpp
 // \author	benoit@qanava.org
@@ -346,25 +346,58 @@ TEST(GTpo, progressNotifier)
 }
 
 //-----------------------------------------------------------------------------
+// GTpo Edge Set Behaviour test (using STpo)
+//-----------------------------------------------------------------------------
+
+TEST(GTpo, stpoGroupEdgeSetBehaviour)
+{
+    stpo::Graph g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto n4 = g.createNode();
+    auto n5 = g.createNode();
+
+    auto e1 = g.createEdge( n1, n2 );
+    auto e2 = g.createEdge( n1, n3 );
+    auto e3 = g.createEdge( n2, n4 );
+    auto e4 = g.createEdge( n3, n5 );
+    auto e5 = g.createEdge( n4, n3 );
+
+    auto g1 = g.createGroup();
+    auto sg1 = g1.lock();
+    sg1->insertNode( n3 );
+    sg1->insertNode( n4 );
+    sg1->insertNode( n5 );
+
+    // See manual topology section, it is the same topology
+    // Check that group 1 adjacent edge set is {e2, e3, e4, e5}
+    auto g1AdjacentEdgeSet = sg1->getAdjacentEdges();
+    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e2 ) );
+    g.clear();
+}
+
+
+//-----------------------------------------------------------------------------
 // GTpo Behaviour test (using STpo)
 //-----------------------------------------------------------------------------
 
-template < class Node, class Edge, class Group >
-class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge, Group >
+template < class Config >
+class GraphBehaviourMock : public gtpo::GraphBehaviour< Config >
 {
 public:
     GraphBehaviourMock() { }
     virtual ~GraphBehaviourMock() { }
 protected:
-    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
-    virtual void    groupInserted( Group& ) override { mockGroupInserted(); }
-    virtual void    groupRemoved( Group& ) override { mockGroupRemoved(); }
-    virtual void    groupModified( Group& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
+    virtual void    groupInserted( WeakGroup& ) override { mockGroupInserted(); }
+    virtual void    groupRemoved( WeakGroup& ) override { mockGroupRemoved(); }
+    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -378,20 +411,20 @@ public:
     MOCK_METHOD0(mockGroupModified, void(void));
 };
 
-template < class Node, class Edge, class Group >
-class GroupBehaviourMock : public gtpo::GroupBehaviour< Node, Edge, Group >
+template < class Config >
+class GroupBehaviourMock : public gtpo::GroupBehaviour< Config >
 {
 public:
     GroupBehaviourMock() { }
     virtual ~GroupBehaviourMock() { }
 protected:
-    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
-    virtual void    groupModified( Group& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
+    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -410,9 +443,7 @@ TEST(GTpo, stpoEchoBehaviour)
     stpo::Graph g;
 
     { // Testing graph behaviour
-        using MockGraphBehaviour = GraphBehaviourMock< stpo::Graph::WeakNode,
-                                                       stpo::Graph::WeakEdge,
-                                                       stpo::Graph::WeakGroup >;
+        using MockGraphBehaviour = GraphBehaviourMock< stpo::Graph::Configuration >;
         auto mockBehaviour = new MockGraphBehaviour();  // Wan't use unique_ptr here because of gmock
 
         // Test basic enable/disable behaviour property
@@ -469,9 +500,7 @@ TEST(GTpo, stpoEchoBehaviour)
         g.removeGroup( gg );
 
         { // Testing group behaviour
-            using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::WeakNode,
-                                                           stpo::Graph::WeakEdge,
-                                                           stpo::Graph::WeakGroup >;
+            using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::Configuration >;
             auto group2 = g.createGroup();
             auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
             group2.lock()->addBehaviour( groupMockBehaviour );

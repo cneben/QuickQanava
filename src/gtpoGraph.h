@@ -41,7 +41,7 @@
 #include <cassert>
 #include <iterator>         // std::back_inserter
 
-// Qan.Topo headers
+// GTpo headers
 #include "./gtpoUtils.h"
 #include "./gtpoBehaviour.h"
 
@@ -204,9 +204,7 @@ struct DefaultConfig :  public GraphConfig,
     using GraphBehaviours = std::tuple<>;
 
     //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
-    using GroupBehaviours = std::tuple< gtpo::GroupEdgeSetBehaviour< std::weak_ptr<Node>,
-                                                                     std::weak_ptr<Edge>,
-                                                                     std::weak_ptr<Group> > >;
+    using GroupBehaviours = std::tuple< gtpo::GroupEdgeSetBehaviour< DefaultConfig > >;
 
     //! Define the container used to store nodes (default to std::vector).
     template <class...Ts>
@@ -387,9 +385,7 @@ private:
 */
 template <class Config = DefaultConfig>
 class GenGroup : public Config::GroupBase,
-                 public gtpo::Behaviourable< gtpo::GroupBehaviour< std::weak_ptr< typename Config::Node >,
-                                                                   std::weak_ptr< typename Config::Edge >,
-                                                                   std::weak_ptr< typename Config::Group > >,
+                 public gtpo::Behaviourable< gtpo::GroupBehaviour< Config >,
                                              typename Config::GroupBehaviours >,
                  public std::enable_shared_from_this<typename Config::Group>
 {
@@ -472,9 +468,9 @@ protected:
     //@{
 public:
     //! User friendly shortcut to this group concrete behaviour.
-    using Behaviour = GroupBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    using Behaviour = GroupBehaviour< Config >;
     //! User friendly shortcut type to this group concrete Behaviourable base type.
-    using Behaviourable = Behaviourable<Behaviour, typename Config::GraphBehaviours>;
+    using Behaviourable = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -492,9 +488,7 @@ public:
  */
 template < class Config = DefaultConfig >
 class GenGraph : public Config::GraphBase,
-                 public gtpo::Behaviourable< gtpo::GraphBehaviour< std::weak_ptr< typename Config::Node >,
-                                                                   std::weak_ptr< typename Config::Edge >,
-                                                                   std::weak_ptr< typename Config::Group > >,
+                 public gtpo::Behaviourable< gtpo::GraphBehaviour< Config >,
                                              typename Config::GraphBehaviours >
 {
     /*! \name Graph Management *///--------------------------------------------
@@ -521,9 +515,9 @@ public:
     using SharedGroups  = typename Config::template NodeContainer< SharedGroup >;
 
     //! User friendly shortcut to this concrete graph behaviour.
-    using Behaviour = GraphBehaviour<WeakNode,WeakEdge,WeakGroup>;
+    using Behaviour = GraphBehaviour< Config >;
     //! User friendly shortcut type to this concrete graph Behaviourable base type.
-    using Behaviourable = Behaviourable<Behaviour, typename Config::GraphBehaviours >;
+    using Behaviourable = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
 
 public:
     using Size  = typename SharedNodes::size_type;

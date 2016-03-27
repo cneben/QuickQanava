@@ -144,9 +144,9 @@ auto    GenGraph< Config >::isRootNode( WeakNode node ) const -> bool
 {
     assert_throw( !node.expired(), "gtpo::GenGraph<>::isRootNode(): Error: node is expired." );
     SharedNode sharedNode = node.lock();
-    auto rootNodeIter = std::find_if( _rootNodes.begin(), _rootNodes.end(),
-                                            [=](const WeakNode& rootNode ){ return ( compare_weak_ptr<>( node, rootNode ) ); } );
-    return ( sharedNode->getInDegree() == 0 && rootNodeIter != _rootNodes.end() );
+    if ( sharedNode->getInDegree() != 0 )   // Fast exit when node in degree != 0, it can't be a root node
+        return false;
+    return gtpo::find_weak_ptr( _rootNodes, node );
 }
 
 template < class Config >

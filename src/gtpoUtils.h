@@ -74,14 +74,28 @@ auto    compare_weak_ptr( const std::weak_ptr<T>& left, const std::weak_ptr<T>& 
     return !left.owner_before( right ) && !right.owner_before( left );
 }
 
+/*! Find a weak_ptr<> element in a STL standard container.
+ *
+ * \return true if \c element is found in \c container, false otherwise.
+ * \throw gtpo::bad_topology_error if the searched element weak_ptr is expired.
+ */
+template < class C, class T >
+auto    find_weak_ptr( const C& container, const T& element ) -> bool {
+    assert_throw( !element.expired(), "gtpo::find_weak_ptr<>(): Error: element is expired." );
+    auto iter = std::find_if( container.begin(), container.end(),
+                                            [=](const T& containerElement ){ return ( compare_weak_ptr<>( containerElement, element ) ); } );
+    return ( iter != container.end() );
+}
+
+
 /*! Configuration interface for accessing graph containers.
  *
- * GTpo GenGraph Config configuration struct could inherit from ContainerConfig to
- * help how GenGraph access to its nodes and edges container.
+ * GTpo GenGraph Config configuration struct should inherit from ContainerAccessors since
+ * GenGraph access its nodes, edges and groups container trought the generic insert()/remove() interface.
  *
  * For example, if you define class GenGraph< QtConfig >, your Qt config class could inherit
- * from gtpo::QtContainerConfig (include gtpoQtUtils.h), for the standard library, use
- * gtpo::StdContainerConfig (DefaultConfig inherits STDContainerConfig to provide
+ * from qtpo::ContainerAccessors (include gtpoQtUtils.h), for the standard library, use
+ * gtpo::StdContainerAccessors (DefaultConfig inherits gtpo::StdContainerAccessors to provide
  * default implementations for accessors working with most STL containers.
  */
 struct ContainerAccessors {
