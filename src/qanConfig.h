@@ -151,8 +151,8 @@ class Config final : public gtpo::GraphConfig,
 public:
     // Base config
     using GraphBase = QQuickItem;
-    using NodeBase = QQuickItem;
-    using EdgeBase = QQuickPaintedItem;
+    using NodeBase  = QQuickItem;
+    using EdgeBase  = QQuickPaintedItem;
     using GroupBase = QQuickItem;
 
     using GraphBehaviours = std::tuple<>;
