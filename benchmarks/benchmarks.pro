@@ -1,6 +1,6 @@
 TEMPLATE    = app
 TARGET      = gtpoBenchmarks
-CONFIG      += warn_on thread c++11
+CONFIG      += warn_on thread c++14
 QT          += core
 
 DEPENDPATH  += ../src
@@ -16,7 +16,7 @@ SOURCES	+=  gtpoBenchmarks.cpp
 HEADERS	+=  
 
 CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -L../build/ -lgtpod -lgtest -lprotobuf
+    linux-g++*:     LIBS	+= -L../build/ -lbenchmark -lprotobuf
     win32-msvc*:    PRE_TARGETDEPS +=  ../build/gtpod.lib
     win32-msvc*:    LIBS	+= ../build/gtpod.lib $$GBENCHMARK_DIR/src/Debug/benchmark.lib Shlwapi.lib $$PROTOCOL_BUFFER_LIBDIR_DEBUG/libprotobufd.lib
     win32-g++*:     LIBS	+= -L../build/ -lgtpod

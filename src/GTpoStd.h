@@ -107,7 +107,8 @@ public:
     double   getWeight( ) const { return _weight; }
     void    setWeight( double weight ) {
         _weight = weight;
-        getGraph()->notifyEdgeModified( WeakEdge{ this->shared_from_this() } );
+        WeakEdge edge{ this->shared_from_this() };
+        getGraph()->notifyEdgeModified( edge );
     }
 private:
     double   _weight = 0.;
@@ -119,31 +120,36 @@ public:
     const std::string&  getLabel( ) const { return _label; }
     void                setLabel( const std::string& label ) {
         _label = label;
-        getGraph()->notifyNodeModified( WeakNode{ this->shared_from_this() } );
+        WeakNode node{ this->shared_from_this() };
+        getGraph()->notifyNodeModified( node );
     }
 
     double  getX( ) const { return _x; }
     void    setX( double x ) {
         _x = x;
-        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
+        WeakNode node{ this->shared_from_this() };
+        getGraph()->notifyNodeModified( node );
     }
 
     double  getY( ) const { return _y; }
     void    setY( double y ) {
         _y = y;
-        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
+        WeakNode node{ this->shared_from_this() };
+        getGraph()->notifyNodeModified( node );
     }
 
     double  getWidth( ) const { return _width; }
     void    setWidth( double width ) {
         _width = width;
-        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
+        WeakNode node{ this->shared_from_this() };
+        getGraph()->notifyNodeModified( node );
     }
 
     double  getHeight( ) const { return _height; }
     void    setHeight( double height ) {
         _height = height;
-        getGraph()->notifyNodeModified( WeakNode{ shared_from_this() } );
+        WeakNode node{ this->shared_from_this() };
+        getGraph()->notifyNodeModified( node );
     }
 
 private:

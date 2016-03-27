@@ -436,6 +436,11 @@ class GraphBehaviourMock : public gtpo::GraphBehaviour< Config >
 public:
     GraphBehaviourMock() { }
     virtual ~GraphBehaviourMock() { }
+
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+
 protected:
     virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
     virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
@@ -465,6 +470,11 @@ class GroupBehaviourMock : public gtpo::GroupBehaviour< Config >
 public:
     GroupBehaviourMock() { }
     virtual ~GroupBehaviourMock() { }
+
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+
 protected:
     virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
     virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }

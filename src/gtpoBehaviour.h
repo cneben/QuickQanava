@@ -193,6 +193,8 @@ public:
     explicit GraphBehaviour( const GraphBehaviour& ) = default;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+
     //! Called immediatly after group \c weakGroup has been inserted in graph.
     virtual auto    groupInserted( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
     //! Called immediatly before group \c weakGroup has been removed from graph.
@@ -338,8 +340,8 @@ public:
     auto    notifyGroupRemoved( Group& group ) -> void;
 
     //! Notify all behaviors that group \c group has been modified.
-    template < class Group >
-    auto    notifyGroupModified( Group& group ) -> void;
+    template < class G >
+    auto    notifyGroupModified( G& group ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -357,6 +359,14 @@ public:
     virtual ~GroupAdjacentEdgesBehaviour() = default;
     explicit GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = default;
     GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
+
+    using SharedNode    = std::shared_ptr< typename Config::Node >;
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using SharedEdge    = std::shared_ptr< typename Config::Edge >;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
 
 public:
     virtual auto    groupModified( WeakGroup& weakGroup ) -> void override { (void)weakGroup; }
@@ -377,6 +387,14 @@ public:
     virtual ~GraphGroupAjacentEdgesBehaviour() = default;
     GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
     GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
+
+    using SharedNode    = std::shared_ptr< typename Config::Node >;
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using SharedEdge    = std::shared_ptr< typename Config::Edge >;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+    using WeakGroup     = std::weak_ptr< typename Config::Group >;
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
 
 public:
     virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void override;

@@ -438,7 +438,7 @@ public:
     auto        removeNode( const WeakNode& weakNode ) noexcept( false ) -> void;
 
     //! Return group's nodes.
-    auto        getNodes() -> const typename WeakNodes& { return _nodes; }
+    auto        getNodes() -> const WeakNodes& { return _nodes; }
 
     //! Return true if group contains \c node.
     auto        hasNode( const WeakNode& node ) const -> bool;
@@ -470,7 +470,7 @@ public:
     //! User friendly shortcut to this group concrete behaviour.
     using Behaviour = GroupBehaviour< Config >;
     //! User friendly shortcut type to this group concrete Behaviourable base type.
-    using Behaviourable = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
+    using BehaviourableBase = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -517,7 +517,8 @@ public:
     //! User friendly shortcut to this concrete graph behaviour.
     using Behaviour = GraphBehaviour< Config >;
     //! User friendly shortcut type to this concrete graph Behaviourable base type.
-    using Behaviourable = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
+    using BehaviourableBase = gtpo::Behaviourable< gtpo::GraphBehaviour< Config >,
+                                                   typename Config::GraphBehaviours >;
 
 public:
     using Size  = typename SharedNodes::size_type;

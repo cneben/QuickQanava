@@ -38,7 +38,7 @@ template < class T >
 auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
 {
     // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
-    // For calling pointer on memg++ template template parameter template keywordber functions.
+    // For calling pointer on template template parameter template keyword functions.
     // std::unique_ptr has no overload for .* or ->* operator
     // (*behaviour) == (*behaviour.get())
     // Equivalent to: ((*behaviour.get()).*method)(arg)
@@ -115,10 +115,10 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupRemoved( Group& grou
 }
 
 template < class Behaviour, class SBehaviours  >
-template < class Group >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( Group& group ) -> void
+template < class G >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( G& group ) -> void
 {
-    notifyBehaviours< Group >( &Behaviour::groupModified, group );
+    notifyBehaviours< G >( &Behaviour::groupModified, group );
     sNotifyBehaviours( [&](auto& behaviour) { behaviour.groupModified( group ); } );
 }
 //-----------------------------------------------------------------------------

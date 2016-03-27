@@ -55,7 +55,7 @@ void    GenGraph< Config >::clear()
 
     // Clearing groups and behaviours
     _groups.clear();
-    Behaviourable::clear();
+    BehaviourableBase::clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ auto    GenGraph< Config >::insertNode( SharedNode node ) -> WeakNode
         Config::template insert< SharedNodes >::into( _nodes, node );
         Config::template insert< WeakNodesSearch >::into( _nodesSearch, weakNode );
         Config::template insert< WeakNodes >::into( _rootNodes, weakNode );
-        notifyNodeInserted( weakNode );
+        BehaviourableBase::notifyNodeInserted( weakNode );
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::insertNode(): Error: can't insert node in graph." ); }
     return weakNode;
 }
@@ -103,7 +103,7 @@ auto    GenGraph< Config >::removeNode( WeakNode weakNode ) -> void
     if ( !node )
         gtpo::assert_throw( false, "gtpo::GenGraph<>::removeNode(): Error: node is expired." );
 
-    notifyNodeRemoved( weakNode );
+    BehaviourableBase::notifyNodeRemoved( weakNode );
 
     // Removing all orphant edges pointing to node.
     WeakEdges nodeInEdges; std::copy( node->getInEdges().cbegin(),
@@ -181,7 +181,7 @@ auto    GenGraph< Config >::createEdge( WeakNode src, WeakNode dst ) -> WeakEdge
 
             if ( source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template remove<WeakNodes>::from( _rootNodes, dst );    // Otherwise destination is no longer a root node
-            notifyEdgeInserted( edge );
+            BehaviourableBase::notifyEdgeInserted( edge );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
         }
@@ -267,7 +267,7 @@ void    GenGraph< Config >::removeEdge( WeakEdge edge )
     SharedNode destination = sharedEdge->getDst().lock();
     if ( !source || !destination )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Error: Edge source or destination are expired." );
-    notifyEdgeRemoved( edge );
+    BehaviourableBase::notifyEdgeRemoved( edge );
     source->removeOutEdge( edge );
     destination->removeInEdge( edge );
     sharedEdge->setGraph( nullptr );
@@ -326,7 +326,7 @@ auto    GenGraph< Config >::insertGroup( SharedGroup group ) noexcept( false ) -
         weakGroup = group;
         group->setGraph( this );
         Config::template insert<SharedGroups>::into( _groups, group );
-        notifyGroupInserted( WeakGroup{ group } );
+        this->notifyGroupInserted( weakGroup );
     } catch (...) { throw gtpo::bad_topology_error( "gtpo::GenGraph<>::insertGroup(): Insertion of group failed" ); }
     return weakGroup;
 }
@@ -340,7 +340,7 @@ auto    GenGraph< Config >::removeGroup( WeakGroup weakGroup ) noexcept( false )
         gtpo::assert_throw( false, "GenGraph<>::removeGroup(): Error: trying to remove and expired group." );
 
     // Remove group (it will be automatically deallocated)
-    notifyGroupRemoved( WeakGroup{ weakGroup } );
+    this->notifyGroupRemoved( weakGroup );
     group->setGraph( nullptr );
     Config::template remove<SharedGroups>::from( _groups, group );
 }

@@ -45,8 +45,8 @@ auto GenGroup< Config >::insertNode( WeakNode weakNode ) -> void
         node->setGroup( weakGroup );
         Config::template insert<WeakNodes>::into( _nodes, node );
 
-        notifyGroupModified<WeakGroup>( weakGroup );        // Notification
-        notifyNodeInserted<WeakNode>( weakNode );
+        this->notifyGroupModified( weakGroup );        // Notification
+        this->notifyNodeInserted( weakNode );
         getGraph()->notifyGroupModified( weakGroup );
 
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGroup<>::insertNode(): Error: can't insert node in group." ); }
@@ -61,11 +61,12 @@ auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
         gtpo::assert_throw( false, "gtpo::GenGroup<>::removeNode(): Error: node is expired." );
 
     WeakGroup weakGroup{ this->shared_from_this() };
-    notifyGroupModified< WeakGroup >( weakGroup );          // Notification
-    notifyNodeRemoved< WeakNode >( const_cast<WeakNode&>( weakNode ) );
-    getGraph()->notifyGroupModified< WeakGroup >( weakGroup );
+    this->notifyGroupModified( weakGroup );          // Notification
+    this->notifyNodeRemoved( const_cast<WeakNode&>( weakNode ) );
+    getGraph()->notifyGroupModified( weakGroup );
 
-    node->setGroup( WeakGroup{} );
+    WeakGroup emptyGroup{};
+    node->setGroup( emptyGroup );
     Config::template remove<WeakNodes>::from( _nodes, node );
 }
 

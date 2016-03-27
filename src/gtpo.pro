@@ -3,7 +3,7 @@ TEMPLATE	= lib
 LANGUAGE	= C++
 TARGET		= gtpo
 DESTDIR		= ../build
-CONFIG		+= warn_on thread staticlib c++11
+CONFIG		+= warn_on thread staticlib c++14
 QT		+= core 
 
 include (../common.pri)
