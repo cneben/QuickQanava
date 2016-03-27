@@ -15,4 +15,7 @@ sample-serializer.depends  = gtpo
 tests.subdir     = tests
 tests.depends   = gtpo
 
-SUBDIRS     +=  gtpo sample-basic sample-behaviour sample-serializer tests
+benchmarks.subdir   = benchmarks
+benchmarks.depends  = gtpo
+
+SUBDIRS     +=  gtpo sample-basic sample-behaviour sample-serializer tests benchmarks
