@@ -1,0 +1,33 @@
+syntax = "proto3"; 
+import "google/protobuf/any.proto";
+
+package gtpo.pb;
+
+message GTpoNode {
+    int32   node_id=1;
+    string  label=2;
+    double  x=3;
+    double  y=4;
+    double  width=5;
+    double  height=6;
+}
+
+message GTpoEdge {
+    int32   edge_id=1;
+    int32   src_node_id=2;
+    int32   dst_node_id=3;
+    double  weight=4;
+}
+
+message GTpoVoid {	// Empty message type serialized by default to GTpoGraph.user1 and  GTpoGraph.user2
+
+}
+
+message GTpoGraph {
+    int32 node_count = 1;
+    int32 edge_count = 2;
+    repeated google.protobuf.Any nodes = 3;
+    repeated google.protobuf.Any edges = 4;
+    google.protobuf.Any user1 = 5;  // Reserved for user extensions
+    google.protobuf.Any user2 = 6;
+}
