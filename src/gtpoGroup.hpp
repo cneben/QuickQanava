@@ -60,14 +60,12 @@ auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
     if ( !node )
         gtpo::assert_throw( false, "gtpo::GenGroup<>::removeNode(): Error: node is expired." );
 
-    node->setGroup( WeakGroup{} );
-
     WeakGroup weakGroup{ this->shared_from_this() };
-
     notifyGroupModified< WeakGroup >( weakGroup );          // Notification
     notifyNodeRemoved< WeakNode >( const_cast<WeakNode&>( weakNode ) );
     getGraph()->notifyGroupModified< WeakGroup >( weakGroup );
 
+    node->setGroup( WeakGroup{} );
     Config::template remove<WeakNodes>::from( _nodes, node );
 }
 

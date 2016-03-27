@@ -59,18 +59,18 @@ public:
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
-    //! Called immediatly after \c node has been inserted.
-    virtual auto nodeInserted( WeakNode& node ) -> void { (void)node; }
-    //! Called when \c node is about to be removed.
-    virtual auto nodeRemoved( WeakNode& node ) -> void { (void)node; }
-    /*! \brief Called immedialty after \c node has been modified.
+    //! Called immediatly after \c weakNode has been inserted.
+    virtual auto nodeInserted( WeakNode& weakNode ) -> void { (void)weakNode; }
+    //! Called when \c weakNode is about to be removed.
+    virtual auto nodeRemoved( WeakNode& weakNode ) -> void { (void)weakNode; }
+    /*! \brief Called immedialty after \c weakNode has been modified.
      *
      * Creating, inserting or removing a node does not generate a nodeModified() call.
      *
      * A call to nodeModified() usually follow a node property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    nodeModified( WeakNode& node ) -> void { (void)node; }
+    virtual auto    nodeModified( WeakNode& weakNode ) -> void { (void)weakNode; }
 };
 
 
@@ -86,24 +86,25 @@ public:
     explicit EdgeBehaviour( const EdgeBehaviour& ) = default;
     EdgeBehaviour& operator=( const EdgeBehaviour& ) = default;
 
-    using Edge          = typename Config::Edge;
-    using SharedEdge    = std::shared_ptr< typename Config::Edge >;
-    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
-    using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
-    using SharedEdges   = typename Config::template EdgeContainer< SharedEdge >;
+    using Edge              = typename Config::Edge;
+    using SharedEdge        = std::shared_ptr< typename Config::Edge >;
+    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
+    using WeakEdges         = typename Config::template EdgeContainer< WeakEdge >;
+    using SharedEdges       = typename Config::template EdgeContainer< SharedEdge >;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 
-    //! Called immediatly after \c edge has been inserted.
-    virtual auto    edgeInserted( WeakEdge& edge ) -> void { (void)edge; }
-    //! Called when \c edge is about to be removed.
-    virtual auto    edgeRemoved( WeakEdge& edge ) -> void { (void)edge; }
-    /*! \brief Called immediatly after \c edge has been modified.
+    //! Called immediatly after \c weakEdge has been inserted.
+    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    //! Called when \c weakEdge is about to be removed.
+    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    /*! \brief Called immediatly after \c weakEdge has been modified.
      *
      * Creating, inserting or removing an edge does not generate an edgeModified() call.
      *
      * A call to edgeModified() usually follow an edge property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    edgeModified( WeakEdge& edge ) -> void { (void)edge; }
+    virtual auto    edgeModified( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
 };
 
 
@@ -171,13 +172,13 @@ public:
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
 public:
-    /*! Called whenever group \c group has been modified.
+    /*! Called whenever group \c weakGroup has been modified.
      *
      * Called in the following situations:
      * \li node or edge inserted or removed from group
      * \li group label changed
      */
-    virtual auto    groupModified( WeakGroup& group ) -> void { (void)group; }
+    virtual auto    groupModified( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
 };
 
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
@@ -192,10 +193,10 @@ public:
     explicit GraphBehaviour( const GraphBehaviour& ) = default;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
-    //! Called immediatly after group \c group has been inserted in graph.
-    virtual auto    groupInserted( WeakGroup& group ) -> void { (void)group; }
-    //! Called immediatly before group \c group has been removed from graph.
-    virtual auto    groupRemoved( WeakGroup& group ) -> void { (void)group; }
+    //! Called immediatly after group \c weakGroup has been inserted in graph.
+    virtual auto    groupInserted( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
+    //! Called immediatly before group \c weakGroup has been removed from graph.
+    virtual auto    groupRemoved( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
 };
 
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
@@ -343,23 +344,43 @@ public:
     //-------------------------------------------------------------------------
 };
 
+/*! \brief Collect and maintain a group adjacent edge set when a node is removed or inserted in a group.
+ *
+ *  This behaviour should be used with GraphGroupAjacentEdgesBehaviour.
+ */
+template < class Config >
+class GroupAdjacentEdgesBehaviour : public GroupBehaviour< Config >
+{
+    /* Group Edge Set Behaviour *///-------------------------------------------
+public:
+    GroupAdjacentEdgesBehaviour() = default;
+    virtual ~GroupAdjacentEdgesBehaviour() = default;
+    explicit GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = default;
+    GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
+
+public:
+    virtual auto    groupModified( WeakGroup& weakGroup ) -> void override { (void)weakGroup; }
+    virtual auto    nodeInserted( WeakNode& weakNode ) -> void override;
+    virtual auto    nodeRemoved( WeakNode& weakNode ) -> void override;
+    //-------------------------------------------------------------------------
+};
+
 /*! \brief Collect and maintain a group adjacent edge set and group edge set.
  *
  */
 template < class Config >
-class GroupEdgeSetBehaviour : public GroupBehaviour< Config >
+class GraphGroupAjacentEdgesBehaviour : public GraphBehaviour< Config >
 {
     /* Group Edge Set Behaviour *///-------------------------------------------
 public:
-    GroupEdgeSetBehaviour() = default;
-    virtual ~GroupEdgeSetBehaviour() = default;
-    explicit GroupEdgeSetBehaviour( const GroupEdgeSetBehaviour& ) = default;
-    GroupEdgeSetBehaviour& operator=( const GroupEdgeSetBehaviour& ) = delete;
+    GraphGroupAjacentEdgesBehaviour() = default;
+    virtual ~GraphGroupAjacentEdgesBehaviour() = default;
+    GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
+    GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
 
 public:
-    virtual auto    groupModified( WeakGroup& group ) -> void override { (void)group; }
-    virtual auto    nodeInserted( WeakNode& node ) -> void override;
-    virtual auto    nodeRemoved( WeakNode& node ) -> void override;
+    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void override;
+    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void override;
     //-------------------------------------------------------------------------
 };
 

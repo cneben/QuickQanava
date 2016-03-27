@@ -78,8 +78,8 @@ public:
     using Edge = stpo::Edge;
     using Group = stpo::Group;
 
-    using GraphBehaviours = std::tuple<>;
-    using GroupBehaviours = std::tuple< gtpo::GroupEdgeSetBehaviour< Config > >;
+    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< Config > >;
+    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< Config > >;
 
     template <class...Ts>
     using NodeContainer = std::vector<Ts...>;

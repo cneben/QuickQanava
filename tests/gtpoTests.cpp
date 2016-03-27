@@ -349,7 +349,45 @@ TEST(GTpo, progressNotifier)
 // GTpo Edge Set Behaviour test (using STpo)
 //-----------------------------------------------------------------------------
 
-TEST(GTpo, stpoGroupEdgeSetBehaviour)
+TEST(GTpo, stpoGroupAdjacentEdgesBehaviour)
+{
+    stpo::Graph g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+
+    auto g1 = g.createGroup();
+    auto sg1 = g1.lock();
+    sg1->insertNode( n1 );
+    sg1->insertNode( n2 );
+
+    // Expecting 0 adjacent edges since no edge has been added
+    auto& g1AdjacentEdgeSet = sg1->getAdjacentEdges();
+    EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
+
+    {   // Adding an edge at graph level, expecting edge to be inserted in group adjacent edge set
+        g.createEdge( n1, n2 );
+        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
+
+        // Removing the edge at graph level, expecting group empty adjacent edge
+        g.removeEdge( n1, n2 );
+        EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
+    }
+
+    {
+        auto e2 = g.createEdge( n1, n2 );
+        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
+
+        // Removing node 1 from group, edge is still adjacent
+        sg1->removeNode( n1 );
+        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
+
+        // Removing node 2 from group, edge is no longer adjacent to group
+        sg1->removeNode( n2 );
+        EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
+    }
+}
+
+TEST(GTpo, stpoGroupAdjacentEdgesBehaviour2)
 {
     stpo::Graph g;
     auto n1 = g.createNode();
@@ -372,8 +410,18 @@ TEST(GTpo, stpoGroupEdgeSetBehaviour)
 
     // See manual topology section, it is the same topology
     // Check that group 1 adjacent edge set is {e2, e3, e4, e5}
-    auto g1AdjacentEdgeSet = sg1->getAdjacentEdges();
+    auto& g1AdjacentEdgeSet = sg1->getAdjacentEdges();
     EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e2 ) );
+    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e3 ) );
+    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e4 ) );
+    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e5 ) );
+    EXPECT_EQ( g1AdjacentEdgeSet.size(), 4 );
+
+    // Removing a node from the group should remove its in/out edges from group adjacent edge set
+    // Here, removing n4 should remove e3 and e5
+    sg1->removeNode( n4 );
+    EXPECT_EQ( g1AdjacentEdgeSet.size(), 3 );
+
     g.clear();
 }
 

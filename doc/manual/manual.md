@@ -10,16 +10,21 @@ For any questions, please contact: benoit@qanava.org
 | Pugy XML                  | No                |       **Yes**                   |      MIT        |
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
+| Google Benchmark          | No                |       No                        |    Apache 2.0   |
 
 *PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugyXML*, see:
 + PugiXML homepage: http://pugixml.org/
 + PugiXML GitHub: https://github.com/zeux/pugixml
+*GTpo* include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine.
 
 Google Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer homepage and installation instructions could be found on:
 + Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
 + Protocol Buffer v3 GitHub: https://github.com/google/protobuf
 
-Google Test is a *GTpo* dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
+Google Test (optional until you intent to use a graph with custom non-STL non-Qt containers):
++ Google Test GitHub: https://github.com/google/googletest/
+
+Google Benchmark (optional):
 + Google Test GitHub: https://github.com/google/googletest/
 
 [TOC]

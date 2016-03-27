@@ -124,26 +124,96 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( Group& gro
 //-----------------------------------------------------------------------------
 
 
-/* Group Edge Set Behaviour *///-------------------------------------------
+/* Group Adjacent Edges Behaviour *///-----------------------------------------
 template < class Config >
-auto GroupEdgeSetBehaviour< Config >::nodeInserted( WeakNode& node ) -> void
+auto GroupAdjacentEdgesBehaviour< Config >::nodeInserted( WeakNode& weakNode ) -> void
 {
-    if ( !node.expired() ) {
-        SharedNode sharedNode = node.lock();
-        if ( sharedNode != nullptr ) {
-            /*WeakGroup group = node.getGroup();
-            // Add all node edges to adjacent edge set
-            for ( auto inEdge : sharedNode.getInEdges() )
-                group.addAdjacentEdge( group.getAdjacentEdgeSet(), inEdge );*/
+    if ( !weakNode.expired() ) {
+        SharedNode node = weakNode.lock();
+        if ( node != nullptr ) {
+            WeakGroup weakGroup = node->getGroup();
+            SharedGroup group = weakGroup.lock();
+            for ( auto inEdge : node->getInEdges() ) // Add all node in/out edges to adjacent edge set
+                Config::template insert<WeakEdgesSearch>::into( group->getAdjacentEdges(), inEdge );
+            for ( auto outEdge : node->getOutEdges() )
+                Config::template insert<WeakEdgesSearch>::into( group->getAdjacentEdges(), outEdge );
         }
     }
 }
 
 template < class Config >
-auto GroupEdgeSetBehaviour< Config >::nodeRemoved( WeakNode& node ) -> void
+auto GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode ) -> void
 {
+    if ( !weakNode.expired() ) {
+        SharedNode node = weakNode.lock();
+        if ( node != nullptr ) {
+            WeakGroup weakGroup = node->getGroup();
+            SharedGroup group = weakGroup.lock();
+            // Remove all node in/out edges from group adjacent edge set
+                // Except if this edge "other" src or dst is still part of the group
+            for ( auto inWeakEdge : node->getInEdges() ) {
+                SharedEdge inEdge = inWeakEdge.lock();
+                WeakNode inEdgeWeakSrc = inEdge->getSrc();
+                SharedNode inEdgeSrc = inEdgeWeakSrc.lock();
+                if ( !gtpo::compare_weak_ptr( inEdgeSrc->getGroup(), weakGroup ) )
+                    Config::template remove<WeakEdgesSearch>::from( group->getAdjacentEdges(), inWeakEdge );
+            }
+            for ( auto outWeakEdge : node->getOutEdges() ) {
+                SharedEdge outEdge = outWeakEdge.lock();
+                WeakNode outEdgeWeakDst = outEdge->getDst();
+                SharedNode outEdgeDst = outEdgeWeakDst.lock();
+                if ( !gtpo::compare_weak_ptr( outEdgeDst->getGroup(), weakGroup ) )
+                    Config::template remove<WeakEdgesSearch>::from( group->getAdjacentEdges(), outWeakEdge );
+            }
+        }
+    }
 }
 //-----------------------------------------------------------------------------
+
+/* Graph Group Edge Set Behaviour *///-----------------------------------------
+template < class Config >
+auto GraphGroupAjacentEdgesBehaviour< Config >::edgeInserted( WeakEdge& weakEdge ) -> void
+{
+    if ( !weakEdge.expired() ) {
+        SharedEdge edge = weakEdge.lock();
+        if ( edge != nullptr ) {
+            // If either src or dst is inside a group, add edge to group adjacent edge set
+            SharedNode src = edge->getSrc().lock();
+            SharedNode dst = edge->getSrc().lock();
+            if ( src != nullptr && dst != nullptr ) {
+                SharedGroup srcGroup = src->getGroup().lock();
+                if ( srcGroup != nullptr )
+                    Config::template insert<WeakEdgesSearch>::into( srcGroup->getAdjacentEdges(), weakEdge );
+                SharedGroup dstGroup = dst->getGroup().lock();
+                if ( dstGroup != nullptr )
+                    Config::template insert<WeakEdgesSearch>::into( dstGroup->getAdjacentEdges(), weakEdge );
+            }
+        }
+    }
+}
+
+template < class Config >
+auto GraphGroupAjacentEdgesBehaviour< Config >::edgeRemoved( WeakEdge& weakEdge ) -> void
+{
+    if ( !weakEdge.expired() ) {
+        SharedEdge edge = weakEdge.lock();
+        if ( edge != nullptr ) {
+            // If either src or dst is inside a group, remove edge from group adjacent edge set
+            SharedNode src = edge->getSrc().lock();
+            SharedNode dst = edge->getSrc().lock();
+            if ( src != nullptr && dst != nullptr ) {
+                SharedGroup srcGroup = src->getGroup().lock();
+                if ( srcGroup != nullptr )
+                    Config::template remove<WeakEdgesSearch>::from( srcGroup->getAdjacentEdges(), weakEdge );
+                SharedGroup dstGroup = dst->getGroup().lock();
+                if ( dstGroup != nullptr )
+                    Config::template remove<WeakEdgesSearch>::from( dstGroup->getAdjacentEdges(), weakEdge );
+            }
+        }
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 } // ::gtpo
 

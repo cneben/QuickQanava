@@ -201,10 +201,10 @@ struct DefaultConfig :  public GraphConfig,
     using Group = GenGroup<DefaultConfig>;
 
     //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
-    using GraphBehaviours = std::tuple<>;
+    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< DefaultConfig > >;
 
     //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
-    using GroupBehaviours = std::tuple< gtpo::GroupEdgeSetBehaviour< DefaultConfig > >;
+    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< DefaultConfig > >;
 
     //! Define the container used to store nodes (default to std::vector).
     template <class...Ts>
