@@ -66,8 +66,6 @@ qan::Graph* Group::getGraph()
 /* Group Nodes Management *///-------------------------------------------------
 auto    Group::insertNode( qan::Node* node ) -> void
 {
-    qDebug() << "qan::Group::insertNode(): node=" << node;
-
     if ( node == nullptr )
         return;
     WeakNode weakNode;
@@ -77,13 +75,12 @@ auto    Group::insertNode( qan::Node* node ) -> void
 
         if ( getContainer( ) == nullptr )   // A container must have configured in concrete QML group component
             return;
-        //qDebug( ) << "qan::Group::insertNode(): container found...";
 
         // Note 20150907: Set a default position corresponding to the drop position, it will usually be modified
         // if a layout has been configured in this group
         node->setPosition( node->mapToItem( getContainer( ), QPointF( 0., 0. ) ) );
         node->setParentItem( getContainer( ) );
-        //node->setGroup( this );
+        groupMoved( ); // Force call to groupMoved() to update group adjacent edges
 
         //qDebug( ) << "qan::Group::insertNode(): node configured...";
 
@@ -106,11 +103,6 @@ auto    Group::insertNode( qan::Node* node ) -> void
             //_nodes.append( node );  // Layout will occurs automatically after node insertion
 
         //connect( node, SIGNAL( destroyed( QObject* ) ), this, SLOT( nodeDestroyed( QObject* ) ) );  // Automatically check for node suppression
-
-        // FIXME
-        //emit _graph->nodeModified( node );  // Update graph observation signals
-        //emit _graph->groupModified( this );
-
     }
     catch ( std::bad_weak_ptr ) { return; }
     catch ( gtpo::bad_topology_error ) { return; }
@@ -172,27 +164,22 @@ void    Group::groupMoved( )
 {
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
-    /*for ( auto node : getNodes() ) {
-
-    }*/
-
-    /*qan::Edge::Set edgeSet;
-    foreach ( qan::Node* node, _nodes )
-    {
-        edgeSet.unite( node->getInEdges( ).toSet( ) );
-        edgeSet.unite( node->getOutEdges( ).toSet( ) );
+    for ( auto weakEdge : getAdjacentEdges() ) {
+        qan::Edge* edge = weakEdge.lock().get();
+        if ( edge != nullptr )
+            edge->updateItem();
     }
-    foreach ( qan::Edge* edge, edgeSet )
-        edge->updateEdge( );
-    if ( _graph != nullptr )        // Note 20151013: _graph can be null sometime, investigate that...
-        emit _graph->groupModified( this );*/
+    if ( getGraph() != nullptr ) {
+        WeakGroup weakGroup{ this->shared_from_this( ) };
+        getGraph()->notifyGroupModified( weakGroup );
+    }
 }
 //-----------------------------------------------------------------------------
 
 /* Drag'nDrop Management *///--------------------------------------------------
 void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
 {
-    qDebug( ) << "qan::Group::proposeNodeDrop(): container=" << container << "  node=" << node;
+    //qDebug( ) << "qan::Group::proposeNodeDrop(): container=" << container << "  node=" << node;
     if ( !getHilightDrag( ) )
         return;
 

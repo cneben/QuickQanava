@@ -51,9 +51,8 @@ Qan.AbstractGroup {
 
     signal  groupRightClicked( var group, var p )
 
-    // See qan::Group::container property documentation
-    container: content
-    Text {
+    container: content   // See qan::Group::container property documentation
+    TextInput {
         id: nameText
         x: 0
         y: -contentHeight - 3
@@ -61,6 +60,12 @@ Qan.AbstractGroup {
         font.pointSize: group.nameTextSize
         font.bold: group.nameTextBold
         color: group.nameTextColor
+        onAccepted: {
+            if ( text.length == 0 )
+                text = group.label  // Do not allow empty labels
+            else group.label = text
+            focus = false;  // Release focus once the lable has been edited
+        }
     }
 
     Rectangle {

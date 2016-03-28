@@ -147,7 +147,6 @@ void    Node::dropNode( QQuickItem* target )
 
 void    Node::proposeNodeDrop( QQuickItem* target )
 {
-    qDebug() << "qan::Node::proposeNodeDrop(): target=" << target;
     // FIXME
     //    emitNodeModified( );    // proposeNodeDrop() is called everytime the node has been dragged.
     if ( target == nullptr )
@@ -160,13 +159,13 @@ void    Node::proposeNodeDrop( QQuickItem* target )
 
 void    Node::ungroup( )
 {
-    if ( getGroup() != nullptr && getGraph()->hasGroup( getGroup() ) )
-        getGroup()->removeNode( this );
+    if ( getQanGroup() != nullptr && getGraph()->hasGroup( getQanGroup() ) )
+        getQanGroup()->removeNode( this );
     // FIXME
     //    emitNodeModified( );
 }
 
-qan::Group* Node::getGroup( )
+qan::Group* Node::getQanGroup( )
 {
     WeakGroup weakGroup = gtpo::GenNode<qan::Config>::getGroup();
     if ( weakGroup.expired() )

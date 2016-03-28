@@ -155,8 +155,8 @@ public:
     using EdgeBase  = QQuickPaintedItem;
     using GroupBase = QQuickItem;
 
-    using GraphBehaviours = std::tuple<>;
-    using GroupBehaviours = std::tuple<>;
+    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< Config > >;
+    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< Config > >;
 
     using Node  = qan::Node;
     using Edge  = qan::Edge;

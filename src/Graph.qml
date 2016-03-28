@@ -62,7 +62,11 @@ Qan.AbstractGraph {
         }
     }
 
+    property real maxZ: -1.
     onNodeClicked: {
+        console.debug( "nodeclicked() maxZ=" + maxZ );
+        maxZ = Math.max( node.z + 1, maxZ + 1 )
+        node.z = maxZ + 1;
         if ( connectorDropNode != undefined )
             connectorDropNode.setHostNode( node );
     }

@@ -114,7 +114,6 @@ void Edge::paint( QPainter* painter )
         painter->setRenderHint( QPainter::Antialiasing );
         painter->setBrush( Qt::NoBrush);
         painter->setPen( arrowPen );
-        //painter->drawLine( _line );
         drawArrow( painter, _line,
                    getStyle()->getLineColor(),
                    getStyle()->getArrowSize() );
@@ -135,6 +134,11 @@ void    Edge::updateItem( )
     qan::Node* destinationItem = static_cast< qan::Node* >( ownedDestination.get() );
     if ( sourceItem == nullptr || destinationItem == nullptr )
         return;
+
+    // Update edge z to source or destination maximum x
+    qreal maxZ = qMax( sourceItem->z(), destinationItem->z() );
+    if ( z() < maxZ )
+        setZ( maxZ );
 
     // Compute a global bounding boxe according to the actual src and dst
     // FIXME 20150824: Following code should works, but don't !
