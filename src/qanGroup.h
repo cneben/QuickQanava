@@ -82,28 +82,49 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Appearance Management *///---------------------------------------
+    //@{
+public:
+    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged )
+    void        setCollapsed( bool collapsed );
+    bool        getCollapsed( ) const { return _collapsed; }
+private:
+    bool        _collapsed = false;
+signals:
+    void        collapsedChanged( );
+
+public:
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
+    void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
+    QString     getLabel( ) const { return _label; }
+private:
+    QString     _label = QString{ "" };
+signals:
+    void        labelChanged( );
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Group Behaviour/Layout Management *///---------------------------
     //@{
 public:
     Q_PROPERTY( qan::Layout* layout READ getLayout WRITE setLayout NOTIFY layoutChanged )
     qan::Layout*    getLayout( ) { return _layout; }
     void            setLayout( qan::Layout* layout );
-
-    //! Set this group layout to a new linear layout.
-    Q_INVOKABLE void    setLinearLayout();
-
 signals:
     void            layoutChanged();
 protected:
     qan::Layout*    _layout = nullptr;
 
+public:
+    //! Set this group layout to a new linear layout.
+    Q_INVOKABLE void    setLinearLayout();
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
-    void            groupMoved( );
+    void                groupMoved( );
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Node DnD Management *///-----------------------------------------
+    /*! \name Group DnD Management *///----------------------------------------
     //@{
 public:
     /*! Define if the group could actually be dragged by mouse.
@@ -134,27 +155,7 @@ private:
     bool            _acceptDrops = true;
 signals:
     void            acceptDropsChanged( );
-    //@}
-    //-------------------------------------------------------------------------
 
-    /*! \name Appearance Management *///---------------------------------------
-    //@{
-public:
-    //virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
-
-public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
-    void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
-    QString         getLabel( ) const { return _label; }
-private:
-    QString         _label = QString{ "" };
-signals:
-    void            labelChanged( );
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Drag'nDrop Management  *///--------------------------------------
-    //@{
 public:
     /*! Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
      *

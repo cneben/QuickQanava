@@ -82,8 +82,6 @@ auto    Group::insertNode( qan::Node* node ) -> void
         node->setParentItem( getContainer( ) );
         groupMoved( ); // Force call to groupMoved() to update group adjacent edges
 
-        //qDebug( ) << "qan::Group::insertNode(): node configured...";
-
         // Be carrefull of not inserting _shadowNode which is already inserted...
         if ( getHilightDrag( ) &&
              node != _shadowDropNode &&
@@ -99,13 +97,8 @@ auto    Group::insertNode( qan::Node* node ) -> void
             //delete _shadowDropNode;
             //_shadowDropNode = nullptr;
         }
-        //else
-            //_nodes.append( node );  // Layout will occurs automatically after node insertion
-
-        //connect( node, SIGNAL( destroyed( QObject* ) ), this, SLOT( nodeDestroyed( QObject* ) ) );  // Automatically check for node suppression
-    }
-    catch ( std::bad_weak_ptr ) { return; }
-    catch ( gtpo::bad_topology_error ) { return; }
+    } catch ( std::bad_weak_ptr ) { return; }
+      catch ( gtpo::bad_topology_error ) { return; }
 }
 
 auto    Group::removeNode( const qan::Node* node ) -> void
@@ -135,6 +128,21 @@ bool    Group::hasNode( qan::Node* node ) const
         weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return false; }
     return gtpo::GenGroup< qan::Config >::hasNode( weakNode );
+}
+//-----------------------------------------------------------------------------
+
+/* Group Appearance Management *///--------------------------------------------
+void    Group::setCollapsed( bool collapsed )
+{
+    if ( collapsed != _collapsed ) {
+        _collapsed = collapsed;
+        for ( auto weakEdge : getAdjacentEdges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
+            qan::Edge* edge = weakEdge.lock().get();
+            if ( edge != nullptr )
+                edge->setVisible( !collapsed );
+        }
+        emit collapsedChanged( );
+    }
 }
 //-----------------------------------------------------------------------------
 
@@ -176,7 +184,7 @@ void    Group::groupMoved( )
 }
 //-----------------------------------------------------------------------------
 
-/* Drag'nDrop Management *///--------------------------------------------------
+/* Group DnD Management *///---------------------------------------------------
 void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
 {
     //qDebug( ) << "qan::Group::proposeNodeDrop(): container=" << container << "  node=" << node;

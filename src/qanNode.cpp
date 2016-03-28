@@ -62,13 +62,6 @@ qan::Graph* Node::getGraph()
 //-----------------------------------------------------------------------------
 
 /* Content Management *///-----------------------------------------------------
-void    Node::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
-{
-    QQuickItem::geometryChanged( newGeometry, oldGeometry );
-    if ( _boundingShape.isEmpty( ) )
-        generateDefaultBoundingShape( );
-}
-
 void    Node::setStyle( NodeStyle* style )
 {
     if ( style == _style )
@@ -94,6 +87,13 @@ void    Node::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
+void    Node::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
+{
+    QQuickItem::geometryChanged( newGeometry, oldGeometry );
+    if ( _boundingShape.isEmpty( ) )
+        generateDefaultBoundingShape( );
+}
+
 QPolygonF   Node::getBoundingShape( )
 {
     if ( _boundingShape.isEmpty( ) )

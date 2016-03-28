@@ -143,9 +143,6 @@ signals:
 
     /*! \name Appearance Management *///---------------------------------------
     //@{
-public:
-    virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
-
 private:
     using SharedNodeStyle = QSharedPointer< qan::NodeStyle >;
     SharedNodeStyle _defaultStyle;
@@ -182,6 +179,10 @@ signals:
     void    nodeDoubleClicked( qan::Node* node, QPointF p );
     //! Emmited whenever the node is right clicked.
     void    nodeRightClicked( qan::Node* node, QPointF p );
+
+public:
+    //! Call base implementation, used internally to maintain node bounding shape.
+    virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
 
 public:
     /*! Polygon used for mouse event clipping, and edge arrow clipping.

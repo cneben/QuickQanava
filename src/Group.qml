@@ -25,7 +25,7 @@
 // \date	2016 03 22
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
+import QtQuick 2.6
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.2
@@ -35,11 +35,11 @@ import "." as Qan
 
 Qan.AbstractGroup {
     id: group
+    x: 0;   y: 0
+    width: content.width; height: content.height
 
-    x: 0
-    y: 0
-    width: content.width + 4
-    height: content.height + 4
+    property real   groupWidth: 150
+    property real   groupHeight: 80
 
     property int    nameTextSize: 14
     property bool   nameTextBold: true
@@ -48,37 +48,66 @@ Qan.AbstractGroup {
     property color  backColor: Qt.rgba( 0.95, 0.95, 0.95, 1.0 )
 
     default property alias children : content.children
+    container: content   // See qan::Group::container property documentation
 
     signal  groupRightClicked( var group, var p )
 
-    container: content   // See qan::Group::container property documentation
-    TextInput {
-        id: nameText
+    RowLayout {
         x: 0
-        y: -contentHeight - 3
-        text: group.label
-        font.pointSize: group.nameTextSize
-        font.bold: group.nameTextBold
-        color: group.nameTextColor
-        onAccepted: {
-            if ( text.length == 0 )
-                text = group.label  // Do not allow empty labels
-            else group.label = text
-            focus = false;  // Release focus once the lable has been edited
+        y: -collapser.height
+        Text {
+            id: collapser
+            padding: 4
+            text: group.collapsed ? "+" : "-"
+            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
+            color: group.nameTextColor
+            Rectangle {
+                id: collapserHilight
+                anchors.fill: parent
+                visible: collapserArea.containsMouse
+                color: Qt.rgba( 0., 0., 0., 0. ); radius: 3
+                border.color: group.nameTextColor; border.width: 1
+            }
+            MouseArea {
+                id: collapserArea
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: group.collapsed = !group.collapsed
+            }
         }
-    }
+        TextInput {
+            id: nameText
+            text: group.label
+            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
+            color: group.nameTextColor
+            onAccepted: {
+                if ( text.length == 0 )
+                    text = group.label  // Do not allow empty labels
+                else group.label = text
+                focus = false;  // Release focus once the label has been edited
+            }
+        }
+        MouseArea {
+            id: groupLabelDrapArea
+            anchors.fill: parent
+            enabled: group.draggable    // Enable dragging on group label
+            drag.target: group
+            preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
+        }
+    } // RowLayout: collapser + label
+    Item {
+        id: content
+        x: 0; y: 0; z: 3
+        visible: !group.collapsed
 
-    Rectangle {
-        id: groupBackground
-        anchors.fill: parent
-        z: 0
-        color: backColor
+        width: group.groupWidth
+        height: group.groupHeight
     }
-
-    MouseArea {
+    MouseArea {  // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: dragArea
-        enabled: group.draggable
+        z: 2
         anchors.fill: parent
+        enabled: group.draggable && !group.collapsed
         drag.target: group
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         smooth: true
@@ -87,36 +116,22 @@ Qan.AbstractGroup {
                 groupRightClicked( group, Qt.point( mouse.x, mouse.y ) )
         }
     }
-
-    Item {
-        id: content
-        x: 2; y: 2; z: 2
-
-        width: Math.max( groupWidth, minimumWidth )
-        height: Math.max( groupHeight, minimumHeight )
-
-        property real   minimumWidth: childrenRect.width + 10
-        property real   minimumHeight: childrenRect.height + 10
-
-        property real groupWidth: 150
-        property real groupHeight: 80
-
-        BottomRightResizer {
-            target: content
-            minimumSize: Qt.size( content.minimumWidth, content.minimumHeight )
-            targetWidth: 150
-            targetHeight: 80
-            targetWidthName: "groupWidth"
-            targetHeightName: "groupHeight"
-        }
+    Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+        id: groupBackground
+        anchors.fill: content
+        visible: !group.collapsed
+        z: 1; color: backColor
     }
-
+    BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+        id: groupResizer
+        x: 0; y: 0; z: 3
+        visible: !group.collapsed
+        target: content
+        minimumSize: Qt.size( Math.max( group.groupWidth, content.childrenRect.x + content.childrenRect.width + 10 ),
+                              Math.max( group.groupHeight, content.childrenRect.y + content.childrenRect.height + 10 ) )
+    }
     // Emitted by qan::Group when node dragging start
-    onNodeDragEnter: {
-        groupBackground.color = Qt.darker( group.backColor, 1.05 )
-    }
+    onNodeDragEnter: { groupBackground.color = Qt.darker( group.backColor, 1.05 ) }
     // Emitted by qan::Group when node dragging ends
-    onNodeDragLeave: {
-        groupBackground.color = group.backColor
-    }
+    onNodeDragLeave: { groupBackground.color = group.backColor }
 }

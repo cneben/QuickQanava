@@ -125,8 +125,7 @@ void    Edge::updateItem( )
     SharedNode ownedSource = getSrc().lock();
     SharedNode ownedDestination = getDst().lock();
     if ( ownedSource == nullptr ||
-         ownedDestination == nullptr )
-    {
+         ownedDestination == nullptr ) {
         update(); // Note 20160218: Force a simple update, since for example in edge style preview edge, there is no src and dst.
         return;
     }

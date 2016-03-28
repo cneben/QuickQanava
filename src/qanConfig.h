@@ -122,7 +122,7 @@ class Group;
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group > {
 
-    static inline std::string   getNodeLabel( const Node* n ) { return n->getLabel().toStdString(); }
+    static inline std::string&  getNodeLabel( const Node* n ) { return n->getLabel().toStdString(); }
     static inline void          setNodeLabel( Node* n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
 
     static inline double   getNodeX( const Node* n ) { return n->x(); }
@@ -140,8 +140,23 @@ struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group
     static inline double   getEdgeWeight( const Edge* e ) { Q_UNUSED( e ); return 0.; }
     static inline void     setEdgeWeight( Edge* e, double w ) { Q_UNUSED( e ); Q_UNUSED( w ); }
 
-    static inline std::string   getGroupLabel( const Group* n ) { return n->getLabel().toStdString(); }
+    static inline std::string&  getGroupLabel( const Group* n ) { return n->getLabel().toStdString(); }
     static inline void          setGroupLabel( Node* n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
+
+    static inline double        getGroupX( const Group* g ) { return g->x(); }
+    static inline void          setGroupX( Group* g, double x ) { g->setX( x ); }
+
+    static inline double        getGroupY( const Group* g ) { return g->y(); }
+    static inline void          setGroupY( Group* g, double y ) { g->set( y ); }
+
+    static inline double        getGroupWidth( const Group* g ) { return g->width(); }
+    static inline void          setGroupWidth( Group* g, double width ) { g->setWidth( width ); }
+
+    static inline double        getGroupHeight( const Group* g ) { return g->height(); }
+    static inline void          setGroupHeight( Group* g, double height ) { g->setHeight( height ); }
+
+    static inline bool          getGroupCollapsed( const Group* g ) { return g->getCollapsed(); }
+    static inline void          setGroupCollapsed( Group* g, bool collapsed ) { g->setCollapsed( collapsed ); }
 };
 
 class Config final : public gtpo::GraphConfig,
