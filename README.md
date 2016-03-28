@@ -14,6 +14,7 @@ QuickQanava is primarily developed with Qt >= 5.6 and Qt Creator with MSVC 2015 
 
 + Project homepage: http://www.qanava.org/
 + Reference documentation: http://www.delia-strategie.fr/doc/qan/index.html
++ QuickQanava2 developper guide: https://github.com/cneben/QuickQanava/blob/master/doc/guide/guide.md
 
 For any questions, please contact: benoit@qanava.org
 
