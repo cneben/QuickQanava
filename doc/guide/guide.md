@@ -121,7 +121,7 @@ Basic Graph Topology
     } // Qan.Navigable: navigable
 ~~~~~~~~~~~~~
 
-![Qan qan::Group overview](https://github.com/cneben/QuickQanava/blob/master/doc/guide/groups-overview.gif
+![Qan qan::Group overview](https://github.com/cneben/QuickQanava/blob/master/doc/guide/groups-overview.gif)
 
 Displaying Custom Nodes
 ------------------
