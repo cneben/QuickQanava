@@ -123,6 +123,7 @@ struct IPropertiesAccessors { };
  */
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public IPropertiesAccessors {
+    // Node accessors
     static inline const std::string&    getNodeLabel( const Node*) { return _gtpoVoidString; }
     static inline void                  setNodeLabel( Node*, const std::string& ) { }
 
@@ -138,11 +139,28 @@ struct PropertiesAccessors : public IPropertiesAccessors {
     static inline double        getNodeHeight( const Node* ) { return 0.; }
     static inline void          setNodeHeight( Node*, double ) { }
 
+    // Edge accessors
     static inline double        getEdgeWeight( const Edge* ) { return 0.; }
     static inline void          setEdgeWeight( Edge*, double ) { }
 
-    static inline const std::string&    setGroupLabel( const Group* ) { return _gtpoVoidString; }
+    // Group accessors
+    static inline const std::string&    getGroupLabel( const Group* ) { return _gtpoVoidString; }
     static inline void                  setGroupLabel( Group*, const std::string& ) { }
+
+    static inline double        getGroupX( const Group* ) { return 0.; }
+    static inline void          setGroupX( Group*, double ) { }
+
+    static inline double        getGroupY( const Group* ) { return 0.; }
+    static inline void          setGroupY( Group*, double ) { }
+
+    static inline double        getGroupWidth( const Group* ) { return 0.; }
+    static inline void          setGroupWidth( Group*, double ) { }
+
+    static inline double        getGroupHeight( const Group* ) { return 0.; }
+    static inline void          setGroupHeight( Group*, double ) { }
+
+    static inline bool          getGroupCollapsed( const Group* ) { return false; }
+    static inline void          setGroupCollapsed( Group*, bool ) { }
 
     static std::string _gtpoVoidString;
 };
@@ -748,13 +766,14 @@ private:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    /*! \brief Create a new node group and insert it into the graph.
+    /*! \brief Create a new node group with class name \c className and insert it into the graph.
      *
      * Complexity is O(1).
+     * \arg className desired class name for the create node group (default to gtpo::Group).
      * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if insertion fails.
      */
-    auto        createGroup( ) noexcept( false ) -> WeakGroup;
+    auto        createGroup( const std::string& className = "" ) noexcept( false ) -> WeakGroup;
 
     /*! Insert a node group into the graph.
      *
