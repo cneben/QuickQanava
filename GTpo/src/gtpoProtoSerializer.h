@@ -69,18 +69,22 @@ public:
 
     //! Input/ouput functor are registered in ctor.
     explicit ProtoSerializer( std::string nodeDefaultName = "gtpo::Node",
-                              std::string edgeDefaultName = "gtpo::Edge" );
+                              std::string edgeDefaultName = "gtpo::Edge",
+                              std::string groupDefaultName = "gtpo::Group" );
     virtual ~ProtoSerializer() = default;
     ProtoSerializer( const ProtoSerializer< GraphConfig >& ) = delete;
 
 protected:
     const std::string&  getNodeDefaultName() { return _nodeDefaultName; }
     const std::string&  getEdgeDefaultName() { return _edgeDefaultName; }
+    const std::string&  getGroupDefaultName() { return _groupDefaultName; }
 private:
-    //! Default node class name for edges (default to "gtpo::Node").
+    //! Default class name for nodes (default to "gtpo::Node").
     std::string _nodeDefaultName = std::string( "gtpo::Node" );
-    //! Default node class name for edges (default to "gtpo::Edge").
+    //! Default class name for edges (default to "gtpo::Edge").
     std::string _edgeDefaultName = std::string( "gtpo::Edge" );
+    //! Default class name for groups (default to "gtpo::Group").
+    std::string _groupDefaultName = std::string( "gtpo::Group" );
     //@}
     //-------------------------------------------------------------------------
 
@@ -93,6 +97,8 @@ public:
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
     using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
     using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+    using WeakGroup     = std::weak_ptr< typename GraphConfig::Group >;
+    using SharedGroup   = std::shared_ptr< typename GraphConfig::Group >;
 
     using   ObjectIdMap = std::unordered_map< void*, int >;
 
@@ -157,6 +163,12 @@ public:
      */
     static void     serializeGTpoNodeOut( const WeakNode& weakNode, gtpo::pb::GTpoNode& pbNode, const ObjectIdMap& objectIdMap );
 
+    /*! Serialize GTpo group \c weakGroup to Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup.
+     *
+     * \throw noexcept
+     */
+    static void     serializeGTpoGroupOut( const WeakGroup& weakGroup, gtpo::pb::GTpoGroup& pbGroup, const ObjectIdMap& objectIdMap );
+
 public:
     using   NodeOutFunctor = std::function<void(google::protobuf::Any* anyNodes, const WeakNode&, const ObjectIdMap& objectIdMap )>;
     auto    registerNodeOutFunctor( std::string nodeClassName, NodeOutFunctor nodeOutFunctor ) -> void;
@@ -170,6 +182,13 @@ public:
 protected:
     using   EdgeOutFunctors = std::map< std::string, EdgeOutFunctor >;
     EdgeOutFunctors _edgeOutFunctors;
+
+public:
+    using   GroupOutFunctor = std::function<bool(google::protobuf::Any* anyGroups, const WeakGroup&, const ObjectIdMap& objectIdMap )>;
+    auto    registerGroupOutFunctor( std::string groupClassName, GroupOutFunctor groupOutFunctor ) -> void;
+protected:
+    using   GroupOutFunctors = std::map< std::string, GroupOutFunctor >;
+    GroupOutFunctors _groupOutFunctors;
     //@}
     //-------------------------------------------------------------------------
 
@@ -179,11 +198,11 @@ public:
     /*! \brief Serialize a QuickQanava graph to Protocol Buffer v3.
      *  \throw std::exception if an error occurs.
      */
-    template < class User1 = gtpo::pb::GTpoVoid >
+    template < class User1 = gtpo::pb::GTpoVoid, class User2 = gtpo::pb::GTpoVoid >
     auto            serializeIn( std::istream& is,
                                  Graph& graph,
                                  gtpo::IProgressNotifier& progressNotifier,
-                                 User1* user1 = nullptr ) -> void;
+                                 User1* user1 = nullptr, User2* user2 = nullptr ) -> void;
 
     virtual auto    serializeIn( std::istream& is,
                                  Graph& graph,
@@ -194,6 +213,12 @@ public:
      * \throw noexcept
      */
     static void     serializeGTpoNodeIn( const gtpo::pb::GTpoNode& pbNode, WeakNode& weakNode, IdObjectMap& idObjectMap );
+
+    /*! Serialize Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup to GTpo group \c weakGroup.
+     *
+     * \throw noexcept
+     */
+    static void     serializeGTpoGroupIn( const gtpo::pb::GTpoGroup& pbGroup, WeakGroup& weakGroup, IdObjectMap& idObjectMap );
 
 public:
     //! Serialize a Protocol Buffer "Any" node to a given graph, return true if serialization succeed.
@@ -209,6 +234,13 @@ public:
 protected:
     using   EdgeInFunctors = std::vector< EdgeInFunctor >;
     EdgeInFunctors _edgeInFunctors;
+
+public:
+    using   GroupInFunctor = std::function<WeakGroup( const google::protobuf::Any&, Graph&, IdObjectMap& idObjectMap  )>;
+    auto    registerGroupInFunctor( GroupInFunctor groupInFunctor ) -> void;
+protected:
+    using   GroupInFunctors = std::vector< GroupInFunctor >;
+    GroupInFunctors _groupInFunctors;
     //@}
     //-------------------------------------------------------------------------
 };

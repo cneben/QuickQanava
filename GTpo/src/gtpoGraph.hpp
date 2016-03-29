@@ -307,8 +307,9 @@ auto    GenGraph< Config >::getEdgeCount( WeakNode source, WeakNode destination 
 
 /* Graph Group Management *///-------------------------------------------------
 template < class Config >
-auto    GenGraph< Config >::createGroup( ) noexcept( false ) -> WeakGroup
+auto    GenGraph< Config >::createGroup( const std::string& className ) noexcept( false ) -> WeakGroup
 {
+    (void)className;
     WeakGroup weakGroup;
     try {
         auto group = std::make_shared< typename Config::Group >();
