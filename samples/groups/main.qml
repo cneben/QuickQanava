@@ -57,11 +57,10 @@ Item {
         width: 300
 
         Button {
-            text: "Linear Group"
+            text: "No Layout Group"
             onClicked: {
                 var gg = graph.insertGroup();
                 gg.label = "Group"
-                gg.setLinearLayout();
             }
         }
         Button {

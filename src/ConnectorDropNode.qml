@@ -47,8 +47,7 @@ Qan.AbstractNode {
     visible: false
     clip: false
     label: "Connector Drop Node"
-    // FIXME 20160210
-    //serializable: false // Don't serialize "helper control node"
+    serializable: false // Don't serialize "helper control node"
 
     // Public
     //! Connector control radius (final diameter will be radius x 2).

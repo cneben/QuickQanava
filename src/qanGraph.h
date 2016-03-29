@@ -30,7 +30,6 @@
 
 // GTpo headers
 #include <GTpo>
-//#include <gtpoGmlSerializer.h>
 
 // Qanava headers
 #include "./qanConfig.h"
@@ -241,6 +240,9 @@ public:
 
     //! Return true if \c group is registered in graph.
     bool                    hasGroup( qan::Group* group ) const;
+
+    //! Shortcut to gtpo::GenGraph<>::getGroupCount().
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::Config >::getGroupCount(); }
     //@}
     //-------------------------------------------------------------------------
 

@@ -67,18 +67,18 @@ public:
 
     //! Called from task, force show of associed progress dialog.
     void    beginProgress() {
-        qDebug() << "qan::ProgressNotifier::beginProgress()";
+        gtpo::ProgressNotifier::beginProgress();
+
+        //qDebug() << "qan::ProgressNotifier::beginProgress()";
         emit showProgress();
         QCoreApplication::processEvents( );
         QCoreApplication::processEvents( );
         QCoreApplication::processEvents( );
         QCoreApplication::processEvents( );
         QCoreApplication::processEvents( );
-        qDebug() << "\tprogress shown...";
     }
     //! Called from task, force progress end and hide associed dialog.
     void    endProgress() {
-        qDebug() << "qan::ProgressNotifier::endProgress()";
         emit hideProgress();
         QCoreApplication::processEvents( );
     }
@@ -91,11 +91,8 @@ signals:
 protected:
     //! Called whenever the overall progress change.
     virtual void    notifyProgressChanged() override {
-        qDebug() << "progressChanged() from GTpo;";
-        qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
-        qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
+        qDebug() << "notifyProgressChanged(): progress=" << getProgress();
         emit progressChanged();
-        QThread::sleep( 1 );
         QCoreApplication::processEvents( );
     }
 
@@ -110,9 +107,6 @@ signals:
     void            phaseProgressChanged();
 protected:
     virtual void    notifyPhaseProgressChanged() override {
-        qDebug() << "phaseProgressChanged() from GTpo;";
-        qDebug() << "\tphaseProgress=" << gtpo::ProgressNotifier::getPhaseProgress();
-        qDebug() << "\tprogress=" << gtpo::ProgressNotifier::getProgress();
         emit phaseProgressChanged(); QCoreApplication::processEvents( );
     }
 

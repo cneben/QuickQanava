@@ -113,6 +113,14 @@ Item {
                 menu.targetEdge = undefined;
             }
         }
+        MenuItem {
+            text: "Insert Group"
+            onTriggered: {
+                var n = graph.insertGroup()
+                centerItem( n );
+                n.label = "Group #" + graph.getGroupCount()
+            }
+        }
     }
 
     Text {

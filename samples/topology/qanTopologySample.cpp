@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the Qanava software.
 //
-// \file	qanStyleSample.cpp
+// \file	qanTopologySample.cpp
 // \author	benoit@qanava.org
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
@@ -42,7 +42,6 @@
 #include "./qanTopologySample.h"
 #include "./qanImgNode.h"
 #include "./topology.pb.h"
-
 
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds

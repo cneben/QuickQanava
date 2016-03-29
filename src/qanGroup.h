@@ -71,6 +71,10 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
+
+    //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
+    auto                insertNode( WeakNode weakNode ) -> void { gtpo::GenGroup< qan::Config >::insertNode( weakNode ); }
+
     //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
     auto                insertNode( qan::Node* node ) -> void;
 

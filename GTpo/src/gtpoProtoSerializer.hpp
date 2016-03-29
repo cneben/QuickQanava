@@ -211,24 +211,30 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     gtpo::pb::GTpoGraph pbGraph;
 
     int serializedNodeCout = 0;
-
-    progressNotifier.setPhaseCount( 3, 0.33, "Saving nodes" );
+    int nonSerializableNodeCount = 0;
+    progressNotifier.setPhaseCount( 3 );
+    progressNotifier.beginPhase( "Saving nodes" );
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
-        if ( !node->isSerializable() )   // Don't serialize control nodes
+        if ( !node->isSerializable() ) {   // Don't serialize control nodes
+            nonSerializableNodeCount++;
             continue;
-        auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
-        if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
-            ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
-            ++serializedNodeCout;
-            progressNotifier.setPhaseProgress( ++primitive / primitiveCount );
-        } else
-            std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for node class:" << node->getClassName() << std::endl;
+        }
+        try {
+            auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
+            if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
+                ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
+                ++serializedNodeCout;
+                progressNotifier.setPhaseProgress( ++primitive / primitiveCount );
+            } else
+                std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for node class: " << node->getClassName() << std::endl;
+        } catch ( std::exception e ) { std::cerr << "gtpo::ProtoSerializer::serializeOut(): Error while serializing ou node with error: " << e.what() << std::endl; }
+          catch ( ... ) { std::cerr << "gtpo::ProtoSerializer::serializeOut(): Error while serializing ou node with classname: " << node->getClassName() << std::endl; }
     }
 
     int serializedEdgeCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving edges" );
+    progressNotifier.beginPhase( "Saving edges" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
@@ -243,7 +249,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     }
 
     int serializedGroupCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving groups" );
+    progressNotifier.beginPhase( "Saving groups" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getGroups().size() );
     for ( auto& group: graph.getGroups() ) {  // Serialize groups
@@ -270,7 +276,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     if ( !pbGraph.SerializeToOstream( &os) )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Protocol Buffer Error while writing to output stream." << std::endl;
 
-    if ( serializedNodeCout != (int)graph.getNodeCount() ) // Report errors
+    if ( ( serializedNodeCout + nonSerializableNodeCount ) != graph.getNodeCount() ) // Report errors
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedNodeCout << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
@@ -286,6 +292,7 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& we
     SharedNode node = weakNode.lock();
     if ( node == nullptr )
         return;
+    std::cerr << "node.get()=" << node.get() << std::endl;
     pbNode.set_label( GraphConfig::getNodeLabel( node.get() ) );
     pbNode.set_x( GraphConfig::getNodeX( node.get() ) );
     pbNode.set_y( GraphConfig::getNodeY( node.get() ) );

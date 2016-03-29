@@ -54,7 +54,7 @@ class ProtoSerializer : public QObject,
 public:
     ProtoSerializer( QObject* parent = nullptr )  :
         QObject( parent ),
-        gtpo::ProtoSerializer< qan::Config >( "qan::Node", "qan::Edge" ) { }
+        gtpo::ProtoSerializer< qan::Config >( "qan::Node", "qan::Edge", "qan::Group" ) { }
 
     virtual ~ProtoSerializer() { }
 private:

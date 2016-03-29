@@ -107,7 +107,7 @@ public:
      * \code
      *    gtpo::ProgressNotifier progress;
      *    // progress.getLevelCount() == 1
-     *    gtpo::IProgressNotifier* progress2 = progress.getSubProgress();
+     *    gtpo::IProgressNotifier* progress2 = progress.createSubProgress();
      *
      *    // Register progress2 in a gtpo::Serializer
      *    // Call gtpo::Serializer::serialize( )
@@ -117,7 +117,7 @@ public:
      *
      * \sa getLevelCount()
      */
-    virtual IProgressNotifier*  getSubProgress() {
+    virtual IProgressNotifier*  createSubProgress() {
         IProgressNotifier* subProgress = new IProgressNotifier( this );
         IProgressNotifierPtr progressPtr( subProgress );
         _notifiers.emplace_back( std::move( progressPtr ) );
@@ -129,7 +129,7 @@ public:
      * \code
      *    gtpo::ProgressNotifier progress;
      *    // progress.getLevelCount() == 1
-     *    gtpo::IProgressNotifier* progress2 = progress.getSubProgress();
+     *    gtpo::IProgressNotifier* progress2 = progress.createSubProgress();
      *    // progress.getLevelCount() == 2
      * \endcode
      */
@@ -143,19 +143,37 @@ public:
     //! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
     virtual double  getProgress() const { return 0.; }
 
-    //! Called for user notification purposes when progress change (default implentation is empty).
-    virtual void    notifyProgressChanged() { }
-    //! Called for user notification purposes when phase progress change (default implentation is empty).
-    virtual void    notifyPhaseProgressChanged() { }
-    //! Called for user notification purposes when progress phase number change (default implentation is empty).
-    virtual void    notifyPhaseChanged() { }
-    //! Called for user notification purposes when phase label change (default implentation is empty).
-    virtual void    notifyPhaseLabelChanged() { }
+    //! Called for user notification purposes when progress change (default implementation notify super notifier).
+    virtual void    notifyProgressChanged() {
+        if ( getSuperProgress() != nullptr )
+            getSuperProgress()->notifyProgressChanged();
+    }
+    //! Called for user notification purposes when phase progress change (default implementation notify super notifier).
+    virtual void    notifyPhaseProgressChanged() {
+        if ( getSuperProgress() != nullptr )
+            getSuperProgress()->notifyPhaseProgressChanged();
+    }
+    //! Called for user notification purposes when progress phase number change (default implementation notify super notifier).
+    virtual void    notifyPhaseChanged() {
+        if ( getSuperProgress() != nullptr )
+            getSuperProgress()->notifyPhaseLabelChanged();
+    }
+    //! Called for user notification purposes when phase label change (default implementation notify super notifier).
+    virtual void    notifyPhaseLabelChanged() {
+        if ( getSuperProgress() != nullptr )
+            getSuperProgress()->notifyPhaseLabelChanged();
+    }
 
-    //! Called at the start of the monitored process, indicate to an eventually associed progress display that it must be shown (call reset() automatically).
-    virtual void    beginProgress() { reset(); }
-    //! Called at the end of the monitored process or if the process has been interrupted, indicate to an eventually associed progress display that it must be shut down.
-    virtual void    endProgress() { }
+    /*! \brief Called at the start of the monitored process, indicate to an eventually associed progress display that it must be shown (call reset() automatically).
+     *
+     * \warning User should call base method at the begining of their implementation.
+     */
+    virtual void    beginProgress() { }
+    /*! \brief Called at the end of the monitored process or if the process has been interrupted, indicate to an eventually associed progress display that it must be shut down.
+     *
+     * \warning User should call base method at the end of their implementation.
+     */
+    virtual void    endProgress() { reset(); }
     /*! \brief Set the current overall progress.
      *
      * \note progress value is bound to [0.;1.0].
@@ -163,20 +181,21 @@ public:
     virtual void    setProgress( double ) { }
 
 public:
-    //! Set the previsible number of phase in the monitored task and specify weight of the first current phase (default to 0, ie overall progress equal phase 0 progress).
-    virtual void    setPhaseCount( int phaseCount, double phaseWeight, const std::string& phaseLabel = "" ) { (void)phaseCount; (void)phaseWeight; (void)phaseLabel; }
-    /*! \brief Start a new phase weighting \c phaseWeight in the overall progress.
+    //! Set the previsible number of phase in the monitored task, it should be followed by a beginPhase() call.
+    virtual void    setPhaseCount( int phaseCount ) { (void)phaseCount; }
+    /*! \brief Start a new phase in the overall progress.
      *
-     * \warning calling nextPhase() will automatically close the previous phase and update the overall progress with
-     * last phase weight even if previous phase progress was not complete:
+     * \warning calling beginPhase() will automatically close the previous phase and update the overall progress
+     * even if previous phase progress was not complete:
      *
      * \code
-     *  // Setup a progress notifier with 2 phases, each weighting 50% (0.5) of the global progress
+     *  // Setup a progress notifier with 2 phases, each weighting 50% of the global progress
      *  gtpo::ProgressNotifier progress;
-     *  progress.setPhaseCount( 2, 0.5 );
+     *  progress.setPhaseCount( 2 );
+     *  progress.beginPhase();
      *  progress.setPhaseProgress( 0.5 );
      *  // progress.getProgress() == 0.25   (because phase 1 progress is 0.5 and phase weight is 0.5, global progress is 0.5*0.5=0.25
-     *  progress.nextPhase( 0.5 );
+     *  progress.beginPhase( );
      *  // Warning: progress.getProgress() == 0.5, it now equal previous phase total weight even if the phase was not manually complete with setProgressPhase(1.0)
      *  progress.setPhaseProgress( 0.5 );
      *  // progress.getProgress() == 0.75 (one could expect 0.5*0.5 + 0.5*0.5=0.5, but using nextPhase has automatically complete phase 1, so
@@ -184,9 +203,8 @@ public:
      * \endcode
      *
      * \note The total number of calls to nextPhase() must equal the value of \c phaseCount set when beginning startup monitoring with setPhaseCount().
-     * \note The sum for all \c phaseWeight for the \c phaseCount calls to nextPhase() must equalt 1.0.
      */
-    virtual void    nextPhase( double phaseWeight, const std::string& phaseLabel = "" ) { (void)phaseWeight; (void)phaseLabel; }
+    virtual void    beginPhase( const std::string& phaseLabel = "" ) { (void)phaseLabel; }
     //! Return the current phase number (int between 0 and phaseCount - 1).
     virtual int     getPhase() const { return 0; }
     //! Return current phase label.
@@ -195,6 +213,15 @@ public:
     virtual double  getPhaseProgress() const { return 0.; }
     //! Set the current phase progress (\c phaseProgress must be in the (0.0, 1.0) range.
     virtual void    setPhaseProgress( double phaseProgress ) { (void)phaseProgress; }
+    //! Used to set the current phase label from a sub notifier, from a super progress notifier, use beginPhase().
+    virtual void    setPhaseLabel( const std::string& phaseLabel ) {
+        _phaseLabel = phaseLabel;
+        notifyPhaseLabelChanged();
+    }
+
+    //! Return the number of phase count in this notifier, if the notifier has sub notifiers, phase count will be the sum of all notifiers phase count.
+    virtual int     getPhaseCount() const { return 1; }
+
 protected:
     //! Current phase label.
     std::string _phaseLabel         = "";
@@ -226,18 +253,22 @@ public:
         _progress       = 0.;
         _phaseProgress  = 0.;
         _phase          = 0;
-        _phaseWeight    = 0.0;
-        _phaseBeginProgress = 0.0;
         _phaseCount     = 1;
         notifyPhaseProgressChanged();
         notifyProgressChanged();
     }
 
-    virtual IProgressNotifier*  getSubProgress() {
+    virtual IProgressNotifier*  createSubProgress() {
         ProgressNotifier* subProgress = new ProgressNotifier( this );
         IProgressNotifierPtr progressPtr( subProgress );
         _notifiers.emplace_back( std::move( progressPtr ) );
         return subProgress;
+    }
+
+public:
+    virtual void    beginProgress() override {
+        if ( getSuperProgress() != nullptr )    // Force super progress begin when begin is called on a sub progress
+            getSuperProgress()->beginProgress();
     }
 
 public:
@@ -255,7 +286,7 @@ public:
         progress = std::min( progress, 1.0 );
         progress = std::max( progress, 0.0 );
         _progress = progress;
-        _globalProgress = _progress / getLevelCount();
+        _globalProgress = _progress / getPhaseCount();
         if ( getSuperProgress() != nullptr )
             getSuperProgress()->update();
         notifyProgressChanged();
@@ -267,29 +298,38 @@ private:
 
 public:
     //! \copydoc IProgressNotifier::setPhaseCount()
-    virtual void    setPhaseCount( int phaseCount, double phaseWeight, const std::string& phaseLabel = ""  ) override {
-        _phaseLabel = phaseLabel;
+    virtual void    setPhaseCount( int phaseCount ) override {
+        _phaseLabel = "";
         _phaseCount = phaseCount;
-        _phase = 0;
-
-        _phaseBeginProgress = (double)_progress;
-        _phaseWeight = phaseWeight;
+        _phase = -1;
         _phaseProgress = 0.;
+        if ( getSuperProgress() != nullptr )
+            getSuperProgress()->update();
         notifyPhaseLabelChanged();
         notifyPhaseChanged();
         notifyPhaseProgressChanged();
         notifyProgressChanged();
     }
 
-    //! \copydoc IProgressNotifier::nextPhase()
-    virtual void    nextPhase( double phaseWeight, const std::string& phaseLabel = "" ) override {
-        setProgress( _phaseBeginProgress + _phaseWeight );  // Overall progress is progress at (last) phase startup plus the last phase weight.
+    //! \copydoc IProgressNotifier::getPhaseCount()
+    virtual int     getPhaseCount() const {
+        int phaseCount = _phaseCount;
+        for ( auto& subNotifier : _notifiers )
+            phaseCount += subNotifier->getPhaseCount();
+        return phaseCount;
+    }
+
+    //! \copydoc IProgressNotifier::beginPhase()
+    virtual void    beginPhase( const std::string& phaseLabel = "" ) override {
+        if ( _phase > 0 )   // Don't update global progress if phase has not been set
+            setProgress( 1.0 / _phase );  // newPhase() reset current progress, forcing all previous phases to 100%
         _phaseLabel = phaseLabel;
         _phase++;
-        _phaseBeginProgress = (double)_progress;
-
-        _phaseWeight = phaseWeight;
         _phaseProgress = 0.;
+        if ( getSuperProgress() != nullptr ) {
+            getSuperProgress()->setPhaseLabel( phaseLabel );
+            getSuperProgress()->update();
+        }
         notifyPhaseLabelChanged();
         notifyPhaseChanged();
         notifyPhaseProgressChanged();
@@ -309,12 +349,13 @@ public:
         _phaseProgress = phaseProgress;
         notifyPhaseProgressChanged();
         if ( phaseProgress >= 0. ) {   // phase progress could be -1 if progression can't be evaluated
-            double phasePercentage = _phaseWeight;
+            double phasePercentage = 1.0 / getPhaseCount();
             if ( phasePercentage <= 0 ) // If no phasePercentage has been specified in beginPhase(), consider
                 phasePercentage = 1.0;  // that there is only one phase covering 100% of total progress
             if ( phaseProgress > 1.0 )
                 phaseProgress = 1.0;
-            setProgress( _phaseBeginProgress + ( ( phaseProgress * phasePercentage ) ) );
+            setProgress( ( _phase * ( 1. / getPhaseCount() ) ) +
+                         ( phaseProgress * phasePercentage ) );
         }
     }
 
@@ -322,10 +363,7 @@ private:
     double      _phaseProgress      = 0.;
     //! Current phase index.
     int         _phase              = 0;
-    //! Current phase weight.
-    double      _phaseWeight        = 0.0;
-    //! Overall progress at current phase start (when nextPhase() has been called).
-    double      _phaseBeginProgress = 0.0;
+    //! Number of phase registered with setPhaseCount().
     int         _phaseCount         = 1;
 };
 
@@ -344,7 +382,7 @@ public:
         ProgressNotifier( superProgress ) { }
 
 public:
-    virtual IProgressNotifier*  getSubProgress() {
+    virtual IProgressNotifier*  createSubProgress() {
         EchoProgressNotifier* subProgress = new EchoProgressNotifier( this );
         IProgressNotifierPtr progressPtr( subProgress );
         _notifiers.emplace_back( std::move( progressPtr ) );
