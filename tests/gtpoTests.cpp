@@ -234,6 +234,9 @@ TEST(GTpo, protobufInOut)
     go.createEdge(n2, n4);
     go.createEdge(n4, n1);
 
+    auto group1 = go.createGroup();
+    group1.lock()->insertNode( n1 );
+
     gtpo::GenGraph<> gi;
 
     gtpo::ProtoSerializer<> ps;
@@ -242,6 +245,7 @@ TEST(GTpo, protobufInOut)
 
     EXPECT_EQ( go.getNodeCount(), gi.getNodeCount() );
     EXPECT_EQ( go.getEdges().size(), gi.getEdges().size() );
+    EXPECT_EQ( go.getGroups().size(), gi.getGroups().size() );
     EXPECT_TRUE( true );
 }
 

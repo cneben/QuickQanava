@@ -48,7 +48,7 @@ class Group;
 
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public gtpo::PropertiesAccessors<Node, Edge, Group> {
-
+    // Node accessors
     static inline const std::string& getNodeLabel( const Node* n ) { return n->getLabel(); }
     static inline void               setNodeLabel( Node* n, const std::string& label ) { n->setLabel( label ); }
 
@@ -64,8 +64,28 @@ struct PropertiesAccessors : public gtpo::PropertiesAccessors<Node, Edge, Group>
     static inline double    getNodeHeight( const Node* n ) { return n->getHeight(); }
     static inline void      setNodeHeight( Node* n, double h ) { n->setHeight( h ); }
 
+    // Edge accessors
     static inline double    getEdgeWeight( const Edge* e ) { return e->getWeight(); }
     static inline void      setEdgeWeight( Edge* e, double w ) { e->setWeight( w ); }
+
+    // Group accessors
+    static inline const std::string&    getGroupLabel( const Group* g ) { return g->getLabel(); }
+    static inline void                  setGroupLabel( Group* g, const std::string& l ) { g->setLabel( l ); }
+
+    static inline double        getGroupX( const Group* g ) { return g->getX(); }
+    static inline void          setGroupX( Group* g, double x ) { g->setX( x ); }
+
+    static inline double        getGroupY( const Group* g ) { return g->getY(); }
+    static inline void          setGroupY( Group* g, double y ) { g->setY( y ); }
+
+    static inline double        getGroupWidth( const Group* g ) { return g->getWidth(); }
+    static inline void          setGroupWidth( Group* g, double width ) { g->setWidth( width ); }
+
+    static inline double        getGroupHeight( const Group* g ) { return g->getHeight(); }
+    static inline void          setGroupHeight( Group* g, double height ) { g->setHeight( height ); }
+
+    static inline bool          getGroupCollapsed( const Group* g ) { return g->getCollapsed(); }
+    static inline void          setGroupCollapsed( Group* g, bool collapsed ) { g->setCollapsed( collapsed ); }
 };
 
 
@@ -99,6 +119,31 @@ class Graph : public gtpo::GenGraph< stpo::Config >
 class Group : public gtpo::GenGroup< stpo::Config >
 {
 public:
+    inline const std::string&    getLabel( ) const  { return _label; }
+    inline void                  setLabel( const std::string& l ) { _label = l; }
+
+    inline double   getX( ) const { return _x; }
+    inline void     setX( double x ) { _x = x; }
+
+    inline double   getY( ) const { return _y; }
+    inline void     setY( double y ) { _y = y; }
+
+    inline double   getWidth( ) const { return _width; }
+    inline void     setWidth( double width ) { _width = width; }
+
+    inline double   getHeight( ) const { return _height; }
+    inline void     setHeight( double height ) { _height = height ; }
+
+    inline bool     getCollapsed( ) const { return _collapsed; }
+    inline void     setCollapsed( bool collapsed ) { _collapsed = collapsed; }
+
+protected:
+    std::string _label;
+    double      _x = 0.;
+    double      _y = 0.;
+    double      _width = 0.;
+    double      _height = 0.;
+    bool        _collapsed = false;
 };
 
 class Edge : public gtpo::GenEdge< stpo::Config >
