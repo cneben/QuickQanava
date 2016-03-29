@@ -50,12 +50,10 @@ auto    ProtoSerializer< GraphConfig >::shutDownProtocolBuffer() -> void
 
 template < class GraphConfig >
 ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
-                                                 std::string edgeDefaultName,
-                                                 std::string groupDefaultName ) :
+                                                 std::string edgeDefaultName ) :
     gtpo::Serializer< GraphConfig >( ),
     _nodeDefaultName( nodeDefaultName ),
-    _edgeDefaultName( edgeDefaultName ),
-    _groupDefaultName( groupDefaultName )
+    _edgeDefaultName( edgeDefaultName )
 {
     registerNodeOutFunctor( getNodeDefaultName(),
                             [=]( google::protobuf::Any* anyNodes,
@@ -90,7 +88,7 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
     registerEdgeOutFunctor( getEdgeDefaultName(),
                             []( google::protobuf::Any* anyEdges,
                                 const WeakEdge& edge,
-                                const ObjectIdMap& objectIdMap ) -> bool {
+                                const ObjectIdMap& objectIdMap ){
             if ( anyEdges == nullptr )
                 return false;
             gtpo::pb::GTpoEdge pbEdge;
@@ -151,37 +149,6 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
             }
             return nullptr;
         } );
-
-    registerGroupOutFunctor( getGroupDefaultName(),
-                            [=]( google::protobuf::Any* anyGroups,
-                                const WeakGroup& weakGroup,
-                                const ObjectIdMap& objectIdMap ) -> bool {
-            if ( anyGroups == nullptr )
-                return false;
-            SharedGroup group = weakGroup.lock();
-            if ( !group )
-                return false;
-            gtpo::pb::GTpoGroup pbGroup;
-            serializeGTpoGroupOut( weakGroup, pbGroup, objectIdMap );
-            anyGroups->PackFrom( pbGroup );
-            return true;
-        } );
-    registerGroupInFunctor( [=]( const google::protobuf::Any& anyGroup,
-                               Graph& graph,
-                               IdObjectMap& idObjectMap ) -> WeakGroup {
-            if ( anyGroup.Is< gtpo::pb::GTpoGroup >() ) {
-                gtpo::pb::GTpoGroup pbGroup;
-                if ( anyGroup.UnpackTo( &pbGroup ) ) {
-                    WeakGroup weakGroup = graph.createGroup( getGroupDefaultName() );
-                    SharedGroup group = weakGroup.lock();
-                    if ( group != nullptr ) {    // Feed the newly created group with PB group data
-                        serializeGTpoGroupIn( pbGroup, weakGroup, idObjectMap );
-                        return group;
-                    }
-                }
-            }
-            return WeakGroup();
-        } );
 }
 
 template < class GraphConfig >
@@ -212,7 +179,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
 
     int serializedNodeCout = 0;
 
-    progressNotifier.setPhaseCount( 3, 0.33, "Saving nodes" );
+    progressNotifier.setPhaseCount( 2, 0.5, "Saving nodes" );
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
@@ -228,7 +195,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     }
 
     int serializedEdgeCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving edges" );
+    progressNotifier.nextPhase( 0.5, "Saving edges" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
@@ -242,24 +209,8 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for edge class:" << edge->getClassName() << std::endl;
     }
 
-    int serializedGroupCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving groups" );
-    primitive = 0;
-    primitiveCount = static_cast< double >( graph.getGroups().size() );
-    for ( auto& group: graph.getGroups() ) {  // Serialize groups
-        auto groupOutFunctor = _groupOutFunctors.find( group->getClassName() );
-        if ( groupOutFunctor != _groupOutFunctors.end() ) {
-            if ( ( groupOutFunctor->second )( pbGraph.add_groups(), group, objectIdMap ) ) {
-                ++serializedGroupCout;
-                progressNotifier.setPhaseProgress( ++primitive / primitiveCount );
-            }
-        } else
-            std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for group class:" << group->getClassName() << std::endl;
-    }
-
     pbGraph.set_node_count( ( int )graph.getNodeCount() );
     pbGraph.set_edge_count( ( int )graph.getEdges().size() );
-    pbGraph.set_group_count( ( int )graph.getGroups().size() );
 
     if ( user1 != nullptr )
         pbGraph.mutable_user1()->PackFrom( *user1 );
@@ -284,7 +235,7 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& we
         return;
     }
     SharedNode node = weakNode.lock();
-    if ( node == nullptr )
+    if ( !node )
         return;
     pbNode.set_label( GraphConfig::getNodeLabel( node.get() ) );
     pbNode.set_x( GraphConfig::getNodeX( node.get() ) );
@@ -297,29 +248,6 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& we
 }
 
 template < class GraphConfig >
-void    ProtoSerializer< GraphConfig >::serializeGTpoGroupOut( const WeakGroup& weakGroup, gtpo::pb::GTpoGroup& pbGroup, const ObjectIdMap& objectIdMap )
-{
-    if ( objectIdMap.size() == 0 ) {
-        std::cerr << "ProtoSerializer<>::serializeGTpoGroupOut(): Warning: Method called with an empty object ID map." << std::endl;
-        return;
-    }
-    SharedGroup group = weakGroup.lock();
-    if ( group == nullptr )
-        return;
-    pbGroup.set_label( GraphConfig::getGroupLabel( group.get() ) );
-    pbGroup.set_x( GraphConfig::getGroupX( group.get() ) );
-    pbGroup.set_y( GraphConfig::getGroupY( group.get() ) );
-    pbGroup.set_width( GraphConfig::getGroupWidth( group.get() ) );
-    pbGroup.set_height( GraphConfig::getGroupHeight( group.get() ) );
-
-    // FIXME serialize repeated node_ids
-
-    try {
-        pbGroup.set_group_id( objectIdMap.at( group.get() ) );
-    } catch( ... ) { pbGroup.set_group_id( -1 ); }
-}
-
-template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::registerNodeOutFunctor( std::string nodeClassName,
                                                                 NodeOutFunctor nodeOutFunctor ) -> void
 {
@@ -328,16 +256,9 @@ auto    ProtoSerializer< GraphConfig >::registerNodeOutFunctor( std::string node
 
 template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::registerEdgeOutFunctor( std::string edgeClassName,
-                                                                EdgeOutFunctor edgeOutFunctor ) -> void
+                                                                                 EdgeOutFunctor edgeOutFunctor ) -> void
 {
     _edgeOutFunctors.insert( std::make_pair( edgeClassName, edgeOutFunctor ) );
-}
-
-template < class GraphConfig >
-auto    ProtoSerializer< GraphConfig >::registerGroupOutFunctor( std::string groupClassName,
-                                                                 GroupOutFunctor groupOutFunctor ) -> void
-{
-    _groupOutFunctors.insert( std::make_pair( groupClassName, groupOutFunctor ) );
 }
 
 template < class GraphConfig >
@@ -368,12 +289,11 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
 }
 
 template < class GraphConfig >
-template < class User1, class User2 >
+template < class User1 >
 auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                                                      Graph& graph,
                                                      gtpo::IProgressNotifier& progressNotifier,
-                                                     User1* user1,
-                                                     User2* user2 ) -> void
+                                                     User1* user1 ) -> void
 {
     progressNotifier.beginProgress();
 
@@ -381,7 +301,6 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
     idObjectMap.clear();
     int serializedNodeCout = 0;
     int serializedEdgeCout = 0;
-    int serializedGroupCout = 0;
     gtpo::pb::GTpoGraph inGraph;
     if ( inGraph.ParseFromIstream( &is ) ) {
         for ( const google::protobuf::Any& anyNode : inGraph.nodes() ) {    // Serializing nodes in
@@ -413,30 +332,11 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                     std::cerr << "\tProtocol Buffer Error:" << anyEdge.type_url() << std::endl;
                 }
             }
-
-            for ( const google::protobuf::Any& anyGroup : inGraph.groups() ) {    // Serializing groups in
-                bool groupSerialized = false;
-                for ( auto groupInFunctor : _groupInFunctors ) {
-                    WeakGroup serializedGroup = groupInFunctor( anyGroup, graph, idObjectMap );
-                    if ( !serializedGroup.expired() ) {
-                        groupSerialized = true;
-                        ++serializedGroupCout;
-                        break;
-                    }
-                }
-                if ( !groupSerialized ) {
-                    std::cerr << "gtpo::ProtoSerializer::serializeIn(): Warning: A Protocol Buffer group has not been serialized in successfuly." << std::endl;
-                    std::cerr << "\tProtocol Buffer Error:" << anyGroup.type_url() << std::endl;
-                }
-            }
         }
 
         // Serialize optional user message
         if ( inGraph.mutable_user1() != nullptr && inGraph.user1().Is< User1 >() )
             inGraph.mutable_user1()->UnpackTo( user1 );
-        // Serialize optional user message
-        if ( inGraph.mutable_user2() != nullptr && inGraph.user2().Is< User1 >() )
-            inGraph.mutable_user2()->UnpackTo( user2 );
     } else
         std::cerr << "gtpo::ProtoSerializer::serializeIn(): Protocol Buffer reports an error while trying to read input stream" << std::endl;
 
@@ -446,7 +346,9 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << inGraph.edge_count() << " edges in graph" << std::endl;
 
-    progressNotifier.endProgress();
+    // FIXME progress
+    //if ( progress != nullptr )
+    //    progress->endProgress();
 }
 
 template < class GraphConfig >
@@ -466,30 +368,6 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeIn( const gtpo::pb::GTp
 }
 
 template < class GraphConfig >
-void    ProtoSerializer< GraphConfig >::serializeGTpoGroupIn( const gtpo::pb::GTpoGroup& pbGroup,
-                                                              WeakGroup& weakGroup,
-                                                              IdObjectMap& idObjectMap )
-{
-    SharedGroup group = weakGroup.lock();
-    if ( group != nullptr ) {    // Feed the newly created group with PB group data
-        idObjectMap.insert( std::make_pair( pbGroup.group_id(), group.get() ) );
-
-        GraphConfig::setGroupLabel( group.get(), pbGroup.label() );
-        GraphConfig::setGroupX( group.get(), pbGroup.x() );
-        GraphConfig::setGroupY( group.get(), pbGroup.y() );
-        GraphConfig::setGroupWidth( group.get(), pbGroup.width() );
-        GraphConfig::setGroupHeight( group.get(), pbGroup.height() );
-        for ( const google::protobuf::int32 groupNodeId : pbGroup.node_ids() ) {    // Serializing edges in
-            if ( groupNodeId >= 0 ) {
-                void* groupNode = idObjectMap.at( groupNodeId );
-                if ( groupNode != nullptr )
-                    group->insertNode( reinterpret_cast< typename GraphConfig::Node* >( groupNode )->shared_from_this() );
-            }
-        }
-    }
-}
-
-template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::registerNodeInFunctor( NodeInFunctor nodeInFunctor ) -> void
 {
     _nodeInFunctors.push_back( nodeInFunctor );
@@ -499,12 +377,6 @@ template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::registerEdgeInFunctor( EdgeInFunctor edgeInFunctor ) -> void
 {
     _edgeInFunctors.push_back( edgeInFunctor );
-}
-
-template < class GraphConfig >
-auto    ProtoSerializer< GraphConfig >::registerGroupInFunctor( GroupInFunctor groupInFunctor ) -> void
-{
-    _groupInFunctors.push_back( groupInFunctor );
 }
 
 } // ::gtpo

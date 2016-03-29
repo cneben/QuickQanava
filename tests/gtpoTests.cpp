@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the GTpo software.
+// This file is a part of the Qan.Topo software.
 //
 // \file	qtpoTests.cpp
 // \author	benoit@qanava.org
@@ -234,9 +234,6 @@ TEST(GTpo, protobufInOut)
     go.createEdge(n2, n4);
     go.createEdge(n4, n1);
 
-    auto group1 = go.createGroup();
-    group1.lock()->insertNode( n1 );
-
     gtpo::GenGraph<> gi;
 
     gtpo::ProtoSerializer<> ps;
@@ -245,7 +242,6 @@ TEST(GTpo, protobufInOut)
 
     EXPECT_EQ( go.getNodeCount(), gi.getNodeCount() );
     EXPECT_EQ( go.getEdges().size(), gi.getEdges().size() );
-    EXPECT_EQ( go.getGroups().size(), gi.getGroups().size() );
     EXPECT_TRUE( true );
 }
 
@@ -350,111 +346,25 @@ TEST(GTpo, progressNotifier)
 }
 
 //-----------------------------------------------------------------------------
-// GTpo Edge Set Behaviour test (using STpo)
-//-----------------------------------------------------------------------------
-
-TEST(GTpo, stpoGroupAdjacentEdgesBehaviour)
-{
-    stpo::Graph g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-
-    auto g1 = g.createGroup();
-    auto sg1 = g1.lock();
-    sg1->insertNode( n1 );
-    sg1->insertNode( n2 );
-
-    // Expecting 0 adjacent edges since no edge has been added
-    auto& g1AdjacentEdgeSet = sg1->getAdjacentEdges();
-    EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
-
-    {   // Adding an edge at graph level, expecting edge to be inserted in group adjacent edge set
-        g.createEdge( n1, n2 );
-        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
-
-        // Removing the edge at graph level, expecting group empty adjacent edge
-        g.removeEdge( n1, n2 );
-        EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
-    }
-
-    {
-        auto e2 = g.createEdge( n1, n2 );
-        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
-
-        // Removing node 1 from group, edge is still adjacent
-        sg1->removeNode( n1 );
-        EXPECT_EQ( g1AdjacentEdgeSet.size(), 1 );
-
-        // Removing node 2 from group, edge is no longer adjacent to group
-        sg1->removeNode( n2 );
-        EXPECT_EQ( g1AdjacentEdgeSet.size(), 0 );
-    }
-}
-
-TEST(GTpo, stpoGroupAdjacentEdgesBehaviour2)
-{
-    stpo::Graph g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    auto n3 = g.createNode();
-    auto n4 = g.createNode();
-    auto n5 = g.createNode();
-
-    auto e1 = g.createEdge( n1, n2 );
-    auto e2 = g.createEdge( n1, n3 );
-    auto e3 = g.createEdge( n2, n4 );
-    auto e4 = g.createEdge( n3, n5 );
-    auto e5 = g.createEdge( n4, n3 );
-
-    auto g1 = g.createGroup();
-    auto sg1 = g1.lock();
-    sg1->insertNode( n3 );
-    sg1->insertNode( n4 );
-    sg1->insertNode( n5 );
-
-    // See manual topology section, it is the same topology
-    // Check that group 1 adjacent edge set is {e2, e3, e4, e5}
-    auto& g1AdjacentEdgeSet = sg1->getAdjacentEdges();
-    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e2 ) );
-    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e3 ) );
-    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e4 ) );
-    EXPECT_TRUE( gtpo::find_weak_ptr( g1AdjacentEdgeSet, e5 ) );
-    EXPECT_EQ( g1AdjacentEdgeSet.size(), 4 );
-
-    // Removing a node from the group should remove its in/out edges from group adjacent edge set
-    // Here, removing n4 should remove e3 and e5
-    sg1->removeNode( n4 );
-    EXPECT_EQ( g1AdjacentEdgeSet.size(), 3 );
-
-    g.clear();
-}
-
-
-//-----------------------------------------------------------------------------
 // GTpo Behaviour test (using STpo)
 //-----------------------------------------------------------------------------
 
-template < class Config >
-class GraphBehaviourMock : public gtpo::GraphBehaviour< Config >
+template < class Node, class Edge, class Group >
+class GraphBehaviourMock : public gtpo::GraphBehaviour< Node, Edge, Group >
 {
 public:
     GraphBehaviourMock() { }
     virtual ~GraphBehaviourMock() { }
-
-    using WeakNode      = std::weak_ptr< typename Config::Node >;
-    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
-    using WeakGroup     = std::weak_ptr< typename Config::Group >;
-
 protected:
-    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
-    virtual void    groupInserted( WeakGroup& ) override { mockGroupInserted(); }
-    virtual void    groupRemoved( WeakGroup& ) override { mockGroupRemoved(); }
-    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
+    virtual void    groupInserted( Group& ) override { mockGroupInserted(); }
+    virtual void    groupRemoved( Group& ) override { mockGroupRemoved(); }
+    virtual void    groupModified( Group& ) override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -468,25 +378,20 @@ public:
     MOCK_METHOD0(mockGroupModified, void(void));
 };
 
-template < class Config >
-class GroupBehaviourMock : public gtpo::GroupBehaviour< Config >
+template < class Node, class Edge, class Group >
+class GroupBehaviourMock : public gtpo::GroupBehaviour< Node, Edge, Group >
 {
 public:
     GroupBehaviourMock() { }
     virtual ~GroupBehaviourMock() { }
-
-    using WeakNode      = std::weak_ptr< typename Config::Node >;
-    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
-    using WeakGroup     = std::weak_ptr< typename Config::Group >;
-
 protected:
-    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
-    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( Node& ) override { mockNodeInserted(); }
+    virtual void    nodeRemoved( Node& ) override { mockNodeRemoved(); }
+    virtual void    nodeModified( Node& ) override { mockNodeModified(); }
+    virtual void    edgeInserted( Edge& ) override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( Edge& ) override { mockEdgeRemoved(); }
+    virtual void    edgeModified( Edge& ) override { mockEdgeModified(); }
+    virtual void    groupModified( Group& ) override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -498,6 +403,7 @@ public:
     MOCK_METHOD0(mockGroupModified, void(void));
 };
 
+
 using testing::AtLeast;
 
 TEST(GTpo, stpoEchoBehaviour)
@@ -505,7 +411,9 @@ TEST(GTpo, stpoEchoBehaviour)
     stpo::Graph g;
 
     { // Testing graph behaviour
-        using MockGraphBehaviour = GraphBehaviourMock< stpo::Graph::Configuration >;
+        using MockGraphBehaviour = GraphBehaviourMock< stpo::Graph::WeakNode,
+                                                       stpo::Graph::WeakEdge,
+                                                       stpo::Graph::WeakGroup >;
         auto mockBehaviour = new MockGraphBehaviour();  // Wan't use unique_ptr here because of gmock
 
         // Test basic enable/disable behaviour property
@@ -523,7 +431,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // nodeModified() notification
         EXPECT_CALL(*mockBehaviour, mockNodeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setNodeLabel( n.lock().get(), "test" );
+        stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
 
         // nodeInserted() notification
         EXPECT_CALL(*mockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
@@ -537,7 +445,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // edgeModified() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setEdgeWeight( e.lock().get(), 0.5 );
+        stpo::Graph::Configuration::setEdgeWeight( e.lock(), 0.5 );
 
         // edgeRemoved() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeRemoved()).Times(AtLeast(1));
@@ -562,17 +470,19 @@ TEST(GTpo, stpoEchoBehaviour)
         g.removeGroup( gg );
 
         { // Testing group behaviour
-            using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::Configuration >;
+            using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::WeakNode,
+                                                           stpo::Graph::WeakEdge,
+                                                           stpo::Graph::WeakGroup >;
             auto group2 = g.createGroup();
             auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
             group2.lock()->addBehaviour( groupMockBehaviour );
 
             // nodeInserted() notification
             EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(AtLeast(1));
-            EXPECT_CALL(*groupMockBehaviour, mockGroupModified()).Times(AtLeast(1));
             group2.lock()->insertNode( s );
 
             // nodeModified() notification
+            //EXPECT_CALL(*groupMockBehaviour, mockNodeModified()).Times(AtLeast(1));
             //stpo::Graph::Configuration::setNodeLabel( n.lock(), "test" );
 
             // nodeInserted() notification

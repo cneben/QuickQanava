@@ -1,7 +1,7 @@
 TEMPLATE    = app
 TARGET      = test-serializer
 FORMS       =
-CONFIG      += warn_on thread c++14
+CONFIG      += warn_on thread c++11
 QT          += core
 
 DEPENDPATH +=   ../../src

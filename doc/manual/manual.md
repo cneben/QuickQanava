@@ -10,21 +10,16 @@ For any questions, please contact: benoit@qanava.org
 | Pugy XML                  | No                |       **Yes**                   |      MIT        |
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
-| Google Benchmark          | No                |       No                        |    Apache 2.0   |
 
 *PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugyXML*, see:
 + PugiXML homepage: http://pugixml.org/
 + PugiXML GitHub: https://github.com/zeux/pugixml
-*GTpo* include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine.
 
 Google Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer homepage and installation instructions could be found on:
 + Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
 + Protocol Buffer v3 GitHub: https://github.com/google/protobuf
 
-Google Test (optional until you intent to use a graph with custom non-STL non-Qt containers):
-+ Google Test GitHub: https://github.com/google/googletest/
-
-Google Benchmark (optional):
+Google Test is a *GTpo* dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
 + Google Test GitHub: https://github.com/google/googletest/
 
 [TOC]
@@ -69,14 +64,6 @@ to the concrete container.
 Topology
 ------------------
 
-
-### Group topology
-
-When a gtpo::GroupEdgeSetBehaviour is registered in graph (ie added in gtpo::GraphConfig::GroupBehaviours std::tuple), edges and adjacent edges of a group could be searched 
-with gtpo::GenGroup<>::getEdges() and gtpo::GenGroup<>::getAdjacentEdges():
-
-![GTpo group adjacent edges](https://github.com/cneben/GTpo/blob/master/doc/manual/group-adjacent-edges.png)
-
 Groups
 ------------------
 
@@ -96,10 +83,10 @@ There is two way to access graph primitives properties in GTpo:
 | gtpo::GenNode   | y            | double         | GenGraph::setNodeY(), GenGraph::getNodeY()             |                     |
 | gtpo::GenNode   | width        | double         | GenGraph::setNodeWidth(), GenGraph::getNodeWidth()     |                     |
 | gtpo::GenNode   | height       | double         | GenGraph::setNodeHeight(), GenGraph::getNodeHeight()   |                     |
-|                 |              |                |                                                        |                     |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
 | gtpo::GenEdge   | label        | std::string    | GenGraph::setEdgeLabel(), GenGraph::getEdgeLabel()     |                     |
 | gtpo::GenEdge   | weight       | double         | GenGraph::setEdgeWeight(), GenGraph::getEdgeWeight()   |                     |
-|                 |              |                |                                                        |                     |
+| ---             | :---:        | :---:          | :---:                                                  | :---:               |
 | gtpo::GenGroup  | label        | std::string    | GenGraph::setGroupLabel(), GenGraph::getGroupLabel()   |                     |
 | gtpo::GenGroup  | x            | double         | GenGraph::setGroupX(), GenGraph::getGroupX()           |                     |
 | gtpo::GenGroup  | y            | double         | GenGraph::setGroupY(), GenGraph::getGroupY()           |                     |

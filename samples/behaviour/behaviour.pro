@@ -1,7 +1,7 @@
 TEMPLATE    = app
 TARGET      = test-behaviour
 FORMS       =
-CONFIG      += qt warn_on thread c++14
+CONFIG      += qt warn_on thread c++11
 QT          += core
 
 DEPENDPATH +=   ../../src

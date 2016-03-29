@@ -55,7 +55,7 @@ void    GenGraph< Config >::clear()
 
     // Clearing groups and behaviours
     _groups.clear();
-    BehaviourableBase::clear();
+    Behaviourable::clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ auto    GenGraph< Config >::insertNode( SharedNode node ) -> WeakNode
         Config::template insert< SharedNodes >::into( _nodes, node );
         Config::template insert< WeakNodesSearch >::into( _nodesSearch, weakNode );
         Config::template insert< WeakNodes >::into( _rootNodes, weakNode );
-        BehaviourableBase::notifyNodeInserted( weakNode );
+        notifyBehaviours( &Behaviour::nodeInserted, weakNode );
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::insertNode(): Error: can't insert node in graph." ); }
     return weakNode;
 }
@@ -103,7 +103,7 @@ auto    GenGraph< Config >::removeNode( WeakNode weakNode ) -> void
     if ( !node )
         gtpo::assert_throw( false, "gtpo::GenGraph<>::removeNode(): Error: node is expired." );
 
-    BehaviourableBase::notifyNodeRemoved( weakNode );
+    notifyBehaviours( &Behaviour::nodeRemoved, weakNode );
 
     // Removing all orphant edges pointing to node.
     WeakEdges nodeInEdges; std::copy( node->getInEdges().cbegin(),
@@ -144,9 +144,9 @@ auto    GenGraph< Config >::isRootNode( WeakNode node ) const -> bool
 {
     assert_throw( !node.expired(), "gtpo::GenGraph<>::isRootNode(): Error: node is expired." );
     SharedNode sharedNode = node.lock();
-    if ( sharedNode->getInDegree() != 0 )   // Fast exit when node in degree != 0, it can't be a root node
-        return false;
-    return gtpo::find_weak_ptr( _rootNodes, node );
+    auto rootNodeIter = std::find_if( _rootNodes.begin(), _rootNodes.end(),
+                                            [=](const WeakNode& rootNode ){ return ( compare_weak_ptr<>( node, rootNode ) ); } );
+    return ( sharedNode->getInDegree() == 0 && rootNodeIter != _rootNodes.end() );
 }
 
 template < class Config >
@@ -181,7 +181,8 @@ auto    GenGraph< Config >::createEdge( WeakNode src, WeakNode dst ) -> WeakEdge
 
             if ( source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template remove<WeakNodes>::from( _rootNodes, dst );    // Otherwise destination is no longer a root node
-            BehaviourableBase::notifyEdgeInserted( edge );
+            notifyBehaviours( &Behaviour::edgeInserted, edge );
+            //sNotifyBehaviours( edge, [](auto x) { x.edgeInserted( e ); } );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
         }
@@ -218,7 +219,7 @@ auto    GenGraph< Config >::insertEdge( SharedEdge sharedEdge ) -> WeakEdge
             ownedDestination->addInEdge( edge );
             if ( ownedSource != ownedDestination ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
-            notifyEdgeInserted( edge );
+            notifyBehaviours( &Behaviour::edgeInserted, edge );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
         }
@@ -267,7 +268,7 @@ void    GenGraph< Config >::removeEdge( WeakEdge edge )
     SharedNode destination = sharedEdge->getDst().lock();
     if ( !source || !destination )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Error: Edge source or destination are expired." );
-    BehaviourableBase::notifyEdgeRemoved( edge );
+    notifyBehaviours( &Behaviour::edgeRemoved, edge );
     source->removeOutEdge( edge );
     destination->removeInEdge( edge );
     sharedEdge->setGraph( nullptr );
@@ -307,9 +308,8 @@ auto    GenGraph< Config >::getEdgeCount( WeakNode source, WeakNode destination 
 
 /* Graph Group Management *///-------------------------------------------------
 template < class Config >
-auto    GenGraph< Config >::createGroup( const std::string& className ) noexcept( false ) -> WeakGroup
+auto    GenGraph< Config >::createGroup( ) noexcept( false ) -> WeakGroup
 {
-    (void)className;
     WeakGroup weakGroup;
     try {
         auto group = std::make_shared< typename Config::Group >();
@@ -327,7 +327,7 @@ auto    GenGraph< Config >::insertGroup( SharedGroup group ) noexcept( false ) -
         weakGroup = group;
         group->setGraph( this );
         Config::template insert<SharedGroups>::into( _groups, group );
-        this->notifyGroupInserted( weakGroup );
+        notifyBehaviours( &Behaviour::groupInserted, WeakGroup{ group } );
     } catch (...) { throw gtpo::bad_topology_error( "gtpo::GenGraph<>::insertGroup(): Insertion of group failed" ); }
     return weakGroup;
 }
@@ -341,7 +341,7 @@ auto    GenGraph< Config >::removeGroup( WeakGroup weakGroup ) noexcept( false )
         gtpo::assert_throw( false, "GenGraph<>::removeGroup(): Error: trying to remove and expired group." );
 
     // Remove group (it will be automatically deallocated)
-    this->notifyGroupRemoved( weakGroup );
+    notifyBehaviours( &Behaviour::groupRemoved, WeakGroup{ weakGroup } );
     group->setGraph( nullptr );
     Config::template remove<SharedGroups>::from( _groups, group );
 }
@@ -355,6 +355,33 @@ auto    GenGraph< Config >::hasGroup( const WeakGroup& group ) const -> bool
                                         [=](const WeakGroup& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
     return groupIter != _groups.end();
 }
+//-----------------------------------------------------------------------------
+
+/* Behaviours Management *///--------------------------------------------------
+template < class Config >
+auto    GenGraph< Config >::notifyNodeModified( WeakNode& node ) -> void
+{
+    notifyBehaviours< WeakNode >( &Behaviour::nodeModified, node );
+}
+
+template < class Config >
+auto    GenGraph< Config >::notifyEdgeModified( WeakEdge& edge ) -> void
+{
+    notifyBehaviours< WeakEdge >( &Behaviour::edgeModified, edge );
+}
+
+template < class Config >
+auto    GenGraph< Config >::notifyGroupModified( WeakGroup& group ) -> void
+{
+    notifyBehaviours< WeakGroup >( &Behaviour::groupModified, group );
+}
+
+/*template < class Config >
+template < typename T, typename NotifyFunct >
+auto    GenGraph< Config >::sNotifyBehaviours( T, NotifyFunct f)
+{
+    std::cerr << "sNotifyBehaviours()..." << std::endl;
+}*/
 //-----------------------------------------------------------------------------
 
 } // ::gtpo

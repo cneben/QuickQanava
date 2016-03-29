@@ -40,15 +40,12 @@ auto GenGroup< Config >::insertNode( WeakNode weakNode ) -> void
     SharedNode node = weakNode.lock();
     gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::removeNode(): Error: trying to insert an expired node in group." );
     try {
-        SharedGroup group{ this->shared_from_this() };
-        WeakGroup weakGroup{ group };
+        WeakGroup weakGroup{ this->shared_from_this() };
         node->setGroup( weakGroup );
         Config::template insert<WeakNodes>::into( _nodes, node );
-
-        this->notifyGroupModified( weakGroup );        // Notification
-        this->notifyNodeInserted( weakNode );
+        notifyBehaviours<WeakGroup>( &Behaviour::groupModified, weakGroup );
+        notifyBehaviours<WeakNode>( &Behaviour::nodeInserted, weakNode );
         getGraph()->notifyGroupModified( weakGroup );
-
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGroup<>::insertNode(): Error: can't insert node in group." ); }
 }
 
@@ -60,13 +57,13 @@ auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
     if ( !node )
         gtpo::assert_throw( false, "gtpo::GenGroup<>::removeNode(): Error: node is expired." );
 
+    node->setGroup( WeakGroup{} );
+
     WeakGroup weakGroup{ this->shared_from_this() };
-    this->notifyGroupModified( weakGroup );          // Notification
-    this->notifyNodeRemoved( const_cast<WeakNode&>( weakNode ) );
+    notifyBehaviours< WeakGroup >( &Behaviour::groupModified, weakGroup );
+    notifyBehaviours< WeakNode >( &Behaviour::nodeRemoved, const_cast<WeakNode&>( weakNode ) );
     getGraph()->notifyGroupModified( weakGroup );
 
-    WeakGroup emptyGroup{};
-    node->setGroup( emptyGroup );
     Config::template remove<WeakNodes>::from( _nodes, node );
 }
 
@@ -81,6 +78,26 @@ auto GenGroup< Config >::hasNode( const WeakNode& node ) const -> bool
     auto groupNodeIter = std::find_if( _nodes.begin(), _nodes.end(),
                                         [=](const WeakNode& groupNode ){ return ( compare_weak_ptr<>( node, groupNode ) ); } );
     return groupNodeIter != _nodes.end();
+}
+//-----------------------------------------------------------------------------
+
+/* Behaviours Management *///--------------------------------------------------
+template < class Config >
+auto    GenGroup< Config >::notifyNodeModified( WeakNode& node ) -> void
+{
+    notifyBehaviours< WeakNode >( &Behaviour::nodeModified, node );
+}
+
+template < class Config >
+auto    GenGroup< Config >::notifyEdgeModified( WeakEdge& edge ) -> void
+{
+    notifyBehaviours< WeakEdge >( &Behaviour::edgeModified, edge );
+}
+
+template < class Config >
+auto    GenGroup< Config >::notifyGroupModified( WeakGroup& group ) -> void
+{
+    notifyBehaviours< WeakGroup >( &Behaviour::groupModified, group );
 }
 //-----------------------------------------------------------------------------
 
