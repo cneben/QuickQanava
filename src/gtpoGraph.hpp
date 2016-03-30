@@ -72,11 +72,11 @@ auto GenGraph< Config >::createNode( ) -> WeakNode
 }
 
 template < class Config >
-auto    GenGraph< Config >::createNode( const std::string& nodeClassName ) noexcept( false ) -> WeakNode
+auto    GenGraph< Config >::createNode( const std::string& className ) noexcept( false ) -> WeakNode
 {
-    if ( nodeClassName == "gtpo::Node" )    // FIXME 20160212
+    if ( className == "gtpo::Node" )
         return createNode();
-    return WeakNode();
+    return WeakNode{};
 }
 
 template < class Config >
@@ -194,7 +194,7 @@ auto    GenGraph< Config >::createEdge( const std::string& className, WeakNode s
 {
     if ( className == "gtpo::Edge" )
         return createEdge( src, dst );
-    return WeakEdge();
+    return WeakEdge{};
 }
 
 template < class Config >
@@ -307,15 +307,22 @@ auto    GenGraph< Config >::getEdgeCount( WeakNode source, WeakNode destination 
 
 /* Graph Group Management *///-------------------------------------------------
 template < class Config >
-auto    GenGraph< Config >::createGroup( const std::string& className ) noexcept( false ) -> WeakGroup
+auto GenGraph< Config >::createGroup( ) -> WeakGroup
 {
-    (void)className;
     WeakGroup weakGroup;
     try {
         auto group = std::make_shared< typename Config::Group >();
         weakGroup = insertGroup( group );
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::createGroup(): Error: can't insert group in graph." ); }
     return weakGroup;
+}
+
+template < class Config >
+auto    GenGraph< Config >::createGroup( const std::string& className ) noexcept( false ) -> WeakGroup
+{
+    if ( className == "gtpo::Group" )
+        return createGroup();
+    return WeakGroup{};
 }
 
 template < class Config >
