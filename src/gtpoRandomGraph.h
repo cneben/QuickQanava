@@ -31,6 +31,7 @@
 // STD headers
 #include <random>
 #include <cstdlib>
+#include <sstream>
 
 // GTPO headers
 #include "./gtpoUtils.h"
@@ -86,9 +87,13 @@ public:
         std::uniform_real_distribution< double > yDist( config.yRng.first, config.yRng.second );
         std::uniform_real_distribution< double > widthDist( config.widthRng.first, config.widthRng.second );
         std::uniform_real_distribution< double > heightDist( config.heightRng.first, config.heightRng.second );
+        int nodeIndex = 0;
         for ( auto weakNode: nodes ) {
             typename Graph::SharedNode node = weakNode.lock();
             if ( node ) {
+                std::ostringstream ostr; ostr << nodeIndex++;
+                std::string nodeLabel{ std::string( "Node #" ) + ostr.str() };
+                Graph::Configuration::setNodeLabel( node.get(), nodeLabel );
                 Graph::Configuration::setNodeX( node.get(), xDist( gen ) );
                 Graph::Configuration::setNodeY( node.get(), yDist( gen ) );
                 Graph::Configuration::setNodeWidth( node.get(), widthDist( gen ) );
