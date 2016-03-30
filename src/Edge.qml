@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the Qanava software. Copyright 2014 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
 // \file	QanArrowEdge.qml
 // \author	benoit@qanava.org

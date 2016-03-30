@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the Qanava software.
+// This file is a part of the QuickQanava software library.
 //
 // \file    qanStyleManager.h
 // \author  benoit@qanava.org

@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the Qanava software. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
 // \file	Graph.qml
 // \author	benoit@qanava.org
