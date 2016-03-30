@@ -596,7 +596,7 @@ public:
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    virtual auto    createNode( const std::string& nodeClassName ) noexcept( false ) -> WeakNode;
+    virtual auto    createNode( const std::string& className ) noexcept( false ) -> WeakNode;
 
     /*! Insert a node created outside of GTpo into the graph.
      *
@@ -773,7 +773,16 @@ public:
      * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if insertion fails.
      */
-    auto        createGroup( const std::string& className = "" ) noexcept( false ) -> WeakGroup;
+    auto        createGroup( ) noexcept( false ) -> WeakGroup;
+
+    /*! \brief Used for serialization purposes, create a new group with a given class name \c className and insert it into the graph.
+     *
+     * Complexity is O(1).
+     * \arg className desired class name for the create node group (default to gtpo::Group).
+     * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
+     * \throw a gtpo::bad_topology_error if insertion fails.
+     */
+    virtual auto    createGroup( const std::string& className ) noexcept( false ) -> WeakGroup;
 
     /*! Insert a node group into the graph.
      *
