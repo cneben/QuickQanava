@@ -55,11 +55,40 @@ class ProgressNotifier;
  * Here is a summary of the interaction between a long \c task and a progress \c notifier:
  * \li Progress \c notifier is passed as an argument of the long \c task method or functor.
  * \li First, the task initialize the number of phases that are usually required to complete the task with a call to setPhaseCount().
- * \li When the \c task change phase, the nextPhase() method is called with the estimated weight of the
- * phase in \c task completion. The sum of all weight arguments to nextPhase() must be 1.0.
+ * \li When the \c task change phase, the nextPhase() method is called.
  * \li The \c task then set the current phase progress with calls to setPhaseProgress(), the overall progress
  * is automatically updated by this notifyer and could be accessed with getProgress().
  * \li When the task ends, it call endProgress().
+ *
+ * Example code with a notifier and a sub notifier for sub tasks:
+ * \code
+ *  void    Consumer::consume( gtpo::IProgressNotifier* notifier )
+ *   {
+ *       if ( notifier == nullptr )
+ *           return;
+ *       notifier->reset();
+ *       notifier->setPhaseCount( 3 );
+ *       gtpo::IProgressNotifier* subNotifier = notifier->createSubProgress();
+ *       subNotifier->setPhaseCount( 2 );
+ *       notifier->beginProgress();
+ *
+ *       subNotifier->beginProgress();
+ *       subNotifier->beginPhase( "Sub progress - phase1" );
+ *       consumePhase( subNotifier );
+ *       subNotifier->beginPhase( "Sub Progress - phase2" );
+ *       consumePhase( subNotifier );
+ *       subNotifier->endProgress();
+ *
+ *       notifier->beginPhase( "Super progress - phase1");
+ *       consumePhase( notifier );
+ *       notifier->beginPhase( "Super progress - phase2" );
+ *       consumePhase( notifier );
+ *       notifier->beginPhase( "Super progress - phase3" );
+ *       consumePhase( notifier );
+ *
+ *       notifier->endProgress();
+ *  }
+ * \endcode
  *
  * Update of overall or phase progress is protected against values outside of the [0.;1.0] range.
  *
@@ -223,6 +252,7 @@ public:
 
 public:
     virtual void    beginProgress() override {
+        IProgressNotifier::beginProgress();
         if ( getSuperProgress() != nullptr )    // Force super progress begin when begin is called on a sub progress
             getSuperProgress()->beginProgress();
     }
@@ -235,12 +265,13 @@ public:
      * notifier "local" progress.
      */
     virtual double  getProgress() const override {
-        if ( _phase < 0 )   // No call to beginPhase()
-            return 0.;
         double totalPhaseCount = getPhaseCount();
         double phaseWeight = ( 1.0 / _phaseCount );
-        double progress = ( _phase * phaseWeight ) + ( _phaseProgress * phaseWeight );
-        progress *= _phaseCount / totalPhaseCount;
+        double progress = 0.;
+        if ( _phase >= 0 ) {
+            progress = ( _phase * phaseWeight ) + ( _phaseProgress * phaseWeight );
+            progress *= _phaseCount / totalPhaseCount;
+        }
         for ( auto& subNotifier : _notifiers ) {
             progress += subNotifier->getProgress() * subNotifier->getPhaseCount( ) / totalPhaseCount;
         }
