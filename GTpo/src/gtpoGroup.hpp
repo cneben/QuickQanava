@@ -48,7 +48,6 @@ auto GenGroup< Config >::insertNode( WeakNode weakNode ) -> void
         this->notifyGroupModified( weakGroup );        // Notification
         this->notifyNodeInserted( weakNode );
         getGraph()->notifyGroupModified( weakGroup );
-
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGroup<>::insertNode(): Error: can't insert node in group." ); }
 }
 

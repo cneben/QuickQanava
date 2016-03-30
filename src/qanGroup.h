@@ -71,12 +71,18 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-
     //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
-    auto                insertNode( WeakNode weakNode ) -> void { gtpo::GenGroup< qan::Config >::insertNode( weakNode ); }
+    auto                insertNode( WeakNode weakNode ) -> void;
 
-    //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
-    auto                insertNode( qan::Node* node ) -> void;
+    /*! \brief Insert an existing QuickQanava node \c node into gthis group.
+     *
+     * \param drop specify if the node insertion is the result of a drag and drop (default), in that case,
+     * the node position will be mapped in group coordinate system. If false (for serialization or in case
+     * of a "programmatic" insertion, node keep its current position and size.
+     *
+     * \note Call gtpo::GenGroup<qan::Config>::insertNode() during insertion.
+     */
+    Q_INVOKABLE auto    insertNode( qan::Node* node, bool drop = true ) -> void;
 
     //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
     auto                removeNode( const qan::Node* node ) -> void;

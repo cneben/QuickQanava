@@ -238,8 +238,8 @@ Item {
                 model: graph.edges
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlight: Rectangle {
-                    x: 0; y: ListView.view.currentItem.y;
-                    width: ListView.view.width; height: ListView.view.currentItem.height
+                    x: 0; y: ( ListView.view.currentItem != null ? ListView.view.currentItem.y : 0 )
+                    width: ListView.view.width; height: ( ListView.view.currentItem != null ? ListView.view.currentItem.height : 100 )
                     color: "lightsteelblue"; opacity: 0.7; radius: 5
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }

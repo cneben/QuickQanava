@@ -211,6 +211,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     gtpo::pb::GTpoGraph pbGraph;
 
     int serializedNodeCout = 0;
+    int nonSerializableNodeCount = 0;
 
     progressNotifier.beginProgress();
     progressNotifier.setPhaseCount( 3 );
@@ -218,8 +219,10 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
-        if ( !node->isSerializable() )   // Don't serialize control nodes
+        if ( !node->isSerializable() ) {   // Don't serialize control nodes
+            ++nonSerializableNodeCount;
             continue;
+        }
         auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
             ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
@@ -272,8 +275,8 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     if ( !pbGraph.SerializeToOstream( &os) )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Protocol Buffer Error while writing to output stream." << std::endl;
 
-    if ( serializedNodeCout != (int)graph.getNodeCount() ) // Report errors
-        std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedNodeCout << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
+    if ( ( serializedNodeCout + nonSerializableNodeCount ) != (int)graph.getNodeCount() ) // Report errors
+        std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << ( serializedNodeCout + nonSerializableNodeCount ) << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
 
@@ -316,8 +319,15 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoGroupOut( const WeakGroup& 
     pbGroup.set_width( GraphConfig::getGroupWidth( group.get() ) );
     pbGroup.set_height( GraphConfig::getGroupHeight( group.get() ) );
 
-    // FIXME serialize repeated node_ids
-
+    for ( auto& groupNode : group->getNodes() ) { // Serialize group node ids
+        if ( !groupNode.expired() ) {
+            try {
+                int groupNodeId = objectIdMap.at( groupNode.lock().get() );
+                if ( groupNodeId != -1 )
+                    pbGroup.add_node_ids( groupNodeId );
+            } catch ( std::out_of_range ) { std::cerr << "ProtoSerializer<>::serializeGTpoGroupOut: Error while serialiazing a group node id (index out of range)." << std::endl; }
+        }
+    }
     try {
         pbGroup.set_group_id( objectIdMap.at( group.get() ) );
     } catch( ... ) { pbGroup.set_group_id( -1 ); }

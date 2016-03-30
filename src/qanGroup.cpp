@@ -64,7 +64,19 @@ qan::Graph* Group::getGraph()
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
-auto    Group::insertNode( qan::Node* node ) -> void
+auto    Group::insertNode( WeakNode weakNode ) -> void
+{
+    SharedNode node = weakNode.lock();
+    if ( node != nullptr ) {
+        qan::Node* qanNode = qobject_cast< qan::Node* >( node.get() );
+        if ( qanNode != nullptr )
+            insertNode( qanNode, false );  // If the node is a QuickQanava qan::Node, insert it "graphically" before adding it to graph topology.
+        else    // Should not happen
+            gtpo::GenGroup< qan::Config >::insertNode( weakNode );
+    }
+}
+
+auto    Group::insertNode( qan::Node* node, bool drop ) -> void
 {
     if ( node == nullptr )
         return;
@@ -78,7 +90,8 @@ auto    Group::insertNode( qan::Node* node ) -> void
 
         // Note 20150907: Set a default position corresponding to the drop position, it will usually be modified
         // if a layout has been configured in this group
-        node->setPosition( node->mapToItem( getContainer( ), QPointF( 0., 0. ) ) );
+        if ( drop ) // Do not map position if the insertion didn't result from a drag and drop action (for example when inserting a node for in serialization)
+            node->setPosition( node->mapToItem( getContainer( ), QPointF( 0., 0. ) ) );
         node->setParentItem( getContainer( ) );
         groupMoved( ); // Force call to groupMoved() to update group adjacent edges
 

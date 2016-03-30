@@ -232,6 +232,9 @@ signals:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
+    //! Defined for serialization support, do not use.
+    virtual auto            createGroup( const std::string& className ) -> WeakGroup;
+
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE qan::Group* insertGroup( QQmlComponent* groupComponent = nullptr );
 

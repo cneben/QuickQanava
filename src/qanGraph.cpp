@@ -188,9 +188,9 @@ qan::Node*  Graph::insertNode( QVariant nodeArgument )
 auto    Graph::createNode( const std::string& className ) -> WeakNode
 {
     if ( className.size() == 0 )
-        return WeakNode();
+        return WeakNode{};
     qan::Node* node = insertNode( QString::fromStdString( className ) );
-    return ( node != nullptr ? node->shared_from_this() : WeakNode() ); // Note 20160213: shared_from_this() could be used since the node has already been added to graph, it
+    return ( node != nullptr ? node->shared_from_this() : WeakNode{} ); // Note 20160213: shared_from_this() could be used since the node has already been added to graph, it
 }
 
 void    Graph::removeNode( qan::Node* node )
@@ -302,6 +302,14 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
+auto    Graph::createGroup( const std::string& className ) -> WeakGroup
+{
+    if ( className.size() == 0 )
+        return WeakGroup{};
+    qan::Group* group = insertGroup( );
+    return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
+}
+
 qan::Group* Graph::insertGroup( QQmlComponent* groupComponent )
 {
     if ( groupComponent == nullptr ) {
@@ -323,7 +331,11 @@ qan::Group* Graph::insertGroup( QQmlComponent* groupComponent )
 
 void    Graph::removeGroup( qan::Group* group )
 {
-    // FIXME
+    if ( group == nullptr )
+        return;
+    WeakGroup weakGroup = group->shared_from_this();
+    if ( !weakGroup.expired() )
+        gtpo::GenGraph< Config >::removeGroup( weakGroup );
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
