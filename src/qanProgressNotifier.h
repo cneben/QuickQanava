@@ -68,17 +68,12 @@ public:
     //! Called from task, force show of associed progress dialog.
     void    beginProgress() {
         gtpo::ProgressNotifier::beginProgress();
-
-        //qDebug() << "qan::ProgressNotifier::beginProgress()";
         emit showProgress();
-        QCoreApplication::processEvents( );
-        QCoreApplication::processEvents( );
-        QCoreApplication::processEvents( );
-        QCoreApplication::processEvents( );
         QCoreApplication::processEvents( );
     }
     //! Called from task, force progress end and hide associed dialog.
     void    endProgress() {
+        gtpo::ProgressNotifier::endProgress();
         emit hideProgress();
         QCoreApplication::processEvents( );
     }
@@ -90,9 +85,12 @@ signals:
 
 protected:
     //! Called whenever the overall progress change.
-    virtual void    notifyProgressChanged() override {
-        qDebug() << "notifyProgressChanged(): progress=" << getProgress();
+    virtual void    notifyModified() override {
+        gtpo::ProgressNotifier::notifyModified();
+        QCoreApplication::processEvents( );
+        emit phaseProgressChanged();
         emit progressChanged();
+        emit phaseLabelChanged();
         QCoreApplication::processEvents( );
     }
 
@@ -105,10 +103,6 @@ public:
 signals:
     //! \sa phaseProgress
     void            phaseProgressChanged();
-protected:
-    virtual void    notifyPhaseProgressChanged() override {
-        emit phaseProgressChanged(); QCoreApplication::processEvents( );
-    }
 
 public:
     /*! Label for the current progress phase, usually set in beginPhase().
@@ -120,8 +114,6 @@ public:
 signals:
     //! \sa phaseLabel
     void            phaseLabelChanged();
-protected:
-    virtual void    notifyPhaseLabelChanged() override { emit phaseLabelChanged(); QCoreApplication::processEvents( ); }
     //@}
     //-------------------------------------------------------------------------
 };

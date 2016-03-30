@@ -44,7 +44,7 @@ void    consumePhase( gtpo::IProgressNotifier* notifier )
 {
     for ( int i = 0; i < 100; ++i ) {
         notifier->setPhaseProgress( 0.01 * i );
-        QThread::msleep( 30 );
+        QThread::msleep( 15 );
     }
 }
 
@@ -52,23 +52,26 @@ void    Consumer::consume( qan::ProgressNotifier* notifier )
 {
     if ( notifier == nullptr )
         return;
+    notifier->reset();
+    notifier->setPhaseCount( 3 );
     gtpo::IProgressNotifier* subNotifier = notifier->createSubProgress();
-    subNotifier->beginProgress();
     subNotifier->setPhaseCount( 2 );
+    notifier->beginProgress();
+
+    subNotifier->beginProgress();
     subNotifier->beginPhase( "Sub progress - phase1" );
     consumePhase( subNotifier );
     subNotifier->beginPhase( "Sub Progress - phase2" );
     consumePhase( subNotifier );
     subNotifier->endProgress();
 
-    notifier->beginProgress();
-    notifier->setPhaseCount( 3 );
     notifier->beginPhase( "Super progress - phase1");
     consumePhase( notifier );
     notifier->beginPhase( "Super progress - phase2" );
     consumePhase( notifier );
     notifier->beginPhase( "Super progress - phase3" );
     consumePhase( notifier );
+
     notifier->endProgress();
 }
 
