@@ -69,14 +69,15 @@ void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProg
         serializeAttribute( graphNode, "weight", "edge", "double", "0." );
 
         // FIXME 20160208 virer getNodes()
-        progress->setPhaseCount( 2, 0.5 , "Saving nodes" );
+        progress->setPhaseCount( 2 );
+        progress->beginPhase( "Saving nodes" );
         int     primitive = 0;
         double  primitiveCount = static_cast< double >( graph.getNodes().size() );
         for ( auto node : graph.getNodes() ) {
             serializeNode( node );
             progress->setPhaseProgress( ++primitive / primitiveCount );
         }
-        progress->nextPhase( 0.5, "Saving edges" );
+        progress->beginPhase( "Saving edges" );
         primitive = 0;
         primitiveCount = static_cast< double >( graph.getEdges().size() );
         for ( auto edge : graph.getEdges() ) {

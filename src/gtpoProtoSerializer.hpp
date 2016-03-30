@@ -212,7 +212,9 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
 
     int serializedNodeCout = 0;
 
-    progressNotifier.setPhaseCount( 3, 0.33, "Saving nodes" );
+    progressNotifier.beginProgress();
+    progressNotifier.setPhaseCount( 3 );
+    progressNotifier.beginPhase( "Saving nodes" );
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
@@ -228,7 +230,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     }
 
     int serializedEdgeCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving edges" );
+    progressNotifier.beginPhase( "Saving edges" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
@@ -243,7 +245,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     }
 
     int serializedGroupCout = 0;
-    progressNotifier.nextPhase( 0.33, "Saving groups" );
+    progressNotifier.beginPhase( "Saving groups" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getGroups().size() );
     for ( auto& group: graph.getGroups() ) {  // Serialize groups
@@ -274,6 +276,8 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedNodeCout << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
     if ( serializedEdgeCout != (int)graph.getEdges().size() )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
+
+    progressNotifier.endProgress();
 }
 
 template < class GraphConfig >
@@ -376,6 +380,8 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                                                      User2* user2 ) -> void
 {
     progressNotifier.beginProgress();
+    progressNotifier.setPhaseCount( 3 );
+    progressNotifier.beginPhase( "Loading nodes" );
 
     IdObjectMap& idObjectMap = getIdObjectMap();
     idObjectMap.clear();
@@ -399,6 +405,7 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
             }
         }
         if ( idObjectMap.size() > 0 ) {   // No need to start edge serialization if node id map is empty...
+            progressNotifier.beginPhase( "Loading edges" );
             for ( const google::protobuf::Any& anyEdge : inGraph.edges() ) {    // Serializing edges in
                 bool edgeSerialized = false;
                 for ( auto edgeInFunctor : _edgeInFunctors ) {
@@ -414,6 +421,7 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                 }
             }
 
+            progressNotifier.beginPhase( "Loading groups" );
             for ( const google::protobuf::Any& anyGroup : inGraph.groups() ) {    // Serializing groups in
                 bool groupSerialized = false;
                 for ( auto groupInFunctor : _groupInFunctors ) {
