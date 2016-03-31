@@ -63,7 +63,7 @@ class ImageItem : public QQuickPaintedItem
 public:
     explicit ImageItem( QQuickItem* parent = nullptr ) :
         QQuickPaintedItem( parent ) { setAntialiasing(true); }
-    virtual ~ImageItem() { }
+    virtual ~ImageItem();
 private:
     Q_DISABLE_COPY( ImageItem )
 public:

@@ -48,11 +48,11 @@ Node::Node( QQuickItem* parent ) :
 
 Node::~Node( )
 {
-    // Force remove all children who hae no cpp ownership
-    for ( auto child: childItems() ) {
-        if ( QQmlEngine::objectOwnership( child ) != QQmlEngine::CppOwnership )
+/*    for ( auto child: childItems() ) {
+        if ( QQmlEngine::objectOwnership( child ) != QQmlEngine::CppOwnership ) {
             child->setParent( nullptr );
-    }
+        }
+    }*/
 }
 
 qan::Graph* Node::getGraph()

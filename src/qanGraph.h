@@ -119,6 +119,9 @@ public:
 protected:
     //! Create a graph primitive using the given delegate \c component.
     Q_INVOKABLE QQuickItem* createFromDelegate( QQmlComponent* component );
+
+    static void setCppOwnership( QQuickItem* item );
+
 private:
     QMap< QString, QQmlComponent* > _nodeClassComponents;
     QMap< QString, QQmlComponent* > _edgeClassComponents;

@@ -65,8 +65,12 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
     if ( component->isReady() ) {
         QObject* object = component->create( );
         if ( object != nullptr && !component->isError() ) {
-            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+            //QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );
+            //setCppOwnership( item );
+            /*for ( auto childItem: item->childItems() ) {
+                QQmlEngine::setObjectOwnership( childItem, QQmlEngine::CppOwnership );
+            }*/
             item->setVisible( true );
             item->setParentItem( this );
         } else {
@@ -79,6 +83,15 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
     }
 
     return item;
+}
+
+void Graph::setCppOwnership( QQuickItem* item )
+{
+    if ( item == nullptr )
+        return;
+    QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
+    for ( auto childItem: item->childItems() )
+        qan::Graph::setCppOwnership( childItem );
 }
 
 void    Graph::registerNodeDelegate( QString nodeClass, QQmlComponent* nodeComponent )
@@ -144,6 +157,8 @@ qan::Node* Graph::insertNode( QQmlComponent* nodeComponent )
     } else
         qDebug() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
 
+//    if ( node != nullptr )
+//        QQmlEngine::setObjectOwnership( node, QQmlEngine::CppOwnership );
     return node;
 }
 
@@ -164,6 +179,8 @@ qan::Node*  Graph::insertNode( QString nodeClassName )
         connect( node, &qan::Node::nodeClicked, this, &qan::Graph::nodeClicked );
         connect( node, &qan::Node::nodeRightClicked, this, &qan::Graph::nodeRightClicked );
         connect( node, &qan::Node::nodeDoubleClicked, this, &qan::Graph::nodeDoubleClicked );
+
+        //QQmlEngine::setObjectOwnership( node, QQmlEngine::CppOwnership );
     }
     return node;
 }
@@ -253,6 +270,8 @@ qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCom
     catch ( ... ) {
         qDebug() << "qan::Graph::insertEdge(): Error: Topology error.";
     }
+    //if ( edge != nullptr )  // Keep ownership for the return value of a Q_INVOKABLE method
+    //    QQmlEngine::setObjectOwnership( edge, QQmlEngine::CppOwnership );
     return edge;
 }
 
@@ -323,6 +342,7 @@ qan::Group* Graph::insertGroup( QQmlComponent* groupComponent )
     qan::Group* group = static_cast< qan::Group* >( createFromDelegate( groupComponent ) );
     if ( group != nullptr ) {
         GTpoGraph::insertGroup( std::shared_ptr<qan::Group>{group} );
+        //QQmlEngine::setObjectOwnership( group, QQmlEngine::CppOwnership );
     } else
         qDebug() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
 

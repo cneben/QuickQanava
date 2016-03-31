@@ -39,7 +39,8 @@ namespace qan { // ::qan
 
 ImgNode::~ImgNode()
 {
-
+    qDebug() << "ImgNode::~ImgNode()";
+    qDebug() << "\tobjectOwnership==Cpp =" << ( QQmlEngine::objectOwnership(this) == QQmlEngine::CppOwnership );
 }
 
 void    ImgNode::loadImageFromFile( QString fileName )
@@ -55,6 +56,16 @@ void    ImageItem::paint( QPainter* painter )
 {
     if ( !_image.isNull() )
         painter->drawImage( QRectF( 0., 0., width(), height() ), _image );
+}
+
+ImageItem::~ImageItem()
+{
+    if ( QQmlEngine::objectOwnership( this ) == QQmlEngine::CppOwnership ) {
+        //setParent( nullptr );
+        setParentItem( nullptr );
+    }
+    qDebug() << "ImageItem::~ImageItem()";
+    qDebug() << "\tobjectOwnership==Cpp = " << ( QQmlEngine::objectOwnership(this) == QQmlEngine::CppOwnership );
 }
 
 } // ::qan
