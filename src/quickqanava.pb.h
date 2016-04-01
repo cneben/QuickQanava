@@ -30,6 +30,7 @@
 #include <google/protobuf/map_field_inl.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "quickproperties.pb.h"
+#include "gtpo.pb.h"
 // @@protoc_insertion_point(includes)
 
 namespace qan {
@@ -40,6 +41,7 @@ void protobuf_AddDesc_quickqanava_2eproto();
 void protobuf_AssignDesc_quickqanava_2eproto();
 void protobuf_ShutdownFile_quickqanava_2eproto();
 
+class Graph;
 class Style;
 class StyleManager;
 
@@ -326,6 +328,97 @@ class StyleManager : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static StyleManager* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Graph : public ::google::protobuf::Message {
+ public:
+  Graph();
+  virtual ~Graph();
+
+  Graph(const Graph& from);
+
+  inline Graph& operator=(const Graph& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Graph& default_instance();
+
+  void Swap(Graph* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Graph* New() const { return New(NULL); }
+
+  Graph* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Graph& from);
+  void MergeFrom(const Graph& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Graph* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .gtpo.pb.Graph graph = 1;
+  bool has_graph() const;
+  void clear_graph();
+  static const int kGraphFieldNumber = 1;
+  const ::gtpo::pb::Graph& graph() const;
+  ::gtpo::pb::Graph* mutable_graph();
+  ::gtpo::pb::Graph* release_graph();
+  void set_allocated_graph(::gtpo::pb::Graph* graph);
+
+  // optional .qan.pb.StyleManager style_manager = 2;
+  bool has_style_manager() const;
+  void clear_style_manager();
+  static const int kStyleManagerFieldNumber = 2;
+  const ::qan::pb::StyleManager& style_manager() const;
+  ::qan::pb::StyleManager* mutable_style_manager();
+  ::qan::pb::StyleManager* release_style_manager();
+  void set_allocated_style_manager(::qan::pb::StyleManager* style_manager);
+
+  // @@protoc_insertion_point(class_scope:qan.pb.Graph)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::gtpo::pb::Graph* graph_;
+  ::qan::pb::StyleManager* style_manager_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_quickqanava_2eproto();
+  friend void protobuf_AssignDesc_quickqanava_2eproto();
+  friend void protobuf_ShutdownFile_quickqanava_2eproto();
+
+  void InitAsDefaultInstance();
+  static Graph* default_instance_;
 };
 // ===================================================================
 
@@ -659,7 +752,87 @@ StyleManager::mutable_default_edge_styles() {
   return default_edge_styles_.MutableMap();
 }
 
+// -------------------------------------------------------------------
+
+// Graph
+
+// optional .gtpo.pb.Graph graph = 1;
+inline bool Graph::has_graph() const {
+  return !_is_default_instance_ && graph_ != NULL;
+}
+inline void Graph::clear_graph() {
+  if (GetArenaNoVirtual() == NULL && graph_ != NULL) delete graph_;
+  graph_ = NULL;
+}
+inline const ::gtpo::pb::Graph& Graph::graph() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Graph.graph)
+  return graph_ != NULL ? *graph_ : *default_instance_->graph_;
+}
+inline ::gtpo::pb::Graph* Graph::mutable_graph() {
+  
+  if (graph_ == NULL) {
+    graph_ = new ::gtpo::pb::Graph;
+  }
+  // @@protoc_insertion_point(field_mutable:qan.pb.Graph.graph)
+  return graph_;
+}
+inline ::gtpo::pb::Graph* Graph::release_graph() {
+  
+  ::gtpo::pb::Graph* temp = graph_;
+  graph_ = NULL;
+  return temp;
+}
+inline void Graph::set_allocated_graph(::gtpo::pb::Graph* graph) {
+  delete graph_;
+  graph_ = graph;
+  if (graph) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.Graph.graph)
+}
+
+// optional .qan.pb.StyleManager style_manager = 2;
+inline bool Graph::has_style_manager() const {
+  return !_is_default_instance_ && style_manager_ != NULL;
+}
+inline void Graph::clear_style_manager() {
+  if (GetArenaNoVirtual() == NULL && style_manager_ != NULL) delete style_manager_;
+  style_manager_ = NULL;
+}
+inline const ::qan::pb::StyleManager& Graph::style_manager() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Graph.style_manager)
+  return style_manager_ != NULL ? *style_manager_ : *default_instance_->style_manager_;
+}
+inline ::qan::pb::StyleManager* Graph::mutable_style_manager() {
+  
+  if (style_manager_ == NULL) {
+    style_manager_ = new ::qan::pb::StyleManager;
+  }
+  // @@protoc_insertion_point(field_mutable:qan.pb.Graph.style_manager)
+  return style_manager_;
+}
+inline ::qan::pb::StyleManager* Graph::release_style_manager() {
+  
+  ::qan::pb::StyleManager* temp = style_manager_;
+  style_manager_ = NULL;
+  return temp;
+}
+inline void Graph::set_allocated_style_manager(::qan::pb::StyleManager* style_manager) {
+  delete style_manager_;
+  style_manager_ = style_manager;
+  if (style_manager) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.Graph.style_manager)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 
