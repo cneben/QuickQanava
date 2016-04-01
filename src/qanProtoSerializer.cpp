@@ -118,6 +118,7 @@ void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan
         qDebug() << "qan::ProtoSerializer::loadGraphFrom(" << fileName << "): Error: graph is nullptr.";
         return;
     }
+
     QUrl url( fileName );
     if ( url.isValid() )
         fileName = url.toLocalFile();
