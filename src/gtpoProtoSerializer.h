@@ -100,6 +100,7 @@ public:
     using WeakGroup     = std::weak_ptr< typename GraphConfig::Group >;
     using SharedGroup   = std::shared_ptr< typename GraphConfig::Group >;
 
+public:
     using   ObjectIdMap = std::unordered_map< void*, int >;
 
     /*! Generate an int ID mapping between \c graph nodes/edges/groups.
@@ -110,16 +111,14 @@ public:
      * \note Existing mapping is cleared.
      */
     auto                    generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&;
-protected:
     ObjectIdMap&            getObjectIdMap() { return _objectIdMap; }
     const ObjectIdMap&      getObjectIdMap() const { return _objectIdMap; }
-
 private:
     ObjectIdMap             _objectIdMap;
 
 public:
     using   IdObjectMap = std::unordered_map< int, void* >;
-protected:
+public:
     IdObjectMap&            getIdObjectMap() { return _idObjectMap; }
     const IdObjectMap&      getIdObjectMap() const { return _idObjectMap; }
 private:
@@ -147,27 +146,26 @@ public:
      *
      *  \throw std::exception if an error occurs.
      */
-    auto            serializeOut( const Graph& graph,
-                                  std::ostream& os,
-                                  gtpo::IProgressNotifier& progressNotifier,
-                                  const ::google::protobuf::Message* user1 = nullptr,
-                                  const ::google::protobuf::Message* user2 = nullptr  ) -> void;
-    //! \copydoc serializeOut()
     virtual auto    serializeOut( const Graph& graph,
                                   std::ostream& os,
-                                  gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void override;
+                                  gtpo::IProgressNotifier& progress ) -> void override;
 
-    /*! Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.GTpoNode \c pbNode.
+    //! Low level access to protocol buffer GTpoGraph message.
+    auto    serializeOut( const Graph& graph,
+                          gtpo::pb::Graph& pbGraph,
+                          gtpo::IProgressNotifier& progress ) -> void;
+
+    /*! Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.Node \c pbNode.
      *
      * \throw noexcept
      */
-    static void     serializeGTpoNodeOut( const WeakNode& weakNode, gtpo::pb::GTpoNode& pbNode, const ObjectIdMap& objectIdMap );
+    static void     serializeGTpoNodeOut( const WeakNode& weakNode, gtpo::pb::Node& pbNode, const ObjectIdMap& objectIdMap );
 
-    /*! Serialize GTpo group \c weakGroup to Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup.
+    /*! Serialize GTpo group \c weakGroup to Protocol Buffer gtpo.pb.Group \c pbGroup.
      *
      * \throw noexcept
      */
-    static void     serializeGTpoGroupOut( const WeakGroup& weakGroup, gtpo::pb::GTpoGroup& pbGroup, const ObjectIdMap& objectIdMap );
+    static void     serializeGTpoGroupOut( const WeakGroup& weakGroup, gtpo::pb::Group& pbGroup, const ObjectIdMap& objectIdMap );
 
 public:
     using   NodeOutFunctor = std::function<void(google::protobuf::Any* anyNodes, const WeakNode&, const ObjectIdMap& objectIdMap )>;
@@ -198,27 +196,26 @@ public:
     /*! \brief Serialize a QuickQanava graph to Protocol Buffer v3.
      *  \throw std::exception if an error occurs.
      */
-    template < class User1 = gtpo::pb::GTpoVoid, class User2 = gtpo::pb::GTpoVoid >
-    auto            serializeIn( std::istream& is,
-                                 Graph& graph,
-                                 gtpo::IProgressNotifier& progressNotifier,
-                                 User1* user1 = nullptr, User2* user2 = nullptr ) -> void;
+    virtual auto            serializeIn( std::istream& is,
+                                         Graph& graph,
+                                         gtpo::IProgressNotifier& progress ) -> void override;
 
-    virtual auto    serializeIn( std::istream& is,
+    //! Low level direct access to protocol buffer GTpoGraph message.
+    auto            serializeIn( const gtpo::pb::Graph& pbGraph,
                                  Graph& graph,
-                                 gtpo::IProgressNotifier* progressNotifier = nullptr  ) -> void override;
+                                 gtpo::IProgressNotifier& progress ) -> void;
 
     /*! Serialize Protocol Buffer gtpo.pb.GTpoNode \c pbNode to GTpo node \c weakNode.
      *
      * \throw noexcept
      */
-    static void     serializeGTpoNodeIn( const gtpo::pb::GTpoNode& pbNode, WeakNode& weakNode, IdObjectMap& idObjectMap );
+    static void     serializeGTpoNodeIn( const gtpo::pb::Node& pbNode, WeakNode& weakNode, IdObjectMap& idObjectMap );
 
     /*! Serialize Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup to GTpo group \c weakGroup.
      *
      * \throw noexcept
      */
-    static void     serializeGTpoGroupIn( const gtpo::pb::GTpoGroup& pbGroup, WeakGroup& weakGroup, IdObjectMap& idObjectMap );
+    static void     serializeGTpoGroupIn( const gtpo::pb::Group& pbGroup, WeakGroup& weakGroup, IdObjectMap& idObjectMap );
 
 public:
     //! Serialize a Protocol Buffer "Any" node to a given graph, return true if serialization succeed.
