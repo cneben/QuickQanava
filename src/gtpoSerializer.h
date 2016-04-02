@@ -113,7 +113,8 @@ public:
      *
      * \throw std::exception if an error occurs.
      */
-    auto    serializeOut( const Graph& graph, std::ostream& os, gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void { (void)graph; (void)os; (void)progressNotifier; }
+    virtual auto    serializeOut( const Graph& graph, std::ostream& os, gtpo::IProgressNotifier& progressNotifier ) -> void { (void)graph; (void)os; (void)progressNotifier; }
+
     //! Shortcut to serializeOut( const Graph&, std::ostream& ) with a file name instead of an output stream.
     auto    serializeOutTo( const Graph& graph, std::string fileName, gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void {
         std::ofstream os( fileName, std::ios::out | std::ios::trunc | std::ios::binary );
@@ -121,7 +122,10 @@ public:
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): Error: Can't open output stream " << fileName << std::endl;
             return;
         }
-        serializeOut( graph, os, progressNotifier );
+        gtpo::ProgressNotifier voidNotifier;
+        if ( progressNotifier == nullptr )
+            progressNotifier = &voidNotifier;
+        serializeOut( graph, os, *progressNotifier );
         if ( os.is_open() )
             os.close();
     }
@@ -130,7 +134,8 @@ public:
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */
-    auto    serializeIn( std::istream& is, Graph& graph, gtpo::IProgressNotifier* progressNotifier = nullptr ) noexcept( false )  -> void { (void)is; (void)graph; (void)progressNotifier; }
+    virtual auto    serializeIn( std::istream& is, Graph& graph, gtpo::IProgressNotifier& progressNotifier ) -> void { (void)is; (void)graph; (void)progressNotifier; }
+
     //! Shortcut to serializeIn( std::istream&, Graph& ) with a file name instead of an input stream.
     auto    serializeInFrom( std::string fileName, Graph& graph, gtpo::IProgressNotifier* progressNotifier = nullptr ) noexcept( false ) -> void {
         std::ifstream is( fileName, std::ios::in | std::ios::binary );
@@ -138,7 +143,10 @@ public:
             std::cerr << "gtpo::ProtoSerializer::serializeIn(): Error: Can't open input stream " << fileName << std::endl;
             return;
         }
-        serializeIn( is, graph, progressNotifier );
+        gtpo::ProgressNotifier voidNotifier;
+        if ( progressNotifier == nullptr )
+            progressNotifier = &voidNotifier;
+        serializeIn( is, graph, *progressNotifier );
         if ( is.is_open() )
             is.close();
     }

@@ -45,10 +45,12 @@ OutGmlSerializer< GraphConfig >::OutGmlSerializer( std::string xmlFileName ) :
 template < class GraphConfig >
 void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProgressNotifier* progress )
 {
-    gtpo::IProgressNotifier voidNotifier;
+    gtpo::ProgressNotifier voidNotifier;
     if ( progress == nullptr )
         progress = &voidNotifier;
     try {
+        progress->reserveSubProgress( 2 );
+
         auto graphmlNode = _xmlDoc.append_child( "graphml" );
         if ( !graphmlNode )
             throw std::exception();
@@ -60,7 +62,7 @@ void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProg
         _xmlCurrentParent = graphNode;
 
         // Serialize GTpo default attributes
-        progress->beginProgress();
+        gtpo::IProgressNotifier& nodesProgress = progress->takeSubProgress( "Saving nodes" );
         serializeAttribute( graphNode, "x", "node", "double", "0." );
         serializeAttribute( graphNode, "y", "node", "double", "0." );
         serializeAttribute( graphNode, "width", "node", "double", "0." );
@@ -69,23 +71,22 @@ void    OutGmlSerializer< GraphConfig >::serializeOut( Graph& graph, gtpo::IProg
         serializeAttribute( graphNode, "weight", "edge", "double", "0." );
 
         // FIXME 20160208 virer getNodes()
-        progress->setPhaseCount( 2 );
-        progress->beginPhase( "Saving nodes" );
         int     primitive = 0;
         double  primitiveCount = static_cast< double >( graph.getNodes().size() );
         for ( auto node : graph.getNodes() ) {
             serializeNode( node );
-            progress->setPhaseProgress( ++primitive / primitiveCount );
+            nodesProgress.setProgress( ++primitive / primitiveCount );
         }
-        progress->beginPhase( "Saving edges" );
+        nodesProgress.endProgress();
+
+        gtpo::IProgressNotifier& edgesProgress = progress->takeSubProgress( "Saving edges" );
         primitive = 0;
         primitiveCount = static_cast< double >( graph.getEdges().size() );
         for ( auto edge : graph.getEdges() ) {
             serializeEdge( edge );
-            progress->setPhaseProgress( ++primitive / primitiveCount );
+            edgesProgress.setProgress( ++primitive / primitiveCount );
         }
     } catch ( std::exception const& ) {
-        progress->endProgress();
     }
     progress->endProgress();
 }

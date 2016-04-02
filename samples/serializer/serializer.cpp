@@ -63,16 +63,18 @@ int	main( int /*argc*/, char** /*argv*/ )
         std::cout << "*****************************************************" << std::endl;
         std::cout << "Serializing Protocol Buffer OUT" << std::endl;
         gtpo::EchoProgressNotifier progressNotifier;
+        progressNotifier.reserveSubProgress( 2 );
         stpo::Graph sgi;
         gtpo::ProtoSerializer<stpo::Config> ps;
 
-        gtpo::IProgressNotifier* subProgressNotifier = progressNotifier.createSubProgress();
-        ps.serializeOutTo( sg, std::string( "test.gtpo" ), subProgressNotifier );
+        gtpo::IProgressNotifier& subProgressNotifier = progressNotifier.takeSubProgress();
+        ps.serializeOutTo( sg, std::string( "test.gtpo" ), &subProgressNotifier );
 
         std::cout << "User serialization:" << std::endl;
-        //progressNotifier.setProgress( 0.1 );
-        //progressNotifier.setProgress( 0.5 );
-        //progressNotifier.setProgress( 0.99 );
+        gtpo::IProgressNotifier& userProgressNotifier = progressNotifier.takeSubProgress();
+        userProgressNotifier.setProgress( 0.1 );
+        userProgressNotifier.setProgress( 0.5 );
+        userProgressNotifier.setProgress( 0.99 );
         std::cout << "GTpo serialization:" << std::endl;
 
         std::cout << "*****************************************************" << std::endl;

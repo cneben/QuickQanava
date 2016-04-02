@@ -209,6 +209,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     int serializedNodeCout = 0;
     int nonSerializableNodeCount = 0;
 
+    progress.reserveSubProgress( 3 );
     gtpo::IProgressNotifier& nodesProgress = progress.takeSubProgress();
     nodesProgress.beginProgress();
     nodesProgress.setLabel( "Saving nodes" );
@@ -377,6 +378,7 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
                                                      Graph& graph,
                                                      gtpo::IProgressNotifier& progress ) -> void
 {
+    progress.reserveSubProgress( 3 );
     gtpo::IProgressNotifier& nodesProgress = progress.takeSubProgress();
     nodesProgress.beginProgress( "Loading nodes" );
 

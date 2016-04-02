@@ -146,9 +146,9 @@ public:
      *
      *  \throw std::exception if an error occurs.
      */
-    auto    serializeOut( const Graph& graph,
-                          std::ostream& os,
-                          gtpo::IProgressNotifier& progress ) -> void;
+    virtual auto    serializeOut( const Graph& graph,
+                                  std::ostream& os,
+                                  gtpo::IProgressNotifier& progress ) -> void override;
 
     //! Low level access to protocol buffer GTpoGraph message.
     auto    serializeOut( const Graph& graph,
@@ -196,9 +196,9 @@ public:
     /*! \brief Serialize a QuickQanava graph to Protocol Buffer v3.
      *  \throw std::exception if an error occurs.
      */
-    auto            serializeIn( std::istream& is,
-                                 Graph& graph,
-                                 gtpo::IProgressNotifier& progress ) -> void;
+    virtual auto            serializeIn( std::istream& is,
+                                         Graph& graph,
+                                         gtpo::IProgressNotifier& progress ) -> void override;
 
     //! Low level direct access to protocol buffer GTpoGraph message.
     auto            serializeIn( const gtpo::pb::Graph& pbGraph,

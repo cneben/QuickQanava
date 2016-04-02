@@ -260,34 +260,34 @@ TEST(GTpo, progressNotifier)
 
         // Test default initial progress values
         EXPECT_DOUBLE_EQ( progress.getProgress(), 0. );
-        EXPECT_EQ( progress.getPhase(), 0 );
         EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0. );
 
         // Test progress reporting with a single phase
         // Expectation: with no phase specified, setProgress() and
         // setPhaseProgress() should impact global progress directly.
-        progress.setPhaseProgress( 0.5 );
+        progress.setProgress( 0.5 );
         EXPECT_DOUBLE_EQ( progress.getProgress(), 0.5 );
-        progress.setPhaseProgress( 0.7 );
+        progress.setProgress( 0.7 );
         EXPECT_NEAR( progress.getProgress(), 0.7, 0.09 );
         EXPECT_NEAR( progress.getPhaseProgress(), 0.7, 0.09);
     }
 
     {   // Test progress reporting with multiple phases
         gtpo::ProgressNotifier progress;
-        progress.setPhaseCount( 2 );
-        progress.beginPhase();
-        EXPECT_EQ( progress.getPhase(), 0 );
-        progress.setPhaseProgress( 0.5 );
-        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
-        progress.beginPhase();
-        progress.setPhaseProgress( 0.5 );
-        EXPECT_DOUBLE_EQ( progress.getPhaseProgress(), 0.5 );
-        EXPECT_EQ( progress.getProgress(), 0.75 );  // Warning phase1.progress=1.0 because of the beginPhase() call, so
-                // progress= 1. * 0.5 + 0.5 * 0.5 = 0.75   (and not 0.5*0.5 + 0.5*0.5)
+        progress.reserveSubProgress( 2 );
+
+        gtpo::IProgressNotifier& subProgress1 = progress.takeSubProgress( "Phase1" );
+        subProgress1.setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( subProgress1.getProgress(), 0.5 );
+
+        gtpo::IProgressNotifier& subProgress2 = progress.takeSubProgress( "Phase2" );
+        subProgress2.setProgress( 0.5 );
+        EXPECT_DOUBLE_EQ( subProgress2.getProgress(), 0.5 );
+
+        EXPECT_EQ( progress.getProgress(), 0.5 );  // progress = 0.5*0.5 + 0.5*0.5
     }
 
-    {   // Test reporting with multiple levels
+/*    {   // Test reporting with multiple levels
         gtpo::ProgressNotifier progress;
         gtpo::IProgressNotifier* progress2 = progress.createSubProgress();
 
@@ -359,7 +359,7 @@ TEST(GTpo, progressNotifier)
         }
         EXPECT_DOUBLE_EQ( progress.getProgress(), 0.75 );
         progress.endProgress();
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
