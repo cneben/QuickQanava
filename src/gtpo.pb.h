@@ -38,40 +38,40 @@ void protobuf_AddDesc_gtpo_2eproto();
 void protobuf_AssignDesc_gtpo_2eproto();
 void protobuf_ShutdownFile_gtpo_2eproto();
 
-class GTpoEdge;
-class GTpoGraph;
-class GTpoGroup;
-class GTpoNode;
-class GTpoVoid;
+class Edge;
+class Graph;
+class Group;
+class Node;
+class Void;
 
 // ===================================================================
 
-class GTpoNode : public ::google::protobuf::Message {
+class Node : public ::google::protobuf::Message {
  public:
-  GTpoNode();
-  virtual ~GTpoNode();
+  Node();
+  virtual ~Node();
 
-  GTpoNode(const GTpoNode& from);
+  Node(const Node& from);
 
-  inline GTpoNode& operator=(const GTpoNode& from) {
+  inline Node& operator=(const Node& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const GTpoNode& default_instance();
+  static const Node& default_instance();
 
-  void Swap(GTpoNode* other);
+  void Swap(Node* other);
 
   // implements Message ----------------------------------------------
 
-  inline GTpoNode* New() const { return New(NULL); }
+  inline Node* New() const { return New(NULL); }
 
-  GTpoNode* New(::google::protobuf::Arena* arena) const;
+  Node* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GTpoNode& from);
-  void MergeFrom(const GTpoNode& from);
+  void CopyFrom(const Node& from);
+  void MergeFrom(const Node& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -86,7 +86,7 @@ class GTpoNode : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(GTpoNode* other);
+  void InternalSwap(Node* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -152,7 +152,7 @@ class GTpoNode : public ::google::protobuf::Message {
   ::google::protobuf::Any* release_user1();
   void set_allocated_user1(::google::protobuf::Any* user1);
 
-  // @@protoc_insertion_point(class_scope:gtpo.pb.GTpoNode)
+  // @@protoc_insertion_point(class_scope:gtpo.pb.Node)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -170,36 +170,36 @@ class GTpoNode : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_gtpo_2eproto();
 
   void InitAsDefaultInstance();
-  static GTpoNode* default_instance_;
+  static Node* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class GTpoEdge : public ::google::protobuf::Message {
+class Edge : public ::google::protobuf::Message {
  public:
-  GTpoEdge();
-  virtual ~GTpoEdge();
+  Edge();
+  virtual ~Edge();
 
-  GTpoEdge(const GTpoEdge& from);
+  Edge(const Edge& from);
 
-  inline GTpoEdge& operator=(const GTpoEdge& from) {
+  inline Edge& operator=(const Edge& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const GTpoEdge& default_instance();
+  static const Edge& default_instance();
 
-  void Swap(GTpoEdge* other);
+  void Swap(Edge* other);
 
   // implements Message ----------------------------------------------
 
-  inline GTpoEdge* New() const { return New(NULL); }
+  inline Edge* New() const { return New(NULL); }
 
-  GTpoEdge* New(::google::protobuf::Arena* arena) const;
+  Edge* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GTpoEdge& from);
-  void MergeFrom(const GTpoEdge& from);
+  void CopyFrom(const Edge& from);
+  void MergeFrom(const Edge& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -214,7 +214,7 @@ class GTpoEdge : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(GTpoEdge* other);
+  void InternalSwap(Edge* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -263,7 +263,7 @@ class GTpoEdge : public ::google::protobuf::Message {
   ::google::protobuf::Any* release_user1();
   void set_allocated_user1(::google::protobuf::Any* user1);
 
-  // @@protoc_insertion_point(class_scope:gtpo.pb.GTpoEdge)
+  // @@protoc_insertion_point(class_scope:gtpo.pb.Edge)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -279,36 +279,36 @@ class GTpoEdge : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_gtpo_2eproto();
 
   void InitAsDefaultInstance();
-  static GTpoEdge* default_instance_;
+  static Edge* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class GTpoGroup : public ::google::protobuf::Message {
+class Group : public ::google::protobuf::Message {
  public:
-  GTpoGroup();
-  virtual ~GTpoGroup();
+  Group();
+  virtual ~Group();
 
-  GTpoGroup(const GTpoGroup& from);
+  Group(const Group& from);
 
-  inline GTpoGroup& operator=(const GTpoGroup& from) {
+  inline Group& operator=(const Group& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const GTpoGroup& default_instance();
+  static const Group& default_instance();
 
-  void Swap(GTpoGroup* other);
+  void Swap(Group* other);
 
   // implements Message ----------------------------------------------
 
-  inline GTpoGroup* New() const { return New(NULL); }
+  inline Group* New() const { return New(NULL); }
 
-  GTpoGroup* New(::google::protobuf::Arena* arena) const;
+  Group* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GTpoGroup& from);
-  void MergeFrom(const GTpoGroup& from);
+  void CopyFrom(const Group& from);
+  void MergeFrom(const Group& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -323,7 +323,7 @@ class GTpoGroup : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(GTpoGroup* other);
+  void InternalSwap(Group* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -401,7 +401,7 @@ class GTpoGroup : public ::google::protobuf::Message {
   ::google::protobuf::Any* release_user1();
   void set_allocated_user1(::google::protobuf::Any* user1);
 
-  // @@protoc_insertion_point(class_scope:gtpo.pb.GTpoGroup)
+  // @@protoc_insertion_point(class_scope:gtpo.pb.Group)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -421,36 +421,36 @@ class GTpoGroup : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_gtpo_2eproto();
 
   void InitAsDefaultInstance();
-  static GTpoGroup* default_instance_;
+  static Group* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class GTpoVoid : public ::google::protobuf::Message {
+class Void : public ::google::protobuf::Message {
  public:
-  GTpoVoid();
-  virtual ~GTpoVoid();
+  Void();
+  virtual ~Void();
 
-  GTpoVoid(const GTpoVoid& from);
+  Void(const Void& from);
 
-  inline GTpoVoid& operator=(const GTpoVoid& from) {
+  inline Void& operator=(const Void& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const GTpoVoid& default_instance();
+  static const Void& default_instance();
 
-  void Swap(GTpoVoid* other);
+  void Swap(Void* other);
 
   // implements Message ----------------------------------------------
 
-  inline GTpoVoid* New() const { return New(NULL); }
+  inline Void* New() const { return New(NULL); }
 
-  GTpoVoid* New(::google::protobuf::Arena* arena) const;
+  Void* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GTpoVoid& from);
-  void MergeFrom(const GTpoVoid& from);
+  void CopyFrom(const Void& from);
+  void MergeFrom(const Void& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -465,7 +465,7 @@ class GTpoVoid : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(GTpoVoid* other);
+  void InternalSwap(Void* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -481,7 +481,7 @@ class GTpoVoid : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:gtpo.pb.GTpoVoid)
+  // @@protoc_insertion_point(class_scope:gtpo.pb.Void)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -492,36 +492,36 @@ class GTpoVoid : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_gtpo_2eproto();
 
   void InitAsDefaultInstance();
-  static GTpoVoid* default_instance_;
+  static Void* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class GTpoGraph : public ::google::protobuf::Message {
+class Graph : public ::google::protobuf::Message {
  public:
-  GTpoGraph();
-  virtual ~GTpoGraph();
+  Graph();
+  virtual ~Graph();
 
-  GTpoGraph(const GTpoGraph& from);
+  Graph(const Graph& from);
 
-  inline GTpoGraph& operator=(const GTpoGraph& from) {
+  inline Graph& operator=(const Graph& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const GTpoGraph& default_instance();
+  static const Graph& default_instance();
 
-  void Swap(GTpoGraph* other);
+  void Swap(Graph* other);
 
   // implements Message ----------------------------------------------
 
-  inline GTpoGraph* New() const { return New(NULL); }
+  inline Graph* New() const { return New(NULL); }
 
-  GTpoGraph* New(::google::protobuf::Arena* arena) const;
+  Graph* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GTpoGraph& from);
-  void MergeFrom(const GTpoGraph& from);
+  void CopyFrom(const Graph& from);
+  void MergeFrom(const Graph& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -536,7 +536,7 @@ class GTpoGraph : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(GTpoGraph* other);
+  void InternalSwap(Graph* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -606,25 +606,7 @@ class GTpoGraph : public ::google::protobuf::Message {
   const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
       groups() const;
 
-  // optional .google.protobuf.Any user1 = 42;
-  bool has_user1() const;
-  void clear_user1();
-  static const int kUser1FieldNumber = 42;
-  const ::google::protobuf::Any& user1() const;
-  ::google::protobuf::Any* mutable_user1();
-  ::google::protobuf::Any* release_user1();
-  void set_allocated_user1(::google::protobuf::Any* user1);
-
-  // optional .google.protobuf.Any user2 = 43;
-  bool has_user2() const;
-  void clear_user2();
-  static const int kUser2FieldNumber = 43;
-  const ::google::protobuf::Any& user2() const;
-  ::google::protobuf::Any* mutable_user2();
-  ::google::protobuf::Any* release_user2();
-  void set_allocated_user2(::google::protobuf::Any* user2);
-
-  // @@protoc_insertion_point(class_scope:gtpo.pb.GTpoGraph)
+  // @@protoc_insertion_point(class_scope:gtpo.pb.Graph)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -634,8 +616,6 @@ class GTpoGraph : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any > nodes_;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any > edges_;
   ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any > groups_;
-  ::google::protobuf::Any* user1_;
-  ::google::protobuf::Any* user2_;
   ::google::protobuf::int32 group_count_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_gtpo_2eproto();
@@ -643,7 +623,7 @@ class GTpoGraph : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_gtpo_2eproto();
 
   void InitAsDefaultInstance();
-  static GTpoGraph* default_instance_;
+  static Graph* default_instance_;
 };
 // ===================================================================
 
@@ -651,148 +631,148 @@ class GTpoGraph : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// GTpoNode
+// Node
 
 // optional int32 node_id = 1;
-inline void GTpoNode::clear_node_id() {
+inline void Node::clear_node_id() {
   node_id_ = 0;
 }
-inline ::google::protobuf::int32 GTpoNode::node_id() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.node_id)
+inline ::google::protobuf::int32 Node::node_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.node_id)
   return node_id_;
 }
-inline void GTpoNode::set_node_id(::google::protobuf::int32 value) {
+inline void Node::set_node_id(::google::protobuf::int32 value) {
   
   node_id_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.node_id)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.node_id)
 }
 
 // optional string label = 2;
-inline void GTpoNode::clear_label() {
+inline void Node::clear_label() {
   label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& GTpoNode::label() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.label)
+inline const ::std::string& Node::label() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.label)
   return label_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void GTpoNode::set_label(const ::std::string& value) {
+inline void Node::set_label(const ::std::string& value) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.label)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.label)
 }
-inline void GTpoNode::set_label(const char* value) {
+inline void Node::set_label(const char* value) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:gtpo.pb.GTpoNode.label)
+  // @@protoc_insertion_point(field_set_char:gtpo.pb.Node.label)
 }
-inline void GTpoNode::set_label(const char* value, size_t size) {
+inline void Node::set_label(const char* value, size_t size) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:gtpo.pb.GTpoNode.label)
+  // @@protoc_insertion_point(field_set_pointer:gtpo.pb.Node.label)
 }
-inline ::std::string* GTpoNode::mutable_label() {
+inline ::std::string* Node::mutable_label() {
   
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoNode.label)
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Node.label)
   return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* GTpoNode::release_label() {
+inline ::std::string* Node::release_label() {
   
   return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void GTpoNode::set_allocated_label(::std::string* label) {
+inline void Node::set_allocated_label(::std::string* label) {
   if (label != NULL) {
     
   } else {
     
   }
   label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoNode.label)
+  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.Node.label)
 }
 
 // optional double x = 3;
-inline void GTpoNode::clear_x() {
+inline void Node::clear_x() {
   x_ = 0;
 }
-inline double GTpoNode::x() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.x)
+inline double Node::x() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.x)
   return x_;
 }
-inline void GTpoNode::set_x(double value) {
+inline void Node::set_x(double value) {
   
   x_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.x)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.x)
 }
 
 // optional double y = 4;
-inline void GTpoNode::clear_y() {
+inline void Node::clear_y() {
   y_ = 0;
 }
-inline double GTpoNode::y() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.y)
+inline double Node::y() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.y)
   return y_;
 }
-inline void GTpoNode::set_y(double value) {
+inline void Node::set_y(double value) {
   
   y_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.y)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.y)
 }
 
 // optional double width = 5;
-inline void GTpoNode::clear_width() {
+inline void Node::clear_width() {
   width_ = 0;
 }
-inline double GTpoNode::width() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.width)
+inline double Node::width() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.width)
   return width_;
 }
-inline void GTpoNode::set_width(double value) {
+inline void Node::set_width(double value) {
   
   width_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.width)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.width)
 }
 
 // optional double height = 6;
-inline void GTpoNode::clear_height() {
+inline void Node::clear_height() {
   height_ = 0;
 }
-inline double GTpoNode::height() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.height)
+inline double Node::height() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.height)
   return height_;
 }
-inline void GTpoNode::set_height(double value) {
+inline void Node::set_height(double value) {
   
   height_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoNode.height)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Node.height)
 }
 
 // optional .google.protobuf.Any user1 = 42;
-inline bool GTpoNode::has_user1() const {
+inline bool Node::has_user1() const {
   return !_is_default_instance_ && user1_ != NULL;
 }
-inline void GTpoNode::clear_user1() {
+inline void Node::clear_user1() {
   if (GetArenaNoVirtual() == NULL && user1_ != NULL) delete user1_;
   user1_ = NULL;
 }
-inline const ::google::protobuf::Any& GTpoNode::user1() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoNode.user1)
+inline const ::google::protobuf::Any& Node::user1() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Node.user1)
   return user1_ != NULL ? *user1_ : *default_instance_->user1_;
 }
-inline ::google::protobuf::Any* GTpoNode::mutable_user1() {
+inline ::google::protobuf::Any* Node::mutable_user1() {
   
   if (user1_ == NULL) {
     user1_ = new ::google::protobuf::Any;
   }
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoNode.user1)
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Node.user1)
   return user1_;
 }
-inline ::google::protobuf::Any* GTpoNode::release_user1() {
+inline ::google::protobuf::Any* Node::release_user1() {
   
   ::google::protobuf::Any* temp = user1_;
   user1_ = NULL;
   return temp;
 }
-inline void GTpoNode::set_allocated_user1(::google::protobuf::Any* user1) {
+inline void Node::set_allocated_user1(::google::protobuf::Any* user1) {
   delete user1_;
   user1_ = user1;
   if (user1) {
@@ -800,96 +780,96 @@ inline void GTpoNode::set_allocated_user1(::google::protobuf::Any* user1) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoNode.user1)
+  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.Node.user1)
 }
 
 // -------------------------------------------------------------------
 
-// GTpoEdge
+// Edge
 
 // optional int32 edge_id = 1;
-inline void GTpoEdge::clear_edge_id() {
+inline void Edge::clear_edge_id() {
   edge_id_ = 0;
 }
-inline ::google::protobuf::int32 GTpoEdge::edge_id() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoEdge.edge_id)
+inline ::google::protobuf::int32 Edge::edge_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.edge_id)
   return edge_id_;
 }
-inline void GTpoEdge::set_edge_id(::google::protobuf::int32 value) {
+inline void Edge::set_edge_id(::google::protobuf::int32 value) {
   
   edge_id_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoEdge.edge_id)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.edge_id)
 }
 
 // optional int32 src_node_id = 2;
-inline void GTpoEdge::clear_src_node_id() {
+inline void Edge::clear_src_node_id() {
   src_node_id_ = 0;
 }
-inline ::google::protobuf::int32 GTpoEdge::src_node_id() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoEdge.src_node_id)
+inline ::google::protobuf::int32 Edge::src_node_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.src_node_id)
   return src_node_id_;
 }
-inline void GTpoEdge::set_src_node_id(::google::protobuf::int32 value) {
+inline void Edge::set_src_node_id(::google::protobuf::int32 value) {
   
   src_node_id_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoEdge.src_node_id)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.src_node_id)
 }
 
 // optional int32 dst_node_id = 3;
-inline void GTpoEdge::clear_dst_node_id() {
+inline void Edge::clear_dst_node_id() {
   dst_node_id_ = 0;
 }
-inline ::google::protobuf::int32 GTpoEdge::dst_node_id() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoEdge.dst_node_id)
+inline ::google::protobuf::int32 Edge::dst_node_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.dst_node_id)
   return dst_node_id_;
 }
-inline void GTpoEdge::set_dst_node_id(::google::protobuf::int32 value) {
+inline void Edge::set_dst_node_id(::google::protobuf::int32 value) {
   
   dst_node_id_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoEdge.dst_node_id)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.dst_node_id)
 }
 
 // optional double weight = 4;
-inline void GTpoEdge::clear_weight() {
+inline void Edge::clear_weight() {
   weight_ = 0;
 }
-inline double GTpoEdge::weight() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoEdge.weight)
+inline double Edge::weight() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.weight)
   return weight_;
 }
-inline void GTpoEdge::set_weight(double value) {
+inline void Edge::set_weight(double value) {
   
   weight_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoEdge.weight)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.weight)
 }
 
 // optional .google.protobuf.Any user1 = 42;
-inline bool GTpoEdge::has_user1() const {
+inline bool Edge::has_user1() const {
   return !_is_default_instance_ && user1_ != NULL;
 }
-inline void GTpoEdge::clear_user1() {
+inline void Edge::clear_user1() {
   if (GetArenaNoVirtual() == NULL && user1_ != NULL) delete user1_;
   user1_ = NULL;
 }
-inline const ::google::protobuf::Any& GTpoEdge::user1() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoEdge.user1)
+inline const ::google::protobuf::Any& Edge::user1() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.user1)
   return user1_ != NULL ? *user1_ : *default_instance_->user1_;
 }
-inline ::google::protobuf::Any* GTpoEdge::mutable_user1() {
+inline ::google::protobuf::Any* Edge::mutable_user1() {
   
   if (user1_ == NULL) {
     user1_ = new ::google::protobuf::Any;
   }
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoEdge.user1)
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Edge.user1)
   return user1_;
 }
-inline ::google::protobuf::Any* GTpoEdge::release_user1() {
+inline ::google::protobuf::Any* Edge::release_user1() {
   
   ::google::protobuf::Any* temp = user1_;
   user1_ = NULL;
   return temp;
 }
-inline void GTpoEdge::set_allocated_user1(::google::protobuf::Any* user1) {
+inline void Edge::set_allocated_user1(::google::protobuf::Any* user1) {
   delete user1_;
   user1_ = user1;
   if (user1) {
@@ -897,183 +877,183 @@ inline void GTpoEdge::set_allocated_user1(::google::protobuf::Any* user1) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoEdge.user1)
+  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.Edge.user1)
 }
 
 // -------------------------------------------------------------------
 
-// GTpoGroup
+// Group
 
 // optional int32 group_id = 1;
-inline void GTpoGroup::clear_group_id() {
+inline void Group::clear_group_id() {
   group_id_ = 0;
 }
-inline ::google::protobuf::int32 GTpoGroup::group_id() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.group_id)
+inline ::google::protobuf::int32 Group::group_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.group_id)
   return group_id_;
 }
-inline void GTpoGroup::set_group_id(::google::protobuf::int32 value) {
+inline void Group::set_group_id(::google::protobuf::int32 value) {
   
   group_id_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.group_id)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.group_id)
 }
 
 // optional string label = 2;
-inline void GTpoGroup::clear_label() {
+inline void Group::clear_label() {
   label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& GTpoGroup::label() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.label)
+inline const ::std::string& Group::label() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.label)
   return label_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void GTpoGroup::set_label(const ::std::string& value) {
+inline void Group::set_label(const ::std::string& value) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.label)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.label)
 }
-inline void GTpoGroup::set_label(const char* value) {
+inline void Group::set_label(const char* value) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:gtpo.pb.GTpoGroup.label)
+  // @@protoc_insertion_point(field_set_char:gtpo.pb.Group.label)
 }
-inline void GTpoGroup::set_label(const char* value, size_t size) {
+inline void Group::set_label(const char* value, size_t size) {
   
   label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:gtpo.pb.GTpoGroup.label)
+  // @@protoc_insertion_point(field_set_pointer:gtpo.pb.Group.label)
 }
-inline ::std::string* GTpoGroup::mutable_label() {
+inline ::std::string* Group::mutable_label() {
   
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGroup.label)
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Group.label)
   return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* GTpoGroup::release_label() {
+inline ::std::string* Group::release_label() {
   
   return label_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void GTpoGroup::set_allocated_label(::std::string* label) {
+inline void Group::set_allocated_label(::std::string* label) {
   if (label != NULL) {
     
   } else {
     
   }
   label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoGroup.label)
+  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.Group.label)
 }
 
 // optional double x = 3;
-inline void GTpoGroup::clear_x() {
+inline void Group::clear_x() {
   x_ = 0;
 }
-inline double GTpoGroup::x() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.x)
+inline double Group::x() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.x)
   return x_;
 }
-inline void GTpoGroup::set_x(double value) {
+inline void Group::set_x(double value) {
   
   x_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.x)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.x)
 }
 
 // optional double y = 4;
-inline void GTpoGroup::clear_y() {
+inline void Group::clear_y() {
   y_ = 0;
 }
-inline double GTpoGroup::y() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.y)
+inline double Group::y() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.y)
   return y_;
 }
-inline void GTpoGroup::set_y(double value) {
+inline void Group::set_y(double value) {
   
   y_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.y)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.y)
 }
 
 // optional double width = 5;
-inline void GTpoGroup::clear_width() {
+inline void Group::clear_width() {
   width_ = 0;
 }
-inline double GTpoGroup::width() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.width)
+inline double Group::width() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.width)
   return width_;
 }
-inline void GTpoGroup::set_width(double value) {
+inline void Group::set_width(double value) {
   
   width_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.width)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.width)
 }
 
 // optional double height = 6;
-inline void GTpoGroup::clear_height() {
+inline void Group::clear_height() {
   height_ = 0;
 }
-inline double GTpoGroup::height() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.height)
+inline double Group::height() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.height)
   return height_;
 }
-inline void GTpoGroup::set_height(double value) {
+inline void Group::set_height(double value) {
   
   height_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.height)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.height)
 }
 
 // repeated int32 node_ids = 7;
-inline int GTpoGroup::node_ids_size() const {
+inline int Group::node_ids_size() const {
   return node_ids_.size();
 }
-inline void GTpoGroup::clear_node_ids() {
+inline void Group::clear_node_ids() {
   node_ids_.Clear();
 }
-inline ::google::protobuf::int32 GTpoGroup::node_ids(int index) const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.node_ids)
+inline ::google::protobuf::int32 Group::node_ids(int index) const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.node_ids)
   return node_ids_.Get(index);
 }
-inline void GTpoGroup::set_node_ids(int index, ::google::protobuf::int32 value) {
+inline void Group::set_node_ids(int index, ::google::protobuf::int32 value) {
   node_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGroup.node_ids)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Group.node_ids)
 }
-inline void GTpoGroup::add_node_ids(::google::protobuf::int32 value) {
+inline void Group::add_node_ids(::google::protobuf::int32 value) {
   node_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:gtpo.pb.GTpoGroup.node_ids)
+  // @@protoc_insertion_point(field_add:gtpo.pb.Group.node_ids)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GTpoGroup::node_ids() const {
-  // @@protoc_insertion_point(field_list:gtpo.pb.GTpoGroup.node_ids)
+Group::node_ids() const {
+  // @@protoc_insertion_point(field_list:gtpo.pb.Group.node_ids)
   return node_ids_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GTpoGroup::mutable_node_ids() {
-  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.GTpoGroup.node_ids)
+Group::mutable_node_ids() {
+  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.Group.node_ids)
   return &node_ids_;
 }
 
 // optional .google.protobuf.Any user1 = 42;
-inline bool GTpoGroup::has_user1() const {
+inline bool Group::has_user1() const {
   return !_is_default_instance_ && user1_ != NULL;
 }
-inline void GTpoGroup::clear_user1() {
+inline void Group::clear_user1() {
   if (GetArenaNoVirtual() == NULL && user1_ != NULL) delete user1_;
   user1_ = NULL;
 }
-inline const ::google::protobuf::Any& GTpoGroup::user1() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGroup.user1)
+inline const ::google::protobuf::Any& Group::user1() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Group.user1)
   return user1_ != NULL ? *user1_ : *default_instance_->user1_;
 }
-inline ::google::protobuf::Any* GTpoGroup::mutable_user1() {
+inline ::google::protobuf::Any* Group::mutable_user1() {
   
   if (user1_ == NULL) {
     user1_ = new ::google::protobuf::Any;
   }
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGroup.user1)
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Group.user1)
   return user1_;
 }
-inline ::google::protobuf::Any* GTpoGroup::release_user1() {
+inline ::google::protobuf::Any* Group::release_user1() {
   
   ::google::protobuf::Any* temp = user1_;
   user1_ = NULL;
   return temp;
 }
-inline void GTpoGroup::set_allocated_user1(::google::protobuf::Any* user1) {
+inline void Group::set_allocated_user1(::google::protobuf::Any* user1) {
   delete user1_;
   user1_ = user1;
   if (user1) {
@@ -1081,221 +1061,147 @@ inline void GTpoGroup::set_allocated_user1(::google::protobuf::Any* user1) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoGroup.user1)
+  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.Group.user1)
 }
 
 // -------------------------------------------------------------------
 
-// GTpoVoid
+// Void
 
 // -------------------------------------------------------------------
 
-// GTpoGraph
+// Graph
 
 // optional int32 node_count = 1;
-inline void GTpoGraph::clear_node_count() {
+inline void Graph::clear_node_count() {
   node_count_ = 0;
 }
-inline ::google::protobuf::int32 GTpoGraph::node_count() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.node_count)
+inline ::google::protobuf::int32 Graph::node_count() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.node_count)
   return node_count_;
 }
-inline void GTpoGraph::set_node_count(::google::protobuf::int32 value) {
+inline void Graph::set_node_count(::google::protobuf::int32 value) {
   
   node_count_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGraph.node_count)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Graph.node_count)
 }
 
 // optional int32 edge_count = 2;
-inline void GTpoGraph::clear_edge_count() {
+inline void Graph::clear_edge_count() {
   edge_count_ = 0;
 }
-inline ::google::protobuf::int32 GTpoGraph::edge_count() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.edge_count)
+inline ::google::protobuf::int32 Graph::edge_count() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.edge_count)
   return edge_count_;
 }
-inline void GTpoGraph::set_edge_count(::google::protobuf::int32 value) {
+inline void Graph::set_edge_count(::google::protobuf::int32 value) {
   
   edge_count_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGraph.edge_count)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Graph.edge_count)
 }
 
 // optional int32 group_count = 3;
-inline void GTpoGraph::clear_group_count() {
+inline void Graph::clear_group_count() {
   group_count_ = 0;
 }
-inline ::google::protobuf::int32 GTpoGraph::group_count() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.group_count)
+inline ::google::protobuf::int32 Graph::group_count() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.group_count)
   return group_count_;
 }
-inline void GTpoGraph::set_group_count(::google::protobuf::int32 value) {
+inline void Graph::set_group_count(::google::protobuf::int32 value) {
   
   group_count_ = value;
-  // @@protoc_insertion_point(field_set:gtpo.pb.GTpoGraph.group_count)
+  // @@protoc_insertion_point(field_set:gtpo.pb.Graph.group_count)
 }
 
 // repeated .google.protobuf.Any nodes = 4;
-inline int GTpoGraph::nodes_size() const {
+inline int Graph::nodes_size() const {
   return nodes_.size();
 }
-inline void GTpoGraph::clear_nodes() {
+inline void Graph::clear_nodes() {
   nodes_.Clear();
 }
-inline const ::google::protobuf::Any& GTpoGraph::nodes(int index) const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.nodes)
+inline const ::google::protobuf::Any& Graph::nodes(int index) const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.nodes)
   return nodes_.Get(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::mutable_nodes(int index) {
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGraph.nodes)
+inline ::google::protobuf::Any* Graph::mutable_nodes(int index) {
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Graph.nodes)
   return nodes_.Mutable(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::add_nodes() {
-  // @@protoc_insertion_point(field_add:gtpo.pb.GTpoGraph.nodes)
+inline ::google::protobuf::Any* Graph::add_nodes() {
+  // @@protoc_insertion_point(field_add:gtpo.pb.Graph.nodes)
   return nodes_.Add();
 }
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
-GTpoGraph::mutable_nodes() {
-  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.GTpoGraph.nodes)
+Graph::mutable_nodes() {
+  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.Graph.nodes)
   return &nodes_;
 }
 inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-GTpoGraph::nodes() const {
-  // @@protoc_insertion_point(field_list:gtpo.pb.GTpoGraph.nodes)
+Graph::nodes() const {
+  // @@protoc_insertion_point(field_list:gtpo.pb.Graph.nodes)
   return nodes_;
 }
 
 // repeated .google.protobuf.Any edges = 5;
-inline int GTpoGraph::edges_size() const {
+inline int Graph::edges_size() const {
   return edges_.size();
 }
-inline void GTpoGraph::clear_edges() {
+inline void Graph::clear_edges() {
   edges_.Clear();
 }
-inline const ::google::protobuf::Any& GTpoGraph::edges(int index) const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.edges)
+inline const ::google::protobuf::Any& Graph::edges(int index) const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.edges)
   return edges_.Get(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::mutable_edges(int index) {
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGraph.edges)
+inline ::google::protobuf::Any* Graph::mutable_edges(int index) {
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Graph.edges)
   return edges_.Mutable(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::add_edges() {
-  // @@protoc_insertion_point(field_add:gtpo.pb.GTpoGraph.edges)
+inline ::google::protobuf::Any* Graph::add_edges() {
+  // @@protoc_insertion_point(field_add:gtpo.pb.Graph.edges)
   return edges_.Add();
 }
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
-GTpoGraph::mutable_edges() {
-  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.GTpoGraph.edges)
+Graph::mutable_edges() {
+  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.Graph.edges)
   return &edges_;
 }
 inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-GTpoGraph::edges() const {
-  // @@protoc_insertion_point(field_list:gtpo.pb.GTpoGraph.edges)
+Graph::edges() const {
+  // @@protoc_insertion_point(field_list:gtpo.pb.Graph.edges)
   return edges_;
 }
 
 // repeated .google.protobuf.Any groups = 6;
-inline int GTpoGraph::groups_size() const {
+inline int Graph::groups_size() const {
   return groups_.size();
 }
-inline void GTpoGraph::clear_groups() {
+inline void Graph::clear_groups() {
   groups_.Clear();
 }
-inline const ::google::protobuf::Any& GTpoGraph::groups(int index) const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.groups)
+inline const ::google::protobuf::Any& Graph::groups(int index) const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Graph.groups)
   return groups_.Get(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::mutable_groups(int index) {
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGraph.groups)
+inline ::google::protobuf::Any* Graph::mutable_groups(int index) {
+  // @@protoc_insertion_point(field_mutable:gtpo.pb.Graph.groups)
   return groups_.Mutable(index);
 }
-inline ::google::protobuf::Any* GTpoGraph::add_groups() {
-  // @@protoc_insertion_point(field_add:gtpo.pb.GTpoGraph.groups)
+inline ::google::protobuf::Any* Graph::add_groups() {
+  // @@protoc_insertion_point(field_add:gtpo.pb.Graph.groups)
   return groups_.Add();
 }
 inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >*
-GTpoGraph::mutable_groups() {
-  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.GTpoGraph.groups)
+Graph::mutable_groups() {
+  // @@protoc_insertion_point(field_mutable_list:gtpo.pb.Graph.groups)
   return &groups_;
 }
 inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Any >&
-GTpoGraph::groups() const {
-  // @@protoc_insertion_point(field_list:gtpo.pb.GTpoGraph.groups)
+Graph::groups() const {
+  // @@protoc_insertion_point(field_list:gtpo.pb.Graph.groups)
   return groups_;
-}
-
-// optional .google.protobuf.Any user1 = 42;
-inline bool GTpoGraph::has_user1() const {
-  return !_is_default_instance_ && user1_ != NULL;
-}
-inline void GTpoGraph::clear_user1() {
-  if (GetArenaNoVirtual() == NULL && user1_ != NULL) delete user1_;
-  user1_ = NULL;
-}
-inline const ::google::protobuf::Any& GTpoGraph::user1() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.user1)
-  return user1_ != NULL ? *user1_ : *default_instance_->user1_;
-}
-inline ::google::protobuf::Any* GTpoGraph::mutable_user1() {
-  
-  if (user1_ == NULL) {
-    user1_ = new ::google::protobuf::Any;
-  }
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGraph.user1)
-  return user1_;
-}
-inline ::google::protobuf::Any* GTpoGraph::release_user1() {
-  
-  ::google::protobuf::Any* temp = user1_;
-  user1_ = NULL;
-  return temp;
-}
-inline void GTpoGraph::set_allocated_user1(::google::protobuf::Any* user1) {
-  delete user1_;
-  user1_ = user1;
-  if (user1) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoGraph.user1)
-}
-
-// optional .google.protobuf.Any user2 = 43;
-inline bool GTpoGraph::has_user2() const {
-  return !_is_default_instance_ && user2_ != NULL;
-}
-inline void GTpoGraph::clear_user2() {
-  if (GetArenaNoVirtual() == NULL && user2_ != NULL) delete user2_;
-  user2_ = NULL;
-}
-inline const ::google::protobuf::Any& GTpoGraph::user2() const {
-  // @@protoc_insertion_point(field_get:gtpo.pb.GTpoGraph.user2)
-  return user2_ != NULL ? *user2_ : *default_instance_->user2_;
-}
-inline ::google::protobuf::Any* GTpoGraph::mutable_user2() {
-  
-  if (user2_ == NULL) {
-    user2_ = new ::google::protobuf::Any;
-  }
-  // @@protoc_insertion_point(field_mutable:gtpo.pb.GTpoGraph.user2)
-  return user2_;
-}
-inline ::google::protobuf::Any* GTpoGraph::release_user2() {
-  
-  ::google::protobuf::Any* temp = user2_;
-  user2_ = NULL;
-  return temp;
-}
-inline void GTpoGraph::set_allocated_user2(::google::protobuf::Any* user2) {
-  delete user2_;
-  user2_ = user2;
-  if (user2) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:gtpo.pb.GTpoGraph.user2)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
