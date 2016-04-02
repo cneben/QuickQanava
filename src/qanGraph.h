@@ -259,6 +259,7 @@ public:
      */
     Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager NOTIFY styleManagerChanged )
     qan::StyleManager*  getStyleManager( ) { return _styleManager.data(); }
+    const qan::StyleManager*  getStyleManager( ) const { return _styleManager.data(); }
     qan::StyleManager&  styleManager( ) { Q_ASSERT( _styleManager != nullptr ); return *_styleManager.data(); }
 private:
     using SharedStyleManager = QSharedPointer< qan::StyleManager >;

@@ -41,6 +41,16 @@
 
 namespace qan { // ::qan
 
+
+/* Qan ProtoSerializer Object Management *///----------------------------------
+ProtoSerializer::ProtoSerializer( QObject* parent )  :
+    QObject( parent ),
+    _gtpoSerializer( "qan::Node", "qan::Edge", "qan::Group" )
+{
+
+}
+//-----------------------------------------------------------------------------
+
 /* QML Serialization Interface *///--------------------------------------------
 void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::ProgressNotifier* progress )
 {
@@ -62,56 +72,101 @@ void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Error: Can't open output stream " << fileName.toStdString() << std::endl;
         return;
     }
-    qan::pb::StyleManager pbStyleManager;
-    generateObjectIdMap( *graph ); // Force generation of internal graph primitive / ID map before serializing style manager
-    saveStyleManager( *graph, graph->styleManager(), pbStyleManager, getObjectIdMap() );
 
-    gtpo::IProgressNotifier* gtpoProgress = progress;
+    gtpo::IProgressNotifier* gtpoProgress = static_cast< gtpo::IProgressNotifier* >( progress );
     gtpo::ProgressNotifier voidProgressNotifier;
     if ( gtpoProgress == nullptr )
         gtpoProgress = &voidProgressNotifier;
-    progress->beginProgress();
-    serializeOut( *graph, os, *gtpoProgress, &pbStyleManager );
-    progress->endProgress();
+    gtpoProgress->beginProgress();
+    try {
+        qan::pb::Graph pbGraph;
+        serializeOut( *graph, pbGraph, *gtpoProgress );
+        if ( !pbGraph.SerializeToOstream( &os) )
+            std::cerr << "qan::ProtoSerializer::saveGraphTo(): Protocol Buffer Error while writing to output stream." << std::endl;
+    } catch ( ... ) { std::cerr << "gtpo::ProtoSerializer::saveGraphTo(): Protocol Buffer Error while writing to output stream." << std::endl; }
+
+    gtpoProgress->endProgress();
     if ( os.is_open() )
         os.close();
+}
+
+//! Low level access to protocol buffer GTpoGraph message.
+auto    ProtoSerializer::serializeOut( const qan::Graph& graph,
+                                       qan::pb::Graph& pbGraph,
+                                       gtpo::IProgressNotifier& progressNotifier ) -> void
+{
+    const qan::StyleManager* styleManager = graph.getStyleManager();
+    if ( styleManager == nullptr ) {
+        std::cerr << "qan::ProtoSerializer::serializeOut(): Error, style manager is nullptr." << std::endl;
+        return;
+    }
+    qan::pb::StyleManager pbStyleManager;
+    _gtpoSerializer.generateObjectIdMap( graph ); // Force generation of internal graph primitive / ID map before serializing style manager
+    serializeStyleManagerOut( graph, *styleManager, pbStyleManager, _gtpoSerializer.getObjectIdMap() );
+    gtpo::pb::Graph* pbGtpoGraph = pbGraph.mutable_graph();
+    if ( pbGtpoGraph != nullptr )
+        _gtpoSerializer.serializeOut( graph, *pbGtpoGraph, progressNotifier );
 }
 
 void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan::ProgressNotifier* progress )
 {
     if ( fileName.isEmpty() ) {
-        qDebug() << "qan::ProtoSerializer::saveGraphTo(): Error: file name is invalid.";
+        qDebug() << "qan::ProtoSerializer::loadGraphFromo(): Error: file name is invalid.";
         return;
     }
     if ( graph == nullptr ) {
         qDebug() << "qan::ProtoSerializer::loadGraphFrom(" << fileName << "): Error: graph is nullptr.";
         return;
     }
+
     QUrl url( fileName );
     if ( url.isValid() )
         fileName = url.toLocalFile();
 
     std::ifstream is( fileName.toStdString(), std::ios::in | std::ios::binary );
     if ( !is ) {
-        std::cerr << "gtpo::ProtoSerializer::serializeIn(): Error: Can't open input stream " << fileName.toStdString() << std::endl;
+        std::cerr << "qan::ProtoSerializer::serializeIn(): Error: Can't open input stream " << fileName.toStdString() << std::endl;
         return;
     }
-    qan::pb::StyleManager pbStyleManager;
-    gtpo::IProgressNotifier* gtpoProgress = progress;
+    gtpo::IProgressNotifier* gtpoProgress = static_cast< gtpo::IProgressNotifier* >( progress );
     gtpo::ProgressNotifier voidProgressNotifier;
     if ( gtpoProgress == nullptr )
         gtpoProgress = &voidProgressNotifier;
-    progress->beginProgress();
-    serializeIn( is, *graph, *gtpoProgress, &pbStyleManager );
-    loadStyleManager( pbStyleManager, *graph->getStyleManager(), getIdObjectMap() );
+    gtpoProgress->beginProgress();
+    try {
+        qan::pb::Graph pbGraph;
+        if ( !pbGraph.ParseFromIstream( &is ) )
+            throw std::exception( "qan::ProtoSerializer::loadGraphFrom(): Error: Protocol Buffer QAN graph in serialization fails.");
+        serializeIn( pbGraph, *graph, *gtpoProgress );
+    } catch ( ... ) {
+        std::cerr << "qan::ProtoSerializer::loadGraphFrom(): Error: Protocol Buffer QAN graph in serialization fails." << std::endl;
+    }
+    gtpoProgress->endProgress();
     if ( is.is_open() )
         is.close();
 }
 
-auto    ProtoSerializer::saveStyleManager( const qan::Graph& graph,
-                                           const qan::StyleManager& styleManager,
-                                           qan::pb::StyleManager& pbStyleManager,
-                                           const ObjectIdMap& objectIdMap ) -> void
+auto    ProtoSerializer::serializeIn( const qan::pb::Graph& pbGraph,
+                                      qan::Graph& graph,
+                                      gtpo::IProgressNotifier& progress ) -> void
+{
+    progress.beginProgress();
+    try {
+        qan::StyleManager* styleManager = graph.getStyleManager();
+        if ( styleManager == nullptr ) {
+            std::cerr << "qan::ProtoSerializer::serializeIn(): Error, style manager is nullptr." << std::endl;
+            return;
+        }
+        serializeStyleManagerIn( pbGraph.style_manager(), *styleManager, _gtpoSerializer.getIdObjectMap() );
+        _gtpoSerializer.serializeIn( pbGraph.graph(), graph, progress );
+    } catch ( ... ) { std::cerr << "qan::ProtoSerializer::serializeIn(): Error while serializing in graph." << std::endl; }
+    progress.endProgress();
+}
+
+auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
+                                                   const qan::StyleManager& styleManager,
+                                                   qan::pb::StyleManager& pbStyleManager,
+                                                   const ObjectIdMap& objectIdMap ) -> void
 {
     std::unordered_map< qan::Style*, int > styleObjectIdMap;
     try {
@@ -187,9 +242,9 @@ auto    ProtoSerializer::saveStyleManager( const qan::Graph& graph,
     pbStyleManager.mutable_default_edge_styles()->insert( defaultEdgeStyle.begin(), defaultEdgeStyle.end() );
 }
 
-auto    ProtoSerializer::loadStyleManager( const qan::pb::StyleManager& pbStyleManager,
-                                           qan::StyleManager& styleManager,
-                                           const IdObjectMap& idObjectMap ) -> void
+auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& pbStyleManager,
+                                                  qan::StyleManager& styleManager,
+                                                  const IdObjectMap& idObjectMap ) -> void
 {
     std::unordered_map< int, qan::Style* > idStyleMap;
     for ( auto pbStyle : pbStyleManager.styles() ) {

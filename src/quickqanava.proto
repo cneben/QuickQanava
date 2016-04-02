@@ -1,5 +1,6 @@
 syntax = "proto3"; 
 import "quickproperties.proto";
+import "gtpo.proto";
 
 package qan.pb;
 
@@ -18,4 +19,9 @@ message StyleManager {
     repeated    Style styles                = 2;
     map<string, int32> default_node_styles  = 3;
     map<string, int32> default_edge_styles  = 4;
+}
+
+message Graph {
+    gtpo.pb.Graph   graph           = 1;
+    StyleManager    style_manager   = 2;
 }
