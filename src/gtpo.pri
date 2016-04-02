@@ -11,6 +11,7 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/gtpoRandomGraph.h         \
             $$PWD/gtpoBehaviour.h           \
             $$PWD/gtpoBehaviour.hpp         \
+            $$PWD/gtpoProgressNotifier.h    \
             $$PWD/gtpoSerializer.h          \
             $$PWD/gtpoGmlSerializer.h       \
             $$PWD/gtpoGmlSerializer.hpp     \
