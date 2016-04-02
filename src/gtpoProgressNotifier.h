@@ -38,8 +38,8 @@
 #include "./gtpoGraph.h"
 
 // STD headers
-#include <fstream>
-#include <atomic>
+#include <deque>
+#include <iostream>
 
 namespace gtpo { // ::gtpo
 
@@ -62,289 +62,261 @@ class ProgressNotifier;
  *
  * Example code with a notifier and a sub notifier for sub tasks:
  * \code
- *  void    Consumer::consume( gtpo::IProgressNotifier* notifier )
- *   {
- *       if ( notifier == nullptr )
- *           return;
- *       notifier->reset();
- *       notifier->setPhaseCount( 3 );
- *       gtpo::IProgressNotifier* subNotifier = notifier->createSubProgress();
- *       subNotifier->setPhaseCount( 2 );
- *       notifier->beginProgress();
+ * void    Consumer::consume( gtpo::IProgressNotifier& notifier )
+ * {
+ *   notifier.reset();
+ *   notifier.reserveSubProgress( 2 );
+ *   try {
+ *     gtpo::IProgressNotifier& subNotifier1 = notifier.takeSubProgress();
+ *     subNotifier1.reserveSubProgress( 2 );
  *
- *       subNotifier->beginProgress();
- *       subNotifier->beginPhase( "Sub progress - phase1" );
- *       consumePhase( subNotifier );
- *       subNotifier->beginPhase( "Sub Progress - phase2" );
- *       consumePhase( subNotifier );
- *       subNotifier->endProgress();
+ *     gtpo::IProgressNotifier& subNotifier2 = notifier.takeSubProgress();
+ *     subNotifier2.reserveSubProgress( 3 );
  *
- *       notifier->beginPhase( "Super progress - phase1");
- *       consumePhase( notifier );
- *       notifier->beginPhase( "Super progress - phase2" );
- *       consumePhase( notifier );
- *       notifier->beginPhase( "Super progress - phase3" );
- *       consumePhase( notifier );
+ *     notifier->beginProgress();
+ *       gtpo::IProgressNotifier& subNotifier11 = subNotifier1.takeSubProgress( "Sub progress 1 - phase1" );
+ *       consumePhase( subNotifier11 );  // Consume phase just call setProgress() mutliple times from 0. to 1.
  *
- *       notifier->endProgress();
+ *       gtpo::IProgressNotifier& subNotifier12 = subNotifier1.takeSubProgress( "Sub Progress 1 - phase2" );
+ *       consumePhase( subNotifier12 );
+ *
+ *       gtpo::IProgressNotifier& subNotifier21 = subNotifier2.takeSubProgress( "Sub progress 2 - phase1");
+ *       consumePhase( subNotifier21 );
+ *
+ *       gtpo::IProgressNotifier& subNotifier22 = subNotifier2.takeSubProgress( "Sub progress 2 - phase2" );
+ *       consumePhase( subNotifier22 );
+ *
+ *       gtpo::IProgressNotifier& subNotifier23 = subNotifier2.takeSubProgress( "Sub progress 3 - phase3" );
+ *       consumePhase( subNotifier23 );
+ *    } catch ( std::exception e ) { std::cerr << "Consumer::concume(): Error while reporting progress: " << e.what() << std::endl; }
+ *    notifier.endProgress();    // Calling enProgress() is not mandatory on intermediate sub progress.
  *  }
  * \endcode
+ *
+ * \image html IProgressNotifier.gif
  *
  * Update of overall or phase progress is protected against values outside of the [0.;1.0] range.
  *
  * IProgressNotifier is the default progress notifier, and it don't has state nor notify anything, any decent compiler
  * should just generate no overhead at runtime when parametrized with such class.
  *
+ * \nosubgrouping
  */
 class IProgressNotifier
 {
+    /*! \name IProgressNotifier Object Management *///-------------------------
+    //@{
 public:
     //! Construct a default notifiyer with 0.0 progress and 0 \c phaseCount.
     IProgressNotifier( IProgressNotifier* superProgress = nullptr ) :
         _superProgress( superProgress ) { }
-    virtual ~IProgressNotifier() { _notifiers.clear(); }
+    virtual ~IProgressNotifier() { _subProgress.clear(); }
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Sub/Sup Progress Management *///---------------------------------
+    //@{
 protected:
     IProgressNotifier*  getSuperProgress( ) { return _superProgress; }
 private:
     IProgressNotifier*  _superProgress = nullptr;
 
 public:
-    //! Called by a sub progress to force progress update of a super progress.
-    virtual void    update( ) {
-        if ( getSuperProgress() != nullptr )    // Update any eventual super progress
-            getSuperProgress()->update();
-    }
-
     //! Reset the progress notifier (destroy all sub progress).
     virtual void    reset() {
-        _notifiers.clear();
+        _subProgressQueue.clear( );
+        _subProgress.clear();
+        notifyModified();
     }
 
     using   IProgressNotifierPtr = std::unique_ptr< IProgressNotifier >;
 
-    /*! Return a new sub progress notifier (this progress keep ownership for the sub progress).
+    /*! Return a sub progress notifier previously reserved using reserveSubProgress(), or throw std::exception if no reservation was made.
      *
      * Creating a sub progress will introduce a new level in progress reporting. For example, if you are
-     * extending GTpo, you might have custom serialization to do with its own progress reporting. In your
-     * serialization method:
-     * \li Create a progress object.
-     * \li Add a new sub progress.
-     * \li Call base GTpo serialization methods with the subprogress.
-     * \li Then, serialize your data using the root progress notifier.
+     * extending GTpo, you might have custom serialization to process with its own progress reporting.
+     * In your specialized serialization method, use the following code:
+     * \li Get the super progress notifier given by the user as an argument.
+     * \li Reserve the number of subprogress necessary to model all you serialization "phases".
+     * \li Call setProgress() on sub progress notifiers returned by takeSubProgress()
      *
      * \code
-     *    gtpo::ProgressNotifier progress;
-     *    gtpo::IProgressNotifier* progress2 = progress.createSubProgress();
+     * auto mySerializationMethod( gtpo::ProgressNotifier& progress ) -> void {
+     *   progress.reserveSubProgress( 2 );  // Reserve sub progress before serializing
+     *           // to allow GTpo compute a global progress in "super progress notifiers"
      *
-     *    // Then report the serialization of your own data in progress
+     *   progress.reserveSubProgress( 2 );
+
+     *   // Phase 1
+     *   gtpo::IProgressNotifier& progress1 = progress.takeSubProgress( "Phase1" );
+     *   // Serialize something with progress 1:
+     *   progress1.setProgress( 0.25 ); // 25%
+     *   // ...
+     *   progress1.setProgress( 0.75 ); // 75%
+     *   progress1.endProgress()
+     *
+     *   // Phase 2
+     *   gtpo::IProgressNotifier* progress2 = progress.takeSubProgress( "Phase2" );
+     *   // ...
+     * }
      * \endcode
      *
+     * \note Seting \c beginImmediately automatically call beginProgress() with \c label.
+     * \throw std::exception when sub progress is nullptr or sub notifier has not been reserved with a call to reserveSubProgress().
      */
-    virtual IProgressNotifier*  createSubProgress() {
-        IProgressNotifier* subProgress = new IProgressNotifier( this );
-        IProgressNotifierPtr progressPtr( subProgress );
-        _notifiers.emplace_back( std::move( progressPtr ) );
-        return subProgress;
+    virtual IProgressNotifier&  takeSubProgress( const std::string& label = "", bool beginImmediately = true ) {
+        if ( _subProgressQueue.empty() )
+            throw std::exception( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a sub progress notifier without a reservation." );
+        IProgressNotifier* subProgress = _subProgressQueue.front( );
+        _subProgressQueue.pop_front( );
+        if ( subProgress == nullptr )
+            throw std::exception( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a nullptr sub progress notifier." );
+        if ( beginImmediately )
+            beginProgress( label );
+        return *subProgress;
+    }
+
+    //! Reserve a given \c subProgressCount number of sub prgress in this notifier.
+    virtual void                reserveSubProgress( int subProgressCount ) {
+        for ( int p = 0; p < subProgressCount; ++p ) {
+            IProgressNotifier* subProgress = createSubProgress( );
+            IProgressNotifierPtr progressPtr( subProgress );
+            _subProgressQueue.push_back( subProgress );
+            _subProgress.emplace_back( std::move( progressPtr ) );
+        }
     }
 
 protected:
-    std::vector< IProgressNotifierPtr > _notifiers;
+    virtual IProgressNotifier*  createSubProgress() {
+        return nullptr;
+    }
 
+    const std::vector< IProgressNotifierPtr >&  takeSubProgress() const { return _subProgress; }
+private:
+    std::deque< IProgressNotifier* >            _subProgressQueue;
+    std::vector< IProgressNotifierPtr >         _subProgress;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Progress Reporting *///------------------------------------------
+    //@{
 public:
-    //! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
-    virtual double  getProgress() const { return 0.; }
-
     //! Called for user notification purposes when notifier change (default implementation notify super notifier).
     virtual void    notifyModified() {
-        if ( getSuperProgress() != nullptr )
-            getSuperProgress()->notifyModified();
+        if ( getSuperProgress() != nullptr ) {
+            getSuperProgress()->setLabel( _label );         // Push phase label and progress upstream
+            getSuperProgress()->setPhaseProgress( getPhaseProgress() );
+            getSuperProgress()->notifyModified( );
+        }
+        onModified();
     }
 
     /*! \brief Called at the start of the monitored process, indicate to an eventually associed progress display that it must be shown (call reset() automatically).
      *
      * \warning User should call base method at the begining of their implementation.
      */
-    virtual void    beginProgress() { _active = true; }
-
-    //! Return true between a call to beginProgress() and endProgress().
-    bool            isActive( ) const { return _active; }
+    virtual void    beginProgress( const std::string& label = "" ) { setLabel( label ); }
 
     /*! \brief Called at the end of the monitored process or if the process has been interrupted, indicate to an eventually associed progress display that it must be shut down.
      *
      * \warning User should call base method at the end of their implementation.
      */
-    virtual void    endProgress() { _active = false; }
+    virtual void    endProgress() { }
 
 protected:
-    bool    _active = false;
+    //! Virtual notifier method that should be overriden in user code to be notified of phase/label or global progress changes.
+    virtual void    onModified() = 0;
 
 public:
-    //! Set the previsible number of phase in the monitored task, it should be followed by a beginPhase() call.
-    virtual void    setPhaseCount( int phaseCount ) { (void)phaseCount; }
-    /*! \brief Start a new phase in the overall progress.
-     *
-     * \warning calling beginPhase() will automatically close the previous phase and update the overall progress
-     * even if previous phase progress was not complete:
-     *
-     * \code
-     *  // Setup a progress notifier with 2 phases, each weighting 50% of the global progress
-     *  gtpo::ProgressNotifier progress;
-     *  progress.setPhaseCount( 2 );
-     *  progress.beginPhase();
-     *  progress.setPhaseProgress( 0.5 );
-     *  // progress.getProgress() == 0.25   (because phase 1 progress is 0.5 and phase weight is 0.5, global progress is 0.5*0.5=0.25
-     *  progress.beginPhase( );
-     *  // Warning: progress.getProgress() == 0.5, it now equal previous phase total weight even if the phase was not manually complete with setProgressPhase(1.0)
-     *  progress.setPhaseProgress( 0.5 );
-     *  // progress.getProgress() == 0.75 (one could expect 0.5*0.5 + 0.5*0.5=0.5, but using nextPhase has automatically complete phase 1, so
-     *  // progress is (phase1.progress = 1. * 0.5) + (0.5 * 0.5) = 0.75
-     * \endcode
-     *
-     * \note The total number of calls to nextPhase() must equal the value of \c phaseCount set when beginning startup monitoring with setPhaseCount().
-     */
-    virtual void    beginPhase( const std::string& phaseLabel = "" ) { (void)phaseLabel; }
-    //! Return the current phase number (int between 0 and phaseCount - 1).
-    virtual int     getPhase() const { return 0; }
-    //! Return current phase label.
-    virtual const std::string&    getPhaseLabel() const { return _phaseLabel; }
-    //! Return current phase progress into the (0.0, 1.0) range.
-    virtual double  getPhaseProgress() const { return 0.; }
-    //! Set the current phase progress (\c phaseProgress must be in the (0.0, 1.0) range.
-    virtual void    setPhaseProgress( double phaseProgress ) { (void)phaseProgress; }
-    //! Used to set the current phase label from a sub notifier, from a super progress notifier, use beginPhase().
-    virtual void    setPhaseLabel( const std::string& phaseLabel ) {
-        _phaseLabel = phaseLabel;
-        notifyModified();
+    //! Set the current global progress, might equal global progress for leaf progress notifiers (\c progress must be in the (0.0, 1.0) range).
+    virtual void    setProgress( double progress ) {
+        _phaseProgress = progress;
+        if ( getSuperProgress() != nullptr ) {
+            getSuperProgress()->setPhaseProgress( getPhaseProgress() );
+            getSuperProgress()->notifyModified( );
+        }
+        onModified();
     }
 
-    //! Return the number of phase count in this notifier, if the notifier has sub notifiers, phase count will be the sum of all notifiers phase count.
-    virtual int     getPhaseCount() const { return 1; }
+    /*! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
+     *
+     * When a sub progress notifier is attached to this progress notifier, getProgress()
+     * return a global progress valid for all progress notifier, otherwise, it return the
+     * notifier "local" progress.
+     */
+    virtual double  getProgress() const {
+        double progress = 0.;
+        if ( takeSubProgress().size() <= 0 )   // When there is no sub notifiers, return local progress
+            progress = _phaseProgress;
+        else {   // Otherwise, average all sub notifiers progress
+            for ( auto& subProgress : takeSubProgress() )
+                progress += subProgress->getProgress();
+            progress /= static_cast< double >( takeSubProgress().size() );
+        }
+        return progress;
+    }
+
+    double          getPhaseProgress() const {
+        return ( _subProgress.size() <= 0 ? getProgress() : _phaseProgress );
+    }
 
 protected:
-    //! Current phase label.
-    std::string _phaseLabel         = "";
+    //! Set the current phase progress (\c phaseProgress must be in the (0.0, 1.0) range.
+    void            setPhaseProgress( double phaseProgress ) {
+        _phaseProgress = phaseProgress;
+        if ( getSuperProgress() != nullptr ) {
+            getSuperProgress()->setPhaseProgress( getPhaseProgress() );
+            getSuperProgress()->notifyModified( );
+        }
+        onModified();
+    }
+
+    //! Current phase progress.
+    double          _phaseProgress = 0.;
+
+public:
+    //! Return current phase label.
+    virtual const std::string&  getLabel() const { return _label; }
+
+    //! Used to set the current phase label from a sub notifier, from a super progress notifier, use beginPhase().
+    virtual void                setLabel( const std::string& label ) {
+        _label = label;
+        if ( getSuperProgress() != nullptr ) {
+            getSuperProgress()->setLabel( _label );         // Push phase label and progress upstream
+            getSuperProgress()->notifyModified( );
+        }
+        onModified();
+    }
+
+protected:
+    //! Current progress label.
+    std::string _label  = "";
+    //@}
+    //-------------------------------------------------------------------------
 };
 
-//! Multi levels, multi phases progress notifier (basic concrete implementation of IProgressNotifier).
+
+/*! \brief Multi levels, multi phases progress notifier (basic concrete implementation of IProgressNotifier).
+ *
+ * \nosubgrouping
+ */
 class ProgressNotifier : public IProgressNotifier
 {
 public:
     ProgressNotifier( IProgressNotifier* superProgress = nullptr ) :
         IProgressNotifier( superProgress ) { }
 
-public:
-    //! \copydoc IProgressNotifier::reset()
-    virtual void                reset() override {
-        IProgressNotifier::reset( );
-        _phaseProgress  = 0.;
-        _phase          = 0;
-        _phaseCount     = 1;
-        notifyModified();
-    }
+protected:
+    virtual IProgressNotifier*  createSubProgress() { return new ProgressNotifier( this ); }
 
-    virtual IProgressNotifier*  createSubProgress() {
-        ProgressNotifier* subProgress = new ProgressNotifier( this );
-        IProgressNotifierPtr progressPtr( subProgress );
-        _notifiers.emplace_back( std::move( progressPtr ) );
-        return subProgress;
-    }
-
-public:
-    virtual void    beginProgress() override {
-        IProgressNotifier::beginProgress();
-        if ( getSuperProgress() != nullptr )    // Force super progress begin when begin is called on a sub progress
-            getSuperProgress()->beginProgress();
-    }
-
-public:
-    /*! \copybrief IProgressNotifier::getProgress()
-     *
-     * When a sub progress notifier is attached to this progress notifier, getProgress()
-     * return a global progress valid for all progress notifier, otherwise, it return the
-     * notifier "local" progress.
-     */
-    virtual double  getProgress() const override {
-        double totalPhaseCount = getPhaseCount();
-        double phaseWeight = ( 1.0 / _phaseCount );
-        double progress = 0.;
-        if ( _phase >= 0 ) {
-            progress = ( _phase * phaseWeight ) + ( _phaseProgress * phaseWeight );
-            progress *= _phaseCount / totalPhaseCount;
-        }
-        for ( auto& subNotifier : _notifiers ) {
-            progress += subNotifier->getProgress() * subNotifier->getPhaseCount( ) / totalPhaseCount;
-        }
-        return progress;
-    }
-public:
-    //! \copydoc IProgressNotifier::setPhaseCount()
-    virtual void    setPhaseCount( int phaseCount ) override {
-        _phaseLabel = "";
-        _phaseCount = phaseCount;
-        _phase = -1;
-        _phaseProgress = 0.;
-        if ( getSuperProgress() != nullptr )
-            getSuperProgress()->update();
-        notifyModified();
-    }
-
-    //! \copydoc IProgressNotifier::getPhaseCount()
-    virtual int     getPhaseCount() const {
-        int phaseCount = _phaseCount;
-        for ( auto& subNotifier : _notifiers )
-            phaseCount += subNotifier->getPhaseCount();
-        return phaseCount;
-    }
-
-    //! \copydoc IProgressNotifier::beginPhase()
-    virtual void    beginPhase( const std::string& phaseLabel = "" ) override {
-        _phaseLabel = phaseLabel;
-        _phase++;
-        _phaseProgress = 0.;
-        notifyModified();
-    }
-
-    //! \copydoc IProgressNotifier::getPhase()
-    virtual int     getPhase( ) const override { return _phase; }
-
-    //! \copydoc IProgressNotifier::getPhaseLabel()
-    virtual const std::string&    getPhaseLabel() const override {
-        for ( auto& subNotifier : _notifiers )
-            if ( subNotifier->isActive() )
-                return subNotifier->getPhaseLabel();
-        return _phaseLabel;
-    }
-
-    //! \copydoc IProgressNotifier::getPhaseProgress()
-    virtual double  getPhaseProgress() const override {
-        for ( auto& subNotifier : _notifiers )
-            if ( subNotifier->isActive() )
-                return subNotifier->getPhaseProgress();
-        return _phaseProgress;
-    }
-
-    //! \copydoc IProgressNotifier::setPhaseProgress()
-    virtual void    setPhaseProgress( double phaseProgress ) override {
-        _phaseProgress = phaseProgress;
-        notifyModified();
-    }
-
-private:
-    double      _phaseProgress      = 0.;
-    //! Current phase index.
-    int         _phase              = 0;
-    //! Number of phase registered with setPhaseCount().
-    int         _phaseCount         = 1;
+protected:
+    virtual void    onModified() { }
 };
 
 
 /*! \brief Report progress in an output stream (default to std::cerr).
  *
- * Example use for debugging purposes:
- * \code
- *    FIXME
- * \endcode
+ * Minimal demonstration for a concrete progress notifier.
  */
 class EchoProgressNotifier : public ProgressNotifier
 {
@@ -353,18 +325,12 @@ public:
         ProgressNotifier( superProgress ) { }
 
 public:
-    virtual IProgressNotifier*  createSubProgress() {
-        EchoProgressNotifier* subProgress = new EchoProgressNotifier( this );
-        IProgressNotifierPtr progressPtr( subProgress );
-        _notifiers.emplace_back( std::move( progressPtr ) );
-        return subProgress;
-    }
-
-    virtual void    notifyModified() override {
+    virtual void    onModified() override {
         std::cout << "Progress=" << getProgress() << std::endl;
-        std::cout << "Phase=" << getPhase() << std::endl;
-        std::cout << "Phase progress=" << getProgress() << std::endl;
+        std::cout << "Phase progress=" << getPhaseProgress() << std::endl;
     }
+protected:
+    virtual IProgressNotifier*  createSubProgress() { return new EchoProgressNotifier( this ); }
 };
 
 } // ::gtpo

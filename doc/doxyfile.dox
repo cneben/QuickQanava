@@ -1180,7 +1180,8 @@ HTML_EXTRA_STYLESHEET  = gtpo.css
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_EXTRA_FILES       = graph-datamodel.png \
-                         manual/behaviour-class.png
+                         manual/behaviour-class.png \
+                         manual/IProgressNotifier.gif
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
