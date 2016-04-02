@@ -3,7 +3,7 @@ import "gtpo.proto";
 package qan.pb;
 
 message QanImgNode {
-    .gtpo.pb.GTpoNode base=1;
+    .gtpo.pb.Node base=1;
     int32   img_data_size=4;
     bytes   img_data=5;
 }

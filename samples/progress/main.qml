@@ -31,12 +31,15 @@ Item {
     id: window
     anchors.fill: parent
     Text {
+        id: infoText
         text: "This sample demonstrate use of Qan.ProgressNotifier:
                \t-A custom progress dialog reflect progress properties from Qan.ProgressNotifier."
     }
 
     Button {
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: infoText.contentHeight + 15
         text: "Launch progress notifier"
         onClicked: {
             consumer.consume( progressNotifier );

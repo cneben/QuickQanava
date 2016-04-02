@@ -40,10 +40,10 @@
 
 using namespace qan;
 
-void    consumePhase( gtpo::IProgressNotifier* notifier )
+void    consumePhase( gtpo::IProgressNotifier& notifier )
 {
     for ( int i = 0; i < 100; ++i ) {
-        notifier->setPhaseProgress( 0.01 * i );
+        notifier.setProgress( 0.01 * i );
         QThread::msleep( 15 );
     }
 }
@@ -53,26 +53,35 @@ void    Consumer::consume( qan::ProgressNotifier* notifier )
     if ( notifier == nullptr )
         return;
     notifier->reset();
-    notifier->setPhaseCount( 3 );
-    gtpo::IProgressNotifier* subNotifier = notifier->createSubProgress();
-    subNotifier->setPhaseCount( 2 );
-    notifier->beginProgress();
+    notifier->reserveSubProgress( 2 );
 
-    subNotifier->beginProgress();
-    subNotifier->beginPhase( "Sub progress - phase1" );
-    consumePhase( subNotifier );
-    subNotifier->beginPhase( "Sub Progress - phase2" );
-    consumePhase( subNotifier );
-    subNotifier->endProgress();
+    try {
+        gtpo::IProgressNotifier& subNotifier1 = notifier->takeSubProgress();
+        subNotifier1.reserveSubProgress( 2 );
 
-    notifier->beginPhase( "Super progress - phase1");
-    consumePhase( notifier );
-    notifier->beginPhase( "Super progress - phase2" );
-    consumePhase( notifier );
-    notifier->beginPhase( "Super progress - phase3" );
-    consumePhase( notifier );
+        gtpo::IProgressNotifier& subNotifier2 = notifier->takeSubProgress();
+        subNotifier2.reserveSubProgress( 3 );
 
-    notifier->endProgress();
+        notifier->beginProgress();
+        {
+            gtpo::IProgressNotifier& subNotifier11 = subNotifier1.takeSubProgress( "Sub progress 1 - phase1" );
+            consumePhase( subNotifier11 );
+
+            gtpo::IProgressNotifier& subNotifier12 = subNotifier1.takeSubProgress( "Sub Progress 1 - phase2" );
+            consumePhase( subNotifier12 );
+        }
+        {
+            gtpo::IProgressNotifier& subNotifier21 = subNotifier2.takeSubProgress( "Sub progress 2 - phase1");
+            consumePhase( subNotifier21 );
+
+            gtpo::IProgressNotifier& subNotifier22 = subNotifier2.takeSubProgress( "Sub progress 2 - phase2" );
+            consumePhase( subNotifier22 );
+
+            gtpo::IProgressNotifier& subNotifier23 = subNotifier2.takeSubProgress( "Sub progress 3 - phase3" );
+            consumePhase( subNotifier23 );
+        }
+    } catch ( std::exception e ) { std::cerr << "Consumer::concume(): Error while reporting progress: " << e.what() << std::endl; }
+    notifier->endProgress();    // Calling enProgress() is not mandatory on intermediate sub progress.
 }
 
 //-----------------------------------------------------------------------------

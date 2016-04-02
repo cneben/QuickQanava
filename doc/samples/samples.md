@@ -26,6 +26,12 @@ Demonstrate use of qan::Navigable.
 "topology" - Topology Sample: 
 ------------------
 
+Compilation of Protocol Buffer message for topology sample:
+
+~~~~~~~~~~~~~{.cpp}
+protoc topology.proto --cpp_out=. -I. -I../../GTpo/src
+~~~~~~~~~~~~~
+
 ![topology sample](http://www.delia-strategie.fr/doc/qan/topology.png)
 
 

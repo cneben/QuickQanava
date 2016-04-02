@@ -68,9 +68,9 @@ MainView::MainView( ) :
                 return;
             qan::pb::QanImgNode pbImgNode;
             if ( pbImgNode.mutable_base() != nullptr )
-                qan::ProtoSerializer::serializeGTpoNodeOut( weakNode,
-                                                            *pbImgNode.mutable_base(),
-                                                            objectIdMap ); // Serialize base gtpo.pb.GTpoNode
+                gtpo::ProtoSerializer<qan::Config>::serializeGTpoNodeOut( weakNode,
+                                                                         *pbImgNode.mutable_base(),
+                                                                         objectIdMap ); // Serialize base gtpo.pb.Node
             pbImgNode.set_img_data_size( -1 );
             QBuffer qBuffer{};
             qBuffer.open( QIODevice::WriteOnly );
@@ -94,7 +94,7 @@ MainView::MainView( ) :
                     node = graph.createNode( std::string( "qan::ImgNode" ) );
                     qan::ProtoSerializer::SharedNode ownedNode = node.lock();
                     if ( ownedNode ) {    // Feed the newly created node with PB node data
-                        qan::ProtoSerializer::serializeGTpoNodeIn( pbImgNode.base(), node, idObjectMap ); // Serialize base gtpo.pb.GTpoNode
+                        gtpo::ProtoSerializer<qan::Config>::serializeGTpoNodeIn( pbImgNode.base(), node, idObjectMap ); // Serialize base gtpo.pb.Node
                         int imageDataSize = pbImgNode.img_data_size();
                         QImage image;
                         qan::ImgNode* imgNode = static_cast< qan::ImgNode* >( ownedNode.get() );

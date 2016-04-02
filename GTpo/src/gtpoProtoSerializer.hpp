@@ -209,9 +209,9 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     int serializedNodeCout = 0;
     int nonSerializableNodeCount = 0;
 
-    progress.beginProgress();
-    progress.setPhaseCount( 3 );
-    progress.beginPhase( "Saving nodes" );
+    gtpo::IProgressNotifier& nodesProgress = progress.takeSubProgress();
+    nodesProgress.beginProgress();
+    nodesProgress.setLabel( "Saving nodes" );
     int     primitive = 0;
     double  primitiveCount = static_cast< double >( graph.getNodes().size() );
     for ( auto& node: graph.getNodes() ) {  // Serialize nodes
@@ -223,13 +223,15 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
             ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
             ++serializedNodeCout;
-            progress.setPhaseProgress( ++primitive / primitiveCount );
+            nodesProgress.setProgress( ++primitive / primitiveCount );
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for node class:" << node->getClassName() << std::endl;
     }
+    nodesProgress.endProgress();
 
+    gtpo::IProgressNotifier& edgesProgress = progress.takeSubProgress();
+    edgesProgress.beginProgress( "Saving edges" );
     int serializedEdgeCout = 0;
-    progress.beginPhase( "Saving edges" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
@@ -237,14 +239,16 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         if ( edgeOutFunctor != _edgeOutFunctors.end() ) {
             if ( ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
                 ++serializedEdgeCout;
-                progress.setPhaseProgress( ++primitive / primitiveCount );
+                edgesProgress.setProgress( ++primitive / primitiveCount );
             }
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for edge class:" << edge->getClassName() << std::endl;
     }
+    edgesProgress.endProgress();
 
+    gtpo::IProgressNotifier& groupsProgress = progress.takeSubProgress();
+    groupsProgress.beginProgress( "Saving groups" );
     int serializedGroupCout = 0;
-    progress.beginPhase( "Saving groups" );
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getGroups().size() );
     for ( auto& group: graph.getGroups() ) {  // Serialize groups
@@ -252,11 +256,12 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         if ( groupOutFunctor != _groupOutFunctors.end() ) {
             if ( ( groupOutFunctor->second )( pbGraph.add_groups(), group, objectIdMap ) ) {
                 ++serializedGroupCout;
-                progress.setPhaseProgress( ++primitive / primitiveCount );
+                groupsProgress.setProgress( ++primitive / primitiveCount );
             }
         } else
             std::cerr << "gtpo::ProtoSerializer::serializeOut(): no out serialization functor available for group class:" << group->getClassName() << std::endl;
     }
+    groupsProgress.endProgress();
 
     pbGraph.set_node_count( ( int )graph.getNodeCount() );
     pbGraph.set_edge_count( ( int )graph.getEdges().size() );
@@ -372,9 +377,8 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
                                                      Graph& graph,
                                                      gtpo::IProgressNotifier& progress ) -> void
 {
-    progress.beginProgress();
-    progress.setPhaseCount( 3 );
-    progress.beginPhase( "Loading nodes" );
+    gtpo::IProgressNotifier& nodesProgress = progress.takeSubProgress();
+    nodesProgress.beginProgress( "Loading nodes" );
 
     IdObjectMap& idObjectMap = getIdObjectMap();
     idObjectMap.clear();
@@ -395,8 +399,11 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
             std::cerr << "\tProtocol Buffer Error:" << anyNode.type_url() << std::endl;
         }
     }
+    nodesProgress.endProgress();
+
     if ( idObjectMap.size() > 0 ) {   // No need to start edge serialization if node id map is empty...
-        progress.beginPhase( "Loading edges" );
+        gtpo::IProgressNotifier& edgesProgress = progress.takeSubProgress();
+        edgesProgress.beginProgress( "Loading edges" );
         for ( const google::protobuf::Any& anyEdge : pbGraph.edges() ) {    // Serializing edges in
             bool edgeSerialized = false;
             for ( auto edgeInFunctor : _edgeInFunctors ) {
@@ -411,8 +418,10 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
                 std::cerr << "\tProtocol Buffer Error:" << anyEdge.type_url() << std::endl;
             }
         }
+        edgesProgress.endProgress();
 
-        progress.beginPhase( "Loading groups" );
+        gtpo::IProgressNotifier& groupsProgress = progress.takeSubProgress();
+        groupsProgress.beginProgress( "Loading groups" );
         for ( const google::protobuf::Any& anyGroup : pbGraph.groups() ) {    // Serializing groups in
             bool groupSerialized = false;
             for ( auto groupInFunctor : _groupInFunctors ) {
@@ -428,6 +437,7 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
                 std::cerr << "\tProtocol Buffer Error:" << anyGroup.type_url() << std::endl;
             }
         }
+        groupsProgress.endProgress();
     }
 
     // Report errors

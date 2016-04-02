@@ -83,10 +83,10 @@ void protobuf_AddDesc_topology_2eproto() {
 
   ::gtpo::pb::protobuf_AddDesc_gtpo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\016topology.proto\022\006qan.pb\032\ngtpo.proto\"V\n\n"
-    "QanImgNode\022\037\n\004base\030\001 \001(\0132\021.gtpo.pb.GTpoN"
-    "ode\022\025\n\rimg_data_size\030\004 \001(\005\022\020\n\010img_data\030\005"
-    " \001(\014b\006proto3", 132);
+    "\n\016topology.proto\022\006qan.pb\032\ngtpo.proto\"R\n\n"
+    "QanImgNode\022\033\n\004base\030\001 \001(\0132\r.gtpo.pb.Node\022"
+    "\025\n\rimg_data_size\030\004 \001(\005\022\020\n\010img_data\030\005 \001(\014"
+    "b\006proto3", 128);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "topology.proto", &protobuf_RegisterTypes);
   QanImgNode::default_instance_ = new QanImgNode();
@@ -127,7 +127,7 @@ QanImgNode::QanImgNode()
 
 void QanImgNode::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  base_ = const_cast< ::gtpo::pb::GTpoNode*>(&::gtpo::pb::GTpoNode::default_instance());
+  base_ = const_cast< ::gtpo::pb::Node*>(&::gtpo::pb::Node::default_instance());
 }
 
 QanImgNode::QanImgNode(const QanImgNode& from)
@@ -201,7 +201,7 @@ bool QanImgNode::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .gtpo.pb.GTpoNode base = 1;
+      // optional .gtpo.pb.Node base = 1;
       case 1: {
         if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
@@ -265,7 +265,7 @@ failure:
 void QanImgNode::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:qan.pb.QanImgNode)
-  // optional .gtpo.pb.GTpoNode base = 1;
+  // optional .gtpo.pb.Node base = 1;
   if (this->has_base()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, *this->base_, output);
@@ -288,7 +288,7 @@ void QanImgNode::SerializeWithCachedSizes(
 ::google::protobuf::uint8* QanImgNode::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.QanImgNode)
-  // optional .gtpo.pb.GTpoNode base = 1;
+  // optional .gtpo.pb.Node base = 1;
   if (this->has_base()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -314,7 +314,7 @@ void QanImgNode::SerializeWithCachedSizes(
 int QanImgNode::ByteSize() const {
   int total_size = 0;
 
-  // optional .gtpo.pb.GTpoNode base = 1;
+  // optional .gtpo.pb.Node base = 1;
   if (this->has_base()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -356,7 +356,7 @@ void QanImgNode::MergeFrom(const ::google::protobuf::Message& from) {
 void QanImgNode::MergeFrom(const QanImgNode& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_base()) {
-    mutable_base()->::gtpo::pb::GTpoNode::MergeFrom(from.base());
+    mutable_base()->::gtpo::pb::Node::MergeFrom(from.base());
   }
   if (from.img_data_size() != 0) {
     set_img_data_size(from.img_data_size());
@@ -407,7 +407,7 @@ void QanImgNode::InternalSwap(QanImgNode* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // QanImgNode
 
-// optional .gtpo.pb.GTpoNode base = 1;
+// optional .gtpo.pb.Node base = 1;
 bool QanImgNode::has_base() const {
   return !_is_default_instance_ && base_ != NULL;
 }
@@ -415,25 +415,25 @@ void QanImgNode::clear_base() {
   if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
   base_ = NULL;
 }
-const ::gtpo::pb::GTpoNode& QanImgNode::base() const {
+const ::gtpo::pb::Node& QanImgNode::base() const {
   // @@protoc_insertion_point(field_get:qan.pb.QanImgNode.base)
   return base_ != NULL ? *base_ : *default_instance_->base_;
 }
-::gtpo::pb::GTpoNode* QanImgNode::mutable_base() {
+::gtpo::pb::Node* QanImgNode::mutable_base() {
   
   if (base_ == NULL) {
-    base_ = new ::gtpo::pb::GTpoNode;
+    base_ = new ::gtpo::pb::Node;
   }
   // @@protoc_insertion_point(field_mutable:qan.pb.QanImgNode.base)
   return base_;
 }
-::gtpo::pb::GTpoNode* QanImgNode::release_base() {
+::gtpo::pb::Node* QanImgNode::release_base() {
   
-  ::gtpo::pb::GTpoNode* temp = base_;
+  ::gtpo::pb::Node* temp = base_;
   base_ = NULL;
   return temp;
 }
-void QanImgNode::set_allocated_base(::gtpo::pb::GTpoNode* base) {
+void QanImgNode::set_allocated_base(::gtpo::pb::Node* base) {
   delete base_;
   base_ = base;
   if (base) {

@@ -307,10 +307,8 @@ Item {
 
     Qan.ProgressNotifier {
         id: progressNotifier
-        onShowProgress: { console.debug( "Qan.ProgressNotifier.onShowProgress()..." ); progressDialog.visible = true; }
-        onHideProgress: { console.debug( "Qan.ProgressNotifier.onHideProgress()..." ); progressDialog.visible = false; }
-
-
+        onShowProgress: { progressDialog.visible = true; }
+        onHideProgress: { progressDialog.visible = false; }
     }
     Item {
         id: progressDialog
@@ -329,11 +327,19 @@ Item {
             ProgressBar {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 value: progressNotifier.progress
+                Text {
+                    anchors.centerIn: parent
+                    text: Math.round( progressNotifier.progress * 100. ) + " %"
+                }
             }
             ProgressBar {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 value: progressNotifier.phaseProgress
                 onValueChanged: { indeterminate = value < 0. }
+                Text {
+                    anchors.centerIn: parent
+                    text: Math.round( progressNotifier.phaseProgress * 100. ) + " %"
+                }
             }
             Text {
                 Layout.alignment: Layout.Center

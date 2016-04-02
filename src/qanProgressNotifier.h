@@ -66,13 +66,13 @@ public:
     Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged )
 
     //! Called from task, force show of associed progress dialog.
-    void    beginProgress() {
-        gtpo::ProgressNotifier::beginProgress();
+    virtual void    beginProgress( const std::string& label = "" ) override {
+        gtpo::ProgressNotifier::beginProgress( label );
         emit showProgress();
         QCoreApplication::processEvents( );
     }
     //! Called from task, force progress end and hide associed dialog.
-    void    endProgress() {
+    virtual void    endProgress() override {
         gtpo::ProgressNotifier::endProgress();
         emit hideProgress();
         QCoreApplication::processEvents( );
@@ -85,8 +85,7 @@ signals:
 
 protected:
     //! Called whenever the overall progress change.
-    virtual void    notifyModified() override {
-        gtpo::ProgressNotifier::notifyModified();
+    virtual void    onModified() override {
         QCoreApplication::processEvents( );
         emit phaseProgressChanged();
         emit progressChanged();
@@ -110,7 +109,7 @@ public:
      * FIXME: Reactivate phase label support in Qan2...
      */
     Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged )
-    QString         getQmlPhaseLabel() const { return QString::fromStdString( getPhaseLabel() ); }
+    QString         getQmlPhaseLabel() const { return QString::fromStdString( getLabel() ); }
 signals:
     //! \sa phaseLabel
     void            phaseLabelChanged();
