@@ -8,6 +8,9 @@ win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/buil
 # Remove C4100 unreferenced formal parameter
 win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34100
 
+# Remove C4267 conversion from size_t to int (protobuf)
+win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267
+
 # Used internally, override if you want to use a different working copy of GTpo
 INCLUDEPATH	+= $$PWD/GTpo/src
 GTPO_DIR        =  $$PWD/\GTpo/src
