@@ -81,8 +81,6 @@ MainView::MainView( ) :
                 pbImgNode.set_img_data( imageData );
             }
             anyNodes->PackFrom( pbImgNode );
-            std::cout << "Sleeping for 1s..." << std::endl;
-            std::this_thread::sleep_for( std::chrono::seconds(1) );
         } );
     _serializer->registerNodeInFunctor( []( const google::protobuf::Any& anyNode,
                                             qan::ProtoSerializer::Graph& graph,
