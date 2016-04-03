@@ -183,6 +183,9 @@ struct GraphConfig
     //! Define gtpo::GenGroup base class.
     using GroupBase = Empty;
 
+    //! Static behaviours that should be used for node (default to empty node behaviour tuple).
+    using NodeBehaviours = std::tuple<>;
+
     //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
     using GraphBehaviours = std::tuple<>;
 
@@ -217,6 +220,9 @@ struct DefaultConfig :  public GraphConfig,
     using Edge = GenEdge<DefaultConfig>;
     //! Concrete final group primitive type.
     using Group = GenGroup<DefaultConfig>;
+
+    //! Static behaviours that should be used for node (default to empty node behaviour tuple).
+    using NodeBehaviours = std::tuple<>;
 
     //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
     using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< DefaultConfig > >;
@@ -269,8 +275,10 @@ public:
 
     void    setSrc( WeakNode src ) { _src = src; }
     void    setDst( WeakNode dst ) { _dst = dst; }
-    auto    getSrc( ) -> WeakNode const { return _src; }
-    auto    getDst( ) -> WeakNode const { return _dst; }
+    auto    getSrc( ) -> WeakNode&{ return _src; }
+    auto    getSrc( ) const -> const WeakNode& { return _src; }
+    auto    getDst( ) -> WeakNode& { return _dst; }
+    auto    getDst( ) const -> const WeakNode& { return _dst; }
 
 private:
     WeakNode  _src;
@@ -289,6 +297,8 @@ private:
  */
 template <class Config = DefaultConfig>
 class GenNode : public Config::NodeBase,
+                public gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
+                                            typename Config::NodeBehaviours >,
                 public std::enable_shared_from_this<typename Config::Node>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
@@ -317,6 +327,9 @@ public:
     //! Return node class name (default to "gtpo::Node").
     std::string getClassName() const { return "gtpo::Node"; }
 
+    //! User friendly shortcut type to this concrete node Behaviourable base type.
+    using BehaviourableBase = gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
+                                                   typename Config::NodeBehaviours >;
 protected:
     Graph*      getGraph() { return _graph; }
 private:
@@ -392,6 +405,15 @@ public:
     auto        getGroup( ) -> WeakGroup& { return _group; }
 private:
     WeakGroup   _group;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Node Behaviours Notifications *///-------------------------------
+    //@{
+    inline auto    notifyInNodeInserted( WeakNode& outNode ) -> void;
+    inline auto    notifyInNodeRemoved( WeakNode& outNode ) -> void;
+    inline auto    notifyOutNodeInserted( WeakNode& outNode ) -> void;
+    inline auto    notifyOutNodeRemoved( WeakNode& outNode ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };
