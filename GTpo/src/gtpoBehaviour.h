@@ -36,6 +36,7 @@
 // STD headers
 #include <functional>       // std::function
 #include <vector>
+#include <memory>
 
 // GTpo headers
 // Nil
