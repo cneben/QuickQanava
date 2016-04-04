@@ -59,6 +59,7 @@ public:
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
+public:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
      */
     virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void { (void)weakInNode; }
