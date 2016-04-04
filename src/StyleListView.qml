@@ -78,7 +78,7 @@ Qps.PropertiesListView {
     }
 
     function selectStyleDelegate( target, metaTarget ) {
-        var styleTarget = ( target === "" || target.length == 0 ? metaTarget : target )
+        var styleTarget = ( metaTarget === "" || metaTarget.length == 0 ? target : metaTarget ) // Note 20160404: Use meta target by default
         switch ( styleTarget ) {
         case "qan::Node": return nodeStyleDelegate
         case "qan::Edge": return edgeStyleDelegate
@@ -197,9 +197,6 @@ Qps.PropertiesListView {
                 drag.target: edge
                 onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
                 onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
-            }
-            Component.onCompleted: {
-                console.debug( "edgeStyleDelegate() created: style.name=" + styleProperties.name )
             }
         }
     } // Component: edgeStyleDelegate
