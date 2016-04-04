@@ -233,13 +233,14 @@ Item {
         ColumnLayout {
             anchors.fill: parent
             ListView {
+                id: edgesList
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
                 model: graph.edges
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlight: Rectangle {
-                    x: 0; y: ( ListView.view.currentItem != null ? ListView.view.currentItem.y : 0 )
-                    width: ListView.view.width; height: ( ListView.view.currentItem != null ? ListView.view.currentItem.height : 100 )
+                    x: 0; y: ( edgesList.currentItem != null ? edgesList.currentItem.y : 0 )
+                    width: edgesList.width; height: ( edgesList.currentItem != null ? edgesList.currentItem.height : 100 )
                     color: "lightsteelblue"; opacity: 0.7; radius: 5
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }

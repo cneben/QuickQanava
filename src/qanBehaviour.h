@@ -32,6 +32,7 @@
 #include <QObject>
 
 // GTpo headers
+#include <memory>   // FIXME 20160404: remove that later, memory was missing from gtpoBehaviour.h
 #include "../GTpo/src/gtpoBehaviour.h"
 
 // Qanava headers
@@ -43,22 +44,23 @@ namespace qan { // ::qan
  *
  *  \nosubgrouping
  */
-class NodeBehaviour : public gtpo::NodeBehaviour< qan::Config >
+class NodeBehaviour : public QObject,
+                      public gtpo::NodeBehaviour< qan::Config >
 {
     Q_OBJECT
 public:
     NodeBehaviour( QObject* parent = nullptr );
     virtual ~NodeBehaviour() { }
 
-    using WeakNode          = std::weak_ptr< qan::Config::Node >;
+    using WeakNode  = std::weak_ptr< qan::Config::Node >;
 
-    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void { (void)weakInNode; }
-    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void;
+    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void;
 
-    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
-    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void;
+    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void;
 
-    virtual auto    nodeModified( WeakNode& weakNode ) -> void { (void)weakNode; }
+    virtual auto    nodeModified( WeakNode& weakNode ) -> void;
 
 protected:
     virtual auto    inNodeInserted( qan::Node& inNode ) -> void { Q_UNUSED( inNode ); }

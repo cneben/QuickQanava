@@ -43,35 +43,35 @@ auto    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) -> void
 {
     SharedNode inNode = weakInNode.lock();
     if ( inNode != nullptr )
-        inNodeInserted( inNode );
+        inNodeInserted( *inNode );
 }
 
 auto    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode ) -> void
 {
     SharedNode inNode = weakInNode.lock();
     if ( inNode != nullptr )
-        inNodeRemoved( inNode );
+        inNodeRemoved( *inNode );
 }
 
 auto    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode ) -> void
 {
     SharedNode outNode = weakOutNode.lock();
     if ( outNode != nullptr )
-        outNodeInserted( outNode );
+        outNodeInserted( *outNode );
 }
 
 auto    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode ) -> void
 {
     SharedNode outNode = weakOutNode.lock();
     if ( outNode != nullptr )
-        outNodeRemoved( outNode );
+        outNodeRemoved( *outNode );
 }
 
 auto    NodeBehaviour::nodeModified( WeakNode& weakNode ) -> void
 {
     SharedNode node = weakNode.lock();
     if ( node != nullptr )
-        nodeModified( node );
+        nodeModified( *node );
 }
 
 } // ::qan
