@@ -59,10 +59,22 @@ public:
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
-    //! Called immediatly after \c weakNode has been inserted.
-    virtual auto nodeInserted( WeakNode& weakNode ) -> void { (void)weakNode; }
-    //! Called when \c weakNode is about to be removed.
-    virtual auto nodeRemoved( WeakNode& weakNode ) -> void { (void)weakNode; }
+    /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
+     */
+    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+
+    /*! \brief Called whean an in-edge with source \c weakInNode is about to be removed.
+     */
+    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+
+    /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
+     */
+    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+
+    /*! \brief Called whean an out-edge with destination \c weakOutNode is about to be removed.
+     */
+    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+
     /*! \brief Called immedialty after \c weakNode has been modified.
      *
      * Creating, inserting or removing a node does not generate a nodeModified() call.
@@ -89,14 +101,7 @@ public:
     using Edge              = typename Config::Edge;
     using SharedEdge        = std::shared_ptr< typename Config::Edge >;
     using WeakEdge          = std::weak_ptr< typename Config::Edge >;
-    using WeakEdges         = typename Config::template EdgeContainer< WeakEdge >;
-    using SharedEdges       = typename Config::template EdgeContainer< SharedEdge >;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 
-    //! Called immediatly after \c weakEdge has been inserted.
-    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
-    //! Called when \c weakEdge is about to be removed.
-    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
     /*! \brief Called immediatly after \c weakEdge has been modified.
      *
      * Creating, inserting or removing an edge does not generate an edgeModified() call.
@@ -157,20 +162,49 @@ protected:
  *
  */
 template < class Config >
-class GroupBehaviour :  public Behaviour< Config >,
-                        public NodeBehaviour< Config >,
-                        public EdgeBehaviour< Config >
+class GroupBehaviour :  public Behaviour< Config >
 {
+    /*! \name GroupBehaviour Object Management *///----------------------------
+    //@{
 public:
     GroupBehaviour() = default;
     virtual ~GroupBehaviour() = default;
     explicit GroupBehaviour( const GroupBehaviour& ) = default;
     GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
 
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
     using Group         = typename Config::Group;
     using SharedGroup   = std::shared_ptr< typename Config::Group >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Node Notification Interface *///---------------------------------
+    //@{
+    //! Called immediatly after \c weakNode has been inserted.
+    virtual auto    nodeInserted( WeakNode& weakNode ) -> void { (void)weakNode; }
+    //! Called when \c weakNode is about to be removed.
+    virtual auto    nodeRemoved( WeakNode& weakNode ) -> void { (void)weakNode; }
+    //! \copydoc gtpo::NodeBehaviour::nodeModified()
+    virtual auto    nodeModified( WeakNode& weakNode ) -> void { (void)weakNode; }
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge Notification Interface *///---------------------------------
+    //@{
+public:
+    //! Called immediatly after \c weakEdge has been inserted.
+    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    //! Called when \c weakEdge is about to be removed.
+    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    //! \copydoc gtpo::EdgeBehaviour::edgeModified()
+    virtual auto    edgeModified( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group Notification Interface *///--------------------------------
+    //@{
 public:
     /*! Called whenever group \c weakGroup has been modified.
      *
@@ -179,6 +213,8 @@ public:
      * \li group label changed
      */
     virtual auto    groupModified( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
@@ -197,7 +233,7 @@ public:
 
     //! Called immediatly after group \c weakGroup has been inserted in graph.
     virtual auto    groupInserted( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
-    //! Called immediatly before group \c weakGroup has been removed from graph.
+    //! Called immediatly before group \c weakGroup is removed from graph.
     virtual auto    groupRemoved( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
 };
 
@@ -313,6 +349,8 @@ private:
     /*! \name Notification Helper Methods *///---------------------------------
     //@{
 public:
+
+    // Group Behaviours Notification
     template < class Node >
     auto    notifyNodeInserted( Node& node ) -> void;
 
@@ -333,6 +371,7 @@ public:
     template < class Edge >
     auto    notifyEdgeModified( Edge& edge ) -> void;
 
+    // GraphBehaviours Notification
     template < class Group >
     auto    notifyGroupInserted( Group& group ) -> void;
 
