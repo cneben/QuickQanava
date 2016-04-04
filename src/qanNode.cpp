@@ -61,6 +61,11 @@ qan::Graph* Node::getGraph()
 }
 //-----------------------------------------------------------------------------
 
+void    Node::installBehaviour( qan::NodeBehaviour* behaviour )
+{
+    addBehaviour( behaviour );
+}
+
 /* Content Management *///-----------------------------------------------------
 void    Node::setStyle( NodeStyle* style )
 {

@@ -16,6 +16,7 @@ HEADERS +=  ./QuickQanava.h         \
             ./qanConfig.h           \
             ./qanEdge.h             \
             ./qanNode.h             \
+            ./qanBehaviour.h        \
             ./qanGroup.h            \
             ./qanGraph.h            \
             ./qanLayout.h           \
@@ -29,6 +30,7 @@ HEADERS +=  ./QuickQanava.h         \
 
 SOURCES +=  ./qanEdge.cpp               \
             ./qanNode.cpp               \
+            ./qanBehaviour.cpp          \
             ./qanGroup.cpp              \
             ./qanGraph.cpp              \
             ./qanLayout.cpp             \

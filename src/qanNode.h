@@ -36,6 +36,7 @@
 #include "./qanConfig.h"
 #include "./qanEdge.h"
 #include "./qanStyle.h"
+#include "./qanBehaviour.h"
 
 //! Main QuickQanava namespace
 namespace qan { // ::qan
@@ -88,6 +89,9 @@ signals:
     void            serializableChanged();
     //@}
     //-------------------------------------------------------------------------
+
+public:
+    void            installBehaviour( qan::NodeBehaviour* behaviour );
 
     /*! \name Node DnD Management *///-----------------------------------------
     //@{
