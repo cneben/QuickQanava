@@ -32,6 +32,10 @@
 
 namespace gtpo { // ::gtpo
 
+<<<<<<< HEAD
+=======
+/* GenNode Edges Management *///-----------------------------------------------
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
 template < class Config >
 auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
 {
@@ -43,8 +47,15 @@ auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->setSrc( node );
         Config::template insert< WeakEdges >::into( _outEdges, sharedOutEdge );
+<<<<<<< HEAD
         if ( !outEdge->getDst().expired() )
             Config::template insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
+=======
+        if ( !outEdge->getDst().expired() ) {
+            Config::template insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
+            notifyOutNodeInserted( outEdge->getDst() );
+        }
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
     }
 }
 
@@ -59,8 +70,15 @@ auto GenNode< Config >::addInEdge( WeakEdge sharedInEdge ) -> void
         if ( !inEdgeDst || inEdgeDst != node ) // In edge destination should point to target node
             inEdge->setDst( node );
         Config::template insert< WeakEdges >::into( _inEdges, sharedInEdge );
+<<<<<<< HEAD
         if ( !inEdge->getSrc().expired() )
             Config::template insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
+=======
+        if ( !inEdge->getSrc().expired() ) {
+            Config::template insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
+            notifyInNodeInserted( inEdge->getSrc() );
+        }
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
     }
 }
 
@@ -75,6 +93,10 @@ auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
                         ownedOutEdgeSrc == sharedNode, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
     auto ownedOutEdgeDst = ownedOutEdge->getDst().lock();
     gtpo::assert_throw( ownedOutEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
+<<<<<<< HEAD
+=======
+    notifyOutNodeRemoved( ownedOutEdge->getDst() );
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
     Config::template remove< WeakEdges >::from( _outEdges, outEdge );
     Config::template remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
     if ( getInDegree() == 0 ) {
@@ -96,6 +118,10 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 
     auto ownedInEdgeSrc = ownedInEdge->getSrc().lock();
     gtpo::assert_throw( ownedInEdgeSrc != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
+<<<<<<< HEAD
+=======
+    notifyInNodeRemoved( ownedInEdge->getSrc() );
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
     Config::template remove< WeakEdges >::from( _inEdges, inEdge );
     Config::template remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
     if ( getInDegree() == 0 ) {
@@ -104,5 +130,39 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
             graph->installRootNode( WeakNode( sharedNode ) );
     }
 }
+<<<<<<< HEAD
+=======
+//-----------------------------------------------------------------------------
+
+/* GenNode Behaviour Notifications *///----------------------------------------
+template < class Config >
+auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::inNodeInserted, inNode );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeInserted( inNode ); } );
+}
+
+template < class Config >
+auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::inNodeRemoved, inNode );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved( inNode ); } );
+}
+
+template < class Config >
+auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeInserted( outNode ); } );
+}
+
+template < class Config >
+auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );
+}
+//-----------------------------------------------------------------------------
+>>>>>>> d729343ab32333a4dc041bc6f92af037508e0637
 
 } // ::gtpo
