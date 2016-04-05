@@ -21,6 +21,11 @@ message StyleManager {
     map<string, int32> default_edge_styles  = 4;
 }
 
+message Node {
+    gtpo.pb.Node    base            = 1;
+    int32           style_id        = 2;
+}
+
 message Graph {
     gtpo.pb.Graph   graph           = 1;
     StyleManager    style_manager   = 2;

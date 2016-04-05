@@ -112,18 +112,19 @@ public:
                                qan::Graph& graph,
                                gtpo::IProgressNotifier& progress ) -> void;
 
+    static  auto    serializeQanNodeOut( const WeakNode& weakNode, qan::pb::Node& pbQanNode, const ObjectIdMap& objectIdMap ) -> void;
+    static  auto    serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void;
+
 protected:
     /*! Save style manager \c styleManager in graph \c graph to Protocol Buffer message \c pbStyleManager.
      *
-     * Arguments \c graph and \c objectIdMap are used serialize the mapping between graph nodes and their associed style.
+     * Arguments \c graph and \c objectIdMap are used to serialize the mapping between graph nodes and their associed style.
      */
-    static auto serializeStyleManagerOut( const qan::Graph& graph,
-                                          const qan::StyleManager& styleManager,
-                                          qan::pb::StyleManager& pbStyleManager,
-                                          const ObjectIdMap& objectIdMap  ) -> void;
-    static auto serializeStyleManagerIn( const qan::pb::StyleManager& pbStyleManager,
-                                         qan::StyleManager& styleManager,
-                                         const IdObjectMap& idObjectMap  ) -> void;
+    auto serializeStyleManagerOut( const qan::Graph& graph,
+                                   const qan::StyleManager& styleManager,
+                                   qan::pb::StyleManager& pbStyleManager ) -> void;
+    auto serializeStyleManagerIn( const qan::pb::StyleManager& pbStyleManager,
+                                  qan::StyleManager& styleManager  ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };

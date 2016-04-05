@@ -50,7 +50,7 @@ Graph::Graph( QQuickItem* parent ) :
 void    Graph::clear( )
 {
     gtpo::GenGraph< qan::Config >::clear();
-    _styleManager.clear();
+    _styleManager->clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -68,9 +68,6 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
             //QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );
             //setCppOwnership( item );
-            /*for ( auto childItem: item->childItems() ) {
-                QQmlEngine::setObjectOwnership( childItem, QQmlEngine::CppOwnership );
-            }*/
             item->setVisible( true );
             item->setParentItem( this );
         } else {
@@ -156,9 +153,6 @@ qan::Node* Graph::insertNode( QQmlComponent* nodeComponent )
         connect( node, &qan::Node::nodeDoubleClicked, this, &qan::Graph::nodeDoubleClicked );
     } else
         qDebug() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
-
-//    if ( node != nullptr )
-//        QQmlEngine::setObjectOwnership( node, QQmlEngine::CppOwnership );
     return node;
 }
 
@@ -176,11 +170,13 @@ qan::Node*  Graph::insertNode( QString nodeClassName )
     if ( node != nullptr ) {
         GTpoGraph::insertNode( sharedNode );
 
+        qan::NodeStyle* defaultStyle = qobject_cast< qan::NodeStyle* >( getStyleManager()->getDefaultNodeStyle( nodeClassName ) );
+        if ( defaultStyle != nullptr )
+            node->setStyle( defaultStyle );
+
         connect( node, &qan::Node::nodeClicked, this, &qan::Graph::nodeClicked );
         connect( node, &qan::Node::nodeRightClicked, this, &qan::Graph::nodeRightClicked );
         connect( node, &qan::Node::nodeDoubleClicked, this, &qan::Graph::nodeDoubleClicked );
-
-        //QQmlEngine::setObjectOwnership( node, QQmlEngine::CppOwnership );
     }
     return node;
 }
@@ -257,6 +253,11 @@ qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCom
             edge->setSrc( sharedSource );
             edge->setDst( sharedDestination );
             GTpoGraph::insertEdge( std::shared_ptr<qan::Edge>{edge} );
+
+            qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
+            if ( defaultStyle != nullptr )
+                edge->setStyle( defaultStyle );
+
             edge->setVisible( true );
             edge->updateItem();
 

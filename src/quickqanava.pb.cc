@@ -30,6 +30,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
   StyleManager_reflection_ = NULL;
 const ::google::protobuf::Descriptor* StyleManager_DefaultNodeStylesEntry_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* StyleManager_DefaultEdgeStylesEntry_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* Node_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Node_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Graph_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Graph_reflection_ = NULL;
@@ -84,7 +87,23 @@ void protobuf_AssignDesc_quickqanava_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StyleManager, _is_default_instance_));
   StyleManager_DefaultNodeStylesEntry_descriptor_ = StyleManager_descriptor_->nested_type(0);
   StyleManager_DefaultEdgeStylesEntry_descriptor_ = StyleManager_descriptor_->nested_type(1);
-  Graph_descriptor_ = file->message_type(2);
+  Node_descriptor_ = file->message_type(2);
+  static const int Node_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, base_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, style_id_),
+  };
+  Node_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Node_descriptor_,
+      Node::default_instance_,
+      Node_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Node),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _is_default_instance_));
+  Graph_descriptor_ = file->message_type(3);
   static const int Graph_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Graph, graph_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Graph, style_manager_),
@@ -135,6 +154,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
             0>::CreateDefaultInstance(
                 StyleManager_DefaultEdgeStylesEntry_descriptor_));
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Node_descriptor_, &Node::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Graph_descriptor_, &Graph::default_instance());
 }
 
@@ -145,6 +166,8 @@ void protobuf_ShutdownFile_quickqanava_2eproto() {
   delete Style_reflection_;
   delete StyleManager::default_instance_;
   delete StyleManager_reflection_;
+  delete Node::default_instance_;
+  delete Node_reflection_;
   delete Graph::default_instance_;
   delete Graph_reflection_;
 }
@@ -171,16 +194,20 @@ void protobuf_AddDesc_quickqanava_2eproto() {
     "nager.DefaultEdgeStylesEntry\0328\n\026DefaultN"
     "odeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001"
     "(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry\022\013\n\003key\030"
-    "\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"S\n\005Graph\022\035\n\005gra"
-    "ph\030\001 \001(\0132\016.gtpo.pb.Graph\022+\n\rstyle_manage"
-    "r\030\002 \001(\0132\024.qan.pb.StyleManagerb\006proto3", 637);
+    "\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node\022\033\n\004base"
+    "\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_id\030\002 \001(\005\""
+    "S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.pb.Graph\022"
+    "+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb.StyleMan"
+    "agerb\006proto3", 692);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "quickqanava.proto", &protobuf_RegisterTypes);
   Style::default_instance_ = new Style();
   StyleManager::default_instance_ = new StyleManager();
+  Node::default_instance_ = new Node();
   Graph::default_instance_ = new Graph();
   Style::default_instance_->InitAsDefaultInstance();
   StyleManager::default_instance_->InitAsDefaultInstance();
+  Node::default_instance_->InitAsDefaultInstance();
   Graph::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_quickqanava_2eproto);
 }
@@ -1468,6 +1495,312 @@ StyleManager::default_edge_styles() const {
 StyleManager::mutable_default_edge_styles() {
   // @@protoc_insertion_point(field_mutable_map:qan.pb.StyleManager.default_edge_styles)
   return default_edge_styles_.MutableMap();
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Node::kBaseFieldNumber;
+const int Node::kStyleIdFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Node::Node()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:qan.pb.Node)
+}
+
+void Node::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  base_ = const_cast< ::gtpo::pb::Node*>(&::gtpo::pb::Node::default_instance());
+}
+
+Node::Node(const Node& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:qan.pb.Node)
+}
+
+void Node::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  base_ = NULL;
+  style_id_ = 0;
+}
+
+Node::~Node() {
+  // @@protoc_insertion_point(destructor:qan.pb.Node)
+  SharedDtor();
+}
+
+void Node::SharedDtor() {
+  if (this != default_instance_) {
+    delete base_;
+  }
+}
+
+void Node::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Node::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Node_descriptor_;
+}
+
+const Node& Node::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_quickqanava_2eproto();
+  return *default_instance_;
+}
+
+Node* Node::default_instance_ = NULL;
+
+Node* Node::New(::google::protobuf::Arena* arena) const {
+  Node* n = new Node;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Node::Clear() {
+  if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
+  base_ = NULL;
+  style_id_ = 0;
+}
+
+bool Node::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:qan.pb.Node)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .gtpo.pb.Node base = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_base()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_style_id;
+        break;
+      }
+
+      // optional int32 style_id = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_style_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &style_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:qan.pb.Node)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:qan.pb.Node)
+  return false;
+#undef DO_
+}
+
+void Node::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:qan.pb.Node)
+  // optional .gtpo.pb.Node base = 1;
+  if (this->has_base()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->base_, output);
+  }
+
+  // optional int32 style_id = 2;
+  if (this->style_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->style_id(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:qan.pb.Node)
+}
+
+::google::protobuf::uint8* Node::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:qan.pb.Node)
+  // optional .gtpo.pb.Node base = 1;
+  if (this->has_base()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, *this->base_, target);
+  }
+
+  // optional int32 style_id = 2;
+  if (this->style_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->style_id(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:qan.pb.Node)
+  return target;
+}
+
+int Node::ByteSize() const {
+  int total_size = 0;
+
+  // optional .gtpo.pb.Node base = 1;
+  if (this->has_base()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->base_);
+  }
+
+  // optional int32 style_id = 2;
+  if (this->style_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->style_id());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Node::MergeFrom(const ::google::protobuf::Message& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Node* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Node>(
+          &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void Node::MergeFrom(const Node& from) {
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (from.has_base()) {
+    mutable_base()->::gtpo::pb::Node::MergeFrom(from.base());
+  }
+  if (from.style_id() != 0) {
+    set_style_id(from.style_id());
+  }
+}
+
+void Node::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Node::CopyFrom(const Node& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Node::IsInitialized() const {
+
+  return true;
+}
+
+void Node::Swap(Node* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Node::InternalSwap(Node* other) {
+  std::swap(base_, other->base_);
+  std::swap(style_id_, other->style_id_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Node::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Node_descriptor_;
+  metadata.reflection = Node_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Node
+
+// optional .gtpo.pb.Node base = 1;
+bool Node::has_base() const {
+  return !_is_default_instance_ && base_ != NULL;
+}
+void Node::clear_base() {
+  if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
+  base_ = NULL;
+}
+const ::gtpo::pb::Node& Node::base() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Node.base)
+  return base_ != NULL ? *base_ : *default_instance_->base_;
+}
+::gtpo::pb::Node* Node::mutable_base() {
+  
+  if (base_ == NULL) {
+    base_ = new ::gtpo::pb::Node;
+  }
+  // @@protoc_insertion_point(field_mutable:qan.pb.Node.base)
+  return base_;
+}
+::gtpo::pb::Node* Node::release_base() {
+  
+  ::gtpo::pb::Node* temp = base_;
+  base_ = NULL;
+  return temp;
+}
+void Node::set_allocated_base(::gtpo::pb::Node* base) {
+  delete base_;
+  base_ = base;
+  if (base) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.Node.base)
+}
+
+// optional int32 style_id = 2;
+void Node::clear_style_id() {
+  style_id_ = 0;
+}
+ ::google::protobuf::int32 Node::style_id() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Node.style_id)
+  return style_id_;
+}
+ void Node::set_style_id(::google::protobuf::int32 value) {
+  
+  style_id_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.Node.style_id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

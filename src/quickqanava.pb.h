@@ -42,6 +42,7 @@ void protobuf_AssignDesc_quickqanava_2eproto();
 void protobuf_ShutdownFile_quickqanava_2eproto();
 
 class Graph;
+class Node;
 class Style;
 class StyleManager;
 
@@ -328,6 +329,94 @@ class StyleManager : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static StyleManager* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Node : public ::google::protobuf::Message {
+ public:
+  Node();
+  virtual ~Node();
+
+  Node(const Node& from);
+
+  inline Node& operator=(const Node& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Node& default_instance();
+
+  void Swap(Node* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Node* New() const { return New(NULL); }
+
+  Node* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Node& from);
+  void MergeFrom(const Node& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Node* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .gtpo.pb.Node base = 1;
+  bool has_base() const;
+  void clear_base();
+  static const int kBaseFieldNumber = 1;
+  const ::gtpo::pb::Node& base() const;
+  ::gtpo::pb::Node* mutable_base();
+  ::gtpo::pb::Node* release_base();
+  void set_allocated_base(::gtpo::pb::Node* base);
+
+  // optional int32 style_id = 2;
+  void clear_style_id();
+  static const int kStyleIdFieldNumber = 2;
+  ::google::protobuf::int32 style_id() const;
+  void set_style_id(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:qan.pb.Node)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::gtpo::pb::Node* base_;
+  ::google::protobuf::int32 style_id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_quickqanava_2eproto();
+  friend void protobuf_AssignDesc_quickqanava_2eproto();
+  friend void protobuf_ShutdownFile_quickqanava_2eproto();
+
+  void InitAsDefaultInstance();
+  static Node* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -754,6 +843,61 @@ StyleManager::mutable_default_edge_styles() {
 
 // -------------------------------------------------------------------
 
+// Node
+
+// optional .gtpo.pb.Node base = 1;
+inline bool Node::has_base() const {
+  return !_is_default_instance_ && base_ != NULL;
+}
+inline void Node::clear_base() {
+  if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
+  base_ = NULL;
+}
+inline const ::gtpo::pb::Node& Node::base() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Node.base)
+  return base_ != NULL ? *base_ : *default_instance_->base_;
+}
+inline ::gtpo::pb::Node* Node::mutable_base() {
+  
+  if (base_ == NULL) {
+    base_ = new ::gtpo::pb::Node;
+  }
+  // @@protoc_insertion_point(field_mutable:qan.pb.Node.base)
+  return base_;
+}
+inline ::gtpo::pb::Node* Node::release_base() {
+  
+  ::gtpo::pb::Node* temp = base_;
+  base_ = NULL;
+  return temp;
+}
+inline void Node::set_allocated_base(::gtpo::pb::Node* base) {
+  delete base_;
+  base_ = base;
+  if (base) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.Node.base)
+}
+
+// optional int32 style_id = 2;
+inline void Node::clear_style_id() {
+  style_id_ = 0;
+}
+inline ::google::protobuf::int32 Node::style_id() const {
+  // @@protoc_insertion_point(field_get:qan.pb.Node.style_id)
+  return style_id_;
+}
+inline void Node::set_style_id(::google::protobuf::int32 value) {
+  
+  style_id_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.Node.style_id)
+}
+
+// -------------------------------------------------------------------
+
 // Graph
 
 // optional .gtpo.pb.Graph graph = 1;
@@ -831,6 +975,8 @@ inline void Graph::set_allocated_style_manager(::qan::pb::StyleManager* style_ma
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

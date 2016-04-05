@@ -351,6 +351,7 @@ template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&
 {
     _objectIdMap.clear();
+    _maxId = 0;
     int id = 0;
     for ( auto& node: graph.getNodes() )
         _objectIdMap.insert( std::make_pair( node.get(), ++id ) );
@@ -358,7 +359,18 @@ auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph 
     for ( auto& edge: graph.getEdges() )
         _objectIdMap.insert( std::make_pair( edge.get(), ++id ) );
 
+    _maxId = ++id;
     return _objectIdMap;
+}
+
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::addObjectId( void* object ) -> int
+{
+    if ( object == nullptr )
+        return -1;
+    ++_maxId;
+    _objectIdMap.insert( std::make_pair( object, _maxId ) );
+    return _maxId;
 }
 
 template < class GraphConfig >

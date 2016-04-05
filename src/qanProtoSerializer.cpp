@@ -47,7 +47,36 @@ ProtoSerializer::ProtoSerializer( QObject* parent )  :
     QObject( parent ),
     _gtpoSerializer( "qan::Node", "qan::Edge", "qan::Group" )
 {
+    _gtpoSerializer.registerNodeOutFunctor( "qan::Node",
+                                            []( google::protobuf::Any* anyNodes,
+                                                const qan::ProtoSerializer::WeakNode& weakNode,
+                                                const qan::ProtoSerializer::ObjectIdMap& objectIdMap  ) {
+        std::shared_ptr< qan::Node > qanNode = std::static_pointer_cast< qan::Node >( weakNode.lock() );
+        if ( !qanNode )
+            return;
+        qan::pb::Node pbQanNode;
+        serializeQanNodeOut( weakNode, pbQanNode, objectIdMap );
+        anyNodes->PackFrom( pbQanNode );
+    } );
 
+    _gtpoSerializer.registerNodeInFunctor( []( const google::protobuf::Any& anyNode,
+                                              qan::ProtoSerializer::Graph& graph,
+                                              qan::ProtoSerializer::IdObjectMap& idObjectMap  ) -> qan::ProtoSerializer::WeakNode {
+        qan::ProtoSerializer::WeakNode weakNode;
+        if ( anyNode.Is< qan::pb::Node >() ) {
+            try {
+                qan::pb::Node pbQanNode;
+                if ( !anyNode.UnpackTo( &pbQanNode ) )
+                    throw std::runtime_error( "Error while unpacking protobuf qan::pb::Node" );
+                weakNode = graph.createNode( std::string( "qan::Node" ) );
+                qan::Node* qanNode = qobject_cast< qan::Node* >( weakNode.lock().get() );
+                if ( qanNode == nullptr )
+                    throw std::runtime_error( "Creation of a qan::Node fails." );
+                serializeQanNodeIn( pbQanNode, weakNode, idObjectMap );
+            } catch ( std::exception e ) { std::cerr << "hlg::ProtoSerializer: hlg::Node in-functor error: " << e.what() << std::endl; }
+        }
+        return weakNode;
+    } );
 }
 //-----------------------------------------------------------------------------
 
@@ -90,19 +119,17 @@ void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::
         os.close();
 }
 
-//! Low level access to protocol buffer GTpoGraph message.
 auto    ProtoSerializer::serializeOut( const qan::Graph& graph,
                                        qan::pb::Graph& pbGraph,
                                        gtpo::IProgressNotifier& progressNotifier ) -> void
 {
     const qan::StyleManager* styleManager = graph.getStyleManager();
-    if ( styleManager == nullptr ) {
+    if ( styleManager == nullptr || pbGraph.mutable_style_manager() == nullptr ) {
         std::cerr << "qan::ProtoSerializer::serializeOut(): Error, style manager is nullptr." << std::endl;
         return;
     }
-    qan::pb::StyleManager pbStyleManager;
     _gtpoSerializer.generateObjectIdMap( graph ); // Force generation of internal graph primitive / ID map before serializing style manager
-    serializeStyleManagerOut( graph, *styleManager, pbStyleManager, _gtpoSerializer.getObjectIdMap() );
+    serializeStyleManagerOut( graph, *styleManager, *pbGraph.mutable_style_manager() );
     gtpo::pb::Graph* pbGtpoGraph = pbGraph.mutable_graph();
     if ( pbGtpoGraph != nullptr )
         _gtpoSerializer.serializeOut( graph, *pbGtpoGraph, progressNotifier );
@@ -111,7 +138,7 @@ auto    ProtoSerializer::serializeOut( const qan::Graph& graph,
 void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan::ProgressNotifier* progress )
 {
     if ( fileName.isEmpty() ) {
-        qDebug() << "qan::ProtoSerializer::loadGraphFromo(): Error: file name is invalid.";
+        qDebug() << "qan::ProtoSerializer::loadGraphFrom(): Error: file name is invalid.";
         return;
     }
     if ( graph == nullptr ) {
@@ -157,17 +184,56 @@ auto    ProtoSerializer::serializeIn( const qan::pb::Graph& pbGraph,
             std::cerr << "qan::ProtoSerializer::serializeIn(): Error, style manager is nullptr." << std::endl;
             return;
         }
-        serializeStyleManagerIn( pbGraph.style_manager(), *styleManager, _gtpoSerializer.getIdObjectMap() );
         _gtpoSerializer.serializeIn( pbGraph.graph(), graph, progress );
+        serializeStyleManagerIn( pbGraph.style_manager(), *styleManager );  // Note 20160404: Warning, gtpoSerializer.serializeIn() clear the objectIdMap, style manager should be serialized _after_ topology
     } catch ( ... ) { std::cerr << "qan::ProtoSerializer::serializeIn(): Error while serializing in graph." << std::endl; }
     progress.endProgress();
 }
 
+auto    ProtoSerializer::serializeQanNodeOut( const WeakNode& weakNode, qan::pb::Node& pbQanNode, const ObjectIdMap& objectIdMap ) -> void
+{
+    if ( pbQanNode.mutable_base() != nullptr )
+        gtpo::ProtoSerializer< qan::Config >::serializeGTpoNodeOut( weakNode,
+                                                                    *pbQanNode.mutable_base(),
+                                                                    objectIdMap ); // Serialize base gtpo.pb.GTpoNode
+    std::shared_ptr< qan::Node > qanNode = std::static_pointer_cast< qan::Node >( weakNode.lock() );
+    if ( qanNode != nullptr ) {
+        int styleId = -1;
+        try {
+            styleId = objectIdMap.at( qanNode->getStyle() );
+        } catch ( std::out_of_range ) { }
+        pbQanNode.set_style_id( styleId );  // Default to -1 if there is a style mapping error
+    }
+}
+
+auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void
+{
+    qan::Node* qanNode = qobject_cast< qan::Node* >( weakNode.lock().get() );
+    if ( qanNode != nullptr ) {    // Feed the newly created node with PB node data
+        gtpo::ProtoSerializer< qan::Config >::serializeGTpoNodeIn( pbQanNode.base(), weakNode, idObjectMap ); // Serialize base gtpo.pb.GTpoNode
+
+        // Note 20160404: This code should not find any style since style manager is serialized _after_ topology, kept
+        // if a node is serialized in from the network...
+        void* styleObject{ nullptr };
+        try {
+            styleObject = idObjectMap.at( pbQanNode.style_id() );
+        } catch ( std::out_of_range ) { }
+        if ( styleObject != nullptr ) {
+            qan::NodeStyle* nodeStyle = reinterpret_cast< qan::NodeStyle* >( styleObject );
+            qanNode->setStyle( nodeStyle );
+        }
+    }
+}
+
 auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
                                                    const qan::StyleManager& styleManager,
-                                                   qan::pb::StyleManager& pbStyleManager,
-                                                   const ObjectIdMap& objectIdMap ) -> void
+                                                   qan::pb::StyleManager& pbStyleManager ) -> void
 {
+    for ( const auto style : styleManager )
+        _gtpoSerializer.addObjectId( style );
+    const ObjectIdMap& objectIdMap = _gtpoSerializer.getObjectIdMap();
+
+    // Map styles to nodes ids
     std::unordered_map< qan::Style*, int > styleObjectIdMap;
     try {
         for ( auto& node: graph.getNodes() ) {   // Mapping styles to the node where they are applied
@@ -182,30 +248,29 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
         std::cerr << "qan::ProtoSerializer::saveStyleManager(): Warning: Out of range access in objectIdMap.";
     }
 
-    qDebug() << "ProtoSerializer::saveStyleManager(): Saving " << styleManager.size() << " styles...";
     pbStyleManager.set_style_count( styleManager.size() );
-    int styleId = 0;
-    std::unordered_map< qan::Style*, int > styleIdMap;
     for ( auto style : styleManager ) {
         qan::Style* qanStyle = qobject_cast< qan::Style* >( style );
-        int id = ++styleId;
-        styleIdMap.insert( std::make_pair( qanStyle, id ) );
+        int styleId = -1;
+        try {
+            styleId = objectIdMap.at( style );
+        } catch ( std::out_of_range ) { }
         if ( qanStyle != nullptr ) {
             qan::pb::Style* pbStyle = pbStyleManager.add_styles( );
-            pbStyle->set_id( id );
+            pbStyle->set_id( styleId );
             pbStyle->set_meta_target( qanStyle->getMetaTarget().toStdString() );
             pbStyle->set_name( qanStyle->getName().toStdString() );
             pbStyle->set_target( qanStyle->getTarget().toStdString() );
 
             if ( style->inherits( "qan::NodeStyle" ) ) {
                 auto nodes = styleObjectIdMap.equal_range( qanStyle );
-                for ( auto nodeIter = nodes.first; nodeIter != nodes.second; ++nodeIter )
+                for ( auto nodeIter = nodes.first; nodeIter != nodes.second; ++nodeIter ) {
                     pbStyle->add_node_ids( nodeIter->second );
+                }
             } else if ( style->inherits( "qan::EdgeStyle" ) ) {
                 auto edges = styleObjectIdMap.equal_range( qanStyle );
                 for ( auto edgeIter = edges.first; edgeIter != edges.second; ++edgeIter ) {
                     pbStyle->add_edge_ids( edgeIter->second );
-                    std::cerr << "Saving edge Id:" << edgeIter->second << std::endl;
                 }
             }
             qps::pb::Properties* pbProperties = pbStyle->mutable_properties();
@@ -221,7 +286,7 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
         std::string target = nodeStyleIter.key().toStdString();
         int styleId = -1;
         try {
-            styleId = styleIdMap.at( nodeStyleIter.value() );
+            styleId = objectIdMap.at( nodeStyleIter.value() );
         } catch ( std::out_of_range ) { }
         defaultNodeStyle.insert( std::make_pair( target, styleId ) );
     }
@@ -235,7 +300,7 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
         std::string target = edgeStyleIter.key().toStdString();
         int styleId = -1;
         try {
-            styleId = styleIdMap.at( edgeStyleIter.value() );
+            styleId = objectIdMap.at( edgeStyleIter.value() );
         } catch ( std::out_of_range ) { }
         defaultEdgeStyle.insert( std::make_pair( target, styleId ) );
     }
@@ -243,48 +308,50 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
 }
 
 auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& pbStyleManager,
-                                                  qan::StyleManager& styleManager,
-                                                  const IdObjectMap& idObjectMap ) -> void
+                                                  qan::StyleManager& styleManager ) -> void
 {
-    std::unordered_map< int, qan::Style* > idStyleMap;
+    IdObjectMap& idObjectMap = _gtpoSerializer.getIdObjectMap();
     for ( auto pbStyle : pbStyleManager.styles() ) {
         qan::Style* style = nullptr;
         std::string styleName = pbStyle.name();
-        if ( pbStyle.meta_target() == "qan::Node" ) {
-            style = styleManager.createNodeStyle( QString::fromStdString( styleName ),
-                                                  "qan::Node" );
-            if ( style != nullptr ) {
-                idStyleMap.insert( std::make_pair( pbStyle.id(), style ) );
-                qan::NodeStyle* nodeStyle = static_cast< qan::NodeStyle* >( style );
-                for ( auto nodeId : pbStyle.node_ids() ) {
-                    try {
-                        void* object = idObjectMap.at( nodeId );
-                        qan::Node* node = reinterpret_cast< qan::Node* >( object );
-                        if ( node != nullptr )
-                            node->setStyle( nodeStyle );
-                    } catch ( std::out_of_range ) { }
+        style = styleManager.findStyleByName( QString::fromStdString( styleName ) );    // Note 20160404: Existing styles are overwritten (for exemple default styles...)
+        if ( style == nullptr ) {
+            if ( pbStyle.meta_target() == "qan::Node" ) {
+                style = styleManager.createNodeStyle( QString::fromStdString( styleName ),
+                                                      "qan::Node" );
+                if ( style != nullptr ) {
+                    qan::NodeStyle* nodeStyle = static_cast< qan::NodeStyle* >( style );
+                    for ( auto nodeId : pbStyle.node_ids() ) {
+                        try {
+                            void* object = idObjectMap.at( nodeId );
+                            qan::Node* node = reinterpret_cast< qan::Node* >( object );
+                            if ( node != nullptr )
+                                node->setStyle( nodeStyle );
+                        } catch ( std::out_of_range ) { }
+                    }
+                }
+            }
+            else if ( pbStyle.meta_target() == "qan::Edge" ) {
+                style = styleManager.createEdgeStyle( QString::fromStdString( styleName ),
+                                                      "qan::Edge" );
+                if ( style != nullptr ) {
+                    qan::EdgeStyle* edgeStyle = static_cast< qan::EdgeStyle* >( style );
+                    for ( auto edgeId : pbStyle.edge_ids() ) {
+                        try {
+                            std::cerr << "edgeId=" << edgeId << std::endl;
+                            void* object = idObjectMap.at( edgeId );
+                            qan::Edge* edge = reinterpret_cast< qan::Edge* >( object );
+                            if ( edge != nullptr )
+                                edge->setStyle( edgeStyle );
+                        } catch ( std::out_of_range ) { std::cerr << "ProtoSerializer::loadStyleManager(): Error: Invalid edge ID." << std::endl; }
+                    }
                 }
             }
         }
-        else if ( pbStyle.meta_target() == "qan::Edge" ) {
-            style = styleManager.createEdgeStyle( QString::fromStdString( styleName ),
-                                                  "qan::Edge" );
-            if ( style != nullptr ) {
-                idStyleMap.insert( std::make_pair( pbStyle.id(), style ) );
-                qan::EdgeStyle* edgeStyle = static_cast< qan::EdgeStyle* >( style );
-                for ( auto edgeId : pbStyle.edge_ids() ) {
-                    try {
-                        std::cerr << "edgeId=" << edgeId << std::endl;
-                        void* object = idObjectMap.at( edgeId );
-                        qan::Edge* edge = reinterpret_cast< qan::Edge* >( object );
-                        if ( edge != nullptr )
-                            edge->setStyle( edgeStyle );
-                    } catch ( std::out_of_range ) { std::cerr << "ProtoSerializer::loadStyleManager(): Error: Invalid edge ID." << std::endl; }
-                }
-            }
-        }
-        if ( style != nullptr )
+        if ( style != nullptr ) {
+            idObjectMap.insert( std::make_pair( pbStyle.id(), style ) );
             qps::ProtoSerializer::serializeIn( pbStyle.properties(), *style );
+        }
     }
 
     // Serializing default node styles
@@ -293,20 +360,20 @@ auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& p
         int styleId = defaultNodeIter.second;
         qan::NodeStyle* style = nullptr;
         try {
-            style = qobject_cast< qan::NodeStyle* >( idStyleMap.at( styleId ) );
+            style = reinterpret_cast< qan::NodeStyle* >( idObjectMap.at( styleId ) );
+            if ( style != nullptr )
+                styleManager.setDefaultNodeStyle( QString::fromStdString( targetName ), style );
         } catch ( std::out_of_range ) { }
-        if ( style != nullptr )
-            styleManager.setDefaultNodeStyle( QString::fromStdString( targetName ), style );
     }
     for ( auto defaultEdgeIter : pbStyleManager.default_edge_styles() ) {
         std::string targetName = defaultEdgeIter.first;
         int styleId = defaultEdgeIter.second;
         qan::EdgeStyle* style = nullptr;
         try {
-            style = qobject_cast< qan::EdgeStyle* >( idStyleMap.at( styleId ) );
+            style = reinterpret_cast< qan::EdgeStyle* >( idObjectMap.at( styleId ) );
+            if ( style != nullptr )
+                styleManager.setDefaultEdgeStyle( QString::fromStdString( targetName ), style );
         } catch ( std::out_of_range ) { }
-        if ( style != nullptr )
-            styleManager.setDefaultEdgeStyle( QString::fromStdString( targetName ), style );
     }
 }
 //-----------------------------------------------------------------------------

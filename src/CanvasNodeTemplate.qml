@@ -47,7 +47,10 @@ Item {
 
     Drag.active: node.dropable && nodeDragArea.drag.active
     Drag.dragType: Drag.Internal
-
+    onNodeChanged: {
+        if ( node != null && node != undefined )
+            node.Drag.dragType = Drag.Internal
+    }
     function requestPaint( ) {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.requestPaint( );
