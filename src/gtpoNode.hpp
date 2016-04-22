@@ -88,6 +88,7 @@ auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
         if ( graph != nullptr )
             graph->installRootNode( WeakNode( sharedNode ) );
     }
+    notifyOutNodeRemoved();
 }
 
 template < class Config >
@@ -110,6 +111,7 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
         if ( graph != nullptr )
             graph->installRootNode( WeakNode( sharedNode ) );
     }
+    notifyInNodeRemoved();
 }
 //-----------------------------------------------------------------------------
 
@@ -129,6 +131,13 @@ auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) -> void
 }
 
 template < class Config >
+auto    GenNode< Config >::notifyInNodeRemoved() -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::inNodeRemoved );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved(); } );
+}
+
+template < class Config >
 auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) -> void
 {
     notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
@@ -140,6 +149,13 @@ auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) -> void
 {
     notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
     sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );
+}
+
+template < class Config >
+auto    GenNode< Config >::notifyOutNodeRemoved() -> void
+{
+    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeRemoved );
+    sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( ); } );
 }
 //-----------------------------------------------------------------------------
 

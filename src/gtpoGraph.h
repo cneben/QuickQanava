@@ -273,6 +273,22 @@ public:
     //! Return node class name (default to "gtpo::Edge").
     std::string getClassName() const { return "gtpo::Edge"; }
 
+    /*! \name Edge Meta Properties *///----------------------------------------
+    //@{
+public:
+    //! Get the edge current serializable property (false=not serializable, for example a control node).
+    inline  auto    getSerializable( ) const -> bool { return _serializable; }
+    //! Shortcut to getSerializable().
+    inline  auto    isSerializable( ) const -> bool { return getSerializable(); }
+    //! Change the edge serializable property (it will not trigger an edge changed call in graph behaviour).
+    inline  auto    setSerializable( bool serializable ) -> void { _serializable = serializable; }
+private:
+    //! Edge serializable property (default to true ie serializable).
+    bool            _serializable = true;
+    //@}
+    //-------------------------------------------------------------------------
+
+public:
     void    setSrc( WeakNode src ) { _src = src; }
     void    setDst( WeakNode dst ) { _dst = dst; }
     auto    getSrc( ) -> WeakNode&{ return _src; }
@@ -412,8 +428,10 @@ private:
     //@{
     inline auto    notifyInNodeInserted( WeakNode& outNode ) -> void;
     inline auto    notifyInNodeRemoved( WeakNode& outNode ) -> void;
+    inline auto    notifyInNodeRemoved() -> void;
     inline auto    notifyOutNodeInserted( WeakNode& outNode ) -> void;
     inline auto    notifyOutNodeRemoved( WeakNode& outNode ) -> void;
+    inline auto    notifyOutNodeRemoved() -> void;
     //@}
     //-------------------------------------------------------------------------
 };

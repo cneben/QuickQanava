@@ -111,10 +111,24 @@ public:
      * \note Existing mapping is cleared.
      */
     auto                    generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&;
+    /*! Generate a valid id for a new object, add an object to the actual object id map an return the id.
+     *
+     * \note if the object is already registered, it's actual id is returned.
+     * \return -1 if an error occurs or an interger >= 0 if insertion suceed.
+     */
+    auto                    addObjectId( const void* object ) -> int;
+
+    /*! Get the id of an already registered object, if it is not registered, return -1.
+     *
+     * \return -1 if an error occurs or an interger >= 0 if insertion suceed.
+     */
+    auto                    getObjectId( const void* object ) const noexcept( true ) -> int;
+
     ObjectIdMap&            getObjectIdMap() { return _objectIdMap; }
     const ObjectIdMap&      getObjectIdMap() const { return _objectIdMap; }
 private:
     ObjectIdMap             _objectIdMap;
+    int                     _maxId = 0;
 
 public:
     using   IdObjectMap = std::unordered_map< int, void* >;

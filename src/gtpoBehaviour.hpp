@@ -46,7 +46,15 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
         if ( behaviour != nullptr )
             ((*behaviour).*method)(arg);
 }
-//-----------------------------------------------------------------------------
+
+template < class Behaviour, class SBehaviours  >
+template < class T >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)() ) -> void
+{
+    for ( auto& behaviour : _behaviours )
+        if ( behaviour != nullptr )
+            ((*behaviour).*method)();
+}//-----------------------------------------------------------------------------
 
 
 /* Notification Helper Methods *///--------------------------------------------

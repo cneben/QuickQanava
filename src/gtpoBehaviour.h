@@ -50,7 +50,7 @@ template < class Config >
 class NodeBehaviour
 {
 public:
-    NodeBehaviour() = default;
+    NodeBehaviour( const std::string& name ) : _name( name ) { }
     virtual ~NodeBehaviour() = default;
     explicit NodeBehaviour( const NodeBehaviour& ) = default;
     NodeBehaviour& operator=( const NodeBehaviour& ) = default;
@@ -61,21 +61,36 @@ public:
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
 public:
+    auto        getName() const -> const std::string& { return _name; }
+protected:
+    auto        setName( const std::string& name ) -> void { _name = name; }
+private:
+    std::string _name = "";
+
+public:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
      */
     virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void { (void)weakInNode; }
 
-    /*! \brief Called whean an in-edge with source \c weakInNode is about to be removed.
+    /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
      */
     virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+
+    /*! \brief Called immediatly after an in node has been removed.
+     */
+    virtual auto    inNodeRemoved() -> void { }
 
     /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
      */
     virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
 
-    /*! \brief Called whean an out-edge with destination \c weakOutNode is about to be removed.
+    /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
      */
     virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+
+    /*! \brief Called immediatly after an out-edge has been removed.
+     */
+    virtual auto    outNodeRemoved() -> void { }
 
     /*! \brief Called immedialty after \c weakNode has been modified.
      *
@@ -310,7 +325,7 @@ public:
     auto    hasBehaviours() const -> bool { return _behaviours.size() > 0; }
 
     //! Return a read only container of actually registered behaviours.
-    auto    getBehaviours() const -> Behaviours& { return _behaviours; }
+    auto    getBehaviours() const -> const Behaviours& { return _behaviours; }
 
 protected:
     /*! Apply a method pointer on all registered behaviours.
@@ -323,6 +338,10 @@ protected:
      */
     template < class T >
     auto    notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void;
+
+    //! Similar to notifyBahaviours() but without arguments.
+    template < class T >
+    auto    notifyBehaviours( void (Behaviour::*method)() ) -> void;
 
 private:
     Behaviours  _behaviours;

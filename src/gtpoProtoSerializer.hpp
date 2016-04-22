@@ -222,7 +222,13 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         }
         auto nodeOutFunctor = _nodeOutFunctors.find( node->getClassName() );
         if ( nodeOutFunctor != _nodeOutFunctors.end() ) {
-            ( nodeOutFunctor->second )( pbGraph.add_nodes(), node, objectIdMap );
+            NodeOutFunctor& nodeFunct = ( nodeOutFunctor->second );
+            google::protobuf::Any* pbNode = pbGraph.add_nodes();
+            try {
+                if ( pbNode != nullptr && nodeFunct )
+                    nodeFunct( pbNode, node, objectIdMap );
+            } catch ( const std::exception& e ) { std::cerr << "Error:" << e.what() << std::endl; }
+              catch ( ... ) { std::cerr << "unknown error..." << std::endl; }
             ++serializedNodeCout;
             nodesProgress.setProgress( ++primitive / primitiveCount );
         } else
@@ -236,9 +242,9 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getEdges().size() );
     for ( auto& edge: graph.getEdges() ) {  // Serialize edges
-        auto edgeOutFunctor = _edgeOutFunctors.find( edge->getClassName() );
+        auto& edgeOutFunctor = _edgeOutFunctors.find( edge->getClassName() );
         if ( edgeOutFunctor != _edgeOutFunctors.end() ) {
-            if ( ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
+            if ( ( edgeOutFunctor->second ) && ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
                 ++serializedEdgeCout;
                 edgesProgress.setProgress( ++primitive / primitiveCount );
             }
@@ -253,9 +259,10 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     primitive = 0;
     primitiveCount = static_cast< double >( graph.getGroups().size() );
     for ( auto& group: graph.getGroups() ) {  // Serialize groups
-        auto groupOutFunctor = _groupOutFunctors.find( group->getClassName() );
+        auto& groupOutFunctor = _groupOutFunctors.find( group->getClassName() );
         if ( groupOutFunctor != _groupOutFunctors.end() ) {
-            if ( ( groupOutFunctor->second )( pbGraph.add_groups(), group, objectIdMap ) ) {
+            if ( groupOutFunctor->second &&
+                 ( groupOutFunctor->second )( pbGraph.add_groups(), group, objectIdMap ) ) {
                 ++serializedGroupCout;
                 groupsProgress.setProgress( ++primitive / primitiveCount );
             }
@@ -351,6 +358,7 @@ template < class GraphConfig >
 auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&
 {
     _objectIdMap.clear();
+    _maxId = 0;
     int id = 0;
     for ( auto& node: graph.getNodes() )
         _objectIdMap.insert( std::make_pair( node.get(), ++id ) );
@@ -358,7 +366,34 @@ auto    ProtoSerializer< GraphConfig >::generateObjectIdMap( const Graph& graph 
     for ( auto& edge: graph.getEdges() )
         _objectIdMap.insert( std::make_pair( edge.get(), ++id ) );
 
+    _maxId = ++id;
     return _objectIdMap;
+}
+
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::addObjectId( const void* object ) -> int
+{
+    if ( object == nullptr )
+        return -1;
+
+    int objectId = getObjectId( object );
+    if ( objectId != -1 )
+        return objectId;
+    ++_maxId;
+    _objectIdMap.insert( std::make_pair( const_cast<void*>( object ), _maxId ) );
+    return _maxId;
+}
+
+template < class GraphConfig >
+auto    ProtoSerializer< GraphConfig >::getObjectId( const void* object ) const noexcept( true ) -> int
+{
+    if ( object == nullptr )
+        return -1;
+    int objectId = -1;
+    try {
+        objectId = _objectIdMap.at( const_cast<void*>( object ) );
+    } catch ( ... ) { objectId = -1; }
+    return objectId;
 }
 
 template < class GraphConfig >
@@ -389,7 +424,7 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
     int serializedGroupCout = 0;
     for ( const google::protobuf::Any& anyNode : pbGraph.nodes() ) {    // Serializing nodes in
         WeakNode node;
-        for ( auto nodeInFunctor : _nodeInFunctors ) {
+        for ( auto& nodeInFunctor : _nodeInFunctors ) {
             node = nodeInFunctor( anyNode, graph, idObjectMap );
             if ( !node.expired() ) {
                 ++serializedNodeCout;
@@ -408,8 +443,8 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
         edgesProgress.beginProgress( "Loading edges" );
         for ( const google::protobuf::Any& anyEdge : pbGraph.edges() ) {    // Serializing edges in
             bool edgeSerialized = false;
-            for ( auto edgeInFunctor : _edgeInFunctors ) {
-                if ( edgeInFunctor( anyEdge, graph, idObjectMap ) ) {
+            for ( auto& edgeInFunctor : _edgeInFunctors ) {
+                if ( edgeInFunctor && edgeInFunctor( anyEdge, graph, idObjectMap ) ) {
                     edgeSerialized = true;
                     ++serializedEdgeCout;
                     break;
@@ -426,8 +461,10 @@ auto    ProtoSerializer< GraphConfig >::serializeIn( const gtpo::pb::Graph& pbGr
         groupsProgress.beginProgress( "Loading groups" );
         for ( const google::protobuf::Any& anyGroup : pbGraph.groups() ) {    // Serializing groups in
             bool groupSerialized = false;
-            for ( auto groupInFunctor : _groupInFunctors ) {
-                WeakGroup serializedGroup = groupInFunctor( anyGroup, graph, idObjectMap );
+            for ( auto& groupInFunctor : _groupInFunctors ) {
+                WeakGroup serializedGroup;
+                if ( groupInFunctor )
+                    serializedGroup = groupInFunctor( anyGroup, graph, idObjectMap );
                 if ( !serializedGroup.expired() ) {
                     groupSerialized = true;
                     ++serializedGroupCout;
