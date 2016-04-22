@@ -132,6 +132,9 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
+    using Node              = typename Config::Node;
+    using WeakNode          = std::weak_ptr< typename Config::Node >;
+
     /*! Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
      * A gtpo::bad_topology_error could be thrown if insertion in base graph fails.
@@ -143,6 +146,9 @@ public:
      * \note graph keep ownership of the returned node.
      */
     Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
+
+    //! Shortcut to GTpoGraph::insertNode.
+    WeakNode                insertNode( SharedNode node );
 
     //! Insert a new node with a given class name \c nodeClassName and return a pointer on it if creation succeed (\c nullptr otherwise).
     Q_INVOKABLE qan::Node*  insertNode( QString nodeClassName );

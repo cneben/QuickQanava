@@ -49,18 +49,20 @@ class NodeBehaviour : public QObject,
 {
     Q_OBJECT
 public:
-    NodeBehaviour( QObject* parent = nullptr );
+    NodeBehaviour( const std::string& name, QObject* parent = nullptr );
     virtual ~NodeBehaviour() { }
 
     using WeakNode  = std::weak_ptr< qan::Config::Node >;
 
-    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void;
-    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void;
+    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void override;
+    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void override;
+    virtual auto    inNodeRemoved() -> void override { }
 
-    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void;
-    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void;
+    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void override;
+    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void override;
+    virtual auto    outNodeRemoved() -> void override { }
 
-    virtual auto    nodeModified( WeakNode& weakNode ) -> void;
+    virtual auto    nodeModified( WeakNode& weakNode ) -> void override;
 
 protected:
     virtual auto    inNodeInserted( qan::Node& inNode ) -> void { Q_UNUSED( inNode ); }

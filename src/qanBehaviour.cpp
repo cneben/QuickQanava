@@ -33,8 +33,9 @@
 
 namespace qan { // ::qan
 
-NodeBehaviour::NodeBehaviour( QObject* parent ) :
-    QObject( parent )
+NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
+    QObject( parent ),
+    gtpo::NodeBehaviour< qan::Config >::NodeBehaviour( name )
 {
 
 }

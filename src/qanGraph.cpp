@@ -156,6 +156,11 @@ qan::Node* Graph::insertNode( QQmlComponent* nodeComponent )
     return node;
 }
 
+qan::Graph::WeakNode    Graph::insertNode( SharedNode node )
+{
+    return GTpoGraph::insertNode( node );
+}
+
 qan::Node*  Graph::insertNode( QString nodeClassName )
 {
     if ( nodeClassName.isEmpty() )

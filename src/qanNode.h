@@ -65,22 +65,17 @@ public:
     virtual ~Node( );
 private:
     Q_DISABLE_COPY( Node )
-signals:
-    /*! Emitted whenever the node changes (either its position, size, style or internal attribute).
-     *
-     *  Could be usefull to detect any node change (usually trought the graph observation interface) for
-     *  selective serialization, or to allow graph save only once a modification has occurred.
-     * \sa qan::Graph::nodeModified()
-     */
-    void            modified( qan::Node* );
-    // ^^^^ FIXME 20160323 remove that, notification is made trough behaviours not direct signals.
 public:
     auto            getClassName() -> std::string { return getDynamicClassName(); }
     virtual auto    getDynamicClassName() -> std::string { return "qan::Node"; }
 public:
     //! Shortcut to gtpo::GenNode<>::getGraph().
     qan::Graph*     getGraph();
-
+public:
+    /*!
+     * \note only label is taken into account for equality comparison.
+     */
+    bool    operator==( const qan::Node& right ) const;
 public:
     // Qt property for gtpo::Node serializable standard property.
     Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
@@ -90,8 +85,12 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Behaviours Management *///---------------------------------------
+    //@{
 public:
-    void            installBehaviour( qan::NodeBehaviour* behaviour );
+    virtual auto    installBehaviour( qan::NodeBehaviour* behaviour ) -> void;
+    //@}
+    //-------------------------------------------------------------------------
 
     /*! \name Node DnD Management *///-----------------------------------------
     //@{

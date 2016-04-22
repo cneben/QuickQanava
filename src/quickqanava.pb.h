@@ -152,7 +152,7 @@ class Style : public ::google::protobuf::Message {
   ::qps::pb::Properties* release_properties();
   void set_allocated_properties(::qps::pb::Properties* properties);
 
-  // repeated int32 node_ids = 6;
+  // repeated int32 node_ids = 6 [packed = true];
   int node_ids_size() const;
   void clear_node_ids();
   static const int kNodeIdsFieldNumber = 6;
@@ -164,7 +164,7 @@ class Style : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_node_ids();
 
-  // repeated int32 edge_ids = 7;
+  // repeated int32 edge_ids = 7 [packed = true];
   int edge_ids_size() const;
   void clear_edge_ids();
   static const int kEdgeIdsFieldNumber = 7;
@@ -697,7 +697,7 @@ inline void Style::set_allocated_properties(::qps::pb::Properties* properties) {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.properties)
 }
 
-// repeated int32 node_ids = 6;
+// repeated int32 node_ids = 6 [packed = true];
 inline int Style::node_ids_size() const {
   return node_ids_.size();
 }
@@ -727,7 +727,7 @@ Style::mutable_node_ids() {
   return &node_ids_;
 }
 
-// repeated int32 edge_ids = 7;
+// repeated int32 edge_ids = 7 [packed = true];
 inline int Style::edge_ids_size() const {
   return edge_ids_.size();
 }

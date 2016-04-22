@@ -48,7 +48,7 @@ ProtoSerializer::ProtoSerializer( QObject* parent )  :
     _gtpoSerializer( "qan::Node", "qan::Edge", "qan::Group" )
 {
     _gtpoSerializer.registerNodeOutFunctor( "qan::Node",
-                                            []( google::protobuf::Any* anyNodes,
+                                            [=]( google::protobuf::Any* anyNodes,
                                                 const qan::ProtoSerializer::WeakNode& weakNode,
                                                 const qan::ProtoSerializer::ObjectIdMap& objectIdMap  ) {
         std::shared_ptr< qan::Node > qanNode = std::static_pointer_cast< qan::Node >( weakNode.lock() );
@@ -59,7 +59,7 @@ ProtoSerializer::ProtoSerializer( QObject* parent )  :
         anyNodes->PackFrom( pbQanNode );
     } );
 
-    _gtpoSerializer.registerNodeInFunctor( []( const google::protobuf::Any& anyNode,
+    _gtpoSerializer.registerNodeInFunctor( [=]( const google::protobuf::Any& anyNode,
                                               qan::ProtoSerializer::Graph& graph,
                                               qan::ProtoSerializer::IdObjectMap& idObjectMap  ) -> qan::ProtoSerializer::WeakNode {
         qan::ProtoSerializer::WeakNode weakNode;
@@ -197,13 +197,14 @@ auto    ProtoSerializer::serializeQanNodeOut( const WeakNode& weakNode, qan::pb:
                                                                     *pbQanNode.mutable_base(),
                                                                     objectIdMap ); // Serialize base gtpo.pb.GTpoNode
     std::shared_ptr< qan::Node > qanNode = std::static_pointer_cast< qan::Node >( weakNode.lock() );
-    if ( qanNode != nullptr ) {
+    /*if ( qanNode != nullptr && qanNode->getStyle() != nullptr ) {
         int styleId = -1;
         try {
             styleId = objectIdMap.at( qanNode->getStyle() );
-        } catch ( std::out_of_range ) { }
+        } catch ( const std::out_of_range& ) { }
+          catch ( ... ) { }
         pbQanNode.set_style_id( styleId );  // Default to -1 if there is a style mapping error
-    }
+    }*/
 }
 
 auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void
@@ -214,14 +215,17 @@ auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, We
 
         // Note 20160404: This code should not find any style since style manager is serialized _after_ topology, kept
         // if a node is serialized in from the network...
-        void* styleObject{ nullptr };
+        /*void* styleObject{ nullptr };
         try {
-            styleObject = idObjectMap.at( pbQanNode.style_id() );
-        } catch ( std::out_of_range ) { }
+            if ( pbQanNode.style_id() != -1 )
+                styleObject = idObjectMap.at( pbQanNode.style_id() );
+        }   catch ( const std::out_of_range& ) { styleObject = nullptr; }
+            catch ( ... ) { styleObject = nullptr; }
+
         if ( styleObject != nullptr ) {
             qan::NodeStyle* nodeStyle = reinterpret_cast< qan::NodeStyle* >( styleObject );
             qanNode->setStyle( nodeStyle );
-        }
+        }*/
     }
 }
 

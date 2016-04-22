@@ -182,23 +182,23 @@ void protobuf_AddDesc_quickqanava_2eproto() {
   ::gtpo::pb::protobuf_AddDesc_gtpo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\021quickqanava.proto\022\006qan.pb\032\025quickproper"
-    "ties.proto\032\ngtpo.proto\"\222\001\n\005Style\022\n\n\002id\030\001"
+    "ties.proto\032\ngtpo.proto\"\232\001\n\005Style\022\n\n\002id\030\001"
     " \001(\005\022\023\n\013meta_target\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022"
     "\016\n\006target\030\004 \001(\t\022&\n\nproperties\030\005 \001(\0132\022.qp"
-    "s.pb.Properties\022\020\n\010node_ids\030\006 \003(\005\022\020\n\010edg"
-    "e_ids\030\007 \003(\005\"\312\002\n\014StyleManager\022\023\n\013style_co"
-    "unt\030\001 \001(\005\022\035\n\006styles\030\002 \003(\0132\r.qan.pb.Style"
-    "\022H\n\023default_node_styles\030\003 \003(\0132+.qan.pb.S"
-    "tyleManager.DefaultNodeStylesEntry\022H\n\023de"
-    "fault_edge_styles\030\004 \003(\0132+.qan.pb.StyleMa"
-    "nager.DefaultEdgeStylesEntry\0328\n\026DefaultN"
-    "odeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001"
-    "(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry\022\013\n\003key\030"
-    "\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node\022\033\n\004base"
-    "\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_id\030\002 \001(\005\""
-    "S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.pb.Graph\022"
-    "+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb.StyleMan"
-    "agerb\006proto3", 692);
+    "s.pb.Properties\022\024\n\010node_ids\030\006 \003(\005B\002\020\001\022\024\n"
+    "\010edge_ids\030\007 \003(\005B\002\020\001\"\312\002\n\014StyleManager\022\023\n\013"
+    "style_count\030\001 \001(\005\022\035\n\006styles\030\002 \003(\0132\r.qan."
+    "pb.Style\022H\n\023default_node_styles\030\003 \003(\0132+."
+    "qan.pb.StyleManager.DefaultNodeStylesEnt"
+    "ry\022H\n\023default_edge_styles\030\004 \003(\0132+.qan.pb"
+    ".StyleManager.DefaultEdgeStylesEntry\0328\n\026"
+    "DefaultNodeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005v"
+    "alue\030\002 \001(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry"
+    "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node"
+    "\022\033\n\004base\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_i"
+    "d\030\002 \001(\005\"S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.p"
+    "b.Graph\022+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb."
+    "StyleManagerb\006proto3", 700);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "quickqanava.proto", &protobuf_RegisterTypes);
   Style::default_instance_ = new Style();
@@ -409,7 +409,7 @@ bool Style::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated int32 node_ids = 6;
+      // repeated int32 node_ids = 6 [packed = true];
       case 6: {
         if (tag == 50) {
          parse_node_ids:
@@ -427,7 +427,7 @@ bool Style::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated int32 edge_ids = 7;
+      // repeated int32 edge_ids = 7 [packed = true];
       case 7: {
         if (tag == 58) {
          parse_edge_ids:
@@ -510,7 +510,7 @@ void Style::SerializeWithCachedSizes(
       5, *this->properties_, output);
   }
 
-  // repeated int32 node_ids = 6;
+  // repeated int32 node_ids = 6 [packed = true];
   if (this->node_ids_size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteTag(6, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
     output->WriteVarint32(_node_ids_cached_byte_size_);
@@ -520,7 +520,7 @@ void Style::SerializeWithCachedSizes(
       this->node_ids(i), output);
   }
 
-  // repeated int32 edge_ids = 7;
+  // repeated int32 edge_ids = 7 [packed = true];
   if (this->edge_ids_size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteTag(7, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
     output->WriteVarint32(_edge_ids_cached_byte_size_);
@@ -581,7 +581,7 @@ void Style::SerializeWithCachedSizes(
         5, *this->properties_, target);
   }
 
-  // repeated int32 node_ids = 6;
+  // repeated int32 node_ids = 6 [packed = true];
   if (this->node_ids_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
       6,
@@ -595,7 +595,7 @@ void Style::SerializeWithCachedSizes(
       WriteInt32NoTagToArray(this->node_ids(i), target);
   }
 
-  // repeated int32 edge_ids = 7;
+  // repeated int32 edge_ids = 7 [packed = true];
   if (this->edge_ids_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
       7,
@@ -651,7 +651,7 @@ int Style::ByteSize() const {
         *this->properties_);
   }
 
-  // repeated int32 node_ids = 6;
+  // repeated int32 node_ids = 6 [packed = true];
   {
     int data_size = 0;
     for (int i = 0; i < this->node_ids_size(); i++) {
@@ -668,7 +668,7 @@ int Style::ByteSize() const {
     total_size += data_size;
   }
 
-  // repeated int32 edge_ids = 7;
+  // repeated int32 edge_ids = 7 [packed = true];
   {
     int data_size = 0;
     for (int i = 0; i < this->edge_ids_size(); i++) {
@@ -951,7 +951,7 @@ void Style::set_allocated_properties(::qps::pb::Properties* properties) {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.properties)
 }
 
-// repeated int32 node_ids = 6;
+// repeated int32 node_ids = 6 [packed = true];
 int Style::node_ids_size() const {
   return node_ids_.size();
 }
@@ -981,7 +981,7 @@ Style::mutable_node_ids() {
   return &node_ids_;
 }
 
-// repeated int32 edge_ids = 7;
+// repeated int32 edge_ids = 7 [packed = true];
 int Style::edge_ids_size() const {
   return edge_ids_.size();
 }

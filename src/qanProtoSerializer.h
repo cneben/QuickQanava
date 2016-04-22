@@ -81,6 +81,7 @@ public:
     auto                    generateObjectIdMap( const qan::Graph& graph ) -> ObjectIdMap& { return _gtpoSerializer.generateObjectIdMap( graph ); }
     ObjectIdMap&            getObjectIdMap() { return _gtpoSerializer.getObjectIdMap(); }
     const ObjectIdMap&      getObjectIdMap() const { return _gtpoSerializer.getObjectIdMap(); }
+    auto                    addObjectId( void* object ) -> int { return _gtpoSerializer.addObjectId( object ); }
 public:
     using   IdObjectMap = std::unordered_map< int, void* >;
 public:

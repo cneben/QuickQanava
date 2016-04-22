@@ -59,12 +59,19 @@ qan::Graph* Node::getGraph()
 {
     return qobject_cast< qan::Graph* >( gtpo::GenNode< qan::Config >::getGraph() );
 }
+
+bool    Node::operator==( const qan::Node& right ) const
+{
+    return getLabel() == right.getLabel();
+}
 //-----------------------------------------------------------------------------
 
-void    Node::installBehaviour( qan::NodeBehaviour* behaviour )
+/* Behaviours Management *///--------------------------------------------------
+auto    Node::installBehaviour( qan::NodeBehaviour* behaviour ) -> void
 {
     addBehaviour( behaviour );
 }
+//-----------------------------------------------------------------------------
 
 /* Content Management *///-----------------------------------------------------
 void    Node::setStyle( NodeStyle* style )
