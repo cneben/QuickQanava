@@ -32,6 +32,10 @@
 
 #ifdef GTPO_HAVE_PROTOCOL_BUFFER
 
+// Std headers
+#include <stdexcept>
+
+// GTpo headers
 #include "gtpo.pb.h"
 
 namespace gtpo { // ::gtpo
@@ -193,7 +197,7 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
         gtpo::pb::Graph pbGraph;
         serializeOut( graph, pbGraph, progress );
         if ( !pbGraph.SerializeToOstream( &os) )
-            throw std::exception( "" );
+            throw std::runtime_error( "" );
     } catch ( ... ) { std::cerr << "gtpo::ProtoSerializer::serializeOut(): Protocol Buffer Error while writing to output stream." << std::endl; }
 }
 

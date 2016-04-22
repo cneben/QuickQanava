@@ -54,6 +54,12 @@ public:
 
     //! Return "qan::Edge".
     std::string getClassName() { return "qan::Edge"; }
+public:
+    // Qt property for gtpo::Edge serializable standard property.
+    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
+    void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
+signals:
+    void            serializableChanged();
     //@}
     //-------------------------------------------------------------------------
 

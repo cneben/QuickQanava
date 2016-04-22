@@ -218,7 +218,7 @@ auto    GenGraph< Config >::insertEdge( SharedEdge sharedEdge ) -> WeakEdge
             ownedDestination->addInEdge( edge );
             if ( ownedSource != ownedDestination ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
-            notifyEdgeInserted( edge );
+            this->notifyEdgeInserted( edge );
         } catch ( ... ) {
             throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
         }

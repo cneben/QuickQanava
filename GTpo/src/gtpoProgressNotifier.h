@@ -40,6 +40,8 @@
 // STD headers
 #include <deque>
 #include <iostream>
+#include <exception>
+#include <stdexcept>
 
 namespace gtpo { // ::gtpo
 
@@ -107,7 +109,7 @@ class IProgressNotifier
     /*! \name IProgressNotifier Object Management *///-------------------------
     //@{
 public:
-    //! Construct a default notifiyer with 0.0 progress and 0 \c phaseCount.
+    //BehaviourableBase! Construct a default notifiyer with 0.0 progress and 0 \c phaseCount.
     IProgressNotifier( IProgressNotifier* superProgress = nullptr ) :
         _superProgress( superProgress ) { }
     virtual ~IProgressNotifier() { _subProgress.clear(); }
@@ -140,7 +142,7 @@ public:
      * \li Reserve the number of subprogress necessary to model all you serialization "phases".
      * \li Call setProgress() on sub progress notifiers returned by takeSubProgress()
      *
-     * \code
+     *BehaviourableBase \code
      * auto mySerializationMethod( gtpo::ProgressNotifier& progress ) -> void {
      *   progress.reserveSubProgress( 2 );  // Reserve sub progress before serializing
      *           // to allow GTpo compute a global progress in "super progress notifiers"
@@ -166,11 +168,11 @@ public:
      */
     virtual IProgressNotifier&  takeSubProgress( const std::string& label = "", bool beginImmediately = true ) {
         if ( _subProgressQueue.empty() )
-            throw std::exception( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a sub progress notifier without a reservation." );
+            throw std::runtime_error( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a sub progress notifier without a reservation." );
         IProgressNotifier* subProgress = _subProgressQueue.front( );
         _subProgressQueue.pop_front( );
         if ( subProgress == nullptr )
-            throw std::exception( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a nullptr sub progress notifier." );
+            throw std::runtime_error( "gtpo::ProgressNotifier::takeSubProgress(): Error: trying to access a nullptr sub progress notifier." );
         if ( beginImmediately )
             beginProgress( label );
         return *subProgress;

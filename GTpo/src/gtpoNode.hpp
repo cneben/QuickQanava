@@ -117,29 +117,29 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 template < class Config >
 auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) -> void
 {
-    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::inNodeInserted, inNode );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeInserted( inNode ); } );
+    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeInserted, inNode );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeInserted( inNode ); } );
 }
 
 template < class Config >
 auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) -> void
 {
-    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::inNodeRemoved, inNode );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved( inNode ); } );
+    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeRemoved, inNode );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved( inNode ); } );
 }
 
 template < class Config >
 auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) -> void
 {
-    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeInserted( outNode ); } );
+    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeInserted( outNode ); } );
 }
 
 template < class Config >
 auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) -> void
 {
-    notifyBehaviours< WeakNode >( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );
+    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );
 }
 //-----------------------------------------------------------------------------
 

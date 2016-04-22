@@ -19,12 +19,12 @@ For any questions, please contact: benoit@qanava.org
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
 | ---                       | :---:             | :---:                           | :---:           |
 | GTpo                      | **Yes**           |       **Yes**                   |      MIT        |
-| Pugy XML                  | No                |       **Yes**                   |      MIT        |
+| Pugi XML                  | No                |       **Yes**                   |      MIT        |
 | QuickProperties2          | **Yes**           |       **Yes**                   |      LPGL       |
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-*PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugyXML*, see:
+*PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugiXML*, see:
 + PugiXML homepage: http://pugixml.org/
 + PugiXML GitHub: https://github.com/zeux/pugixml
 
