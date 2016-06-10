@@ -58,7 +58,12 @@ Qps.PropertiesListView {
 
     //! Hilight a specific style, so its get the current selection and appears at the center of the view.
     function    hilightStyle( style ) {
-        currentIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
+        if ( model !== undefined &&
+             model !== null ) {
+            var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
+            if ( styleIndex !== -1 )
+                currentIndex = styleIndex
+        }
     }
 
     //! Emmited whenever a style is clicked by the user.
@@ -126,17 +131,20 @@ Qps.PropertiesListView {
                     var styleTarget = ( styleProperties.target.length == 0 ? styleProperties.metaTarget :
                                                                              styleProperties.target ) // Targeting either target or metaTarget
                     var node = graph.createNodeItem( styleTarget );
-                    node.parent = nodeContainer
-                    node.label = styleProperties.name
-                    node.anchors.fill = nodeContainer;
-                    node.anchors.margins = 5
+                    if ( node !== undefined && node !== null ) {
+                        node.parent = nodeContainer
+                        node.label = styleProperties.name
+                        node.anchors.fill = nodeContainer;
+                        node.anchors.margins = 5
+                        node.resizable = false
 
-                    node.Layout.minimumWidth = width
-                    node.Layout.minimumHeight = height
+                        node.Layout.minimumWidth = width
+                        node.Layout.minimumHeight = height
 
-                    node.style = styleProperties
-                    node.acceptDrops = false // Don't allow style DnD inside style browser
-                    node.dropable = false     // Concern only QuickQanava group drops, set to false
+                        node.style = styleProperties
+                        node.acceptDrops = false // Don't allow style DnD inside style browser
+                        node.dropable = false     // Concern only QuickQanava group drops, set to false
+                    }
                 }
                 property var draggedNodeStyle: styleProperties
                 Drag.active: mouseArea.drag.active

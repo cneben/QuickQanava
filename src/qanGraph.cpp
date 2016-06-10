@@ -52,6 +52,31 @@ void    Graph::clear( )
     gtpo::GenGraph< qan::Config >::clear();
     _styleManager->clear();
 }
+
+void    Graph::addControlNode( qan::Node* node )
+{
+    if ( node == nullptr )
+        return;
+    gtpo::GenGraph< qan::Config >::addControlNode( node->shared_from_this( ) );
+}
+
+QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
+{
+    const QList<QQuickItem *> children = childItems();
+    for (int i = children.count()-1; i >= 0; --i) {
+        QQuickItem *child = children.at(i);
+        // Map coordinates to the child element's coordinate space
+        QPointF point = mapToItem( child, QPointF(x, y) );
+        if ( child->isVisible() &&
+             child->contains( point ) &&    // Note 20160508: childAt do not call contains()
+             point.x() >= 0 &&
+             child->width() > point.x() &&
+             point.y() >= 0 &&
+             child->height() > point.y() )
+            return child;
+    }
+    return nullptr;
+}
 //-----------------------------------------------------------------------------
 
 /* Delegates Management *///---------------------------------------------------
@@ -240,10 +265,15 @@ bool    Graph::isNode( QQuickItem* item ) const
 /* Graph Edge Management *///--------------------------------------------------
 qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
+    return insertEdge( "qan::Edge", source, destination );
+}
+
+qan::Edge* Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
+{
     if ( source == nullptr || destination == nullptr )
         return nullptr;
-    if ( edgeComponent == nullptr && _edgeClassComponents.contains( "qan::Edge" ) )
-        edgeComponent = _edgeClassComponents.value( "qan::Edge", nullptr );
+    if ( edgeComponent == nullptr && _edgeClassComponents.contains( edgeClassName ) )
+        edgeComponent = _edgeClassComponents.value( edgeClassName, nullptr );
     if ( edgeComponent == nullptr )
         return nullptr;
     qan::Edge* edge = nullptr;
@@ -276,8 +306,6 @@ qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCom
     catch ( ... ) {
         qDebug() << "qan::Graph::insertEdge(): Error: Topology error.";
     }
-    //if ( edge != nullptr )  // Keep ownership for the return value of a Q_INVOKABLE method
-    //    QQmlEngine::setObjectOwnership( edge, QQmlEngine::CppOwnership );
     return edge;
 }
 
@@ -289,7 +317,7 @@ auto    Graph::createEdge( const std::string& className, WeakNode source, WeakNo
     qan::Node* dst = static_cast< qan::Node* >( destination.lock().get() );
     qan::Edge* edge = nullptr;
     if ( src != nullptr && dst != nullptr )
-        edge = insertEdge( src, dst );
+        edge = insertEdge( QString::fromStdString( className ), src, dst );
     return ( edge != nullptr ? edge->shared_from_this() : WeakEdge() ); // Note 20160213: shared_from_this() could be used since the edge has already been added to graph, it
 }
 

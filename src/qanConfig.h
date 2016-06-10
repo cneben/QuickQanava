@@ -122,6 +122,7 @@ class Group;
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group > {
 
+    // Node accessors
     // 20160329: Warning, do not return by reference in Qan2
     static inline std::string  getNodeLabel( const Node* n ) { return n->getLabel().toStdString(); }
     static inline void         setNodeLabel( Node* n, const std::string& s ) { n->setLabel( QString::fromStdString( s ) ); }
@@ -132,15 +133,23 @@ struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group
     static inline double   getNodeY( const Node* n ) { return n->y();; }
     static inline void     setNodeY( Node* n, double y ) { n->setY( y ); }
 
+    static inline double   getNodeZ( const Node* n ) { return n->z();; }
+    static inline void     setNodeZ( Node* n, double z ) { n->setZ( z ); }
+
     static inline double   getNodeWidth( const Node* n ) { return n->width();; }
     static inline void     setNodeWidth( Node* n, double w ) { n->setWidth( w ); }
 
     static inline double   getNodeHeight( const Node* n ) { return n->height(); }
     static inline void     setNodeHeight( Node* n, double h ) { n->setHeight( h ); }
 
+    // Edge accessors
     static inline double   getEdgeWeight( const Edge* e ) { Q_UNUSED( e ); return 0.; }
     static inline void     setEdgeWeight( Edge* e, double w ) { Q_UNUSED( e ); Q_UNUSED( w ); }
 
+    static inline double   getEdgeZ( const Edge* e ) { return e->z(); }
+    static inline void     setEdgeZ( Edge* e, double z ) { e->setZ( z ); }
+
+    // Group accessors
     // 20160329: Warning, do not return by reference in Qan2
     static inline std::string   getGroupLabel( const Group* g ) { return g->getLabel().toStdString(); }
     static inline void          setGroupLabel( Group* g, const std::string& s ) { g->setLabel( QString::fromStdString( s ) ); }
@@ -150,6 +159,9 @@ struct PropertiesAccessors : public gtpo::PropertiesAccessors< Node, Edge, Group
 
     static inline double        getGroupY( const Group* g ) { return g->y(); }
     static inline void          setGroupY( Group* g, double y ) { g->setY( y ); }
+
+    static inline double        getGroupZ( const Group* g ) { return g->z(); }
+    static inline void          setGroupZ( Group* g, double z ) { g->setZ( z ); }
 
     static inline double        getGroupWidth( const Group* g ) { return g->width(); }
     static inline void          setGroupWidth( Group* g, double width ) { g->setWidth( width ); }

@@ -28,6 +28,11 @@
 #ifndef qanProtoSerializer_h
 #define qanProtoSerializer_h
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4100)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
+#pragma warning(disable: 4267)  // Disable warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+#endif
+
 // GTpo headers
 #include "gtpoProtoSerializer.h"
 
@@ -91,6 +96,10 @@ public:
     const IdObjectMap&      getIdObjectMap() const { return _gtpoSerializer.getIdObjectMap(); }
 protected:
     gtpo::ProtoSerializer< qan::Config >    _gtpoSerializer;
+
+public:
+    static  auto    serializeGTpoEdgeOut( const WeakEdge& weakEdge, gtpo::pb::Edge& pbEdge, const ObjectIdMap& objectIdMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeOut( weakEdge, pbEdge, objectIdMap ); }
+    static  auto    serializeGTpoEdgeIn(  const gtpo::pb::Edge& pbEdge, WeakEdge& weakEdge, IdObjectMap& idObjectMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeIn( pbEdge, weakEdge, idObjectMap ); }
     //@}
     //-------------------------------------------------------------------------
 

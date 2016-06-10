@@ -74,6 +74,18 @@ public:
      * to clear the delegates registered with registerNodeDelegate() and registerEdgeDelegate().
      */
     Q_INVOKABLE void    clear( );
+
+    Q_INVOKABLE void    addControlNode( qan::Node* node );
+
+public:
+    /*! Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.
+     *
+     * Using childAt() method will most of the time return qan::Edge items since childAt() use bounding boxes
+     * for item detection.
+     *
+     * \return nullptr if there is no child at requested position, or a QQuickItem that can be casted qan::Node, qan::Edge or qan::Group with qobject_cast<>.
+     */
+    Q_INVOKABLE QQuickItem* graphChildAt(qreal x, qreal y) const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -198,6 +210,9 @@ signals:
 public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     Q_INVOKABLE qan::Edge*  insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::insertEdge().
+    Q_INVOKABLE qan::Edge*  insertEdge( QString edgeClassName, qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
 
     //! Defined for serialization support, do not use.
     virtual auto            createEdge( const std::string& className, WeakNode source, WeakNode destination  ) -> WeakEdge override;

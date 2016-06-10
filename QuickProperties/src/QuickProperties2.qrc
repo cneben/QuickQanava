@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="QuickProperties2/PropertiesEditor.qml">PropertiesEditor.qml</file>
-        <file alias="QuickProperties2/PropertiesListView.qml">PropertiesListView.qml</file>
-        <file alias="QuickProperties2/PropertiesView.qml">PropertiesView.qml</file>
-        <file alias="QuickProperties2/qmldir">qmldir</file>
-    </qresource>
-</RCC>

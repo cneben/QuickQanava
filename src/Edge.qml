@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	QanArrowEdge.qml
+// \file	Edge.qml
 // \author	benoit@qanava.org
 // \date	2015 06 20
 //-----------------------------------------------------------------------------

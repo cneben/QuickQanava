@@ -82,6 +82,36 @@ public:
     void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
 signals:
     void            serializableChanged();
+public:
+    // Qt property for gtpo::Node resizable standard property.
+    Q_PROPERTY( bool resizable READ getResizable WRITE setResizableObs NOTIFY resizableChanged )
+    void            setResizableObs( bool resizable ) { setResizable( resizable ); emit resizableChanged( ); }
+signals:
+    void            resizableChanged();
+
+public:
+    //! Node minimum size (it can't be resized below if resizable is true).
+    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged )
+    QSizeF          getMinimumSize() const { return _minimumSize; }
+    void            setMinimumSize( QSizeF minimumSize ) { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
+private:
+    QSizeF          _minimumSize = QSizeF{ 100., 45. };
+signals:
+    void            minimumSizeChanged();
+
+public:
+    //! Read-only abstract item model of this node in nodes.
+    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes NOTIFY inNodesChanged )
+    QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInNodes() ) ); }
+signals:
+    void                inNodesChanged( );
+
+public:
+    //! Read-only abstract item model of this node out nodes.
+    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes NOTIFY outNodesChanged )
+    QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &getOutNodes() ) ); }
+signals:
+    void                outNodesChanged();
     //@}
     //-------------------------------------------------------------------------
 

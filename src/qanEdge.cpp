@@ -61,22 +61,38 @@ auto    Edge::setSourceItem( qan::Node* source ) -> void
         return;
 
     // Connect dst x and y monitored properties change notify signal to slot updateEdge()
-    QMetaMethod updateItemSlot = metaObject()->method( metaObject()->indexOfSlot( "updateItem()" ) );
-    Q_ASSERT( updateItemSlot.isValid() );  // Connect src and dst x and y monitored properties change notify signal to slot updateItem()
-
-    auto srcMetaObj = source->metaObject();
-    QMetaProperty srcPropertyX = srcMetaObj->property( srcMetaObj->indexOfProperty( "x" ) );
-    QMetaProperty srcPropertyY = srcMetaObj->property( srcMetaObj->indexOfProperty( "y" ) );
-    Q_ASSERT( srcPropertyX.isValid() && srcPropertyY.isValid() );
-    Q_ASSERT( srcPropertyX.hasNotifySignal() && srcPropertyY.hasNotifySignal() );
-    QMetaMethod srcNotifyX = srcPropertyX.notifySignal();
-    QMetaMethod srcNotifyY = srcPropertyY.notifySignal();
-    connect( source, srcNotifyX, this, updateItemSlot );
-    connect( source, srcNotifyY, this, updateItemSlot );
-    if ( source->z() < z() )
-        setZ( source->z() );
-    emit sourceItemChanged();
-    updateItem();
+    QMetaMethod updateItemSlot = metaObject()->method( metaObject()->indexOfSlot( "updateItemSlot()" ) );
+    if ( updateItemSlot.isValid() ) {  // Connect src and dst x and y monitored properties change notify signal to slot updateItemSlot()
+        auto srcMetaObj = source->metaObject();
+        QMetaProperty srcX      = srcMetaObj->property( srcMetaObj->indexOfProperty( "x" ) );
+        QMetaProperty srcY      = srcMetaObj->property( srcMetaObj->indexOfProperty( "y" ) );
+        QMetaProperty srcWidth  = srcMetaObj->property( srcMetaObj->indexOfProperty( "width" ) );
+        QMetaProperty srcHeight = srcMetaObj->property( srcMetaObj->indexOfProperty( "height" ) );
+        if ( !srcX.isValid() || !srcX.hasNotifySignal() ) {
+            qDebug() << "qan::Edge::setSourceItem(): Error: can't access source x property.";
+            return;
+        }
+        if (  !srcY.isValid() || !srcY.hasNotifySignal() ) {
+            qDebug() << "qan::Edge::setSourceItem(): Error: can't access source y property.";
+            return;
+        }
+        if (  !srcWidth.isValid() || !srcWidth.hasNotifySignal() ) {
+            qDebug() << "qan::Edge::setSourceItem(): Error: can't access source width property.";
+            return;
+        }
+        if (  !srcHeight.isValid() || !srcHeight.hasNotifySignal() ) {
+            qDebug() << "qan::Edge::setSourceItem(): Error: can't access source height property.";
+            return;
+        }
+        connect( source, srcX.notifySignal(),       this, updateItemSlot );
+        connect( source, srcY.notifySignal(),       this, updateItemSlot );
+        connect( source, srcWidth.notifySignal(),   this, updateItemSlot );
+        connect( source, srcHeight.notifySignal(),  this, updateItemSlot );
+        if ( source->z() < z() )
+            setZ( source->z() );
+        emit sourceItemChanged();
+        updateItem();
+    }
 }
 
 auto    Edge::setDestinationItem( qan::Node* destination ) -> void
@@ -84,19 +100,37 @@ auto    Edge::setDestinationItem( qan::Node* destination ) -> void
     if ( destination == nullptr )
         return;
 
-    // Connect dst x and y monitored properties change notify signal to slot updateItem()
-    QMetaMethod updateItemSlot = metaObject( )->method( metaObject( )->indexOfSlot( "updateItem()" ) );
-    Q_ASSERT( updateItemSlot.isValid( ) );
-
+    // Connect dst x and y monitored properties change notify signal to slot updateItemSlot()
+    QMetaMethod updateItemSlot = metaObject( )->method( metaObject( )->indexOfSlot( "updateItemSlot()" ) );
+    if ( !updateItemSlot.isValid( ) ) {
+        qDebug() << "qan::Edge::setDestinationItem(): Error: no access to edge updateItem slot.";
+        return;
+    }
     auto dstMetaObj = destination->metaObject( );
-    QMetaProperty dstPropertyX = dstMetaObj->property( dstMetaObj->indexOfProperty( "x" ) );
-    QMetaProperty dstPropertyY = dstMetaObj->property( dstMetaObj->indexOfProperty( "y" ) );
-    Q_ASSERT( dstPropertyX.isValid( ) && dstPropertyY.isValid( ) );
-    Q_ASSERT( dstPropertyX.hasNotifySignal( ) && dstPropertyY.hasNotifySignal( ) );
-    QMetaMethod dstNotifyX = dstPropertyX.notifySignal( );
-    QMetaMethod dstNotifyY = dstPropertyY.notifySignal( );
-    connect( destination, dstNotifyX, this, updateItemSlot );
-    connect( destination, dstNotifyY, this, updateItemSlot );
+    QMetaProperty dstX      = dstMetaObj->property( dstMetaObj->indexOfProperty( "x" ) );
+    QMetaProperty dstY      = dstMetaObj->property( dstMetaObj->indexOfProperty( "y" ) );
+    QMetaProperty dstWidth  = dstMetaObj->property( dstMetaObj->indexOfProperty( "width" ) );
+    QMetaProperty dstHeight = dstMetaObj->property( dstMetaObj->indexOfProperty( "height" ) );
+    if ( !dstX.isValid() || !dstX.hasNotifySignal() ) {
+        qDebug() << "qan::Edge::setDestinationItem(): Error: can't access source x property.";
+        return;
+    }
+    if (  !dstY.isValid() || !dstY.hasNotifySignal() ) {
+        qDebug() << "qan::Edge::setDestinationItem(): Error: can't access source y property.";
+        return;
+    }
+    if (  !dstWidth.isValid() || !dstWidth.hasNotifySignal() ) {
+        qDebug() << "qan::Edge::setDestinationItem(): Error: can't access source width property.";
+        return;
+    }
+    if (  !dstHeight.isValid() || !dstHeight.hasNotifySignal() ) {
+        qDebug() << "qan::Edge::setDestinationItem(): Error: can't access source height property.";
+        return;
+    }
+    connect( destination, dstX.notifySignal(),       this, updateItemSlot );
+    connect( destination, dstY.notifySignal(),       this, updateItemSlot );
+    connect( destination, dstWidth.notifySignal(),   this, updateItemSlot );
+    connect( destination, dstHeight.notifySignal(),  this, updateItemSlot );
     emit destinationItemChanged();
     if ( destination->z() < z() )
         setZ( destination->z() );
@@ -246,7 +280,6 @@ void	Edge::drawArrow( QPainter* painter, QLineF line, QColor color, float arrowS
 /* Mouse Management *///-------------------------------------------------------
 void    Edge::mouseDoubleClickEvent( QMouseEvent* event )
 {
-    qDebug( ) << "Edge::mouseDoubleClickEvent()";
     qreal d = distanceFromLine( event->localPos( ), _line );
     if ( d >= 0. && d < 5. && event->button( ) == Qt::LeftButton ) {
         emit edgeDoubleClicked( QVariant::fromValue< qan::Edge* >( this ), QVariant( event->localPos( ) ) );

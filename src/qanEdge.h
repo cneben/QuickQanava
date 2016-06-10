@@ -52,8 +52,9 @@ public:
     //! Edge constructor with source, destination and weight initialization.
     Edge( QQuickItem* parent = nullptr );
 
-    //! Return "qan::Edge".
-    std::string getClassName() { return "qan::Edge"; }
+    //! Return getDynamicClassName() (default to "qan::Edge").
+    std::string     getClassName() { return getDynamicClassName(); }
+    virtual auto    getDynamicClassName() -> std::string { return "qan::Edge"; }
 public:
     // Qt property for gtpo::Edge serializable standard property.
     Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
@@ -87,6 +88,14 @@ signals:
 public:
     virtual void        paint( QPainter* painter ) override;
 public slots:
+    //! Call updateItem() (override updateItem() to an empty method for invisible edges).
+    virtual void        updateItemSlot( ) { updateItem(); }
+public:
+    /*! Update edge bounding box according to source and destination item actual position and size.
+     *
+     * \note When overriding, call base implementation at the beginning of user implementation.
+     * \note Override to an empty method with no base class calls for an edge with no graphics content.
+     */
     virtual void        updateItem( );
 public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.

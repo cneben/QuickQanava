@@ -52,7 +52,7 @@ Item {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
         z: 1
-        radius: 5
+        radius: 2
         color: node.style.backColor
         border.color: node.style.borderColor
         border.width: node.style.borderWidth
@@ -64,9 +64,8 @@ Item {
         source: background
         horizontalOffset: node.style.shadowOffset.width
         verticalOffset: node.style.shadowOffset.height
-        radius: 8.0
-        samples: 16
-        smooth: true
+        radius: 4
+        samples: 16; smooth: true
         color: node.style.shadowColor
         visible: node.style.hasShadow
         transparentBorder: true

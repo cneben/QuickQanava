@@ -73,9 +73,12 @@ Qan.AbstractNode {
      * \note this item will automatically be reparented to host node, and displayed in host node top right.
      */
     function setHostNode( hostNode ) {
-        visible = ( hostNode != null && hostNode != undefined )
+        visible = ( hostNode !== null && hostNode !== undefined )
         parent = hostNode
         sourceNode = hostNode
+        if ( hostNode !== undefined )   // Force drop node position updates
+            x = Qt.binding( function(){ return hostNode.width + 2 } )
+        else x = 0
     }
 
     // Private properties
@@ -148,6 +151,8 @@ Qan.AbstractNode {
             connectorDropNode.y = 0
         }
     }
+    //! Modify this property to create edge with a specific class name (default to qan::Edge).
+    property var edgeClassName: "qan::Edge"
     property var dummyEdge: undefined
     MouseArea {
         id: dropDestArea
@@ -162,11 +167,9 @@ Qan.AbstractNode {
             var src = connectorDropNode.sourceNode
             var dst = connectorDropNode.Drag.target
             if ( src != undefined && dst != undefined && dst != null ) {
-                console.debug( "connectorDropNode.graph.isNode( dst )=" + connectorDropNode.graph.isNode( dst ) );
-                console.debug( "connectorDropNode.graph.hasEdge( src, dst )=" + connectorDropNode.graph.hasEdge( src, dst ) );
                 if ( connectorDropNode.graph.isNode( dst ) &&
                      !connectorDropNode.graph.hasEdge( src, dst ) ) {
-                    connectorDropNode.graph.insertEdge( src, dst )
+                    connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
                 }
             }
             // Restore original position

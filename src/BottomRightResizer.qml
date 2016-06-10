@@ -45,11 +45,15 @@ Item {
     }
     Connections {
         target: resizer.target
-        onWidthChanged: { setResizerSize( target.width, target.height ) }
+        onWidthChanged: {
+            if ( target !== undefined )
+                setResizerSize( target.width, target.height ) }
     }
     Connections {
         target: resizer.target
-        onHeightChanged: { setResizerSize( target.width, target.height ) }
+        onHeightChanged: {
+            if ( target !== undefined )
+                setResizerSize( target.width, target.height ) }
     }
 
     //! Corner resize handlers size (default to 8x8).
@@ -72,10 +76,12 @@ Item {
             if ( !almostEqual( brResizer.y, resizerCenter.y - resizerHeight2 ) )
                 brResizer.y = resizerCenter.y - resizerHeight2
         }
-        if ( !almostEqual( target.width, resizerCenter.x ) )
-            target.width = resizerCenter.x
-        if ( !almostEqual( target.height, resizerCenter.y ) )
-            target.height = resizerCenter.y;
+        if ( target !== undefined ) {
+            if ( !almostEqual( target.width, resizerCenter.x ) )
+                target.width = resizerCenter.x
+            if ( !almostEqual( target.height, resizerCenter.y ) )
+                target.height = resizerCenter.y;
+        }
     }
 
     function almostEqual( a, b ) {

@@ -40,6 +40,7 @@ OTHER_FILES += $$PWD/quickqanava.proto        \
                 $$PWD/RectNodeTemplate.qml    \
                 $$PWD/CanvasNodeTemplate.qml  \
                 $$PWD/Group.qml               \
+                $$PWD/BottomRightResizer.qml  \
                 $$PWD/Node.qml                \
                 $$PWD/Edge.qml                \
                 $$PWD/StyleListView.qml       \

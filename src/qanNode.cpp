@@ -44,6 +44,7 @@ Node::Node( QQuickItem* parent ) :
 {
     setAcceptDrops( true );
     setStyle( _defaultStyle.data() );
+    setResizable( true );
 }
 
 Node::~Node( )

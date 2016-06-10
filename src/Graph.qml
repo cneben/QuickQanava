@@ -41,9 +41,14 @@ Qan.AbstractGraph {
     property Component  groupDelegate: Qt.createComponent( "qrc:/QuickQanava/Group.qml" )
     //! Set to true to enable visual edge creation via a droppable connector control (default to true).
     property bool   enableConnectorDropNode: false
+    //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
+    property string connectorDropNodeEdgeClassName: "qan::Edge"
 
     // Private:
     property Component  connectorDropNodeComponent: Qt.createComponent( "qrc:/QuickQanava/ConnectorDropNode.qml" )
+    onConnectorDropNodeComponentChanged: {
+        connectorDropNodeComponent.edgeClassName = connectorDropNodeEdgeClassName
+    }
     property var        connectorDropNode: undefined
     onEnableConnectorDropNodeChanged: {
         if ( !enableConnectorDropNode &&
@@ -56,23 +61,40 @@ Qan.AbstractGraph {
              connectorDropNodeComponent != undefined ) {
             connectorDropNode = graph.insertNode( graph.connectorDropNodeComponent )
             if ( connectorDropNode != undefined ) {
+                connectorDropNode.edgeClassName = connectorDropNodeEdgeClassName
                 connectorDropNode.visible = false
                 connectorDropNode.graph = graph
             }
         }
     }
-
+    BottomRightResizer {
+        id: nodeResizer
+        visible: false
+    }
     property real maxZ: -1.
     onNodeClicked: {
+        if ( node === undefined ) {
+            connectorDropNode.visible = false
+            resizer.visible = false
+        }
         maxZ = Math.max( node.z + 1, maxZ + 1 )
         node.z = maxZ + 1;
         if ( connectorDropNode != undefined )
             connectorDropNode.setHostNode( node );
+        if ( node.resizable ) {
+            nodeResizer.parent = node
+            nodeResizer.target = node
+            nodeResizer.visible = true
+            nodeResizer.minimumSize = node.minimumSize
+
+        } else
+            nodeResizer.visible = false
     }
 
     Component.onCompleted: {
         graph.registerNodeDelegate( "qan::Node", nodeDelegate )
         graph.registerEdgeDelegate( "qan::Edge", edgeDelegate )
         graph.registerGroupDelegate( "qan::Group", groupDelegate )
+        graph.addControlNode( connectorDropNode )
     }
 }

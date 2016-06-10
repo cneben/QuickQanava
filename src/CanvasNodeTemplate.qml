@@ -38,9 +38,6 @@ import QuickQanava 2.0 as Qan
 Item {
     id: template
 
-    implicitWidth: nodeLayout.implicitWidth
-    implicitHeight: nodeLayout.implicitHeight
-
     property         var    node
     property         alias  symbol: nodeSymbol.sourceComponent
     default property alias  children : templateContentLayout.children
@@ -84,14 +81,13 @@ Item {
         Text {
             id: nodeLabel
             Layout.fillWidth: true;
-            Layout.maximumWidth: template.parent.Layout.preferredWidth
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.margins: 5
+            width: parent.width
             verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
             text: node.label
             font: node.style.labelFont
-            wrapMode: Text.Wrap
-            elide: Text.ElideRight
+            wrapMode: Text.Wrap;    elide: Text.ElideRight; maximumLineCount: 4
         }
         RowLayout {
             Layout.alignment: Qt.AlignHCenter

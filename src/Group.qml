@@ -45,7 +45,7 @@ Qan.AbstractGroup {
     property bool   nameTextBold: true
     property color  nameTextColor: "black"
 
-    property color  backColor: Qt.rgba( 0.95, 0.95, 0.95, 1.0 )
+    property color  backColor: Qt.rgba( 0.96, 0.96, 0.96, 1.0 )
 
     default property alias children : content.children
     container: content   // See qan::Group::container property documentation
@@ -93,6 +93,7 @@ Qan.AbstractGroup {
             enabled: group.draggable    // Enable dragging on group label
             drag.target: group
             preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
+            onDoubleClicked: { nameText.forceActiveFocus(); nameText.selectAll() }
         }
     } // RowLayout: collapser + label
     Item {
