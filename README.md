@@ -1,4 +1,5 @@
 [Overview](#QuickQanava) |
+[Overview](#Dependencies) |
 [Building](#building) |
 [License](#license)
 
@@ -20,6 +21,8 @@ QuickQanava is primarily developed with Qt >= 5.6 with MSVC2015 and g++5.3
 
 For any questions, please contact: benoit@destrat.io
 
+## Dependencies:
+
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
 | ---                       | :---:             | :---:                           | :---:           |
 | GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |      MIT        |
@@ -28,16 +31,16 @@ For any questions, please contact: benoit@destrat.io
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-*PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on PugiXML, see:
-+ PugiXML homepage: http://pugixml.org/
-+ PugiXML GitHub: https://github.com/zeux/pugixml
+-  **PugiXML** is distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on PugiXML, see:
+  - PugiXML homepage: http://pugixml.org/
+  - PugiXML GitHub: https://github.com/zeux/pugixml
 
 - **Protocol Buffer v3**: Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer installation instructions can be found on:
   - Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
   - Protocol Buffer v3 GitHub: https://github.com/google/protobuf
 
-**Google Test** is a *GTpo* dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
-+ Google Test GitHub: https://github.com/google/googletest/
+- **Google Test** is a *GTpo* dependency, it optionnal for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers:
+  - Google Test GitHub: https://github.com/google/googletest/
 
 ## Building:
 
@@ -47,7 +50,7 @@ cd QuickQanava
 git submodule init
 git submodule update
 ```
-Then configure common.pri with your local Protocol Buffer source directory (win32 only), and open quickqanava2.pro
+Build options are configured in `common.pri` (local Protocol Buffer source directory for win32). Main QtCreator project file is quickqanava2.pro
 
 ## QuickQanava Screenshots:
 
