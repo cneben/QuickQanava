@@ -61,14 +61,14 @@ Item {
             id: collapser
             padding: 4
             text: group.collapsed ? "+" : "-"
-            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
-            color: group.nameTextColor
+            font.pointSize: nameTextSize; font.bold: nameTextBold
+            color: nameTextColor
             Rectangle {
                 id: collapserHilight
                 anchors.fill: parent
                 visible: collapserArea.containsMouse
                 color: Qt.rgba( 0., 0., 0., 0. ); radius: 3
-                border.color: group.nameTextColor; border.width: 1
+                border.color: nameTextColor; border.width: 1
             }
             MouseArea {
                 id: collapserArea
@@ -80,8 +80,8 @@ Item {
         TextInput {
             id: nameText
             text: group.label
-            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
-            color: group.nameTextColor
+            font.pointSize: nameTextSize; font.bold: nameTextBold
+            color: nameTextColor
             onAccepted: {
                 if ( text.length == 0 )
                     text = group.label  // Do not allow empty labels

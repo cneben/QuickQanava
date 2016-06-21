@@ -38,21 +38,21 @@ Item {
     id: resizer
 
     //! Resizer target.
-    property var    target: undefined
+    property var    target: null
     onTargetChanged: {
-        if ( target != undefined )
+        if ( target !== null )
             setResizerSize( target.width, target.height )
     }
     Connections {
         target: resizer.target
         onWidthChanged: {
-            if ( target !== undefined )
+            if ( target !== null )
                 setResizerSize( target.width, target.height ) }
     }
     Connections {
         target: resizer.target
         onHeightChanged: {
-            if ( target !== undefined )
+            if ( target !== null )
                 setResizerSize( target.width, target.height ) }
     }
 
@@ -76,7 +76,7 @@ Item {
             if ( !almostEqual( brResizer.y, resizerCenter.y - resizerHeight2 ) )
                 brResizer.y = resizerCenter.y - resizerHeight2
         }
-        if ( target !== undefined ) {
+        if ( target !== null ) {
             if ( !almostEqual( target.width, resizerCenter.x ) )
                 target.width = resizerCenter.x
             if ( !almostEqual( target.height, resizerCenter.y ) )
