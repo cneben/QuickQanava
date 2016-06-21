@@ -260,7 +260,7 @@ public:
     virtual auto            createGroup( const std::string& className ) -> WeakGroup;
 
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
-    Q_INVOKABLE qan::Group* insertGroup( QQmlComponent* groupComponent = nullptr );
+    Q_INVOKABLE qan::Group* insertGroup( QString className = "qan::Group" );
 
     //! Shortcut to gtpo::GenGraph<>::removeGroup().
     Q_INVOKABLE void        removeGroup( qan::Group* group );

@@ -363,12 +363,10 @@ auto    Graph::createGroup( const std::string& className ) -> WeakGroup
     return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
 }
 
-qan::Group* Graph::insertGroup( QQmlComponent* groupComponent )
+qan::Group* Graph::insertGroup( QString className )
 {
-    if ( groupComponent == nullptr ) {
-        if ( _groupClassComponents.contains( "qan::Group" ) )
-            groupComponent = _groupClassComponents.value( "qan::Group", nullptr );
-    }
+    QQmlComponent* groupComponent{ nullptr };
+    groupComponent = _groupClassComponents.value( className, nullptr );
     if ( groupComponent == nullptr ) {
         qDebug() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
         return nullptr;
