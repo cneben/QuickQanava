@@ -48,6 +48,7 @@ OTHER_FILES +=  quickqanava.proto       \
                 RectNodeTemplate.qml    \
                 CanvasNodeTemplate.qml  \
                 Group.qml               \
+                RectGroupTemplate.qml   \
                 Node.qml                \
                 Edge.qml                \
                 StyleListView.qml       \

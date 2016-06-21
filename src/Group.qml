@@ -36,103 +36,34 @@ import "." as Qan
 Qan.AbstractGroup {
     id: group
     x: 0;   y: 0
-    width: content.width; height: content.height
+    width: template.content.width;
+    height: template.content.height
+    Layout.preferredWidth: 150
+    Layout.preferredHeight:  80
 
-    property real   groupWidth: 150
-    property real   groupHeight: 80
-
-    property int    nameTextSize: 14
-    property bool   nameTextBold: true
-    property color  nameTextColor: "black"
-
-    property color  backColor: Qt.rgba( 0.96, 0.96, 0.96, 1.0 )
-
-    default property alias children : content.children
-    container: content   // See qan::Group::container property documentation
-
+    default property alias children : template
+    container: template.content   // See qan::Group::container property documentation
     signal  groupRightClicked( var group, var p )
 
-    RowLayout {
-        x: 0
-        y: -collapser.height
-        Text {
-            id: collapser
-            padding: 4
-            text: group.collapsed ? "+" : "-"
-            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
-            color: group.nameTextColor
-            Rectangle {
-                id: collapserHilight
-                anchors.fill: parent
-                visible: collapserArea.containsMouse
-                color: Qt.rgba( 0., 0., 0., 0. ); radius: 3
-                border.color: group.nameTextColor; border.width: 1
-            }
-            MouseArea {
-                id: collapserArea
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: group.collapsed = !group.collapsed
-            }
-        }
-        TextInput {
-            id: nameText
-            text: group.label
-            font.pointSize: group.nameTextSize; font.bold: group.nameTextBold
-            color: group.nameTextColor
-            onAccepted: {
-                if ( text.length == 0 )
-                    text = group.label  // Do not allow empty labels
-                else group.label = text
-                focus = false;  // Release focus once the label has been edited
-            }
-        }
-        MouseArea {
-            id: groupLabelDrapArea
-            anchors.fill: parent
-            enabled: group.draggable    // Enable dragging on group label
-            drag.target: group
-            preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
-            onDoubleClicked: { nameText.forceActiveFocus(); nameText.selectAll() }
-        }
-    } // RowLayout: collapser + label
-    Item {
-        id: content
-        x: 0; y: 0; z: 3
-        visible: !group.collapsed
-
-        width: group.groupWidth
-        height: group.groupHeight
-    }
-    MouseArea {  // 20160328: Do not set as content child to avoid interferring with content.childrenRect
-        id: dragArea
-        z: 2
+    Qan.RectGroupTemplate {
+        id: template
+        groupWidth: group.Layout.preferredWidth
+        groupHeight: group.Layout.preferredHeight
         anchors.fill: parent
-        enabled: group.draggable && !group.collapsed
-        drag.target: group
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        smooth: true
-        onClicked: {
-            if ( mouse.button === Qt.RightButton )
-                groupRightClicked( group, Qt.point( mouse.x, mouse.y ) )
-        }
+        group: group
+        onGroupRightClicked: group.groupRightClicked( group, p )
     }
-    Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
-        id: groupBackground
-        anchors.fill: content
-        visible: !group.collapsed
-        z: 1; color: backColor
-    }
+
     BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: groupResizer
         x: 0; y: 0; z: 3
         visible: !group.collapsed
-        target: content
-        minimumSize: Qt.size( Math.max( group.groupWidth, content.childrenRect.x + content.childrenRect.width + 10 ),
-                              Math.max( group.groupHeight, content.childrenRect.y + content.childrenRect.height + 10 ) )
+        target: template.content
+        minimumSize: Qt.size( Math.max( group.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
+                              Math.max( group.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
     }
     // Emitted by qan::Group when node dragging start
-    onNodeDragEnter: { groupBackground.color = Qt.darker( group.backColor, 1.05 ) }
+    onNodeDragEnter: { template.onNodeDragEnter() }
     // Emitted by qan::Group when node dragging ends
-    onNodeDragLeave: { groupBackground.color = group.backColor }
+    onNodeDragLeave: { template.onNodeDragLeave() }
 }

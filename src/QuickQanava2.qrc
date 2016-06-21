@@ -4,6 +4,7 @@
         <file alias="QuickQanava/Graph.qml">Graph.qml</file>
         <file alias="QuickQanava/Node.qml">Node.qml</file>
         <file alias="QuickQanava/Group.qml">Group.qml</file>
+        <file alias="QuickQanava/RectGroupTemplate.qml">RectGroupTemplate.qml</file>
         <file alias="QuickQanava/CanvasNodeTemplate.qml">CanvasNodeTemplate.qml</file>
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>

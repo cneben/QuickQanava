@@ -33,7 +33,7 @@ CONFIG(debug, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2d
     android:        LIBS	+= -L../../build/ -lquickqanava2d
     win32-msvc*:    PRE_TARGETDEPS += ../../build/quickqanava2d.lib
-    win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib $(GTPO_DEBUGLIBDIR)/gtpod.lib
+    win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib
     win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d 
 }
 

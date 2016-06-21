@@ -3,7 +3,9 @@ module QuickQanava
 Edge 2.0 Node.qml
 Node 2.0 Node.qml
 Graph 2.0 Graph.qml
+Group 2.0 Group.qml
 RectNodeTemplate 2.0 RectNodeTemplate.qml
+RectGroupTemplate 2.0 RectGroupTemplate.qml
 CanvasNodeTemplate 2.0 CanvasNodeTemplate.qml
 StyleListView 2.0 StyleListView.qml
 ConnectorDropNode 2.0 ConnectorDropNode.qml
