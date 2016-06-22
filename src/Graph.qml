@@ -29,6 +29,13 @@ import QtQuick 2.2
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
+/*! \brief Graph is the QML view for qan::Graph
+ *
+ * Visual connection of nodes:
+ *   \li Visual connection of nodes with ConnectorDropNode is enabled by setting the \c enableConnectorDropNode property to \c true (default to false).
+ *   \li Class name for the edges created by the visual node connector could be changed with property \c connectorDropNodeEdgeClassName (default to qan::Edge).
+ *   \li When an edge is created with the visual node connector, the signal \c edgeInsertedVisually with the newly inserted \c edge as an argument.
+ */
 Qan.AbstractGraph {
     id: graph
 
@@ -39,6 +46,7 @@ Qan.AbstractGraph {
     property Component  edgeDelegate: Qt.createComponent( "qrc:/QuickQanava/Edge.qml" )
     //! Default delegate for qan::Group and Qan.Group groups.
     property Component  groupDelegate: Qt.createComponent( "qrc:/QuickQanava/Group.qml" )
+
     //! Set to true to enable visual edge creation via a droppable connector control (default to true).
     property bool   enableConnectorDropNode: false
     //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
@@ -67,6 +75,8 @@ Qan.AbstractGraph {
             }
         }
     }
+    signal  edgeInsertedVisually( var edge );
+
     BottomRightResizer {
         id: nodeResizer
         visible: false

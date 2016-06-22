@@ -166,10 +166,13 @@ Qan.AbstractNode {
                 return
             var src = connectorDropNode.sourceNode
             var dst = connectorDropNode.Drag.target
-            if ( src != undefined && dst != undefined && dst != null ) {
+            if ( src !== undefined && src !== null &&
+                 dst !== undefined && dst !== null ) {
                 if ( connectorDropNode.graph.isNode( dst ) &&
                      !connectorDropNode.graph.hasEdge( src, dst ) ) {
-                    connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
+                    var edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
+                    if ( edge !== null )    // Notify graph user of the edge creation
+                        graph.edgeInsertedVisually( edge )
                 }
             }
             // Restore original position
