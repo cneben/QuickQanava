@@ -6,9 +6,9 @@
 QuickQanava 
 ============================
 
-`QuickQanava` is a C++11/QML library designed to display graphs in a Qt/QML application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relationnal content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
+`QuickQanava` is a C++11/Qt/QML library designed to display graphs in a Qt/QML application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relationnal content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
 
-`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  [QuickProperties](https://github.com/cneben/quickproperties) (LGPL).
+`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickProperties](https://github.com/cneben/quickproperties)* (LGPL).
 
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
@@ -31,7 +31,7 @@ For any questions, please contact: benoit@destrat.io
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
--  **PugiXML** is released under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on PugiXML, see:
+- **PugiXML** is released under an MIT licence, it is compatible with *GTpo* an is included directly in *GTpo* source tree. For more informations on PugiXML, see:
   - PugiXML homepage: http://pugixml.org/
   - PugiXML GitHub: https://github.com/zeux/pugixml
 
@@ -54,7 +54,9 @@ Build options are configured in `common.pri` (local Protocol Buffer source direc
 
 ## QuickQanava Screenshots:
 
-![resizing and groups sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/resizing-groups.gif)
+![resizing and groups sample](https://github.com/cneben/QuickQanava/blob/master/doc/web/images/resizing-groups.gif)
+
+![visual node connection](https://github.com/cneben/QuickQanava/blob/master/doc/web/images/visual-node-connector.gif)
 
 ![custom node sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/custom.png)
 

@@ -1,78 +1,73 @@
-QuickQanava Developper Guide  {#mainpage}
+QuickQanava Quick Start 
 ============================
-
-QuickQanava2 is an open-source C++11/QML library designed to display graphs in a Qt QML application. QuickQanava provide classes to generate various layouts of directed graphs and visualize their nodes with custom styles on a graphic canvas. 
-
-QuickQanava2 is released under LGPL v3, and is shipped with *GTpo* library (distributed under MIT licence). 
-
-QuickQanava2 source repository is hosted on GitHub: https://github.com/cneben/quickqanava
-
-QuickQanava2 use code from the QuickProperties project on: https://github.com/cneben/quickproperties (code is actually shipped as a subtree in main QuickQanava source tree).
-
-QuickQanava is primarily developed with Qt >= 5.6 and Qt Creator with MSVC 2015 but should compiles well with g++ for Linux and GCC-ARM for Android. 
-
-+ Project homepage: http://www.qanava.org/
-+ Reference documentation: http://www.delia-strategie.fr/doc/qan/index.html
-
-For any questions, please contact: benoit@qanava.org
-
-| Dependency                | Mandatory         |   Included in source tree       |   Licence       |
-| ---                       | :---:             | :---:                           | :---:           |
-| GTpo                      | **Yes**           |       **Yes**                   |      MIT        |
-| Pugi XML                  | No                |       **Yes**                   |      MIT        |
-| QuickProperties2          | **Yes**           |       **Yes**                   |      LPGL       |
-| Protocol Buffer v3        | No                |       No                        |    Permissive   |
-| Google Test/Mock          | No                |       No                        |    Permissive   |
-
-*PugiXML* source beeing distributed under an MIT licence, it is compatible with *GTpo* an is included directly in the *GTpo* source tree. For more informations on *PugiXML*, see:
-+ PugiXML homepage: http://pugixml.org/
-+ PugiXML GitHub: https://github.com/zeux/pugixml
-
-Google Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer homepage and installation instructions could be found on:
-+ Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
-+ Protocol Buffer v3 GitHub: https://github.com/google/protobuf
-
-Google Test is a *GTpo* dependency, it is not mandatory for QuickQanava until you intent to use a graph with custom non-STL non-Qt containers:
-+ Google Test GitHub: https://github.com/google/googletest/
-
-[TOC]
 
 Installation
 ------------------
 
+### Dependencies
+
+| Dependency                | Mandatory         |   Included in source tree       |   Licence       |
+| ---                       | :---:             | :---:                           | :---:           |
+| GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |      MIT        |
+| Pugi XML                  | No                |       **Yes**                   |      MIT        |
+| QuickProperties2          | **Yes**           |       **Yes** (GIT submodule)   |      LPGL       |
+| Protocol Buffer v3        | No                |       No                        |    Permissive   |
+| Google Test/Mock          | No                |       No                        |    Permissive   |
+
+- **PugiXML** is released under an MIT licence, it is compatible with *GTpo* an is included directly in *GTpo* source tree. For more informations on PugiXML, see:
+	- PugiXML homepage: http://pugixml.org/
+	- PugiXML GitHub: https://github.com/zeux/pugixml
+
+- **Protocol Buffer v3**: Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer installation instructions can be found on:
+	- Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
+	- Protocol Buffer v3 GitHub: https://github.com/google/protobuf
+
+- **Google Test** is a *GTpo* dependency, it optionnal for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers:
+	- Google Test GitHub: https://github.com/google/googletest/
+
+### Building from sources
+
+Get the latest QuickQanava sources:
+
+```sh
+git clone https://github.com/cneben/QuickQanava
+cd QuickQanava
+git submodule init
+git submodule update
+```
+
 QuickQanava use _qmake_ as its main build configuration system, dependencies are configured in the root directory _common.pri_ file:
+- For Linux, just install protocol buffer developper package and let the `common.pri` unmodified: `sudo apt-get install libprotobuf-dev`
+- On Windows, follow the installation instructions from source from the Protocol Buffer homepage, then modify `common.pri` to point to your protobuf installation directory:
 
-~~~~~~~~~~~~~{.cpp}
-PROTOCOL_BUFFER3_DIR= **path to protocol buffer**
+```sh
+win32-msvc*:PROTOCOL_BUFFER3_DIR=C:/path/to/protobuf3
+win32-msvc*:INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
+win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
+win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+```
 
-INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
-PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
-PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
-~~~~~~~~~~~~~
+The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:
 
-The simplest way of using QuickQanava is to statically integrate the library as a GIT subtree in your own project:
+```sh
+# Install QuickQanava as a GIT submodule
+$ git submodule add https://github.com/cneben/QuickQanava
+& git submodule update
+```
 
-~~~~~~~~~~~~~{.cpp}
-// Install QuickQanava as a remote repository:
-git remote add QuickQanava https://github.com/cneben/QuickQanava
+Once GIT has finished downloading, QuickQanava and its dependencies ([GTpo](https://github.com/cneben/GTpo) and [QuickProperties](https://github.com/cneben/QuickProperties)) projects files could be included directly in your main qmake .pro file:
 
-// Then in your project root, use the following command:
-git subtree add --prefix=./QuickQanava --squash QuickQanava master 
-~~~~~~~~~~~~~
-
-Once GIT has download the whole subtree, QuickQanava and its dependencies (GTpo) projects files could be included directly in your main
-qmake .pro file:
-
-~~~~~~~~~~~~~{.cpp}
+```sh
 # in your project main .pro qmake configuration file
-include(./QuickQanava/GTpo/src/gtpo.pri)
-include(./QuickQanava/src/quickqanava.pri)
-~~~~~~~~~~~~~
+include($$PWD/QuickQanava/GTpo/src/gtpo.pri)
+include($$PWD/QuickQanava/common.pri)
+include($$PWD/QuickQanava/src/quickqanava.pri)
+```
 
 Samples
 ------------------
 
-[Samples overview](@ref samples)
+
 
 Displaying a Simple Directed Graph
 ------------------
@@ -81,10 +76,13 @@ Both QuickQanava and QuickProperties should be initialized in your c++ main func
 
 ~~~~~~~~~~~~~{.cpp}
 #include <QuickQanava>
+
+ // _translator should be a scoped pointer member of your QQuickView:
+    QScopedPointer< qps::AbstractTranslator > _translator{ new qps::AbstractTranslator() };
+
  // ...
  // In your custom QQuickView constructor:
-    QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
-    QuickProperties::initialize( engine(), translator.data() );
+    QuickProperties::initialize( engine(), _translator.data() );
     QuickQanava::initialize();
 ~~~~~~~~~~~~~
 
@@ -123,12 +121,22 @@ Basic Graph Topology
 
 ![Qan qan::Group overview](https://github.com/cneben/QuickQanava/blob/master/doc/guide/groups-overview.gif)
 
+### Using visual node connector
+
+![Groups](images/visual-node-connector.gif)
+
+
 Displaying Custom Nodes
 ------------------
+
 
 Defining Styles
 ------------------
 
+Using Groups
+------------------
+
+![Groups](images/groups-overview.gif)
 
 Serializing Topology
 -------------

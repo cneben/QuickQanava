@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "Qt Canvas Avancé 2"
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = 20141229_NP_qanava-logo.png
+PROJECT_LOGO           = logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -783,7 +783,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ../src \
                          ./ \
-                         guide/guide.md \
+                         main.md \
                          samples/samples.md
 
 # This tag can be used to specify the character encoding of the source files
@@ -1178,13 +1178,8 @@ HTML_EXTRA_STYLESHEET  =
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = 20141229_NP_qanava-logo.png \
-                         20141229_NP_qanava-logo-footer.png \
-                         20150801_NP_basic.png \
-                         20150801_NP_basic-custom.png \
-                         20150806_NP_basic-custom-control.png \
-                         20150823_NP_class-diagram-groups.png \
-                         20150825_NP_basic-custom-diamond.png \
+HTML_EXTRA_FILES       = logo.png \
+                         logo-footer.png \
                          ConnectorDropNode.png \
                          samples/custom.png \
                          samples/navigable.png \
