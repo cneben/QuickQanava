@@ -5,6 +5,8 @@ type: index
 weight: 0
 ---
 
+![home](images/home.png)
+
 !!! warning "QuickQanava is alpha software" 
 
 `QuickQanava` is a C++11/Qt/QML library designed to display graphs in a Qt/QML application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relationnal content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
@@ -31,6 +33,14 @@ git submodule update
 ## Quick Start
 
 [getting started guide](gettingstarted.md)
+
+## Gallery
+
+| Node Grouping                | Visual Connection of Nodes         | 
+| :---:                       | :---:             | 
+| ![groups](images/groups-overview.gif) | ![connector](images/visual-node-connector.gif) | 
+
+![styles](images/style.png)
 
 
 
