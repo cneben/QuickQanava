@@ -38,7 +38,7 @@ PROJECT_NAME           = "Quick Qanava 2"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "Alpha 1"
+PROJECT_NUMBER         = 0.5
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -58,7 +58,7 @@ PROJECT_LOGO           = logo.png
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ../../web/qan2
+OUTPUT_DIRECTORY       = ./qan
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -162,7 +162,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = C:\projects\DELIA
+STRIP_FROM_PATH        = 
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -171,7 +171,8 @@ STRIP_FROM_PATH        = C:\projects\DELIA
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = C:\projects\DELIA
+STRIP_FROM_INC_PATH    = C:\projects\DELIA\Holographe4\third-party \
+                         C:/projects/DELIA/Holograph4/third-party/
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -849,7 +850,10 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = ../QuickProperties
+EXCLUDE                = ../QuickProperties \
+                         ../GTpo \
+                         ../src/quickqanava.pb.cc \
+                         ../src/quickqanava.pb.h
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1180,11 +1184,11 @@ HTML_EXTRA_STYLESHEET  =
 
 HTML_EXTRA_FILES       = logo.png \
                          logo-footer.png \
-                         ConnectorDropNode.png \
                          samples/custom.png \
                          samples/navigable.png \
                          samples/style.png \
-                         samples/topology.png
+                         samples/topology.png \
+                         web/docs/images/ConnectorDropNode.png
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
@@ -2374,7 +2378,7 @@ INTERACTIVE_SVG        = NO
 # found. If left blank, it is assumed the dot tool can be found in the path.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_PATH               = "../../../../Program Files (x86)/Graphviz2.38/bin"
+DOT_PATH               = "../../../../../../Program Files (x86)/Graphviz2.38/bin"
 
 # The DOTFILE_DIRS tag can be used to specify one or more directories that
 # contain dot files that are included in the documentation (see the \dotfile

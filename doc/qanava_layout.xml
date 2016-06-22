@@ -19,7 +19,7 @@
       <tab type="filelist" visible="yes" title="" intro=""/>
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
-	<tab type="user" url="http://www.qanava.org" title="Qanava Homepage"/>
+	<tab type="user" url="http://www.destrat.io/quickqanava" title="Qanava Homepage"/>
   </navindex>
 
   <!-- Layout definition for a class page -->
