@@ -359,7 +359,7 @@ auto    Graph::createGroup( const std::string& className ) -> WeakGroup
 {
     if ( className.size() == 0 )
         return WeakGroup{};
-    qan::Group* group = insertGroup( );
+    qan::Group* group = insertGroup( QString::fromStdString( className ) );
     return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
 }
 

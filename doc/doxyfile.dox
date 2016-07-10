@@ -1188,7 +1188,9 @@ HTML_EXTRA_FILES       = logo.png \
                          samples/navigable.png \
                          samples/style.png \
                          samples/topology.png \
-                         web/docs/images/ConnectorDropNode.png
+                         web/docs/images/ConnectorDropNode.png \
+                         samples/sample-resizer.gif \
+                         samples/sample-resizer.png
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

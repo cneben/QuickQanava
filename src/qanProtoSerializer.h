@@ -74,11 +74,15 @@ public:
     auto    registerNodeOutFunctor( std::string nodeClassName, NodeOutFunctor nodeOutFunctor ) -> void { _gtpoSerializer.registerNodeOutFunctor( nodeClassName, nodeOutFunctor ); }
     using   EdgeOutFunctor = gtpo::ProtoSerializer< qan::Config >::EdgeOutFunctor;
     auto    registerEdgeOutFunctor( std::string edgeClassName, EdgeOutFunctor edgeOutFunctor ) -> void { _gtpoSerializer.registerEdgeOutFunctor( edgeClassName, edgeOutFunctor ); }
+    using   GroupOutFunctor = gtpo::ProtoSerializer< qan::Config >::GroupOutFunctor;
+    auto    registerGroupOutFunctor( std::string groupClassName, GroupOutFunctor groupOutFunctor ) -> void { _gtpoSerializer.registerGroupOutFunctor( groupClassName, groupOutFunctor ); }
 
     using   NodeInFunctor = gtpo::ProtoSerializer< qan::Config >::NodeInFunctor;
     auto    registerNodeInFunctor( NodeInFunctor nodeInFunctor ) -> void { _gtpoSerializer.registerNodeInFunctor( nodeInFunctor ); }
     using   EdgeInFunctor = gtpo::ProtoSerializer< qan::Config >::EdgeInFunctor;
     auto    registerEdgeInFunctor( EdgeInFunctor edgeInFunctor ) -> void { _gtpoSerializer.registerEdgeInFunctor( edgeInFunctor ); }
+    using   GroupInFunctor = gtpo::ProtoSerializer< qan::Config >::GroupInFunctor;
+    auto    registerGroupInFunctor( GroupInFunctor groupInFunctor ) -> void { _gtpoSerializer.registerGroupInFunctor( groupInFunctor ); }
 
 public:
     using   ObjectIdMap = std::unordered_map< void*, int >;
@@ -98,8 +102,16 @@ protected:
     gtpo::ProtoSerializer< qan::Config >    _gtpoSerializer;
 
 public:
+    //! Shortcut to gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeOut().
     static  auto    serializeGTpoEdgeOut( const WeakEdge& weakEdge, gtpo::pb::Edge& pbEdge, const ObjectIdMap& objectIdMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeOut( weakEdge, pbEdge, objectIdMap ); }
+    //! Shortcut to gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeIn().
     static  auto    serializeGTpoEdgeIn(  const gtpo::pb::Edge& pbEdge, WeakEdge& weakEdge, IdObjectMap& idObjectMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoEdgeIn( pbEdge, weakEdge, idObjectMap ); }
+
+public:
+    //! Shortcut to gtpo::ProtoSerializer< qan::Config >::serializeGTpoGroupOut().
+    static  auto    serializeGTpoGroupOut( const WeakGroup& weakGroup, gtpo::pb::Group& pbGroup, const ObjectIdMap& objectIdMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoGroupOut( weakGroup, pbGroup, objectIdMap ); }
+    //! Shortcut to gtpo::ProtoSerializer< qan::Config >::serializeGTpoGroupIn().
+    static  auto    serializeGTpoGroupIn(  const gtpo::pb::Group& pbGroup, WeakGroup& weakGroup, IdObjectMap& idObjectMap ) -> void { gtpo::ProtoSerializer< qan::Config >::serializeGTpoGroupIn( pbGroup, weakGroup, idObjectMap ); }
     //@}
     //-------------------------------------------------------------------------
 
