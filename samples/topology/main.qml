@@ -138,32 +138,28 @@ Item {
             return
         var windowCenter = Qt.point( ( window.width - item.width ) / 2.,
                                      ( window.height - item.height ) / 2. )
-        var containerNodeCenter = window.mapToItem( navigable.containerItem, windowCenter.x, windowCenter.y )
+        var containerNodeCenter = window.mapToItem( graph.containerItem, windowCenter.x, windowCenter.y )
         item.x = containerNodeCenter.x
         item.y = containerNodeCenter.y
     }
 
-    Qan.Navigable {
-        id: navigable
+    Qan.Graph {
+        id: graph
+        objectName: "graph"
         anchors.fill: parent
-        Qan.Graph {
-            parent: navigable.containerItem
-            id: graph
-            objectName: "graph"
-            anchors.fill: parent
-            enableConnectorDropNode: true
+                clip: true
+        enableConnectorDropNode: true
 
-            property Component imgNodeComponent: Qt.createComponent( "qrc:/ImgNode.qml" )
+        property Component imgNodeComponent: Qt.createComponent( "qrc:/ImgNode.qml" )
 
-            Component.onCompleted: {
-                graph.registerNodeDelegate( "qan::ImgNode", graph.imgNodeComponent )
-            }
-            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
-            onEdgeRightClicked: { menu.targetEdge = edge; menu.popup() }
-        } // Qan.Graph: graph
+        Component.onCompleted: {
+            graph.registerNodeDelegate( "qan::ImgNode", graph.imgNodeComponent )
+        }
+        onNodeRightClicked: { menu.targetNode = node; menu.popup() }
+        onEdgeRightClicked: { menu.targetEdge = edge; menu.popup() }
 
         onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
-    } // Qan.Navigable: navigable
+    } // Qan.Graph: graph
 
     Item {
         anchors.bottom: parent.bottom

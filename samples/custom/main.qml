@@ -26,30 +26,26 @@ import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "." as Qan
 
-Qan.Navigable {
+Qan.Graph {
+    id: graph
+    objectName: "graph"
     anchors.fill: parent
-    id: container
 
-    Qan.Graph {
-        parent: container.containerItem
-        id: graph
-        objectName: "graph"
-        anchors.fill: parent
+    navigable: false
 
-        property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
-        property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
+    property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
+    property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
 
-        Component.onCompleted: {
-            var n1 = graph.insertNode( )
-            n1.label = "Rectangle"
-            graph.insertNode( customNodeDelegate )
-            var n2 = graph.insertNode( diamondNodeDelegate )
-            n2.label = "Diamond"
+    Component.onCompleted: {
+        var n1 = graph.insertNode( )
+        n1.label = "Rectangle"
+        graph.insertNode( customNodeDelegate )
+        var n2 = graph.insertNode( diamondNodeDelegate )
+        n2.label = "Diamond"
 
-            graph.insertEdge( edgeDelegate, n1, n2 )
+        graph.insertEdge( edgeDelegate, n1, n2 )
 
-            var g = graph.insertGroup( )
-        }
+        var g = graph.insertGroup( )
     }
 }
 

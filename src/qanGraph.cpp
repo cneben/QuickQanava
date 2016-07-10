@@ -44,7 +44,6 @@ Graph::Graph( QQuickItem* parent ) :
     gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
 {
-
 }
 
 void    Graph::clear( )
@@ -92,9 +91,8 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
         if ( object != nullptr && !component->isError() ) {
             //QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );
-            //setCppOwnership( item );
             item->setVisible( true );
-            item->setParentItem( this );
+            item->setParentItem( getContainerItem() );
         } else {
             qDebug() << "qan::Graph::createFromDelegate(): Failed to create a concrete QQuickItem from QML component:";
             qDebug() << "\t" << component->errorString();

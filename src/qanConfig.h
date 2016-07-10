@@ -47,6 +47,9 @@
 // QuickProperties headers
 #include "../QuickProperties/src/qpsContainerListModel.h"
 
+// QuickQanava headers
+#include "./qanNavigable.h"
+
 namespace qan { // ::qan
 
 struct ContainerAccessors : public gtpo::ContainerAccessors
@@ -179,7 +182,7 @@ class Config final : public gtpo::GraphConfig,
 {
 public:
     // Base config
-    using GraphBase = QQuickItem;
+    using GraphBase = qan::Navigable;
     using NodeBase  = QQuickItem;
     using EdgeBase  = QQuickPaintedItem;
     using GroupBase = QQuickItem;

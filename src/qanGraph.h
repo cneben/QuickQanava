@@ -37,6 +37,7 @@
 #include "./qanEdge.h"
 #include "./qanNode.h"
 #include "./qanGroup.h"
+#include "./qanNavigable.h"
 
 // QT headers
 #include <QQuickItem>

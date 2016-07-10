@@ -84,10 +84,25 @@ class Navigable : public QQuickItem
 {
 Q_OBJECT
 public:
-    Navigable( QQuickItem* parent = 0 );
+    explicit Navigable( QQuickItem* parent = 0 );
     virtual ~Navigable( ) { }
 private:
     Q_DISABLE_COPY( Navigable )
+
+public:
+    /*! \brief Enable or disable navigation (navigation is enabled by default).
+     */
+    Q_PROPERTY( bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL )
+    //! \sa navigable
+    inline qreal    getNavigable( ) const { return _navigable; }
+    //! \sa navigable
+    void            setNavigable( bool navigable ) { _navigable = navigable; emit navigableChanged(); }
+private:
+    //! \copydoc navigable
+    bool            _navigable{ true };
+signals:
+    //! \sa navigable
+    void            navigableChanged( );
 
 public:
     /*! \brief Parent container for area child items.
@@ -157,15 +172,15 @@ public:
     void        setAutoFitMode( AutoFitMode autoFitMode );
 private:
     //! \copydoc autoFitMode
-    AutoFitMode _autoFitMode;
+    AutoFitMode _autoFitMode{ NoAutoFit };
 signals:
     //! \sa autoFitMode
     void        autoFitModeChanged( );
 private:
     //! Flag set to true if area panning has been modified since the last fitInView() call.
-    bool        _panModified;
+    bool        _panModified{ false };
     //! Flag set to true if area zoom has been modified since the last fitInView() call.
-    bool        _zoomModified;
+    bool        _zoomModified{ false };
 
 public:
     /*! \brief Zoom incrementation delta (default to 0.05).
@@ -177,7 +192,7 @@ public:
     void        setZoomIncrement( qreal zoomIncrement ) { _zoomIncrement = zoomIncrement; emit zoomIncrementChanged(); }
 private:
     //! \copydoc zoomIncrement
-    qreal       _zoomIncrement;
+    qreal       _zoomIncrement{0.05 };
 signals:
     //! \sa zoomIncrement
     void        zoomIncrementChanged( );
@@ -204,7 +219,7 @@ public:
     bool        isValidZoom( qreal zoom ) const;
 private:
     //! \copydoc zoom
-    qreal       _zoom;
+    qreal       _zoom{ 1.0 };
 signals:
     //! \sa zoom
     void        zoomChanged( );
@@ -223,7 +238,7 @@ public:
     void        setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin );
 private:
     //! \copydoc zoomOrigin
-    QQuickItem::TransformOrigin _zoomOrigin;
+    QQuickItem::TransformOrigin _zoomOrigin{ QQuickItem::Center };
 signals:
     //! \sa zoomOrigin
     void        zoomOriginChanged( );
@@ -237,7 +252,7 @@ public:
     void        setZoomMax( qreal zoomMax );
 private:
     //! \copydoc zoomMax
-    qreal       _zoomMax;
+    qreal       _zoomMax{ -1.0 };
 signals:
     //! \sa zoomMax
     void        zoomMaxChanged( );
@@ -251,7 +266,7 @@ public:
     void        setZoomMin( qreal zoomMin );
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin;
+    qreal       _zoomMin{ 0.1 };
 signals:
     //! \sa zoomMin
     void        zoomMinChanged( );
@@ -271,9 +286,9 @@ protected:
     virtual void    wheelEvent( QWheelEvent* event ) override;
 
 protected:
-    QQuickItem* _containerItem;
-    bool        _leftButtonPressed;
-    QPointF     _lastPan;
+    QQuickItem* _containerItem{ nullptr };
+    bool        _leftButtonPressed{ false };
+    QPointF     _lastPan{};
 };
 
 } // ::qan

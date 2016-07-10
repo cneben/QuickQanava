@@ -34,18 +34,7 @@
 namespace qan { // ::qan
 
 Navigable::Navigable( QQuickItem* parent ) :
-    QQuickItem( parent ),
-    _autoFitMode( NoAutoFit ),
-    _panModified( false ),
-    _zoomModified( false ),
-    _zoomIncrement( 0.05 ),
-    _zoom( 1.0 ),
-    _zoomOrigin( QQuickItem::Center ),
-    _zoomMax( -1.0 ),
-    _zoomMin( 0.1 ),
-    _containerItem( nullptr ),
-    _leftButtonPressed( false ),
-    _lastPan( )
+    QQuickItem( parent )
 {
     _containerItem = new QQuickItem( this );
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
@@ -198,113 +187,118 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
 {
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
 
-    // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
-    if ( _autoFitMode == AutoFit &&
-        ( !_panModified || !_zoomModified ) ) {
-        fitInView();
-    }
-    // In AutoFit mode, try centering the content when the view is resized and the content
-    // size is less than the view size (it is no fitting but centering...)
-    if ( _autoFitMode == AutoFit ) {
-        bool centerWidth = false;
-        bool centerHeight = false;
-        // Container item children Br mapped in root CS.
-        QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
-        if ( newGeometry.contains( contentBr ) ) {
-            centerWidth = true;
-            centerHeight = true;
-        } else {
-            if ( contentBr.top( ) >= newGeometry.top( ) &&
-                 contentBr.bottom() <= newGeometry.bottom( ) )
-                centerHeight = true;
-            if ( contentBr.left( ) >= newGeometry.left( ) &&
-                 contentBr.right() <= newGeometry.right( ) )
+    if ( getNavigable() ) {
+        // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
+        if ( _autoFitMode == AutoFit &&
+             ( !_panModified || !_zoomModified ) ) {
+            fitInView();
+        }
+        // In AutoFit mode, try centering the content when the view is resized and the content
+        // size is less than the view size (it is no fitting but centering...)
+        if ( _autoFitMode == AutoFit ) {
+            bool centerWidth = false;
+            bool centerHeight = false;
+            // Container item children Br mapped in root CS.
+            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
+            if ( newGeometry.contains( contentBr ) ) {
                 centerWidth = true;
+                centerHeight = true;
+            } else {
+                if ( contentBr.top( ) >= newGeometry.top( ) &&
+                     contentBr.bottom() <= newGeometry.bottom( ) )
+                    centerHeight = true;
+                if ( contentBr.left( ) >= newGeometry.left( ) &&
+                     contentBr.right() <= newGeometry.right( ) )
+                    centerWidth = true;
+            }
+            if ( centerWidth ) {
+                qreal cx = ( newGeometry.width() - contentBr.width() ) / 2.;
+                _containerItem->setX( cx );
+            }
+            if ( centerHeight ) {
+                qreal cy = ( newGeometry.height() - contentBr.height() ) / 2.;
+                _containerItem->setY( cy );
+            }
         }
-        if ( centerWidth ) {
-            qreal cx = ( newGeometry.width() - contentBr.width() ) / 2.;
-            _containerItem->setX( cx );
-        }
-        if ( centerHeight ) {
-            qreal cy = ( newGeometry.height() - contentBr.height() ) / 2.;
-            _containerItem->setY( cy );
-        }
-    }
 
-    // In AutoFit mode, try anchoring the content to the visible border when the content has
-    // custom user zoom
-    if ( _autoFitMode == AutoFit &&
-         ( _panModified || _zoomModified ) ) {
-        bool anchorRight = false;
-        bool anchorLeft = false;
+        // In AutoFit mode, try anchoring the content to the visible border when the content has
+        // custom user zoom
+        if ( _autoFitMode == AutoFit &&
+             ( _panModified || _zoomModified ) ) {
+            bool anchorRight = false;
+            bool anchorLeft = false;
 
-        // Container item children Br mapped in root CS.
-        QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
-        if ( contentBr.width( ) > newGeometry.width( ) &&
-             contentBr.right( ) < newGeometry.right( ) ) {
-            anchorRight = true;
-        }
-        if ( contentBr.width( ) > newGeometry.width( ) &&
-             contentBr.left( ) > newGeometry.left( ) ) {
-            anchorLeft = true;
-        }
-        if ( anchorRight ) {
-            qreal xd = newGeometry.right( ) - contentBr.right( );
-            _containerItem->setX( _containerItem->x( ) + xd );
-        } else if ( anchorLeft ) {  // Right anchoring has priority over left anchoring...
-            qreal xd = newGeometry.left( ) - contentBr.left( );
-            _containerItem->setX( _containerItem->x( ) + xd );
+            // Container item children Br mapped in root CS.
+            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
+            if ( contentBr.width( ) > newGeometry.width( ) &&
+                 contentBr.right( ) < newGeometry.right( ) ) {
+                anchorRight = true;
+            }
+            if ( contentBr.width( ) > newGeometry.width( ) &&
+                 contentBr.left( ) > newGeometry.left( ) ) {
+                anchorLeft = true;
+            }
+            if ( anchorRight ) {
+                qreal xd = newGeometry.right( ) - contentBr.right( );
+                _containerItem->setX( _containerItem->x( ) + xd );
+            } else if ( anchorLeft ) {  // Right anchoring has priority over left anchoring...
+                qreal xd = newGeometry.left( ) - contentBr.left( );
+                _containerItem->setX( _containerItem->x( ) + xd );
+            }
         }
     }
 }
 
 void    Navigable::mouseMoveEvent( QMouseEvent* event )
 {
-    if ( _leftButtonPressed && !_lastPan.isNull( ))
-    {
-        QPointF delta = _lastPan - event->localPos( );
-        QPointF p( QPointF( _containerItem->x( ), _containerItem->y( ) ) - delta );
-        _containerItem->setX( p.x( ) );
-        _containerItem->setY( p.y( ) );
-        emit containerItemModified( );
-        _panModified = true;
-        _lastPan = event->localPos( );
+    if ( getNavigable() ) {
+        if ( _leftButtonPressed && !_lastPan.isNull( ) ) {
+            QPointF delta = _lastPan - event->localPos( );
+            QPointF p( QPointF( _containerItem->x( ), _containerItem->y( ) ) - delta );
+            _containerItem->setX( p.x( ) );
+            _containerItem->setY( p.y( ) );
+            emit containerItemModified( );
+            _panModified = true;
+            _lastPan = event->localPos( );
+        }
     }
     QQuickItem::mouseMoveEvent( event );
 }
 
 void    Navigable::mousePressEvent( QMouseEvent* event )
 {
-    if ( event->button( ) == Qt::LeftButton )
-    {
-        _leftButtonPressed = true;
-        _lastPan = event->localPos( );
-        event->accept( );
-        return;
-    }
-    if ( event->button( ) == Qt::RightButton )
-    {
-        event->accept( );
-        return;
+    if ( getNavigable() ) {
+        if ( event->button( ) == Qt::LeftButton ) {
+            _leftButtonPressed = true;
+            _lastPan = event->localPos( );
+            event->accept( );
+            return;
+        }
+        if ( event->button( ) == Qt::RightButton ) {
+            event->accept( );
+            return;
+        }
     }
     event->ignore( );
 }
 
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
-    if ( event->button( ) == Qt::RightButton )
-    {
-        emit rightClicked( event->localPos( ) );
+    if ( getNavigable() ) {
+        if ( event->button( ) == Qt::RightButton )
+            emit rightClicked( event->localPos( ) );
+        _leftButtonPressed = false;
     }
-    _leftButtonPressed = false;
     QQuickItem::mouseReleaseEvent( event );
 }
 
 void    Navigable::wheelEvent( QWheelEvent* event )
 {
-    qreal zoomFactor = ( event->angleDelta( ).y( ) > 0. ? _zoomIncrement : -_zoomIncrement );
-    zoomOn( QPointF( event->x( ), event->y( ) ),
-            getZoom( ) + zoomFactor );
+    if ( getNavigable() ) {
+        qreal zoomFactor = ( event->angleDelta( ).y( ) > 0. ? _zoomIncrement : -_zoomIncrement );
+        zoomOn( QPointF( event->x( ), event->y( ) ),
+                getZoom( ) + zoomFactor );
+    }
     // Note 20160117: NavigableArea is opaque for wheel events
     //QQuickItem::wheelEvent( event );
 }

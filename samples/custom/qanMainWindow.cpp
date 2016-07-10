@@ -40,8 +40,8 @@ MainView::MainView( ) :
     QuickQanava::initialize();
 
     setSource( QUrl( "qrc:/main.qml" ) );
-    qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
-    Q_ASSERT( g != nullptr );
+    //qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
+    //Q_ASSERT( g != nullptr );
 }
 //-----------------------------------------------------------------------------
 

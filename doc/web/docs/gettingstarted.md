@@ -86,37 +86,41 @@ Both QuickQanava and QuickProperties should be initialized in your c++ main func
     QuickQanava::initialize();
 ~~~~~~~~~~~~~
 
+Then, in QML:
+~~~~~~~~~~~~~{.cpp}
+import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
+~~~~~~~~~~~~~
+
 Basic Graph Topology
 ------------------
 
+### Group topology
+
+   A graph is navigable by default.
 
 ### Group topology
 
 ~~~~~~~~~~~~~{.cpp}
-    Qan.Navigable {
-        id: navigable
-        anchors.fill: parent
-        Qan.Graph {
-            parent: navigable.containerItem
-            id: graph
-            objectName: "graph"
-            anchors.fill: parent
+Qan.Graph {
+  id: graph
+  objectName: "graph"
+  anchors.fill: parent
 
-            Component.onCompleted: {
-                var n1 = graph.insertNode( )
-                n1.label = "N1"
-                var n2 = graph.insertNode( )
-                n2.label = "N2"
-                var n3 = graph.insertNode( )
-                n3.label = "N3"
-                graph.insertEdge( n1, n2 )
-                graph.insertEdge( n2, n3 )
+  Component.onCompleted: {
+    var n1 = graph.insertNode( )
+    n1.label = "N1"
+    var n2 = graph.insertNode( )
+    n2.label = "N2"
+    var n3 = graph.insertNode( )
+    n3.label = "N3"
+    graph.insertEdge( n1, n2 )
+    graph.insertEdge( n2, n3 )
 
-				var gg = graph.insertGroup();
-                gg.label = "Group"
-            }
-        } // Qan.Graph: graph
-    } // Qan.Navigable: navigable
+    var gg = graph.insertGroup();
+    gg.label = "Group"
+  }
+} // Qan.Graph: graph
 ~~~~~~~~~~~~~
 
 ![Qan qan::Group overview](https://github.com/cneben/QuickQanava/blob/master/doc/guide/groups-overview.gif)

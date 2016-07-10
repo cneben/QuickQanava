@@ -131,32 +131,27 @@ Item {
         }
     }
 
-    Qan.Navigable {
-        id: navigable
+    Qan.Graph {
+        id: graph
+        objectName: "graph"
         anchors.fill: parent
-        Qan.Graph {
-            parent: navigable.containerItem
-            id: graph
-            objectName: "graph"
-            anchors.fill: parent
-            enableConnectorDropNode: true
+        enableConnectorDropNode: true
 
-            Component.onCompleted: {
-                var n1 = graph.insertNode()
-                n1.label = "N1"
-                var n2 = graph.insertNode()
-                n2.label = "N2"
-                var n3 = graph.insertNode()
-                n3.label = "N3"
-                graph.insertEdge( n1, n2 )
-                graph.insertEdge( n2, n3 )
-                console.debug( "hasEdge(n1,n2)=" + graph.hasEdge( n1, n2 ) )
-            }
-            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
-        } // Qan.Graph: graph
-
+        Component.onCompleted: {
+            var n1 = graph.insertNode()
+            n1.label = "N1"
+            var n2 = graph.insertNode()
+            n2.label = "N2"
+            var n3 = graph.insertNode()
+            n3.label = "N3"
+            graph.insertEdge( n1, n2 )
+            graph.insertEdge( n2, n3 )
+            console.debug( "hasEdge(n1,n2)=" + graph.hasEdge( n1, n2 ) )
+        }
+        onNodeRightClicked: { menu.targetNode = node; menu.popup() }
         onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
-    } // Qan.Navigable: navigable
+    } // Qan.Graph: graph
+
 
     Rectangle {
         id: styleBrowser

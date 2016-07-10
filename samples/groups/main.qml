@@ -29,27 +29,22 @@ import "." as Qan
 Item {
     anchors.fill: parent
 
-    Qan.Navigable {
-        id: navigable
+    Qan.Graph {
+        id: graph
+        objectName: "graph"
         anchors.fill: parent
-        Qan.Graph {
-            parent: navigable.containerItem
-            id: graph
-            objectName: "graph"
-            anchors.fill: parent
 
-            Component.onCompleted: {
-                var n1 = graph.insertNode( )
-                n1.label = "N1"
-                var n2 = graph.insertNode( )
-                n2.label = "N2"
-                var n3 = graph.insertNode( )
-                n3.label = "N3"
-                graph.insertEdge( n1, n2 )
-                graph.insertEdge( n2, n3 )
-            }
-        } // Qan.Graph: graph
-    } // Qan.Navigable: navigable
+        Component.onCompleted: {
+            var n1 = graph.insertNode( )
+            n1.label = "N1"
+            var n2 = graph.insertNode( )
+            n2.label = "N2"
+            var n3 = graph.insertNode( )
+            n3.label = "N3"
+            graph.insertEdge( n1, n2 )
+            graph.insertEdge( n2, n3 )
+        }
+    } // Qan.Graph: graph
 
     RowLayout {
         anchors.top: parent.top
