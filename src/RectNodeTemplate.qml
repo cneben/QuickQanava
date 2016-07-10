@@ -36,15 +36,11 @@ import QuickQanava 2.0 as Qan
  */
 Item {
     id: template
-
-    implicitWidth: layout.implicitWidth
-    implicitHeight: Math.max( layout.implicitHeight, parent.Layout.preferredHeight )
-
     property         var    node
     default property alias  children : contentLayout.children
 
     onNodeChanged: {
-        if ( node != null && node != undefined )
+        if ( node !== null && node !== undefined )
             node.Drag.dragType = Drag.Internal
     }
 
@@ -102,7 +98,7 @@ Item {
                 node.proposeNodeDrop( node.Drag.target )
         }
         onClicked: {
-            if ( mouse.button == Qt.LeftButton )
+            if ( mouse.button === Qt.LeftButton )
                 node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
             if ( mouse.button === Qt.RightButton )
                 node.nodeRightClicked( node, Qt.point( mouse.x, mouse.y ) )
@@ -119,7 +115,7 @@ Item {
             z: 4
             Layout.maximumWidth: template.parent.Layout.preferredWidth
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillHeight: false
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             text: node.label
             font: node.style.labelFont
@@ -128,13 +124,11 @@ Item {
             elide: Text.ElideRight
             wrapMode: Text.Wrap
         }
-        ColumnLayout {
+        Item {
             id: contentLayout
             z: 5
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            //Layout.alignment: Qt.AlignHCenter
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.fillWidth: true; Layout.fillHeight: true
             visible: contentLayout.children.length > 0  // Hide if the user has not added any content
         }
     }

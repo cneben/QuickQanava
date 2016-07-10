@@ -35,21 +35,20 @@ import "qrc:/QuickQanava" as Qan
 
 Qan.AbstractImgNode {
     id: imgNode
-    width: template.implicitWidth
-    height: template.implicitHeight
-    //Layout.preferredWidth: 110
-    //Layout.preferredHeight: 50
-    //width: Layout.preferredWidth
-    //height: Layout.preferredHeight
+
+    Layout.preferredWidth: 110
+    Layout.preferredHeight: 50
+
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
+
     label: "qan::ImgNode"
     Qan.RectNodeTemplate {
-        id: template
-        //anchors.fill: parent
+        anchors.fill: parent
         node : imgNode
         Qan.ImageItem {
+            anchors.fill: parent
             smooth: true
-            width: 50
-            height: 50
             image: imgNode.image
         }
     }
