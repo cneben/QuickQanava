@@ -47,21 +47,20 @@ Qan.AbstractGroup {
 
     Qan.RectGroupTemplate {
         id: template
-        groupWidth: group.Layout.preferredWidth
-        groupHeight: group.Layout.preferredHeight
         anchors.fill: parent
         group: group
         onGroupRightClicked: group.groupRightClicked( group, p )
+
+        Qan.BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+            id: groupResizer
+            x: 0; y: 0; z: 3
+            visible: !group.collapsed
+            target: template.content
+            minimumTargetSize: Qt.size( Math.max( group.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
+                                        Math.max( group.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
+        }
     }
 
-    BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
-        id: groupResizer
-        x: 0; y: 0; z: 3
-        visible: !group.collapsed
-        target: template.content
-        minimumSize: Qt.size( Math.max( group.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
-                              Math.max( group.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
-    }
     // Emitted by qan::Group when node dragging start
     onNodeDragEnter: { template.onNodeDragEnter() }
     // Emitted by qan::Group when node dragging ends

@@ -12,20 +12,21 @@ include(../GTpo/src/gtpo.pri)
 include(../QuickProperties/src/quickproperties2.pri)
 INCLUDEPATH += ../QuickProperties/src
 
-HEADERS +=  ./QuickQanava.h         \
-            ./qanConfig.h           \
-            ./qanEdge.h             \
-            ./qanNode.h             \
-            ./qanBehaviour.h        \
-            ./qanGroup.h            \
-            ./qanGraph.h            \
-            ./qanLayout.h           \
-            ./qanLinear.h           \
-            ./qanProgressNotifier.h \
-            ./qanStyle.h            \
-            ./qanStyleManager.h     \
-            ./qanNavigable.h        \
-            ./qanProtoSerializer.h  \       # Protocol Buffer serialization
+HEADERS +=  ./QuickQanava.h             \
+            ./qanConfig.h               \
+            ./qanEdge.h                 \
+            ./qanNode.h                 \
+            ./qanBehaviour.h            \
+            ./qanGroup.h                \
+            ./qanGraph.h                \
+            ./qanLayout.h               \
+            ./qanLinear.h               \
+            ./qanProgressNotifier.h     \
+            ./qanStyle.h                \
+            ./qanStyleManager.h         \
+            ./qanNavigable.h            \
+            ./fqlBottomRightResizer.h   \
+            ./qanProtoSerializer.h      \       # Protocol Buffer serialization
             ./quickqanava.pb.h
 
 SOURCES +=  ./qanEdge.cpp               \
@@ -39,6 +40,7 @@ SOURCES +=  ./qanEdge.cpp               \
             ./qanStyle.cpp              \
             ./qanStyleManager.cpp       \
             ./qanNavigable.cpp          \
+            ./fqlBottomRightResizer.cpp \
             ./qanProtoSerializer.cpp    \   # Protocol Buffer serialization
             ./quickqanava.pb.cc
 
@@ -52,8 +54,7 @@ OTHER_FILES +=  quickqanava.proto       \
                 Node.qml                \
                 Edge.qml                \
                 StyleListView.qml       \
-                ConnectorDropNode.qml   \
-                BottomRightResizer.qml
+                ConnectorDropNode.qml
 
 TRANSLATIONS = ./quickqanava-fr_FR.ts
 lupdate_only {

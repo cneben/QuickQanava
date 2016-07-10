@@ -18,7 +18,8 @@ HEADERS +=  $$PWD/QuickQanava.h         \
             $$PWD/qanStyleManager.h     \
             $$PWD/qanNavigable.h        \
             $$PWD/qanProtoSerializer.h  \       # Protocol Buffer serialization
-            $$PWD/quickqanava.pb.h
+            $$PWD/quickqanava.pb.h		\
+			$$PWD/fqlBottomRightResizer.h
 
 SOURCES +=  $$PWD/qanEdge.cpp               \
             $$PWD/qanNode.cpp               \
@@ -32,8 +33,9 @@ SOURCES +=  $$PWD/qanEdge.cpp               \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
             $$PWD/qanProtoSerializer.cpp    \   # Protocol Buffer serialization
-            $$PWD/quickqanava.pb.cc
-
+            $$PWD/quickqanava.pb.cc			\
+			$$PWD/fqlBottomRightResizer.cpp
+			
 OTHER_FILES += $$PWD/quickqanava.proto        \
                 $$PWD/QuickQanava             \
                 $$PWD/Graph.qml               \

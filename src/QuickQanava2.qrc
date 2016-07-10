@@ -9,7 +9,6 @@
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
         <file alias="QuickQanava/ConnectorDropNode.qml">ConnectorDropNode.qml</file>
-        <file alias="QuickQanava/BottomRightResizer.qml">BottomRightResizer.qml</file>
         <file alias="QuickQanava/qmldir">qmldir</file>
     </qresource>
 </RCC>

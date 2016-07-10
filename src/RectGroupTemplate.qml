@@ -36,10 +36,8 @@ import "." as Qan
 Item {
     id: template
     x: 0;   y: 0
-    width: content.width; height: content.height
-
-    property real   groupWidth: 150
-    property real   groupHeight: 80
+    width: Math.max( content.width, 75 )
+    height: Math.max( content.height, 40 )
 
     property int    nameTextSize: 14
     property bool   nameTextBold: true
@@ -102,9 +100,6 @@ Item {
         id: content
         x: 0; y: 0; z: 3
         visible: !group.collapsed
-
-        width: group.groupWidth
-        height: group.groupHeight
     }
     MouseArea {  // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: dragArea

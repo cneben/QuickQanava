@@ -77,7 +77,7 @@ Qan.AbstractGraph {
     }
     signal  edgeInsertedVisually( var edge );
 
-    BottomRightResizer {
+    Qan.BottomRightResizer {
         id: nodeResizer
         visible: false
     }
@@ -95,7 +95,7 @@ Qan.AbstractGraph {
             nodeResizer.parent = node
             nodeResizer.target = node
             nodeResizer.visible = true
-            nodeResizer.minimumSize = node.minimumSize
+            nodeResizer.minimumTargetSize = node.minimumSize
 
         } else
             nodeResizer.visible = false
