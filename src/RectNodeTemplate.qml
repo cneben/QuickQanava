@@ -67,7 +67,7 @@ Item {
         transparentBorder: true
     }
 
-    MouseArea {
+/*    MouseArea {
         id: nodeDragArea
         anchors.fill: parent
         z: 2
@@ -104,7 +104,7 @@ Item {
                 node.nodeRightClicked( node, Qt.point( mouse.x, mouse.y ) )
         }
         onDoubleClicked: { node.nodeDoubleClicked( node, Qt.point( mouse.x, mouse.y ) ) }
-    }
+    }*/
 
     ColumnLayout {
         id: layout

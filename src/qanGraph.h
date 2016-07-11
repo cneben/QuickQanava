@@ -42,6 +42,7 @@
 // QT headers
 #include <QQuickItem>
 #include <QSharedPointer>
+#include <QAbstractListModel>
 
 namespace qan { // ::qan
 
@@ -87,10 +88,28 @@ public:
      * \return nullptr if there is no child at requested position, or a QQuickItem that can be casted qan::Node, qan::Edge or qan::Group with qobject_cast<>.
      */
     Q_INVOKABLE QQuickItem* graphChildAt(qreal x, qreal y) const;
+
+    /*! Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
+     *
+     */
+    Q_INVOKABLE qan::Group*  groupAt( const QPointF& p, const QSizeF& s ) const;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Delegates Management *///-----------------------------------------
+    /*! \name Selection Management *///----------------------------------------
+    //@{
+public:
+    //! Read-only list model of currently selected nodes.
+    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodes NOTIFY selectedNodesChanged )
+    QAbstractListModel* getSelectedNodes( ) { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
+signals:
+    void                selectedNodesChanged();
+private:
+    qps::ContainerListModel< QVector, qan::Node* >  _selectedNodes;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Delegates Management *///----------------------------------------
     //@{
 public:
     //! Clear the currently regsitered delegates.

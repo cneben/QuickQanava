@@ -76,6 +76,17 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
     }
     return nullptr;
 }
+
+qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
+{
+    for ( const auto& g : getGroups() ) {
+        if ( g == nullptr )
+            continue;
+        if ( QRectF{ g->position(), QSizeF{ g->width(), g->height() } }.contains( QRectF{ p, s } ) )
+            return g.get();
+    }
+    return nullptr;
+}
 //-----------------------------------------------------------------------------
 
 /* Delegates Management *///---------------------------------------------------

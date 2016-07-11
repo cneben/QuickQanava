@@ -94,22 +94,7 @@ auto    Group::insertNode( qan::Node* node, bool drop ) -> void
             node->setPosition( node->mapToItem( getContainer( ), QPointF( 0., 0. ) ) );
         node->setParentItem( getContainer( ) );
         groupMoved( ); // Force call to groupMoved() to update group adjacent edges
-
-        // Be carrefull of not inserting _shadowNode which is already inserted...
-        if ( getHilightDrag( ) &&
-             node != _shadowDropNode &&
-             _shadowDropNode != nullptr &&
-             hasNode( _shadowDropNode ) )
-        {
-            // If shadow drop node is configured, then layout has found a specific place for inserted node
-            //_nodes.insert( _nodes.indexOf( _shadowDropNode ), node );
-
-            // Remove shadow node...
-            //removeNode( _shadowDropNode );
-            //_graph->removeNode( _shadowDropNode );
-            //delete _shadowDropNode;
-            //_shadowDropNode = nullptr;
-        }
+        endProposeNodeDrop();
     } catch ( std::bad_weak_ptr ) { return; }
       catch ( gtpo::bad_topology_error ) { return; }
 }
@@ -120,10 +105,10 @@ auto    Group::removeNode( const qan::Node* node ) -> void
         return;
     qan::Node* mutableNode = const_cast< qan::Node* >( node );
     WeakNode weakNode;
-    try {        
-        mutableNode->setParentItem( getGraph() );
-        if ( getContainer( ) != nullptr )   // Convert actual node position in group to scene position
-            mutableNode->setPosition( getContainer( )->mapToScene( node->position( ) ) ); // Note 20150908: node->mapToScene( 0, 0) don't work on Qt 5.5 beta.
+    try {
+        QPointF nodePos{ node->position() };
+        mutableNode->setParentItem( getGraph()->getContainerItem() );
+        mutableNode->setPosition( nodePos + position() );
         mutableNode->setDraggable( true );
         mutableNode->setDropable( true );
 
@@ -201,16 +186,11 @@ void    Group::groupMoved( )
 void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
 {
     //qDebug( ) << "qan::Group::proposeNodeDrop(): container=" << container << "  node=" << node;
+    emit nodeDragEnter( );
     if ( !getHilightDrag( ) )
         return;
 
-    // If node is already member of the group we are in front of a group "inside" drag and drop,
-    // or a group removal via drag and drop, so just remove the node from group and use the normal
-    // drag and drop code.
-    if( hasNode( node ) )
-        removeNode( node ); // removeNode take care or layout() call and node position change...
-
-    // FIXME
+    // FIXME 20160710: Reactivate this code with layouts
 //    if ( _layout == nullptr )   // Can't make a drop proposition without a layout configured in the group
 //        return;
 
@@ -242,33 +222,12 @@ void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
     //    _layout->proposeNodeDrop( container, node, _shadowDropNode );
 }
 
-void    Group::dragEnterEvent( QDragEnterEvent* event )
+void    Group::endProposeNodeDrop()
 {
-    event->acceptProposedAction( );
-    event->accept( );
-    emit nodeDragEnter( );
-}
-
-void	Group::dragMoveEvent( QDragMoveEvent* event )
-{
-    event->acceptProposedAction( );
-    event->accept();
-
-    // Note 20150907: Actually, drag move event is not used except to accept drop move event,
-    // because it is impossible to have an access to the node currently beeing dragged (event->target is null...),
-    // so a quite costly mechanism does it manually in QanRectNode.qml by calling proposeNodeDrop(), and dropNode()
-    // methods in qan::Node which in turn call group drop methods...
-}
-
-void	Group::dragLeaveEvent( QDragLeaveEvent* event )
-{
-    //qDebug( ) << "Group::dragLeaveEvent()";
-    event->ignore();
     emit nodeDragLeave( );
-
     if ( getHilightDrag( ) &&
-           _shadowDropNode != nullptr &&
-           hasNode( _shadowDropNode ) )
+         _shadowDropNode != nullptr &&
+         hasNode( _shadowDropNode ) )
     {
         removeNode( _shadowDropNode );
         getGraph()->removeNode( _shadowDropNode );

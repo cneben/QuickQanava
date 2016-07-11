@@ -31,6 +31,7 @@
 // QT headers
 #include <QPointF>
 #include <QPolygonF>
+#include <QDrag>
 
 // QuickQanava headers
 #include "./qanConfig.h"
@@ -115,6 +116,20 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Selection Management *///----------------------------------------
+    //@{
+public:
+    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged )
+    //! FIXME: Actually, selected state canno't be set programmatically.
+    void            setSelected( bool selected ) { _selected = selected; emit selectedChanged( ); }
+    inline bool     getSelected( ) const { return _selected; }
+private:
+    bool            _selected = false;
+signals:
+    void            selectedChanged( );
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
@@ -132,8 +147,8 @@ public:
      * Default to true.
      */
     Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged )
-    void             setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
-    bool             getDraggable( ) { return _draggable; }
+    void            setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
+    inline bool     getDraggable( ) const { return _draggable; }
 private:
     bool            _draggable = true;
 signals:
@@ -148,7 +163,7 @@ public:
      */
     Q_PROPERTY( bool dropable READ getDropable WRITE setDropable NOTIFY dropableChanged )
     void             setDropable( bool dropable ) { _dropable = dropable; emit dropableChanged( ); }
-    bool             getDropable( ) { return _dropable; }
+    inline bool     getDropable( ) const { return _dropable; }
 private:
     bool            _dropable = true;
 signals:
@@ -166,11 +181,43 @@ public:
      */
     Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged )
     void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
-    bool             getAcceptDrops( ) { return _acceptDrops; }
+    bool             getAcceptDrops( ) const { return _acceptDrops; }
 private:
     bool            _acceptDrops = true;
 signals:
     void            acceptDropsChanged( );
+
+protected:
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
+    //! Internally used to accept style drops.
+    virtual void    dropEvent( QDropEvent* event ) override;
+
+    virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event ) override;
+    virtual void    mousePressEvent(QMouseEvent* event ) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
+private:
+    //! Initial global mouse position at the beginning of a node drag operation.
+    QPointF         _dragInitialMousePos{ 0., 0. };
+    //! Node position at the beginning of a node drag.
+    QPointF         _dragInitialPos{ 0., 0. };
+    //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
+    QPointer< qan::Group >  _lastProposedGroup{ nullptr };
+
+public:
+    //! True when the node is currently beeing dragged.
+    Q_PROPERTY( bool dragged READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged )
+    void             setDragActive( bool dragActive ) { _dragActive = dragActive; emit dragActiveChanged( ); }
+    bool             getDragActive( ) const { return _dragActive; }
+private:
+    bool            _dragActive = false;
+signals:
+    void            dragActiveChanged( );
     //@}
     //-------------------------------------------------------------------------
 
@@ -276,37 +323,6 @@ protected:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    /*! Must be called by the QML component modelling concrete node when a node is dropped on another quick item.
-     *
-     * For example, on a concrete node item configured that way:
-     * \code
-     * QanNode { //...
-     *     id: rectNode
-     *     Drag.active: nodeDragArea.drag.active
-     *     Drag.dragType: Drag.Internal
-     *     // ...
-     * \endcode
-     * The corresponding MouseArea that actually implement dragging must call dropNode with the following code:
-     * \code
-     * MouseArea { //...
-     * id: nodeDragArea
-     * drag.target: rectNode
-     * onReleased: { rectNode.dropNode( rectNode.Drag.target ); }
-     * }
-     * //...
-     * }
-     * \endcode
-     *
-     *  \param target item on which this node has been dropped on (could be nullptr...)
-     */
-    Q_INVOKABLE virtual void    dropNode( QQuickItem* target );
-
-    /*! Called from a concrete node QML component to inform that a node drop over a target currently occurs (similar to a dropMoveEvent()).
-     *
-     * \sa qan::Layout::proposeNodeDrop() and qan::Group::proposeNodeDrop() for a more detailled description.
-     */
-    Q_INVOKABLE virtual void    proposeNodeDrop( QQuickItem* target );
-
     /*! Ungroup this node from its current group.
      *
      * Method can be called even if the node is not actually part of a group.
@@ -317,20 +333,6 @@ public:
 
     //! Shortcut to gtpo::GenNode<>::getGroup().
     qan::Group*                 getQanGroup( );
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Drag'nDrop Management  *///--------------------------------------
-    //@{
-protected:
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
-    //! Internally used to accept style drops.
-    virtual void    dropEvent( QDropEvent* event ) override;
     //@}
     //-------------------------------------------------------------------------
 };

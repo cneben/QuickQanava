@@ -198,6 +198,9 @@ public:
      * \sa qan::Layout::proposeNodeDrop( ) for a detailled explanation.
      */
     virtual void    proposeNodeDrop( QQuickItem* container, qan::Node* node );
+
+    //! Called at the end of a node drag hover.
+    virtual void    endProposeNodeDrop();
 private:
     //! Shadow node managed internally by group used to hilight node position before a node is dropped in this group, or when a node is moved inside the group.
     qan::Node*      _shadowDropNode = nullptr;
@@ -236,14 +239,6 @@ signals:
     void            nodeDragEnter( );
     //! Emmited whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
     void            nodeDragLeave( );
-
-protected:
-    //! Internally used to manage drag and drop over groups, override with caution, and call base class implementation.
-    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
-    //! Internally used to manage drag and drop over groups, override with caution, and call base class implementation.
-    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
-    //! Internally used to manage drag and drop over groups, override with caution, and call base class implementation.
-    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
     //@}
     //-------------------------------------------------------------------------
 };

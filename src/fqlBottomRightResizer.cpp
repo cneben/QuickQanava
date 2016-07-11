@@ -23,9 +23,6 @@ BottomRightResizer::BottomRightResizer( QQuickItem* parent ) :
     QQuickItem( parent )
 {
     setFiltersChildMouseEvents( true );
-
-    //setWidth( _handlerSize.width() );   // Set a default size so that mouse event are accepted by default
-    //setHeight( _handlerSize.height() );
 }
 
 BottomRightResizer::~BottomRightResizer( )
@@ -135,7 +132,6 @@ void    BottomRightResizer::onTargetWidthChanged()
         qreal targetWidth = _target->width();
         qreal handlerWidth2 = _handlerSize.width() / 2.;
         _handler->setX( targetWidth - handlerWidth2 );
-        //setWidth( targetWidth + handlerWidth2 ); // This item must fit target plus handler br to allow filtering of events on _handler
     }
 }
 
@@ -146,7 +142,6 @@ void    BottomRightResizer::onTargetHeightChanged()
         qreal targetHeight = _target->height();
         qreal handlerHeight2 = _handlerSize.height() / 2.;
         _handler->setY( targetHeight - handlerHeight2 );
-        //setHeight( targetHeight + handlerHeight2 ); // This item must fit target plus handler br to allow filtering of events on _handler
     }
 }
 
@@ -230,7 +225,21 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
             if ( me->buttons() |  Qt::LeftButton &&
                  !_dragInitialPos.isNull() &&
                  !_targetInitialSize.isEmpty() ) {
-                QPointF delta = ( me->globalPos() - _dragInitialPos );
+
+                // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
+                // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
+                // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
+                // BTW, this code is probably buggy for deep quick item hierarchy.
+                QPointF startLocalPos;
+                QPointF curLocalPos;
+                if ( parentItem() != nullptr ) {
+                    startLocalPos = parentItem()->mapFromScene( _dragInitialPos );
+                    curLocalPos = parentItem()->mapFromScene( me->windowPos() );
+                } else {
+                    startLocalPos = _dragInitialPos;
+                    curLocalPos = me->windowPos();
+                }
+                QPointF delta{ curLocalPos - startLocalPos };
                 if ( _target != nullptr ) {
                     // Do not resize below minimumSize
                     qreal targetWidth = _targetInitialSize.width() + delta.x();
@@ -246,7 +255,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
         case QEvent::MouseButtonPress: {
             QMouseEvent* me = static_cast<QMouseEvent*>( event );
             if ( _target != nullptr ) {
-                _dragInitialPos = me->globalPos();
+                _dragInitialPos = me->windowPos();
                 _targetInitialSize = { _target->width(), _target->height() };
             }
         }
