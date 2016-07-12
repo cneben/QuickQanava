@@ -63,6 +63,72 @@ bool    Node::operator==( const qan::Node& right ) const
 }
 //-----------------------------------------------------------------------------
 
+/* Selection Management *///---------------------------------------------------
+void    Node::setSelectable( bool selectable )
+{
+    if ( _selectable == selectable )
+        return;
+    if ( getSelectionItem() != nullptr &&
+         getSelectionItem()->isVisible() )
+        getSelectionItem()->setVisible( false );
+    _selectable = selectable;
+    emit selectableChanged();
+}
+
+void    Node::setSelected( bool selected )
+{
+    if ( getSelectionItem() != nullptr &&
+         isSelectable() )
+        getSelectionItem()->setVisible( selected );
+    if ( _selected == selected ) // Binding loop protection, and avoid unnecessary redraws
+        return;
+    _selected = selected;
+    emit selectedChanged( );
+}
+
+void Node::setSelectionItem( QQuickItem* selectionItem )
+{
+    if ( selectionItem == nullptr ) {
+        qDebug() << "qan::Node::setSelectionItem(): Error: Can't set a nullptr selection hilight item.";
+        return;
+    }
+    _selectionItem.reset( selectionItem );
+    _selectionItem->setParentItem( this );  // Configure Quick item
+    qan::Graph* graph = getGraph();
+    if ( graph != nullptr )
+        configureSelectionItem( graph->getSelectionColor(), graph->getSelectionWeight(), graph->getSelectionMargin() );
+    _selectionItem->setVisible( isSelectable() && getSelected() );
+    emit selectionItemChanged();
+}
+
+void    Node::configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin )
+{
+    if ( _selectionItem != nullptr ) {
+        _selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
+        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
+        if ( rectangleBorder != nullptr )
+            rectangleBorder->setProperty( "color", QVariant::fromValue<QColor>(selectionColor) );
+    }
+    configureSelectionItem( selectionWeight, selectionMargin );
+}
+
+void    Node::configureSelectionItem( qreal selectionWeight, qreal selectionMargin )
+{
+    if ( _selectionItem != nullptr ) {
+        _selectionItem->setX( -( selectionWeight / 2. + selectionMargin ) );
+        _selectionItem->setY( -( selectionWeight / 2. + selectionMargin ) );
+        _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
+        _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
+        _selectionItem->setOpacity( 0.80 );
+        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
+        if ( rectangleBorder != nullptr ) {
+            rectangleBorder->setProperty( "width", selectionWeight );
+            rectangleBorder->setProperty( "radius", 3. );
+        }
+    }
+}
+//-----------------------------------------------------------------------------
+
 /* Behaviours Management *///--------------------------------------------------
 auto    Node::installBehaviour( qan::NodeBehaviour* behaviour ) -> void
 {
@@ -163,6 +229,8 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
         QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
         setX( startPos.x() + curLocalPos.x() - startLocalPos.x() );
         setY( startPos.y() + curLocalPos.y() - startLocalPos.y() );
+        QPointF delta( curLocalPos - startLocalPos );
+        getGraph()->moveSelectedNodes( delta, this );
 
         qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
         if ( group != nullptr &&
@@ -177,25 +245,44 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
     }
 }
 
-void    Node::mousePressEvent(QMouseEvent* event )
+void    Node::mousePressEvent( QMouseEvent* event )
 {
 //    bool accepted = isInsideBoundingShape( event->localPos() );
-//    if ( accepted ) {
+    bool accepted{ true };
+    if ( accepted ) {
+        // Selection management
+        if ( isSelectable() &&
+             event->button() == Qt::LeftButton &&
+             getGraph() != nullptr ) {
+            qan::Graph* graph = getGraph();
+            graph->selectNode( *this, event->modifiers() );
+        }
+
+        // QML notifications
         if ( event->button() == Qt::LeftButton )
             emit nodeClicked( this, event->localPos() );
         else if ( event->button() == Qt::RightButton )
             emit nodeRightClicked( this, event->localPos() );
 
+        // Dragging management
         if ( getDraggable() &&
              event->button() == Qt::LeftButton ) {
             setDragActive( true );
             _dragInitialMousePos = event->windowPos();
             _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
+
+            // If there is a selection, keep start position for all selected nodes.
+            qan::Graph* graph = getGraph();
+            if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
+                for ( auto& selectedNode : graph->getSelectedNodes() )
+                    if ( selectedNode != nullptr && selectedNode != this )
+                        selectedNode->_dragInitialPos = selectedNode->position();
+            }
         }
- //   }
+    }
 }
 
-void    Node::mouseReleaseEvent(QMouseEvent* event )
+void    Node::mouseReleaseEvent( QMouseEvent* event )
 {
     if ( getDropable() ) {
         qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
@@ -207,6 +294,14 @@ void    Node::mouseReleaseEvent(QMouseEvent* event )
     _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when button is released
     _dragInitialPos = { 0., 0. };
     _lastProposedGroup = nullptr;
+
+    // If there is a selection, keep start position for all selected nodes.
+    qan::Graph* graph = getGraph();
+    if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
+        for ( auto& selectedNode : graph->getSelectedNodes() )
+            if ( selectedNode != nullptr && selectedNode != this )
+                selectedNode->_dragInitialPos = selectedNode->parentItem() != nullptr ? selectedNode->parentItem()->mapToScene( selectedNode->position() ) : selectedNode->position();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -240,25 +335,20 @@ void    Node::styleDestroyed( QObject* style )
 void    Node::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
-    if ( _boundingShape.isEmpty( ) )
-        generateDefaultBoundingShape( );
+
+    // Invalidate actual bounding shape
+    emit updateBoundingShape();
+    _boundingShape.clear();
 }
 
 QPolygonF   Node::getBoundingShape( )
 {
     if ( _boundingShape.isEmpty( ) )
-        return generateDefaultBoundingShape( );
+        _boundingShape = generateDefaultBoundingShape( );
     return _boundingShape;
 }
 
-const QPolygonF Node::getBoundingShape( ) const
-{
-    if ( _boundingShape.isEmpty( ) )
-        return generateDefaultBoundingShape( );
-    return _boundingShape;
-}
-
-QPolygonF    Node::generateDefaultBoundingShape( ) const
+QPolygonF    Node::generateDefaultBoundingShape( )
 {
     // Generate a rounded rectangular intersection shape for this node rect new geometry
     QPainterPath path;
@@ -275,11 +365,25 @@ void    Node::setBoundingShape( QVariantList boundingShape )
         shape.append( vp.toPointF( ) );
     if ( !shape.isEmpty( ) )
         _boundingShape = shape;
+    else
+        _boundingShape = generateDefaultBoundingShape();
 }
 
 bool    Node::isInsideBoundingShape( QPointF p )
 {
     return _boundingShape.containsPoint( p, Qt::OddEvenFill );
+}
+
+int     Node::getBoundingPointsCount( )
+{
+    return getBoundingShape().size();
+}
+
+QPointF Node::getBoundingPoint( int p )
+{
+    if ( _boundingShape.isEmpty() )
+        _boundingShape = generateDefaultBoundingShape();
+    return ( p < _boundingShape.size() ? _boundingShape.at(p) : QPointF{} );
 }
 //-----------------------------------------------------------------------------
 

@@ -37,6 +37,9 @@ Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem( parent )
 {
     _containerItem = new QQuickItem( this );
+    //_containerItem->setSmooth(true);
+    //_containerItem->setAntialiasing(true);
+
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
 }

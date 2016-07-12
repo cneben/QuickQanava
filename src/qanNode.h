@@ -119,14 +119,44 @@ signals:
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
+    //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
+    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged )
+    void            setSelectable( bool selectable );
+    inline bool     getSelectable( ) const { return _selectable; }
+    inline bool     isSelectable( ) const { return _selectable; }
+private:
+    bool            _selectable = true;
+signals:
+    void            selectableChanged( );
+
+public:
     Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged )
-    //! FIXME: Actually, selected state canno't be set programmatically.
-    void            setSelected( bool selected ) { _selected = selected; emit selectedChanged( ); }
+    //! FIXME: Actually, selected state cannot be set programmatically.
+    void            setSelected( bool selected );
     inline bool     getSelected( ) const { return _selected; }
 private:
     bool            _selected = false;
 signals:
     void            selectedChanged( );
+
+public:
+    /*! Item used to hilight selection (usually a Rectangle quick item).
+     *
+     */
+    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged )
+    inline QQuickItem*  getSelectionItem() { return _selectionItem.get(); }
+    void                setSelectionItem( QQuickItem* selectionItem );
+private:
+    std::unique_ptr< QQuickItem >  _selectionItem{ nullptr };
+signals:
+    void                selectionItemChanged();
+
+public:
+    //! Update selection hilight item with new color, border weight and margin.
+    void            configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin );
+
+    //! Update selection hilight item with new border weight and margin.
+    void            configureSelectionItem( qreal selectionWeight, qreal selectionMargin );
     //@}
     //-------------------------------------------------------------------------
 
@@ -201,6 +231,11 @@ protected:
     virtual void    mouseMoveEvent(QMouseEvent* event ) override;
     virtual void    mousePressEvent(QMouseEvent* event ) override;
     virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
+
+public:
+    //! Used internally for multiple selection dragging, contain scene position of the node at the beggining of a drag operation.
+    auto            getDragInitialPos() const -> const QPointF& { return _dragInitialPos; }
+
 private:
     //! Initial global mouse position at the beginning of a node drag operation.
     QPointF         _dragInitialMousePos{ 0., 0. };
@@ -274,12 +309,13 @@ public:
      */
     Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged )
     QPolygonF           getBoundingShape( );
-    const QPolygonF     getBoundingShape( ) const;
     void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
 signals:
-    void                boundingShapeChanged( );
+    void                boundingShapeChanged();
+    //! signal is emmited when the bounding shape become invalid and should be regenerated from QML.
+    void                updateBoundingShape();
 protected:
-    QPolygonF           generateDefaultBoundingShape( ) const;
+    QPolygonF           generateDefaultBoundingShape( );
 private:
     QPolygonF           _boundingShape;
 protected:
@@ -317,6 +353,11 @@ protected:
      *  \sa setBoundShapeFrom()
      */
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
+
+    //! \warning method in non-const, because if bounding shape is empty, default one will be generated.
+    Q_INVOKABLE virtual int     getBoundingPointsCount();
+    //! \warning method in non-const, because if bounding shape is empty, default one will be generated.
+    Q_INVOKABLE virtual QPointF getBoundingPoint( int p );
     //@}
     //-------------------------------------------------------------------------
 

@@ -39,8 +39,13 @@ Qan.AbstractNode {
     Layout.preferredHeight: 50
     width: Layout.preferredWidth
     height: Layout.preferredHeight
+
     Qan.RectNodeTemplate {
         anchors.fill: parent
         node : rectNode
+    }
+
+    onUpdateBoundingShape: {
+
     }
 }

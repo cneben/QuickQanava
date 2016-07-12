@@ -26,9 +26,10 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
-// Nil
 #include <QQmlProperty>
 #include <QVariant>
+#include <QQmlEngine>
+#include <QQmlComponent>
 
 // GTpo headers
 #include "gtpoRandomGraph.h"
@@ -44,10 +45,13 @@ Graph::Graph( QQuickItem* parent ) :
     gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
 {
+    setAntialiasing( true );
+    setSmooth( true );
 }
 
 void    Graph::clear( )
 {
+    _selectedNodes.clear();
     gtpo::GenGraph< qan::Config >::clear();
     _styleManager->clear();
 }
@@ -86,6 +90,135 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
             return g.get();
     }
     return nullptr;
+}
+//-----------------------------------------------------------------------------
+
+/* Selection Management *///---------------------------------------------------
+void    Graph::setSelectionPolicy( SelectionPolicy selectionPolicy )
+{
+    if ( selectionPolicy == _selectionPolicy )  // Binding loop protection
+        return;
+    _selectionPolicy = selectionPolicy;
+    if ( selectionPolicy == SelectionPolicy::NoSelection )
+        clearSelection();
+    emit selectionPolicyChanged( );
+}
+
+void    Graph::setSelectionColor( QColor selectionColor )
+{
+    _selectionColor = selectionColor;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr &&
+             node->getSelectionItem() != nullptr ) {
+            QQuickItem* selectionItem = node->getSelectionItem();
+            selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
+            QObject* rectangleBorder = node->getSelectionItem()->property( "border" ).value<QObject*>();
+            if ( rectangleBorder != nullptr )
+                rectangleBorder->setProperty( "color", selectionColor );
+        }
+    }
+    emit selectionColorChanged();
+}
+
+void    Graph::setSelectionWeight( qreal selectionWeight )
+{
+    if ( qFuzzyCompare( selectionWeight, _selectionWeight ) )   // Never 0
+        return;
+    _selectionWeight = selectionWeight;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr )
+            node->configureSelectionItem( selectionWeight, getSelectionMargin() );
+    }
+    emit selectionWeightChanged();
+}
+
+void    Graph::setSelectionMargin( qreal selectionMargin )
+{
+    if ( qFuzzyCompare( selectionMargin, _selectionMargin ) )   // Never 0
+        return;
+    _selectionMargin = selectionMargin;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr )
+            node->configureSelectionItem( getSelectionWeight(), selectionMargin );
+    }
+    emit selectionMarginChanged();
+}
+
+bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers )
+{
+    if ( getSelectionPolicy() == SelectionPolicy::NoSelection )
+        return false;
+
+    bool selectNode{ false };
+    bool ctrlPressed = modifiers & Qt::ControlModifier;
+
+    if ( node.getSelected() ) {
+        if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
+            removeFromSelection( node );
+        /*else {
+            clearSelection();       // Clicking on a node without CTRL disable the existing multiple selection
+            addToSelection( node );
+        }*/ // Note: no or we loose multiple selection dragging
+    } else {
+        switch ( getSelectionPolicy() ) {
+        case SelectionPolicy::SelectOnClick:
+            selectNode = true;        // Click on an unselected node with SelectOnClick = select node
+            if ( !ctrlPressed )
+                clearSelection();
+            break;
+        case SelectionPolicy::SelectOnCtrlClick:
+            selectNode = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+            break;
+        default: break;
+        }
+    }
+    if ( selectNode ) {
+        addToSelection( node );
+        return true;
+    }
+    return false;
+}
+
+void    Graph::addToSelection( qan::Node& node )
+{
+    if ( !_selectedNodes.contains( &node ) ) {
+        _selectedNodes.append( &node );
+        node.configureSelectionItem( getSelectionColor(), getSelectionWeight(), getSelectionMargin() );
+        node.setSelected( true );
+    }
+}
+
+void    Graph::removeFromSelection( qan::Node& node )
+{
+    if ( _selectedNodes.contains( &node ) )
+        _selectedNodes.remove( &node );
+    node.setSelected( false );
+}
+
+void    Graph::clearSelection()
+{
+    for ( auto& node : _selectedNodes )
+        if ( node != nullptr )
+            node->setSelected( false );
+    _selectedNodes.clear();
+}
+
+void    Graph::moveSelectedNodes(QPointF delta, qan::Node* except )
+{
+    for ( auto& node : _selectedNodes )
+        if ( node != nullptr && node != except ) {
+            QPointF startPos = node->getDragInitialPos();
+            node->setX( startPos.x() + delta.x() );
+            node->setY( startPos.y() + delta.y() );
+        }
+}
+
+void    Graph::mousePressEvent( QMouseEvent* event )
+{
+    if ( event->button() == Qt::LeftButton )
+        clearSelection();
+    event->ignore();
+    qan::Config::GraphBase::mousePressEvent( event );
 }
 //-----------------------------------------------------------------------------
 
@@ -165,6 +298,87 @@ QQuickItem* Graph::createEdgeItem( QString edgeClass )
         return createFromDelegate( _edgeClassComponents.value( edgeClass ) );
     return new QQuickItem();    // Is should never happen, otherwise it is leaked.
 }
+
+QQuickItem* Graph::createCanvas( QQuickItem* parent )
+{
+    // Initialize canvas component for the first factory call.
+    if ( _canvasComponent == nullptr ) {
+        QQmlEngine* engine = qmlEngine( this );
+        if ( engine != nullptr ) {
+            _canvasComponent = std::make_unique<QQmlComponent>(engine);
+            QString canvasComponentQml = "import QtQuick 2.6\n  Canvas{ }";
+            _canvasComponent ->setData( canvasComponentQml.toUtf8(), QUrl() );
+            if ( !_canvasComponent->isReady() ) {
+                qDebug() << "qan::Graph::createCanvas(): Error: Can't create at Qt Quick Canvas object:";
+                qDebug() << canvasComponentQml;
+                qDebug() << "QML Component status=" << _canvasComponent->status();
+                qDebug() << "QML Component errors=" << _canvasComponent->errors();
+            }
+        }
+    }
+
+    // Create a Qt Quick Canvas object
+    if ( _canvasComponent != nullptr &&
+         _canvasComponent->isReady() ) {
+        QObject* object = _canvasComponent->create();
+        QQuickItem* canvas = qobject_cast< QQuickItem* >( object );
+        if ( canvas != nullptr ) {
+            if ( parent != nullptr )
+                canvas->setParentItem( parent );
+            QQmlEngine::setObjectOwnership( canvas, QQmlEngine::CppOwnership );
+        }
+        if ( canvas == nullptr && object != nullptr ) {
+            qDebug() << "qan::Graph::createCanvas(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+            delete object;      // Somtehing has been created, but it is not a canvas !
+            return nullptr;
+        }
+        return canvas;
+    } else {
+        qDebug() << "qan::Graph::createCanvas(): Error: Can't create a Qt Quick Canvas Object.";
+    }
+    return nullptr;
+}
+
+QQuickItem* Graph::createRectangle( QQuickItem* parent )
+{
+    // Initialize rectangle component for the first factory call.
+    if ( _rectangleComponent == nullptr ) {
+        QQmlEngine* engine = qmlEngine( this );
+        if ( engine != nullptr ) {
+            _rectangleComponent = std::make_unique<QQmlComponent>(engine);
+            QString componentQml = "import QtQuick 2.6\n  Rectangle{ }";
+            _rectangleComponent ->setData( componentQml.toUtf8(), QUrl() );
+            if ( !_rectangleComponent->isReady() ) {
+                qDebug() << "qan::Graph::createRectangle(): Error: Can't create at Qt Quick Rectangle object:";
+                qDebug() << componentQml;
+                qDebug() << "QML Component status=" << _rectangleComponent->status();
+                qDebug() << "QML Component errors=" << _rectangleComponent->errors();
+            }
+        }
+    }
+
+    // Create a Qt Quick Retangle object
+    if ( _rectangleComponent != nullptr &&
+         _rectangleComponent->isReady() ) {
+        QObject* object = _rectangleComponent->create();
+        QQuickItem* rectangle = qobject_cast< QQuickItem* >( object );
+        if ( rectangle != nullptr ) {
+            rectangle->setVisible( false );
+            if ( parent != nullptr )
+                rectangle->setParentItem( parent );
+            QQmlEngine::setObjectOwnership( rectangle, QQmlEngine::CppOwnership );
+        }
+        if ( rectangle == nullptr && object != nullptr ) {
+            qDebug() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+            delete object;      // Somtehing has been created, but it is not a rectangle !
+            return nullptr;
+        }
+        return rectangle;
+    } else {
+        qDebug() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
+    }
+    return nullptr;
+}
 //-----------------------------------------------------------------------------
 
 /* Graph Factories *///--------------------------------------------------------
@@ -179,6 +393,7 @@ qan::Node* Graph::insertNode( QQmlComponent* nodeComponent )
         return nullptr;
     }
     qan::Node* node = static_cast< qan::Node* >( createFromDelegate( nodeComponent ) );
+    node->setSelectionItem( createRectangle( node ) );
     if ( node != nullptr ) {
         GTpoGraph::insertNode( std::shared_ptr<qan::Node>{node} );
 
@@ -205,6 +420,7 @@ qan::Node*  Graph::insertNode( QString nodeClassName )
     if ( nodeComponent == nullptr )
         return nullptr;
     qan::Node* node = static_cast< qan::Node* >( createFromDelegate( nodeComponent ) );
+    node->setSelectionItem( createRectangle( node ) );
     SharedNode sharedNode{ node };
     if ( node != nullptr ) {
         GTpoGraph::insertNode( sharedNode );

@@ -39,21 +39,17 @@ Item {
     property         var    node
     default property alias  children : contentLayout.children
 
-    onNodeChanged: {
-        if ( node !== null && node !== undefined )
-            node.Drag.dragType = Drag.Internal
-    }
-
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
+
+        layer.enabled: false
         z: 1
         radius: 2
         color: node.style.backColor
         border.color: node.style.borderColor
         border.width: node.style.borderWidth
     }
-
     DropShadow {
         id: backgroundShadow
         anchors.fill: parent
@@ -61,50 +57,13 @@ Item {
         horizontalOffset: node.style.shadowOffset.width
         verticalOffset: node.style.shadowOffset.height
         radius: 4
-        samples: 16; smooth: true
+        samples: 8
+        //smooth: true
         color: node.style.shadowColor
         visible: node.style.hasShadow
-        transparentBorder: true
+        //transparentBorder: true
     }
 
-/*    MouseArea {
-        id: nodeDragArea
-        anchors.fill: parent
-        z: 2
-        drag.target: ( node.draggable ? node : null )
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        smooth: true
-        propagateComposedEvents: true
-        hoverEnabled: true
-        property bool nodeAcceptDrops: false
-        drag.onActiveChanged: {
-            if ( drag.active ) {
-                nodeAcceptDrops = node.acceptDrops
-                node.acceptDrops = false
-            } else node.acceptDrops = nodeAcceptDrops
-            // Node 20160104 Drag.active must be updated manually to initiate de new
-            // Drag sequence when node is dragged
-            node.Drag.active = node.draggable && drag.active
-        }
-        onPressed : {
-            mouse.accepted = ( node.isInsideBoundingShape( Qt.point( mouse.x, mouse.y ) ) ? true : false )
-            if ( mouse.accepted )
-                node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
-        }
-        // Quick Qanava node drag and drop to groups management
-        onReleased: { node.dropNode( node.Drag.target ); }
-        onPositionChanged: {
-            if ( node.Drag.target !== null )
-                node.proposeNodeDrop( node.Drag.target )
-        }
-        onClicked: {
-            if ( mouse.button === Qt.LeftButton )
-                node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
-            if ( mouse.button === Qt.RightButton )
-                node.nodeRightClicked( node, Qt.point( mouse.x, mouse.y ) )
-        }
-        onDoubleClicked: { node.nodeDoubleClicked( node, Qt.point( mouse.x, mouse.y ) ) }
-    }*/
 
     ColumnLayout {
         id: layout

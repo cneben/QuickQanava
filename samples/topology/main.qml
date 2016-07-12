@@ -23,6 +23,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
+import QtQuick.Controls 2.0 as QC2
+
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "qrc:/QuickProperties2" as Qps
@@ -228,6 +230,10 @@ Item {
         }
         ColumnLayout {
             anchors.fill: parent
+            Text {
+                Layout.margins: 3; text: "Edges:"
+                font.bold: true; horizontalAlignment: Text.AlignLeft
+            }
             ListView {
                 id: edgesList
                 Layout.fillWidth: true; Layout.fillHeight: true
@@ -272,6 +278,10 @@ Item {
         }
         ColumnLayout {
             anchors.fill: parent
+            Text {
+                Layout.margins: 3; text: "Nodes:"
+                font.bold: true; horizontalAlignment: Text.AlignLeft
+            }
             ListView {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
@@ -298,6 +308,130 @@ Item {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 model: graph.nodes
                 textRole: "itemLabel"
+            }
+        }
+    }
+
+    ColorDialog {
+        id: selectionColorDialog
+        title: "Selection hilight color"
+        onAccepted: { graph.selectionColor = color; }
+    }
+    Item {
+        id: selectionView
+        anchors.top: nodeList.bottom;     anchors.topMargin: 15
+        anchors.right: parent.right; anchors.rightMargin: 15
+        width: 200; height: 280
+        Rectangle { // Background
+            anchors.fill: parent
+            color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
+        }
+        ColumnLayout {
+            anchors.fill: parent
+            Text {
+                Layout.margins: 3; text: "Selection:"
+                font.bold: true; horizontalAlignment: Text.AlignLeft
+            }
+            ListView {
+                id: selectionListView
+                Layout.fillWidth: true; Layout.fillHeight: true
+                clip: true
+                model: graph.selectedNodes
+                spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
+                highlightFollowsCurrentItem: false
+                highlight: Rectangle {
+                    x: 0; y: ( selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0 );
+                    width: selectionListView.width; height: selectionListView.currentItem.height
+                    color: "lightsteelblue"; opacity: 0.7; radius: 5
+                    Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
+                }
+                delegate: Item {
+                    id: selectedNodeDelegate
+                    width: ListView.view.width; height: 30;
+                    Text { text: "Label: " + itemData.label }
+                    MouseArea {
+                        anchors.fill: selectedNodeDelegate
+                        onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
+                    }
+                }
+            }
+            RowLayout {
+                Layout.margins: 2
+                Text { text:"Policy:" }
+                Item { Layout.fillWidth: true }
+                ColumnLayout {
+                    QC2.CheckBox {
+                        Layout.preferredHeight: 25
+                        text: "NoSelection"
+                        autoExclusive: true
+                        checked: graph.selectionPolicy === Qan.AbstractGraph.NoSelection
+                        onCheckedChanged: {
+                            if ( checked )
+                                graph.selectionPolicy = Qan.AbstractGraph.NoSelection;
+                        }
+                    }
+                    QC2.CheckBox {
+                        Layout.preferredHeight: 25
+                        height: 15
+                        text: "SelectOnClick"
+                        autoExclusive: true
+                        checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnClick
+                        onCheckedChanged: {
+                            if ( checked )
+                                graph.selectionPolicy = Qan.AbstractGraph.SelectOnClick;
+                        }
+                    }
+                    QC2.CheckBox {
+                        Layout.preferredHeight: 25
+                        text: "SelectOnCtrlClick"
+                        autoExclusive: true
+                        checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
+                        onCheckedChanged: {
+                            if ( checked )
+                                graph.selectionPolicy = Qan.AbstractGraph.SelectOnCtrlClick;
+                        }
+                    }
+                }
+            }
+            RowLayout {
+                Layout.margins: 2
+                Text { text:"Color:" }
+                Item { Layout.fillWidth: true }
+                Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: graph.selectionColor }
+                QC2.Button {
+                    Layout.preferredHeight: 25; Layout.preferredWidth: 30
+                    text: "..."
+                    onClicked: {
+                        selectionColorDialog.color = graph.selectionColor
+                        selectionColorDialog.open();
+                    }
+                }
+            }
+            RowLayout {
+                Layout.margins: 2
+                Text { text:"Weight:" }
+                QC2.Slider {
+                    Layout.preferredHeight: 20
+                    Layout.fillWidth: true
+                    from: 1.0
+                    to: 15.
+                    stepSize: 0.1
+                    value: graph.selectionWeight
+                    onValueChanged: { graph.selectionWeight = value  }
+                }
+            }
+            RowLayout {
+                Layout.margins: 2
+                Text { text:"Margin:" }
+                QC2.Slider {
+                    Layout.preferredHeight: 20
+                    Layout.fillWidth: true
+                    from: 1.0
+                    to: 15.
+                    stepSize: 0.1
+                    value: graph.selectionMargin
+                    onValueChanged: { graph.selectionMargin = value  }
+                }
             }
         }
     }

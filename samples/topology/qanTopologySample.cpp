@@ -122,7 +122,7 @@ int	main( int argc, char** argv )
 
     MainView mainView;
     mainView.setResizeMode( QQuickView::SizeRootObjectToView );
-    mainView.resize( 1024, 700 );
+    mainView.resize( 1024, 768 );
     mainView.show( );
 
     return app.exec( );

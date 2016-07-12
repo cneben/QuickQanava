@@ -99,13 +99,97 @@ public:
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
+    /*! Graph node selection policy (default to \c SelectOnClick);
+     * \li \c NoSelection: Selection of nodes is disabled.
+     * \li \c SelectOnClick (default): Node is selected when clicked, multiple selection is allowed with CTRL.
+     * \li \c SelectOnCtrlClick: Node is selected only when CTRL is pressed, multiple selection is allowed with CTRL.
+     */
+    enum SelectionPolicy { NoSelection, SelectOnClick, SelectOnCtrlClick };
+    Q_ENUM(SelectionPolicy)
+
+public:
+    /*! Current graph selection policy.
+     *
+     * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
+     */
+    Q_PROPERTY( SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged )
+    void            setSelectionPolicy( SelectionPolicy selectionPolicy );
+    inline SelectionPolicy  getSelectionPolicy( ) const { return _selectionPolicy; }
+private:
+    SelectionPolicy _selectionPolicy{ SelectionPolicy::SelectOnClick };
+signals:
+    void            selectionPolicyChanged( );
+
+public:
+    //! Color for the node selection hilgither component (default to dark blue).
+    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged )
+    void            setSelectionColor( QColor selectionColor );
+    inline QColor   getSelectionColor( ) const { return _selectionColor; }
+private:
+    QColor          _selectionColor{ Qt::darkBlue };
+signals:
+    void            selectionColorChanged( );
+
+public:
+    //! Selection hilgither item stroke width (default to 3.0).
+    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged )
+    void            setSelectionWeight( qreal selectionWeight );
+    inline qreal    getSelectionWeight( ) const { return _selectionWeight; }
+private:
+    qreal           _selectionWeight{ 3. };
+signals:
+    void            selectionWeightChanged( );
+
+public:
+    //! Margin between the selection hilgither item and a selected item (default to 3.0).
+    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged )
+    void            setSelectionMargin( qreal selectionMargin );
+    inline qreal    getSelectionMargin( ) const { return _selectionMargin; }
+private:
+    qreal           _selectionMargin{ 3. };
+signals:
+    void            selectionMarginChanged( );
+
+public:
+    /*! Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
+     *
+     * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
+     * method will always return false.
+     */
+    bool    selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
+
+    /*! Add a node in the current selection.
+     */
+    void    addToSelection( qan::Node& node );
+
+    //! Remove a node from the selection.
+    void    removeFromSelection( qan::Node& node );
+
+    //! Clear the current selection.
+    void    clearSelection();
+
+    //! Return true if multiple node are selected.
+    inline  bool    hasMultipleSelection() const { return _selectedNodes.size() > 0; }
+
+    //! Move the selected node by a position \c delta (except a given one that can be nullptr).
+    void            moveSelectedNodes(QPointF delta, qan::Node* except = nullptr );
+
+public:
+    using SelectedNodes = qps::ContainerListModel< QVector, qan::Node* > ;
+
     //! Read-only list model of currently selected nodes.
-    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodes NOTIFY selectedNodesChanged )
-    QAbstractListModel* getSelectedNodes( ) { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
+    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged )
+    QAbstractListModel* getSelectedNodesModel( ) { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
+
+    auto    getSelectedNodes( ) -> SelectedNodes& { return _selectedNodes; }
+    auto    getSelectedNodes( ) const -> const SelectedNodes& { return _selectedNodes; }
 signals:
     void                selectedNodesChanged();
 private:
-    qps::ContainerListModel< QVector, qan::Node* >  _selectedNodes;
+    SelectedNodes       _selectedNodes;
+
+protected:
+    virtual void    mousePressEvent(QMouseEvent* event ) override;
     //@}
     //-------------------------------------------------------------------------
 
@@ -153,6 +237,17 @@ protected:
     Q_INVOKABLE QQuickItem* createFromDelegate( QQmlComponent* component );
 
     static void setCppOwnership( QQuickItem* item );
+
+protected:
+    //! Create a Qt Quick Canvas object (caller get ownership for the object flagged with CppOwnership).
+    QQuickItem*     createCanvas( QQuickItem* parent );
+private:
+    std::unique_ptr< QQmlComponent >   _canvasComponent{nullptr};
+protected:
+    //! Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
+    QQuickItem*     createRectangle( QQuickItem* parent );
+private:
+    std::unique_ptr< QQmlComponent >   _rectangleComponent{nullptr};
 
 private:
     QMap< QString, QQmlComponent* > _nodeClassComponents;

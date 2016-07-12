@@ -129,16 +129,16 @@ Item {
     }
 
     // Node intersection shape and symbol polygon management
-    onWidthChanged: {
+    /*onWidthChanged: {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.updateSymbolPolygon()
     }
     onHeightChanged: {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.updateSymbolPolygon()
-    }
-    Component.onCompleted: {
+    }*/
+    /*Component.onCompleted: {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.updateSymbolPolygon()
-    }
+    }*/
 }

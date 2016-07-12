@@ -48,6 +48,8 @@ Qan.AbstractNode {
     clip: false
     label: "Connector Drop Node"
     serializable: false // Don't serialize "helper control node"
+    selectable: false
+    antialiasing: true
 
     // Public
     //! Connector control radius (final diameter will be radius x 2).
