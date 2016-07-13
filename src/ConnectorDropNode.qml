@@ -39,9 +39,9 @@ import QuickQanava 2.0 as Qan
 Qan.AbstractNode {
     id: connectorDropNode
 
-    width: radius * 2 * radiusHilightMag
-    height: radius * 2 * radiusHilightMag
-    x: parent.width + 2
+    width: radius * 2
+    height: radius * 2
+    x: parent.width + xMargin
     y: 0
 
     visible: false
@@ -53,10 +53,7 @@ Qan.AbstractNode {
 
     // Public
     //! Connector control radius (final diameter will be radius x 2).
-    property real radius: 5
-
-    //! Connector control will be expanded up to radius * raduiusHilightMag to hilight a "connectable" drag target (default to 2.).
-    property real radiusHilightMag: 2.
+    property real radius: 7
 
     //! Connector color (default to Qt.DarkBlue).
     property color connectorColor: "darkblue"
@@ -65,10 +62,12 @@ Qan.AbstractNode {
     property real connectorLineWidth: 2
 
     //! Maximum connector line width, used to visually hilight that te current drag "target" can be connected (default to 5.0).
-    property real connectorHilightLineWidth: 5
+    property real connectorHilightLineWidth: 4
 
     //! Qan.Graph where this connector drop node is registered
-    property var graph : undefined
+    property var    graph : undefined
+
+    property real   xMargin: 7
 
     /*! \brief Set the connector target (is the node that will display the control and that will be used as 'source' for edge creation).
      *
@@ -78,9 +77,10 @@ Qan.AbstractNode {
         visible = ( hostNode !== null && hostNode !== undefined )
         parent = hostNode
         sourceNode = hostNode
-        if ( hostNode !== undefined )   // Force drop node position updates
-            x = Qt.binding( function(){ return hostNode.width + 2 } )
+        if ( hostNode !== null )   // Force drop node position updates
+            x = Qt.binding( function(){ return hostNode.width + xMargin } )
         else x = 0
+        connectionSymbol.state = "NORMAL"
     }
 
     // Private properties
@@ -90,67 +90,71 @@ Qan.AbstractNode {
     Drag.dragType: Drag.Internal
 
     Drag.onTargetChanged: { // Hilight a target node
-        if ( Drag.target != null && Drag.target == sourceNode ) {
-            nodeSymbol.state = "NORMAL"
-            if ( dummyEdge != undefined )
+        if ( Drag.target === undefined ||
+             Drag.target === null ) {
+            connectionSymbol.state = "NORMAL"
+        } else if ( Drag.target !== undefined &&
+                   Drag.target !== null &&
+                   Drag.target === sourceNode ) {
+            connectionSymbol.state = "NORMAL"
+            if ( dummyEdge !== null && dummyEdge !== undefined )
                 dummyEdge.visible = false
         }
         else {
-            if ( Drag.target != undefined )
+            if ( Drag.target !== undefined &&
+                 Drag.target !== null ) {
                 parent.z = Drag.target.z + 1
-            nodeSymbol.state = ( Drag.target != undefined ) ? "HILIGHT" : "NORMAL"
-            if ( dummyEdge != undefined ) {
-                dummyEdge.visible = true
-                dummyEdge.z = parent.z  // Edge should be always on top
+                connectionSymbol.state = "HILIGHT"
+                if ( dummyEdge !== null &&
+                        dummyEdge !== undefined ) {
+                    dummyEdge.visible = true
+                    dummyEdge.z = parent.z  // Edge should be always on top
+                }
             }
         }
     }
 
-    Canvas {
-        id: nodeSymbol
+    Rectangle {
+        id: connectionSymbol
         anchors.fill: parent
-        z: 1
+        z: 15
         state: "NORMAL"
-        clip: false
-        property var radius : connectorDropNode.radius
-        property var lineWidth: connectorDropNode.connectorLineWidth
+        color: Qt.rgba(0, 0, 0, 0)
+        radius : width / 2.
+        property real   borderWidth: connectorDropNode.connectorLineWidth
+        border.color: connectorDropNode.connectorColor
+        border.width: borderWidth
         states: [
-            State { name: "NORMAL"; PropertyChanges { target: nodeSymbol; lineWidth: connectorDropNode.connectorLineWidth; radius : connectorDropNode.radius } },
+            State { name: "NORMAL";
+                PropertyChanges {
+                    target: connectionSymbol;
+                    borderWidth: connectorDropNode.connectorLineWidth;
+                    scale: 1.0
+                }
+            },
             State { name: "HILIGHT"
                 PropertyChanges {
-                    target: nodeSymbol; lineWidth: connectorDropNode.connectorHilightLineWidth;
-                    radius : ( nodeSymbol.width / 2 ) - connectorDropNode.connectorHilightLineWidth / 1.8  // 1.8 to add an "antialisaing margin"
+                    target: connectionSymbol;
+                    borderWidth: connectorDropNode.connectorHilightLineWidth;
+                    scale: 1.7
                 }
             }
         ]
         smooth: true
-        antialiasing: true
         transitions: [
             Transition {
-                from: "NORMAL"; to: "HILIGHT"; PropertyAnimation { target: nodeSymbol; properties: "lineWidth, radius"; duration: 100 }
+                from: "NORMAL"; to: "HILIGHT"; PropertyAnimation { target: connectionSymbol; properties: "borderWidth, scale"; duration: 100 }
             },
             Transition {
-                from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: nodeSymbol; properties: "lineWidth, radius"; duration: 150 }
+                from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: connectionSymbol; properties: "borderWidth, scale"; duration: 150 }
             } ]
-
-        onRadiusChanged: requestPaint()
-        onPaint: {
-            var ctx = nodeSymbol.getContext( "2d" )
-            ctx.clearRect( 0, 0, width, height )
-            ctx.lineWidth = lineWidth
-            ctx.strokeStyle = connectorDropNode.connectorColor
-            ctx.beginPath( )
-            var center = Qt.point( width / 2, height / 2 )
-            ctx.ellipse( center.x - radius, center.y - radius,
-                        radius * 2, radius * 2 )
-            ctx.stroke( )
-        }
     }
     property var sourceNode
     onSourceNodeChanged: {
-        if ( visible && connectorDropNode.parent != null ) {
-            connectorDropNode.x = connectorDropNode.parent.width + 2
+        if ( visible && connectorDropNode.parent !== null ) {
+            connectorDropNode.x = connectorDropNode.parent.width + xMargin
             connectorDropNode.y = 0
+            connectionSymbol.state = "NORMAL"
         }
     }
     //! Modify this property to create edge with a specific class name (default to qan::Edge).
@@ -164,7 +168,7 @@ Qan.AbstractNode {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            if ( connectorDropNode.graph == undefined )
+            if ( connectorDropNode.graph === undefined )
                 return
             var src = connectorDropNode.sourceNode
             var dst = connectorDropNode.Drag.target
@@ -178,9 +182,11 @@ Qan.AbstractNode {
                 }
             }
             // Restore original position
-            connectorDropNode.x = connectorDropNode.parent.width + 2
+            connectionSymbol.state = "NORMAL"
+            connectorDropNode.x = connectorDropNode.parent.width + xMargin
             connectorDropNode.y = 0
-            if ( connectorDropNode.dummyEdge != undefined ) {
+            if ( connectorDropNode.dummyEdge !== undefined &&
+                 connectorDropNode.dummyEdge !== null ) {
                 connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
                 connectorDropNode.dummyEdge = undefined
             }
@@ -188,7 +194,8 @@ Qan.AbstractNode {
         onPressed : {
             mouse.accepted = true
             if ( !connectorDropNode.graph.hasEdge( connectorDropNode.sourceNode, connectorDropNode ) ) {
-                if ( connectorDropNode.dummyEdge != undefined )
+                if ( connectorDropNode.dummyEdge !== undefined &&
+                     connectorDropNode !== null )
                     connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
                 connectorDropNode.dummyEdge = connectorDropNode.graph.insertEdge( connectorDropNode.sourceNode, connectorDropNode )
                 connectorDropNode.dummyEdge.z = connectorDropNode.sourceNode.z
