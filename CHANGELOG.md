@@ -1,4 +1,8 @@
 
+## 2016/07/13:
+Add multiple selection dragging (with group support).
+Add support for visual edition of nodes label in Qan.RectNodeTemplate.
+
 ## 2016/07/12:
 Add node selection and multiple selection support.
 

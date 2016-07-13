@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanva software. Copyright 2014 Benoit AUTHEMAN.
 //
 // \file	NodeCanvasTemplate.qml
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
