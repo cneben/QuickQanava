@@ -31,21 +31,25 @@ Qan.Graph {
     objectName: "graph"
     anchors.fill: parent
 
-    navigable: false
+    navigable: true
 
     property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
+    property var controlNodeDelegate: Qt.createComponent( "qrc:/ControlNode.qml" )
     property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
 
     Component.onCompleted: {
         var n1 = graph.insertNode( )
         n1.label = "Rectangle"
+
         graph.insertNode( customNodeDelegate )
+
         var n2 = graph.insertNode( diamondNodeDelegate )
         n2.label = "Diamond"
 
-        //graph.insertEdge( edgeDelegate, n1, n2 )
+        var n2 = graph.insertNode( controlNodeDelegate )
 
-        //var g = graph.insertGroup( )
+        var g = graph.insertGroup( )
+        g.label = "Group"
     }
 }
 

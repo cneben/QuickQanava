@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>CustomNode.qml</file>
+        <file>ControlNode.qml</file>
         <file>DiamondNode.qml</file>
     </qresource>
 </RCC>

@@ -234,14 +234,6 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
     if ( getDraggable() &&
          event->buttons() |  Qt::LeftButton &&
          getDragActive() ) {
-
-        if ( getQanGroup() != nullptr ) {
-            getQanGroup()->removeNode( this );
-            _dragInitialMousePos = event->windowPos();  // Note 20160811: Resetting position cache since the node has changed parent and
-                                                        // thus position (same scene pos but different local pos)
-            _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-        }
-
         // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
         // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
         // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
@@ -255,22 +247,8 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
             startLocalPos = _dragInitialMousePos;
             curLocalPos = event->windowPos();
         }
-        QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
-        setX( startPos.x() + curLocalPos.x() - startLocalPos.x() );
-        setY( startPos.y() + curLocalPos.y() - startLocalPos.y() );
         QPointF delta( curLocalPos - startLocalPos );
-        getGraph()->moveSelectedNodes( delta, this );
-
-        qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
-        if ( group != nullptr &&
-             getDropable() ) {
-                group->proposeNodeDrop( group->getContainer(), this );
-                _lastProposedGroup = group;
-        }
-        if ( group == nullptr && _lastProposedGroup != nullptr ) {
-            _lastProposedGroup->endProposeNodeDrop();
-            _lastProposedGroup = nullptr;
-        }
+        dragMove( event->windowPos(), delta );
     }
 }
 
@@ -295,17 +273,7 @@ void    Node::mousePressEvent( QMouseEvent* event )
         // Dragging management
         if ( getDraggable() &&
              event->button() == Qt::LeftButton ) {
-            setDragActive( true );
-            _dragInitialMousePos = event->windowPos();
-            _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-
-            // If there is a selection, keep start position for all selected nodes.
-            qan::Graph* graph = getGraph();
-            if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
-                for ( auto& selectedNode : graph->getSelectedNodes() )
-                    if ( selectedNode != nullptr && selectedNode != this )
-                        selectedNode->_dragInitialPos = selectedNode->position();
-            }
+            beginDragMove( event->windowPos() );
         }
         event->accept();
     } else
@@ -315,6 +283,67 @@ void    Node::mousePressEvent( QMouseEvent* event )
 
 void    Node::mouseReleaseEvent( QMouseEvent* event )
 {
+    if ( getDragActive() )
+        endDragMove();
+}
+
+auto    Node::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection ) -> void
+{
+    setDragActive( true );
+    _dragInitialMousePos = dragInitialMousePos;
+    _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
+
+    // If there is a selection, keep start position for all selected nodes.
+    if ( dragSelection ) {
+        qan::Graph* graph = getGraph();
+        if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
+            for ( auto& selectedNode : graph->getSelectedNodes() )
+                if ( selectedNode != nullptr && selectedNode != this )
+                    selectedNode->beginDragMove( dragInitialMousePos, false );
+        }
+    }
+}
+
+auto    Node::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
+{
+    if ( getQanGroup() != nullptr ) {
+        getQanGroup()->removeNode( this );
+        _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and
+                                                    // thus position (same scene pos but different local pos)
+        _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
+    }
+
+    QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
+    setX( startPos.x() + delta.x() );
+    setY( startPos.y() + delta.y() );
+
+    if ( dragSelection ) {
+        if ( getGraph() != nullptr ) {
+            for ( auto& node : getGraph()->getSelectedNodes() )
+                if ( node != nullptr && node != this ) {
+                    node->dragMove( dragInitialMousePos, delta, false );
+                    /*QPointF startPos = node->getDragInitialPos();
+                    node->setX( startPos.x() + delta.x() );
+                    node->setY( startPos.y() + delta.y() );*/
+                }
+        }
+    }
+
+    // Eventually, propose a node group drop after move
+    qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
+    if ( group != nullptr &&
+         getDropable() ) {
+            group->proposeNodeDrop( group->getContainer(), this );
+            _lastProposedGroup = group;
+    }
+    if ( group == nullptr && _lastProposedGroup != nullptr ) {
+        _lastProposedGroup->endProposeNodeDrop();
+        _lastProposedGroup = nullptr;
+    }
+}
+
+auto    Node::endDragMove( bool dragSelection ) -> void
+{
     if ( getDropable() ) {
         qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
         if ( group != nullptr )
@@ -322,19 +351,20 @@ void    Node::mouseReleaseEvent( QMouseEvent* event )
     }
 
     setDragActive( false );
-    _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when button is released
+    _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends
     _dragInitialPos = { 0., 0. };
     _lastProposedGroup = nullptr;
 
-    // If there is a selection, keep start position for all selected nodes.
-    qan::Graph* graph = getGraph();
-    if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
-        for ( auto& selectedNode : graph->getSelectedNodes() )
-            if ( selectedNode != nullptr && selectedNode != this )
-                selectedNode->_dragInitialPos = selectedNode->parentItem() != nullptr ? selectedNode->parentItem()->mapToScene( selectedNode->position() ) : selectedNode->position();
+    // If there is a selection, end drag for the whole selection
+    if ( dragSelection ) {
+        qan::Graph* graph = getGraph();
+        if ( graph != nullptr && getGraph()->hasMultipleSelection() ) {
+            for ( auto& selectedNode : graph->getSelectedNodes() )
+                if ( selectedNode != nullptr && selectedNode != this )
+                    selectedNode->endDragMove( false );
+        }
     }
 }
-
 //-----------------------------------------------------------------------------
 
 /* Appearance Management *///--------------------------------------------------

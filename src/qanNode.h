@@ -237,6 +237,13 @@ protected:
     virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
 
 public:
+    //! \c dragInitialMousePos in window coordinate system.
+    inline  auto    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) -> void;
+    //! \c delta in scene coordinate system.
+    inline  auto    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) -> void;
+    inline  auto    endDragMove( bool dragSelection = true ) -> void;
+
+public:
     //! Used internally for multiple selection dragging, contain scene position of the node at the beggining of a drag operation.
     auto            getDragInitialPos() const -> const QPointF& { return _dragInitialPos; }
 

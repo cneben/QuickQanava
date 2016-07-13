@@ -67,8 +67,6 @@ include($$PWD/QuickQanava/src/quickqanava.pri)
 Samples
 ------------------
 
-
-
 Displaying a Simple Directed Graph
 ------------------
 
@@ -79,25 +77,88 @@ Both QuickQanava and QuickProperties should be initialized in your c++ main func
 
  // _translator should be a scoped pointer member of your QQuickView:
     QScopedPointer< qps::AbstractTranslator > _translator{ new qps::AbstractTranslator() };
-
+	
  // ...
  // In your custom QQuickView constructor:
-    QuickProperties::initialize( engine(), _translator.data() );
+    QuickProperties::initialize( engine(), _translator.data() );	// <--- translator could just be left to nullptr if you don't need internationalization
     QuickQanava::initialize();
 ~~~~~~~~~~~~~
 
-Then, in QML:
+Then, in QML import QuickQanava:
 ~~~~~~~~~~~~~{.cpp}
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 ~~~~~~~~~~~~~
 
+And create a `Qan.Graph` component:
+~~~~~~~~~~~~~{.cpp}
+Qan.Graph {
+    id: graph
+    anchors.fill: parent
+    Component.onCompleted: {
+        var n1 = graph.insertNode( )
+        n1.label = "Hello World"
+    }
+}
+~~~~~~~~~~~~~
+
 Basic Graph Topology
 ------------------
 
-### Group topology
+A graph is "navigable" by default, it can be panned, zoomed and fit to view, this behaviour can be disabled by setting `Qan.Graph.navigable` property to false.
 
-   A graph is navigable by default.
+### Selection
+   
+Selection can be modified at graph level just by changing the graph selection policy property `Qan.Graph.selectionPolicy':
+- `Qan.AbstractGraph.NoSelection`: Selection will be disabled in the whole graph.
+- `Qan.AbstractGraph.SelectOnClick`: Node are selected when clicked, multiple selection is enabled when CTRL is pressed.
+- `Qan.AbstractGraph.SelectOnCtrlClick`: Node are selected only if CTRL is pressed when node is clicked (multiple selection is still available).
+
+Selection can also be configured with the following Qan.Graph properties:
+- `Qan.Graph.selectionColor` / `qan::Graph::setSelectionColor()`: Color for the node selection rectangle.
+- `Qan.Graph.selectionWeight` / `qan::Graph::setSelectionWeight()`: Border width of the node selection rectangle.
+- `Qan.Graph.selectionMargin` / `qan::Graph::setSelectionMargin()`: Margin between the node selection rectangle and the node content (selection weight is taken into account).
+
+All theses properties could be changed dynamically.
+
+Selection could also be disabled at node level by setting `Qan.Node.selectable` to false, node become unselectable even if global graph selection policy is not set to `NoSelection`.
+
+Current multiple selection (or single selection) is available trought Qan.Graph `selectedNodes` property. `selectedNodes` is a list model, it can be used in any QML view, or iterated from C++ to read the current selection:
+~~~~~~~~~~~~~{.cpp}
+// Viewing the actual selected nodes with a QML ListView:
+ListView {
+	id: selectionListView
+	Layout.fillWidth: true; Layout.fillHeight: true
+	clip: true
+	model: graph.selectedNodes		// <---------
+	spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
+	highlightFollowsCurrentItem: false
+	highlight: Rectangle {
+		x: 0; y: ( selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0 );
+		width: selectionListView.width; height: selectionListView.currentItem.height
+		color: "lightsteelblue"; opacity: 0.7; radius: 5
+	}
+	delegate: Item {
+		id: selectedNodeDelegate
+		width: ListView.view.width; height: 30;
+		Text { text: "Label: " + itemData.label }		// <----- itemData is a Qan.Node, node label could be accessed directly
+		MouseArea {
+			anchors.fill: selectedNodeDelegate
+			onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
+		}
+	}
+}
+~~~~~~~~~~~~~
+
+In C++, `selectedNodes` could be iterated directly, the current node should be tested to ensure it is non nullptr, since the underlining model is thread-safe and could have
+been modified from another thread:
+~~~~~~~~~~~~~{.cpp}
+	auto graph = std::make_unique<qan::Graph>();
+    for ( auto& node : graph->getSelectNodes() ) {
+        if ( node != nullptr )
+            node->doWhateverYouWant();
+    }
+~~~~~~~~~~~~~
 
 ### Group topology
 
@@ -129,9 +190,9 @@ Qan.Graph {
 
 ![Groups](images/visual-node-connector.gif)
 
-
 Displaying Custom Nodes
 ------------------
+
 
 
 Defining Styles

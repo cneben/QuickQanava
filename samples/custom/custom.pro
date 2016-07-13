@@ -13,6 +13,7 @@ HEADERS	+=  qanMainWindow.h
 
 OTHER_FILES   +=  main.qml          \
                   CustomNode.qml    \
+                  ControlNode.qml   \
                   DiamondNode.qml
 
 RESOURCES   +=  ../../src/QuickQanava2.qrc                       \

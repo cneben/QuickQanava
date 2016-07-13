@@ -171,9 +171,6 @@ public:
     //! Return true if multiple node are selected.
     inline  bool    hasMultipleSelection() const { return _selectedNodes.size() > 0; }
 
-    //! Move the selected node by a position \c delta (except a given one that can be nullptr).
-    void            moveSelectedNodes(QPointF delta, qan::Node* except = nullptr );
-
 public:
     using SelectedNodes = qps::ContainerListModel< QVector, qan::Node* > ;
 

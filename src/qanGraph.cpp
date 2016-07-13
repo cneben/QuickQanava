@@ -203,16 +203,6 @@ void    Graph::clearSelection()
     _selectedNodes.clear();
 }
 
-void    Graph::moveSelectedNodes(QPointF delta, qan::Node* except )
-{
-    for ( auto& node : _selectedNodes )
-        if ( node != nullptr && node != except ) {
-            QPointF startPos = node->getDragInitialPos();
-            node->setX( startPos.x() + delta.x() );
-            node->setY( startPos.y() + delta.y() );
-        }
-}
-
 void    Graph::mousePressEvent( QMouseEvent* event )
 {
     if ( event->button() == Qt::LeftButton )

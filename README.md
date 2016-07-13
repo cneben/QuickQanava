@@ -55,6 +55,8 @@ Build options are configured in `common.pri` (local Protocol Buffer source direc
 
 ## QuickQanava Screenshots:
 
+![selection](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/selection.gif)
+
 ![resizing and groups sample](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/groups-overview.gif)
 
 ![visual node connection](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/visual-node-connector.gif)
