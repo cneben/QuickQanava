@@ -118,6 +118,10 @@ signals:
 
     /*! \name Selection Management *///----------------------------------------
     //@{
+protected slots:
+    virtual void    onWidthChanged();
+    virtual void    onHeightChanged();
+
 public:
     //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
     Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged )

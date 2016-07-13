@@ -1,4 +1,7 @@
 
+## 2016/07/12:
+Add node selection and multiple selection support.
+
 ## 2016/07/11:
 Massive optimization of node dragging code: node dragging is now 100% c++, MouseArea and Drag QML components are
 no longer necessary in Qan.RectNodeTemplate (faster node JS compilation and creation, and way faster runtime execution)

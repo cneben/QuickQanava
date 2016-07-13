@@ -42,12 +42,6 @@ Item {
     property         alias  symbol: nodeSymbol.sourceComponent
     default property alias  children : templateContentLayout.children
 
-    Drag.active: node.dropable && nodeDragArea.drag.active
-    Drag.dragType: Drag.Internal
-    onNodeChanged: {
-        if ( node != null && node != undefined )
-            node.Drag.dragType = Drag.Internal
-    }
     function requestPaint( ) {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.requestPaint( );
@@ -89,43 +83,13 @@ Item {
             font: node.style.labelFont
             wrapMode: Text.Wrap;    elide: Text.ElideRight; maximumLineCount: 4
         }
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
+        Item {
             id: templateContentLayout
             z: 4
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.fillWidth: true; Layout.fillHeight: true
             visible: templateContentLayout.children.length > 0  // Hide if the user has not added any content
         }
-    }
-
-    MouseArea {
-        id: nodeDragArea
-        anchors.fill: parent
-        z: 2
-        drag.target: ( node.draggable ? node : null )
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        smooth: true
-        propagateComposedEvents: true
-        hoverEnabled: true
-        onPressed : {
-            //console.debug( "onPressed() pos=" + mouse.x + "," + mouse.y + "  accepted=" + node.isInsideIntersectionShape( Qt.point( mouse.x, mouse.y ) ) );
-            mouse.accepted = ( node.isInsideBoundingShape( Qt.point( mouse.x, mouse.y ) ) ? true : false )
-            if ( mouse.accepted )
-                node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
-        }
-        onReleased: { node.dropNode( node.Drag.target ); } // Quick Qanava node drag and drop to groups management
-        onPositionChanged: {
-            if ( node.Drag.target !== null )
-                node.proposeNodeDrop( node.Drag.target )
-        }
-        onClicked: {
-            if ( mouse.button == Qt.LeftButton )
-                node.nodeClicked( node, Qt.point( mouse.x, mouse.y ) )
-            if ( mouse.button === Qt.RightButton )
-                node.nodeRightClicked( node, Qt.point( mouse.x, mouse.y ) )
-        }
-        onDoubleClicked: { node.nodeDoubleClicked( node, Qt.point( mouse.x, mouse.y ) ) }
     }
 
     // Node intersection shape and symbol polygon management

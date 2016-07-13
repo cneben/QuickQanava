@@ -3,6 +3,8 @@
 [Building](#building) |
 [License](#license)
 
+20160713: Warning, master branch is actually under heavy development, compilation on g++ might be difficult for a few days. 
+
 QuickQanava 
 ============================
 

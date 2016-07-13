@@ -56,14 +56,11 @@ Item {
         source: background
         horizontalOffset: node.style.shadowOffset.width
         verticalOffset: node.style.shadowOffset.height
-        radius: 4
-        samples: 8
-        //smooth: true
+        radius: 4; samples: 8
         color: node.style.shadowColor
         visible: node.style.hasShadow
-        //transparentBorder: true
+        transparentBorder: true
     }
-
 
     ColumnLayout {
         id: layout
@@ -91,22 +88,4 @@ Item {
             visible: contentLayout.children.length > 0  // Hide if the user has not added any content
         }
     }
-
-    // Node intersection shape and symbol polygon management
-    property var boundingShape: new Array( )
-    onWidthChanged: { updateBoundingShape() }
-    onHeightChanged: { updateBoundingShape() }
-    function updateBoundingShape( ) {
-        // Generate a standard rectangular bounding polygon
-        var w = width /*- 1*/
-        var h = height /*- 1*/
-        boundingShape = new Array( )
-        boundingShape.push( Qt.point( 1, 1 ) )
-        boundingShape.push( Qt.point( w, 1 ) )
-        boundingShape.push( Qt.point( w, h ) )
-        boundingShape.push( Qt.point( 1, h ) )
-        boundingShape.push( Qt.point( 1, 1 ) )
-        node.setBoundingShape( boundingShape )
-    }
-    Component.onCompleted: { updateBoundingShape() }
 }

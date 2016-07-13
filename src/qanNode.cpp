@@ -48,6 +48,9 @@ Node::Node( QQuickItem* parent ) :
     setResizable( true );
 
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+
+    connect( this, &qan::Node::widthChanged, this, &qan::Node::onWidthChanged );
+    connect( this, &qan::Node::heightChanged, this, &qan::Node::onHeightChanged );
 }
 
 Node::~Node( ) { }
@@ -64,6 +67,32 @@ bool    Node::operator==( const qan::Node& right ) const
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
+void    Node::onWidthChanged()
+{
+    qreal selectionWeight{ 3. };
+    qreal selectionMargin{ 3. };
+    qan::Graph* graph = getGraph();
+    if ( graph != nullptr ) {
+        selectionWeight = graph->getSelectionWeight();
+        selectionMargin = graph->getSelectionMargin();
+    }
+    if ( _selectionItem != nullptr )
+        _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
+}
+
+void    Node::onHeightChanged()
+{
+    qreal selectionWeight{ 3. };
+    qreal selectionMargin{ 3. };
+    qan::Graph* graph = getGraph();
+    if ( graph != nullptr ) {
+        selectionWeight = graph->getSelectionWeight();
+        selectionMargin = graph->getSelectionMargin();
+    }
+    if ( _selectionItem != nullptr )
+        _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
+}
+
 void    Node::setSelectable( bool selectable )
 {
     if ( _selectable == selectable )
@@ -120,10 +149,10 @@ void    Node::configureSelectionItem( qreal selectionWeight, qreal selectionMarg
         _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
         _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
         _selectionItem->setOpacity( 0.80 );
+        _selectionItem->setProperty( "radius", 4. );
         QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
         if ( rectangleBorder != nullptr ) {
             rectangleBorder->setProperty( "width", selectionWeight );
-            rectangleBorder->setProperty( "radius", 3. );
         }
     }
 }
@@ -247,7 +276,7 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
 
 void    Node::mousePressEvent( QMouseEvent* event )
 {
-//    bool accepted = isInsideBoundingShape( event->localPos() );
+    //bool accepted = isInsideBoundingShape( event->localPos() );
     bool accepted{ true };
     if ( accepted ) {
         // Selection management
