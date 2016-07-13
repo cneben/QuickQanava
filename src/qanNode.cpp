@@ -276,8 +276,7 @@ void    Node::mouseMoveEvent(QMouseEvent* event )
 
 void    Node::mousePressEvent( QMouseEvent* event )
 {
-    //bool accepted = isInsideBoundingShape( event->localPos() );
-    bool accepted{ true };
+    bool accepted = isInsideBoundingShape( event->localPos() );
     if ( accepted ) {
         // Selection management
         if ( isSelectable() &&
@@ -308,7 +307,10 @@ void    Node::mousePressEvent( QMouseEvent* event )
                         selectedNode->_dragInitialPos = selectedNode->position();
             }
         }
-    }
+        event->accept();
+    } else
+        event->ignore();
+    // Note 20160712: Do not call base QQuickItem implementation.
 }
 
 void    Node::mouseReleaseEvent( QMouseEvent* event )
@@ -366,8 +368,9 @@ void    Node::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeome
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
 
     // Invalidate actual bounding shape
-    emit updateBoundingShape();
     _boundingShape.clear();
+    emit boundingShapeChanged();
+    emit updateBoundingShape();
 }
 
 QPolygonF   Node::getBoundingShape( )
@@ -392,14 +395,14 @@ void    Node::setBoundingShape( QVariantList boundingShape )
     QPolygonF shape;
     foreach ( QVariant vp, boundingShape )
         shape.append( vp.toPointF( ) );
-    if ( !shape.isEmpty( ) )
-        _boundingShape = shape;
-    else
-        _boundingShape = generateDefaultBoundingShape();
+    _boundingShape = ( !shape.isEmpty( ) ? shape : generateDefaultBoundingShape() );
+    emit boundingShapeChanged();
 }
 
 bool    Node::isInsideBoundingShape( QPointF p )
 {
+    if ( _boundingShape.isEmpty() )
+        setBoundingShape( generateDefaultBoundingShape() );
     return _boundingShape.containsPoint( p, Qt::OddEvenFill );
 }
 

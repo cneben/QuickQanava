@@ -43,9 +43,9 @@ Qan.Graph {
         var n2 = graph.insertNode( diamondNodeDelegate )
         n2.label = "Diamond"
 
-        graph.insertEdge( edgeDelegate, n1, n2 )
+        //graph.insertEdge( edgeDelegate, n1, n2 )
 
-        var g = graph.insertGroup( )
+        //var g = graph.insertGroup( )
     }
 }
 

@@ -43,9 +43,15 @@ Item {
     default property alias  children : templateContentLayout.children
 
     function requestPaint( ) {
-        if ( nodeSymbol.item != null )
+        if ( nodeSymbol.item !== null )
             nodeSymbol.item.requestPaint( );
     }
+    onNodeChanged: {
+        console.debug( "node changed to " + node )
+        if ( node !== undefined && node !== null )
+            nodeUpdateBoundingShape.target = node
+    }
+
     Loader {
         id: nodeSymbol
         anchors.fill: parent
@@ -92,17 +98,16 @@ Item {
         }
     }
 
-    // Node intersection shape and symbol polygon management
-    /*onWidthChanged: {
+    // Bounding shape management
+    Connections {
+        id: nodeUpdateBoundingShape
+        onUpdateBoundingShape: {
+            if ( nodeSymbol.item !== null )
+                nodeSymbol.item.updateSymbolPolygon()
+        }
+    }
+    Component.onCompleted: {
         if ( nodeSymbol.item != null )
             nodeSymbol.item.updateSymbolPolygon()
     }
-    onHeightChanged: {
-        if ( nodeSymbol.item != null )
-            nodeSymbol.item.updateSymbolPolygon()
-    }*/
-    /*Component.onCompleted: {
-        if ( nodeSymbol.item != null )
-            nodeSymbol.item.updateSymbolPolygon()
-    }*/
 }

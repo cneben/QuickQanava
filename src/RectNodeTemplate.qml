@@ -42,8 +42,6 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
-
-        layer.enabled: false
         z: 1
         radius: 2
         color: node.style.backColor
