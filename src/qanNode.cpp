@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library.
 //
 // \file	qanNode.cpp
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
@@ -256,6 +256,8 @@ void    Node::mousePressEvent( QMouseEvent* event )
 {
     bool accepted = isInsideBoundingShape( event->localPos() );
     if ( accepted ) {
+        forceActiveFocus();
+
         // Selection management
         if ( isSelectable() &&
              event->button() == Qt::LeftButton &&

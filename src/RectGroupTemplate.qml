@@ -86,6 +86,7 @@ Item {
                 else group.label = text
                 focus = false;  // Release focus once the label has been edited
             }
+            onEditingFinished: { focus = false; }
         }
         MouseArea {
             id: groupLabelDrapArea

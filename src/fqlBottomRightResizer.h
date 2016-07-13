@@ -2,7 +2,7 @@
 // This file is a part of the FastQMLlibrary. Copyright 2016 Benoit AUTHEMAN.
 //
 // \file	fqlBottomRightResizer.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2016 07 08
 //-----------------------------------------------------------------------------
 

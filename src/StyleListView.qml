@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
 // \file	StyleListView.qml
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 10 18
 //-----------------------------------------------------------------------------
 

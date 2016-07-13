@@ -212,8 +212,10 @@ void    Graph::clearSelection()
 
 void    Graph::mousePressEvent( QMouseEvent* event )
 {
-    if ( event->button() == Qt::LeftButton )
+    if ( event->button() == Qt::LeftButton ) {
         clearSelection();
+        forceActiveFocus();
+    }
     event->ignore();
     qan::Config::GraphBase::mousePressEvent( event );
 }

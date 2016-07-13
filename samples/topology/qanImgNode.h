@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library.
 //
 // \file	qanImgNode.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
 

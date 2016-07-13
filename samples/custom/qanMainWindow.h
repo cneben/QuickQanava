@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library.
 //
 // \file	qanMainWindow.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2014 10 19
 //-----------------------------------------------------------------------------
 

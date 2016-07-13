@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
 // \file	DiamondNode.qml
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 08 25
 //-----------------------------------------------------------------------------
 
@@ -70,7 +70,6 @@ Qan.AbstractNode {
             }
             property var symbolPolygon: new Array( )
             function updateSymbolPolygon( ) {
-                console.debug( "node " + diamondNode + " updateSymbolPolygon()..." )
                 var w = width - 1
                 var w2 = w / 2
                 var w5 = w / 4

@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library.
 //
 // \file	qanEdge.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 

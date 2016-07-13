@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
 // \file	Edge.qml
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 06 20
 //-----------------------------------------------------------------------------
 

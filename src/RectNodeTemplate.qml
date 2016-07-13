@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software. Copyright 2015 Benoit AUTHEMAN.
 //
 // \file	NodeRectTemplate.qml
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
@@ -60,29 +60,59 @@ Item {
         transparentBorder: true
     }
 
+    Connections {
+        target: node
+        onNodeDoubleClicked: {
+            nodeLabel.visible = false
+            nodeLabelEditor.forceActiveFocus();
+            nodeLabelEditor.selectAll()
+        }
+    }
+
     ColumnLayout {
         id: layout
         anchors.fill: parent
         anchors.margins: background.radius
         z: 3
         Text {
+            id: nodeLabel
             z: 4
-            Layout.maximumWidth: template.parent.Layout.preferredWidth
             Layout.fillWidth: true
-            Layout.fillHeight: false
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.fillHeight: contentLayout.children.length === 0
+            Layout.preferredHeight: contentHeight
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             text: node.label
             font: node.style.labelFont
-            horizontalAlignment: Qt.AlignHCenter
-            verticalAlignment: Qt.AlignVCenter
-            elide: Text.ElideRight
-            wrapMode: Text.Wrap
+            horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter
+            maximumLineCount: 3 // Must be set, otherwise elide don't work and we end up with single line text
+            elide: Text.ElideRight; wrapMode: Text.Wrap
+        }
+        TextInput {
+            id: nodeLabelEditor
+            z: 5
+            Layout.preferredWidth: nodeLabel.width
+            Layout.preferredHeight: nodeLabel.height
+            text: node.label
+            onAccepted: {
+                if ( text.length == 0 )
+                    text = node.label  // Do not allow empty labels
+                else node.label = text
+                focus = false;  // Release focus once the label has been edited
+                nodeLabel.visible = true
+            }
+            onEditingFinished: { visible = false; }
+            onActiveFocusChanged: {
+                if ( !activeFocus )
+                    nodeLabel.visible = true;
+            }
+            visible: !nodeLabel.visible
         }
         Item {
             id: contentLayout
             z: 5
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            Layout.fillWidth: true; Layout.fillHeight: true
+            Layout.fillWidth: true;
+            Layout.fillHeight: true
             visible: contentLayout.children.length > 0  // Hide if the user has not added any content
         }
     }

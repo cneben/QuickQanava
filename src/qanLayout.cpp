@@ -21,7 +21,7 @@
 // This file is a part of the QuickQanava software library.
 //
 // \file	qanLayout.cpp
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 09 07
 //-----------------------------------------------------------------------------
 
