@@ -107,4 +107,7 @@ Qan.AbstractGraph {
         graph.registerGroupDelegate( "qan::Group", groupDelegate )
         graph.addControlNode( connectorDropNode )
     }
+    Component.onDestruction: {
+        graph.removeControlNode( connectorDropNode )
+    }
 }

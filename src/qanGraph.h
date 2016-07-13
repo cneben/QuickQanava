@@ -78,6 +78,7 @@ public:
     Q_INVOKABLE void    clear( );
 
     Q_INVOKABLE void    addControlNode( qan::Node* node );
+    Q_INVOKABLE void    removeControlNode( qan::Node* node );
 
 public:
     /*! Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.

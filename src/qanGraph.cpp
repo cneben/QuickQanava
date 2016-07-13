@@ -63,6 +63,13 @@ void    Graph::addControlNode( qan::Node* node )
     gtpo::GenGraph< qan::Config >::addControlNode( node->shared_from_this( ) );
 }
 
+void    Graph::removeControlNode( qan::Node* node )
+{
+    if ( node == nullptr )
+        return;
+    gtpo::GenGraph< qan::Config >::removeControlNode( node->shared_from_this( ) );
+}
+
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
     const QList<QQuickItem *> children = childItems();
