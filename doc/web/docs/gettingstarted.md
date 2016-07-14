@@ -109,12 +109,14 @@ A graph is "navigable" by default, it can be panned, zoomed and fit to view, thi
 
 ### Selection
    
-Selection can be modified at graph level just by changing the graph selection policy property `Qan.Graph.selectionPolicy':
+Selection can be modified at graph level just by changing the graph selection policy property `Qan.Graph.selectionPolicy`:
+
 - `Qan.AbstractGraph.NoSelection`: Selection will be disabled in the whole graph.
 - `Qan.AbstractGraph.SelectOnClick`: Node are selected when clicked, multiple selection is enabled when CTRL is pressed.
 - `Qan.AbstractGraph.SelectOnCtrlClick`: Node are selected only if CTRL is pressed when node is clicked (multiple selection is still available).
 
 Selection can also be configured with the following Qan.Graph properties:
+
 - `Qan.Graph.selectionColor` / `qan::Graph::setSelectionColor()`: Color for the node selection rectangle.
 - `Qan.Graph.selectionWeight` / `qan::Graph::setSelectionWeight()`: Border width of the node selection rectangle.
 - `Qan.Graph.selectionMargin` / `qan::Graph::setSelectionMargin()`: Margin between the node selection rectangle and the node content (selection weight is taken into account).
@@ -141,7 +143,8 @@ ListView {
 	delegate: Item {
 		id: selectedNodeDelegate
 		width: ListView.view.width; height: 30;
-		Text { text: "Label: " + itemData.label }		// <----- itemData is a Qan.Node, node label could be accessed directly
+		Text { text: "Label: " + itemData.label }		// <----- itemData is a Qan.Node, node 
+														// label could be accessed directly
 		MouseArea {
 			anchors.fill: selectedNodeDelegate
 			onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
@@ -159,6 +162,10 @@ been modified from another thread:
             node->doWhateverYouWant();
     }
 ~~~~~~~~~~~~~
+
+Example of `Qan.AbstractGraph.SelectOnClick` selection policy with multiple selection dragging inside a group:
+![selection](images/Selection.gif)
+
 
 ### Group topology
 
