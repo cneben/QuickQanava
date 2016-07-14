@@ -35,7 +35,7 @@ import QuickQanava 2.0 as Qan
 
 Qan.AbstractNode {
     id: customNode
-    width: 140; height: 110
+    width: 160; height: 150
     x: 150; y: 15
     Item {
         anchors.fill: parent

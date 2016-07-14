@@ -85,7 +85,8 @@ public:
     auto    registerGroupInFunctor( GroupInFunctor groupInFunctor ) -> void { _gtpoSerializer.registerGroupInFunctor( groupInFunctor ); }
 
 public:
-    using   ObjectIdMap = std::unordered_map< void*, int >;
+    using ObjectIdMap   = gtpo::ProtoSerializer< qan::Config >::ObjectIdMap;
+
     //! \copydoc gtpo::ProtoSerializer::generateObjectIdMap().
     auto                    generateObjectIdMap( const qan::Graph& graph ) -> ObjectIdMap& { return _gtpoSerializer.generateObjectIdMap( graph ); }
     ObjectIdMap&            getObjectIdMap() { return _gtpoSerializer.getObjectIdMap(); }
@@ -94,8 +95,8 @@ public:
     auto                    getObjectId( const void* object ) const noexcept( true ) -> int { return _gtpoSerializer.getObjectId( object ); }
 
 public:
-    using   IdObjectMap = std::unordered_map< int, void* >;
-public:
+    using IdObjectMap   = gtpo::ProtoSerializer< qan::Config >::IdObjectMap;
+
     IdObjectMap&            getIdObjectMap() { return _gtpoSerializer.getIdObjectMap(); }
     const IdObjectMap&      getIdObjectMap() const { return _gtpoSerializer.getIdObjectMap(); }
 protected:
@@ -118,9 +119,6 @@ public:
     /*! \name QML Serialization Interface *///---------------------------------
     //@{
 public:
-    using ObjectIdMap   = gtpo::ProtoSerializer< qan::Config >::ObjectIdMap;
-    using IdObjectMap   = gtpo::ProtoSerializer< qan::Config >::IdObjectMap;
-
     //! Serialize graph \c graph to file \c fileName (fileName could a be a file:// URL).
     Q_INVOKABLE void    saveGraphTo( qan::Graph* graph, QString fileName, qan::ProgressNotifier* progress = nullptr );
     //! Serialize graph \c graph from file \c fileName (fileName could a be a file:// URL).

@@ -26,13 +26,12 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
-#include <QBrush>
 #include <QPainter>
 #include <QPainterPath>
-#include <QMimeData>
 
 // Qanava headers
 #include "./qanNode.h"
+#include "./qanGroup.h"
 #include "./qanGraph.h"
 
 namespace qan { // ::qan
@@ -285,6 +284,7 @@ void    Node::mousePressEvent( QMouseEvent* event )
 
 void    Node::mouseReleaseEvent( QMouseEvent* event )
 {
+    Q_UNUSED( event );
     if ( getDragActive() )
         endDragMove();
 }

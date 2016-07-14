@@ -163,7 +163,7 @@ void    ProtoSerializer::loadGraphFrom( QString fileName, qan::Graph* graph, qan
     try {
         qan::pb::Graph pbGraph;
         if ( !pbGraph.ParseFromIstream( &is ) )
-            throw std::exception( "qan::ProtoSerializer::loadGraphFrom(): Error: Protocol Buffer QAN graph in serialization fails.");
+            throw std::runtime_error( "qan::ProtoSerializer::loadGraphFrom(): Error: Protocol Buffer QAN graph in serialization fails.");
         serializeIn( pbGraph, *graph, *gtpoProgress );
     } catch ( ... ) {
         std::cerr << "qan::ProtoSerializer::loadGraphFrom(): Error: Protocol Buffer QAN graph in serialization fails." << std::endl;

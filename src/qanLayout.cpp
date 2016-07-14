@@ -26,6 +26,9 @@
 //-----------------------------------------------------------------------------
 
 // Qanava headers
+#include "./qanNode.h"
+#include "./qanGraph.h"
+#include "./qanGroup.h"
 #include "./qanLayout.h"
 
 namespace qan { // ::qan

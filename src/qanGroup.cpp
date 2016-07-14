@@ -33,6 +33,7 @@
 // Qanava headers
 #include "./qanGroup.h"
 #include "./qanGraph.h"
+#include "./qanLayout.h"
 #include "./qanLinear.h"
 
 namespace qan { // ::qan
@@ -154,7 +155,7 @@ void    Group::setLayout( qan::Layout* layout )
         emit layoutChanged();
     }
     if ( _layout == nullptr ) {
-        addBehaviour( layout );
+        //addBehaviour( layout );       // FIXME: 20160714 removed because of g++5.2 compilation problems, reactivate group layout later...
         //if ( hasLayout( layout ) )
         _layout = layout;
         emit layoutChanged();
@@ -185,7 +186,9 @@ void    Group::groupMoved( )
 /* Group DnD Management *///---------------------------------------------------
 void    Group::proposeNodeDrop( QQuickItem* container, qan::Node* node )
 {
-    //qDebug( ) << "qan::Group::proposeNodeDrop(): container=" << container << "  node=" << node;
+    Q_UNUSED( container );
+    Q_UNUSED( node);
+
     emit nodeDragEnter( );
     if ( !getHilightDrag( ) )
         return;

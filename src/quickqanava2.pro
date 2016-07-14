@@ -4,7 +4,7 @@ LANGUAGE	= C++
 DEFINES		+= QANAVA
 TARGET		= quickqanava2
 DESTDIR		= ../build
-CONFIG		+= warn_on qt thread staticlib c++11
+CONFIG		+= warn_on qt thread staticlib c++14
 QT		+= core widgets gui xml qml quick quickwidgets
 
 include(../common.pri)

@@ -23,8 +23,6 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
-import QtQuick.Controls 2.0 as QC2
-
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "qrc:/QuickProperties2" as Qps
@@ -319,9 +317,9 @@ Item {
     }
     Item {
         id: selectionView
-        anchors.top: nodeList.bottom;     anchors.topMargin: 15
-        anchors.right: parent.right; anchors.rightMargin: 15
-        width: 200; height: 280
+        anchors.top: nodeList.bottom;   anchors.topMargin: 15
+        anchors.right: parent.right;    anchors.rightMargin: 15
+        width: 250; height: 280
         Rectangle { // Background
             anchors.fill: parent
             color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
@@ -360,31 +358,32 @@ Item {
                 Text { text:"Policy:" }
                 Item { Layout.fillWidth: true }
                 ColumnLayout {
-                    QC2.CheckBox {
+                    ExclusiveGroup { id: selectionPolicyGroup }
+                    CheckBox {
                         Layout.preferredHeight: 25
                         text: "NoSelection"
-                        autoExclusive: true
+                        exclusiveGroup: selectionPolicyGroup
                         checked: graph.selectionPolicy === Qan.AbstractGraph.NoSelection
                         onCheckedChanged: {
                             if ( checked )
                                 graph.selectionPolicy = Qan.AbstractGraph.NoSelection;
                         }
                     }
-                    QC2.CheckBox {
+                    CheckBox {
                         Layout.preferredHeight: 25
                         height: 15
                         text: "SelectOnClick"
-                        autoExclusive: true
+                        exclusiveGroup: selectionPolicyGroup
                         checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnClick
                         onCheckedChanged: {
                             if ( checked )
                                 graph.selectionPolicy = Qan.AbstractGraph.SelectOnClick;
                         }
                     }
-                    QC2.CheckBox {
+                    CheckBox {
                         Layout.preferredHeight: 25
                         text: "SelectOnCtrlClick"
-                        autoExclusive: true
+                        exclusiveGroup: selectionPolicyGroup
                         checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
                         onCheckedChanged: {
                             if ( checked )
@@ -398,7 +397,7 @@ Item {
                 Text { text:"Color:" }
                 Item { Layout.fillWidth: true }
                 Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: graph.selectionColor }
-                QC2.Button {
+                Button {
                     Layout.preferredHeight: 25; Layout.preferredWidth: 30
                     text: "..."
                     onClicked: {
@@ -410,11 +409,11 @@ Item {
             RowLayout {
                 Layout.margins: 2
                 Text { text:"Weight:" }
-                QC2.Slider {
+                Slider {
                     Layout.preferredHeight: 20
                     Layout.fillWidth: true
-                    from: 1.0
-                    to: 15.
+                    minimumValue: 1.0
+                    maximumValue: 15.
                     stepSize: 0.1
                     value: graph.selectionWeight
                     onValueChanged: { graph.selectionWeight = value  }
@@ -423,11 +422,11 @@ Item {
             RowLayout {
                 Layout.margins: 2
                 Text { text:"Margin:" }
-                QC2.Slider {
+                Slider {
                     Layout.preferredHeight: 20
                     Layout.fillWidth: true
-                    from: 1.0
-                    to: 15.
+                    minimumValue: 1.0
+                    maximumValue: 15.
                     stepSize: 0.1
                     value: graph.selectionMargin
                     onValueChanged: { graph.selectionMargin = value  }

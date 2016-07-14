@@ -29,6 +29,7 @@
 #define qanNode_h
 
 // QT headers
+#include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>
 #include <QDrag>
@@ -37,6 +38,7 @@
 #include "./qanConfig.h"
 #include "./qanEdge.h"
 #include "./qanStyle.h"
+#include "./qanGroup.h"
 #include "./qanBehaviour.h"
 
 //! Main QuickQanava namespace

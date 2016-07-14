@@ -1,7 +1,7 @@
 TEMPLATE	= app
 TARGET		= test-topology
 FORMS		=
-CONFIG		+= qt warn_on thread c++11
+CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
 LANGUAGE        = C++
 QT              += widgets core gui qml quick quickwidgets

@@ -29,18 +29,18 @@
 #define qanLayout_h
 
 // Qt headers
-#include <Qt>
+#include <QObject>
 #include <QSizeF>
-#include <QtQml>
 #include <QQuickItem>
 
-// GTpo headers
-#include <GTpo>
-
-// Qanava headers
-#include "qanNode.h"
+// QuickQanava headers
+#include "./qanConfig.h"
+#include "./qanBehaviour.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
+
+class Group;
 
 /*! Base class for all layouts algorithms in Qanava.
  *

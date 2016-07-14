@@ -31,6 +31,7 @@
 
 // Qanava headers
 #include "./qanEdge.h"
+#include "./qanGroup.h"
 #include "./qanNode.h"
 #include "./qanGraph.h"
 

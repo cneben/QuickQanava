@@ -29,17 +29,19 @@
 #define qanGroup_h
 
 // QT headers
+#include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>
 
 // QuickQanava headers
 #include "./qanConfig.h"
 #include "./qanNode.h"
-#include "./qanLayout.h"
 
 namespace qan { // ::qan
 
 class Group;
+class Graph;
+class Layout;
 
 /*! \brief Model a graphics group of nodes.
  *
@@ -78,7 +80,7 @@ public:
      *
      * \param drop specify if the node insertion is the result of a drag and drop (default), in that case,
      * the node position will be mapped in group coordinate system. If false (for serialization or in case
-     * of a "programmatic" insertion, node keep its current position and size.
+     * of a "prograObjectIdMapmmatic" insertion, node keep its current position and size.
      *
      * \note Call gtpo::GenGroup<qan::Config>::insertNode() during insertion.
      */

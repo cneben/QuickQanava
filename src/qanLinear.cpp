@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 // Qanava headers
+#include "./qanGroup.h"
 #include "./qanLinear.h"
 
 namespace qan { // ::qan
@@ -43,14 +44,14 @@ void    Linear::layout( )
     if ( !isEnabled( ) )
         return;
     if ( getOrientation( ) == Qt::Horizontal ) {
-        qreal x = 0.;
+        qreal x = 0.; Q_UNUSED(x);
         /*foreach ( Node* node, *_nodes ) {
             node->setPosition( QPointF( x, 0 ) );
             x += node->boundingRect( ).width( ) + _spacing;
         }*/
     }
     else if ( getOrientation( ) == Qt::Vertical ) {
-        qreal y = 0.;
+        qreal y = 0.; Q_UNUSED(y);
         /*foreach ( Node* node, *_nodes ) {
             node->setPosition( QPointF( 0, y ) );
             y += node->boundingRect( ).height( ) + _spacing;
@@ -60,6 +61,8 @@ void    Linear::layout( )
 
 void    Linear::proposeNodeDrop( QQuickItem* layoutItem, qan::Node* node, qan::Node* shadowNode )
 {
+    Q_UNUSED( shadowNode );
+
     // Find previous and next nodes
     QPointF nodePos = node->mapToItem( layoutItem, QPointF( 0, 0 ) );
     QPointF previousPos;

@@ -489,6 +489,7 @@ bool    Graph::isNode( QQuickItem* item ) const
 /* Graph Edge Management *///--------------------------------------------------
 qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
+    Q_UNUSED( edgeComponent );
     return insertEdge( "qan::Edge", source, destination );
 }
 
