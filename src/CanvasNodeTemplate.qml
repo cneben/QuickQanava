@@ -47,7 +47,6 @@ Item {
             nodeSymbol.item.requestPaint( );
     }
     onNodeChanged: {
-        console.debug( "node changed to " + node )
         if ( node !== undefined && node !== null )
             nodeUpdateBoundingShape.target = node
     }
