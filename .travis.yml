@@ -18,7 +18,7 @@ install:
 install:
   - wget https://github.com/google/protobuf/releases/download/v3.0.0-beta-4/protobuf-cpp-3.0.0-beta-4.tar.gz
   - tar -xzvf protobuf-cpp-3.0.0-beta-4.tar.gz
-  - pushd protobuf-cpp-3.0.0-beta-4 && ./configure --prefix=/usr && make && sudo make install && popd
+  - pushd protobuf-3.0.0-beta-4 && ./configure --prefix=/usr && make && sudo make install && popd
 
 before_script: export QMAKESPEC=linux-g++
 
