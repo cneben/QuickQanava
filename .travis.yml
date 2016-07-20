@@ -7,13 +7,13 @@ compiler:
   - gcc
 
 before_install:
-  - sudo add-apt-repository -y ppa:beineri/opt-qt561-trusty
+  - sudo add-apt-repository -y ppa:beineri/opt-qt57-trusty
 
 install:
   - sudo apt-get update
-  - sudo apt-get install -qq qt56base; 
-  - sudo apt-get -y install qt56declarative qt56quickcontrols qt56graphicaleffects qt56tools qt56svg
-  - source /opt/qt56/bin/qt56-env.sh;
+  - sudo apt-get install -qq qt57base; 
+  - sudo apt-get -y install qt57declarative qt57quickcontrols qt57graphicaleffects qt57tools qt57charts-no-lgpl 
+  - source /opt/qt57/bin/qt57-env.sh;
   - sudo apt-get -y install libprotobuf-dev
 
 before_script: export QMAKESPEC=linux-g++
