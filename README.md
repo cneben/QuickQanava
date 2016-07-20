@@ -3,6 +3,9 @@
 [Building](#building) |
 [License](#license)
 
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
+
 QuickQanava 
 ============================
 
