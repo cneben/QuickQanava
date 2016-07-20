@@ -14,7 +14,7 @@ install:
   - sudo apt-get install -qq qt56base; 
   - sudo apt-get -y install qt56declarative qt56quickcontrols qt56graphicaleffects qt56tools qt56svg
   - source /opt/qt56/bin/qt56-env.sh;
-  - sudo apt-get install libprotobuf-dev
+  - sudo apt-get -y install libprotobuf-dev
 
 before_script: export QMAKESPEC=linux-g++
 
