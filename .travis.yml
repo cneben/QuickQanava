@@ -2,13 +2,12 @@
 language: cpp
 
 compiler:
-  - clang
   - gcc
 
 before_install:
+  - sudo add-apt-repository -y ppa:beineri/opt-qt56-trusty
   - sudo apt-get update
-  - sudo apt-get install qtbase5-dev qtdeclarative5-dev 
-  - sudo apt-get install qt5-default qttools5-dev-tools
+  - sudo apt-get -y install qt56declarative qt56quickcontrols qt56graphicaleffects qt56tools qt56svg
   - sudo apt-get install libprotobuf-dev
 
 script:
