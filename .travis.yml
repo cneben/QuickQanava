@@ -7,8 +7,12 @@ compiler:
 
 before_install:
   - sudo add-apt-repository ppa:beineri/opt-qt56-trusty
+
+install:
   - sudo apt-get update
+  - sudo apt-get install -qq qt56base; 
   - sudo apt-get -y install qt56declarative qt56quickcontrols qt56graphicaleffects qt56tools qt56svg
+  - source /opt/qt56/bin/qt56-env.sh;
   - sudo apt-get install libprotobuf-dev
 
 script:
