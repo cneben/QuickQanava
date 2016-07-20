@@ -15,13 +15,14 @@ install:
   - sudo apt-get -y install qt57declarative qt57quickcontrols qt57graphicaleffects qt57tools qt57charts-no-lgpl 
   - source /opt/qt57/bin/qt57-env.sh;
   #- sudo apt-get -y install libprotobuf-dev
-install:
   - wget https://github.com/google/protobuf/releases/download/v3.0.0-beta-4/protobuf-cpp-3.0.0-beta-4.tar.gz
   - tar -xzvf protobuf-cpp-3.0.0-beta-4.tar.gz
   - pushd protobuf-3.0.0-beta-4 && ./configure --prefix=/usr && make && sudo make install && popd
 
-before_script: export QMAKESPEC=linux-g++
-
+before_script: 
+  - export QMAKESPEC=linux-g++
+  - source /opt/qt57/bin/qt57-env.sh
+  
 script:
   - qmake -project
   - qmake quickqanava2.pro
