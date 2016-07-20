@@ -4,7 +4,7 @@ FORMS		=
 CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
-QT		+= widgets core gui qml quick quickwidgets
+QT		+= widgets core gui qml quick charts
 
 include(../../common.pri)
 

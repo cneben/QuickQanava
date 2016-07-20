@@ -5,11 +5,12 @@ DEFINES		+= QANAVA
 TARGET		= quickqanava2
 DESTDIR		= ../build
 CONFIG		+= warn_on qt thread staticlib c++14
-QT		+= core widgets gui xml qml quick quickwidgets
+QT		+= core widgets gui xml qml quick quickwidgets charts
 
 include(../common.pri)
 include(../GTpo/src/gtpo.pri)
-include(../QuickProperties/src/quickproperties2.pri)
+include(../QuickProperties/src/quickproperties.pri)
+include(../QuickProperties/src/quickpropertiespb.pri)
 INCLUDEPATH += ../QuickProperties/src
 
 HEADERS +=  ./QuickQanava.h             \

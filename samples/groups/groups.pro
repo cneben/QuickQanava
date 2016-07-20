@@ -3,7 +3,7 @@ TARGET		= test-groups
 FORMS		=
 CONFIG		+= qt warn_on thread c++14
 LANGUAGE	= C++
-QT		+= widgets core gui qml quick quickwidgets
+QT		+= widgets core gui qml quick charts
 INCLUDEPATH     +=  ../../src
 INCLUDEPATH     +=  ../../QuickProperties/src
 

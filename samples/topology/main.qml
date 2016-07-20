@@ -25,7 +25,7 @@ import QtQuick.Dialogs 1.2
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-import "qrc:/QuickProperties2" as Qps
+import "qrc:/QuickProperties" as Qps
 
 Item {
     id: window

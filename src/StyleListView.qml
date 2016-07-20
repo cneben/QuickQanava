@@ -31,7 +31,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 
-import "qrc:/QuickProperties2" as Qps
+import "qrc:/QuickProperties" as Qps
 import QuickProperties 2.0 as Qps
 
 import QuickQanava 2.0 as Qan

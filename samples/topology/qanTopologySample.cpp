@@ -29,7 +29,7 @@
 #include <cstring>   // std::memcpy on g++5.2 ...
 
 // QuickProperties headers
-#include "../../QuickProperties/src/QuickProperties2.h"
+#include "../../QuickProperties/src/QuickProperties.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
