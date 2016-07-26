@@ -9,7 +9,7 @@ message Style {
     string              meta_target  = 2;
     string              name         = 3;
     string              target       = 4;
-    qps.pb.Properties   properties   = 5;
+    qps.pb.QtObject     properties   = 5;
     repeated int32      node_ids     = 6 [packed=true]; // Id of node where this style apply
     repeated int32      edge_ids     = 7 [packed=true]; // Id of node where this style apply
 }

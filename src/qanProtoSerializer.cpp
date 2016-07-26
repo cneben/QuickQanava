@@ -26,7 +26,7 @@
 //-----------------------------------------------------------------------------
 
 // QuickProperties headers
-#include "qpsSerializer.h"
+#include "qpsPbSerializer.h"
 
 // QuickQanava headers
 #include "./qanProtoSerializer.h"
@@ -277,8 +277,8 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
                     pbStyle->add_edge_ids( edgeIter->second );
                 }
             }
-            qps::pb::Properties* pbProperties = pbStyle->mutable_properties();
-            qps::ProtoSerializer::serializeOut( *qanStyle, *pbProperties );
+            qps::pb::QtObject* pbProperties = pbStyle->mutable_properties();
+            qps::PbSerializer::serializeOut( *qanStyle, *pbProperties );
         }
     }
 
@@ -354,7 +354,7 @@ auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& p
         }
         if ( style != nullptr ) {
             idObjectMap.insert( std::make_pair( pbStyle.id(), style ) );
-            qps::ProtoSerializer::serializeIn( pbStyle.properties(), *style );
+            qps::PbSerializer::serializeIn( pbStyle.properties(), *style );
         }
     }
 

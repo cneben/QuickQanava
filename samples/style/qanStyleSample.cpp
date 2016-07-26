@@ -34,7 +34,8 @@
 #include "./qanStyleSample.h"
 
 // Qt headers
-#include <QGuiApplication>
+//#include <QGuiApplication>
+#include <QApplication>
 
 using namespace qan;
 
@@ -62,7 +63,8 @@ MainView::MainView( ) :
 
 int	main( int argc, char** argv )
 {
-    QGuiApplication app(argc, argv);
+    //QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     MainView mainView;
     mainView.setResizeMode( QQuickView::SizeRootObjectToView );

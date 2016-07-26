@@ -182,23 +182,23 @@ void protobuf_AddDesc_quickqanava_2eproto() {
   ::gtpo::pb::protobuf_AddDesc_gtpo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\021quickqanava.proto\022\006qan.pb\032\025quickproper"
-    "ties.proto\032\ngtpo.proto\"\232\001\n\005Style\022\n\n\002id\030\001"
+    "ties.proto\032\ngtpo.proto\"\230\001\n\005Style\022\n\n\002id\030\001"
     " \001(\005\022\023\n\013meta_target\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022"
-    "\016\n\006target\030\004 \001(\t\022&\n\nproperties\030\005 \001(\0132\022.qp"
-    "s.pb.Properties\022\024\n\010node_ids\030\006 \003(\005B\002\020\001\022\024\n"
-    "\010edge_ids\030\007 \003(\005B\002\020\001\"\312\002\n\014StyleManager\022\023\n\013"
-    "style_count\030\001 \001(\005\022\035\n\006styles\030\002 \003(\0132\r.qan."
-    "pb.Style\022H\n\023default_node_styles\030\003 \003(\0132+."
-    "qan.pb.StyleManager.DefaultNodeStylesEnt"
-    "ry\022H\n\023default_edge_styles\030\004 \003(\0132+.qan.pb"
-    ".StyleManager.DefaultEdgeStylesEntry\0328\n\026"
-    "DefaultNodeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005v"
-    "alue\030\002 \001(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry"
-    "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node"
-    "\022\033\n\004base\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_i"
-    "d\030\002 \001(\005\"S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.p"
-    "b.Graph\022+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb."
-    "StyleManagerb\006proto3", 700);
+    "\016\n\006target\030\004 \001(\t\022$\n\nproperties\030\005 \001(\0132\020.qp"
+    "s.pb.QtObject\022\024\n\010node_ids\030\006 \003(\005B\002\020\001\022\024\n\010e"
+    "dge_ids\030\007 \003(\005B\002\020\001\"\312\002\n\014StyleManager\022\023\n\013st"
+    "yle_count\030\001 \001(\005\022\035\n\006styles\030\002 \003(\0132\r.qan.pb"
+    ".Style\022H\n\023default_node_styles\030\003 \003(\0132+.qa"
+    "n.pb.StyleManager.DefaultNodeStylesEntry"
+    "\022H\n\023default_edge_styles\030\004 \003(\0132+.qan.pb.S"
+    "tyleManager.DefaultEdgeStylesEntry\0328\n\026De"
+    "faultNodeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
+    "ue\030\002 \001(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry\022\013"
+    "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node\022\033"
+    "\n\004base\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_id\030"
+    "\002 \001(\005\"S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.pb."
+    "Graph\022+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb.St"
+    "yleManagerb\006proto3", 698);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "quickqanava.proto", &protobuf_RegisterTypes);
   Style::default_instance_ = new Style();
@@ -249,7 +249,7 @@ Style::Style()
 
 void Style::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  properties_ = const_cast< ::qps::pb::Properties*>(&::qps::pb::Properties::default_instance());
+  properties_ = const_cast< ::qps::pb::QtObject*>(&::qps::pb::QtObject::default_instance());
 }
 
 Style::Style(const Style& from)
@@ -311,6 +311,7 @@ Style* Style::New(::google::protobuf::Arena* arena) const {
 }
 
 void Style::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.Style)
   id_ = 0;
   meta_target_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -323,7 +324,7 @@ void Style::Clear() {
 
 bool Style::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:qan.pb.Style)
   for (;;) {
@@ -396,7 +397,7 @@ bool Style::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .qps.pb.Properties properties = 5;
+      // optional .qps.pb.QtObject properties = 5;
       case 5: {
         if (tag == 42) {
          parse_properties:
@@ -504,7 +505,7 @@ void Style::SerializeWithCachedSizes(
       4, this->target(), output);
   }
 
-  // optional .qps.pb.Properties properties = 5;
+  // optional .qps.pb.QtObject properties = 5;
   if (this->has_properties()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       5, *this->properties_, output);
@@ -574,7 +575,7 @@ void Style::SerializeWithCachedSizes(
         4, this->target(), target);
   }
 
-  // optional .qps.pb.Properties properties = 5;
+  // optional .qps.pb.QtObject properties = 5;
   if (this->has_properties()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -614,6 +615,7 @@ void Style::SerializeWithCachedSizes(
 }
 
 int Style::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.Style)
   int total_size = 0;
 
   // optional int32 id = 1;
@@ -644,7 +646,7 @@ int Style::ByteSize() const {
         this->target());
   }
 
-  // optional .qps.pb.Properties properties = 5;
+  // optional .qps.pb.QtObject properties = 5;
   if (this->has_properties()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -692,18 +694,22 @@ int Style::ByteSize() const {
 }
 
 void Style::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Style)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   const Style* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Style>(
           &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.Style)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.Style)
     MergeFrom(*source);
   }
 }
 
 void Style::MergeFrom(const Style& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Style)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   node_ids_.MergeFrom(from.node_ids_);
   edge_ids_.MergeFrom(from.edge_ids_);
@@ -723,17 +729,19 @@ void Style::MergeFrom(const Style& from) {
     target_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.target_);
   }
   if (from.has_properties()) {
-    mutable_properties()->::qps::pb::Properties::MergeFrom(from.properties());
+    mutable_properties()->::qps::pb::QtObject::MergeFrom(from.properties());
   }
 }
 
 void Style::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.Style)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void Style::CopyFrom(const Style& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.Style)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -815,6 +823,7 @@ void Style::clear_meta_target() {
   return meta_target_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
  ::std::string* Style::release_meta_target() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.meta_target)
   
   return meta_target_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -858,6 +867,7 @@ void Style::clear_name() {
   return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
  ::std::string* Style::release_name() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.name)
   
   return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -901,6 +911,7 @@ void Style::clear_target() {
   return target_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
  ::std::string* Style::release_target() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.target)
   
   return target_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -914,7 +925,7 @@ void Style::clear_target() {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.target)
 }
 
-// optional .qps.pb.Properties properties = 5;
+// optional .qps.pb.QtObject properties = 5;
 bool Style::has_properties() const {
   return !_is_default_instance_ && properties_ != NULL;
 }
@@ -922,25 +933,26 @@ void Style::clear_properties() {
   if (GetArenaNoVirtual() == NULL && properties_ != NULL) delete properties_;
   properties_ = NULL;
 }
-const ::qps::pb::Properties& Style::properties() const {
+const ::qps::pb::QtObject& Style::properties() const {
   // @@protoc_insertion_point(field_get:qan.pb.Style.properties)
   return properties_ != NULL ? *properties_ : *default_instance_->properties_;
 }
-::qps::pb::Properties* Style::mutable_properties() {
+::qps::pb::QtObject* Style::mutable_properties() {
   
   if (properties_ == NULL) {
-    properties_ = new ::qps::pb::Properties;
+    properties_ = new ::qps::pb::QtObject;
   }
   // @@protoc_insertion_point(field_mutable:qan.pb.Style.properties)
   return properties_;
 }
-::qps::pb::Properties* Style::release_properties() {
+::qps::pb::QtObject* Style::release_properties() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.properties)
   
-  ::qps::pb::Properties* temp = properties_;
+  ::qps::pb::QtObject* temp = properties_;
   properties_ = NULL;
   return temp;
 }
-void Style::set_allocated_properties(::qps::pb::Properties* properties) {
+void Style::set_allocated_properties(::qps::pb::QtObject* properties) {
   delete properties_;
   properties_ = properties;
   if (properties) {
@@ -1090,6 +1102,7 @@ StyleManager* StyleManager::New(::google::protobuf::Arena* arena) const {
 }
 
 void StyleManager::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.StyleManager)
   style_count_ = 0;
   styles_.Clear();
   default_node_styles_.Clear();
@@ -1098,7 +1111,7 @@ void StyleManager::Clear() {
 
 bool StyleManager::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:qan.pb.StyleManager)
   for (;;) {
@@ -1305,6 +1318,7 @@ void StyleManager::SerializeWithCachedSizes(
 }
 
 int StyleManager::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.StyleManager)
   int total_size = 0;
 
   // optional int32 style_count = 1;
@@ -1355,18 +1369,22 @@ int StyleManager::ByteSize() const {
 }
 
 void StyleManager::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.StyleManager)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   const StyleManager* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const StyleManager>(
           &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.StyleManager)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.StyleManager)
     MergeFrom(*source);
   }
 }
 
 void StyleManager::MergeFrom(const StyleManager& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.StyleManager)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   styles_.MergeFrom(from.styles_);
   default_node_styles_.MergeFrom(from.default_node_styles_);
@@ -1377,12 +1395,14 @@ void StyleManager::MergeFrom(const StyleManager& from) {
 }
 
 void StyleManager::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.StyleManager)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void StyleManager::CopyFrom(const StyleManager& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.StyleManager)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1569,6 +1589,7 @@ Node* Node::New(::google::protobuf::Arena* arena) const {
 }
 
 void Node::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.Node)
   if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
   base_ = NULL;
   style_id_ = 0;
@@ -1576,7 +1597,7 @@ void Node::Clear() {
 
 bool Node::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:qan.pb.Node)
   for (;;) {
@@ -1669,6 +1690,7 @@ void Node::SerializeWithCachedSizes(
 }
 
 int Node::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.Node)
   int total_size = 0;
 
   // optional .gtpo.pb.Node base = 1;
@@ -1692,18 +1714,22 @@ int Node::ByteSize() const {
 }
 
 void Node::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Node)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   const Node* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Node>(
           &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.Node)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.Node)
     MergeFrom(*source);
   }
 }
 
 void Node::MergeFrom(const Node& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Node)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_base()) {
     mutable_base()->::gtpo::pb::Node::MergeFrom(from.base());
@@ -1714,12 +1740,14 @@ void Node::MergeFrom(const Node& from) {
 }
 
 void Node::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.Node)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void Node::CopyFrom(const Node& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.Node)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1773,6 +1801,7 @@ const ::gtpo::pb::Node& Node::base() const {
   return base_;
 }
 ::gtpo::pb::Node* Node::release_base() {
+  // @@protoc_insertion_point(field_release:qan.pb.Node.base)
   
   ::gtpo::pb::Node* temp = base_;
   base_ = NULL;
@@ -1877,6 +1906,7 @@ Graph* Graph::New(::google::protobuf::Arena* arena) const {
 }
 
 void Graph::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.Graph)
   if (GetArenaNoVirtual() == NULL && graph_ != NULL) delete graph_;
   graph_ = NULL;
   if (GetArenaNoVirtual() == NULL && style_manager_ != NULL) delete style_manager_;
@@ -1885,7 +1915,7 @@ void Graph::Clear() {
 
 bool Graph::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:qan.pb.Graph)
   for (;;) {
@@ -1979,6 +2009,7 @@ void Graph::SerializeWithCachedSizes(
 }
 
 int Graph::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.Graph)
   int total_size = 0;
 
   // optional .gtpo.pb.Graph graph = 1;
@@ -2002,18 +2033,22 @@ int Graph::ByteSize() const {
 }
 
 void Graph::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Graph)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   const Graph* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Graph>(
           &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.Graph)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.Graph)
     MergeFrom(*source);
   }
 }
 
 void Graph::MergeFrom(const Graph& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Graph)
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
   if (from.has_graph()) {
     mutable_graph()->::gtpo::pb::Graph::MergeFrom(from.graph());
@@ -2024,12 +2059,14 @@ void Graph::MergeFrom(const Graph& from) {
 }
 
 void Graph::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.Graph)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void Graph::CopyFrom(const Graph& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.Graph)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2083,6 +2120,7 @@ const ::gtpo::pb::Graph& Graph::graph() const {
   return graph_;
 }
 ::gtpo::pb::Graph* Graph::release_graph() {
+  // @@protoc_insertion_point(field_release:qan.pb.Graph.graph)
   
   ::gtpo::pb::Graph* temp = graph_;
   graph_ = NULL;
@@ -2120,6 +2158,7 @@ const ::qan::pb::StyleManager& Graph::style_manager() const {
   return style_manager_;
 }
 ::qan::pb::StyleManager* Graph::release_style_manager() {
+  // @@protoc_insertion_point(field_release:qan.pb.Graph.style_manager)
   
   ::qan::pb::StyleManager* temp = style_manager_;
   style_manager_ = NULL;

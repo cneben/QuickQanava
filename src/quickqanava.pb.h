@@ -143,14 +143,14 @@ class Style : public ::google::protobuf::Message {
   ::std::string* release_target();
   void set_allocated_target(::std::string* target);
 
-  // optional .qps.pb.Properties properties = 5;
+  // optional .qps.pb.QtObject properties = 5;
   bool has_properties() const;
   void clear_properties();
   static const int kPropertiesFieldNumber = 5;
-  const ::qps::pb::Properties& properties() const;
-  ::qps::pb::Properties* mutable_properties();
-  ::qps::pb::Properties* release_properties();
-  void set_allocated_properties(::qps::pb::Properties* properties);
+  const ::qps::pb::QtObject& properties() const;
+  ::qps::pb::QtObject* mutable_properties();
+  ::qps::pb::QtObject* release_properties();
+  void set_allocated_properties(::qps::pb::QtObject* properties);
 
   // repeated int32 node_ids = 6 [packed = true];
   int node_ids_size() const;
@@ -184,7 +184,7 @@ class Style : public ::google::protobuf::Message {
   ::google::protobuf::internal::ArenaStringPtr meta_target_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr target_;
-  ::qps::pb::Properties* properties_;
+  ::qps::pb::QtObject* properties_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > node_ids_;
   mutable int _node_ids_cached_byte_size_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > edge_ids_;
@@ -561,6 +561,7 @@ inline ::std::string* Style::mutable_meta_target() {
   return meta_target_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* Style::release_meta_target() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.meta_target)
   
   return meta_target_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -604,6 +605,7 @@ inline ::std::string* Style::mutable_name() {
   return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* Style::release_name() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.name)
   
   return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -647,6 +649,7 @@ inline ::std::string* Style::mutable_target() {
   return target_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* Style::release_target() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.target)
   
   return target_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -660,7 +663,7 @@ inline void Style::set_allocated_target(::std::string* target) {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.target)
 }
 
-// optional .qps.pb.Properties properties = 5;
+// optional .qps.pb.QtObject properties = 5;
 inline bool Style::has_properties() const {
   return !_is_default_instance_ && properties_ != NULL;
 }
@@ -668,25 +671,26 @@ inline void Style::clear_properties() {
   if (GetArenaNoVirtual() == NULL && properties_ != NULL) delete properties_;
   properties_ = NULL;
 }
-inline const ::qps::pb::Properties& Style::properties() const {
+inline const ::qps::pb::QtObject& Style::properties() const {
   // @@protoc_insertion_point(field_get:qan.pb.Style.properties)
   return properties_ != NULL ? *properties_ : *default_instance_->properties_;
 }
-inline ::qps::pb::Properties* Style::mutable_properties() {
+inline ::qps::pb::QtObject* Style::mutable_properties() {
   
   if (properties_ == NULL) {
-    properties_ = new ::qps::pb::Properties;
+    properties_ = new ::qps::pb::QtObject;
   }
   // @@protoc_insertion_point(field_mutable:qan.pb.Style.properties)
   return properties_;
 }
-inline ::qps::pb::Properties* Style::release_properties() {
+inline ::qps::pb::QtObject* Style::release_properties() {
+  // @@protoc_insertion_point(field_release:qan.pb.Style.properties)
   
-  ::qps::pb::Properties* temp = properties_;
+  ::qps::pb::QtObject* temp = properties_;
   properties_ = NULL;
   return temp;
 }
-inline void Style::set_allocated_properties(::qps::pb::Properties* properties) {
+inline void Style::set_allocated_properties(::qps::pb::QtObject* properties) {
   delete properties_;
   properties_ = properties;
   if (properties) {
@@ -866,6 +870,7 @@ inline ::gtpo::pb::Node* Node::mutable_base() {
   return base_;
 }
 inline ::gtpo::pb::Node* Node::release_base() {
+  // @@protoc_insertion_point(field_release:qan.pb.Node.base)
   
   ::gtpo::pb::Node* temp = base_;
   base_ = NULL;
@@ -921,6 +926,7 @@ inline ::gtpo::pb::Graph* Graph::mutable_graph() {
   return graph_;
 }
 inline ::gtpo::pb::Graph* Graph::release_graph() {
+  // @@protoc_insertion_point(field_release:qan.pb.Graph.graph)
   
   ::gtpo::pb::Graph* temp = graph_;
   graph_ = NULL;
@@ -958,6 +964,7 @@ inline ::qan::pb::StyleManager* Graph::mutable_style_manager() {
   return style_manager_;
 }
 inline ::qan::pb::StyleManager* Graph::release_style_manager() {
+  // @@protoc_insertion_point(field_release:qan.pb.Graph.style_manager)
   
   ::qan::pb::StyleManager* temp = style_manager_;
   style_manager_ = NULL;

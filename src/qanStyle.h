@@ -181,15 +181,6 @@ signals:
     void            borderWidthChanged( );
 
 public:
-    Q_PROPERTY( Qt::PenStyle borderType READ getBorderType WRITE setBorderType NOTIFY borderTypeChanged )
-    void            setBorderType( Qt::PenStyle borderType ) { _borderType = borderType; emit borderTypeChanged( ); }
-    Qt::PenStyle    getBorderType( ) const { return _borderType; }
-protected:
-    Qt::PenStyle    _borderType = Qt::SolidLine;
-signals:
-    void            borderTypeChanged( );
-
-public:
     Q_PROPERTY( QFont labelFont READ getLabelFont WRITE setLabelFont NOTIFY labelFontChanged )
     void            setLabelFont( QFont labelFont ) { _labelFont = labelFont; emit labelFontChanged( ); }
     QFont           getLabelFont( ) const { return _labelFont; }

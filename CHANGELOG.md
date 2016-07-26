@@ -1,4 +1,8 @@
 
+## 2016/07/26:
+Fix Qanava to support the latest changes in QuickProperties serialization code.
+Use Quick Controls 2.0 for properties editions.
+
 ## 2016/07/13:
 Add multiple selection dragging (with group support).
 Add support for visual edition of nodes label in Qan.RectNodeTemplate.
