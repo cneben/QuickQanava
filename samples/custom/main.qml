@@ -26,30 +26,32 @@ import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "." as Qan
 
-Qan.Graph {
-    id: graph
-    objectName: "graph"
+Qan.GraphView {
+    id: graphView
     anchors.fill: parent
 
-    navigable: true
+    graph       : topology
+    navigable   : true
 
-    property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
-    property var controlNodeDelegate: Qt.createComponent( "qrc:/ControlNode.qml" )
-    property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
+    Qan.Graph {
+        id: topology
+        property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
+        property var controlNodeDelegate: Qt.createComponent( "qrc:/ControlNode.qml" )
+        property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
+        Component.onCompleted: {
+            var n1 = graph.insertNode( )
+            n1.label = "Rectangle"
 
-    Component.onCompleted: {
-        var n1 = graph.insertNode( )
-        n1.label = "Rectangle"
+            graph.insertNode( customNodeDelegate )
 
-        graph.insertNode( customNodeDelegate )
+            var n2 = graph.insertNode( diamondNodeDelegate )
+            n2.label = "Diamond"
 
-        var n2 = graph.insertNode( diamondNodeDelegate )
-        n2.label = "Diamond"
+            var n2 = graph.insertNode( controlNodeDelegate )
 
-        var n2 = graph.insertNode( controlNodeDelegate )
-
-        var g = graph.insertGroup( )
-        g.label = "Group"
+            var g = graph.insertGroup( )
+            g.label = "Group"
+        }
     }
 }
 

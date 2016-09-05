@@ -194,7 +194,7 @@ Style*  StyleManager::findStyleByName( QString styleName )
     if ( styleName.isEmpty( ) )
         return nullptr;
     qan::Style* style = nullptr;
-    foreach( qps::Properties* p, getList( ) ) {   // Slow, but there shouldn't be so many styles...
+    foreach( qps::Properties* p, getContainer( ) ) {   // Slow, but there shouldn't be so many styles...
         qan::Style* s = qobject_cast< qan::Style* >( p );
         if ( s->getName( ) == styleName ) {
             style = s;
@@ -209,7 +209,7 @@ Style*  StyleManager::findStyleByTarget( QString targetName )
     if ( targetName.isEmpty( ) )
         return nullptr;
     qan::Style* style( nullptr );
-    foreach( qps::Properties* p, getList( ) ) {       // Slow, but there shouldn't be so many styles...
+    foreach( qps::Properties* p, getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
         Style* s = qobject_cast< qan::Style* >( p );
         if ( s->getTarget( ) == targetName ) {
             style = s;
@@ -224,7 +224,7 @@ QList< qan::Style* >     StyleManager::getStylesByTarget( QString targetName )
     if ( targetName.isEmpty() )
         return QList<qan::Style*>();
     QList< qan::Style* > styles;
-    foreach( qps::Properties* p, getList( ) ) {       // Slow, but there shouldn't be so many styles...
+    foreach( qps::Properties* p, getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
         Style* s = qobject_cast< qan::Style* >( p );
         if ( s->getTarget( ) == QString( targetName ) )
             styles.append( s );

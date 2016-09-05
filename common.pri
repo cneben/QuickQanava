@@ -20,3 +20,13 @@ DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
 # Add the QuickQanava2 source directory to include path
 INCLUDEPATH     += $$PWD/src
 INCLUDEPATH     += $$PWD/QuickProperties/src
+
+CONFIG(release, debug|release) {
+    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267 -w34100  # Remove C4100 unreferenced formal parameter
+    win32:      LIBS	+=  $$PROTOCOL_BUFFER3_LIBDIR_RELEASE/libprotobuf.lib
+}
+
+CONFIG(debug, debug|release) {
+    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267 -w34100  # Remove C4100 unreferenced formal parameter
+    win32:      LIBS	+=  $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
+}

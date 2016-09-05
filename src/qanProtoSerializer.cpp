@@ -210,7 +210,7 @@ auto    ProtoSerializer::serializeQanNodeOut( const WeakNode& weakNode, qan::pb:
 auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void
 {
     qan::Node* qanNode = qobject_cast< qan::Node* >( weakNode.lock().get() );
-    if ( qanNode != nullptr ) {    // Feed the newly created node with PB node data
+    if ( qanNode != nullptr ) {
         gtpo::ProtoSerializer< qan::Config >::serializeGTpoNodeIn( pbQanNode.base(), weakNode, idObjectMap ); // Serialize base gtpo.pb.GTpoNode
 
         // Note 20160404: This code should not find any style since style manager is serialized _after_ topology, kept

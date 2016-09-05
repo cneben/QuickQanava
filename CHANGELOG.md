@@ -1,3 +1,11 @@
+## 2016/08/30:
+Fix a small bug in qan::Graph::addControlNode().
+Fix method qan::Graph::graphChildAt().
+Small JS fixes in Qan.Graph component.
+
+## 2016/08/16:
+Create a Qan.GraphView component to split grahv visualization from Qan.Graph: subclasses of qan::Graph could now be used
+in any graph view.
 
 ## 2016/07/26:
 Fix Qanava to support the latest changes in QuickProperties serialization code.

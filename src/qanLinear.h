@@ -49,7 +49,7 @@ class Linear : public qan::Layout
     Q_OBJECT
 public:
     //! Linear constructor.
-    Linear( QObject* parent = 0 );
+    explicit Linear( QObject* parent = 0 );
 private:
     Q_DISABLE_COPY( Linear )
     //@}
@@ -62,7 +62,7 @@ public:
      *
      * Default to 15.
      */
-    Q_PROPERTY( qreal spacing READ getSpacing WRITE setSpacing NOTIFY spacingChanged )
+    Q_PROPERTY( qreal spacing READ getSpacing WRITE setSpacing NOTIFY spacingChanged FINAL )
     void            setSpacing( qreal spacing ) { _spacing = spacing; emit spacingChanged( ); }
     qreal           getSpacing( ) { return _spacing; }
 protected:

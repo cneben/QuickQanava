@@ -15,6 +15,7 @@ INCLUDEPATH += ../QuickProperties/src
 
 HEADERS +=  ./QuickQanava.h             \
             ./qanConfig.h               \
+            ./qanGraphView.h            \
             ./qanEdge.h                 \
             ./qanNode.h                 \
             ./qanBehaviour.h            \
@@ -31,6 +32,7 @@ HEADERS +=  ./QuickQanava.h             \
             ./quickqanava.pb.h
 
 SOURCES +=  ./qanEdge.cpp               \
+            ./qanGraphView.cpp          \
             ./qanNode.cpp               \
             ./qanBehaviour.cpp          \
             ./qanGroup.cpp              \

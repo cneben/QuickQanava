@@ -63,7 +63,7 @@ public:
     /*! Read-only value of the current overall progress between 0.0 (action 0% done) and 1.0 (action 100% done).
      *
      */
-    Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged )
+    Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged FINAL )
 
     //! Called from task, force show of associed progress dialog.
     virtual void    beginProgress( const std::string& label = "" ) override {
@@ -98,7 +98,7 @@ public:
      *
      * The action currently monitored could eventually be cancelled with a call to cancel() if the receiver supports it.
      */
-    Q_PROPERTY( double phaseProgress READ getPhaseProgress NOTIFY phaseProgressChanged )
+    Q_PROPERTY( double phaseProgress READ getPhaseProgress NOTIFY phaseProgressChanged FINAL )
 signals:
     //! \sa phaseProgress
     void            phaseProgressChanged();
@@ -108,7 +108,7 @@ public:
      *
      * FIXME: Reactivate phase label support in Qan2...
      */
-    Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged )
+    Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged FINAL )
     QString         getQmlPhaseLabel() const { return QString::fromStdString( getLabel() ); }
 signals:
     //! \sa phaseLabel

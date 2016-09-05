@@ -77,7 +77,7 @@ Qan.AbstractNode {
         visible = ( hostNode !== null && hostNode !== undefined )
         parent = hostNode
         sourceNode = hostNode
-        if ( hostNode !== null )   // Force drop node position updates
+        if ( hostNode)   // Force drop node position updates
             x = Qt.binding( function(){ return hostNode.width + xMargin } )
         else x = 0
         connectionSymbol.state = "NORMAL"

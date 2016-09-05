@@ -61,7 +61,7 @@ class Node : public gtpo::GenNode< qan::Config >
     Q_OBJECT
 public:
     //! Node constructor.
-    Node( QQuickItem* parent = 0 );
+    explicit Node( QQuickItem* parent = 0 );
     /*! Remove any childs node who have no QQmlEngine::CppOwnership.
      *
      */
@@ -81,20 +81,20 @@ public:
     bool    operator==( const qan::Node& right ) const;
 public:
     // Qt property for gtpo::Node serializable standard property.
-    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
+    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
     void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
 signals:
     void            serializableChanged();
 public:
     // Qt property for gtpo::Node resizable standard property.
-    Q_PROPERTY( bool resizable READ getResizable WRITE setResizableObs NOTIFY resizableChanged )
+    Q_PROPERTY( bool resizable READ getResizable WRITE setResizableObs NOTIFY resizableChanged FINAL )
     void            setResizableObs( bool resizable ) { setResizable( resizable ); emit resizableChanged( ); }
 signals:
     void            resizableChanged();
 
 public:
     //! Node minimum size (it can't be resized below if resizable is true).
-    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged )
+    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
     QSizeF          getMinimumSize() const { return _minimumSize; }
     void            setMinimumSize( QSizeF minimumSize ) { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
 private:
@@ -104,14 +104,14 @@ signals:
 
 public:
     //! Read-only abstract item model of this node in nodes.
-    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes NOTIFY inNodesChanged )
+    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes NOTIFY inNodesChanged FINAL )
     QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInNodes() ) ); }
 signals:
     void                inNodesChanged( );
 
 public:
     //! Read-only abstract item model of this node out nodes.
-    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes NOTIFY outNodesChanged )
+    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes NOTIFY outNodesChanged FINAL )
     QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &getOutNodes() ) ); }
 signals:
     void                outNodesChanged();
@@ -126,7 +126,7 @@ protected slots:
 
 public:
     //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
-    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged )
+    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
     void            setSelectable( bool selectable );
     inline bool     getSelectable( ) const { return _selectable; }
     inline bool     isSelectable( ) const { return _selectable; }
@@ -136,7 +136,7 @@ signals:
     void            selectableChanged( );
 
 public:
-    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged )
+    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
     //! FIXME: Actually, selected state cannot be set programmatically.
     void            setSelected( bool selected );
     inline bool     getSelected( ) const { return _selected; }
@@ -149,7 +149,7 @@ public:
     /*! Item used to hilight selection (usually a Rectangle quick item).
      *
      */
-    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged )
+    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
     inline QQuickItem*  getSelectionItem() { return _selectionItem.get(); }
     void                setSelectionItem( QQuickItem* selectionItem );
 private:
@@ -182,7 +182,7 @@ public:
      * fixed and should be changed programmatically).
      * Default to true.
      */
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged )
+    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
     void            setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
     inline bool     getDraggable( ) const { return _draggable; }
 private:
@@ -197,7 +197,7 @@ public:
      * Default to true.
      * Setting this property to false may lead to a significant performance improvement if group dropping is not needed.
      */
-    Q_PROPERTY( bool dropable READ getDropable WRITE setDropable NOTIFY dropableChanged )
+    Q_PROPERTY( bool dropable READ getDropable WRITE setDropable NOTIFY dropableChanged FINAL )
     void             setDropable( bool dropable ) { _dropable = dropable; emit dropableChanged( ); }
     inline bool     getDropable( ) const { return _dropable; }
 private:
@@ -215,7 +215,7 @@ public:
      *
      * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
      */
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged )
+    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
     void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
     bool             getAcceptDrops( ) const { return _acceptDrops; }
 private:
@@ -259,7 +259,7 @@ private:
 
 public:
     //! True when the node is currently beeing dragged.
-    Q_PROPERTY( bool dragged READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged )
+    Q_PROPERTY( bool dragged READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL )
     void             setDragActive( bool dragActive ) { _dragActive = dragActive; emit dragActiveChanged( ); }
     bool             getDragActive( ) const { return _dragActive; }
 private:
@@ -276,7 +276,7 @@ private:
     SharedNodeStyle _defaultStyle;
 public:
     //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged )
+    Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void            setStyle( NodeStyle* style );
     qan::NodeStyle* getStyle( ) const { return _style; }
 private:
@@ -288,7 +288,7 @@ private slots:
     void            styleDestroyed( QObject* style );
 
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
     QString         getLabel( ) const { return _label; }
 private:
@@ -320,7 +320,7 @@ public:
      * not a rectangle.
      * \sa \ref custom
      */
-    Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged )
+    Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL )
     QPolygonF           getBoundingShape( );
     void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
 signals:

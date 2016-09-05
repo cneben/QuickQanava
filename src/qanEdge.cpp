@@ -178,8 +178,9 @@ void    Edge::updateItem( )
     // FIXME 20150824: Following code should works, but don't !
     //QPointF srcPos = getSrc( )->mapToScene( getSrc( )->position( ) );
     //QPointF dstPos = getDst( )->mapToScene( getDst( )->position( ) );
-    QPointF srcPos = ownedSource->mapToItem( getGraph()->getContainerItem(), QPointF( 0, 0 ) );
-    QPointF dstPos = destinationItem->mapToItem( getGraph()->getContainerItem(), QPointF( 0, 0 ) );
+    qan::Graph* qanGraph = static_cast< qan::Graph* >( getGraph() );
+    QPointF srcPos = ownedSource->mapToItem( qanGraph->getContainerItem(), QPointF( 0, 0 ) );
+    QPointF dstPos = destinationItem->mapToItem( qanGraph->getContainerItem(), QPointF( 0, 0 ) );
 
     QRectF srcBr{ srcPos, QSizeF( ownedSource->width( ), ownedSource->height( ) ) };
     QRectF dstBr{ dstPos, QSizeF( ownedDestination->width( ), ownedDestination->height( ) ) };

@@ -54,7 +54,7 @@ class Group : public gtpo::GenGroup< qan::Config >
     Q_OBJECT
 public:
     //! Group constructor.
-    Group( QQuickItem* parent = 0 );
+    explicit Group( QQuickItem* parent = 0 );
     /*! Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
@@ -97,7 +97,7 @@ public:
     /*! \name Appearance Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged )
+    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
     void        setCollapsed( bool collapsed );
     bool        getCollapsed( ) const { return _collapsed; }
 private:
@@ -106,7 +106,7 @@ signals:
     void        collapsedChanged( );
 
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
     QString     getLabel( ) const { return _label; }
 private:
@@ -119,7 +119,7 @@ signals:
     /*! \name Group Behaviour/Layout Management *///---------------------------
     //@{
 public:
-    Q_PROPERTY( qan::Layout* layout READ getLayout WRITE setLayout NOTIFY layoutChanged )
+    Q_PROPERTY( qan::Layout* layout READ getLayout WRITE setLayout NOTIFY layoutChanged FINAL )
     qan::Layout*    getLayout( ) { return _layout; }
     void            setLayout( qan::Layout* layout );
 signals:
@@ -145,7 +145,7 @@ public:
      * fixed and should be changed programmatically).
      * Default to true.
      */
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged )
+    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
     void             setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
     bool             getDraggable( ) { return _draggable; }
 private:
@@ -160,7 +160,7 @@ public:
      *
      * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
      */
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged )
+    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
     void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
     bool             getAcceptDrops( ) { return _acceptDrops; }
 private:
@@ -186,7 +186,7 @@ public:
      * \sa qan::Node::proposeNodeDrop()
      * \sa qan::Layout::proposeNodeDrop()
      */
-    Q_PROPERTY( bool hilightDrag READ getHilightDrag WRITE setHilightDrag NOTIFY hilightDragChanged )
+    Q_PROPERTY( bool hilightDrag READ getHilightDrag WRITE setHilightDrag NOTIFY hilightDragChanged FINAL )
     void             setHilightDrag( bool hilightDrag ) { _hilightDrag = hilightDrag; emit hilightDragChanged( ); }
     bool             getHilightDrag( ) { return _hilightDrag; }
 protected:
@@ -228,7 +228,7 @@ public:
      * }
      * \endcode
      */
-    Q_PROPERTY( QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged )
+    Q_PROPERTY( QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL )
     void            setContainer( QQuickItem* container ) { _container = container; emit containerChanged( ); }
     QQuickItem*     getContainer( ) { return _container; }
 protected:

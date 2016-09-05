@@ -60,7 +60,7 @@ private:
     /*! \name Resizer Management *///------------------------------------------
     //@{
 public:
-    Q_PROPERTY( QString handlerComponent READ getHandlerComponent WRITE setHandlerComponent NOTIFY handlerComponentChanged )
+    Q_PROPERTY( QString handlerComponent READ getHandlerComponent WRITE setHandlerComponent NOTIFY handlerComponentChanged FINAL )
     void        setHandlerComponent( QString handlerComponentString );
     QString     getHandlerComponent( ) const { return _handlerComponentString; }
 signals:
@@ -71,7 +71,7 @@ private:
 
 public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
-    Q_PROPERTY( QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged )
+    Q_PROPERTY( QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL )
     void        setTarget( QQuickItem* target );
     QQuickItem* getTarget( ) const { return _target.data(); }
 signals:
@@ -90,7 +90,7 @@ public:
      * \note Setting an empty or invalid size has not effect, use \c autoHideHandler property to control
      * handler visibility (or set it's opacity to a given value).
      */
-    Q_PROPERTY( QSizeF handlerSize READ getHandlerSize WRITE setHandlerSize NOTIFY handlerSizeChanged )
+    Q_PROPERTY( QSizeF handlerSize READ getHandlerSize WRITE setHandlerSize NOTIFY handlerSizeChanged FINAL )
     void        setHandlerSize( QSizeF handlerSize );
     QSizeF      getHandlerSize( ) const { return _handlerSize; }
 signals:
@@ -104,7 +104,7 @@ public:
      * \note For a default rectangular handler, color is border color, background is
      * set to transparent, use getHandler()->setProperty() to change this default behaviour.
      */
-    Q_PROPERTY( QColor handlerColor READ getHandlerColor WRITE setHandlerColor NOTIFY handlerColorChanged )
+    Q_PROPERTY( QColor handlerColor READ getHandlerColor WRITE setHandlerColor NOTIFY handlerColorChanged FINAL )
     void        setHandlerColor( QColor handlerColor );
     QColor      getHandlerColor( ) const { return _handlerColor; }
 signals:
@@ -114,7 +114,7 @@ private:
 
 public:
     //! Target could not be resized below \c minimumTargetSize (default to \c 50x50).
-    Q_PROPERTY( QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged )
+    Q_PROPERTY( QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL )
     //! \sa minimumTargetSize
     void        setMinimumTargetSize( QSizeF minimumTargetSize );
     //! \sa minimumTargetSize
@@ -128,7 +128,7 @@ private:
 
 public:
     //! Set to true to hide the resize handler component when the resize area is not hovered (default to \c false).
-    Q_PROPERTY( bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY autoHideHandlerChanged )
+    Q_PROPERTY( bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY autoHideHandlerChanged FINAL )
     void        setAutoHideHandler( bool autoHideHandler );
     bool        getAutoHideHandler( ) const { return _autoHideHandler; }
 signals:

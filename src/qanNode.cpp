@@ -308,6 +308,9 @@ auto    Node::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelect
 
 auto    Node::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
 {
+    if ( getGraph()->getControlNodes().contains( this->shared_from_this() ) )   // Do not try to drag a control node in a group...
+         return;
+
     if ( getQanGroup() != nullptr ) {
         getQanGroup()->removeNode( this );
         _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and

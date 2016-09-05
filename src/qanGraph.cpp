@@ -45,6 +45,7 @@ Graph::Graph( QQuickItem* parent ) :
     gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
 {
+    setContainerItem( this );
     setAntialiasing( true );
     setSmooth( true );
 }
@@ -58,9 +59,8 @@ void    Graph::clear( )
 
 void    Graph::addControlNode( qan::Node* node )
 {
-    if ( node == nullptr )
-        return;
-    gtpo::GenGraph< qan::Config >::addControlNode( node->shared_from_this( ) );
+    if ( node != nullptr )
+        gtpo::GenGraph< qan::Config >::addControlNode( node->shared_from_this( ) );
 }
 
 void    Graph::removeControlNode( qan::Node* node )
@@ -72,18 +72,41 @@ void    Graph::removeControlNode( qan::Node* node )
 
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
-    const QList<QQuickItem *> children = childItems();
+    if ( getContainerItem() == nullptr )
+        return nullptr;
+
+    const QList<QQuickItem *> children = getContainerItem()->childItems();
+    //qDebug() << "graphChildAt(): x=" << x << " y=" << y;
+    //qDebug() << " \tchildren=" << children;
     for (int i = children.count()-1; i >= 0; --i) {
         QQuickItem *child = children.at(i);
-        // Map coordinates to the child element's coordinate space
-        QPointF point = mapToItem( child, QPointF(x, y) );
+        QPointF point = mapToItem( child, QPointF(x, y) );  // Map coordinates to the child element's coordinate space
         if ( child->isVisible() &&
              child->contains( point ) &&    // Note 20160508: childAt do not call contains()
              point.x() >= 0 &&
              child->width() > point.x() &&
              point.y() >= 0 &&
-             child->height() > point.y() )
+             child->height() > point.y() ) {
+            if ( child->inherits( "qan::Group" ) ) {  // For group, look in group childs
+                qan::Group* group = qobject_cast<qan::Group*>( child );
+                if ( group != nullptr && group->getContainer() != nullptr ) {
+                    const QList<QQuickItem *> groupChildren = group->getContainer()->childItems();
+                    for (int gc = groupChildren.count()-1; gc >= 0; --gc) {
+                        QQuickItem *groupChild = groupChildren.at(gc);
+                        point = mapToItem( groupChild, QPointF(x, y) ); // Map coordinates to group child element's coordinate space
+                        if ( groupChild->isVisible() &&
+                             groupChild->contains( point ) &&
+                             point.x() >= 0 &&
+                             groupChild->width() > point.x() &&
+                             point.y() >= 0 &&
+                             groupChild->height() > point.y() ) {
+                            return groupChild;
+                        }
+                    }
+                }
+            }
             return child;
+        }
     }
     return nullptr;
 }
@@ -97,6 +120,15 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
             return g.get();
     }
     return nullptr;
+}
+
+void    Graph::setContainerItem( QQuickItem* containerItem )
+{
+    if ( containerItem != nullptr &&
+         containerItem != _containerItem.data() ) {
+        _containerItem = containerItem;
+        emit containerItemChanged();
+    }
 }
 //-----------------------------------------------------------------------------
 

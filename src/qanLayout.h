@@ -92,7 +92,7 @@ public:
      *
      * Supported by qan::HierarchyTree.
      */
-    Q_PROPERTY( Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged )
+    Q_PROPERTY( Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged FINAL )
     void            setOrientation( Qt::Orientation orientation ) { _orientation = orientation; emit orientationChanged( ); }
     Qt::Orientation getOrientation( ) { return _orientation; }
 protected:

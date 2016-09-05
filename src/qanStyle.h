@@ -65,7 +65,7 @@ public:
      * set to qan::Node, style will be applied by default to every qan::Node
      * created in the graph).
      */
-    Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = 0 );
+    explicit Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = 0 );
     virtual ~Style( ) { }
 private:
     Q_DISABLE_COPY( Style )
@@ -76,7 +76,7 @@ private:
     //@{
 public:
     //! Style target (class name of the target primitive for example "qan::Node" or "qan::Edge").
-    Q_PROPERTY( QString target READ getTarget WRITE setTarget NOTIFY targetChanged )
+    Q_PROPERTY( QString target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL )
     //! Get this style default target class name (eg qan::Node for a style that apply to node).
     QString     getTarget( ) { return _target; }
     //! Defined only for serialization purposes, do not change style target dynamically.
@@ -90,7 +90,7 @@ private:
 
 public:
     //! Style meta target (root class name of the target primitive for example "qan::Node" for a custom qan::CustomNode node).
-    Q_PROPERTY( QString metaTarget READ getMetaTarget WRITE setMetaTarget NOTIFY metaTargetChanged )
+    Q_PROPERTY( QString metaTarget READ getMetaTarget WRITE setMetaTarget NOTIFY metaTargetChanged FINAL )
     //! Get this style default meta target class name, it should return either "qan::Node", "qan::Edge" or "qan::HEdge".
     QString     getMetaTarget( ) { return _metaTarget; }
     //! Defined only for serialization purposes, do not change style meta target dynamically.
@@ -106,7 +106,7 @@ protected:
     void        setTargets( QString target, QString metaTarget ) { _target = target; _metaTarget = metaTarget; }
 
 public:
-    Q_PROPERTY( QString name READ getName WRITE setName NOTIFY nameChanged )
+    Q_PROPERTY( QString name READ getName WRITE setName NOTIFY nameChanged FINAL )
     void        setName( QString name ) { _name = name; emit nameChanged( ); }
     QString     getName( ) { return _name; }
 signals:
@@ -154,7 +154,7 @@ private:
     /*! \name Properties Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged )
+    Q_PROPERTY( QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged FINAL )
     void            setBackColor( const QColor& backColor ) { _backColor = backColor; emit backColorChanged( ); }
     const QColor&   getBackColor( ) const { return _backColor; }
 protected:
@@ -163,7 +163,7 @@ signals:
     void            backColorChanged( );
 
 public:
-    Q_PROPERTY( QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged )
+    Q_PROPERTY( QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL )
     void            setBorderColor( const QColor& borderColor ) { _borderColor = borderColor; emit borderColorChanged( ); }
     const QColor&   getBorderColor( ) const { return _borderColor; }
 protected:
@@ -172,7 +172,7 @@ signals:
     void            borderColorChanged( );
 
 public:
-    Q_PROPERTY( qreal borderWidth READ getBorderWidth WRITE setBorderWidth NOTIFY borderWidthChanged )
+    Q_PROPERTY( qreal borderWidth READ getBorderWidth WRITE setBorderWidth NOTIFY borderWidthChanged FINAL )
     void            setBorderWidth( qreal borderWidth ) { _borderWidth = borderWidth; emit borderWidthChanged( ); }
     qreal           getBorderWidth( ) const { return _borderWidth; }
 protected:
@@ -181,7 +181,7 @@ signals:
     void            borderWidthChanged( );
 
 public:
-    Q_PROPERTY( QFont labelFont READ getLabelFont WRITE setLabelFont NOTIFY labelFontChanged )
+    Q_PROPERTY( QFont labelFont READ getLabelFont WRITE setLabelFont NOTIFY labelFontChanged FINAL )
     void            setLabelFont( QFont labelFont ) { _labelFont = labelFont; emit labelFontChanged( ); }
     QFont           getLabelFont( ) const { return _labelFont; }
 protected:
@@ -190,7 +190,7 @@ signals:
     void            labelFontChanged( );
 
 public:
-    Q_PROPERTY( bool hasShadow READ getHasShadow WRITE setHasShadow NOTIFY hasShadowChanged )
+    Q_PROPERTY( bool hasShadow READ getHasShadow WRITE setHasShadow NOTIFY hasShadowChanged FINAL )
     void            setHasShadow( bool hasShadow ) { _hasShadow = hasShadow; emit hasShadowChanged( ); }
     bool            getHasShadow( ) const { return _hasShadow; }
 protected:
@@ -199,7 +199,7 @@ signals:
     void            hasShadowChanged( );
 
 public:
-    Q_PROPERTY( QColor shadowColor READ getShadowColor WRITE setShadowColor NOTIFY shadowColorChanged )
+    Q_PROPERTY( QColor shadowColor READ getShadowColor WRITE setShadowColor NOTIFY shadowColorChanged FINAL )
     void            setShadowColor( QColor shadowColor ) { _shadowColor = shadowColor; emit shadowColorChanged( ); }
     QColor          getShadowColor( ) const { return _shadowColor; }
 protected:
@@ -208,7 +208,7 @@ signals:
     void            shadowColorChanged( );
 
 public:
-    Q_PROPERTY( QSizeF shadowOffset READ getShadowOffset WRITE setShadowOffset NOTIFY shadowOffsetChanged )
+    Q_PROPERTY( QSizeF shadowOffset READ getShadowOffset WRITE setShadowOffset NOTIFY shadowOffsetChanged FINAL )
     void            setShadowOffset( QSizeF shadowOffset ) { _shadowOffset = shadowOffset; emit shadowOffsetChanged( ); }
     QSizeF          getShadowOffset( ) const { return _shadowOffset; }
 protected:
@@ -244,7 +244,7 @@ signals:
     void            styleModified();
 
 public:
-    Q_PROPERTY( QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged )
+    Q_PROPERTY( QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged FINAL )
     void            setLineColor( const QColor& lineColor ) { _lineColor = lineColor; emit lineColorChanged( ); emit styleModified(); }
     const QColor&   getLineColor( ) const { return _lineColor; }
 protected:
@@ -253,7 +253,7 @@ signals:
     void            lineColorChanged( );
 
 public:
-    Q_PROPERTY( qreal lineWidth READ getLineWidth WRITE setLineWidth NOTIFY lineWidthChanged )
+    Q_PROPERTY( qreal lineWidth READ getLineWidth WRITE setLineWidth NOTIFY lineWidthChanged FINAL )
     void            setLineWidth( qreal lineWidth ) { _lineWidth = lineWidth; emit lineWidthChanged( ); emit styleModified();  }
     qreal           getLineWidth( ) const { return _lineWidth; }
 protected:
@@ -262,7 +262,7 @@ signals:
     void            lineWidthChanged( );
 
 public:
-    Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged )
+    Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL )
     void        setArrowSize( qreal arrowSize ) { _arrowSize = arrowSize; emit arrowSizeChanged( ); emit styleModified();  }
     qreal       getArrowSize( ) const { return _arrowSize; }
 protected:

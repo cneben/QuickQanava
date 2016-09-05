@@ -50,14 +50,14 @@ class Edge : public gtpo::GenEdge< qan::Config >
     Q_OBJECT
 public:
     //! Edge constructor with source, destination and weight initialization.
-    Edge( QQuickItem* parent = nullptr );
+    explicit Edge( QQuickItem* parent = nullptr );
 
     //! Return getDynamicClassName() (default to "qan::Edge").
     std::string     getClassName() { return getDynamicClassName(); }
     virtual auto    getDynamicClassName() -> std::string { return "qan::Edge"; }
 public:
     // Qt property for gtpo::Edge serializable standard property.
-    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged )
+    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
     void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
 signals:
     void            serializableChanged();
@@ -70,13 +70,13 @@ public:
     void        setSourceItem( qan::Node* source );
     void        setDestinationItem( qan::Node* destination );
 public:
-    Q_PROPERTY( qan::Node* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged )
+    Q_PROPERTY( qan::Node* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::Node*  getSourceItem( ) { return static_cast< qan::Node* >( getSrc().lock().get() ); }
 signals:
     void        sourceItemChanged( );
 
 public:
-    Q_PROPERTY( qan::Node* destinationItem READ getDestinationItem() WRITE setDestinationItem NOTIFY destinationItemChanged )
+    Q_PROPERTY( qan::Node* destinationItem READ getDestinationItem() WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
     qan::Node*  getDestinationItem( ) { return static_cast< qan::Node* >( getDst().lock().get() ); }
 signals:
     void        destinationItemChanged( );
@@ -124,7 +124,7 @@ private:
 
 public:
     //! Edge label position.
-    Q_PROPERTY( QPointF labelPos READ getLabelPos WRITE setLabelPos NOTIFY labelPosChanged )
+    Q_PROPERTY( QPointF labelPos READ getLabelPos WRITE setLabelPos NOTIFY labelPosChanged FINAL )
     //! Get edge label position.
     QPointF		getLabelPos( ) const { return _labelPos; }
     //! Set edge label position.
@@ -145,7 +145,7 @@ private:
     SharedEdgeStyle _defaultStyle;
 public:
     //! Edge current style object (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::EdgeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged )
+    Q_PROPERTY( qan::EdgeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void            setStyle( EdgeStyle* style );
     qan::EdgeStyle* getStyle( ) const { return _style; }
 private:
@@ -157,7 +157,7 @@ private slots:
     void            styleDestroyed( QObject* style );
 
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     //! Set this edge label.
     void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
     //! Get this edge label.
@@ -168,7 +168,7 @@ signals:
     void            labelChanged( );
 
 public:
-    Q_PROPERTY( qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged )
+    Q_PROPERTY( qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL )
     //! Get edge's weight.
     float		getWeight( ) const { return _weight; }
     //! Set edge's weight.
@@ -192,7 +192,7 @@ public:
      *
      * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
      */
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged )
+    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
     void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
     bool             getAcceptDrops( ) { return _acceptDrops; }
 private:

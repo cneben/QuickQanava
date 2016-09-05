@@ -60,15 +60,15 @@ Qan.AbstractGraph {
     property var        connectorDropNode: undefined
     onEnableConnectorDropNodeChanged: {
         if ( !enableConnectorDropNode &&
-             connectorDropNode != undefined &&
+             connectorDropNode &&
              graph.hasNode( connectorDropNode ) )
             graph.removeNode( connectorDropNode )
 
         if ( enableConnectorDropNode &&
-             connectorDropNode == undefined &&
-             connectorDropNodeComponent != undefined ) {
+             !connectorDropNode &&
+             connectorDropNodeComponent ) {
             connectorDropNode = graph.insertNode( graph.connectorDropNodeComponent )
-            if ( connectorDropNode != undefined ) {
+            if ( connectorDropNode ) {
                 connectorDropNode.edgeClassName = connectorDropNodeEdgeClassName
                 connectorDropNode.visible = false
                 connectorDropNode.graph = graph
@@ -83,13 +83,13 @@ Qan.AbstractGraph {
     }
     property real maxZ: -1.
     onNodeClicked: {
-        if ( node === undefined ) {
+        if ( !node ) {
             connectorDropNode.visible = false
             resizer.visible = false
         }
         maxZ = Math.max( node.z + 1, maxZ + 1 )
         node.z = maxZ + 1;
-        if ( connectorDropNode != undefined )
+        if ( connectorDropNode )
             connectorDropNode.setHostNode( node );
         if ( node.resizable ) {
             nodeResizer.parent = node

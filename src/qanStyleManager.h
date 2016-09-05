@@ -200,21 +200,21 @@ private:
     QMap< QString, QAbstractItemModel* > _targetModelMap;
 
 public:
-    Q_PROPERTY( QAbstractItemModel* nodeStylesModel READ getNodeStylesModel NOTIFY nodeStylesModelChanged )
+    Q_PROPERTY( QAbstractItemModel* nodeStylesModel READ getNodeStylesModel NOTIFY nodeStylesModelChanged FINAL )
     QAbstractItemModel* getNodeStylesModel( ) { return getStylesModelForTarget( "qan::Node" ); }
 signals:
     //! Never used, defined to avoid a QML NOTIFY warning.
     void                nodeStylesModelChanged( );
 
 public:
-    Q_PROPERTY( QAbstractItemModel* edgeStylesModel READ getEdgeStylesModel NOTIFY edgeStylesModelChanged )
+    Q_PROPERTY( QAbstractItemModel* edgeStylesModel READ getEdgeStylesModel NOTIFY edgeStylesModelChanged FINAL )
     QAbstractItemModel* getEdgeStylesModel( ) { return getStylesModelForTarget( "qan::Edge" ); }
 signals:
     //! Never used, defined to avoid a QML NOTIFY warning.
     void                edgeStylesModelChanged( );
 
 public:
-    Q_PROPERTY( QAbstractItemModel* hEdgesStylesModel READ getHEdgeStylesModel NOTIFY hEdgeStylesModelChanged )
+    Q_PROPERTY( QAbstractItemModel* hEdgesStylesModel READ getHEdgeStylesModel NOTIFY hEdgeStylesModelChanged FINAL )
     QAbstractItemModel* getHEdgeStylesModel( ) { return getStylesModelForTarget( "qan::HEdge" ); }
 signals:
     //! Never used, defined to avoid a QML NOTIFY warning.

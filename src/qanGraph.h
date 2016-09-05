@@ -60,7 +60,7 @@ class Graph : public gtpo::GenGraph< qan::Config >
     //@{
 public:
     //! Graph default constructor.
-    Graph( QQuickItem* parent = 0 );
+    explicit Graph( QQuickItem* parent = 0 );
     /*! Graph default destructor.
      *
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
@@ -94,6 +94,23 @@ public:
      *
      */
     Q_INVOKABLE qan::Group*  groupAt( const QPointF& p, const QSizeF& s ) const;
+
+public:
+    /*! Quick item used as a parent for all graphics item "factored" by this graph (default to this).
+     *
+     * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
+     * graphics items.
+     */
+    Q_PROPERTY( QQuickItem* containerItem READ getContainerItem NOTIFY containerItemChanged FINAL )
+    //! \sa containerItem
+    QQuickItem*         getContainerItem() { return _containerItem.data(); }
+    const QQuickItem*   getContainerItem() const { return _containerItem.data(); }
+    void                setContainerItem( QQuickItem* containerItem );
+signals:
+    //! Used internally, never change containerItem.
+    void            containerItemChanged( ); // Never used, avoid a QML warning
+private:
+    QPointer< QQuickItem >  _containerItem{nullptr};
     //@}
     //-------------------------------------------------------------------------
 
@@ -113,7 +130,7 @@ public:
      *
      * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
      */
-    Q_PROPERTY( SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged )
+    Q_PROPERTY( SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged FINAL )
     void            setSelectionPolicy( SelectionPolicy selectionPolicy );
     inline SelectionPolicy  getSelectionPolicy( ) const { return _selectionPolicy; }
 private:
@@ -123,7 +140,7 @@ signals:
 
 public:
     //! Color for the node selection hilgither component (default to dark blue).
-    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged )
+    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
     void            setSelectionColor( QColor selectionColor );
     inline QColor   getSelectionColor( ) const { return _selectionColor; }
 private:
@@ -133,7 +150,7 @@ signals:
 
 public:
     //! Selection hilgither item stroke width (default to 3.0).
-    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged )
+    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
     void            setSelectionWeight( qreal selectionWeight );
     inline qreal    getSelectionWeight( ) const { return _selectionWeight; }
 private:
@@ -143,7 +160,7 @@ signals:
 
 public:
     //! Margin between the selection hilgither item and a selected item (default to 3.0).
-    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged )
+    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
     void            setSelectionMargin( qreal selectionMargin );
     inline qreal    getSelectionMargin( ) const { return _selectionMargin; }
 private:
@@ -176,7 +193,7 @@ public:
     using SelectedNodes = qps::ContainerListModel< QVector, qan::Node* > ;
 
     //! Read-only list model of currently selected nodes.
-    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged )
+    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
     QAbstractListModel* getSelectedNodesModel( ) { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
 
     auto    getSelectedNodes( ) -> SelectedNodes& { return _selectedNodes; }
@@ -300,7 +317,7 @@ public:
 
 public:
     //! Access the list of nodes with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel NOTIFY nodesModelChanged )
+    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel NOTIFY nodesModelChanged FINAL )
     QAbstractItemModel* getNodesModel( ) const { return ( QAbstractItemModel* )( &getNodes() ); }
 signals:
     /*! \note Never used, defined for QML compatibility. */
@@ -341,7 +358,7 @@ public:
 
 public:
     //! Access the list of edges with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel NOTIFY edgesModelChanged )
+    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel NOTIFY edgesModelChanged FINAL )
     QAbstractItemModel* getEdgesModel( ) const { return ( QAbstractItemModel* )( &getEdges() ); }
 signals:
     /*! \note Never used, defined for QML compatibility. */
@@ -391,7 +408,7 @@ public:
 public:
     /*! Graph style manager (ie list of style applicable to graph primitive).
      */
-    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager NOTIFY styleManagerChanged )
+    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager NOTIFY styleManagerChanged FINAL )
     qan::StyleManager*  getStyleManager( ) { return _styleManager.data(); }
     const qan::StyleManager*  getStyleManager( ) const { return _styleManager.data(); }
     qan::StyleManager&  styleManager( ) { Q_ASSERT( _styleManager != nullptr ); return *_styleManager.data(); }

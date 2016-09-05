@@ -37,6 +37,7 @@
 #include "./qanNode.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
+#include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
 #include "./qanProgressNotifier.h"
@@ -48,6 +49,7 @@ struct QuickQanava {
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");
         qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
+        qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");
         qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");

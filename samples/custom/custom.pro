@@ -6,6 +6,10 @@ DEFINES		+= QANAVA
 LANGUAGE	= C++
 QT		+= widgets core gui qml quick charts
 
+include(../../GTpo/src/gtpo.pri)
+include(../../QuickProperties/src/quickproperties.pri)
+include(../../QuickProperties/src/quickpropertiespb.pri)
+include(../../src/quickqanava.pri)
 include(../../common.pri)
 
 SOURCES	+=  qanMainWindow.cpp
@@ -19,18 +23,4 @@ OTHER_FILES   +=  main.qml          \
 RESOURCES   +=  ../../src/QuickQanava2.qrc                       \
                 custom.qrc
 
-CONFIG(release, debug|release) {
-    linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2 
-    android:        LIBS	+= -L../../build/ -lquickqanava2 
-    win32-msvc*:    PRE_TARGETDEPS +=  ../../build/quickqanava2.lib
-    win32-msvc*:    LIBS	+= ../../build/quickqanava2.lib
-    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2 
-}
 
-CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2d
-    android:        LIBS	+= -L../../build/ -lquickqanava2d
-    win32-msvc*:    PRE_TARGETDEPS += ../../build/quickqanava2d.lib
-    win32-msvc*:    LIBS	+=  ../../build/quickqanava2d.lib
-    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d 
-}
