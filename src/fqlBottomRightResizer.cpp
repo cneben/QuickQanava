@@ -71,6 +71,7 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
                 engine->setObjectOwnership( _handler, QQmlEngine::CppOwnership );
                 _handler->setOpacity( _autoHideHandler ? 0. : 1. );
                 _handler->setSize( _handlerSize );
+                _handler->setZ( z() + 1. );
                 QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
                 if ( handlerBorder != nullptr ) {
                     handlerBorder->setProperty( "color", _handlerColor );
@@ -179,6 +180,29 @@ void    BottomRightResizer::setHandlerColor( QColor handlerColor )
     emit handlerColorChanged();
 }
 
+void    BottomRightResizer::setHandlerRadius( qreal handlerRadius )
+{
+    if ( qFuzzyCompare( 1.0 + handlerRadius, 1.0 + _handlerRadius ) )    // Binding loop protection
+        return;
+    if ( _handler != nullptr )
+        _handler->setProperty( "radius", handlerRadius );
+    _handlerRadius = handlerRadius;
+    emit handlerRadiusChanged();
+}
+
+void    BottomRightResizer::setHandlerWidth( qreal handlerWidth )
+{
+    if ( qFuzzyCompare( 1.0 + handlerWidth, 1.0 + _handlerWidth ) )    // Binding loop protection
+        return;
+    if ( _handler != nullptr ) {
+        QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
+        if ( handlerBorder != nullptr ) {
+            handlerBorder->setProperty( "width", handlerWidth );
+        }
+    }
+    _handlerWidth = handlerWidth;
+    emit handlerWidthChanged();
+}
 void    BottomRightResizer::setMinimumTargetSize( QSizeF minimumTargetSize )
 {
     if ( minimumTargetSize.isEmpty() )

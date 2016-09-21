@@ -385,6 +385,8 @@ public:
      */
     Q_INVOKABLE virtual void    ungroup( );
 
+    Q_INVOKABLE qan::Group*     qmlGetGroup( ) { return getQanGroup(); }
+
     //! Shortcut to gtpo::GenNode<>::getGroup().
     qan::Group*                 getQanGroup( );
     //@}

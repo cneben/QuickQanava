@@ -28,7 +28,7 @@ namespace fql {  // ::fql
  *
  *   // From QML:
  *   import FastQml 1.0 as Fql
- *   import "qrc:/FastQml" 1.0 as Fql
+ *   import "qrc:/FastQml" 2.0 as Fql
  *
  *   Item {
  *     id: targetItem
@@ -52,8 +52,7 @@ public:
     //! .
     explicit BottomRightResizer( QQuickItem* parent = nullptr );
     virtual ~BottomRightResizer( );
-private:
-    Q_DISABLE_COPY( BottomRightResizer )
+    BottomRightResizer( const BottomRightResizer& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -113,6 +112,28 @@ private:
     QColor      _handlerColor{ Qt::black };
 
 public:
+    /*! Radius of the bottom right handler rectangle component (default to \c 4).
+     */
+    Q_PROPERTY( qreal handlerRadius READ getHandlerRadius WRITE setHandlerRadius NOTIFY handlerRadiusChanged FINAL )
+    void        setHandlerRadius( qreal handlerRadius );
+    qreal       getHandlerRadius( ) const { return _handlerRadius; }
+signals:
+    void        handlerRadiusChanged();
+private:
+    qreal       _handlerRadius{ 4.0 };
+
+public:
+    /*! Radius of the bottom right handler rectangle component (default to \c 4).
+     */
+    Q_PROPERTY( qreal handlerWidth READ getHandlerWidth WRITE setHandlerWidth NOTIFY handlerWidthChanged FINAL )
+    void        setHandlerWidth( qreal handlerWidth );
+    qreal       getHandlerWidth( ) const { return _handlerWidth; }
+signals:
+    void        handlerWidthChanged();
+private:
+    qreal       _handlerWidth{ 4.0 };
+
+public:
     //! Target could not be resized below \c minimumTargetSize (default to \c 50x50).
     Q_PROPERTY( QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL )
     //! \sa minimumTargetSize
@@ -158,12 +179,6 @@ private:
 }  // ::fql
 
 QML_DECLARE_TYPE( fql::BottomRightResizer );
-
-struct FastQml {
-    static void initialize() {
-        qmlRegisterType< fql::BottomRightResizer >( "FastQml", 1, 0, "BottomRightResizer" );
-    }
-};
 
 #endif // fqlBottomRightResizer_h
 

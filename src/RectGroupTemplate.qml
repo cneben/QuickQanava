@@ -46,9 +46,12 @@ Item {
     property color  backColor: Qt.rgba( 0.96, 0.96, 0.96, 1.0 )
 
     default property alias children : content.children
-    property alias content: content
+    property alias  content: content
 
-    property         var    group
+    property alias  radius: groupBackground.radius
+    property alias  border: groupBackground.border
+
+    property var    group
 
     signal  groupRightClicked( var group, var p )
 
@@ -123,7 +126,7 @@ Item {
     }
 
     // Emitted by qan::Group when node dragging start
-    function onNodeDragEnter() { groupBackground.color = Qt.darker( backColor, 1.05 ) }
+    function onNodeDragEnter() { groupBackground.color = Qt.binding( function() { return Qt.darker( template.backColor, 1.05 ) } ) }
     // Emitted by qan::Group when node dragging ends
-    function onNodeDragLeave() { groupBackground.color = backColor }
+    function onNodeDragLeave() { groupBackground.color = Qt.binding( function() { return template.backColor } ) }
 }

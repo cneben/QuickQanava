@@ -182,7 +182,6 @@ class Config final : public gtpo::GraphConfig,
 {
 public:
     // Base config
-    //using GraphBase = qan::Navigable;
     using GraphBase = QQuickItem;
     using NodeBase  = QQuickItem;
     using EdgeBase  = QQuickPaintedItem;
