@@ -24,3 +24,16 @@ RESOURCES   +=  ../../src/QuickQanava2.qrc                       \
                 custom.qrc
 
 
+CONFIG(release, debug|release) {
+    linux-g++*:     LIBS	+= -lprotobuf
+    android:        LIBS	+= -lprotobuf
+    win32-msvc*:    LIBS	+= $$PROTOCOL_BUFFER3_LIBDIR_RELEASE/libprotobuf.lib
+    win32-g++*:     LIBS	+= -lprotobuf
+}
+
+CONFIG(debug, debug|release) {
+    linux-g++*:     LIBS	+= -lprotobuf
+    android:        LIBS	+= -lprotobuf
+    win32-msvc*:    LIBS	+= $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
+    win32-g++*:     LIBS	+= -lprotobuf
+}

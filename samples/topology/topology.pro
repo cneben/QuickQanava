@@ -25,7 +25,7 @@ RESOURCES   +=  ../../QuickProperties/src/QuickProperties.qrc   \
                 topology.qrc
 
 CONFIG(release, debug|release) {
-    linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2 -lprotobuf
+    linux-g++*:     LIBS	+= -L../../build/ -lprotobuf -lquickqanava2
     android:        LIBS	+= -L../../build/ -lquickqanava2 -lprotobuf
     win32-msvc*:    PRE_TARGETDEPS +=  ../../build/quickqanava2.lib
     win32-msvc*:    LIBS	+= ../../build/quickqanava2.lib $$PROTOCOL_BUFFER3_LIBDIR_RELEASE/libprotobuf.lib

@@ -40,6 +40,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 }  // namespace
 
 
+void protobuf_AssignDesc_quickqanava_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AssignDesc_quickqanava_2eproto() {
   protobuf_AddDesc_quickqanava_2eproto();
   const ::google::protobuf::FileDescriptor* file =
@@ -129,6 +130,7 @@ inline void protobuf_AssignDescriptorsOnce() {
                  &protobuf_AssignDesc_quickqanava_2eproto);
 }
 
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -172,6 +174,7 @@ void protobuf_ShutdownFile_quickqanava_2eproto() {
   delete Graph_reflection_;
 }
 
+void protobuf_AddDesc_quickqanava_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AddDesc_quickqanava_2eproto() {
   static bool already_here = false;
   if (already_here) return;
@@ -218,16 +221,6 @@ struct StaticDescriptorInitializer_quickqanava_2eproto {
     protobuf_AddDesc_quickqanava_2eproto();
   }
 } static_descriptor_initializer_quickqanava_2eproto_;
-
-namespace {
-
-static void MergeFromFail(int line) GOOGLE_ATTRIBUTE_COLD;
-static void MergeFromFail(int line) {
-  GOOGLE_CHECK(false) << __FILE__ << ":" << line;
-}
-
-}  // namespace
-
 
 // ===================================================================
 
@@ -534,8 +527,8 @@ void Style::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_end:qan.pb.Style)
 }
 
-::google::protobuf::uint8* Style::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* Style::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.Style)
   // optional int32 id = 1;
   if (this->id() != 0) {
@@ -578,8 +571,8 @@ void Style::SerializeWithCachedSizes(
   // optional .qps.pb.QtObject properties = 5;
   if (this->has_properties()) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        5, *this->properties_, target);
+      InternalWriteMessageNoVirtualToArray(
+        5, *this->properties_, false, target);
   }
 
   // repeated int32 node_ids = 6 [packed = true];
@@ -695,7 +688,9 @@ int Style::ByteSize() const {
 
 void Style::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Style)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   const Style* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Style>(
           &from);
@@ -710,7 +705,9 @@ void Style::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Style::MergeFrom(const Style& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Style)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   node_ids_.MergeFrom(from.node_ids_);
   edge_ids_.MergeFrom(from.edge_ids_);
   if (from.id() != 0) {
@@ -1054,6 +1051,7 @@ StyleManager::StyleManager(const StyleManager& from)
 
 void StyleManager::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   style_count_ = 0;
   default_node_styles_.SetAssignDescriptorCallback(
@@ -1155,12 +1153,16 @@ bool StyleManager::MergePartialFromCodedStream(
         if (tag == 26) {
           DO_(input->IncrementRecursionDepth());
          parse_loop_default_node_styles:
-          ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry(default_node_styles_.NewEntry());
+          StyleManager_DefaultNodeStylesEntry::Parser< ::google::protobuf::internal::MapField<
+              ::std::string, ::google::protobuf::int32,
+              ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+              ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+              0 >,
+            ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 > > parser(&default_node_styles_);
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-              input, entry.get()));
-          (*mutable_default_node_styles())[entry->key()] = *entry->mutable_value();
+              input, &parser));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            entry->key().data(), entry->key().length(),
+            parser.key().data(), parser.key().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "qan.pb.StyleManager.DefaultNodeStylesEntry.key"));
         } else {
@@ -1177,12 +1179,16 @@ bool StyleManager::MergePartialFromCodedStream(
         if (tag == 34) {
           DO_(input->IncrementRecursionDepth());
          parse_loop_default_edge_styles:
-          ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry(default_edge_styles_.NewEntry());
+          StyleManager_DefaultEdgeStylesEntry::Parser< ::google::protobuf::internal::MapField<
+              ::std::string, ::google::protobuf::int32,
+              ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
+              ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+              0 >,
+            ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 > > parser(&default_edge_styles_);
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-              input, entry.get()));
-          (*mutable_default_edge_styles())[entry->key()] = *entry->mutable_value();
+              input, &parser));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            entry->key().data(), entry->key().length(),
+            parser.key().data(), parser.key().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "qan.pb.StyleManager.DefaultEdgeStylesEntry.key"));
         } else {
@@ -1230,42 +1236,108 @@ void StyleManager::SerializeWithCachedSizes(
   }
 
   // map<string, int32> default_node_styles = 3;
-  {
-    ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
-    for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
-        it = this->default_node_styles().begin();
-        it != this->default_node_styles().end(); ++it) {
-      entry.reset(default_node_styles_.NewEntryWrapper(it->first, it->second));
-      ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-          3, *entry, output);
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        it->first.data(), it->first.length(),
-        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-        "qan.pb.StyleManager.DefaultNodeStylesEntry.key");
+  if (!this->default_node_styles().empty()) {
+    typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_pointer
+        ConstPtr;
+    typedef ConstPtr SortItem;
+    typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
+    struct Utf8Check {
+      static void Check(ConstPtr p) {
+        ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          p->first.data(), p->first.length(),
+          ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+          "qan.pb.StyleManager.DefaultNodeStylesEntry.key");
+      }
+    };
+
+    if (output->IsSerializationDeterminstic() &&
+        this->default_node_styles().size() > 1) {
+      ::google::protobuf::scoped_array<SortItem> items(
+          new SortItem[this->default_node_styles().size()]);
+      typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::size_type size_type;
+      size_type n = 0;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_node_styles().begin();
+          it != this->default_node_styles().end(); ++it, ++n) {
+        items[n] = SortItem(&*it);
+      }
+      ::std::sort(&items[0], &items[n], Less());
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
+      for (size_type i = 0; i < n; i++) {
+        entry.reset(default_node_styles_.NewEntryWrapper(
+            items[i]->first, items[i]->second));
+        ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+            3, *entry, output);
+        Utf8Check::Check(items[i]);
+      }
+    } else {
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_node_styles().begin();
+          it != this->default_node_styles().end(); ++it) {
+        entry.reset(default_node_styles_.NewEntryWrapper(
+            it->first, it->second));
+        ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+            3, *entry, output);
+        Utf8Check::Check(&*it);
+      }
     }
   }
 
   // map<string, int32> default_edge_styles = 4;
-  {
-    ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
-    for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
-        it = this->default_edge_styles().begin();
-        it != this->default_edge_styles().end(); ++it) {
-      entry.reset(default_edge_styles_.NewEntryWrapper(it->first, it->second));
-      ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-          4, *entry, output);
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        it->first.data(), it->first.length(),
-        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-        "qan.pb.StyleManager.DefaultEdgeStylesEntry.key");
+  if (!this->default_edge_styles().empty()) {
+    typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_pointer
+        ConstPtr;
+    typedef ConstPtr SortItem;
+    typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
+    struct Utf8Check {
+      static void Check(ConstPtr p) {
+        ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          p->first.data(), p->first.length(),
+          ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+          "qan.pb.StyleManager.DefaultEdgeStylesEntry.key");
+      }
+    };
+
+    if (output->IsSerializationDeterminstic() &&
+        this->default_edge_styles().size() > 1) {
+      ::google::protobuf::scoped_array<SortItem> items(
+          new SortItem[this->default_edge_styles().size()]);
+      typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::size_type size_type;
+      size_type n = 0;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_edge_styles().begin();
+          it != this->default_edge_styles().end(); ++it, ++n) {
+        items[n] = SortItem(&*it);
+      }
+      ::std::sort(&items[0], &items[n], Less());
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
+      for (size_type i = 0; i < n; i++) {
+        entry.reset(default_edge_styles_.NewEntryWrapper(
+            items[i]->first, items[i]->second));
+        ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+            4, *entry, output);
+        Utf8Check::Check(items[i]);
+      }
+    } else {
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_edge_styles().begin();
+          it != this->default_edge_styles().end(); ++it) {
+        entry.reset(default_edge_styles_.NewEntryWrapper(
+            it->first, it->second));
+        ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+            4, *entry, output);
+        Utf8Check::Check(&*it);
+      }
     }
   }
 
   // @@protoc_insertion_point(serialize_end:qan.pb.StyleManager)
 }
 
-::google::protobuf::uint8* StyleManager::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* StyleManager::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.StyleManager)
   // optional int32 style_count = 1;
   if (this->style_count() != 0) {
@@ -1275,41 +1347,113 @@ void StyleManager::SerializeWithCachedSizes(
   // repeated .qan.pb.Style styles = 2;
   for (unsigned int i = 0, n = this->styles_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->styles(i), target);
+      InternalWriteMessageNoVirtualToArray(
+        2, this->styles(i), false, target);
   }
 
   // map<string, int32> default_node_styles = 3;
-  {
-    ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
-    for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
-        it = this->default_node_styles().begin();
-        it != this->default_node_styles().end(); ++it) {
-      entry.reset(default_node_styles_.NewEntryWrapper(it->first, it->second));
-      target = ::google::protobuf::internal::WireFormatLite::
-          WriteMessageNoVirtualToArray(
-              3, *entry, target);
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        it->first.data(), it->first.length(),
-        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-        "qan.pb.StyleManager.DefaultNodeStylesEntry.key");
+  if (!this->default_node_styles().empty()) {
+    typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_pointer
+        ConstPtr;
+    typedef ConstPtr SortItem;
+    typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
+    struct Utf8Check {
+      static void Check(ConstPtr p) {
+        ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          p->first.data(), p->first.length(),
+          ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+          "qan.pb.StyleManager.DefaultNodeStylesEntry.key");
+      }
+    };
+
+    if (deterministic &&
+        this->default_node_styles().size() > 1) {
+      ::google::protobuf::scoped_array<SortItem> items(
+          new SortItem[this->default_node_styles().size()]);
+      typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::size_type size_type;
+      size_type n = 0;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_node_styles().begin();
+          it != this->default_node_styles().end(); ++it, ++n) {
+        items[n] = SortItem(&*it);
+      }
+      ::std::sort(&items[0], &items[n], Less());
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
+      for (size_type i = 0; i < n; i++) {
+        entry.reset(default_node_styles_.NewEntryWrapper(
+            items[i]->first, items[i]->second));
+        target = ::google::protobuf::internal::WireFormatLite::
+                   InternalWriteMessageNoVirtualToArray(
+                       3, *entry, deterministic, target);
+;
+        Utf8Check::Check(items[i]);
+      }
+    } else {
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultNodeStylesEntry> entry;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_node_styles().begin();
+          it != this->default_node_styles().end(); ++it) {
+        entry.reset(default_node_styles_.NewEntryWrapper(
+            it->first, it->second));
+        target = ::google::protobuf::internal::WireFormatLite::
+                   InternalWriteMessageNoVirtualToArray(
+                       3, *entry, deterministic, target);
+;
+        Utf8Check::Check(&*it);
+      }
     }
   }
 
   // map<string, int32> default_edge_styles = 4;
-  {
-    ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
-    for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
-        it = this->default_edge_styles().begin();
-        it != this->default_edge_styles().end(); ++it) {
-      entry.reset(default_edge_styles_.NewEntryWrapper(it->first, it->second));
-      target = ::google::protobuf::internal::WireFormatLite::
-          WriteMessageNoVirtualToArray(
-              4, *entry, target);
-      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        it->first.data(), it->first.length(),
-        ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-        "qan.pb.StyleManager.DefaultEdgeStylesEntry.key");
+  if (!this->default_edge_styles().empty()) {
+    typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_pointer
+        ConstPtr;
+    typedef ConstPtr SortItem;
+    typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
+    struct Utf8Check {
+      static void Check(ConstPtr p) {
+        ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          p->first.data(), p->first.length(),
+          ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+          "qan.pb.StyleManager.DefaultEdgeStylesEntry.key");
+      }
+    };
+
+    if (deterministic &&
+        this->default_edge_styles().size() > 1) {
+      ::google::protobuf::scoped_array<SortItem> items(
+          new SortItem[this->default_edge_styles().size()]);
+      typedef ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::size_type size_type;
+      size_type n = 0;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_edge_styles().begin();
+          it != this->default_edge_styles().end(); ++it, ++n) {
+        items[n] = SortItem(&*it);
+      }
+      ::std::sort(&items[0], &items[n], Less());
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
+      for (size_type i = 0; i < n; i++) {
+        entry.reset(default_edge_styles_.NewEntryWrapper(
+            items[i]->first, items[i]->second));
+        target = ::google::protobuf::internal::WireFormatLite::
+                   InternalWriteMessageNoVirtualToArray(
+                       4, *entry, deterministic, target);
+;
+        Utf8Check::Check(items[i]);
+      }
+    } else {
+      ::google::protobuf::scoped_ptr<StyleManager_DefaultEdgeStylesEntry> entry;
+      for (::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >::const_iterator
+          it = this->default_edge_styles().begin();
+          it != this->default_edge_styles().end(); ++it) {
+        entry.reset(default_edge_styles_.NewEntryWrapper(
+            it->first, it->second));
+        target = ::google::protobuf::internal::WireFormatLite::
+                   InternalWriteMessageNoVirtualToArray(
+                       4, *entry, deterministic, target);
+;
+        Utf8Check::Check(&*it);
+      }
     }
   }
 
@@ -1370,7 +1514,9 @@ int StyleManager::ByteSize() const {
 
 void StyleManager::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:qan.pb.StyleManager)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   const StyleManager* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const StyleManager>(
           &from);
@@ -1385,7 +1531,9 @@ void StyleManager::MergeFrom(const ::google::protobuf::Message& from) {
 
 void StyleManager::MergeFrom(const StyleManager& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.StyleManager)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   styles_.MergeFrom(from.styles_);
   default_node_styles_.MergeFrom(from.default_node_styles_);
   default_edge_styles_.MergeFrom(from.default_edge_styles_);
@@ -1670,14 +1818,14 @@ void Node::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_end:qan.pb.Node)
 }
 
-::google::protobuf::uint8* Node::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* Node::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.Node)
   // optional .gtpo.pb.Node base = 1;
   if (this->has_base()) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, *this->base_, target);
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->base_, false, target);
   }
 
   // optional int32 style_id = 2;
@@ -1715,7 +1863,9 @@ int Node::ByteSize() const {
 
 void Node::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Node)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   const Node* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Node>(
           &from);
@@ -1730,7 +1880,9 @@ void Node::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Node::MergeFrom(const Node& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Node)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   if (from.has_base()) {
     mutable_base()->::gtpo::pb::Node::MergeFrom(from.base());
   }
@@ -1987,21 +2139,21 @@ void Graph::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_end:qan.pb.Graph)
 }
 
-::google::protobuf::uint8* Graph::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* Graph::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.Graph)
   // optional .gtpo.pb.Graph graph = 1;
   if (this->has_graph()) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, *this->graph_, target);
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->graph_, false, target);
   }
 
   // optional .qan.pb.StyleManager style_manager = 2;
   if (this->has_style_manager()) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, *this->style_manager_, target);
+      InternalWriteMessageNoVirtualToArray(
+        2, *this->style_manager_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:qan.pb.Graph)
@@ -2034,7 +2186,9 @@ int Graph::ByteSize() const {
 
 void Graph::MergeFrom(const ::google::protobuf::Message& from) {
 // @@protoc_insertion_point(generalized_merge_from_start:qan.pb.Graph)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   const Graph* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const Graph>(
           &from);
@@ -2049,7 +2203,9 @@ void Graph::MergeFrom(const ::google::protobuf::Message& from) {
 
 void Graph::MergeFrom(const Graph& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.Graph)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   if (from.has_graph()) {
     mutable_graph()->::gtpo::pb::Graph::MergeFrom(from.graph());
   }

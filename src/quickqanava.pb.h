@@ -48,7 +48,7 @@ class StyleManager;
 
 // ===================================================================
 
-class Style : public ::google::protobuf::Message {
+class Style : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.Style) */ {
  public:
   Style();
   virtual ~Style();
@@ -82,7 +82,11 @@ class Style : public ::google::protobuf::Message {
       ::google::protobuf::io::CodedInputStream* input);
   void SerializeWithCachedSizes(
       ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
   int GetCachedSize() const { return _cached_size_; }
   private:
   void SharedCtor();
@@ -200,7 +204,7 @@ class Style : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class StyleManager : public ::google::protobuf::Message {
+class StyleManager : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.StyleManager) */ {
  public:
   StyleManager();
   virtual ~StyleManager();
@@ -234,7 +238,11 @@ class StyleManager : public ::google::protobuf::Message {
       ::google::protobuf::io::CodedInputStream* input);
   void SerializeWithCachedSizes(
       ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
   int GetCachedSize() const { return _cached_size_; }
   private:
   void SharedCtor();
@@ -332,7 +340,7 @@ class StyleManager : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class Node : public ::google::protobuf::Message {
+class Node : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.Node) */ {
  public:
   Node();
   virtual ~Node();
@@ -366,7 +374,11 @@ class Node : public ::google::protobuf::Message {
       ::google::protobuf::io::CodedInputStream* input);
   void SerializeWithCachedSizes(
       ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
   int GetCachedSize() const { return _cached_size_; }
   private:
   void SharedCtor();
@@ -420,7 +432,7 @@ class Node : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class Graph : public ::google::protobuf::Message {
+class Graph : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.Graph) */ {
  public:
   Graph();
   virtual ~Graph();
@@ -454,7 +466,11 @@ class Graph : public ::google::protobuf::Message {
       ::google::protobuf::io::CodedInputStream* input);
   void SerializeWithCachedSizes(
       ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
   int GetCachedSize() const { return _cached_size_; }
   private:
   void SharedCtor();

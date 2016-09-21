@@ -39,7 +39,7 @@ Item {
         onAccepted: {
             console.debug( "Inserting an image node..." )
                 if ( targetGraph != undefined ) {
-                var imgNode = graph.insertNode( "qan::ImgNode" )
+                var imgNode = topology.insertNode( "qan::ImgNode" )
                 if ( imgNode != null ) {
                     imgNode.loadImageFromFile( fileUrls );
                     centerItem( imgNode );
@@ -73,7 +73,7 @@ Item {
         property var targetEdge: undefined
         MenuItem {
             text: "Clear Graph"
-            onTriggered: { graph.clear() }
+            onTriggered: { topology.clear() }
         }
         MenuItem {
             text: "Load"
@@ -86,9 +86,9 @@ Item {
         MenuItem {
             text: "Insert Node"
             onTriggered: {
-                var n = graph.insertNode()
+                var n = topology.insertNode()
                 centerItem( n );
-                n.label = "Node #" + graph.getNodeCount()
+                n.label = "Node #" + topology.getNodeCount()
             }
         }
         MenuItem {
@@ -100,7 +100,7 @@ Item {
             enabled: menu.targetNode != undefined
             onTriggered: {
                 if ( menu.targetNode != undefined )
-                    graph.removeNode( menu.targetNode )
+                    topology.removeNode( menu.targetNode )
                 menu.targetNode = undefined
             }
         }
@@ -109,16 +109,16 @@ Item {
             enabled: menu.targetEdge != undefined
             onTriggered: {
                 if ( menu.targetEdge != undefined )
-                    graph.removeEdge( menu.targetEdge )
+                    topology.removeEdge( menu.targetEdge )
                 menu.targetEdge = undefined;
             }
         }
         MenuItem {
             text: "Insert Group"
             onTriggered: {
-                var n = graph.insertGroup()
+                var n = topology.insertGroup()
                 centerItem( n );
-                n.label = "Group #" + graph.getGroupCount()
+                n.label = "Group #" + topology.getGroupCount()
             }
         }
     }
@@ -138,28 +138,31 @@ Item {
             return
         var windowCenter = Qt.point( ( window.width - item.width ) / 2.,
                                      ( window.height - item.height ) / 2. )
-        var containerNodeCenter = window.mapToItem( graph.containerItem, windowCenter.x, windowCenter.y )
+        var containerNodeCenter = window.mapToItem( topology.containerItem, windowCenter.x, windowCenter.y )
         item.x = containerNodeCenter.x
         item.y = containerNodeCenter.y
     }
-
-    Qan.Graph {
-        id: graph
-        objectName: "graph"
+    Qan.GraphView {
+        id: graphView
         anchors.fill: parent
-                clip: true
-        enableConnectorDropNode: true
+        graph       : topology
+        navigable   : true
+        Qan.Graph {
+            id: topology
+            objectName: "graph"
+            anchors.fill: parent
+            clip: true
+            enableConnectorDropNode: true
 
-        property Component imgNodeComponent: Qt.createComponent( "qrc:/ImgNode.qml" )
-
-        Component.onCompleted: {
-            graph.registerNodeDelegate( "qan::ImgNode", graph.imgNodeComponent )
-        }
-        onNodeRightClicked: { menu.targetNode = node; menu.popup() }
-        onEdgeRightClicked: { menu.targetEdge = edge; menu.popup() }
-
-        onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
-    } // Qan.Graph: graph
+            property Component imgNodeComponent: Qt.createComponent( "qrc:/ImgNode.qml" )
+            Component.onCompleted: {
+                topology.registerNodeDelegate( "qan::ImgNode", topology.imgNodeComponent )
+            }
+            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
+            onEdgeRightClicked: { menu.targetEdge = edge; menu.popup() }
+            //onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
+        } // Qan.Graph: graph
+    }
 
     Item {
         anchors.bottom: parent.bottom
@@ -206,7 +209,7 @@ Item {
                     text: "Generate"
                     onClicked: {
                         var rect = Qt.rect( 0, 0, window.width, window.height )
-                        graph.initializeRandom( nodeCount.value,
+                        topology.initializeRandom( nodeCount.value,
                                                minOutNodes.value, maxOutNodes.value,
                                                minWidth.value, maxWidth.value,
                                                minHeight.value, maxHeight.value,
@@ -236,7 +239,7 @@ Item {
                 id: edgesList
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
-                model: graph.edges
+                model: topology.edges
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlight: Rectangle {
                     x: 0; y: ( edgesList.currentItem != null ? edgesList.currentItem.y : 0 )
@@ -259,7 +262,7 @@ Item {
             }
             ComboBox {
                 Layout.fillWidth: true; Layout.fillHeight: false
-                model: graph.edges
+                model: topology.edges
                 textRole: "label"
             }
         }
@@ -283,7 +286,7 @@ Item {
             ListView {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
-                model: graph.nodes
+                model: topology.nodes
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
@@ -304,7 +307,7 @@ Item {
             }
             ComboBox {
                 Layout.fillWidth: true; Layout.fillHeight: false
-                model: graph.nodes
+                model: topology.nodes
                 textRole: "itemLabel"
             }
         }
@@ -313,7 +316,7 @@ Item {
     ColorDialog {
         id: selectionColorDialog
         title: "Selection hilight color"
-        onAccepted: { graph.selectionColor = color; }
+        onAccepted: { topology.selectionColor = color; }
     }
     Item {
         id: selectionView
@@ -334,7 +337,7 @@ Item {
                 id: selectionListView
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
-                model: graph.selectedNodes
+                model: topology.selectedNodes
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
@@ -363,10 +366,10 @@ Item {
                         Layout.preferredHeight: 25
                         text: "NoSelection"
                         exclusiveGroup: selectionPolicyGroup
-                        checked: graph.selectionPolicy === Qan.AbstractGraph.NoSelection
+                        checked: topology.selectionPolicy === Qan.AbstractGraph.NoSelection
                         onCheckedChanged: {
                             if ( checked )
-                                graph.selectionPolicy = Qan.AbstractGraph.NoSelection;
+                                topology.selectionPolicy = Qan.AbstractGraph.NoSelection;
                         }
                     }
                     CheckBox {
@@ -374,20 +377,20 @@ Item {
                         height: 15
                         text: "SelectOnClick"
                         exclusiveGroup: selectionPolicyGroup
-                        checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnClick
+                        checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnClick
                         onCheckedChanged: {
                             if ( checked )
-                                graph.selectionPolicy = Qan.AbstractGraph.SelectOnClick;
+                                topology.selectionPolicy = Qan.AbstractGraph.SelectOnClick;
                         }
                     }
                     CheckBox {
                         Layout.preferredHeight: 25
                         text: "SelectOnCtrlClick"
                         exclusiveGroup: selectionPolicyGroup
-                        checked: graph.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
+                        checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
                         onCheckedChanged: {
                             if ( checked )
-                                graph.selectionPolicy = Qan.AbstractGraph.SelectOnCtrlClick;
+                                topology.selectionPolicy = Qan.AbstractGraph.SelectOnCtrlClick;
                         }
                     }
                 }
@@ -396,12 +399,12 @@ Item {
                 Layout.margins: 2
                 Text { text:"Color:" }
                 Item { Layout.fillWidth: true }
-                Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: graph.selectionColor }
+                Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: topology.selectionColor }
                 Button {
                     Layout.preferredHeight: 25; Layout.preferredWidth: 30
                     text: "..."
                     onClicked: {
-                        selectionColorDialog.color = graph.selectionColor
+                        selectionColorDialog.color = topology.selectionColor
                         selectionColorDialog.open();
                     }
                 }
@@ -415,8 +418,8 @@ Item {
                     minimumValue: 1.0
                     maximumValue: 15.
                     stepSize: 0.1
-                    value: graph.selectionWeight
-                    onValueChanged: { graph.selectionWeight = value  }
+                    value: topology.selectionWeight
+                    onValueChanged: { topology.selectionWeight = value  }
                 }
             }
             RowLayout {
@@ -428,8 +431,8 @@ Item {
                     minimumValue: 1.0
                     maximumValue: 15.
                     stepSize: 0.1
-                    value: graph.selectionMargin
-                    onValueChanged: { graph.selectionMargin = value  }
+                    value: topology.selectionMargin
+                    onValueChanged: { topology.selectionMargin = value  }
                 }
             }
         }

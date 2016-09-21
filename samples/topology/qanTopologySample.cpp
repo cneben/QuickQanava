@@ -111,8 +111,6 @@ MainView::MainView( ) :
     engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer.data() );
 
     setSource( QUrl( "qrc:/main.qml" ) );
-    qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
-    Q_ASSERT( g != nullptr );
 }
 //-----------------------------------------------------------------------------
 
