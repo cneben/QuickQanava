@@ -84,6 +84,16 @@ private slots:
     void        onTargetHeightChanged();
 
 public:
+    //! When a resizer is used on an item that is _inside_ a Flickable QML component, bind the flickable to this property to automatically disable flicking whild resizing is active.
+    Q_PROPERTY( QQuickItem* flickable READ getFlickable WRITE setFlickable NOTIFY flickableChanged FINAL )
+    void        setFlickable( QQuickItem* flickable ) { _flickable = flickable; emit flickableChanged(); }
+    QQuickItem* getFlickable( ) const { return _flickable.data(); }
+signals:
+    void        flickableChanged();
+private:
+    QPointer< QQuickItem >  _flickable{ nullptr };
+
+public:
     /*! Size of the bottom right handler component (default to \c 9x9).
      *
      * \note Setting an empty or invalid size has not effect, use \c autoHideHandler property to control
@@ -164,8 +174,12 @@ private:
 
     /*! \name Resizer Management *///------------------------------------------
     //@{
+signals:
+    //! Emmited immediately before a resize operation start, \c targetSize is target item current size.
+    void    resizeStart(QSizeF targetSize );
+    //! Emmited immediately after a resize operation, \c targetSize is target item size after resize.
+    void    resizeEnd( QSizeF targetSize );
 protected:
-
     virtual bool    childMouseEventFilter(QQuickItem *item, QEvent *event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.

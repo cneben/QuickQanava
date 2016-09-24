@@ -237,19 +237,26 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
          item == _handler ) {
         switch ( event->type() ) {
         case QEvent::HoverEnter:
+        {
             _handler->setCursor( Qt::SizeFDiagCursor );
             _handler->setOpacity( 1.0 );   // Handler is always visible when hovered
+            QMouseEvent* me = static_cast<QMouseEvent*>( event );
+            me->setAccepted(true);
+        }
             break;
         case QEvent::HoverLeave:
+        {
             _handler->setCursor( Qt::ArrowCursor );
             _handler->setOpacity( getAutoHideHandler() ? 0. : 1.0 );
+            QMouseEvent* me = static_cast<QMouseEvent*>( event );
+            me->setAccepted(true);
             break;
+        }
         case QEvent::MouseMove: {
             QMouseEvent* me = static_cast<QMouseEvent*>( event );
             if ( me->buttons() |  Qt::LeftButton &&
                  !_dragInitialPos.isNull() &&
                  !_targetInitialSize.isEmpty() ) {
-
                 // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
                 // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
                 // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
@@ -272,6 +279,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
                     qreal targetHeight = _targetInitialSize.height() + delta.y();
                     if ( targetHeight >= _minimumTargetSize.height() )
                         _target->setHeight( targetHeight );
+                    me->setAccepted(true);
                 }
             }
         }
@@ -281,12 +289,21 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
             if ( _target != nullptr ) {
                 _dragInitialPos = me->windowPos();
                 _targetInitialSize = { _target->width(), _target->height() };
+                emit resizeStart( _target != nullptr ? QSizeF{ _target->width(), _target->height() } :
+                                                       QSizeF{} );
+                if ( getFlickable() != nullptr )
+                    getFlickable()->setProperty( "interactive", QVariant{false} );
+                me->setAccepted(true);
             }
         }
             break;
         case QEvent::MouseButtonRelease: {
             _dragInitialPos = { 0., 0. };       // Invalid all cached coordinates when button is released
             _targetInitialSize = { 0., 0. };
+            emit resizeEnd( _target != nullptr ? QSizeF{ _target->width(), _target->height() } :
+                                                 QSizeF{} );
+            if ( getFlickable() != nullptr )
+                getFlickable()->setProperty( "interactive", QVariant{true} );
         }
             break;
         default:

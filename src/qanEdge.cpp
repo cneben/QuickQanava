@@ -47,6 +47,8 @@ Edge::Edge( QQuickItem* parent ) :
     setStyle( _defaultStyle.data() );
     setParentItem( parent );
     setAntialiasing( true );
+    //setSmooth(true);
+    //setRenderTarget( QQuickPaintedItem::FramebufferObject );
     setPerformanceHint( QQuickPaintedItem::FastFBOResizing, true );    // Optimize item size modification but consume more graphics memory
     setFlag( QQuickItem::ItemHasContents );
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
