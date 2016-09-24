@@ -56,10 +56,11 @@ Qps.PropertiesListView {
     //! Color used for the text inside this creator (default to black).
     property color  textColor: Qt.rgba( 0., 0., 0., 1.0)
 
+    property var    graph: undefined
+
     //! Hilight a specific style, so its get the current selection and appears at the center of the view.
     function    hilightStyle( style ) {
-        if ( model !== undefined &&
-             model !== null ) {
+        if ( model ) {
             var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
             if ( styleIndex !== -1 )
                 currentIndex = styleIndex
@@ -77,13 +78,13 @@ Qps.PropertiesListView {
             property var    listView:           styleListView
             property var    styleIndex:         index
             property var    styleProperties:    itemData
-            sourceComponent: selectStyleDelegate( itemData != null ? itemData.target : "",
-                                                  itemData != null ? itemData.metaTarget : "" )
+            sourceComponent: selectStyleDelegate( itemData ? itemData.target : "",
+                                                  itemData ? itemData.metaTarget : "" )
         }
     }
 
     function selectStyleDelegate( target, metaTarget ) {
-        var styleTarget = ( metaTarget === "" || metaTarget.length == 0 ? target : metaTarget ) // Note 20160404: Use meta target by default
+        var styleTarget = ( metaTarget === "" || metaTarget.length === 0 ? target : metaTarget ) // Note 20160404: Use meta target by default
         switch ( styleTarget ) {
         case "qan::Node": return nodeStyleDelegate
         case "qan::Edge": return edgeStyleDelegate
@@ -126,24 +127,26 @@ Qps.PropertiesListView {
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10
                 Component.onCompleted: {
-                    if ( styleProperties == undefined || styleProperties == null )
+                    if ( !styleProperties )
                         return;
-                    var styleTarget = ( styleProperties.target.length == 0 ? styleProperties.metaTarget :
-                                                                             styleProperties.target ) // Targeting either target or metaTarget
-                    var node = graph.createNodeItem( styleTarget );
-                    if ( node !== undefined && node !== null ) {
-                        node.parent = nodeContainer
-                        node.label = styleProperties.name
-                        node.anchors.fill = nodeContainer;
-                        node.anchors.margins = 5
-                        node.resizable = false
+                    var styleTarget = ( styleProperties.target.length === 0 ? styleProperties.metaTarget :
+                                                                              styleProperties.target ) // Targeting either target or metaTarget
+                    if ( styleListView.graph ) {
+                        var node = graph.createNodeItem( styleTarget );
+                        if ( node ) {
+                            node.parent = nodeContainer
+                            node.label = styleProperties.name
+                            node.anchors.fill = nodeContainer;
+                            node.anchors.margins = 5
+                            node.resizable = false
 
-                        node.Layout.minimumWidth = width
-                        node.Layout.minimumHeight = height
+                            node.Layout.minimumWidth = width
+                            node.Layout.minimumHeight = height
 
-                        node.style = styleProperties
-                        node.acceptDrops = false // Don't allow style DnD inside style browser
-                        node.dropable = false     // Concern only QuickQanava group drops, set to false
+                            node.style = styleProperties
+                            node.acceptDrops = false // Don't allow style DnD inside style browser
+                            node.dropable = false     // Concern only QuickQanava group drops, set to false
+                        }
                     }
                 }
                 property var draggedNodeStyle: styleProperties
@@ -172,7 +175,7 @@ Qps.PropertiesListView {
             onDelegateStyleChanged: {
                 label.text = ""
                 edge.label = ""
-                if ( delegateStyle != undefined && delegateStyle != null ) {
+                if ( delegateStyle ) {
                     label.text = styleProperties.name
                     edge.label = styleProperties.name
                 }

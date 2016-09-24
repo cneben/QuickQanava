@@ -29,7 +29,7 @@ import "qrc:/QuickProperties" as Qps
 
 Item {
     anchors.fill: parent
-    property alias nodeDelegate : graph.nodeDelegate
+    property alias nodeDelegate : topology.nodeDelegate
 
     Dialog {
         id: styleSelectionDialog
@@ -44,17 +44,18 @@ Item {
                 Qan.StyleListView {
                     Layout.fillWidth: true; Layout.fillHeight: true
                     id: nodeStyleList
-                    model: graph.styleManager.nodeStylesModel
+                    graph: topology
+                    model: topology.styleManager.nodeStylesModel
                     onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
                     onStyleClicked: { styleSelectionDialog.styleToApply = style }
                 }
                 Button {
                     Layout.alignment: Qt.AlignRight
                     text: "Apply"
-                    enabled: styleSelectionDialog.styleToApply != undefined
+                    enabled: styleSelectionDialog.styleToApply !== undefined
                     onClicked: {
-                        if ( styleSelectionDialog.styleToApply != undefined &&
-                             styleSelectionDialog.targetNode != undefined )
+                        if ( styleSelectionDialog.styleToApply &&
+                             styleSelectionDialog.targetNode )
                                 styleSelectionDialog.targetNode.style = styleSelectionDialog.styleToApply
                         styleSelectionDialog.targetNode = undefined
                         styleSelectionDialog.styleToApply = undefined
@@ -103,7 +104,7 @@ Item {
         }
         MenuItem {
             text: "Clear all styles"
-            onTriggered: { graph.styleManager.clear(); }
+            onTriggered: { topology.styleManager.clear(); }
         }
         MenuItem {
             text: "Add new style"
@@ -111,7 +112,7 @@ Item {
         }
         MenuItem {
             text: "Select node style"
-            enabled: menu.targetNode != undefined
+            enabled: menu.targetNode !== undefined && menu.targetNode !== null
             onTriggered: { styleSelectionDialog.targetNode = menu.targetNode; styleSelectionDialog.open() }
         }
         MenuItem {
@@ -131,27 +132,31 @@ Item {
         }
     }
 
-    Qan.Graph {
-        id: graph
-        objectName: "graph"
+    Qan.GraphView {
+        id: graphViewconfiguration
         anchors.fill: parent
-        enableConnectorDropNode: true
+        graph       : topology
+        navigable   : true
+        Qan.Graph {
+            id: topology
+            objectName: "graph"
+            enableConnectorDropNode: true
 
-        Component.onCompleted: {
-            var n1 = graph.insertNode()
-            n1.label = "N1"
-            var n2 = graph.insertNode()
-            n2.label = "N2"
-            var n3 = graph.insertNode()
-            n3.label = "N3"
-            graph.insertEdge( n1, n2 )
-            graph.insertEdge( n2, n3 )
-            console.debug( "hasEdge(n1,n2)=" + graph.hasEdge( n1, n2 ) )
-        }
-        onNodeRightClicked: { menu.targetNode = node; menu.popup() }
+            Component.onCompleted: {
+                var n1 = topology.insertNode()
+                n1.label = "N1"
+                var n2 = topology.insertNode()
+                n2.label = "N2"
+                var n3 = topology.insertNode()
+                n3.label = "N3"
+                topology.insertEdge( n1, n2 )
+                topology.insertEdge( n2, n3 )
+                console.debug( "hasEdge(n1,n2)=" + topology.hasEdge( n1, n2 ) )
+            }
+            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
+        } // Qan.Graph: graph
         onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
-    } // Qan.Graph: graph
-
+    }
 
     Rectangle {
         id: styleBrowser
@@ -162,7 +167,8 @@ Item {
         Qan.StyleListView {
             anchors.fill: parent
             anchors.margins: 4
-            model: graph.styleManager
+            model: topology.styleManager
+            graph: topology
             onStyleClicked: { }
             onStyleDoubleClicked: { styleEditorDialog.hilightStyle( style ) }
         }
@@ -177,7 +183,7 @@ Item {
 
         function    hilightStyle( style ) { // Change selection to a given style and hilight it
             styleSelectionCb.currentIndex = -1
-            styleSelectionCb.currentIndex = graph.styleManager.itemIndex( style )
+            styleSelectionCb.currentIndex = topology.styleManager.itemIndex( style )
         }
         ColumnLayout {
             id: layout
@@ -186,11 +192,11 @@ Item {
                 id: styleSelectionCb
                 Layout.fillWidth: true
                 editText: "Nodes"
-                model: graph.styleManager
+                model: topology.styleManager
                 textRole: "itemLabel"
                 onCurrentIndexChanged: {
                     if ( currentIndex >= 0 )
-                        styleEditor.properties = graph.styleManager.getStyleAt( currentIndex )
+                        styleEditor.properties = topology.styleManager.getStyleAt( currentIndex )
                 }
             }
             Qps.PropertiesEditor {
