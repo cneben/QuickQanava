@@ -29,7 +29,17 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.2
 import QuickQanava 2.0 as Qan
 
+import QuickGeoGL           1.0 as Qgl
+import "qrc:/QuickGeoGL"    1.0 as Qgl
+
 Qan.Edge {
     id: arrowEdge
-    visible: true   // Mandatory since we have no content...
+    Qgl.Arrow {
+        anchors.fill: parent
+        id: arrow
+        p1: arrowEdge.p1
+        p2: arrowEdge.p2
+        p2CapSize: 4
+        lineWidth: 2.0
+    }
 }

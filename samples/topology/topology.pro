@@ -4,7 +4,7 @@ FORMS		=
 CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
 LANGUAGE        = C++
-QT              += widgets core gui qml quick quickwidgets charts
+QT              += widgets core gui qml quick charts quickcontrols2
 
 include(../../common.pri)
 DEPENDPATH +=   ../../src/
@@ -20,7 +20,8 @@ OTHER_FILES +=  main.qml        \
                 gtpo.proto      \
                 topology.proto
 
-RESOURCES   +=  ../../QuickProperties/src/QuickProperties.qrc   \
+RESOURCES   +=  ../../QuickGeoGL/src/QuickGeoGL.qrc             \
+                ../../QuickProperties/src/QuickProperties.qrc   \
                 ../../src/QuickQanava2.qrc                      \
                 topology.qrc
 

@@ -233,6 +233,7 @@ void    BottomRightResizer::setAutoHideHandler( bool autoHideHandler )
 /* Resizer Management *///-----------------------------------------------------
 bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *event )
 {
+    bool accepted{ false };
     if ( _handler != nullptr &&
          item == _handler ) {
         switch ( event->type() ) {
@@ -242,6 +243,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
             _handler->setOpacity( 1.0 );   // Handler is always visible when hovered
             QMouseEvent* me = static_cast<QMouseEvent*>( event );
             me->setAccepted(true);
+            accepted = true;
         }
             break;
         case QEvent::HoverLeave:
@@ -250,6 +252,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
             _handler->setOpacity( getAutoHideHandler() ? 0. : 1.0 );
             QMouseEvent* me = static_cast<QMouseEvent*>( event );
             me->setAccepted(true);
+            accepted = true;
             break;
         }
         case QEvent::MouseMove: {
@@ -280,6 +283,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
                     if ( targetHeight >= _minimumTargetSize.height() )
                         _target->setHeight( targetHeight );
                     me->setAccepted(true);
+                    accepted = true;
                 }
             }
         }
@@ -294,6 +298,7 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
                 if ( getFlickable() != nullptr )
                     getFlickable()->setProperty( "interactive", QVariant{false} );
                 me->setAccepted(true);
+                accepted = true;
             }
         }
             break;
@@ -307,11 +312,11 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
         }
             break;
         default:
-            return false;
+            return accepted;
         }
-        return true;
+        return accepted;
     }
-    return false;
+    return accepted;
 }
 //-------------------------------------------------------------------------
 

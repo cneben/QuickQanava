@@ -241,6 +241,14 @@ signals:
     void            nodeDragEnter( );
     //! Emmited whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
     void            nodeDragLeave( );
+
+signals:
+    //! Emmited whenever the group is clicked (even at the start of a dragging operation).
+    void    groupClicked( qan::Group* group, QPointF p );
+    //! Emmited whenever the group is double clicked.
+    void    groupDoubleClicked( qan::Group* group, QPointF p );
+    //! Emmited whenever the group is right clicked.
+    void    groupRightClicked( qan::Group* group, QPointF p );
     //@}
     //-------------------------------------------------------------------------
 };

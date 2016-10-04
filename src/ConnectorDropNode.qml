@@ -121,6 +121,8 @@ Qan.AbstractNode {
         state: "NORMAL"
         color: Qt.rgba(0, 0, 0, 0)
         radius : width / 2.
+        smooth: true
+        antialiasing: true
         property real   borderWidth: connectorDropNode.connectorLineWidth
         border.color: connectorDropNode.connectorColor
         border.width: borderWidth
@@ -140,7 +142,6 @@ Qan.AbstractNode {
                 }
             }
         ]
-        smooth: true
         transitions: [
             Transition {
                 from: "NORMAL"; to: "HILIGHT"; PropertyAnimation { target: connectionSymbol; properties: "borderWidth, scale"; duration: 100 }

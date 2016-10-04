@@ -25,13 +25,13 @@
 // \date	2016 06 21
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.6
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.2
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
-import "." as Qan
+import QtQuick                  2.7
+import QtQuick.Controls         1.4
+import QtQuick.Layouts          1.3
+import QtGraphicalEffects       1.0
+
+import QuickQanava 2.0  as Qan
+import "."              as Qan
 
 Item {
     id: template
@@ -43,7 +43,7 @@ Item {
     property bool   nameTextBold: true
     property color  nameTextColor: "black"
 
-    property color  backColor: Qt.rgba( 0.96, 0.96, 0.96, 1.0 )
+    property color  backColor: Qt.rgba( 0.97, 0.97, 0.97, 1.0 )
 
     default property alias children : content.children
     property alias  content: content
@@ -53,7 +53,9 @@ Item {
 
     property var    group
 
+    signal  groupClicked( var group, var p )
     signal  groupRightClicked( var group, var p )
+    signal  groupDoubleClicked( var group, var p )
 
     RowLayout {
         x: 0
@@ -113,16 +115,27 @@ Item {
         drag.target: group
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         smooth: true
+        onPressed: { template.groupClicked( group, Qt.point( mouse.x, mouse.y ) ) }
         onClicked: {
-            if ( mouse.button === Qt.RightButton )
-                groupRightClicked( group, Qt.point( mouse.x, mouse.y ) )
+            if ( mouse.button === Qt.LeftButton )
+                template.groupClicked( group, Qt.point( mouse.x, mouse.y ) )
+            else if ( mouse.button === Qt.RightButton )
+                template.groupRightClicked( group, Qt.point( mouse.x, mouse.y ) )
+        }
+        onDoubleClicked: {
+            if ( mouse.button === Qt.LeftButton )
+                template.groupDoubleClicked( group, Qt.point( mouse.x, mouse.y ) )
         }
     }
     Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: groupBackground
         anchors.fill: content
         visible: !group.collapsed
-        z: 1; color: backColor
+        z: 1;
+        color: backColor
+        radius: 7
+        border.width: 2
+        border.color: Qt.darker( backColor, 1.2 )
     }
 
     // Emitted by qan::Group when node dragging start

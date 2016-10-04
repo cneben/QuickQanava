@@ -16,7 +16,8 @@ HEADERS	+=  ./groups.h
 
 OTHER_FILES   +=  main.qml
 
-RESOURCES   +=  ../../src/QuickQanava2.qrc                       \
+RESOURCES   +=  ../../QuickGeoGL/src/QuickGeoGL.qrc             \
+                ../../src/QuickQanava2.qrc                       \
                 groups.qrc
 
 QT_PRIVATE_HEADERS=

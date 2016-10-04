@@ -31,6 +31,9 @@
 // GTpo headers
 #include "gtpo.h"
 
+// QuickGeoGL headers
+#include "../QuickGeoGL/src/QuickGeoGL.h"
+
 // Qanava headers
 #include "./qanConfig.h"
 #include "./qanEdge.h"
@@ -45,6 +48,8 @@
 
 struct QuickQanava {
     static void initialize() {
+        QuickGeoGL::initialize();
+
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");
         qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");

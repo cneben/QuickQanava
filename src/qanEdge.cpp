@@ -39,21 +39,15 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge( QQuickItem* parent ) :
-    gtpo::GenEdge< qan::Config >( ),
-    _line( ),
-    _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } },
-    _style{ nullptr }
+    gtpo::GenEdge< qan::Config >{},
+    _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
 {
     setStyle( _defaultStyle.data() );
     setParentItem( parent );
     setAntialiasing( true );
-    //setSmooth(true);
-    //setRenderTarget( QQuickPaintedItem::FramebufferObject );
-    setPerformanceHint( QQuickPaintedItem::FastFBOResizing, true );    // Optimize item size modification but consume more graphics memory
-    setFlag( QQuickItem::ItemHasContents );
+    setFlag( QQuickItem::ItemHasContents, true );
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setAcceptDrops( true );
-    update( );
 }
 //-----------------------------------------------------------------------------
 
@@ -69,6 +63,7 @@ auto    Edge::setSourceItem( qan::Node* source ) -> void
         auto srcMetaObj = source->metaObject();
         QMetaProperty srcX      = srcMetaObj->property( srcMetaObj->indexOfProperty( "x" ) );
         QMetaProperty srcY      = srcMetaObj->property( srcMetaObj->indexOfProperty( "y" ) );
+        QMetaProperty srcZ      = srcMetaObj->property( srcMetaObj->indexOfProperty( "z" ) );
         QMetaProperty srcWidth  = srcMetaObj->property( srcMetaObj->indexOfProperty( "width" ) );
         QMetaProperty srcHeight = srcMetaObj->property( srcMetaObj->indexOfProperty( "height" ) );
         if ( !srcX.isValid() || !srcX.hasNotifySignal() ) {
@@ -89,11 +84,12 @@ auto    Edge::setSourceItem( qan::Node* source ) -> void
         }
         connect( source, srcX.notifySignal(),       this, updateItemSlot );
         connect( source, srcY.notifySignal(),       this, updateItemSlot );
+        connect( source, srcZ.notifySignal(),       this, updateItemSlot );
         connect( source, srcWidth.notifySignal(),   this, updateItemSlot );
         connect( source, srcHeight.notifySignal(),  this, updateItemSlot );
+        emit sourceItemChanged();
         if ( source->z() < z() )
             setZ( source->z() );
-        emit sourceItemChanged();
         updateItem();
     }
 }
@@ -112,6 +108,7 @@ auto    Edge::setDestinationItem( qan::Node* destination ) -> void
     auto dstMetaObj = destination->metaObject( );
     QMetaProperty dstX      = dstMetaObj->property( dstMetaObj->indexOfProperty( "x" ) );
     QMetaProperty dstY      = dstMetaObj->property( dstMetaObj->indexOfProperty( "y" ) );
+    QMetaProperty dstZ      = dstMetaObj->property( dstMetaObj->indexOfProperty( "z" ) );
     QMetaProperty dstWidth  = dstMetaObj->property( dstMetaObj->indexOfProperty( "width" ) );
     QMetaProperty dstHeight = dstMetaObj->property( dstMetaObj->indexOfProperty( "height" ) );
     if ( !dstX.isValid() || !dstX.hasNotifySignal() ) {
@@ -132,6 +129,7 @@ auto    Edge::setDestinationItem( qan::Node* destination ) -> void
     }
     connect( destination, dstX.notifySignal(),       this, updateItemSlot );
     connect( destination, dstY.notifySignal(),       this, updateItemSlot );
+    connect( destination, dstZ.notifySignal(),       this, updateItemSlot );
     connect( destination, dstWidth.notifySignal(),   this, updateItemSlot );
     connect( destination, dstHeight.notifySignal(),  this, updateItemSlot );
     emit destinationItemChanged();
@@ -142,21 +140,6 @@ auto    Edge::setDestinationItem( qan::Node* destination ) -> void
 //-----------------------------------------------------------------------------
 
 /* Edge Drawing Management *///------------------------------------------------
-void Edge::paint( QPainter* painter )
-{
-    // Paint the line between src and dst
-    QPen arrowPen( getStyle()->getLineColor(), getStyle()->getLineWidth(),
-                   Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
-    if ( _line.length( ) >= getStyle()->getArrowSize() + 1. ) {
-        painter->setRenderHint( QPainter::Antialiasing );
-        painter->setBrush( Qt::NoBrush);
-        painter->setPen( arrowPen );
-        drawArrow( painter, _line,
-                   getStyle()->getLineColor(),
-                   getStyle()->getArrowSize() );
-    }
-}
-
 void    Edge::updateItem( )
 {
     SharedNode ownedSource = getSrc().lock();
@@ -168,18 +151,19 @@ void    Edge::updateItem( )
     }
     qan::Node* sourceItem = static_cast< qan::Node* >( ownedSource.get() );
     qan::Node* destinationItem = static_cast< qan::Node* >( ownedDestination.get() );
-    if ( sourceItem == nullptr || destinationItem == nullptr )
+    if ( sourceItem == nullptr ||
+         destinationItem == nullptr )
         return;
 
     // Update edge z to source or destination maximum x
-    qreal maxZ = qMax( sourceItem->z(), destinationItem->z() );
-    if ( z() < maxZ )
-        setZ( maxZ );
+    qreal srcZ = sourceItem->getQanGroup() != nullptr ? sourceItem->getQanGroup()->z() + sourceItem->z() :
+                                                        sourceItem->z();
+    qreal dstZ = destinationItem->getQanGroup() != nullptr ? destinationItem->getQanGroup()->z() + destinationItem->z() :
+                                                             destinationItem->z();
+    qreal edgeZ = qMax( srcZ, dstZ );
+    setZ( edgeZ );
 
     // Compute a global bounding boxe according to the actual src and dst
-    // FIXME 20150824: Following code should works, but don't !
-    //QPointF srcPos = getSrc( )->mapToScene( getSrc( )->position( ) );
-    //QPointF dstPos = getDst( )->mapToScene( getDst( )->position( ) );
     qan::Graph* qanGraph = static_cast< qan::Graph* >( getGraph() );
     QPointF srcPos = ownedSource->mapToItem( qanGraph->getContainerItem(), QPointF( 0, 0 ) );
     QPointF dstPos = destinationItem->mapToItem( qanGraph->getContainerItem(), QPointF( 0, 0 ) );
@@ -192,99 +176,64 @@ void    Edge::updateItem( )
     setSize( br.size( ) );
 
     // Mapping src shape polygon to this CCS
-    QPolygonF srcBoundingShape;
-    foreach ( QPointF p, ownedSource->getBoundingShape( ) )
-        srcBoundingShape.append( mapFromItem( ownedSource.get(), p ) );
-    QPolygonF dstBoundingShape;
-    foreach ( QPointF p, ownedDestination->getBoundingShape( ) )
-        dstBoundingShape.append( mapFromItem( ownedDestination.get(), p ) );
+    QPolygonF srcBoundingShape{ownedSource->getBoundingShape().size()};
+    int p = 0;
+    for ( const auto& point: ownedSource->getBoundingShape() )
+        srcBoundingShape[p++] = mapFromItem( ownedSource.get(), point );
+
+    QPolygonF dstBoundingShape{ownedDestination->getBoundingShape().size()};
+    p = 0;
+    for ( const auto& point: ownedDestination->getBoundingShape() )
+        dstBoundingShape[p++] = mapFromItem( ownedDestination.get(), point );
 
     // Works, but uncommented is probably faster. Uncomment for debugging
     //QPointF src = mapFromItem( getSrc( ), getSrc( )->boundingRect( ).center( ) );
     //QPointF dst = mapFromItem( getDst( ), getDst( )->boundingRect( ).center( ) );
     QPointF src = srcBoundingShape.boundingRect( ).center( );
     QPointF dst = dstBoundingShape.boundingRect( ).center( );
-
-    _line = getPolyLineIntersection( QLineF( src, dst ),
-                                     srcBoundingShape,
-                                     dstBoundingShape );
-    setLabelPos( _line.pointAt( 0.5 ) + QPointF( 10., 10. ) );
-    update( );
+    QLineF line = getPolyLineIntersection( src, dst, srcBoundingShape, dstBoundingShape );
+    _p1 = line.p1();
+    emit p1Changed();
+    _p2 = line.pointAt( 1 - 2 / line.length() );    // Note 20161001: Hack to take into account arrow border of 2px
+    emit p2Changed();
+    setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
 }
 
 void    Edge::setLine( QPoint src, QPoint dst )
 {
-    _line.setP1( src );
-    _line.setP2( dst );
+    _p1 = src; emit p1Changed();
+    _p2 = dst; emit p2Changed();
 }
 
-QLineF  Edge::getPolyLineIntersection( const QLineF line, const QPolygonF srcBp, const QPolygonF dstBp ) const
+QLineF  Edge::getPolyLineIntersection( const QPointF& p1, const QPointF& p2,
+                                       const QPolygonF& srcBp, const QPolygonF& dstBp ) const
 {
-    QPointF source = line.p1( );
+    QLineF line{p1, p2};
+    QPointF source{p1};
+    QPointF intersection;
     for ( int p = 0; p < srcBp.length( ) - 1 ; p++ ) {
         QLineF polyLine( srcBp[ p ], srcBp[ p + 1 ] );
-        QPointF intersection;
         if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
             source = intersection;
             break;
         }
     }
-    QPointF destination = line.p2( );
+    QPointF destination{p2};
     for ( int p = 0; p < dstBp.length( ) - 1 ; p++ ) {
         QLineF polyLine( dstBp[ p ], dstBp[ p + 1 ] );
-        QPointF intersection;
         if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
             destination = intersection;
             break;
         }
     }
-    return QLineF( source, destination );
-}
-
-void	Edge::drawArrow( QPainter* painter, QLineF line, QColor color, float arrowSize ) const
-{
-    // Don't draw a null line
-    if ( line.isNull( ) )
-        return;
-    qreal lineLength = line.length( );
-    if ( lineLength < 0.0001 )
-        return;
-
-    const double Pi = 3.141592653;
-    double TwoPi = 2.0 * Pi;
-    double angle = ::acos( line.dx( ) / lineLength );
-    if ( line.dy( ) <= 0 )
-        angle = TwoPi - angle;
-
-    // Note 20160218: Correct line length to avoid drawing under the line arrow since it generate
-    // drawing artifacts when line width is > to arrowSize
-    QLineF correctedLine{ line.p1(), line.pointAt( 1.0 - ( arrowSize / lineLength ) ) };
-    painter->drawLine( correctedLine );
-
-    painter->setRenderHint( QPainter::Antialiasing );
-    painter->setPen( QPen( color, 1., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin ) );
-    painter->setBrush( QBrush( color ) );
-
-    painter->save( );
-    painter->translate( line.p2( ) );
-    painter->rotate( angle * 180. / Pi );
-
-    double arrowLength = arrowSize * 2.;
-    QPointF dst = QPointF( -arrowLength /*- 1*/, 0. );
-    QPolygonF poly;
-    poly	<< QPointF( dst.x( ), dst.y( ) - arrowSize )
-            << QPointF( dst.x( ) + arrowLength, dst.y( ) )
-            << QPointF( dst.x( ), dst.y( ) + arrowSize ) << QPointF( dst.x( ), dst.y( ) - arrowSize );
-    painter->drawPolygon( poly );
-    painter->restore( );
+    return QLineF{source, destination};
 }
 //-----------------------------------------------------------------------------
-
 
 /* Mouse Management *///-------------------------------------------------------
 void    Edge::mouseDoubleClickEvent( QMouseEvent* event )
 {
-    qreal d = distanceFromLine( event->localPos( ), _line );
+    qreal d = distanceFromLine( event->localPos( ), QLineF{_p1, _p2} );
     if ( d >= 0. && d < 5. && event->button( ) == Qt::LeftButton ) {
         emit edgeDoubleClicked( QVariant::fromValue< qan::Edge* >( this ), QVariant( event->localPos( ) ) );
         event->accept( );
@@ -296,7 +245,7 @@ void    Edge::mouseDoubleClickEvent( QMouseEvent* event )
 
 void    Edge::mousePressEvent( QMouseEvent* event )
 {
-    qreal d = distanceFromLine( event->localPos( ), _line );
+    qreal d = distanceFromLine( event->localPos( ), QLineF{_p1, _p2} );
     if ( d >= 0. && d < 5. ) {
         if ( event->button( ) == Qt::LeftButton ) {
             emit edgeClicked( QVariant::fromValue< qan::Edge* >( this ), QVariant( event->localPos( ) ) );
@@ -310,32 +259,13 @@ void    Edge::mousePressEvent( QMouseEvent* event )
     }
     else
         event->ignore( );
-    //QQuickItem::mousePressEvent( event );
 }
-
-/*void    Edge::hoverMoveEvent( QHoverEvent* event )
-{
-    QQuickItem::hoverMoveEvent( event );
-    qreal d = distanceFromLine( event->posF( ), _line );
-    if (  !_hoverPopupEntered && d > 0. && d < 5. )
-    {
-        emit edgeHoverPopupEvent( event->posF( ) );
-        _hoverPopupEntered = true;
-    }
-}
-void    Edge::hoverLeaveEvent( QHoverEvent* event )
-{
-    QQuickItem::hoverLeaveEvent( event );
-    _hoverPopupEntered = false;
-    emit edgeHoverPopupLeaveEvent( event->posF( ) );
-}*/
 
 qreal   Edge::distanceFromLine( const QPointF& p, const QLineF& line ) const
 {
     // Inspired by DistancePointLine Unit Test, Copyright (c) 2002, All rights reserved
     // Damian Coventry  Tuesday, 16 July 2002
     qreal lLenght = line.length( );
-
     qreal u  = ( ( ( p.x( ) - line.x1( ) ) * ( line.x2( ) - line.x1( ) ) ) +
                  ( ( p.y( ) - line.y1( ) ) * ( line.y2( ) - line.y1( ) ) ) ) /
                     ( lLenght * lLenght );
@@ -362,9 +292,7 @@ void    Edge::setStyle( EdgeStyle* style )
     _style = style;
     connect( _style, &QObject::destroyed, this, &Edge::styleDestroyed );    // Monitor eventual style destruction
     connect( _style, &qan::EdgeStyle::styleModified, this, &Edge::updateItem );
-
     emit styleChanged( );
-    update();
 }
 
 void    Edge::styleDestroyed( QObject* style )
@@ -379,7 +307,7 @@ void    Edge::styleDestroyed( QObject* style )
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    Edge::contains( const QPointF& point ) const
 {
-    qreal d = distanceFromLine( point, _line );
+    qreal d = distanceFromLine( point, QLineF{_p1, _p2} );
     return ( d > 0. && d < 5. );
 }
 
@@ -389,12 +317,9 @@ void    Edge::dragEnterEvent( QDragEnterEvent* event )
     if ( _acceptDrops ) {
         if ( event->source() != nullptr ) { // Get the source item from the quick drag attached object received
             QVariant source = event->source()->property( "source" );
-            qDebug() << "source=" << source;
             if ( source.isValid() ) {
                 QQuickItem* sourceItem = source.value< QQuickItem* >( );
-                qDebug() << "sourceItem=" << sourceItem;
                 QVariant draggedStyle = sourceItem->property( "draggedEdgeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-                qDebug() << "draggedStyle=" << draggedStyle;
                 if ( draggedStyle.isValid() ) {
                     event->accept();
                     return;
@@ -410,7 +335,7 @@ void    Edge::dragEnterEvent( QDragEnterEvent* event )
 void	Edge::dragMoveEvent( QDragMoveEvent* event )
 {
     if ( getAcceptDrops() ) {
-        qreal d = distanceFromLine( event->posF( ), _line );
+        qreal d = distanceFromLine( event->posF( ), QLineF{_p1, _p2} );
         if ( d > 0. && d < 5. )
             event->accept();
         else event->ignore();

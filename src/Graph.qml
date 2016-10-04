@@ -47,6 +47,8 @@ Qan.AbstractGraph {
     //! Default delegate for qan::Group and Qan.Group groups.
     property Component  groupDelegate: Qt.createComponent( "qrc:/QuickQanava/Group.qml" )
 
+    property alias      resizeHandlerColor: nodeResizer.handlerColor
+
     //! Set to true to enable visual edge creation via a droppable connector control (default to true).
     property bool   enableConnectorDropNode: false
     //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
@@ -89,18 +91,31 @@ Qan.AbstractGraph {
         }
         maxZ = Math.max( node.z + 1, maxZ + 1 )
         node.z = maxZ + 1;
+        if ( node.qmlGetGroup() )
+            node.qmlGetGroup.z = maxZ
         if ( connectorDropNode )
             connectorDropNode.setHostNode( node );
         if ( node.resizable ) {
             nodeResizer.parent = node
+            nodeResizer.minimumTargetSize = node.minimumSize
             nodeResizer.target = node
             nodeResizer.visible = true
-            nodeResizer.minimumTargetSize = node.minimumSize
 
         } else
             nodeResizer.visible = false
     }
-
+    onGroupClicked: {
+        maxZ = Math.max(group.z, maxZ)
+        group.z = maxZ + 1;
+    }
+    onGroupRightClicked: {
+        maxZ = Math.max(group.z, maxZ)
+        group.z = maxZ + 1;
+    }
+    onGroupDoubleClicked: {
+        maxZ = Math.max(group.z, maxZ)
+        group.z = maxZ + 1;
+    }
     Component.onCompleted: {
         graph.registerNodeDelegate( "qan::Node", nodeDelegate )
         graph.registerEdgeDelegate( "qan::Edge", edgeDelegate )

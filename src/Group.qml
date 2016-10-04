@@ -25,13 +25,13 @@
 // \date	2016 03 22
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.6
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.2
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
-import "." as Qan
+import QtQuick              2.7
+import QtQuick.Controls     1.4
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
+
+import QuickQanava  2.0 as Qan
+import "."          as Qan
 
 Qan.AbstractGroup {
     id: group
@@ -43,14 +43,14 @@ Qan.AbstractGroup {
 
     default property alias children : template
     container: template.content   // See qan::Group::container property documentation
-    signal  groupRightClicked( var group, var p )
 
     Qan.RectGroupTemplate {
         id: template
         anchors.fill: parent
         group: group
+        onGroupClicked: group.groupClicked( group, p )
+        onGroupDoubleClicked: group.groupDoubleClicked( group, p )
         onGroupRightClicked: group.groupRightClicked( group, p )
-
         Qan.BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
             id: groupResizer
             x: 0; y: 0; z: 3

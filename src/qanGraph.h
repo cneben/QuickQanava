@@ -400,6 +400,17 @@ public:
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::Config >::getGroupCount(); }
+
+signals:
+    /*! \brief Emitted when a group registered in this graph is clicked.
+     */
+    void            groupClicked( qan::Group* group, QPointF pos );
+    /*! \brief Emitted when a group registered in this graph is right clicked.
+     */
+    void            groupRightClicked( qan::Group* group, QPointF pos );
+    /*! \brief Emitted when a group registered in this graph is double clicked.
+     */
+    void            groupDoubleClicked( qan::Group* group, QPointF pos );
     //@}
     //-------------------------------------------------------------------------
 

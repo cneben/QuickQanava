@@ -17,11 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 2.5
-import QtQuick.Extras 1.4
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.2
-import QtQuick.Dialogs 1.2
+import QtQuick              2.7
+import QtQuick.Controls     2.0
+import QtQuick.Layouts      1.3
+import QtQuick.Dialogs      1.2
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -34,13 +33,11 @@ Item {
         id: openImageDialog
         property var targetGraph: undefined
         title: "Select an image file"
-        selectMultiple: false
-        selectExisting: true
+        selectMultiple: false; selectExisting: true
         onAccepted: {
-            console.debug( "Inserting an image node..." )
-                if ( targetGraph != undefined ) {
+            if ( targetGraph !== undefined ) {
                 var imgNode = topology.insertNode( "qan::ImgNode" )
-                if ( imgNode != null ) {
+                if ( imgNode ) {
                     imgNode.loadImageFromFile( fileUrls );
                     centerItem( imgNode );
                 }
@@ -50,20 +47,14 @@ Item {
     FileDialog {
         id: openGraphDialog
         title: "Load a graph from a QuickQanava GTpo file"
-        selectMultiple: false
-        selectExisting: true
-        onAccepted: {
-            qanSerializer.loadGraphFrom( openGraphDialog.fileUrls, graph, progressNotifier )
-        }
+        selectMultiple: false; selectExisting: true
+        onAccepted: { qanSerializer.loadGraphFrom( openGraphDialog.fileUrls, graph, progressNotifier ) }
     }
     FileDialog {
         id: saveGraphAsDialog
         title: "Save graph to a QuickQanava GTpo file"
-        selectMultiple: false
-        selectExisting: false
-        onAccepted: {
-            qanSerializer.saveGraphTo( graph, saveGraphAsDialog.fileUrls, progressNotifier )
-        }
+        selectMultiple: false; selectExisting: false
+        onAccepted: { qanSerializer.saveGraphTo( graph, saveGraphAsDialog.fileUrls, progressNotifier ) }
     }
 
     Menu {
@@ -71,18 +62,9 @@ Item {
         title: "Main Menu"
         property var targetNode: undefined
         property var targetEdge: undefined
-        MenuItem {
-            text: "Clear Graph"
-            onTriggered: { topology.clear() }
-        }
-        MenuItem {
-            text: "Load"
-            onTriggered: { openGraphDialog.open() }
-        }
-        MenuItem {
-            text: "Save As"
-            onTriggered: { saveGraphAsDialog.open() }
-        }
+        MenuItem { text: "Clear Graph"; onTriggered: topology.clear() }
+        MenuItem { text: "Load"; onTriggered: openGraphDialog.open() }
+        MenuItem { text: "Save As"; onTriggered: saveGraphAsDialog.open() }
         MenuItem {
             text: "Insert Node"
             onTriggered: {
@@ -93,22 +75,22 @@ Item {
         }
         MenuItem {
             text: "Insert Image Node"
-            onTriggered: { openImageDialog.targetGraph = graph; openImageDialog.open() }
+            onTriggered: { openImageDialog.targetGraph = topology; openImageDialog.open() }
         }
         MenuItem {
             text: "Remove node"
-            enabled: menu.targetNode != undefined
+            enabled: menu.targetNode !== undefined
             onTriggered: {
-                if ( menu.targetNode != undefined )
+                if ( menu.targetNode !== undefined )
                     topology.removeNode( menu.targetNode )
                 menu.targetNode = undefined
             }
         }
         MenuItem {
             text: "Remove edge"
-            enabled: menu.targetEdge != undefined
+            enabled: menu.targetEdge !== undefined
             onTriggered: {
-                if ( menu.targetEdge != undefined )
+                if ( menu.targetEdge !== undefined )
                     topology.removeEdge( menu.targetEdge )
                 menu.targetEdge = undefined;
             }
@@ -123,7 +105,7 @@ Item {
         }
     }
 
-    Text {
+    Label {
         text: "Right click for main menu:
                \t-Add content with Add Node or Add Image Node entries.
                \t-Use the DnD connector to add edges between nodes.
@@ -134,13 +116,13 @@ Item {
 
     //! Move a generic item in view current center.
     function centerItem( item ) {
-        if ( item == undefined || item == null )
-            return
-        var windowCenter = Qt.point( ( window.width - item.width ) / 2.,
-                                     ( window.height - item.height ) / 2. )
-        var containerNodeCenter = window.mapToItem( topology.containerItem, windowCenter.x, windowCenter.y )
-        item.x = containerNodeCenter.x
-        item.y = containerNodeCenter.y
+        if ( item ) {
+            var windowCenter = Qt.point( ( window.width - item.width ) / 2.,
+                                        ( window.height - item.height ) / 2. )
+            var containerNodeCenter = window.mapToItem( topology.containerItem, windowCenter.x, windowCenter.y )
+            item.x = containerNodeCenter.x
+            item.y = containerNodeCenter.y
+        }
     }
     Qan.GraphView {
         id: graphView
@@ -158,66 +140,71 @@ Item {
             Component.onCompleted: {
                 topology.registerNodeDelegate( "qan::ImgNode", topology.imgNodeComponent )
             }
-            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
-            onEdgeRightClicked: { menu.targetEdge = edge; menu.popup() }
-            //onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
+            onNodeRightClicked: {
+                var globalPos = node.mapToItem( topology, pos.x, pos.y )
+                menu.x = globalPos.x
+                menu.y = globalPos.y
+                menu.targetNode = node;
+                menu.open()
+            }
+            onEdgeRightClicked: {
+                var globalPos = edge.mapToItem( topology, pos.x, pos.y )
+                menu.x = globalPos.x
+                menu.y = globalPos.y
+                menu.targetEdge = edge; menu.open()
+            }
         } // Qan.Graph: graph
+        onRightClicked: {
+            var globalPos = graphView.mapToItem( topology, pos.x, pos.y )
+            menu.x = globalPos.x
+            menu.y = globalPos.y
+            menu.targetNode = undefined; menu.targetEdge = undefined; menu.open()
+        }
     }
 
     Item {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.left: parent.left
-        height: 120
-        Rectangle { // Background
-            anchors.fill: parent
-            color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
-        }
+        anchors.bottom: parent.bottom; anchors.right: parent.right; anchors.left: parent.left
+        height: 130
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
         RowLayout {
-            anchors.fill: parent; anchors.margins: 4
+            anchors.fill: parent; anchors.margins: 10
+            spacing: 25
             ColumnLayout {
-                Layout.preferredWidth: 250; Layout.fillHeight: true
                 RowLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    ColumnLayout {
-                        RowLayout {
-                            Text { text: "Node cout:" }
-                            SpinBox { id: nodeCount; minimumValue: 1; maximumValue: 250; value: 25 }
-                        }
-                        RowLayout {
-                            Text { text: "OutNodes range:" }
-                            SpinBox { id: minOutNodes; minimumValue: 1; maximumValue: 4; value: 1 }
-                            SpinBox { id: maxOutNodes; minimumValue: minOutNodes.value + 1; maximumValue: minOutNodes.value + 5; value: 2 }
-                        }
-                    }
-                    ColumnLayout {
-                        RowLayout {
-                            Text { text: "Width range:" }
-                            SpinBox { id: minWidth; minimumValue: 50; maximumValue: 150; value: 75 }
-                            SpinBox { id: maxWidth; minimumValue: minWidth.value + 50; maximumValue: minWidth.value + 150; value: 100 }
-                        }
-                        RowLayout {
-                            Text { text: "Height range:" }
-                            SpinBox { id: minHeight; minimumValue: 20; maximumValue: 750; value: 50 }
-                            SpinBox { id: maxHeight; minimumValue: minHeight.value + 25; maximumValue: minHeight.value + 50; value: 60 }
-                        }
-                    }
-                } // RowLayout: random generator options
-                Button {
-                    Layout.alignment: Qt.AlignRight
-                    text: "Generate"
-                    onClicked: {
-                        var rect = Qt.rect( 0, 0, window.width, window.height )
-                        topology.initializeRandom( nodeCount.value,
-                                               minOutNodes.value, maxOutNodes.value,
-                                               minWidth.value, maxWidth.value,
-                                               minHeight.value, maxHeight.value,
-                                               rect )
-                    }
+                    Label { text: "Node cout:" }
+                    SpinBox { id: nodeCount; from: 1; to: 250; value: 25 }
                 }
-            } // ColumnLayout: random generator
-        } // RowLayout: graph generator main layout
+                RowLayout {
+                    Label { text: "OutNodes range:" }
+                    SpinBox { id: minOutNodes; from: 1; to: 4; value: 1 }
+                    SpinBox { id: maxOutNodes; from: minOutNodes.value + 1; to: minOutNodes.value + 5; value: 2 }
+                }
+            }
+            ColumnLayout {
+                RowLayout {
+                    Label { text: "Width range:" }
+                    SpinBox { id: minWidth; from: 50; to: 150; value: 75 }
+                    SpinBox { id: maxWidth; from: minWidth.value + 50; to: minWidth.value + 150; value: 100 }
+                }
+                RowLayout {
+                    Label { text: "Height range:" }
+                    SpinBox { id: minHeight; from: 20; to: 750; value: 50 }
+                    SpinBox { id: maxHeight; from: minHeight.value + 25; to: minHeight.value + 50; value: 60 }
+                }
+            }
+            Button {
+                Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+                text: "Generate"
+                onClicked: {
+                    var rect = Qt.rect( 0, 0, window.width, window.height )
+                    topology.initializeRandom( nodeCount.value,
+                                              minOutNodes.value, maxOutNodes.value,
+                                              minWidth.value, maxWidth.value,
+                                              minHeight.value, maxHeight.value,
+                                              rect )
+                }
+            }
+        } // RowLayout: random generator options
     } // Item: graph generator
 
     Item {
@@ -225,13 +212,10 @@ Item {
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 15
         width: 200; height: 300
-        Rectangle { // Background
-            anchors.fill: parent
-            color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
-        }
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.fill: parent
-            Text {
+            anchors.fill: parent; anchors.margins: 10
+            Label {
                 Layout.margins: 3; text: "Edges:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
@@ -253,9 +237,9 @@ Item {
                     ColumnLayout {
                         anchors.fill: parent
                         id: edgeLayout
-                        Text { text: "Label: " + itemData.label }
-                        Text { text: "  Src: " + itemData.sourceItem.label }
-                        Text { text: "  Dst: " + itemData.destinationItem.label }
+                        Label { text: "Label: " + itemData.label }
+                        Label { text: "  Src: " + itemData.sourceItem.label }
+                        Label { text: "  Dst: " + itemData.destinationItem.label }
                     }
                     MouseArea { anchors.fill: parent; onClicked: { edgeDelegate.ListView.view.currentIndex = index } }
                 }
@@ -263,7 +247,7 @@ Item {
             ComboBox {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 model: topology.edges
-                textRole: "label"
+                textRole: "itemLabel"
             }
         }
     }
@@ -273,13 +257,10 @@ Item {
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: edgeList.left; anchors.rightMargin: 15
         width: 200; height: 300
-        Rectangle { // Background
-            anchors.fill: parent
-            color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
-        }
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.fill: parent
-            Text {
+            anchors.fill: parent; anchors.margins: 10
+            Label {
                 Layout.margins: 3; text: "Nodes:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
@@ -298,7 +279,7 @@ Item {
                 delegate: Item {
                     id: nodeDelegate
                     width: ListView.view.width; height: 30;
-                    Text { id: nodeLabel; text: "Label: " + itemData.label }
+                    Label { id: nodeLabel; text: "Label: " + itemData.label }
                     MouseArea {
                         anchors.fill: nodeDelegate
                         onClicked: { nodeDelegate.ListView.view.currentIndex = index }
@@ -323,13 +304,10 @@ Item {
         anchors.top: nodeList.bottom;   anchors.topMargin: 15
         anchors.right: parent.right;    anchors.rightMargin: 15
         width: 250; height: 280
-        Rectangle { // Background
-            anchors.fill: parent
-            color: "lightblue"; opacity: 0.6; border.width: 1; border.color: "black"
-        }
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.fill: parent
-            Text {
+            anchors.fill: parent; anchors.margins: 10
+            Label {
                 Layout.margins: 3; text: "Selection:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
@@ -349,7 +327,7 @@ Item {
                 delegate: Item {
                     id: selectedNodeDelegate
                     width: ListView.view.width; height: 30;
-                    Text { text: "Label: " + itemData.label }
+                    Label { text: "Label: " + itemData.label }
                     MouseArea {
                         anchors.fill: selectedNodeDelegate
                         onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
@@ -358,14 +336,14 @@ Item {
             }
             RowLayout {
                 Layout.margins: 2
-                Text { text:"Policy:" }
+                Label { text:"Policy:" }
                 Item { Layout.fillWidth: true }
                 ColumnLayout {
-                    ExclusiveGroup { id: selectionPolicyGroup }
                     CheckBox {
                         Layout.preferredHeight: 25
+                        height: 15
+                        autoExclusive: true
                         text: "NoSelection"
-                        exclusiveGroup: selectionPolicyGroup
                         checked: topology.selectionPolicy === Qan.AbstractGraph.NoSelection
                         onCheckedChanged: {
                             if ( checked )
@@ -375,8 +353,8 @@ Item {
                     CheckBox {
                         Layout.preferredHeight: 25
                         height: 15
+                        autoExclusive: true
                         text: "SelectOnClick"
-                        exclusiveGroup: selectionPolicyGroup
                         checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnClick
                         onCheckedChanged: {
                             if ( checked )
@@ -385,8 +363,9 @@ Item {
                     }
                     CheckBox {
                         Layout.preferredHeight: 25
+                        height: 15
+                        autoExclusive: true
                         text: "SelectOnCtrlClick"
-                        exclusiveGroup: selectionPolicyGroup
                         checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
                         onCheckedChanged: {
                             if ( checked )
@@ -397,11 +376,11 @@ Item {
             }
             RowLayout {
                 Layout.margins: 2
-                Text { text:"Color:" }
+                Label { text:"Color:" }
                 Item { Layout.fillWidth: true }
-                Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: topology.selectionColor }
+                Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: topology.selectionColor; radius: 3; border.width: 1; border.color: Qt.lighter(topology.selectionColor) }
                 Button {
-                    Layout.preferredHeight: 25; Layout.preferredWidth: 30
+                    Layout.preferredHeight: 30; Layout.preferredWidth: 30
                     text: "..."
                     onClicked: {
                         selectionColorDialog.color = topology.selectionColor
@@ -411,12 +390,12 @@ Item {
             }
             RowLayout {
                 Layout.margins: 2
-                Text { text:"Weight:" }
+                Label { text:"Weight:" }
                 Slider {
                     Layout.preferredHeight: 20
                     Layout.fillWidth: true
-                    minimumValue: 1.0
-                    maximumValue: 15.
+                    from: 1.0
+                    to: 15.
                     stepSize: 0.1
                     value: topology.selectionWeight
                     onValueChanged: { topology.selectionWeight = value  }
@@ -424,12 +403,12 @@ Item {
             }
             RowLayout {
                 Layout.margins: 2
-                Text { text:"Margin:" }
+                Label { text:"Margin:" }
                 Slider {
                     Layout.preferredHeight: 20
                     Layout.fillWidth: true
-                    minimumValue: 1.0
-                    maximumValue: 15.
+                    from: 1.0
+                    to: 15.
                     stepSize: 0.1
                     value: topology.selectionMargin
                     onValueChanged: { topology.selectionMargin = value  }
@@ -447,20 +426,14 @@ Item {
         id: progressDialog
         anchors.fill: parent
         visible: false
-        onVisibleChanged: console.debug( "progressDialog.visible=" + visible )
-        Rectangle {     // Background
-            anchors.fill: parent
-            color: "black"
-            opacity: 0.3
-        }
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter
             width: 220
             ProgressBar {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 value: progressNotifier.progress
-                Text {
+                Label {
                     anchors.centerIn: parent
                     text: Math.round( progressNotifier.progress * 100. ) + " %"
                 }
@@ -469,12 +442,12 @@ Item {
                 Layout.fillWidth: true; Layout.fillHeight: false
                 value: progressNotifier.phaseProgress
                 onValueChanged: { indeterminate = value < 0. }
-                Text {
+                Label {
                     anchors.centerIn: parent
                     text: Math.round( progressNotifier.phaseProgress * 100. ) + " %"
                 }
             }
-            Text {
+            Label {
                 Layout.alignment: Layout.Center
                 text: progressNotifier.phaseLabel
             }

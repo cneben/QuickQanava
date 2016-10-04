@@ -184,7 +184,7 @@ public:
     // Base config
     using GraphBase = QQuickItem;
     using NodeBase  = QQuickItem;
-    using EdgeBase  = QQuickPaintedItem;
+    using EdgeBase  = QQuickItem;
     using GroupBase = QQuickItem;
 
     using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< Config > >;

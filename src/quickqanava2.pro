@@ -11,6 +11,8 @@ include(../common.pri)
 include(../GTpo/src/gtpo.pri)
 include(../QuickProperties/src/quickproperties.pri)
 include(../QuickProperties/src/quickpropertiespb.pri)
+include(../QuickGeoGL/src/quickgeogl.pri)
+
 INCLUDEPATH += ../QuickProperties/src
 
 HEADERS +=  ./QuickQanava.h             \

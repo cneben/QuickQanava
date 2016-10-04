@@ -37,6 +37,7 @@
 
 // Qt headers
 #include <QGuiApplication>
+#include <QQuickStyle>
 
 // Topology sample headers
 #include "./qanTopologySample.h"
@@ -53,6 +54,7 @@ MainView::MainView( ) :
     QQuickView( ),
     _serializer{ new qan::ProtoSerializer() }
 {
+    QQuickStyle::setStyle("Material");
     QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
     QuickProperties::initialize( engine(), translator.data() );
     QuickQanava::initialize();
@@ -117,12 +119,10 @@ MainView::MainView( ) :
 int	main( int argc, char** argv )
 {
     QGuiApplication app(argc, argv);
-
     MainView mainView;
     mainView.setResizeMode( QQuickView::SizeRootObjectToView );
-    mainView.resize( 1024, 768 );
+    mainView.resize( 1200, 864 );
     mainView.show( );
-
     return app.exec( );
 }
 

@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>ImgNode.qml</file>
         <file>images/showfoto.png</file>
+        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

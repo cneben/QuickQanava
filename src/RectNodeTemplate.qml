@@ -47,6 +47,7 @@ Item {
         color: node.style.backColor
         border.color: node.style.borderColor
         border.width: node.style.borderWidth
+        antialiasing: true
     }
     DropShadow {
         id: backgroundShadow

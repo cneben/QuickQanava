@@ -38,22 +38,18 @@ MainView::MainView( ) :
     QQuickView( )
 {
     QuickQanava::initialize();
-
     setSource( QUrl( "qrc:/main.qml" ) );
     qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
-    Q_ASSERT( g != nullptr );
 }
-//-----------------------------------------------------------------------------
 
 int	main( int argc, char** argv )
 {
     QGuiApplication app(argc, argv);
-
     MainView mainView;
     mainView.setResizeMode( QQuickView::SizeRootObjectToView );
     mainView.resize( 1024, 700 );
     mainView.show( );
-
     return app.exec( );
 }
+//-----------------------------------------------------------------------------
 

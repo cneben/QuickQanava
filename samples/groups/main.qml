@@ -26,23 +26,31 @@ import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "." as Qan
 
-Item {
+Qan.GraphView {
+    id: graphView
     anchors.fill: parent
 
+    graph       : topology
+    navigable   : true
+
     Qan.Graph {
-        id: graph
+        id: topology
         objectName: "graph"
         anchors.fill: parent
 
+        onGroupClicked: { console.debug( "Group " + group.label + " clicked" ) }
+        onGroupDoubleClicked: { console.debug( "Group " + group.label + " double clicked" ) }
+        onGroupRightClicked: { console.debug( "Group " + group.label + " right clicked" ) }
+
         Component.onCompleted: {
-            var n1 = graph.insertNode( )
+            var n1 = topology.insertNode( )
             n1.label = "N1"
-            var n2 = graph.insertNode( )
+            var n2 = topology.insertNode( )
             n2.label = "N2"
-            var n3 = graph.insertNode( )
+            var n3 = topology.insertNode( )
             n3.label = "N3"
-            graph.insertEdge( n1, n2 )
-            graph.insertEdge( n2, n3 )
+            topology.insertEdge( n1, n2 )
+            topology.insertEdge( n2, n3 )
         }
     } // Qan.Graph: graph
 
@@ -54,13 +62,19 @@ Item {
         Button {
             text: "No Layout Group"
             onClicked: {
-                var gg = graph.insertGroup();
-                gg.label = "Group"
+                console.debug("debug")
+                var gg = topology.insertGroup()
+                if ( gg )
+                    gg.label = "Group"
             }
         }
         Button {
             text: "Insert Node"
-            onClicked: { var n = graph.insertNode( ); n.label = "Node" }
+            onClicked: {
+                var n = topology.insertNode( )
+                if ( n )
+                    n.label = "Node"
+            }
         }
     }
 }

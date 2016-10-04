@@ -1,9 +1,9 @@
 
 # Win32 MSVC specific Protocol Buffer configuration
-win32-msvc*:PROTOCOL_BUFFER3_DIR=C:/projects/DELIA/libs/protobuf3
-win32-msvc*:INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR\src
-win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/cmake/build/Release
-win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR\cmake/build/Debug
+win32-msvc*:PROTOCOL_BUFFER3_DIR=C:/projects/DELIA/hlg5-libs/protobuf-3.0.2
+win32-msvc*:INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR/include
+win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/lib
+win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR/lib
 
 # Remove C4100 unreferenced formal parameter
 win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34100

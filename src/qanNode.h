@@ -366,11 +366,6 @@ protected:
      *  \sa setBoundShapeFrom()
      */
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
-
-    //! \warning method in non-const, because if bounding shape is empty, default one will be generated.
-    Q_INVOKABLE virtual int     getBoundingPointsCount();
-    //! \warning method in non-const, because if bounding shape is empty, default one will be generated.
-    Q_INVOKABLE virtual QPointF getBoundingPoint( int p );
     //@}
     //-------------------------------------------------------------------------
 

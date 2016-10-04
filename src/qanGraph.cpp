@@ -617,6 +617,11 @@ auto    Graph::createGroup( const std::string& className ) -> WeakGroup
     if ( className.size() == 0 )
         return WeakGroup{};
     qan::Group* group = insertGroup( QString::fromStdString( className ) );
+    if ( group != nullptr ) {
+        connect( group, &qan::Group::groupClicked, this, &qan::Graph::groupClicked );
+        connect( group, &qan::Group::groupRightClicked, this, &qan::Graph::groupRightClicked );
+        connect( group, &qan::Group::groupDoubleClicked, this, &qan::Graph::groupDoubleClicked );
+    }
     return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
 }
 
@@ -632,6 +637,10 @@ qan::Group* Graph::insertGroup( QString className )
     if ( group != nullptr ) {
         GTpoGraph::insertGroup( std::shared_ptr<qan::Group>{group} );
         //QQmlEngine::setObjectOwnership( group, QQmlEngine::CppOwnership );
+
+        connect( group, &qan::Group::groupClicked, this, &qan::Graph::groupClicked );
+        connect( group, &qan::Group::groupRightClicked, this, &qan::Graph::groupRightClicked );
+        connect( group, &qan::Group::groupDoubleClicked, this, &qan::Graph::groupDoubleClicked );
     } else
         qDebug() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
 
@@ -678,6 +687,11 @@ void    Graph::initializeRandom( int nodeCount,
     rc.xRng = std::make_pair( 0, br.width() - maxWidth );
     rc.yRng = std::make_pair( 0, br.height() - maxHeight );
     RandomGraph::generate< qan::Graph >( *this, rc );
+    qreal nz{0.};
+    for ( auto& node : getNodes() ) {
+        node->setZ(nz);   // Force valid z values
+        nz += 1.0;
+    }
 }
 //-----------------------------------------------------------------------------
 

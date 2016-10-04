@@ -2,6 +2,8 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
+include(../QuickGeoGL/src/quickgeogl.pri)
+
 INCLUDEPATH += $$PWD
 
 HEADERS +=  $$PWD/QuickQanava.h             \

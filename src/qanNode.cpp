@@ -384,9 +384,6 @@ void    Node::setStyle( NodeStyle* style )
     _style = style;
     connect( _style, &QObject::destroyed, this, &Node::styleDestroyed );    // Monitor eventual style destruction
     emit styleChanged( );
-
-    // FIXME 20160209
-    //emitNodeModified( );
 }
 
 void    Node::styleDestroyed( QObject* style )
@@ -401,11 +398,7 @@ void    Node::styleDestroyed( QObject* style )
 void    Node::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
-
-    // Invalidate actual bounding shape
-    _boundingShape.clear();
-    emit boundingShapeChanged();
-    emit updateBoundingShape();
+    emit updateBoundingShape(); // Invalidate actual bounding shape
 }
 
 QPolygonF   Node::getBoundingShape( )
@@ -427,9 +420,10 @@ QPolygonF    Node::generateDefaultBoundingShape( )
 
 void    Node::setBoundingShape( QVariantList boundingShape )
 {
-    QPolygonF shape;
-    foreach ( QVariant vp, boundingShape )
-        shape.append( vp.toPointF( ) );
+    QPolygonF shape; shape.resize( boundingShape.size() );
+    int p = 0;
+    for ( const auto& vp : boundingShape )
+        shape[p++] = vp.toPointF( );
     _boundingShape = ( !shape.isEmpty( ) ? shape : generateDefaultBoundingShape() );
     emit boundingShapeChanged();
 }
@@ -439,18 +433,6 @@ bool    Node::isInsideBoundingShape( QPointF p )
     if ( _boundingShape.isEmpty() )
         setBoundingShape( generateDefaultBoundingShape() );
     return _boundingShape.containsPoint( p, Qt::OddEvenFill );
-}
-
-int     Node::getBoundingPointsCount( )
-{
-    return getBoundingShape().size();
-}
-
-QPointF Node::getBoundingPoint( int p )
-{
-    if ( _boundingShape.isEmpty() )
-        _boundingShape = generateDefaultBoundingShape();
-    return ( p < _boundingShape.size() ? _boundingShape.at(p) : QPointF{} );
 }
 //-----------------------------------------------------------------------------
 

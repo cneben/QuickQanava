@@ -51,6 +51,7 @@ class Edge : public gtpo::GenEdge< qan::Config >
 public:
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge( QQuickItem* parent = nullptr );
+    Edge( const Edge& ) = delete;
 
     //! Return getDynamicClassName() (default to "qan::Edge").
     std::string     getClassName() { return getDynamicClassName(); }
@@ -71,13 +72,13 @@ public:
     void        setDestinationItem( qan::Node* destination );
 public:
     Q_PROPERTY( qan::Node* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
-    qan::Node*  getSourceItem( ) { return static_cast< qan::Node* >( getSrc().lock().get() ); }
+    qan::Node*  getSourceItem( ) { return static_cast< qan::Node* >( !getSrc().expired() ? getSrc().lock().get() : nullptr ); }
 signals:
     void        sourceItemChanged( );
 
 public:
     Q_PROPERTY( qan::Node* destinationItem READ getDestinationItem() WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
-    qan::Node*  getDestinationItem( ) { return static_cast< qan::Node* >( getDst().lock().get() ); }
+    qan::Node*  getDestinationItem( ) { return static_cast< qan::Node* >( !getDst().expired() ? getDst().lock().get() : nullptr ); }
 signals:
     void        destinationItemChanged( );
     //@}
@@ -85,8 +86,6 @@ signals:
 
     /*! \name Edge Drawing Management *///-------------------------------------
     //@{
-public:
-    virtual void        paint( QPainter* painter ) override;
 public slots:
     //! Call updateItem() (override updateItem() to an empty method for invisible edges).
     virtual void        updateItemSlot( ) { updateItem(); }
@@ -100,11 +99,20 @@ public:
 public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );
+    //! Edge source point in item CS (with accurate source bounding shape intersection).
+    Q_PROPERTY( QPointF p1 READ getP1() NOTIFY p1Changed FINAL )
+    inline  auto    getP1() const -> const QPointF& { return _p1; }
+    //! Edge destination point in item CS (with accurate destination bounding shape intersection).
+    Q_PROPERTY( QPointF p2 READ getP2() NOTIFY p2Changed FINAL )
+    inline  auto    getP2() const -> const QPointF& { return _p2; }
+signals:
+    void            p1Changed();
+    void            p2Changed();
 private:
-    QLineF              _line;
+    QPointF         _p1;
+    QPointF         _p2;
 protected:
-    QLineF              getPolyLineIntersection( const QLineF line, const QPolygonF srcBp, const QPolygonF dstBp ) const;
-    void                drawArrow( QPainter* painter, QLineF line, QColor color, float arrowSize ) const;
+    QLineF          getPolyLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -114,8 +122,6 @@ protected:
     virtual void    mouseDoubleClickEvent( QMouseEvent* event ) override;
     virtual void    mousePressEvent( QMouseEvent* event ) override;
 signals:
-    void            edgeHoverPopupEvent( QPointF p );
-    void            edgeHoverPopupLeaveEvent( QPointF p );
     void            edgeClicked( QVariant edge, QVariant pos );
     void            edgeRightClicked( QVariant edge, QVariant pos );
     void            edgeDoubleClicked( QVariant edge, QVariant pos );
@@ -149,7 +155,7 @@ public:
     void            setStyle( EdgeStyle* style );
     qan::EdgeStyle* getStyle( ) const { return _style; }
 private:
-    qan::EdgeStyle* _style;
+    qan::EdgeStyle* _style{nullptr};
 signals:
     void            styleChanged( );
 private slots:
@@ -163,20 +169,20 @@ public:
     //! Get this edge label.
     const QString&  getLabel( ) const { return _label; }
 protected:
-    QString         _label = QString( "" );
+    QString         _label{""};
 signals:
     void            labelChanged( );
 
 public:
     Q_PROPERTY( qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL )
     //! Get edge's weight.
-    float		getWeight( ) const { return _weight; }
+    inline qreal    getWeight( ) const { return _weight; }
     //! Set edge's weight.
-    void		setWeight( float weight ) { _weight = weight; }
+    inline void     setWeight( qreal weight ) { _weight = weight; }
 protected:
-    qreal       _weight = 1.0;
+    qreal           _weight{1.0};
 signals:
-    void        weightChanged( );
+    void            weightChanged( );
     //@}
     //-------------------------------------------------------------------------
 
@@ -196,12 +202,12 @@ public:
     void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
     bool             getAcceptDrops( ) { return _acceptDrops; }
 private:
-    bool            _acceptDrops = true;
+    bool            _acceptDrops{true};
 signals:
     void            acceptDropsChanged( );
 
 protected:
-
+    //! Return true if point is actually on the edge (not only in edge bounding rect).
     virtual bool    contains( const QPointF& point ) const override;
 
     /*! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
