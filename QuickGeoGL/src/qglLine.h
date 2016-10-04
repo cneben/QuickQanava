@@ -30,6 +30,7 @@
 
 // Qt headers
 #include <QQuickItem>
+#include <QLineF>
 
 // QuickGeoGL headers
 #include "./qglSGLineNode.h"
@@ -50,26 +51,22 @@ public:
 public:
     //! Line p1 point, default to {0.,0.}.
     Q_PROPERTY( QPointF p1 READ getP1 WRITE setP1 NOTIFY p1Changed FINAL )
-    inline auto getP1() const noexcept -> QPointF { return _p1; }
-    inline auto setP1( QPointF p1 ) noexcept -> void { _p1 = p1; setDirty(P1Dirty); emit p1Changed(); update(); }
-    Q_INVOKABLE inline auto setP1X( qreal p1X ) noexcept -> void { _p1.setX( p1X ); setDirty(P1Dirty); emit p1Changed(); update(); }
-    Q_INVOKABLE inline auto setP1Y( qreal p1Y ) noexcept -> void { _p1.setY( p1Y ); setDirty(P1Dirty); emit p1Changed(); update(); }
-private:
-    QPointF     _p1{0., 0.};
-signals:
-    void        p1Changed();
+    inline auto getP1() const noexcept -> QPointF { return _line.p1(); }
+    auto        setP1( QPointF p1 ) noexcept -> void;
 
-public:
     //! Line p2 point, default to {0.,0.}.
     Q_PROPERTY( QPointF p2 READ getP2 WRITE setP2 NOTIFY p2Changed FINAL )
-    inline auto getP2() const noexcept -> QPointF { return _p2; }
-    inline auto setP2( QPointF p2 ) noexcept -> void { _p2 = p2; setDirty(P2Dirty); emit p2Changed();  update(); }
-    Q_INVOKABLE inline auto setP2X( qreal p2X ) noexcept -> void { _p2.setX( p2X ); setDirty(P2Dirty); emit p2Changed();  update(); }
-    Q_INVOKABLE inline auto setP2Y( qreal p2Y ) noexcept -> void { _p2.setY( p2Y ); setDirty(P2Dirty); emit p2Changed(); update(); }
-private:
-    QPointF     _p2{0., 0.};
+    inline auto getP2() const noexcept -> QPointF { return _line.p2(); }
+    auto        setP2( QPointF p2 ) noexcept -> void;
+
+    //! Shortcut to internal QLineF length() method.
+    inline      qreal length() const { return _line.length(); }
 signals:
+    void        p1Changed();
     void        p2Changed();
+private:
+    QLineF      _line{0., 0., 0., 0.};
+    static constexpr    qreal MinLength = 0.00001;
 
 public:
     //! Line width, default to 1.0.
@@ -99,6 +96,8 @@ protected:
                 P2Dirty     = 8,
                 WidthDirty  = 16,
                 ColorDirty  = 32,
+                P1Valid     = 64,
+                P2Valid     = 128,
                 Dirty       = P1Dirty | P2Dirty | WidthDirty | ColorDirty
               };
     Q_DECLARE_FLAGS( LineDirtyFlags, LineDirtyFlag )
@@ -109,6 +108,10 @@ protected:
     inline auto isDirty( LineDirtyFlag flag ) const -> bool { return _dirtyFlags & flag; }
     //! Set flag \c flag to dirty.
     inline auto setDirty( LineDirtyFlag flag ) -> void { _dirtyFlags |= flag; }
+    //! Set flag \c flag to true.
+    inline auto setLineFlag( LineDirtyFlag flag ) -> void { _dirtyFlags |= flag; }
+    //! Return true if flag \c flag is set.
+    inline auto getLineFlag( LineDirtyFlag flag ) const -> bool { return _dirtyFlags & flag; }
     //! Clear all flags and set the Clean flag.
     inline auto cleanDirtyFlags( ) -> void { _dirtyFlags = Clean; }
 private:

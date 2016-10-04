@@ -59,21 +59,26 @@ auto    Arrow::setColor( QColor color ) noexcept -> void
         if ( _p2Arrow != nullptr )
             _p2Arrow->setColor( color );
         emit colorChanged();
+        update();
     }
 }
 
 auto    Arrow::setP1( QPointF p1 ) noexcept -> void
 {
     _p1 = p1;
+    _p1Valid = true;
     updateGeometry();
     emit p1Changed();
+    update();
 }
 
 auto    Arrow::setP2( QPointF p2 ) noexcept -> void
 {
     _p2 = p2;
+    _p2Valid = true;
     updateGeometry();
     emit p2Changed();
+    update();
 }
 
 auto    Arrow::setLineWidth( qreal lineWidth ) noexcept -> void
@@ -84,13 +89,17 @@ auto    Arrow::setLineWidth( qreal lineWidth ) noexcept -> void
     if ( getP1CapSize() < lineWidth / 2. )
         setP1CapSize( lineWidth / 2. );
     emit lineWidthChanged();
+    update();
 }
 
 auto    Arrow::updateGeometry() noexcept -> void
 {
     QLineF line{ _p1, _p2 };
+    if ( !_p1Valid ||
+         !_p2Valid )
+        return;
     qreal lineLength = line.length( );
-    if ( lineLength < 0.0001 )
+    if ( lineLength < MinLength )
         return;
 
     switch ( getP1CapStyle() ) {        // Source Cap
@@ -103,12 +112,14 @@ auto    Arrow::updateGeometry() noexcept -> void
             if ( line.dy( ) <= 0 )
                 angle = 2.0 * Pi - angle;
             // Correct line length to avoid generating artifacts when drawing line "under" arrow polygon
-            QPointF truncatedSource{ line.pointAt( _p1CapSize * 2 / lineLength ) };
+            QPointF truncatedSource{ line.pointAt( _p1CapSize * 2. / lineLength ) };
             _line->setP1( truncatedSource );
-            _p1Arrow->setX( _p1.x() );
-            _p1Arrow->setY( _p1.y() );
-            _p1Arrow->setTransformOrigin( QQuickItem::TopLeft );
-            _p1Arrow->setRotation( angle * 180 / Pi );
+            if ( _line->length() > MinLength ) {
+                _p1Arrow->setX( _p1.x() );
+                _p1Arrow->setY( _p1.y() );
+                _p1Arrow->setTransformOrigin( QQuickItem::TopLeft );
+                _p1Arrow->setRotation( angle * 180 / Pi );
+            }
         }
         break;
     case CircleCap:
@@ -125,16 +136,26 @@ auto    Arrow::updateGeometry() noexcept -> void
             if ( line.dy( ) <= 0 )
                 angle = 2.0 * Pi - angle;
             // Correct line length to avoid generating artifacts when drawing line "under" arrow polygon
-            QPointF truncatedP2{ line.pointAt( 1.0 - ( _p2CapSize * 2 / lineLength ) ) };
+            QPointF truncatedP2{ line.pointAt( 1.0 - ( _p2CapSize * 2. / lineLength ) ) };
             _line->setP2( truncatedP2 );
-            _p2Arrow->setX( _p2.x() );
-            _p2Arrow->setY( _p2.y() );
-            _p2Arrow->setTransformOrigin( QQuickItem::TopLeft );
-            _p2Arrow->setRotation( angle * 180 / Pi );
+            if ( _line->length() > MinLength ) {
+                _p2Arrow->setX( _p2.x() );
+                _p2Arrow->setY( _p2.y() );
+                _p2Arrow->setTransformOrigin( QQuickItem::TopLeft );
+                _p2Arrow->setRotation( angle * 180 / Pi );
+            }
         }
         break;
     case CircleCap:
         break;
+    }
+
+    if ( _p1Valid && _p2Valid ) {
+        QRectF edgeBr{_p1, _p2};    // Eventually, update edge bounding rect
+        if ( width() < edgeBr.width() )
+            setWidth( edgeBr.width() );
+        if ( height() < edgeBr.height() )
+            setHeight( edgeBr.height() );
     }
 }
 

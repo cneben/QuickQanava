@@ -75,6 +75,7 @@ public:
     auto                setP1( QPointF source ) noexcept -> void;
 private:
     QPointF     _p1{0., 0.};
+    bool        _p1Valid{false};
 signals:
     void        p1Changed();
 
@@ -85,6 +86,7 @@ public:
     auto                setP2( QPointF destination ) noexcept -> void;
 private:
     QPointF     _p2{0., 0.};
+    bool        _p2Valid{false};
 signals:
     void        p2Changed();
 
@@ -110,6 +112,7 @@ protected:
     //! Update internal arrow geometry when either \c p1, \c p2 or cap size or style change.
     auto        updateGeometry() noexcept -> void;
 private:
+    static constexpr    qreal MinLength = 0.00001;
     static constexpr    qreal Pi = 3.141592653;
     static constexpr    qreal TwoPi = 2. * Pi;
 

@@ -28,6 +28,7 @@
 // Qt headers
 #include <QQuickItem>
 #include <QSGGeometryNode>
+#include <QLineF>
 
 // QuickGeoGL headers
 #include "./qglLine.h"
@@ -40,7 +41,29 @@ namespace qgl { // ::qgl
 Line::Line( QQuickItem* parent ) :
     QQuickItem{ parent }
 {
-    setFlag( ItemHasContents, true );
+    QQuickItem::setFlag( ItemHasContents, true );
+}
+
+auto    Line::setP1( QPointF p1 ) noexcept -> void
+{
+    _line.setP1( p1 );
+    setLineFlag( P1Valid );
+    setVisible( getLineFlag( P2Valid ) &&
+                _line.length() > MinLength );   // Visible only if p2 has already been set and line length is not null
+    setDirty( P1Dirty );
+    emit p1Changed();
+    update();
+}
+
+auto    Line::setP2( QPointF p2 ) noexcept -> void
+{
+    _line.setP2( p2 );
+    setLineFlag( P2Valid );
+    setVisible( getLineFlag( P1Valid ) &&
+                _line.length() > MinLength );   // Visible only if p1 has already been set and line length is not null
+    setDirty( P2Dirty );
+    emit p2Changed();
+    update();
 }
 //-----------------------------------------------------------------------------
 
@@ -57,7 +80,9 @@ QSGNode* Line::updatePaintNode( QSGNode* oldNode, UpdatePaintNodeData* )
     if ( _node != nullptr ) {
         if ( isDirty( Line::P1Dirty ) ||
              isDirty( Line::P2Dirty ) ) {
-            _node->updateGeometry(_p1, _p2);
+            if ( getLineFlag(P1Valid) && getLineFlag(P2Valid) &&
+                 _line.length() > MinLength )
+                _node->updateGeometry( _line.p1(), _line.p2() );
         }
         if ( isDirty( Line::WidthDirty ) ) {
             // FIXME: move that to SG node
