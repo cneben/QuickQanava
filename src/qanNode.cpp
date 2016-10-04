@@ -408,14 +408,18 @@ QPolygonF   Node::getBoundingShape( )
     return _boundingShape;
 }
 
-QPolygonF    Node::generateDefaultBoundingShape( )
+QPolygonF    Node::generateDefaultBoundingShape( ) const
 {
     // Generate a rounded rectangular intersection shape for this node rect new geometry
     QPainterPath path;
     qreal shapeRadius( 5. );
-    path.addRoundedRect( QRectF( QPointF( 0., 0. ), QSizeF( width( ), height( ) ) ),
-                         shapeRadius, shapeRadius );
-    return path.toFillPolygon( QTransform( ) );
+    path.addRoundedRect( QRectF{ 0., 0., width( ), height( ) }, shapeRadius, shapeRadius );
+    return path.toFillPolygon( QTransform{} );
+}
+
+void    Node::setDefaultBoundingShape( )
+{
+    setBoundingShape( generateDefaultBoundingShape() );
 }
 
 void    Node::setBoundingShape( QVariantList boundingShape )

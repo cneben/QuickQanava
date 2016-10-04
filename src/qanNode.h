@@ -321,14 +321,16 @@ public:
      * \sa \ref custom
      */
     Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL )
-    QPolygonF           getBoundingShape( );
+    QPolygonF           getBoundingShape();
     void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
 signals:
     void                boundingShapeChanged();
     //! signal is emmited when the bounding shape become invalid and should be regenerated from QML.
     void                updateBoundingShape();
 protected:
-    QPolygonF           generateDefaultBoundingShape( );
+    QPolygonF           generateDefaultBoundingShape() const;
+    //! Generate a default bounding shape (rounded rectangle) and set it as current bounding shape.
+    Q_INVOKABLE void    setDefaultBoundingShape();
 private:
     QPolygonF           _boundingShape;
 protected:

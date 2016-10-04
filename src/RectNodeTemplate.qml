@@ -39,6 +39,8 @@ Item {
     property         var    node
     default property alias  children : contentLayout.children
 
+    onWidthChanged: { if ( node ) node.setDefaultBoundingShape() }
+    onHeightChanged: { if ( node ) node.setDefaultBoundingShape() }
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
