@@ -16,7 +16,7 @@ weight: 0
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt >= 5.6 with MSVC2015 and g++5.3
+QuickQanava is primarily developed with Qt >= 5.7 with MSVC2015 and g++5.3 (Minimal version number for Qt is 5.7, QuickQanava is reported to works well on 5.8 alpha)
 
 + Project homepage: [http://www.destrat.io/quickqanava](http://www.destrat.io/quickqanava)
 + Reference documentation: [http://www.destrat.io/qanava/doc/index.html](http://www.destrat.io/qanava/doc/index.html)
@@ -30,11 +30,15 @@ git submodule init
 git submodule update
 ```
 
+[Installing QuickQanava](installation.md)
+
 ## Quick Start
 
-[getting started guide](gettingstarted.md)
+[Getting started guide](gettingstarted.md)
 
 ## Gallery
+
+[QuickQanava samples](samples.md)
 
 | Node Grouping                | Visual Connection of Nodes         | 
 | :---:                       | :---:             | 

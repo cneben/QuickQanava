@@ -1,3 +1,10 @@
+## 2016/10/09:
+Update documentation: http://www.destrat.io/quickqanava
+Update API documentation: http://www.destrat.io/quickqanava/doc
+Integrate QuickGeoGL library to draw antialiased lines/polylines and convex polygon with optimized vertex/geometry shader in Qt Quick.
+Major changes: GTpo serialization, multiple bug fixes in connector drop node component, use quick controls 2 in most samples.
+QuickQanava is running well with Qt5.8 alpha.
+
 ## 2016/08/30:
 Fix a small bug in qan::Graph::addControlNode().
 Fix method qan::Graph::graphChildAt().

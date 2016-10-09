@@ -6,7 +6,7 @@
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
-20161002: Warning massive change in master repository, report compilation problems to benoit@destrat.io
+2016 (october): Warning massive change in master repository, report compilation problems to benoit@destrat.io
 
 QuickQanava 
 ============================
@@ -18,7 +18,7 @@ QuickQanava
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt >= 5.6 with MSVC2015 and g++5.3
+QuickQanava is primarily developed with Qt >= 5.7 with MSVC2015 and g++5.3 (minimal required Qt version is 5.7, QuickQanava is reported to work well with Qt 5.8 alpha)
 
 + Project homepage: http://www.destrat.io/quickqanava
 + Reference documentation: http://www.destrat.io/quickqanava/doc/index.html
