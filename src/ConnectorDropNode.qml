@@ -52,17 +52,20 @@ Qan.AbstractNode {
     antialiasing: true
 
     // Public
+    //! Edge color (default to black).
+    property color  edgeColor: Qt.rgba(0,0,0,1)
+
     //! Connector control radius (final diameter will be radius x 2).
-    property real radius: 7
+    property real   radius: 7
 
     //! Connector color (default to Qt.DarkBlue).
-    property color connectorColor: "darkblue"
+    property color  connectorColor: "darkblue"
 
     //! Default connector line width (default to 2.0).
-    property real connectorLineWidth: 2
+    property real   connectorLineWidth: 2
 
     //! Maximum connector line width, used to visually hilight that te current drag "target" can be connected (default to 5.0).
-    property real connectorHilightLineWidth: 4
+    property real   connectorHilightLineWidth: 4
 
     //! Qan.Graph where this connector drop node is registered
     property var    graph : undefined
@@ -90,28 +93,22 @@ Qan.AbstractNode {
     Drag.dragType: Drag.Internal
 
     Drag.onTargetChanged: { // Hilight a target node
-        if ( Drag.target === undefined ||
-             Drag.target === null ) {
+        if ( !Drag.target )
             connectionSymbol.state = "NORMAL"
-        } else if ( Drag.target !== undefined &&
-                   Drag.target !== null &&
+        else if ( Drag.target &&
                    Drag.target === sourceNode ) {
             connectionSymbol.state = "NORMAL"
-            if ( dummyEdge !== null && dummyEdge !== undefined )
+            if ( dummyEdge )
                 dummyEdge.visible = false
         }
-        else {
-            if ( Drag.target !== undefined &&
-                 Drag.target !== null ) {
+        else if ( Drag.target ) {
                 parent.z = Drag.target.z + 1
                 connectionSymbol.state = "HILIGHT"
-                if ( dummyEdge !== null &&
-                        dummyEdge !== undefined ) {
+                if ( dummyEdge ) {
                     dummyEdge.visible = true
                     dummyEdge.z = parent.z  // Edge should be always on top
                 }
             }
-        }
     }
 
     Rectangle {
@@ -169,25 +166,25 @@ Qan.AbstractNode {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            if ( connectorDropNode.graph === undefined )
+            if ( !connectorDropNode.graph )
                 return
             var src = connectorDropNode.sourceNode
             var dst = connectorDropNode.Drag.target
-            if ( src !== undefined && src !== null &&
-                 dst !== undefined && dst !== null ) {
+            if ( src && dst ) {
                 if ( connectorDropNode.graph.isNode( dst ) &&
                      !connectorDropNode.graph.hasEdge( src, dst ) ) {
                     var edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
-                    if ( edge !== null )    // Notify graph user of the edge creation
-                        graph.edgeInsertedVisually( edge )
+                    if ( edge ) {    // Notify graph user of the edge creation
+                        edge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
+                        connectorDropNode.graph.edgeInsertedVisually( edge )
+                    }
                 }
             }
             // Restore original position
             connectionSymbol.state = "NORMAL"
             connectorDropNode.x = connectorDropNode.parent.width + xMargin
             connectorDropNode.y = 0
-            if ( connectorDropNode.dummyEdge !== undefined &&
-                 connectorDropNode.dummyEdge !== null ) {
+            if ( connectorDropNode.dummyEdge ) {
                 connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
                 connectorDropNode.dummyEdge = undefined
             }
@@ -195,10 +192,10 @@ Qan.AbstractNode {
         onPressed : {
             mouse.accepted = true
             if ( !connectorDropNode.graph.hasEdge( connectorDropNode.sourceNode, connectorDropNode ) ) {
-                if ( connectorDropNode.dummyEdge !== undefined &&
-                     connectorDropNode !== null )
+                if ( connectorDropNode.dummyEdge )
                     connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
-                connectorDropNode.dummyEdge = connectorDropNode.graph.insertEdge( connectorDropNode.sourceNode, connectorDropNode )
+                connectorDropNode.dummyEdge = connectorDropNode.graph.insertEdge( edgeClassName, connectorDropNode.sourceNode, connectorDropNode )
+                connectorDropNode.dummyEdge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
                 connectorDropNode.dummyEdge.z = connectorDropNode.sourceNode.z
             }
         }
