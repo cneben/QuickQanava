@@ -1,6 +1,3 @@
-[submodule "GTpo"]
-	path = GTpo
-	url = https://github.com/cneben/GTpo
 [submodule "QuickProperties"]
 	path = QuickProperties
 	url = https://github.com/cneben/QuickProperties
