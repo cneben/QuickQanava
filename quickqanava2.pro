@@ -10,9 +10,6 @@ test-navigable.depends  = quickqanava2
 test-custom.subdir   = samples/custom
 test-custom.depends  = quickqanava2
 
-test-gml.subdir   = samples/gml
-test-gml.depends  = quickqanava2
-
 test-groups.subdir   = samples/groups
 test-groups.depends  = quickqanava2
 
@@ -25,5 +22,5 @@ test-topology.depends  = quickqanava2
 test-progress.subdir   = samples/progress
 test-progress.depends  = quickqanava2
 
-SUBDIRS +=  quickqanava2 test-navigable test-custom test-gml test-groups test-style test-topology test-progress
+SUBDIRS +=  quickqanava2 test-navigable test-custom test-groups test-style test-topology test-progress
 #SUBDIRS +=  quickqanava2 test-custom test-topology
