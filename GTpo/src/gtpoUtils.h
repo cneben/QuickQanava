@@ -70,7 +70,7 @@ auto    assert_throw( bool expr, std::string message = std::string{ "" } ) noexc
 
 //! Compare two std::weak_ptr that must have been checked for expired() and nullptr content (ie use_count()==0).
 template < class T >
-auto    compare_weak_ptr( const std::weak_ptr<T>& left, const std::weak_ptr<T>& right ) -> bool const {
+auto    compare_weak_ptr( const std::weak_ptr<T>& left, const std::weak_ptr<T>& right ) noexcept -> bool const {
     return !left.owner_before( right ) && !right.owner_before( left );
 }
 

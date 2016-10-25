@@ -65,7 +65,7 @@ public:
      *
      * \throw std::exception if an error occurs.
      */
-    virtual void    serializeOut( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) noexcept( false ) { (void)graph; (void)progress;}
+    virtual void    serializeOut( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) { (void)graph; (void)progress;}
 };
 
 /*! Default interface for a GTpo output serializer.
@@ -86,7 +86,7 @@ public:
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */
-    virtual void    serializeIn( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) noexcept( false ) { ( void )graph; (void)progress; }
+    virtual void    serializeIn( Graph& graph, gtpo::IProgressNotifier* progress = nullptr ) { ( void )graph; (void)progress; }
 };
 
 /*! Default interface for a GTpo input/output serializer.
@@ -114,7 +114,7 @@ public:
      *
      * \throw std::exception if an error occurs.
      */
-    virtual auto    serializeOut( const Graph& graph, std::ostream& os, gtpo::IProgressNotifier& progressNotifier ) -> void { (void)graph; (void)os; (void)progressNotifier; }
+    virtual void    serializeOut( const Graph& graph, std::ostream& os, gtpo::IProgressNotifier& progressNotifier ) { (void)graph; (void)os; (void)progressNotifier; }
 
     //! Shortcut to serializeOut( const Graph&, std::ostream& ) with a file name instead of an output stream.
     auto    serializeOutTo( const Graph& graph, std::string fileName, gtpo::IProgressNotifier* progressNotifier = nullptr ) -> void {
@@ -135,7 +135,7 @@ public:
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */
-    virtual auto    serializeIn( std::istream& is, Graph& graph, gtpo::IProgressNotifier& progressNotifier ) -> void { (void)is; (void)graph; (void)progressNotifier; }
+    virtual void    serializeIn( std::istream& is, Graph& graph, gtpo::IProgressNotifier& progressNotifier ) { (void)is; (void)graph; (void)progressNotifier; }
 
     //! Shortcut to serializeIn( std::istream&, Graph& ) with a file name instead of an input stream.
     auto    serializeInFrom( std::string fileName, Graph& graph, gtpo::IProgressNotifier* progressNotifier = nullptr ) noexcept( false ) -> void {

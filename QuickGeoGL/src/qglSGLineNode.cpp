@@ -41,7 +41,7 @@ const QSGGeometry::AttributeSet& SGLineNode::geometryAttributes()
     static QSGGeometry::Attribute attr[] = {
         QSGGeometry::Attribute::create(0, 2, GL_FLOAT, true )
     };
-    static QSGGeometry::AttributeSet set = { 2, 2 * sizeof( GL_FLOAT ), attr };
+    static QSGGeometry::AttributeSet set = { 1, 2 * sizeof( float ), attr };
     return set;
 }
 
@@ -50,18 +50,18 @@ SGLineNode::SGLineNode() noexcept :
 {
     setFlag( QSGNode::OwnedByParent, true );
     try {
-        _material = std::make_unique<qgl::SGLineAAMaterial>();
-        setMaterial( _material.get() );
-        setFlag( QSGNode::OwnsMaterial, false );
-
-        _geometry = std::make_unique<QSGGeometry>( geometryAttributes( ), 2 );
+        _material = new qgl::SGLineAAMaterial{};
+        setFlag( QSGNode::OwnsMaterial );
+        setMaterial( _material );
+        _geometry = new QSGGeometry{ geometryAttributes( ), 2 };
         _geometry->setDrawingMode( GL_LINE_STRIP );
-        _geometry->setLineWidth( 2);
-        setGeometry( _geometry.get() );
-        setFlag( QSGNode::OwnsGeometry, false );
+        setFlag( QSGNode::OwnsGeometry );
+        setGeometry( _geometry );
     } catch (...) { }
-    _gadget = reinterpret_cast< LineGadget* >( _geometry->vertexData( ) );
-    _gadget->p1.x = _gadget->p1.y = _gadget->p2.x = _gadget->p2.y = 0.;
+    if ( geometry() != nullptr ) {
+        _gadget = reinterpret_cast< LineGadget* >( geometry()->vertexData( ) );
+        _gadget->p1.x = _gadget->p1.y = _gadget->p2.x = _gadget->p2.y = 0.;
+    }
     markDirty( QSGNode::DirtyGeometry );
     markDirty( QSGNode::DirtyMaterial );
 }

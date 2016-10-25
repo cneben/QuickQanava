@@ -29,6 +29,7 @@ ColumnLayout {
     TabBar {
         id: tabBar
         Layout.fillWidth: true; Layout.fillHeight: false
+        TabButton { text: qsTr("Crash") }
         TabButton { text: qsTr("Polygons") }
         TabButton { text: qsTr("Arrows") }
         TabButton { text: qsTr("Lines") }
@@ -38,6 +39,10 @@ ColumnLayout {
     StackLayout {
         Layout.fillWidth: true; Layout.fillHeight: true
         currentIndex: tabBar.currentIndex
+        Item {
+            id: crash
+            Loader { anchors.fill: parent; source: "qrc:/crashtest.qml"}
+        }
         Item {
             id: polygons
             Loader { anchors.fill: parent; source: "qrc:/polygons.qml"}

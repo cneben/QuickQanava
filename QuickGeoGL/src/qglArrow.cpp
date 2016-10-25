@@ -41,11 +41,19 @@ namespace qgl { // ::qgl
 
 /* Arrow Object Management *///------------------------------------------------
 Arrow::Arrow( QQuickItem* parent ) :
-    qgl::Line{ parent }
+    QQuickItem{ parent },
+    _line{ new qgl::Line{this} }
 {
-    _line = std::make_unique<qgl::Line>(this);
+    _line->setParentItem(this);
     updateCapStyle();   // Force creation of sub cap quick items with default settings.
     setFlag( ItemHasContents, true );
+}
+
+Arrow::~Arrow()
+{
+    // _line destroyed via scene graph
+    // _p1Arrow destroyed via scene graph
+    // _p2Arrow destroyed via scene graph
 }
 
 auto    Arrow::setColor( QColor color ) noexcept -> void
@@ -83,24 +91,32 @@ auto    Arrow::setP2( QPointF p2 ) noexcept -> void
 
 auto    Arrow::setLineWidth( qreal lineWidth ) noexcept -> void
 {
-    _line->setLineWidth( lineWidth );
-    if ( getP2CapSize() < lineWidth / 2. )
-        setP2CapSize( lineWidth / 2. );
-    if ( getP1CapSize() < lineWidth / 2. )
-        setP1CapSize( lineWidth / 2. );
-    emit lineWidthChanged();
-    update();
+    if ( _line ) {
+        _line->setLineWidth( lineWidth );
+        if ( getP2CapSize() < lineWidth / 2. )
+            setP2CapSize( lineWidth / 2. );
+        if ( getP1CapSize() < lineWidth / 2. )
+            setP1CapSize( lineWidth / 2. );
+        emit lineWidthChanged();
+        update();
+    }
 }
 
 auto    Arrow::updateGeometry() noexcept -> void
 {
+    if ( !_line )
+        return;
     QLineF line{ _p1, _p2 };
     if ( !_p1Valid ||
          !_p2Valid )
         return;
+
     qreal lineLength = line.length( );
-    if ( lineLength < MinLength )
+    if ( lineLength < MinLength ) { // Hide item if line length is almost 0
+        setVisible( false );
         return;
+    } else
+        setVisible( true );
 
     switch ( getP1CapStyle() ) {        // Source Cap
     case NoCap:
@@ -108,6 +124,7 @@ auto    Arrow::updateGeometry() noexcept -> void
         break;
     case ArrowCap:
         if ( _p1Arrow != nullptr ) {
+            _p1Arrow->setVisible(false);    // Not visible by default, visibility is set to true if line length is wide enought to show a cap
             double angle = std::acos( line.dx( ) / lineLength );
             if ( line.dy( ) <= 0 )
                 angle = 2.0 * Pi - angle;
@@ -131,7 +148,9 @@ auto    Arrow::updateGeometry() noexcept -> void
         _line->setP2( _p2 );
     break;
     case ArrowCap:
+        _line->setP2( _p2 );
         if ( _p2Arrow != nullptr ) {
+            _p2Arrow->setVisible(false);    // Not visible by default, visibility is set to true if line length is wide enought to show a cap
             double angle = std::acos( line.dx( ) / lineLength );
             if ( line.dy( ) <= 0 )
                 angle = 2.0 * Pi - angle;
@@ -148,6 +167,16 @@ auto    Arrow::updateGeometry() noexcept -> void
         break;
     case CircleCap:
         break;
+    }
+
+    { // Eventually, hide caps if line length is not wide enought to show both caps
+        qreal effectiveP1CapSize = ( getP1CapStyle() != NoCap ? getP1CapSize() : 0. );
+        qreal effectiveP2CapSize = ( getP2CapStyle() != NoCap ? getP2CapSize() : 0. );
+        bool capVisible = lineLength > effectiveP1CapSize + effectiveP2CapSize;
+        if ( _p1Arrow != nullptr )
+            _p1Arrow->setVisible(capVisible);
+        if ( _p2Arrow != nullptr )
+            _p2Arrow->setVisible(capVisible);
     }
 
     if ( _p1Valid && _p2Valid ) {
@@ -205,16 +234,20 @@ auto    Arrow::updateCapStyle() noexcept -> void
 {
     switch ( getP1CapStyle() ) {
     case NoCap:
-        if ( _p1Arrow != nullptr )
-            _p1Arrow.reset();
+        if ( _p1Arrow != nullptr ) {
+            _p2Arrow->setParentItem(nullptr);
+            delete _p1Arrow;
+            _p1Arrow = nullptr;
+        }
         break;
     case ArrowCap:
-        if ( _p1Arrow == nullptr )
-            _p1Arrow = std::make_unique<qgl::ConvexPolygon>( this );
+        if ( _p1Arrow == nullptr ) {
+            _p1Arrow = new qgl::ConvexPolygon{this};
+            _p1Arrow->setParentItem( this );
+        }
         if ( _p1Arrow != nullptr ) {
-            _p1Arrow->setVisible(true);
-            _p1Arrow->getBorder()->setWidth(2.0);
-            //_p1Arrow->getBorder()->setColor(_color); // FIXME
+            _p1Arrow->getBorder()->setColor(_color);
+            _p1Arrow->setVisible( false );   // Cap visibility managed in updateGeometry()
             double arrowLength = _p1CapSize * 2.;
             QPolygonF p{ { { 0, 0},
                            { arrowLength, -_p1CapSize },
@@ -227,22 +260,27 @@ auto    Arrow::updateCapStyle() noexcept -> void
     case CircleCap:
         if ( _p1Arrow != nullptr )
             _p1Arrow->setVisible( false );
-        // Note 20160930: Circle cap are actually unsupproted
+        // Note 20160930: Circle cap are actually unsupported
         break;
     }
 
     switch ( getP2CapStyle() ) {
     case NoCap:
-        if ( _p2Arrow != nullptr )
-            _p2Arrow.reset();
+        if ( _p2Arrow != nullptr ) {
+            _p2Arrow->setParentItem(nullptr);
+            delete _p2Arrow;
+            _p2Arrow = nullptr;
+        }
         break;
     case ArrowCap:
-        if ( _p2Arrow == nullptr )
-            _p2Arrow = std::make_unique<qgl::ConvexPolygon>( this );
+        if ( _p2Arrow == nullptr ) {
+            _p2Arrow = new qgl::ConvexPolygon{ this };
+            _p2Arrow->setParentItem(this);
+        }
         if ( _p2Arrow != nullptr ) {
-            _p2Arrow->setVisible(true);
+            _p2Arrow->setVisible( false );  // Cap visibility managed in updateGeometry()
             _p2Arrow->getBorder()->setWidth(2.0);
-            //_p2Arrow->getBorder()->setColor(_color); // FIXME
+            _p2Arrow->getBorder()->setColor(_color);
             double arrowLength = _p2CapSize * 2.;
             QPointF dst{ -arrowLength, 0. };
             QPolygonF p{ { { dst.x( ), dst.y( ) - _p2CapSize },
@@ -256,7 +294,7 @@ auto    Arrow::updateCapStyle() noexcept -> void
     case CircleCap:
         if ( _p2Arrow != nullptr )
             _p2Arrow->setVisible( false );
-        // Note 20160930: Circle cap are actually unsupproted
+        // Note 20160930: Circle cap are actually unsupported
         break;
     }
 }

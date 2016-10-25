@@ -41,7 +41,7 @@
 namespace qan { // ::qan
 
 /* Graph Object Management *///------------------------------------------------
-Graph::Graph( QQuickItem* parent ) :
+Graph::Graph( QQuickItem* parent ) noexcept :
     gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
 {
@@ -50,7 +50,12 @@ Graph::Graph( QQuickItem* parent ) :
     setSmooth( true );
 }
 
-void    Graph::clear( )
+void    Graph::qmlClearGraph( ) noexcept
+{
+    qan::Graph::clear();
+}
+
+void    Graph::clear( ) noexcept
 {
     _selectedNodes.clear();
     gtpo::GenGraph< qan::Config >::clear();
@@ -264,7 +269,7 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
     if ( component->isReady() ) {
         QObject* object = component->create( );
         if ( object != nullptr && !component->isError() ) {
-            //QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );
             item->setVisible( true );
             item->setParentItem( getContainerItem() );
@@ -330,46 +335,6 @@ QQuickItem* Graph::createEdgeItem( QString edgeClass )
     return new QQuickItem();    // Is should never happen, otherwise it is leaked.
 }
 
-QQuickItem* Graph::createCanvas( QQuickItem* parent )
-{
-    // Initialize canvas component for the first factory call.
-    if ( _canvasComponent == nullptr ) {
-        QQmlEngine* engine = qmlEngine( this );
-        if ( engine != nullptr ) {
-            _canvasComponent = std::make_unique<QQmlComponent>(engine);
-            QString canvasComponentQml = "import QtQuick 2.6\n  Canvas{ }";
-            _canvasComponent ->setData( canvasComponentQml.toUtf8(), QUrl() );
-            if ( !_canvasComponent->isReady() ) {
-                qDebug() << "qan::Graph::createCanvas(): Error: Can't create at Qt Quick Canvas object:";
-                qDebug() << canvasComponentQml;
-                qDebug() << "QML Component status=" << _canvasComponent->status();
-                qDebug() << "QML Component errors=" << _canvasComponent->errors();
-            }
-        }
-    }
-
-    // Create a Qt Quick Canvas object
-    if ( _canvasComponent != nullptr &&
-         _canvasComponent->isReady() ) {
-        QObject* object = _canvasComponent->create();
-        QQuickItem* canvas = qobject_cast< QQuickItem* >( object );
-        if ( canvas != nullptr ) {
-            if ( parent != nullptr )
-                canvas->setParentItem( parent );
-            QQmlEngine::setObjectOwnership( canvas, QQmlEngine::CppOwnership );
-        }
-        if ( canvas == nullptr && object != nullptr ) {
-            qDebug() << "qan::Graph::createCanvas(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
-            delete object;      // Somtehing has been created, but it is not a canvas !
-            return nullptr;
-        }
-        return canvas;
-    } else {
-        qDebug() << "qan::Graph::createCanvas(): Error: Can't create a Qt Quick Canvas Object.";
-    }
-    return nullptr;
-}
-
 QQuickItem* Graph::createRectangle( QQuickItem* parent )
 {
     // Initialize rectangle component for the first factory call.
@@ -388,7 +353,7 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
         }
     }
 
-    // Create a Qt Quick Retangle object
+    // Create a Qt Quick Rectangle object
     if ( _rectangleComponent != nullptr &&
          _rectangleComponent->isReady() ) {
         QObject* object = _rectangleComponent->create();
@@ -413,7 +378,7 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
 //-----------------------------------------------------------------------------
 
 /* Graph Factories *///--------------------------------------------------------
-qan::Node* Graph::insertNode( QQmlComponent* nodeComponent )
+qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
 {
     if ( nodeComponent == nullptr ) {
         if ( _nodeClassComponents.contains( "qan::Node" ) )
@@ -455,11 +420,9 @@ qan::Node*  Graph::insertNode( QString nodeClassName )
     SharedNode sharedNode{ node };
     if ( node != nullptr ) {
         GTpoGraph::insertNode( sharedNode );
-
         qan::NodeStyle* defaultStyle = qobject_cast< qan::NodeStyle* >( getStyleManager()->getDefaultNodeStyle( nodeClassName ) );
         if ( defaultStyle != nullptr )
             node->setStyle( defaultStyle );
-
         connect( node, &qan::Node::nodeClicked, this, &qan::Graph::nodeClicked );
         connect( node, &qan::Node::nodeRightClicked, this, &qan::Graph::nodeRightClicked );
         connect( node, &qan::Node::nodeDoubleClicked, this, &qan::Graph::nodeDoubleClicked );
@@ -484,7 +447,7 @@ qan::Node*  Graph::insertNode( QVariant nodeArgument )
     return nullptr;
 }
 
-auto    Graph::createNode( const std::string& className ) -> WeakNode
+Graph::WeakNode    Graph::createNode( const std::string& className )
 {
     if ( className.size() == 0 )
         return WeakNode{};
@@ -510,22 +473,72 @@ bool    Graph::isNode( QQuickItem* item ) const
     qan::Node* node = qobject_cast< qan::Node* >( item );
     if ( node == nullptr )
         return false;
-    WeakNode weakNode;
-    try {
-        weakNode = WeakNode{ node->shared_from_this() };
-    } catch ( std::bad_weak_ptr e ) { return false; }
-    return GTpoGraph::containsNode( weakNode );
+    return GTpoGraph::contains( node->shared_from_this() );
+}
+
+bool    Graph::isEdge( QQuickItem* item ) const
+{
+    if ( !item->inherits( "qan::Edge" ) )
+        return false;   // "Fast" exit if item is not a qan::Edge...
+    qan::Edge* edge = qobject_cast< qan::Edge* >( item );
+    if ( edge == nullptr )
+        return false;
+    return GTpoGraph::contains( edge->shared_from_this() );
+}
+
+bool    Graph::isHyperEdge( QQuickItem* item ) const
+{
+    if ( !isEdge(item)) // "Fast" exit if item is not a qan::Edge...
+        return false;
+    qan::Edge* edge = qobject_cast< qan::Edge* >( item );
+    if ( edge == nullptr )
+        return false;
+    return ( edge == nullptr ||
+             ( !edge->getHDst().expired() &&
+               edge->getHDst().lock() != nullptr ) );
 }
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
-qan::Edge* Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent )
+{
+    auto sourceNode = qobject_cast<qan::Node*>(source);
+    if ( sourceNode != nullptr ) {
+            if ( qobject_cast<qan::Node*>(destination) != nullptr )
+                return insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
+            else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
+                return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+    }
+    qDebug() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    return nullptr;
+}
+
+qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
     Q_UNUSED( edgeComponent );
     return insertEdge( "qan::Edge", source, destination );
 }
 
-qan::Edge* Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
+{
+    Q_UNUSED( edgeComponent );
+    return insertEdge( "qan::Edge", source, destination );
+}
+
+qan::Edge*  Graph::insertEdge( QString edgeClassName, QObject* source, QObject* destination, QQmlComponent* edgeComponent )
+{
+    auto sourceNode = qobject_cast<qan::Node*>(source);
+    if ( sourceNode != nullptr ) {
+            if ( qobject_cast<qan::Node*>(destination) != nullptr )
+                return insertEdge( edgeClassName, sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
+            else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
+                return insertEdge( edgeClassName, sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+    }
+    qDebug() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    return nullptr;
+}
+
+qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
     if ( source == nullptr || destination == nullptr )
         return nullptr;
@@ -544,7 +557,7 @@ qan::Edge* Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Nod
             WeakNode sharedDestination{ destination->shared_from_this() };
             edge->setSrc( sharedSource );
             edge->setDst( sharedDestination );
-            GTpoGraph::insertEdge( std::shared_ptr<qan::Edge>{edge} );
+            GTpoGraph::insertEdge( SharedEdge{edge} );  // Note: Do not use shared_from_this()
 
             qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
             if ( defaultStyle != nullptr )
@@ -566,7 +579,51 @@ qan::Edge* Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Nod
     return edge;
 }
 
-auto    Graph::createEdge( const std::string& className, WeakNode source, WeakNode destination ) -> WeakEdge
+qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
+{
+    if ( source == nullptr ||
+         destination == nullptr )
+        return nullptr;
+    if ( edgeComponent == nullptr &&
+         _edgeClassComponents.contains( edgeClassName ) )
+        edgeComponent = _edgeClassComponents.value( edgeClassName, nullptr );
+    if ( edgeComponent == nullptr )
+        return nullptr;
+    qan::Edge* edge = nullptr;
+    try {
+        edge = static_cast< qan::Edge* >( createFromDelegate( edgeComponent ) );
+        if ( edge != nullptr ) {
+            edge->setSourceItem( source );
+            edge->setDestinationEdge( destination );
+
+            WeakNode sourcePtr{ source->shared_from_this() };
+            WeakEdge destinationPtr{ destination->shared_from_this() };
+            edge->setSrc( sourcePtr );
+            edge->setHDst( destinationPtr );
+            GTpoGraph::insertEdge( SharedEdge{edge} );  // Note: Do not use shared_from_this()
+
+            qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
+            if ( defaultStyle != nullptr )
+                edge->setStyle( defaultStyle );
+            edge->setVisible( true );
+            edge->updateItem();
+            connect( edge, SIGNAL( edgeClicked( QVariant, QVariant ) ),
+                     this, SIGNAL( edgeClicked( QVariant, QVariant ) ) );
+            connect( edge, SIGNAL( edgeRightClicked( QVariant, QVariant ) ),
+                     this, SIGNAL( edgeRightClicked( QVariant, QVariant ) ) );
+            connect( edge, SIGNAL( edgeDoubleClicked( QVariant, QVariant ) ),
+                     this, SIGNAL( edgeDoubleClicked( QVariant, QVariant ) ) );
+        }
+    } catch ( gtpo::bad_topology_error e ) {
+        qDebug() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
+    }
+    catch ( ... ) {
+        qDebug() << "qan::Graph::insertEdge(): Error: Topology error.";
+    }
+    return edge;
+}
+
+Graph::WeakEdge    Graph::createEdge( const std::string& className, WeakNode source, WeakNode destination )
 {
     if ( className.size() == 0 )
         return WeakEdge();
@@ -594,7 +651,7 @@ void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
 void    Graph::removeEdge( qan::Edge* edge )
 {
     if ( edge != nullptr )
-        GTpoGraph::removeEdge( edge->getSrc(), edge->getDst() );
+        GTpoGraph::removeEdge( edge->shared_from_this() );
 }
 
 bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
@@ -612,7 +669,7 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
-auto    Graph::createGroup( const std::string& className ) -> WeakGroup
+Graph::WeakGroup   Graph::createGroup( const std::string& className )
 {
     if ( className.size() == 0 )
         return WeakGroup{};
@@ -651,6 +708,16 @@ void    Graph::removeGroup( qan::Group* group )
 {
     if ( group == nullptr )
         return;
+    // Reparent all group childrens (ie node) to graph before destructing the group
+    // otherwise all child iems get destructed too
+    auto groupNodes{group->getNodes()};
+    for ( auto& node : groupNodes ) {
+        auto nodePtr{ node.lock() };
+        if ( nodePtr != nullptr ) {
+            nodePtr->ungroup();
+            nodePtr->setParentItem( this );
+        }
+    }
     WeakGroup weakGroup = group->shared_from_this();
     if ( !weakGroup.expired() )
         gtpo::GenGraph< Config >::removeGroup( weakGroup );

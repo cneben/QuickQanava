@@ -49,29 +49,30 @@ class NodeBehaviour : public QObject,
 {
     Q_OBJECT
 public:
-    NodeBehaviour( const std::string& name, QObject* parent = nullptr );
+    explicit NodeBehaviour( const std::string& name, QObject* parent = nullptr );
     virtual ~NodeBehaviour() { }
+    NodeBehaviour( const NodeBehaviour& ) = delete;
 
     using WeakNode  = std::weak_ptr< qan::Config::Node >;
 
-    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void override;
-    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void override;
-    virtual auto    inNodeRemoved() -> void override { }
+    virtual void    inNodeInserted( WeakNode& weakInNode ) noexcept override;
+    virtual void    inNodeRemoved( WeakNode& weakInNode ) noexcept override;
+    virtual void    inNodeRemoved() noexcept override { }
 
-    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void override;
-    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void override;
-    virtual auto    outNodeRemoved() -> void override { }
+    virtual void    outNodeInserted( WeakNode& weakOutNode ) noexcept override;
+    virtual void    outNodeRemoved( WeakNode& weakOutNode ) noexcept override;
+    virtual void    outNodeRemoved() noexcept override { }
 
-    virtual auto    nodeModified( WeakNode& weakNode ) -> void override;
+    virtual void    nodeModified( WeakNode& weakNode ) noexcept override;
 
 protected:
-    virtual auto    inNodeInserted( qan::Node& inNode ) -> void { Q_UNUSED( inNode ); }
-    virtual auto    inNodeRemoved( qan::Node& inNode ) -> void { Q_UNUSED( inNode ); }
+    virtual void    inNodeInserted( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
+    virtual void    inNodeRemoved( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
 
-    virtual auto    outNodeInserted( qan::Node& outNode ) -> void { Q_UNUSED( outNode ); }
-    virtual auto    outNodeRemoved( qan::Node& outNode ) -> void { Q_UNUSED( outNode ); }
+    virtual void    outNodeInserted( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
+    virtual void    outNodeRemoved( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
 
-    virtual auto    nodeModified( qan::Node& node ) -> void { Q_UNUSED( node ); }
+    virtual void    nodeModified( qan::Node& node ) noexcept { Q_UNUSED( node ); }
 };
 
 } // ::qan

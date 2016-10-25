@@ -97,7 +97,9 @@ private:
      * If \c closed is true and the last vertex doesn't equal the first vertex, close the path by joining last vertex to first vertex.
      * If \c closed is false and the last vertex equals the first vertex, remove the last vertex to open the path.
      */
-    inline auto applyClosing(bool closed) -> void;
+    inline          auto    applyClosing( bool closed ) -> void;
+    static inline   bool    fuzzyComparePoints( const QPointF& p1, const QPointF& p2 );
+
 signals:
     void        closedChanged();
 
@@ -105,10 +107,9 @@ protected:
     enum PolyLineDirtyFlag {
                 Clean           = 0,
                 GeometryDirty   = 2,
-                ClosedDirty     = 4,
                 WidthDirty      = 8,
                 ColorDirty      = 16,
-                Dirty           = GeometryDirty | ClosedDirty | WidthDirty | ColorDirty
+                Dirty           = GeometryDirty | WidthDirty | ColorDirty
               };
     Q_DECLARE_FLAGS( PolyLineDirtyFlags, PolyLineDirtyFlag )
 protected:
@@ -130,8 +131,6 @@ private:
     //@{
 protected:
     virtual QSGNode*    updatePaintNode( QSGNode*, UpdatePaintNodeData* ) override;
-private:
-    SGPolyLineNode*     _node{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

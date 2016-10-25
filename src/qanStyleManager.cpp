@@ -108,15 +108,21 @@ StyleManager::~StyleManager( )
     // Styles destroyed in qps::PropertiesList::~PropertiesList
 
     // _targetModelMap model maps will be destroyed by their parent QObject.
-    _targetModelMap.clear( );
+    _targetModelMap.clear();
+    for ( const auto defaultStyle : _defaultNodeStyles )
+        delete defaultStyle;
+    _defaultNodeStyles.clear();
+    _defaultEdgeStyles.clear();
 }
 
 void    StyleManager::clear()
 {
     qps::PropertiesList::clear( true );
-    for ( auto model : _targetModelMap )
+    for ( const auto model : _targetModelMap )
         delete model;
     _targetModelMap.clear();
+    _defaultNodeStyles.clear();
+    _defaultEdgeStyles.clear();
 }
 //-----------------------------------------------------------------------------
 

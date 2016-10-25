@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanEdge.h
+// \file	hedges.h
 // \author	benoit@destrat.io
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
@@ -54,8 +54,8 @@ public:
     Edge( const Edge& ) = delete;
 
     //! Return getDynamicClassName() (default to "qan::Edge").
-    std::string     getClassName() { return getDynamicClassName(); }
-    virtual auto    getDynamicClassName() -> std::string { return "qan::Edge"; }
+    std::string         getClassName() const noexcept { return getDynamicClassName(); }
+    virtual std::string getDynamicClassName() const noexcept { return "qan::Edge"; }
 public:
     // Qt property for gtpo::Edge serializable standard property.
     Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
@@ -68,19 +68,29 @@ signals:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    void        setSourceItem( qan::Node* source );
-    void        setDestinationItem( qan::Node* destination );
-public:
     Q_PROPERTY( qan::Node* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::Node*  getSourceItem( ) { return static_cast< qan::Node* >( !getSrc().expired() ? getSrc().lock().get() : nullptr ); }
+    void        setSourceItem( qan::Node* source );
 signals:
     void        sourceItemChanged( );
 
 public:
     Q_PROPERTY( qan::Node* destinationItem READ getDestinationItem() WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
     qan::Node*  getDestinationItem( ) { return static_cast< qan::Node* >( !getDst().expired() ? getDst().lock().get() : nullptr ); }
+    void        setDestinationItem( qan::Node* destination );
 signals:
     void        destinationItemChanged( );
+
+public:
+    Q_PROPERTY( qan::Edge* destinationEdge READ getDestinationEdge() WRITE setDestinationEdge NOTIFY destinationEdgeChanged FINAL )
+    qan::Edge*  getDestinationEdge( ) { return static_cast< qan::Edge* >( !getHDst().expired() ? getHDst().lock().get() : nullptr ); }
+    void        setDestinationEdge( qan::Edge* destination );
+signals:
+    void        destinationEdgeChanged( );
+
+protected:
+    //! Configure either a node or an edge (for hyper edges) item.
+    void        configureDestinationItem( QQuickItem* item );
     //@}
     //-------------------------------------------------------------------------
 
@@ -112,7 +122,8 @@ private:
     QPointF         _p1;
     QPointF         _p2;
 protected:
-    QLineF          getPolyLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const;
+    QPointF         getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const;
+    QLineF          getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -165,7 +176,7 @@ private slots:
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     //! Set this edge label.
-    void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
+    void            setLabel( const QString& label );
     //! Get this edge label.
     const QString&  getLabel( ) const { return _label; }
 protected:
@@ -178,7 +189,7 @@ public:
     //! Get edge's weight.
     inline qreal    getWeight( ) const { return _weight; }
     //! Set edge's weight.
-    inline void     setWeight( qreal weight ) { _weight = weight; }
+    void            setWeight( qreal weight );
 protected:
     qreal           _weight{1.0};
 signals:

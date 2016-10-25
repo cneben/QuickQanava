@@ -60,10 +60,9 @@ class ProtoSerializer : public QObject,
     //@{
     Q_OBJECT
 public:
-    ProtoSerializer( QObject* parent = nullptr );
+    explicit ProtoSerializer( QObject* parent = nullptr );
     virtual ~ProtoSerializer() { }
-private:
-    Q_DISABLE_COPY( ProtoSerializer )
+    ProtoSerializer( const ProtoSerializer& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 

@@ -15,7 +15,8 @@ DISTFILES   +=  geometry.qml   	\
                 lines.qml       \
                 polylines.qml   \
                 arrows.qml      \
-                polygons.qml
+                polygons.qml    \
+                crashtest.qml
 
 RESOURCES   +=  geometry.qrc                  \
                 ../../src/QuickGeoGL.qrc

@@ -54,7 +54,7 @@ Node::Node( QQuickItem* parent ) :
 
 Node::~Node( ) { }
 
-qan::Graph* Node::getGraph()
+qan::Graph* Node::getGraph() noexcept
 {
     return qobject_cast< qan::Graph* >( gtpo::GenNode< qan::Config >::getGraph() );
 }
@@ -158,9 +158,9 @@ void    Node::configureSelectionItem( qreal selectionWeight, qreal selectionMarg
 //-----------------------------------------------------------------------------
 
 /* Behaviours Management *///--------------------------------------------------
-auto    Node::installBehaviour( qan::NodeBehaviour* behaviour ) -> void
+void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
 {
-    addBehaviour( behaviour );
+    addBehaviour( std::move( behaviour ) );
 }
 //-----------------------------------------------------------------------------
 
@@ -379,7 +379,8 @@ void    Node::setStyle( NodeStyle* style )
         return;
     if ( style == nullptr )
         style = _defaultStyle.data();
-    if ( _style != nullptr && _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
+    if ( _style != nullptr &&
+         _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
         QObject::disconnect( _style, 0, this, 0 );
     _style = style;
     connect( _style, &QObject::destroyed, this, &Node::styleDestroyed );    // Monitor eventual style destruction
@@ -388,7 +389,8 @@ void    Node::setStyle( NodeStyle* style )
 
 void    Node::styleDestroyed( QObject* style )
 {
-    if ( style != nullptr && style != _defaultStyle.data() )
+    if ( style != nullptr &&
+         style != _defaultStyle.data() )
         setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
 }
 //-----------------------------------------------------------------------------

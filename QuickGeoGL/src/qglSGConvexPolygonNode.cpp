@@ -38,28 +38,25 @@
 namespace qgl { // ::qgl
 
 /* SGLineNodeGS Scene Graph Interface *///---------------------------------------
-const QSGGeometry::AttributeSet& SGConvexPolygonNode::geometryAttributes()
+/*const QSGGeometry::AttributeSet& SGConvexPolygonNode::geometryAttributes()
 {
     static QSGGeometry::Attribute attr[] = {
-        QSGGeometry::Attribute::create(0, 2, GL_FLOAT, true )/*,
-        QSGGeometry::Attribute::create(1, 2, GL_FLOAT ),
-        QSGGeometry::Attribute::create(2, 2, GL_FLOAT )*/
+        QSGGeometry::Attribute::create(0, 2, GL_FLOAT, true )
     };
-    //static QSGGeometry::AttributeSet set = { 3, 6 * sizeof( GL_FLOAT ), attr };
-    static QSGGeometry::AttributeSet set = { 3, 2 * sizeof( GL_FLOAT ), attr };
+    static QSGGeometry::AttributeSet set = { 1, 2 * sizeof( GL_FLOAT ), attr };
     return set;
-}
+}*/
 
 SGConvexPolygonNode::SGConvexPolygonNode() noexcept :
     QSGGeometryNode{}
 {
     setFlag( QSGNode::OwnedByParent, true );
     try {
-        _material = std::make_unique<QSGFlatColorMaterial>();
-        setFlag( QSGNode::OwnsMaterial, false );
-        setMaterial( _material.get() );
+        _material = new QSGFlatColorMaterial{};
+        setFlag( QSGNode::OwnsMaterial );
+        setMaterial( _material );
         markDirty( QSGNode::DirtyMaterial );
-        createGeometry(QPolygonF{});    // Create empty geometry
+        createGeometry( QPolygonF{} );    // Create empty geometry
     } catch (...) {}
 }
 
@@ -68,13 +65,12 @@ auto    SGConvexPolygonNode::createGeometry( const QPolygonF& polygon ) noexcept
     if ( _gadget.pointCount != polygon.size() ||
          _gadget.points == nullptr ) {
         try {
-            _geometry = std::make_unique<QSGGeometry>( geometryAttributes(), polygon.size() );
-            // FIXME GL_TRIANGLE_STRIP
+            _geometry = new QSGGeometry{ QSGGeometry::defaultAttributes_Point2D(), polygon.size() };
             _geometry->setDrawingMode( GL_TRIANGLE_FAN );
-            setGeometry( _geometry.get() );
-            setFlag( QSGNode::OwnsGeometry, false );    // Geometry memory management is done with unique_ptr
+            setFlag( QSGNode::OwnsGeometry );
+            setGeometry( _geometry );
             _gadget.pointCount = polygon.size();
-            _gadget.points = static_cast< PolygonPoint* >( _geometry->vertexData( ) );
+            _gadget.points = static_cast< QSGGeometry::Point2D* >( geometry()->vertexData( ) );
             markDirty( QSGNode::DirtyGeometry );
         } catch ( const std::bad_alloc& ) {
             _gadget.pointCount = 0;
@@ -88,7 +84,7 @@ auto    SGConvexPolygonNode::updateGeometry( const QPolygonF& polygon ) noexcept
     createGeometry(polygon);   // Eventually, recreate geometry
     if ( _gadget.pointCount == polygon.size() &&
          _gadget.points != nullptr &&
-         polygon.size() >= 3 ) {         // Do not loose time feeding geometry for less than thress vertices
+         polygon.size() >= 3 ) {         // Do not loose time feeding geometry for less than three vertices
         int i = 0;
         for ( const auto& p : polygon ) {
             _gadget.points[ i ].x = p.x();

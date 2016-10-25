@@ -66,14 +66,13 @@ public:
      *
      */
     virtual ~Node( );
-private:
-    Q_DISABLE_COPY( Node )
+    Node( const Node& ) = delete;
 public:
-    auto            getClassName() -> std::string { return getDynamicClassName(); }
-    virtual auto    getDynamicClassName() -> std::string { return "qan::Node"; }
+    auto                getClassName() const noexcept -> std::string { return getDynamicClassName(); }
+    virtual std::string getDynamicClassName() const noexcept { return "qan::Node"; }
 public:
     //! Shortcut to gtpo::GenNode<>::getGraph().
-    qan::Graph*     getGraph();
+    qan::Graph*     getGraph() noexcept;
 public:
     /*!
      * \note only label is taken into account for equality comparison.
@@ -169,7 +168,7 @@ public:
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
-    virtual auto    installBehaviour( qan::NodeBehaviour* behaviour ) -> void;
+    virtual void    installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour );
     //@}
     //-------------------------------------------------------------------------
 
@@ -278,9 +277,9 @@ public:
     //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void            setStyle( NodeStyle* style );
-    qan::NodeStyle* getStyle( ) const { return _style; }
+    qan::NodeStyle* getStyle( ) const { return _style.data(); }
 private:
-    qan::NodeStyle* _style;
+    QPointer<qan::NodeStyle>    _style;
 signals:
     void            styleChanged( );
 private slots:

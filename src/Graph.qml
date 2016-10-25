@@ -53,6 +53,7 @@ Qan.AbstractGraph {
     property bool   enableConnectorDropNode: false
     //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
     property string connectorDropNodeEdgeClassName: "qan::Edge"
+    property color  connectorDropNodeEdgeColor: Qt.rgba(0,0,0,1)
 
     // Private:
     property Component  connectorDropNodeComponent: Qt.createComponent( "qrc:/QuickQanava/ConnectorDropNode.qml" )
@@ -60,6 +61,10 @@ Qan.AbstractGraph {
         connectorDropNodeComponent.edgeClassName = connectorDropNodeEdgeClassName
     }
     property var        connectorDropNode: undefined
+    property color      connectorDropNodeColor: "darkblue"
+
+    //! Turn visual creation of hyper edges on or off (default to off).
+    property bool       visualHEdgeCreationEnabled: false
     onEnableConnectorDropNodeChanged: {
         if ( !enableConnectorDropNode &&
              connectorDropNode &&
@@ -74,6 +79,9 @@ Qan.AbstractGraph {
                 connectorDropNode.edgeClassName = connectorDropNodeEdgeClassName
                 connectorDropNode.visible = false
                 connectorDropNode.graph = graph
+                connectorDropNode.edgeColor = Qt.binding( function() { return graph.connectorDropNodeEdgeColor; } )
+                connectorDropNode.connectorColor = Qt.binding( function() { return graph.connectorDropNodeColor; } )
+                connectorDropNode.hEdgeCreationEnabled = Qt.binding( function() { return graph.visualHEdgeCreationEnabled; } )
             }
         }
     }

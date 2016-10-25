@@ -74,28 +74,21 @@ void    ConvexPolygonBackground::setPolygon( const QVariantList& polygon )
 QSGNode* ConvexPolygonBackground::updatePaintNode( QSGNode* oldNode, UpdatePaintNodeData* )
 {
     qgl::SGConvexPolygonNode* polygonNode = reinterpret_cast< qgl::SGConvexPolygonNode* >( oldNode );
-    /*if ( ( width() <= 0 ||
-         height() <= 0 ) &&
-         polygonNode != nullptr ) {
-        delete polygonNode;
-        return _node = nullptr;
-    }*/
     if ( polygonNode == nullptr ) {
         polygonNode = new qgl::SGConvexPolygonNode{};
-        _node = polygonNode;
         setDirty( Dirty );
     }
 
-    if ( _node != nullptr ) {
+    if ( polygonNode != nullptr ) {
         if ( isDirty( ConvexPolygonBackground::GeometryDirty ) ) {
-            _node->updateGeometry(_polygon);
+            polygonNode->updateGeometry(_polygon);
         }
         if ( isDirty( ConvexPolygonBackground::ColorDirty ) ) {
             // FIXME: move that to SG node
-            auto material = static_cast<QSGFlatColorMaterial*>(_node->material());
+            auto material = static_cast<QSGFlatColorMaterial*>(polygonNode->material());
             if ( material != nullptr ) {
                 material->setColor( _color );
-                _node->markDirty( QSGNode::DirtyMaterial );
+                polygonNode->markDirty( QSGNode::DirtyMaterial );
             }
         }
         cleanDirtyFlags();
@@ -107,10 +100,10 @@ QSGNode* ConvexPolygonBackground::updatePaintNode( QSGNode* oldNode, UpdatePaint
 
 /* ConvexPolygon Object Management *///----------------------------------------------
 ConvexPolygon::ConvexPolygon( QQuickItem* parent ) :
-    QQuickItem{ parent }
+    QQuickItem{ parent },
+    _background{ new ConvexPolygonBackground{this} }
 {
-    setFlag( ItemHasContents, false );
-    _background = std::make_unique<ConvexPolygonBackground>(this);
+    _background->setParentItem(this);
     _background->setWidth( width() );
     _background->setHeight( height() );
     connect( &_border, &ConvexPolygonBorder::visibleChanged, this, &ConvexPolygon::borderVisibleChanged );
@@ -119,6 +112,12 @@ ConvexPolygon::ConvexPolygon( QQuickItem* parent ) :
 
     connect( this, &QQuickItem::widthChanged, this, &ConvexPolygon::onWidthChanged );
     connect( this, &QQuickItem::heightChanged, this, &ConvexPolygon::onHeightChanged );
+}
+
+ConvexPolygon::~ConvexPolygon()
+{
+    /* _background destroyed by its SG parent */
+    /* _borderLine destroyed by its SG parent */
 }
 
 void    ConvexPolygon::onWidthChanged()
@@ -140,18 +139,14 @@ void    ConvexPolygon::onHeightChanged()
 void    ConvexPolygon::appendPoint( QPointF p )
 {
     _background->appendPoint( p );
-    createBorderLine();
-    if ( _borderLine != nullptr )
-        _borderLine->setPoints( _background->getPolygon() );
+    updateBorderLine();
 }
 
 auto     ConvexPolygon::setPolygon( QPolygonF polygon ) noexcept -> void
 {
     _background->setPolygon( polygon );
     emit polygonChanged();
-    createBorderLine();
-    if ( _borderLine != nullptr )       // Eventually update border
-        _borderLine->setPoints( polygon );
+    updateBorderLine();
 }
 
 void    ConvexPolygon::setPolygon( const QVariantList& polygon )
@@ -162,9 +157,7 @@ void    ConvexPolygon::setPolygon( const QVariantList& polygon )
         qPolygon[p++] = point.toPointF();
     _background->setPolygon( qPolygon );
     emit polygonChanged();
-    createBorderLine();
-    if ( _borderLine != nullptr )       // Eventually update border
-        _borderLine->setPoints( qPolygon );
+    updateBorderLine();
 }
 
 auto     ConvexPolygon::setColor( QColor color ) noexcept -> void
@@ -178,11 +171,14 @@ auto     ConvexPolygon::setColor( QColor color ) noexcept -> void
 //-----------------------------------------------------------------------------
 
 /* Polygon Border *///----------------------------------------------
-auto    ConvexPolygon::createBorderLine() noexcept -> void
+auto    ConvexPolygon::updateBorderLine() noexcept -> void
 {
+    if ( !_background ||
+         _background->getPolygon().size() < 1 ) // Do not initialize border until there is points in the polygon
+        return;
     if ( _borderLine == nullptr ) {
         try {
-            _borderLine = std::make_unique<qgl::PolyLine>(nullptr);
+            _borderLine = new qgl::PolyLine(nullptr);
             _borderLine->setParentItem(this);
             _borderLine->setVisible(true);
             _borderLine->setColor( _border.getColor() );
@@ -191,21 +187,22 @@ auto    ConvexPolygon::createBorderLine() noexcept -> void
             _borderLine->setHeight( height() );
             _borderLine->setZ( _background->z() + 1. );
             _borderLine->setClosed(true);
-            _borderLine->setPoints( _background->getPolygon() ); // Note 20161001: Since border line is closed, do not add first polygon point at end of border poly line
         } catch (...) { }
     }
+    if ( _borderLine != nullptr )
+        _borderLine->setPoints( _background->getPolygon() );
 }
 
 void    ConvexPolygon::borderColorChanged() noexcept
 {
-    createBorderLine();
+    updateBorderLine();
     if ( _borderLine != nullptr )
         _borderLine->setColor(_border.getColor());
 }
 
 void    ConvexPolygon::borderWidthChanged() noexcept
 {
-    createBorderLine();
+    updateBorderLine();
     if ( _borderLine != nullptr )
         _borderLine->setLineWidth(_border.getWidth());
 }

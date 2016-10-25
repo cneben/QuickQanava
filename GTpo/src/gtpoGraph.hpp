@@ -46,6 +46,18 @@ auto GenEdge< Config >::addInHEdge( WeakEdge inHEdge ) -> void
         Config::template insert< WeakEdges >::into( _inHEdges, inHEdge );
     }
 }
+
+template < class Config >
+auto GenEdge< Config >::removeInHEdge( WeakEdge inHEdge ) -> void
+{
+    if ( inHEdge.expired() )
+        return;                 // Do not throw, removing a null inHEdge let edge in a perfectely valid state
+    SharedEdge inHEdgePtr{ inHEdge.lock() };
+    if ( inHEdgePtr != nullptr ) {
+        inHEdgePtr->setHDst( SharedEdge{} );
+        Config::template remove< WeakEdges >::from( _inHEdges, inHEdge );
+    }
+}
 //-----------------------------------------------------------------------------
 
 /* Graph Node Management *///--------------------------------------------------
@@ -57,12 +69,13 @@ GenGraph< Config >::~GenGraph()
 }
 
 template < class Config >
-void    GenGraph< Config >::clear()
+void    GenGraph< Config >::clear() noexcept
 {
     // Note 20160104: First edges, then nodes (it helps maintaining topology if
     // womething went wrong during destruction
     for ( auto& edge: _edges )   // Do not maintain topology during edge deletion
         edge->_graph = nullptr;
+    _edgesSearch.clear();
     _edges.clear();
     for ( auto& node: _nodes )   // Do not maintain topology during node deletion
         node->_graph = nullptr;
@@ -172,8 +185,10 @@ auto    GenGraph< Config >::isRootNode( WeakNode node ) const -> bool
 }
 
 template < class Config >
-auto    GenGraph< Config >::containsNode( WeakNode node ) const noexcept -> bool
+auto    GenGraph< Config >::contains( WeakNode node ) const noexcept -> bool
 {
+    if ( node.expired() )   // Fast exit.
+        return false;
     auto nodeIter = std::find_if( _nodesSearch.cbegin(), _nodesSearch.cend(),
                                             [=](const WeakNode& n ) { return ( compare_weak_ptr<>( node, n ) ); } );
     return nodeIter != _nodesSearch.cend();
@@ -193,6 +208,7 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakNode destination ) 
     auto edge = std::make_shared< typename Config::Edge >();
     edge->setGraph( this );
     Config::template insert< SharedEdges >::into( _edges, edge );
+    Config::template insert< WeakEdgesSearch >::into( _edgesSearch, edge );
     edge->setSrc( source );
     edge->setDst( destination );
     try {
@@ -219,6 +235,7 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
     auto edge = std::make_shared< typename Config::Edge >();
     edge->setGraph( this );
     Config::template insert< SharedEdges >::into( _edges, edge );
+    Config::template insert< WeakEdgesSearch >::into( _edgesSearch, edge );
     edge->setSrc( source );
     edge->setHDst( destination );
     try {
@@ -233,7 +250,7 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
 }
 
 template < class Config >
-auto    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakNode dst ) -> WeakEdge
+typename GenGraph< Config >::WeakEdge    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakNode dst ) noexcept( false )
 {
     if ( className == "gtpo::Edge" )
         return createEdge( src, dst );
@@ -245,17 +262,24 @@ auto    GenGraph< Config >::insertEdge( SharedEdge edge ) -> WeakEdge
 {
     assert_throw( edge != nullptr );
     auto source{ edge->getSrc().lock() };
-    auto destination{ edge->getDst().lock() };
     if ( source == nullptr ||
-         destination == nullptr )
+         ( edge->getDst().expired() && edge->getHDst().expired() ) )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::insertEdge(): Error: Either source and/or destination nodes are expired." );
     edge->setGraph( this );
     Config::template insert<SharedEdges>::into( _edges, edge );
+    Config::template insert< WeakEdgesSearch >::into( _edgesSearch, edge );
     try {
         source->addOutEdge( edge );
-        destination->addInEdge( edge );
-        if ( source.get() != destination.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
-            Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
+        auto destination{ edge->getDst().lock() };
+        if ( destination != nullptr ) {
+            destination->addInEdge( edge );
+            if ( source.get() != destination.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
+                Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
+        } else {
+            auto hDestination{ edge->getHDst().lock() };
+            if ( hDestination != nullptr )
+                hDestination->addInHEdge( edge );
+        }
         BehaviourableBase::notifyEdgeInserted( WeakEdge{edge} );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
@@ -297,36 +321,67 @@ void    GenGraph< Config >::removeAllEdges( WeakNode source, WeakNode destinatio
 template < class Config >
 void    GenGraph< Config >::removeEdge( WeakEdge edge )
 {
-    SharedEdge sharedEdge = edge.lock();
-    if ( !sharedEdge )
+    SharedEdge edgePtr = edge.lock();
+    if ( edgePtr == nullptr )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Error: Edge to be removed is already expired." );
-    auto source = sharedEdge->getSrc().lock();
-    auto destination = sharedEdge->getDst().lock();
-    if ( !source || !destination )
+    auto source = edgePtr->getSrc().lock();
+    auto destination = edgePtr->getDst().lock();
+    auto hDestination = edgePtr->getHDst().lock();
+    if ( source == nullptr ||           // Expecting a non null source and either a destination or an hyper destination
+         ( destination == nullptr && hDestination == nullptr ) )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Error: Edge source or destination are expired." );
     BehaviourableBase::notifyEdgeRemoved( edge );
     source->removeOutEdge( edge );
-    destination->removeInEdge( edge );
-    sharedEdge->setGraph( nullptr );
-    Config::template remove<SharedEdges>::from( _edges, sharedEdge );
+    if ( destination )      // Remove edge from destination in edges
+        destination->removeInEdge( edge );
+    if ( hDestination )     // Remove edge from hyper destination in hyper edges
+        hDestination->removeInHEdge( edge );
+
+    // If there is in hyper edges, remove them since their destination edge is beeing destroyed
+    if ( edgePtr->getInHDegree() > 0 ) {
+        auto inHEdges{ edgePtr->getInHEdges() };    // Make a deep copy of in hyper edges
+        for ( auto& inHEdge : inHEdges )
+            removeEdge( inHEdge );
+    }
+    edgePtr->setGraph( nullptr );
+    Config::template remove<SharedEdges>::from( _edges, edgePtr );
+    Config::template remove<WeakEdgesSearch>::from( _edgesSearch, edge );
 }
 
 template < class Config >
-auto    GenGraph< Config >::findEdge( WeakNode source, WeakNode destination ) const -> WeakEdge
+auto    GenGraph< Config >::findEdge( WeakNode source, WeakNode destination ) const noexcept -> WeakEdge
 {
     // Find the edge associed with source / destination
     auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                    [=](const SharedEdge& e ){
+                                    [=](const SharedEdge& e ) noexcept {
                                         return ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                                  compare_weak_ptr<>( e->getDst(), destination ) );
                                     } );
-    return ( edgeIter != _edges.end() ? *edgeIter : WeakEdge() );
+    return ( edgeIter != _edges.end() ? *edgeIter : WeakEdge{} );   // std::shared_ptr::operator* is noexcept
 }
 
 template < class Config >
-auto    GenGraph< Config >::hasEdge( WeakNode source, WeakNode destination ) const -> bool
+auto    GenGraph< Config >::hasEdge( WeakNode source, WeakNode destination ) const noexcept -> bool
 {
     return ( findEdge( source, destination).use_count() != 0 );
+}
+
+template < class Config >
+auto    GenGraph< Config >::findEdge( WeakNode source, WeakEdge destination ) const noexcept -> WeakEdge
+{
+    // Find the edge associed with source / destination
+    auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
+                                    [=](const SharedEdge& e ) noexcept {
+                                        return ( compare_weak_ptr<>( e->getSrc(), source ) &&
+                                                 compare_weak_ptr<>( e->getHDst(), destination ) );
+                                    } );
+    return ( edgeIter != _edges.end() ? *edgeIter : WeakEdge{} );   // std::shared_ptr::operator* is noexcept
+}
+
+template < class Config >
+auto    GenGraph< Config >::hasEdge( WeakNode source, WeakEdge destination ) const noexcept -> bool
+{
+    return ( findEdge( source, destination ).use_count() != 0 );
 }
 
 template < class Config >
@@ -339,6 +394,16 @@ auto    GenGraph< Config >::getEdgeCount( WeakNode source, WeakNode destination 
                                                             ++edgeCount;
                                                     } );
     return edgeCount;
+}
+
+template < class Config >
+auto    GenGraph< Config >::contains( WeakEdge edge ) const noexcept -> bool
+{
+    if ( edge.expired() )   // Fast exit.
+        return false;
+    auto edgeIter = std::find_if( _edgesSearch.cbegin(), _edgesSearch.cend(),
+                                            [=](const WeakEdge& n ) { return ( compare_weak_ptr<>( edge, n ) ); } );
+    return edgeIter != _edgesSearch.cend();
 }
 //-----------------------------------------------------------------------------
 
@@ -355,7 +420,7 @@ auto GenGraph< Config >::createGroup( ) -> WeakGroup
 }
 
 template < class Config >
-auto    GenGraph< Config >::createGroup( const std::string& className ) noexcept( false ) -> WeakGroup
+typename GenGraph< Config >::WeakGroup   GenGraph< Config >::createGroup( const std::string& className ) noexcept( false )
 {
     if ( className == "gtpo::Group" )
         return createGroup();

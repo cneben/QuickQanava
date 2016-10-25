@@ -36,16 +36,21 @@
 
 namespace qgl { // ::qgl
 
+QOpenGLShader* SGLineAAShader::_gsh = nullptr;
+QSGMaterialType SGLineAAMaterial::_type;
+
 SGLineAAShader::SGLineAAShader( ) :
     QSGMaterialShader{}
 {
     setShaderSourceFile( QOpenGLShader::Vertex, ":/QuickGeoGL/qglLineAAVsh.glsl");
 
-    _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
-    // First time I need to be plateform specific with Qt, but shader is no found on linux with qrc:// url
-    if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglLineAAGsh.glsl" ) )
-        qDebug( ) << "SGLineAAShader::SGLineAAShader(): geometry shader compilation fails: " << _gsh->log( );
-    else if ( !program()->addShader( _gsh ) )
+    if ( _gsh == nullptr ) {
+        _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
+        if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglLineAAGsh.glsl" ) )
+            qDebug( ) << "SGLineAAShader::SGLineAAShader(): geometry shader compilation fails: " << _gsh->log( );
+    }
+    if ( _gsh != nullptr &&
+         !program()->addShader( _gsh ) )
         qDebug( ) << "SGLineAAShader::SGLineAAShader(): shader could not be added to OGL program.";
 
     setShaderSourceFile( QOpenGLShader::Fragment, ":/QuickGeoGL/qglLineAAFsh.glsl");

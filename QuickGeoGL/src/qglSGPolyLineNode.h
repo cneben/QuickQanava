@@ -62,7 +62,7 @@ public:
      *  \param strokeMaterial material used to "stroke" the line, polyline node does not get the material ownership.
      */
     explicit SGPolyLineNode( const QVector<QPointF>& points ) noexcept;
-    virtual ~SGPolyLineNode( ) { }
+    virtual ~SGPolyLineNode( ) {}
     SGPolyLineNode( const SGPolyLineNode& ) = delete;
     SGPolyLineNode& operator=(const SGPolyLineNode& ) = delete;
 
@@ -70,20 +70,17 @@ public:
     void    createGeometry( const QVector<QPointF>& points );
     //! Update internal geometry with given \c points, is poly line path should be closed, call updateClosedGeometry(true).
     void    updateGeometry( const QVector<QPointF>& points );
-    void    updateClosedGeometry( bool closed );
 
-    /*! Every time you access the underlining polyline gadget, this node consider that you have modified it, internal geometry may be updated.
-     *
-     * \note Automatically call setDirty().
+    /*! FIXME.
      */
     inline auto getGadget() noexcept -> PolyLineGadget& { return _gadget; }
     inline auto getGadget() const noexcept -> const PolyLineGadget& { return _gadget; }
 private:
     static const QSGGeometry::AttributeSet& geometryAttributes();
 protected:
-    std::unique_ptr<QSGGeometry>    _geometry{nullptr};
-    std::unique_ptr<QSGMaterial>    _material{nullptr};
-    PolyLineGadget                  _gadget;
+    QSGGeometry*    _geometry{nullptr};
+    QSGMaterial*    _material{nullptr};
+    PolyLineGadget  _gadget;
     //@}
     //-------------------------------------------------------------------------
 };

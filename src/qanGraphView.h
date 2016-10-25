@@ -54,10 +54,9 @@ class GraphView : public qan::Navigable
     //@{
 public:
     //! GraphView default constructor.
-    GraphView( QQuickItem* parent = 0 );
+    explicit GraphView( QQuickItem* parent = 0 );
     virtual ~GraphView( ) { }
-private:
-    Q_DISABLE_COPY( GraphView )
+    GraphView( const GraphView& ) = delete;
 
 public:
     //! Graph that should be displayed in this graph view.

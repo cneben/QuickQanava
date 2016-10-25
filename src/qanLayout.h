@@ -55,10 +55,9 @@ class Layout : public QObject,
     Q_OBJECT
 public:
     //! Layout constructor.
-    Layout( QObject* parent = 0 ) : QObject( parent ), _orientation( Qt::Horizontal ) { }
+    explicit Layout( QObject* parent = 0 ) noexcept : QObject( parent ), _orientation( Qt::Horizontal ) { }
     virtual ~Layout( ) { }
-private:
-    Q_DISABLE_COPY( Layout )
+    Layout( const Layout& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 

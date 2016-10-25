@@ -59,14 +59,13 @@ public:
      *
      */
     virtual ~Group( );
-private:
-    Q_DISABLE_COPY( Group )
+    Group( const Group& ) = delete;
 public:
-    auto            getClassName() -> std::string { return getDynamicClassName(); }
-    virtual auto    getDynamicClassName() -> std::string { return "qan::Group"; }
+    auto                getClassName() const noexcept -> std::string { return getDynamicClassName(); }
+    virtual std::string getDynamicClassName() const noexcept { return "qan::Group"; }
 public:
     //! Shortcut to gtpo::GenGroup<>::getGraph().
-    qan::Graph*     getGraph();
+    qan::Graph*     getGraph() noexcept;
     //@}
     //-------------------------------------------------------------------------
 

@@ -49,15 +49,8 @@ void    PolyLine::setPoints( const QVariantList& points )
     int p{0};
     for ( const auto& point: points )
         _points[p++] = point.toPointF();
-
-    if ( _closed &&
-         _points.size() >= 3 ) {
-        int initialSize{points.size()};
-        _points.resize( initialSize + 1 );
-        _points[initialSize] = _points[0];
-    }
+    applyClosing(_closed);
     setDirty(GeometryDirty);
-    setDirty(ClosedDirty);
     update();
 }
 
@@ -66,7 +59,6 @@ auto    PolyLine::setPoints( const QVector<QPointF>& points ) noexcept -> void
     _points = points;
     applyClosing(_closed);
     setDirty(GeometryDirty);
-    setDirty(ClosedDirty);
     update();
 }
 
@@ -74,7 +66,7 @@ auto    PolyLine::setClosed( bool closed ) noexcept -> void
 {
     if ( closed != _closed ) { // Binding loop protection
         _closed = closed;
-        applyClosing(closed);
+        applyClosing(closed);   // Eventually regenerate geomtery
         emit closedChanged();
         update();
     }
@@ -82,28 +74,29 @@ auto    PolyLine::setClosed( bool closed ) noexcept -> void
 
 auto    PolyLine::applyClosing(bool closed) -> void
 {
-    if ( closed &&                  // Try to close a potentially unclosed poly line
-         _points.size() >= 3 ) {    // An open (unclosed) polyline might have 3 vertices or more
-        if ( _points[0] != _points[_points.size()-1] ) {
-            int initialSize = _points.size();
-            _points.resize(initialSize + 1);        // Note 20161001: there is bug when calling reserve() to avoid last point default construction
-            if ( _points.size() > initialSize ) {   // reserve() suceed, last point is unitialized
-                _points[ _points.size() - 1 ] = _points[ 0 ];
-                setDirty(GeometryDirty);
-                setDirty(ClosedDirty);
-            }
-        }   // Else: closing already applied
-    }
-    if ( !closed &&                 // Try to unclose a potentially closed poly line
-         _points.size() > 3 ) {     // A potentially closed poly line has always at least four vertices
-        // If we have a potentially closed polyline, and first vertex equals last
-        // vertex (ie the path is closed), unclose it by removing last vertice
-        if ( _points[0] == _points[_points.size()-1] ) {
-            _points.resize( _points.size()-1 );
+    if ( _points.size() <= 0 )
+        return; // 1 point at least is necessary to apply closing
+
+    bool isClosed = _points.size() >= 2 &&
+                    fuzzyComparePoints( _points[0], _points[_points.size()-1] );
+    if ( closed && !isClosed ) {
+        int initialSize = _points.size();
+        _points.resize(initialSize + 1);        // Note 20161001: there is bug when calling reserve() to avoid last point default construction
+        if ( _points.size() > initialSize ) {   // reserve() suceed, last point is unitialized
+            _points[ _points.size() - 1 ] = _points[ 0 ];
             setDirty(GeometryDirty);
-            setDirty(ClosedDirty);
-        }   // Else: polyline already unclosed
+        }
     }
+    else if ( !closed && isClosed ) {
+        _points.resize( _points.size()-1 );
+        setDirty(GeometryDirty);
+    }
+}
+
+bool    PolyLine::fuzzyComparePoints( const QPointF& p1, const QPointF& p2 )
+{
+    return  qFuzzyCompare( 1.0 + p1.x(), 1.0 + p2.x() ) &&
+            qFuzzyCompare( 1.0 + p1.y(), 1.0 + p2.y() );
 }
 //-----------------------------------------------------------------------------
 
@@ -112,29 +105,26 @@ QSGNode* PolyLine::updatePaintNode( QSGNode* oldNode, UpdatePaintNodeData* )
 {
     qgl::SGPolyLineNode* polyLineNode = reinterpret_cast< qgl::SGPolyLineNode* >( oldNode );
     if ( polyLineNode == nullptr ) {
-        polyLineNode = new qgl::SGPolyLineNode{_points };
+        polyLineNode = new qgl::SGPolyLineNode{ _points };
         setDirty(Dirty);
-        _node = polyLineNode;
     }
-    if ( _node != nullptr ) {
+    if ( polyLineNode != nullptr ) {
         if ( isDirty( PolyLine::GeometryDirty ) )
-            _node->updateGeometry(_points);
-        if ( isDirty( PolyLine::ClosedDirty ) )
-            _node->updateClosedGeometry(_closed);
+            polyLineNode->updateGeometry(_points);
         if ( isDirty( PolyLine::WidthDirty ) ) {
             // FIXME: move that to SG node
-            auto material = static_cast<qgl::SGPolyLineAAMaterial*>(_node->material());
+            auto material = static_cast<qgl::SGPolyLineAAMaterial*>(polyLineNode->material());
             if ( material != nullptr ) {
                 material->setWidth( _lineWidth );
-                _node->markDirty(QSGNode::DirtyMaterial);
+                polyLineNode->markDirty(QSGNode::DirtyMaterial);
             }
         }
         if ( isDirty( PolyLine::ColorDirty ) ) {
             // FIXME: move that to SG node
-            auto material = static_cast<qgl::SGPolyLineAAMaterial*>(_node->material());
+            auto material = static_cast<qgl::SGPolyLineAAMaterial*>(polyLineNode->material());
             if ( material != nullptr ) {
                 material->setColor( _color );
-                _node->markDirty(QSGNode::DirtyMaterial);
+                polyLineNode->markDirty(QSGNode::DirtyMaterial);
             }
         }
         cleanDirtyFlags();

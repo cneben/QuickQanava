@@ -67,6 +67,9 @@ Qan.AbstractNode {
     //! Maximum connector line width, used to visually hilight that te current drag "target" can be connected (default to 5.0).
     property real   connectorHilightLineWidth: 4
 
+    //! Enable or disable visual creation of hyper edges.
+    property bool   hEdgeCreationEnabled: false
+
     //! Qan.Graph where this connector drop node is registered
     property var    graph : undefined
 
@@ -80,7 +83,7 @@ Qan.AbstractNode {
         visible = ( hostNode !== null && hostNode !== undefined )
         parent = hostNode
         sourceNode = hostNode
-        if ( hostNode)   // Force drop node position updates
+        if ( hostNode )   // Force drop node position updates
             x = Qt.binding( function(){ return hostNode.width + xMargin } )
         else x = 0
         connectionSymbol.state = "NORMAL"
@@ -96,19 +99,22 @@ Qan.AbstractNode {
         if ( !Drag.target )
             connectionSymbol.state = "NORMAL"
         else if ( Drag.target &&
-                   Drag.target === sourceNode ) {
+                   Drag.target === sourceNode ) {       // Do not create a circuit on source node
             connectionSymbol.state = "NORMAL"
             if ( dummyEdge )
                 dummyEdge.visible = false
         }
-        else if ( Drag.target ) {
-                parent.z = Drag.target.z + 1
-                connectionSymbol.state = "HILIGHT"
-                if ( dummyEdge ) {
-                    dummyEdge.visible = true
-                    dummyEdge.z = parent.z  // Edge should be always on top
-                }
-            }
+        else if ( Drag.target &&                        // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
+                  ( graph.isNode(Drag.target) ||
+                    ( connectorDropNode.hEdgeCreationEnabled && graph.isEdge(Drag.target) ) ) )
+                 {
+                     parent.z = Drag.target.z + 1
+                     connectionSymbol.state = "HILIGHT"
+                     if ( dummyEdge ) {
+                         dummyEdge.visible = true
+                         dummyEdge.z = parent.z  // Edge should be always on top
+                     }
+                 }
     }
 
     Rectangle {
@@ -170,15 +176,21 @@ Qan.AbstractNode {
                 return
             var src = connectorDropNode.sourceNode
             var dst = connectorDropNode.Drag.target
+            var edge = null
             if ( src && dst ) {
-                if ( connectorDropNode.graph.isNode( dst ) &&
-                     !connectorDropNode.graph.hasEdge( src, dst ) ) {
-                    var edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
-                    if ( edge ) {    // Notify graph user of the edge creation
-                        edge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
-                        connectorDropNode.graph.edgeInsertedVisually( edge )
-                    }
+                if ( connectorDropNode.graph.isNode( dst ) ) {
+                    if ( !connectorDropNode.graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
+                        edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
+                } else if ( connectorDropNode.hEdgeCreationEnabled &&
+                            connectorDropNode.graph.isEdge( dst ) ) {           // Do not create an hyper edge on an hyper edge
+                    if ( !connectorDropNode.graph.hasEdge( src, dst ) &&
+                            !connectorDropNode.graph.isHyperEdge( dst ) )
+                        edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
                 }
+            }
+            if ( edge ) {    // Notify graph user of the edge creation
+                edge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
+                connectorDropNode.graph.edgeInsertedVisually( edge )
             }
             // Restore original position
             connectionSymbol.state = "NORMAL"
@@ -191,13 +203,15 @@ Qan.AbstractNode {
         }
         onPressed : {
             mouse.accepted = true
-            if ( !connectorDropNode.graph.hasEdge( connectorDropNode.sourceNode, connectorDropNode ) ) {
-                if ( connectorDropNode.dummyEdge )
+            //if ( !connectorDropNode.graph.hasEdge( connectorDropNode.sourceNode, connectorDropNode ) ) {
+                if ( connectorDropNode.dummyEdge ) {
                     connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
+                    connectorDropNode.dummyEdge = undefined
+                }
                 connectorDropNode.dummyEdge = connectorDropNode.graph.insertEdge( edgeClassName, connectorDropNode.sourceNode, connectorDropNode )
                 connectorDropNode.dummyEdge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
                 connectorDropNode.dummyEdge.z = connectorDropNode.sourceNode.z
-            }
+            //}
         }
     }
     // QuickQanava Qan.Node interface

@@ -58,7 +58,7 @@ public:
      *  \param strokeMaterial material used to "stroke" the line, line node does not get the material ownership.
      */
     SGLineNode() noexcept;
-    virtual ~SGLineNode( ) { }
+    virtual ~SGLineNode( ) {}
     SGLineNode(const SGLineNode& ) = delete;
     SGLineNode& operator=(const SGLineNode& ) = delete;
 
@@ -68,10 +68,11 @@ public:
     inline auto     getGadget( ) const noexcept -> const LineGadget* { return _gadget; }
 private:
     static const QSGGeometry::AttributeSet& geometryAttributes();
+
 protected:
-    std::unique_ptr<QSGGeometry>    _geometry{nullptr};
-    std::unique_ptr<QSGMaterial>    _material{nullptr};
-    LineGadget*                     _gadget{nullptr};
+    QSGGeometry*    _geometry{nullptr};
+    QSGMaterial*    _material{nullptr};
+    LineGadget*     _gadget{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

@@ -60,11 +60,11 @@ class StylesFilterModel : public QSortFilterProxyModel
     Q_OBJECT
 public:
     /*! Build a styles list model filtered by style target.             */
-    StylesFilterModel( QString target, QObject* parent = 0 ) : QSortFilterProxyModel( parent ),
+    explicit StylesFilterModel( QString target, QObject* parent = 0 ) : QSortFilterProxyModel( parent ),
         _target( target ) {     Q_ASSERT( !_target.isEmpty( ) ); }
     virtual ~StylesFilterModel( ) { }
+    StylesFilterModel ( const StylesFilterModel& ) = delete;
 private:
-    Q_DISABLE_COPY( StylesFilterModel )
     QString         _target;
     //@}
     //-------------------------------------------------------------------------
@@ -101,12 +101,11 @@ class StyleManager : public qps::PropertiesList
     //@{
 public:
     //! Style manager must be initialized with a valid graph.
-    StyleManager( QObject* parent = nullptr );
+    explicit StyleManager( QObject* parent = nullptr );
     virtual ~StyleManager( );
-private:
-    Q_DISABLE_COPY( StyleManager )
+    StyleManager( const StyleManager& ) = delete;
 public:
-    //! Clear this manager from all its content.
+    //! Clear this manager from all its content (default node and edge styles are cleared too).
     Q_INVOKABLE virtual void    clear() override;
     //@}
     //-------------------------------------------------------------------------

@@ -1,6 +1,5 @@
 TEMPLATE	= app
 TARGET		= test-groups
-FORMS		=
 CONFIG		+= qt warn_on thread c++14
 LANGUAGE	= C++
 QT		+= widgets core gui qml quick charts
@@ -19,8 +18,6 @@ OTHER_FILES   +=  main.qml
 RESOURCES   +=  ../../QuickGeoGL/src/QuickGeoGL.qrc             \
                 ../../src/QuickQanava2.qrc                       \
                 groups.qrc
-
-QT_PRIVATE_HEADERS=
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2 

@@ -49,9 +49,9 @@ class Linear : public qan::Layout
     Q_OBJECT
 public:
     //! Linear constructor.
-    explicit Linear( QObject* parent = 0 );
-private:
-    Q_DISABLE_COPY( Linear )
+    explicit Linear( QObject* parent = 0 ) noexcept;
+    virtual ~Linear() { }
+    Linear ( const Linear& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 

@@ -20,28 +20,27 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	groups.h
+// \file	hedges.h
 // \author	benoit@qanava.org
-// \date	2016 03 23
+// \date	2016 10 10
 //-----------------------------------------------------------------------------
 
-#ifndef groups_h
-#define qangroups_h
-
-// QuickQanava headers
-#include <QuickQanava>
+#ifndef hedges_h
+#define hedges_h
 
 // QT headers
 #include <QQuickView>
 
+// QuickQanava headers
+#include <QuickQanava>
+
 class MainView : public QQuickView
 {
     Q_OBJECT
-
 public:
     MainView( );
     virtual ~MainView( ) { }
 };
 
-#endif // groups_h
+#endif // hedges_h
 

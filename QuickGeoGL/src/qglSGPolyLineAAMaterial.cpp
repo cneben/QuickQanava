@@ -36,16 +36,21 @@
 
 namespace qgl { // ::qgl
 
+QOpenGLShader* SGPolyLineAAShader::_gsh = nullptr;
+QSGMaterialType SGPolyLineAAMaterial::_type;
+
 SGPolyLineAAShader::SGPolyLineAAShader( ) :
     QSGMaterialShader{ }
 {
     setShaderSourceFile( QOpenGLShader::Vertex, ":/QuickGeoGL/qglPolyLineAAVsh.glsl");
-    _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
 
-    // First time I need to be plateform specific with Qt, but shader is no found on linux with qrc:// url
-    if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglPolyLineAAGsh.glsl" ) )
-        qDebug( ) << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader compilation fails: " << _gsh->log( );
-    else if ( !program()->addShader( _gsh ) )
+    if ( _gsh == nullptr ) {
+        _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
+        if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglPolyLineAAGsh.glsl" ) )
+            qDebug( ) << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader compilation fails: " << _gsh->log( );
+    }
+    if ( _gsh != nullptr &&
+         !program()->addShader( _gsh ) )
         qDebug( ) << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader could not be added to OGL program.";
 
     setShaderSourceFile( QOpenGLShader::Fragment, ":/QuickGeoGL/qglPolyLineAAFsh.glsl");
@@ -75,6 +80,7 @@ void	SGPolyLineAAShader::updateState(const RenderState & state, QSGMaterial* new
 
 void SGPolyLineAAShader::initialize( )
 {
+    QSGMaterialShader::initialize();
     if ( program() == nullptr ||
          !program()->isLinked( ) ) {
         qDebug() << "qgl::SGLineAAShader::initialize(): Error: Material shader is not linked.";

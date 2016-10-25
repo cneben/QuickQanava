@@ -13,6 +13,9 @@ test-custom.depends  = quickqanava2
 test-groups.subdir   = samples/groups
 test-groups.depends  = quickqanava2
 
+test-hedges.subdir   = samples/hedges
+test-hedges.depends  = quickqanava2
+
 test-style.subdir   = samples/style
 test-style.depends  = quickqanava2
 
@@ -22,5 +25,5 @@ test-topology.depends  = quickqanava2
 test-progress.subdir   = samples/progress
 test-progress.depends  = quickqanava2
 
-SUBDIRS +=  quickqanava2 test-navigable test-custom test-groups test-style test-topology test-progress
-#SUBDIRS +=  quickqanava2 test-custom test-topology
+SUBDIRS +=  quickqanava2 test-navigable test-custom test-groups test-hedges test-style test-topology test-progress
+#SUBDIRS +=  test-hedges

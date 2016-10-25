@@ -32,7 +32,7 @@
 namespace qan { // ::qan
 
 /* Linear Layout Management *///-----------------------------------------------
-Linear::Linear( QObject* parent ) :
+Linear::Linear( QObject* parent ) noexcept :
     Layout( parent ),
     _spacing( 25 )
 {

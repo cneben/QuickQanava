@@ -1,3 +1,10 @@
+## 2016/10/12:
+Fix a severe bug in convex polygon OGL rendering code.
+Fix Arrow component to prevent caps beeing rendered when the line length is too small.
+Fix a regression in ConnectorDropNode component.
+Fix qan::Edge rendering code.
+Add reduced directed hyper edge support (not be part of the public API).
+
 ## 2016/10/09:
 Update documentation: http://www.destrat.io/quickqanava
 Update API documentation: http://www.destrat.io/quickqanava/doc

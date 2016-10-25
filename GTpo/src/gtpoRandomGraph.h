@@ -93,11 +93,11 @@ public:
             if ( node ) {
                 std::ostringstream ostr; ostr << nodeIndex++;
                 std::string nodeLabel{ std::string( "Node #" ) + ostr.str() };
-                Graph::Configuration::setNodeLabel( node.get(), nodeLabel );
-                Graph::Configuration::setNodeX( node.get(), xDist( gen ) );
+                Graph::Configuration::setLabel( node.get(), nodeLabel );
+                Graph::Configuration::setX( node.get(), xDist( gen ) );
                 Graph::Configuration::setNodeY( node.get(), yDist( gen ) );
-                Graph::Configuration::setNodeWidth( node.get(), widthDist( gen ) );
-                Graph::Configuration::setNodeHeight( node.get(), heightDist( gen ) );
+                Graph::Configuration::setWidth( node.get(), widthDist( gen ) );
+                Graph::Configuration::setHeight( node.get(), heightDist( gen ) );
             }
         }
     }

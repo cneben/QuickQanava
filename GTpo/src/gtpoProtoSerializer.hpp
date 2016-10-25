@@ -156,9 +156,9 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
 }
 
 template < class GraphConfig >
-auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
+void    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
                                                       std::ostream& os,
-                                                      gtpo::IProgressNotifier& progress ) -> void
+                                                      gtpo::IProgressNotifier& progress )
 {
     try {
         gtpo::pb::Graph pbGraph;
@@ -266,12 +266,12 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeOut( const WeakNode& we
     SharedNode node = weakNode.lock();
     if ( node == nullptr )
         return;
-    pbNode.set_label( GraphConfig::getNodeLabel( node.get() ) );
-    pbNode.set_x( GraphConfig::getNodeX( node.get() ) );
-    pbNode.set_y( GraphConfig::getNodeY( node.get() ) );
-    pbNode.set_z( GraphConfig::getNodeZ( node.get() ) );
-    pbNode.set_width( GraphConfig::getNodeWidth( node.get() ) );
-    pbNode.set_height( GraphConfig::getNodeHeight( node.get() ) );
+    pbNode.set_label( GraphConfig::getLabel( node.get() ) );
+    pbNode.set_x( GraphConfig::getX( node.get() ) );
+    pbNode.set_y( GraphConfig::getY( node.get() ) );
+    pbNode.set_z( GraphConfig::getZ( node.get() ) );
+    pbNode.set_width( GraphConfig::getWidth( node.get() ) );
+    pbNode.set_height( GraphConfig::getHeight( node.get() ) );
     try {
         int groupId = -1;
         if ( node->getGroup().lock() )
@@ -294,8 +294,8 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoEdgeOut( const WeakEdge& we
         SharedEdge sharedEdge = weakEdge.lock();
         if ( sharedEdge == nullptr )
             return;
-        pbEdge.set_weight( GraphConfig::getEdgeWeight( sharedEdge.get() ) );
-        pbEdge.set_z( GraphConfig::getEdgeZ( sharedEdge.get() ) );
+        pbEdge.set_weight( GraphConfig::getWeight( sharedEdge.get() ) );
+        pbEdge.set_z( GraphConfig::getZ( sharedEdge.get() ) );
         int edgeId = -1;
         try {
             edgeId = objectIdMap.at( sharedEdge.get() );
@@ -328,12 +328,12 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoGroupOut( const WeakGroup& 
     SharedGroup group = weakGroup.lock();
     if ( group == nullptr )
         return;
-    pbGroup.set_label( GraphConfig::getGroupLabel( group.get() ) );
-    pbGroup.set_x( GraphConfig::getGroupX( group.get() ) );
-    pbGroup.set_y( GraphConfig::getGroupY( group.get() ) );
-    pbGroup.set_z( GraphConfig::getGroupZ( group.get() ) );
-    pbGroup.set_width( GraphConfig::getGroupWidth( group.get() ) );
-    pbGroup.set_height( GraphConfig::getGroupHeight( group.get() ) );
+    pbGroup.set_label( GraphConfig::getLabel( group.get() ) );
+    pbGroup.set_x( GraphConfig::getX( group.get() ) );
+    pbGroup.set_y( GraphConfig::getY( group.get() ) );
+    pbGroup.set_z( GraphConfig::getZ( group.get() ) );
+    pbGroup.set_width( GraphConfig::getWidth( group.get() ) );
+    pbGroup.set_height( GraphConfig::getHeight( group.get() ) );
     try {
         pbGroup.set_group_id( objectIdMap.at( group.get() ) );
     } catch( ... ) { pbGroup.set_group_id( -1 ); }
@@ -406,9 +406,9 @@ auto    ProtoSerializer< GraphConfig >::getObjectId( const void* object ) const 
 }
 
 template < class GraphConfig >
-auto    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
+void    ProtoSerializer< GraphConfig >::serializeIn( std::istream& is,
                                                      Graph& graph,
-                                                     gtpo::IProgressNotifier& progress ) -> void
+                                                     gtpo::IProgressNotifier& progress )
 {
     gtpo::pb::Graph pbGraph;
     if ( pbGraph.ParseFromIstream( &is ) ) {
@@ -514,12 +514,12 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoNodeIn( const gtpo::pb::Nod
     SharedNode node = weakNode.lock();
     if ( node ) {    // Feed the newly created node with PB node data
         idObjectMap.insert( std::make_pair( pbNode.node_id(), node.get() ) );
-        GraphConfig::setNodeLabel( node.get(), pbNode.label() );
-        GraphConfig::setNodeX( node.get(), pbNode.x() );
+        GraphConfig::setLabel( node.get(), pbNode.label() );
+        GraphConfig::setX( node.get(), pbNode.x() );
         GraphConfig::setNodeY( node.get(), pbNode.y() );
-        GraphConfig::setNodeZ( node.get(), pbNode.z() );
-        GraphConfig::setNodeWidth( node.get(), pbNode.width() );
-        GraphConfig::setNodeHeight( node.get(), pbNode.height() );
+        GraphConfig::setZ( node.get(), pbNode.z() );
+        GraphConfig::setWidth( node.get(), pbNode.width() );
+        GraphConfig::setHeight( node.get(), pbNode.height() );
         if ( pbNode.group_id() >= 0 ) {
             try {
                 auto nodeGroup = reinterpret_cast<typename GraphConfig::Group* >( idObjectMap.at( pbNode.group_id() ) );
@@ -538,8 +538,8 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoEdgeIn( const gtpo::pb::Edg
     SharedEdge edge = weakEdge.lock();
     if ( edge ) {
         idObjectMap.insert( std::make_pair( pbEdge.edge_id(), edge.get() ) );
-        GraphConfig::setEdgeWeight( edge.get(), pbEdge.weight() );
-        GraphConfig::setEdgeZ( edge.get(), pbEdge.z() );
+        GraphConfig::setWeight( edge.get(), pbEdge.weight() );
+        GraphConfig::setZ( edge.get(), pbEdge.z() );
     }
 }
 
@@ -552,12 +552,12 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoGroupIn( const gtpo::pb::Gr
     if ( group != nullptr ) {    // Feed the newly created group with PB group data
         idObjectMap.insert( std::make_pair( pbGroup.group_id(), group.get() ) );
 
-        GraphConfig::setGroupLabel( group.get(), pbGroup.label() );
-        GraphConfig::setGroupX( group.get(), pbGroup.x() );
-        GraphConfig::setGroupY( group.get(), pbGroup.y() );
-        GraphConfig::setGroupZ( group.get(), pbGroup.z() );
-        GraphConfig::setGroupWidth( group.get(), pbGroup.width() );
-        GraphConfig::setGroupHeight( group.get(), pbGroup.height() );
+        GraphConfig::setLabel( group.get(), pbGroup.label() );
+        GraphConfig::setX( group.get(), pbGroup.x() );
+        GraphConfig::setY( group.get(), pbGroup.y() );
+        GraphConfig::setZ( group.get(), pbGroup.z() );
+        GraphConfig::setWidth( group.get(), pbGroup.width() );
+        GraphConfig::setHeight( group.get(), pbGroup.height() );
     }
 }
 

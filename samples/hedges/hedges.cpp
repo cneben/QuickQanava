@@ -20,28 +20,37 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	groups.h
+// \file	hedges.cpp
 // \author	benoit@qanava.org
-// \date	2016 03 23
+// \date	2016 10 10
 //-----------------------------------------------------------------------------
 
-#ifndef groups_h
-#define qangroups_h
-
 // QuickQanava headers
-#include <QuickQanava>
+#include "./hedges.h"
 
-// QT headers
-#include <QQuickView>
+// Qt headers
+#include <QGuiApplication>
+#include <QQuickStyle>
 
-class MainView : public QQuickView
+using namespace qan;
+
+//-----------------------------------------------------------------------------
+MainView::MainView( ) :
+    QQuickView( )
 {
-    Q_OBJECT
+    QuickQanava::initialize();
+    setSource( QUrl( "qrc:/main.qml" ) );
+}
 
-public:
-    MainView( );
-    virtual ~MainView( ) { }
-};
-
-#endif // groups_h
+int	main( int argc, char** argv )
+{
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    MainView mainView;
+    mainView.setResizeMode( QQuickView::SizeRootObjectToView );
+    mainView.resize( 1024, 700 );
+    mainView.show( );
+    return app.exec( );
+}
+//-----------------------------------------------------------------------------
 

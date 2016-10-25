@@ -62,7 +62,7 @@ public:
     virtual void    initialize() override;
 
 private:
-    QOpenGLShader*  _gsh{nullptr};
+    static QOpenGLShader*  _gsh;
     int             _combMatrixId{-1};
     int             _mvMatrixId{-1};
     int             _opacityId{-1};
@@ -77,20 +77,15 @@ public:
     {
         setFlag( QSGMaterial::Blending );
         setFlag( QSGMaterial::RequiresFullMatrix );
-        setFlag( QSGMaterial::CustomCompileStep );  // Note 20151111: For GSH, try without this flag
+        //setFlag( QSGMaterial::CustomCompileStep );  // Note 20151111: For GSH, try without this flag
     }
     virtual ~SGLineAAMaterial() { /* Nil*/ }
     SGLineAAMaterial( const SGLineAAMaterial& ) = delete;
     SGLineAAMaterial& operator=(const SGLineAAMaterial& ) = delete;
 
-    virtual QSGMaterialType* type( ) const override
-    {   // Ensure that we have a unique type for every material instance, otherwise, scene graph
-        // will share the shaders and uniform values will not get updated correctly
-        return const_cast< QSGMaterialType* >( &_type );
-    }
-
-    virtual QSGMaterialShader* createShader( ) const override { return new SGLineAAShader{}; }
-    virtual int	compare( const QSGMaterial* other ) const override { Q_UNUSED( other ); return 0; }
+    virtual QSGMaterialType*    type( ) const override { return &_type; }
+    virtual QSGMaterialShader*  createShader( ) const override { return new SGLineAAShader{}; }
+    virtual int	compare( const QSGMaterial* other ) const override { Q_UNUSED( other ); return 42; }
 
     //! Get the actual material color.
     inline QColor   getColor( ) const noexcept { return _color; }
@@ -101,11 +96,10 @@ public:
     //! Set the actual material stroke width, use SGCanvasNode::modifyStrokeMaterial() to change the width.
     inline void     setWidth( qreal width ) noexcept { _width = width; }
 private:
-    QSGMaterialType _type;
-    QColor          _color{0, 0, 0, 255};
-    qreal           _width{1.0};
+    static QSGMaterialType  _type;
+    QColor                  _color{0, 0, 0, 255};
+    qreal                   _width{1.0};
 };
-
 
 } // ::qgl
 

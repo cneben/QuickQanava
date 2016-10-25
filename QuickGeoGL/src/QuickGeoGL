@@ -20,9 +20,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickGeoGL library.
 //
-// \file    QuickGeoGL.h
+// \file    QuickGeoGL
 // \author	benoit@qanava.org
-// \date	2012 02 15
+// \date	2016 09 24
 //-----------------------------------------------------------------------------
 
 #include "./QuickGeoGL.h"

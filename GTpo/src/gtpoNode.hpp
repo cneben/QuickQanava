@@ -34,16 +34,16 @@ namespace gtpo { // ::gtpo
 
 /* GenNode Edges Management *///-----------------------------------------------
 template < class Config >
-auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
+auto GenNode< Config >::addOutEdge( WeakEdge outEdgePtr ) -> void
 {
-    assert( !sharedOutEdge.expired() );
-    SharedNode node = this->shared_from_this(); // FIXME g++: this-> necessary
-    SharedEdge outEdge = sharedOutEdge.lock( );
-    SharedNode outEdgeSrc = outEdge->getSrc().lock();
+    assert_throw( !outEdgePtr.expired(), "gtpo::GenNode<>::addOutEdge(): Error: out edge is expired." );
+    auto node = this->shared_from_this();
+    auto outEdge = outEdgePtr.lock( );
+    auto outEdgeSrc = outEdge->getSrc().lock();
     if ( outEdge ) {
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->setSrc( node );
-        Config::template insert< WeakEdges >::into( _outEdges, sharedOutEdge );
+        Config::template insert< WeakEdges >::into( _outEdges, outEdgePtr );
         if ( !outEdge->getDst().expired() ) {
             Config::template insert< WeakNodes >::into( _outNodes, outEdge->getDst() );
             notifyOutNodeInserted( outEdge->getDst() );
@@ -52,16 +52,16 @@ auto GenNode< Config >::addOutEdge( WeakEdge sharedOutEdge ) -> void
 }
 
 template < class Config >
-auto GenNode< Config >::addInEdge( WeakEdge sharedInEdge ) -> void
+auto GenNode< Config >::addInEdge( WeakEdge inEdgePtr ) -> void
 {
-    assert( !sharedInEdge.expired() );
-    SharedNode node = this->shared_from_this();
-    SharedEdge inEdge = sharedInEdge.lock( );
-    SharedNode inEdgeDst = inEdge->getDst().lock();
+    assert_throw( !inEdgePtr.expired(), "gtpo::GenNode<>::addInEdge(): Error: in edge is expired." );
+    auto node = this->shared_from_this();
+    auto inEdge = inEdgePtr.lock( );
+    auto inEdgeDst = inEdge->getDst().lock();
     if ( inEdge ) {
         if ( !inEdgeDst || inEdgeDst != node ) // In edge destination should point to target node
             inEdge->setDst( node );
-        Config::template insert< WeakEdges >::into( _inEdges, sharedInEdge );
+        Config::template insert< WeakEdges >::into( _inEdges, inEdgePtr );
         if ( !inEdge->getSrc().expired() ) {
             Config::template insert< WeakNodes >::into( _inNodes, inEdge->getSrc() );
             notifyInNodeInserted( inEdge->getSrc() );
@@ -73,20 +73,22 @@ template < class Config >
 auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
 {
     gtpo::assert_throw( !outEdge.expired(), "gtpo::GenNode<>::removeOutEdge(): Error: Out edge has expired" );
-    SharedNode sharedNode = this->shared_from_this();
-    SharedEdge ownedOutEdge = outEdge.lock( );
-    SharedNode ownedOutEdgeSrc = ownedOutEdge->getSrc().lock();
-    gtpo::assert_throw( ownedOutEdgeSrc != nullptr &&    // Out edge src must be this node
-                        ownedOutEdgeSrc == sharedNode, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
-    auto ownedOutEdgeDst = ownedOutEdge->getDst().lock();
-    gtpo::assert_throw( ownedOutEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
-    notifyOutNodeRemoved( ownedOutEdge->getDst() );
+    auto outEdgePtr = outEdge.lock( );
+    auto outEdgeSrcPtr = outEdgePtr->getSrc().lock();
+    gtpo::assert_throw( outEdgeSrcPtr != nullptr &&    // Out edge src must be this node
+                        outEdgeSrcPtr.get() == this, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
+
+    auto outEdgeDst = outEdgePtr->getDst().lock();
+    if ( outEdgeDst != nullptr ) {
+        gtpo::assert_throw( outEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
+        notifyOutNodeRemoved( outEdgePtr->getDst() );
+    }
     Config::template remove< WeakEdges >::from( _outEdges, outEdge );
-    Config::template remove< WeakNodes >::from( _outNodes, ownedOutEdge->getDst() );
+    Config::template remove< WeakNodes >::from( _outNodes, outEdgePtr->getDst() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
-            graph->installRootNode( WeakNode( sharedNode ) );
+            graph->installRootNode( WeakNode{ this->shared_from_this() } );
     }
 }
 
@@ -115,28 +117,28 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 
 /* GenNode Behaviour Notifications *///----------------------------------------
 template < class Config >
-auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) -> void
+auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) noexcept -> void
 {
     BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeInserted, inNode );
     this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeInserted( inNode ); } );
 }
 
 template < class Config >
-auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) -> void
+auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) noexcept -> void
 {
     BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeRemoved, inNode );
     this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved( inNode ); } );
 }
 
 template < class Config >
-auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) -> void
+auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) noexcept -> void
 {
     BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
     this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeInserted( outNode ); } );
 }
 
 template < class Config >
-auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) -> void
+auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) noexcept -> void
 {
     BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
     this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );

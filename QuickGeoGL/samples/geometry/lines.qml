@@ -207,5 +207,61 @@ Flickable {
             }
         }
     }
-}
+
+    Frame {
+        id: lineUnitialized
+        anchors.left: parent.left;          anchors.leftMargin: 10
+        anchors.top: linesScale2.bottom;    anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Line - unitialized:" }
+        Qgl.Line {
+            id: uninitializedLine
+            lineWidth: 1.0
+            color: "blue"
+        }
+        Rectangle {
+            x: uninitializedLine.x; y: uninitializedLine.y
+            width: uninitializedLine.width; height: uninitializedLine.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
+    }
+    Frame {
+        id: lineZeroLength
+        anchors.left: lineUnitialized.right;   anchors.leftMargin: 10
+        anchors.top: linesScale2.bottom;       anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Line - zero length:" }
+        Qgl.Line {
+            id: zeroLengthLine
+            lineWidth: 1.0
+            p1: Qt.point( 10.0, 40.0 )
+            p2: Qt.point( 10.0, 40.0 )
+            color: "blue"
+        }
+        Rectangle {
+            x: zeroLengthLine.x; y: zeroLengthLine.y
+            width: zeroLengthLine.width; height: zeroLengthLine.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
+    }
+    Frame {
+        id: lineOnepxLength
+        anchors.left: lineZeroLength.right;   anchors.leftMargin: 10
+        anchors.top: linesScale2.bottom;       anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Line - 1px length:" }
+        Qgl.Line {
+            id: onePxLengthLine
+            lineWidth: 1.0
+            p1: Qt.point( 10.0, 40.0 )
+            p2: Qt.point( 11.0, 41.0 )
+            color: "blue"
+        }
+        Rectangle {
+            x: onePxLengthLine.x; y: onePxLengthLine.y
+            width: onePxLengthLine.width; height: onePxLengthLine.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
+    }
+} // Flickable
 

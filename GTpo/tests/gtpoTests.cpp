@@ -103,9 +103,9 @@ TEST(GTpoTopo, removeNodeCount)
     auto rnc = g.getRootNodeCount();
     g.installRootNode( n ); // Just a test, it should not be called by the user directly
     EXPECT_TRUE( g.isRootNode( n ) );
-    EXPECT_TRUE( g.containsNode( n ) );
+    EXPECT_TRUE( g.contains( n ) );
     g.removeNode( n );
-    EXPECT_FALSE( g.containsNode( n ) );
+    EXPECT_FALSE( g.contains( n ) );
     EXPECT_TRUE( ( g.getNodeCount() == nc - 1 ) );
     EXPECT_TRUE( ( g.getRootNodeCount() == rnc - 1 ) ) ;
     g.createNode();
@@ -127,9 +127,9 @@ TEST(GTpoTopo, graphClearNode)
     gtpo::GenGraph<> g;
     auto n = g.createNode();
     EXPECT_TRUE( g.isRootNode( n ) );
-    EXPECT_TRUE( g.containsNode( n ) );
+    EXPECT_TRUE( g.contains( n ) );
     g.clear();
-    EXPECT_FALSE( g.containsNode( n ) );
+    EXPECT_FALSE( g.contains( n ) );
     EXPECT_EQ( g.getNodeCount(), 0 );
     EXPECT_TRUE( n.expired() );
 }
@@ -142,8 +142,10 @@ TEST(GTpoTopo, graphClearNodeEdge)
     auto n2 = g.createNode();
     auto e1 = g.createEdge(n1, n2);
     EXPECT_EQ( g.getNodeCount(), 2 );
+    EXPECT_TRUE( g.contains(e1) );
     g.clear();
     EXPECT_EQ( g.getNodeCount(), 0 );
+    EXPECT_FALSE( g.contains(e1) );
     EXPECT_TRUE( n1.expired() );
     EXPECT_TRUE( n2.expired() );
     EXPECT_TRUE( e1.expired() );
@@ -249,6 +251,18 @@ TEST(GTpoTopo, insertEdgeBasicCircuit)
     EXPECT_TRUE( ( g.getRootNodeCount() == 1 ) );   // n2 is no longer a root node
 }
 
+TEST(GTpoTopo, removeEdgeContains)
+{
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    EXPECT_TRUE( g.contains(e1) );
+    g.removeEdge(n1, n2);
+    EXPECT_FALSE( g.contains(e1) );
+    EXPECT_FALSE( g.hasEdge(n1, n2) );
+}
+
 TEST(GTpoTopo, inOutDegree)
 {
     gtpo::GenGraph<> g;
@@ -341,6 +355,7 @@ TEST(GTpoTopo, parallelEdges)
 
 TEST(GTpoTopo, createHEdge)
 {
+    // TEST: create hyper edge and expect hyper edge in degree change
     gtpo::GenGraph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
@@ -348,13 +363,105 @@ TEST(GTpoTopo, createHEdge)
     auto e1 = g.createEdge(n1, n2);
     EXPECT_TRUE( g.getEdgeCount(n1, n2) == 1 );
     auto he1 = g.createEdge(n3, e1);
-    //EXPECT_TRUE( g.getEdgeCount(n1, n2) == 2 );
     {
         auto e1Ptr = e1.lock();
         ASSERT_TRUE( e1Ptr.get() != nullptr );
         EXPECT_EQ( e1Ptr->getInHDegree(), 1 );
     }
 }
+
+TEST(GTpoTopo, inHDegree)
+{
+    // TEST: create multiple hyper edge and expect an hyper edge in degree > 1
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    EXPECT_TRUE( g.getEdgeCount(n1, n2) == 1 );
+    g.createEdge(n3, e1);
+    g.createEdge(n3, e1);
+    auto e1Ptr = e1.lock();
+    ASSERT_TRUE( e1Ptr.get() != nullptr );
+    EXPECT_EQ( e1Ptr->getInHDegree(), 2 );
+}
+
+TEST(GTpoTopo, containsHEdge)
+{
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    auto he1 = g.createEdge(n3, e1);
+    EXPECT_TRUE( g.contains(he1) );
+}
+
+TEST(GTpoTpo, hasHEdge)
+{
+    // TEST: expecting and edge when an hEdge has been created
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    EXPECT_FALSE( g.hasEdge(n3, e1) );
+    auto he1 = g.createEdge(n3, e1);
+    EXPECT_TRUE( g.hasEdge(n3, e1) );
+}
+
+TEST(GTpoTpo, removeHEdgeHasEdge)
+{
+    // TEST: Expecting hasEdge to return true after having removed an hyper edge
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    EXPECT_FALSE( g.hasEdge(n3, e1) );
+    auto he1 = g.createEdge(n3, e1);
+    EXPECT_TRUE( g.hasEdge(n3, e1) );
+    g.removeEdge(he1);
+    EXPECT_FALSE( g.hasEdge(n3, e1) );
+    EXPECT_TRUE( he1.expired() );       // Hyper edge should have been released after destruction
+}
+
+TEST(GTpoTpo, removeHEdgeHInDegree)
+{
+    // TEST: Removing an hedge should left it's destination edge with no in hEdges
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    auto he1 = g.createEdge(n3, e1);
+
+    auto e1Ptr = e1.lock();
+    ASSERT_TRUE( e1Ptr.get() != nullptr );
+    EXPECT_EQ( e1Ptr->getInHDegree(), 1 );
+
+    g.removeEdge(he1);
+    EXPECT_FALSE( g.hasEdge(n3, e1) );
+    EXPECT_TRUE( he1.expired() );       // Hyper edge should have been released after destruction
+
+    ASSERT_TRUE( e1Ptr.get() != nullptr );
+    EXPECT_EQ( e1Ptr->getInHDegree(), 0 );
+}
+
+TEST(GTpoTopo, removeEdgeWithHEdge)
+{
+    // TEST: Removing an edge with one or more in hEdge should remove edge and all in hEdges
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto n3 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    auto he1 = g.createEdge(n3, e1);
+    g.removeEdge(e1);
+    EXPECT_TRUE( he1.expired() );  // In hEdge should have been destroyed
+    EXPECT_FALSE( g.hasEdge(n3, e1) );
+}
+
 
 //-----------------------------------------------------------------------------
 // GTpo serialization tests

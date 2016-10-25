@@ -70,7 +70,7 @@ auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
 }
 
 template < class Config >
-auto GenGroup< Config >::hasNode( const WeakNode& node ) const -> bool
+auto GenGroup< Config >::hasNode( const WeakNode& node ) const noexcept -> bool
 {
     if ( node.expired() )
         return false;

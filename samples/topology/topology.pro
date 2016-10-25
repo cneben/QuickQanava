@@ -1,9 +1,7 @@
 TEMPLATE	= app
 TARGET		= test-topology
-FORMS		=
 CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
-LANGUAGE        = C++
 QT              += widgets core gui qml quick charts quickcontrols2
 
 include(../../common.pri)
@@ -40,7 +38,3 @@ CONFIG(debug, debug|release) {
     win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
     win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d -lprotobuf
 }
-
-
-
-

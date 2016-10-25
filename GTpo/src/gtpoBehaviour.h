@@ -34,6 +34,7 @@
 #define gtpoBehaviour_h
 
 // STD headers
+#include <cstddef>          // std::size_t
 #include <functional>       // std::function
 #include <vector>
 #include <memory>
@@ -50,10 +51,10 @@ template < class Config >
 class NodeBehaviour
 {
 public:
-    NodeBehaviour( const std::string& name ) : _name( name ) { }
+    NodeBehaviour( const std::string& name ) noexcept : _name( name ) { }
     virtual ~NodeBehaviour() = default;
-    explicit NodeBehaviour( const NodeBehaviour& ) = default;
-    NodeBehaviour& operator=( const NodeBehaviour& ) = default;
+    NodeBehaviour( const NodeBehaviour& ) = delete;
+    NodeBehaviour& operator=( const NodeBehaviour& ) = delete;
 
     using WeakNode          = std::weak_ptr< typename Config::Node >;
     using SharedNode        = std::shared_ptr< typename Config::Node >;
@@ -61,36 +62,36 @@ public:
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
 public:
-    auto        getName() const -> const std::string& { return _name; }
+    inline auto getName() const noexcept -> const std::string& { return _name; }
 protected:
-    auto        setName( const std::string& name ) -> void { _name = name; }
+    inline auto setName( const std::string& name )  noexcept -> void { _name = name; }
 private:
     std::string _name = "";
 
 public:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
      */
-    virtual auto    inNodeInserted( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+    virtual void    inNodeInserted( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
 
     /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
      */
-    virtual auto    inNodeRemoved( WeakNode& weakInNode ) -> void { (void)weakInNode; }
+    virtual void    inNodeRemoved( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
 
     /*! \brief Called immediatly after an in node has been removed.
      */
-    virtual auto    inNodeRemoved() -> void { }
+    virtual void    inNodeRemoved()  noexcept { }
 
     /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
      */
-    virtual auto    outNodeInserted( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+    virtual void    outNodeInserted( WeakNode& weakOutNode )  noexcept { (void)weakOutNode; }
 
     /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
      */
-    virtual auto    outNodeRemoved( WeakNode& weakOutNode ) -> void { (void)weakOutNode; }
+    virtual void    outNodeRemoved( WeakNode& weakOutNode )  noexcept { (void)weakOutNode; }
 
     /*! \brief Called immediatly after an out-edge has been removed.
      */
-    virtual auto    outNodeRemoved() -> void { }
+    virtual void    outNodeRemoved()  noexcept { }
 
     /*! \brief Called immedialty after \c weakNode has been modified.
      *
@@ -99,7 +100,7 @@ public:
      * A call to nodeModified() usually follow a node property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    nodeModified( WeakNode& weakNode ) -> void { (void)weakNode; }
+    virtual void    nodeModified( WeakNode& weakNode ) noexcept { (void)weakNode; }
 };
 
 
@@ -110,10 +111,10 @@ template < class Config >
 class EdgeBehaviour
 {
 public:
-    EdgeBehaviour() = default;
+    EdgeBehaviour() noexcept {}
     virtual ~EdgeBehaviour() = default;
-    explicit EdgeBehaviour( const EdgeBehaviour& ) = default;
-    EdgeBehaviour& operator=( const EdgeBehaviour& ) = default;
+    EdgeBehaviour( const EdgeBehaviour& ) = delete;
+    EdgeBehaviour& operator=( const EdgeBehaviour& ) = delete;
 
     using Edge              = typename Config::Edge;
     using SharedEdge        = std::shared_ptr< typename Config::Edge >;
@@ -126,7 +127,7 @@ public:
      * A call to edgeModified() usually follow an edge property modification trought
      * the gtpo::GenGraph::Config PropertiesConfig interface.
      */
-    virtual auto    edgeModified( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
 };
 
 
@@ -139,10 +140,10 @@ template <class Config >
 class Behaviour
 {
 public:
-    Behaviour() = default;
+    Behaviour() noexcept { }
     virtual ~Behaviour() { }
 
-    explicit Behaviour( const Behaviour& ) = default;
+    explicit Behaviour( const Behaviour& ) = delete;
     Behaviour& operator=( const Behaviour& ) = delete;
 
 public:
@@ -152,12 +153,12 @@ public:
      *       while it was disabled.
      * \sa isEnabled() for enabled state description.
      */
-    auto    enable( ) -> void { _enabled = true; notifyEnabledChanged(); }
+    inline auto     enable() noexcept -> void { _enabled = true; notifyEnabledChanged(); }
     /*! Disable this behaviour until it is enabled back wit a call to enable().
      *
      * \sa isEnabled() for enabled state description.
      */
-    auto    disable( ) -> void { _enabled = false; notifyEnabledChanged(); }
+    inline auto     disable() noexcept -> void { _enabled = false; notifyEnabledChanged(); }
     /*! Return the actual "enabled" state for this behaviour.
      *
      *  This method could be usefull in very specific use cases, such as serialization or insertion of a large number
@@ -166,7 +167,7 @@ public:
      *
      *  \return true if enable() has been called, false if disable() has been called.
      */
-    auto    isEnabled( ) const -> bool { return _enabled; }
+    inline auto     isEnabled( ) const noexcept -> bool { return _enabled; }
 
     //! Optionnal notifier for the enabled property.
     virtual void    notifyEnabledChanged() { }
@@ -184,9 +185,9 @@ class GroupBehaviour :  public Behaviour< Config >
     /*! \name GroupBehaviour Object Management *///----------------------------
     //@{
 public:
-    GroupBehaviour() = default;
+    GroupBehaviour() noexcept { }
     virtual ~GroupBehaviour() = default;
-    explicit GroupBehaviour( const GroupBehaviour& ) = default;
+    GroupBehaviour( const GroupBehaviour& ) = delete;
     GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
 
     using WeakNode      = std::weak_ptr< typename Config::Node >;
@@ -200,11 +201,11 @@ public:
     /*! \name Node Notification Interface *///---------------------------------
     //@{
     //! Called immediatly after \c weakNode has been inserted.
-    virtual auto    nodeInserted( WeakNode& weakNode ) -> void { (void)weakNode; }
+    virtual void    nodeInserted( WeakNode& weakNode ) noexcept { (void)weakNode; }
     //! Called when \c weakNode is about to be removed.
-    virtual auto    nodeRemoved( WeakNode& weakNode ) -> void { (void)weakNode; }
+    virtual void    nodeRemoved( WeakNode& weakNode ) noexcept { (void)weakNode; }
     //! \copydoc gtpo::NodeBehaviour::nodeModified()
-    virtual auto    nodeModified( WeakNode& weakNode ) -> void { (void)weakNode; }
+    virtual void    nodeModified( WeakNode& weakNode ) noexcept { (void)weakNode; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -212,11 +213,11 @@ public:
     //@{
 public:
     //! Called immediatly after \c weakEdge has been inserted.
-    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
     //! Called when \c weakEdge is about to be removed.
-    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
     //! \copydoc gtpo::EdgeBehaviour::edgeModified()
-    virtual auto    edgeModified( WeakEdge& weakEdge ) -> void { (void)weakEdge; }
+    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -229,7 +230,7 @@ public:
      * \li node or edge inserted or removed from group
      * \li group label changed
      */
-    virtual auto    groupModified( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
+    virtual void    groupModified( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -241,39 +242,39 @@ template < class Config >
 class GraphBehaviour :  public GroupBehaviour< Config >
 {
 public:
-    GraphBehaviour() = default;
-    virtual ~GraphBehaviour() = default;
-    explicit GraphBehaviour( const GraphBehaviour& ) = default;
+    GraphBehaviour() noexcept { }
+    virtual ~GraphBehaviour() { }
+    GraphBehaviour( const GraphBehaviour& ) = delete;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
     //! Called immediatly after group \c weakGroup has been inserted in graph.
-    virtual auto    groupInserted( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
+    virtual void    groupInserted( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
     //! Called immediatly before group \c weakGroup is removed from graph.
-    virtual auto    groupRemoved( WeakGroup& weakGroup ) -> void { (void)weakGroup; }
+    virtual void    groupRemoved( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
 };
 
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
 // There is more complex O(N) solutions available on SO
 template< class F, class...Ts, std::size_t...Is >
-void for_each_in_tuple( std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ) {
-    (void)tuple; // Avoid C4100 warning for size 1 std::tuple with MSVC2015
-    (void)func;  // Avoid C4100 warning for size 1 std::tuple with MSVC2015
+void for_each_in_tuple( std::tuple<Ts...> & tuple, F func, std::index_sequence<Is...> ) noexcept {
+    (void)tuple; // Avoid C4100 warning for size 1 std::tuple with MSVC2015 U2
+    (void)func;  // Avoid C4100 warning for size 1 std::tuple with MSVC2015 U2
     using expander = int[];
     (void)expander { 0, ((void)func(std::get<Is>(tuple)), 0)... };
 }
 
 template< class F, class...Ts >
-void for_each_in_tuple( std::tuple<Ts...>& tuple, F func ) {
+void for_each_in_tuple( std::tuple<Ts...>& tuple, F func ) noexcept {
     for_each_in_tuple( tuple, func, std::make_index_sequence<sizeof...(Ts)>() );
 }
 
 //! Empty interface definition for graph primitives supporting behaviour concept.
 struct IBehaviorable {
-    IBehaviorable() = default;
+    IBehaviorable() noexcept = default;
     ~IBehaviorable() = default;
-    explicit IBehaviorable( const IBehaviorable& ) = default;
+    IBehaviorable( const IBehaviorable& ) = delete;
     IBehaviorable& operator=( const IBehaviorable& ) = delete;
 };
 
@@ -287,9 +288,9 @@ class Behaviourable : public IBehaviorable
     /*! \name Behaviorable Object Management *///------------------------------
     //@{
 public:
-    Behaviourable() = default;
+    Behaviourable() noexcept { }
     ~Behaviourable() { _behaviours.clear(); }
-    explicit Behaviourable( const Behaviourable& ) = default;
+    Behaviourable( const Behaviourable& ) = delete;
     Behaviourable& operator=( const Behaviourable& ) = delete;
 
 public:
@@ -313,7 +314,7 @@ public:
      *
      * \param behaviour Graph will get behaviour ownership.
      */
-    auto    addBehaviour( Behaviour* behaviour ) -> void {
+    inline auto     addBehaviour( std::unique_ptr<Behaviour> behaviour ) -> void {
         _behaviours.emplace_back( std::move( behaviour ) );
     }
 
@@ -322,10 +323,10 @@ public:
 
 public:
     //! Return true if a behaviours is currently registered (ie getBehaviours().size()>0).
-    auto    hasBehaviours() const -> bool { return _behaviours.size() > 0; }
+    inline auto    hasBehaviours() const noexcept -> bool { return _behaviours.size() > 0; }
 
     //! Return a read only container of actually registered behaviours.
-    auto    getBehaviours() const -> const Behaviours& { return _behaviours; }
+    inline auto    getBehaviours() const noexcept -> const Behaviours& { return _behaviours; }
 
 protected:
     /*! Apply a method pointer on all registered behaviours.
@@ -337,11 +338,11 @@ protected:
      * \endcode
      */
     template < class T >
-    auto    notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) noexcept -> void;
 
     //! Similar to notifyBahaviours() but without arguments.
     template < class T >
-    auto    notifyBehaviours( void (Behaviour::*method)() ) -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)() ) noexcept -> void;
 
 private:
     Behaviours  _behaviours;
@@ -358,7 +359,7 @@ public:
      * \endcode
      */
     template < class Functor >
-    auto    sNotifyBehaviours( Functor f ) -> void {
+    auto    sNotifyBehaviours( Functor f ) noexcept -> void {
         for_each_in_tuple( _sBehaviours, f );
     }
 
@@ -373,35 +374,35 @@ public:
 
     // Group Behaviours Notification
     template < class Node >
-    auto    notifyNodeInserted( Node& node ) -> void;
+    auto    notifyNodeInserted( Node& node ) noexcept -> void;
 
     template < class Node >
-    auto    notifyNodeRemoved( Node& node ) -> void;
+    auto    notifyNodeRemoved( Node& node ) noexcept -> void;
 
     //! Notify all behaviors that node \c node inside this group has been modified.
     template < class Node >
-    auto    notifyNodeModified( Node& node ) -> void;
+    auto    notifyNodeModified( Node& node ) noexcept -> void;
 
     template < class Edge >
-    auto    notifyEdgeInserted( Edge& edge ) -> void;
+    auto    notifyEdgeInserted( Edge& edge ) noexcept -> void;
 
     template < class Edge >
-    auto    notifyEdgeRemoved( Edge& edge ) -> void;
+    auto    notifyEdgeRemoved( Edge& edge ) noexcept -> void;
 
     //! Notify all behaviors that node \c node inside this group has been modified.
     template < class Edge >
-    auto    notifyEdgeModified( Edge& edge ) -> void;
+    auto    notifyEdgeModified( Edge& edge ) noexcept -> void;
 
     // GraphBehaviours Notification
     template < class Group >
-    auto    notifyGroupInserted( Group& group ) -> void;
+    auto    notifyGroupInserted( Group& group ) noexcept -> void;
 
     template < class Group >
-    auto    notifyGroupRemoved( Group& group ) -> void;
+    auto    notifyGroupRemoved( Group& group ) noexcept -> void;
 
     //! Notify all behaviors that group \c group has been modified.
     template < class G >
-    auto    notifyGroupModified( G& group ) -> void;
+    auto    notifyGroupModified( G& group ) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -415,9 +416,9 @@ class GroupAdjacentEdgesBehaviour : public GroupBehaviour< Config >
 {
     /* Group Edge Set Behaviour *///-------------------------------------------
 public:
-    GroupAdjacentEdgesBehaviour() = default;
+    GroupAdjacentEdgesBehaviour() noexcept = default;
     virtual ~GroupAdjacentEdgesBehaviour() = default;
-    explicit GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = default;
+    GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = delete;
     GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
 
     using SharedNode    = std::shared_ptr< typename Config::Node >;
@@ -429,9 +430,9 @@ public:
     using SharedGroup   = std::shared_ptr< typename Config::Group >;
 
 public:
-    virtual auto    groupModified( WeakGroup& weakGroup ) -> void override { (void)weakGroup; }
-    virtual auto    nodeInserted( WeakNode& weakNode ) -> void override;
-    virtual auto    nodeRemoved( WeakNode& weakNode ) -> void override;
+    virtual void    groupModified( WeakGroup& weakGroup ) noexcept override { (void)weakGroup; }
+    virtual void    nodeInserted( WeakNode& weakNode ) noexcept override;
+    virtual void    nodeRemoved( WeakNode& weakNode ) noexcept override;
     //-------------------------------------------------------------------------
 };
 
@@ -443,8 +444,8 @@ class GraphGroupAjacentEdgesBehaviour : public GraphBehaviour< Config >
 {
     /* Group Edge Set Behaviour *///-------------------------------------------
 public:
-    GraphGroupAjacentEdgesBehaviour() = default;
-    virtual ~GraphGroupAjacentEdgesBehaviour() = default;
+    GraphGroupAjacentEdgesBehaviour() noexcept { }
+    virtual ~GraphGroupAjacentEdgesBehaviour() { }
     GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
     GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
 
@@ -457,8 +458,8 @@ public:
     using SharedGroup   = std::shared_ptr< typename Config::Group >;
 
 public:
-    virtual auto    edgeInserted( WeakEdge& weakEdge ) -> void override;
-    virtual auto    edgeRemoved( WeakEdge& weakEdge ) -> void override;
+    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept override;
+    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept override;
     //-------------------------------------------------------------------------
 };
 

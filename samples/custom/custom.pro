@@ -1,6 +1,5 @@
 TEMPLATE	= app
 TARGET		= test-custom
-FORMS		=
 CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
@@ -22,7 +21,6 @@ OTHER_FILES   +=  main.qml          \
 
 RESOURCES   +=  ../../src/QuickQanava2.qrc                       \
                 custom.qrc
-
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -lprotobuf

@@ -45,8 +45,8 @@ struct PolygonPoint {
 };
 
 struct PolygonGadget {
-    int             pointCount;
-    PolygonPoint*   points{nullptr};
+    int                     pointCount = 0;
+    QSGGeometry::Point2D*   points{nullptr};
 };
 
 class SGConvexPolygonNode : public QSGGeometryNode
@@ -73,12 +73,10 @@ public:
      */
     inline  auto    getGadget( ) noexcept -> PolygonGadget& { return _gadget; }
     inline  auto    getGadget( ) const noexcept -> const PolygonGadget& { return _gadget; }
-private:
-    static const QSGGeometry::AttributeSet& geometryAttributes();
 protected:
-    std::unique_ptr<QSGGeometry>    _geometry{nullptr};
-    std::unique_ptr<QSGMaterial>    _material{nullptr};
-    PolygonGadget                   _gadget;
+    QSGGeometry*    _geometry{nullptr};
+    QSGMaterial*    _material{nullptr};
+    PolygonGadget   _gadget;
     //@}
     //-------------------------------------------------------------------------
 };

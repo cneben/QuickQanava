@@ -37,7 +37,7 @@ namespace gtpo { // ::gtpo
 /* Virtual Behaviours Management *///------------------------------------------
 template < class Behaviour, class SBehaviours  >
 template < class T >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) noexcept -> void
 {
     // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
     // For calling pointer on template template parameter template keyword functions.
@@ -51,7 +51,7 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
 
 template < class Behaviour, class SBehaviours  >
 template < class T >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)() ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)() ) noexcept -> void
 {
     for ( auto& behaviour : _behaviours )
         if ( behaviour != nullptr )
@@ -62,81 +62,81 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
 /* Notification Helper Methods *///--------------------------------------------
 template < class Behaviour, class SBehaviours  >
 template < class Node >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) noexcept -> void
 {
     notifyBehaviours< Node >( &Behaviour::nodeInserted, node );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.nodeInserted( node ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) noexcept -> void
 {
     notifyBehaviours< Node >( &Behaviour::nodeRemoved, node );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.nodeRemoved( node ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeModified( Node& node ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyNodeModified( Node& node ) noexcept -> void
 {
     notifyBehaviours< Node >( &Behaviour::nodeModified, node );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.nodeModified( node ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeModified( node ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Edge >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeInserted( Edge& edge ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeInserted( Edge& edge ) noexcept -> void
 {
     notifyBehaviours< Edge >( &Behaviour::edgeInserted, edge );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.edgeInserted( edge ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeInserted( edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Edge >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeRemoved( Edge& edge ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeRemoved( Edge& edge ) noexcept -> void
 {
     notifyBehaviours< Edge >( &Behaviour::edgeRemoved, edge );
-    sNotifyBehaviours( [&](auto behaviour) { behaviour.edgeRemoved( edge ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeRemoved( edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Edge >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeModified( Edge& edge ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyEdgeModified( Edge& edge ) noexcept -> void
 {
     notifyBehaviours< Edge >( &Behaviour::edgeModified, edge );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.edgeModified( edge ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeModified( edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Group >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) noexcept -> void
 {
     notifyBehaviours< Group >( &Behaviour::groupInserted, group );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.groupInserted( group ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Group >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) noexcept -> void
 {
     notifyBehaviours< Group >( &Behaviour::groupRemoved, group );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.groupRemoved( group ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class G >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( G& group ) -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyGroupModified( G& group ) noexcept -> void
 {
     notifyBehaviours< G >( &Behaviour::groupModified, group );
-    sNotifyBehaviours( [&](auto& behaviour) { behaviour.groupModified( group ); } );
+    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupModified( group ); } );
 }
 //-----------------------------------------------------------------------------
 
 
 /* Group Adjacent Edges Behaviour *///-----------------------------------------
 template < class Config >
-auto GroupAdjacentEdgesBehaviour< Config >::nodeInserted( WeakNode& weakNode ) -> void
+void    GroupAdjacentEdgesBehaviour< Config >::nodeInserted( WeakNode& weakNode ) noexcept
 {
     if ( !weakNode.expired() ) {
         SharedNode node = weakNode.lock();
@@ -152,7 +152,7 @@ auto GroupAdjacentEdgesBehaviour< Config >::nodeInserted( WeakNode& weakNode ) -
 }
 
 template < class Config >
-auto GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode ) -> void
+void    GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode ) noexcept
 {
     if ( !weakNode.expired() ) {
         SharedNode node = weakNode.lock();
@@ -182,7 +182,7 @@ auto GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode ) ->
 
 /* Graph Group Edge Set Behaviour *///-----------------------------------------
 template < class Config >
-auto GraphGroupAjacentEdgesBehaviour< Config >::edgeInserted( WeakEdge& weakEdge ) -> void
+void    GraphGroupAjacentEdgesBehaviour< Config >::edgeInserted( WeakEdge& weakEdge ) noexcept
 {
     if ( !weakEdge.expired() ) {
         SharedEdge edge = weakEdge.lock();
@@ -203,7 +203,7 @@ auto GraphGroupAjacentEdgesBehaviour< Config >::edgeInserted( WeakEdge& weakEdge
 }
 
 template < class Config >
-auto GraphGroupAjacentEdgesBehaviour< Config >::edgeRemoved( WeakEdge& weakEdge ) -> void
+void    GraphGroupAjacentEdgesBehaviour< Config >::edgeRemoved( WeakEdge& weakEdge ) noexcept
 {
     if ( !weakEdge.expired() ) {
         SharedEdge edge = weakEdge.lock();

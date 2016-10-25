@@ -40,35 +40,35 @@ NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
 
 }
 
-auto    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) -> void
+void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) noexcept
 {
     SharedNode inNode = weakInNode.lock();
     if ( inNode != nullptr )
         inNodeInserted( *inNode );
 }
 
-auto    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode ) -> void
+void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode ) noexcept
 {
     SharedNode inNode = weakInNode.lock();
     if ( inNode != nullptr )
         inNodeRemoved( *inNode );
 }
 
-auto    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode ) -> void
+void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode ) noexcept
 {
     SharedNode outNode = weakOutNode.lock();
     if ( outNode != nullptr )
         outNodeInserted( *outNode );
 }
 
-auto    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode ) -> void
+void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode ) noexcept
 {
     SharedNode outNode = weakOutNode.lock();
     if ( outNode != nullptr )
         outNodeRemoved( *outNode );
 }
 
-auto    NodeBehaviour::nodeModified( WeakNode& weakNode ) -> void
+void    NodeBehaviour::nodeModified( WeakNode& weakNode ) noexcept
 {
     SharedNode node = weakNode.lock();
     if ( node != nullptr )

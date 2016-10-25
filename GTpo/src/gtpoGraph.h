@@ -116,7 +116,7 @@ struct IPropertiesAccessors { };
 
 /*! Default properties accessor interface for GTpo topology primitives (GenNode, GenEdge and GenGroup).
  *
- *  Properties are usually sets via the gtpo::GenGraph<> interface (for example gtpo::GenGraph::setNodeLabel() and so on...), using
+ *  Properties are usually sets via the gtpo::GenGraph<> interface (for example gtpo::GenGraph::setLabel() and so on...), using
  *  a specialized PropertiesAccessors interface accessors directly does not enforce graph behaviours update (advanced users could use direct
  *  properties access in very specific scenarios where maximum performance is necessary and where change notification does not matters, ie serialization
  *  or layouts).
@@ -124,59 +124,53 @@ struct IPropertiesAccessors { };
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public IPropertiesAccessors {
     // Node accessors
-    static inline const std::string&    getNodeLabel( const Node*) { return _gtpoVoidString; }
-    static inline void                  setNodeLabel( Node*, const std::string& ) { }
+    static inline const std::string     getLabel( const Node*) noexcept { return std::string{}; }
+    static inline void                  setLabel( Node*, const std::string& ) noexcept { }
 
-    static inline double        getNodeX( const Node* ) { return 0.; }
-    static inline void          setNodeX( Node*, double ) { }
+    static inline double                getX( const Node* ) noexcept { return 0.; }
+    static inline void                  setX( Node*, double ) noexcept { }
 
-    static inline double        getNodeY( const Node* ) { return 0.; }
-    static inline void          setNodeY( Node*, double ) { }
+    static inline double                getY( const Node* ) noexcept { return 0.; }
+    static inline void                  setNodeY( Node*, double ) noexcept { }
 
-    static inline double        getNodeZ( const Node* ) { return 0.; }
-    static inline void          setNodeZ( Node*, double ) { }
+    static inline double                getZ( const Node* ) noexcept { return 0.; }
+    static inline void                  setZ( Node*, double ) noexcept { }
 
-    static inline double        getNodeWidth( const Node* ) { return 0.; }
-    static inline void          setNodeWidth( Node*, double ) { }
+    static inline double                getWidth( const Node* ) noexcept { return 0.; }
+    static inline void                  setWidth( Node*, double ) noexcept { }
 
-    static inline double        getNodeHeight( const Node* ) { return 0.; }
-    static inline void          setNodeHeight( Node*, double ) { }
+    static inline double                getHeight( const Node* ) noexcept { return 0.; }
+    static inline void                  setHeight( Node*, double ) noexcept { }
 
     // Edge accessors
-    static inline double        getEdgeWeight( const Edge* ) { return 0.; }
-    static inline void          setEdgeWeight( Edge*, double ) { }
+    static inline double                getWeight( const Edge* ) noexcept { return 0.; }
+    static inline void                  setWeight( Edge*, double ) noexcept { }
 
-    static inline double        getEdgeZ( const Edge* ) { return 0.; }
-    static inline void          setEdgeZ( Edge*, double ) { }
+    static inline double                getZ( const Edge* ) noexcept { return 0.; }
+    static inline void                  setZ( Edge*, double ) noexcept { }
 
     // Group accessors
-    static inline const std::string&    getGroupLabel( const Group* ) { return _gtpoVoidString; }
-    static inline void                  setGroupLabel( Group*, const std::string& ) { }
+    static inline const std::string     getLabel( const Group* ) noexcept { return std::string{}; }
+    static inline void                  setLabel( Group*, const std::string& ) noexcept { }
 
-    static inline double        getGroupX( const Group* ) { return 0.; }
-    static inline void          setGroupX( Group*, double ) { }
+    static inline double                getX( const Group* ) noexcept { return 0.; }
+    static inline void                  setX( Group*, double ) noexcept { }
 
-    static inline double        getGroupY( const Group* ) { return 0.; }
-    static inline void          setGroupY( Group*, double ) { }
+    static inline double                getY( const Group* ) noexcept { return 0.; }
+    static inline void                  setY( Group*, double ) noexcept { }
 
-    static inline double        getGroupZ( const Group* ) { return 0.; }
-    static inline void          setGroupZ( Group*, double ) { }
+    static inline double                getZ( const Group* ) noexcept { return 0.; }
+    static inline void                  setZ( Group*, double ) noexcept { }
 
-    static inline double        getGroupWidth( const Group* ) { return 0.; }
-    static inline void          setGroupWidth( Group*, double ) { }
+    static inline double                getWidth( const Group* ) noexcept { return 0.; }
+    static inline void                  setWidth( Group*, double ) noexcept { }
 
-    static inline double        getGroupHeight( const Group* ) { return 0.; }
-    static inline void          setGroupHeight( Group*, double ) { }
+    static inline double                getHeight( const Group* ) noexcept { return 0.; }
+    static inline void                  setHeight( Group*, double ) noexcept { }
 
-    static inline bool          getGroupCollapsed( const Group* ) { return false; }
-    static inline void          setGroupCollapsed( Group*, bool ) { }
-
-    static std::string _gtpoVoidString;
+    static inline bool                  getGroupCollapsed( const Group* ) noexcept { return false; }
+    static inline void                  setGroupCollapsed( Group*, bool ) noexcept { }
 };
-
-template < typename Node, typename Edge, typename Group >
-std::string PropertiesAccessors<Node, Edge, Group>::_gtpoVoidString = std::string("");
-
 
 /*! Default configuration for GTpo primitive, containers and behaviours.
  *
@@ -282,14 +276,16 @@ public:
                          "removed from the graph." << std::endl;
         _graph = nullptr;
     }
+    GenEdge(const GenEdge& ) = delete;
 
     //! Return node class name (default to "gtpo::Edge").
-    std::string getClassName() const { return "gtpo::Edge"; }
+    std::string getClassName() const noexcept { return "gtpo::Edge"; }
 protected:
-    Graph*      getGraph() { return _graph; }
+    inline Graph*       getGraph() noexcept { return _graph; }
+    inline const Graph* getGraph() const noexcept { return _graph; }
 private:
-    void        setGraph( Graph* graph ) { _graph = graph; }
-    Graph*      _graph{ nullptr };
+    void                setGraph( Graph* graph ) { _graph = graph; }
+    Graph*              _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
@@ -331,10 +327,11 @@ public:
     inline auto setHDst( WeakEdge hDst ) noexcept -> void { _hDst = hDst; }
     inline auto getHDst() const noexcept -> const WeakEdge& { return _hDst; }
     inline auto getInHEdges() const noexcept -> const WeakEdges& { return _hInEdges; }
-    inline auto addInHEdge(WeakEdge hSource ) -> void;
+    inline auto addInHEdge(WeakEdge inHEdge ) -> void;
+    inline auto removeInHEdge(WeakEdge inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
 protected:
-    inline auto getInHEdges() noexcept -> WeakEdges& { return _hInEdges; }
+    inline auto getInHEdges() noexcept -> WeakEdges& { return _inHEdges; }
 private:
     //! Restricted hyper edge destination (ie this edge target another edge as destination).
     WeakEdge    _hDst;
@@ -378,16 +375,17 @@ public:
     GenNode& operator=( GenNode const& ) = delete;
 
     //! Return node class name (default to "gtpo::Node").
-    std::string getClassName() const { return "gtpo::Node"; }
+    std::string getClassName() const noexcept { return "gtpo::Node"; }
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.
     using BehaviourableBase = gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
                                                    typename Config::NodeBehaviours >;
 protected:
-    Graph*      getGraph() { return _graph; }
+    inline  Graph*          getGraph() noexcept { return _graph; }
+    inline  const Graph*    getGraph() const noexcept { return _graph; }
 private:
-    void        setGraph( Graph* graph ) { _graph = graph; }
-    Graph*      _graph = nullptr;
+    inline void             setGraph( Graph* graph ) noexcept { _graph = graph; }
+    Graph*                  _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
@@ -444,19 +442,19 @@ public:
      */
     auto    removeInEdge( const WeakEdge inEdge ) noexcept( false ) -> void;
 
-    auto    getInEdges() const -> const WeakEdges& { return _inEdges; }
-    auto    getOutEdges() const -> const WeakEdges& { return _outEdges; }
+    inline auto     getInEdges() const noexcept -> const WeakEdges& { return _inEdges; }
+    inline auto     getOutEdges() const noexcept -> const WeakEdges& { return _outEdges; }
 
-    auto    getInNodes() const -> const WeakNodes& { return _inNodes; }
-    auto    getOutNodes() const -> const WeakNodes& { return _outNodes; }
+    inline auto     getInNodes() const noexcept -> const WeakNodes& { return _inNodes; }
+    inline auto     getOutNodes() const noexcept -> const WeakNodes& { return _outNodes; }
 
-    auto    getInDegree() -> unsigned int const { return static_cast<int>( _inEdges.size() ); }
-    auto    getOutDegree() const -> unsigned int { return static_cast<int>( _outEdges.size() ); }
+    inline auto     getInDegree() const noexcept -> unsigned int { return static_cast<int>( _inEdges.size() ); }
+    inline auto     getOutDegree() const noexcept -> unsigned int { return static_cast<int>( _outEdges.size() ); }
 private:
-    WeakEdges   _inEdges;
-    WeakEdges   _outEdges;
-    WeakNodes   _inNodes;
-    WeakNodes   _outNodes;
+    WeakEdges       _inEdges;
+    WeakEdges       _outEdges;
+    WeakNodes       _inNodes;
+    WeakNodes       _outNodes;
     //@}
     //-------------------------------------------------------------------------
 
@@ -464,9 +462,9 @@ private:
     //@{
 public:
     using WeakGroup = std::weak_ptr< typename Config::Group >;
-    auto        setGroup( WeakGroup& group ) -> void { _group = group; }
-    auto        getGroup( ) -> WeakGroup& { return _group; }
-    auto        getGroup( ) const -> const WeakGroup& { return _group; }
+    inline auto setGroup( WeakGroup& group ) noexcept -> void { _group = group; }
+    inline auto getGroup( ) noexcept -> WeakGroup& { return _group; }
+    inline auto getGroup( ) const noexcept -> const WeakGroup& { return _group; }
 private:
     WeakGroup   _group;
     //@}
@@ -474,11 +472,11 @@ private:
 
     /*! \name Node Behaviours Notifications *///-------------------------------
     //@{
-    inline auto    notifyInNodeInserted( WeakNode& outNode ) -> void;
-    inline auto    notifyInNodeRemoved( WeakNode& outNode ) -> void;
-    inline auto    notifyOutNodeInserted( WeakNode& outNode ) -> void;
-    inline auto    notifyOutNodeRemoved( WeakNode& outNode ) -> void;
-    inline auto    notifyOutNodeRemoved() -> void;
+    inline auto    notifyInNodeInserted( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyInNodeRemoved( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyOutNodeInserted( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyOutNodeRemoved( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyOutNodeRemoved() noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -511,24 +509,25 @@ public:
     using WeakGroup         = std::weak_ptr< typename Config::Group >;
     using SharedGroup       = std::shared_ptr< typename Config::Group >;
 
-    GenGroup() : Config::GroupBase( ) { }
-    explicit GenGroup( typename Config::GroupBase* parent ) : Config::GroupBase( parent ) { }
+    GenGroup() noexcept : Config::GroupBase( ) { }
+    explicit GenGroup( typename Config::GroupBase* parent ) noexcept : Config::GroupBase( parent ) { }
     virtual ~GenGroup() {
         if ( _graph != nullptr )
             std::cerr << "gtpo::GenGroup<>::~GenGroup(): Warning: Group has been destroyed before beeing removed from the graph." << std::endl;
         _graph = nullptr;
     }
-    GenGroup(const GenGroup& node ) = delete;
+    GenGroup( const GenGroup& ) = delete;
     GenGroup& operator=( GenGroup const& ) = delete;
 
     //! Return group class name (default to "gtpo::Group").
-    std::string getClassName() const { return "gtpo::Group"; }
+    std::string         getClassName() const noexcept { return "gtpo::Group"; }
 
 protected:
-    Graph*      getGraph() { return _graph; }
+    inline Graph*       getGraph() noexcept { return _graph; }
+    inline const Graph* getGraph() const noexcept { return _graph; }
 private:
-    void        setGraph( Graph* graph ) { _graph = graph; }
-    Graph*      _graph = nullptr;
+    inline void         setGraph( Graph* graph ) noexcept { _graph = graph; }
+    Graph*              _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
@@ -543,12 +542,12 @@ public:
     auto        removeNode( const WeakNode& weakNode ) noexcept( false ) -> void;
 
     //! Return group's nodes.
-    auto        getNodes() -> const WeakNodes& { return _nodes; }
+    inline auto getNodes() noexcept -> const WeakNodes& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        hasNode( const WeakNode& node ) const -> bool;
+    auto        hasNode( const WeakNode& node ) const noexcept -> bool;
     //! Return group registered node count.
-    auto        getNodeCount( ) const -> int { return static_cast< int >( _nodes.size() ); }
+    inline auto getNodeCount( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
 private:
     WeakNodes   _nodes;
     //@}
@@ -557,11 +556,11 @@ private:
     /*! \name Adjacent Edges *///----------------------------------------------
     //@{
 public:
-    auto    getEdges() -> WeakEdgesSearch& { return _edges; }
-    auto    getEdges() const -> const WeakEdgesSearch& { return _edges; }
+    inline auto     getEdges() noexcept -> WeakEdgesSearch& { return _edges; }
+    inline auto     getEdges() const noexcept -> const WeakEdgesSearch& { return _edges; }
 
-    auto    getAdjacentEdges() -> WeakEdgesSearch& { return _adjacentEdges; }
-    auto    getAdjacentEdges() const -> const WeakEdgesSearch& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() noexcept -> WeakEdgesSearch& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() const noexcept -> const WeakEdgesSearch& { return _adjacentEdges; }
 
 protected:
     WeakEdgesSearch _edges;
@@ -611,9 +610,10 @@ public:
     using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
-    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
-    using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
-    using SharedEdges   = typename Config::template EdgeContainer< SharedEdge >;
+    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
+    using WeakEdges         = typename Config::template EdgeContainer< WeakEdge >;
+    using SharedEdges       = typename Config::template EdgeContainer< SharedEdge >;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 
     using SharedGroup   = std::shared_ptr< typename Config::Group >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
@@ -628,39 +628,41 @@ public:
 public:
     using Size  = typename SharedNodes::size_type;
 
-    GenGraph() : Config::GraphBase() { }
-    explicit GenGraph( typename Config::GraphBase* parent ) : Config::GraphBase( parent ) { }
+    GenGraph() noexcept : Config::GraphBase() { }
+    explicit GenGraph( typename Config::GraphBase* parent ) :
+        Config::GraphBase{ parent },
+        BehaviourableBase{} { }
 
     template < class B >
-    explicit GenGraph( B* parent ) : Config::GraphBase( parent ) { }
+    explicit GenGraph( B* parent ) noexcept : Config::GraphBase( parent ) { }
 
     virtual ~GenGraph();
 
-    GenGraph( GenGraph const& ) = delete;
-    GenGraph& operator=( GenGraph const& ) = delete;
+    GenGraph( const GenGraph& ) = delete;
+    GenGraph& operator=( const GenGraph& ) = delete;
 
     /*! Clear the graph from all its content (nodes, edges, groups, behaviours).
      *
      * \note Graph behaviours are cleared after the topology, if you do not want to take into account topology
      * changes when clearing the graph, disable all behaviours before calling clear().
      */
-    void    clear();
+    void    clear() noexcept;
 public:
     /*! \brief Any already inserted node could be added as a control node to prevent it destruction when clear() is called.
      *
      * Add a node as a control node when it is used as an utility in the graph and has no meaning in topology, usually
      * a control node serializable property is set to false.
      */
-    void        addControlNode( SharedNode node ) {
+    inline void         addControlNode( SharedNode node ) {
         Config::template insert< SharedNodes >::into( _controlNodes, node );
     }
-    void        removeControlNode( SharedNode node ) {
+    inline void         removeControlNode( SharedNode node ) {
         Config::template remove< SharedNodes >::from( _controlNodes, node );
     }
 public:
-    const SharedNodes&  getControlNodes() const { return _controlNodes; }
+    inline const SharedNodes&  getControlNodes() const noexcept { return _controlNodes; }
 protected:
-    SharedNodes _controlNodes;
+    SharedNodes                 _controlNodes;
     //@}
     //-------------------------------------------------------------------------
 
@@ -703,7 +705,7 @@ public:
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    virtual auto    createNode( const std::string& className ) noexcept( false ) -> WeakNode;
+    virtual WeakNode    createNode( const std::string& className ) noexcept( false );
 
     /*! Insert a node created outside of GTpo into the graph.
      *
@@ -750,19 +752,19 @@ public:
     auto    isRootNode( WeakNode node ) const noexcept( false ) -> bool;
 
     //! Use fast search container to find if a given \c node is part of this graph.
-    auto    containsNode( WeakNode node ) const noexcept -> bool;
+    auto    contains( WeakNode node ) const noexcept -> bool;
 
     //! Graph main nodes container.
-    auto    getNodes() const -> const SharedNodes& { return _nodes; }
+    inline auto     getNodes() const -> const SharedNodes& { return _nodes; }
     //! Return a const begin iterator over graph SharedNode nodes.
-    auto    begin( ) const -> typename SharedNodes::const_iterator { return _nodes.begin( ); }
+    inline auto     begin( ) const -> typename SharedNodes::const_iterator { return _nodes.begin( ); }
     //! Return a const begin iterator over graph SharedNode nodes.
-    auto    end( ) const -> typename SharedNodes::const_iterator { return _nodes.end( ); }
+    inline auto     end( ) const -> typename SharedNodes::const_iterator { return _nodes.end( ); }
 
     //! Return a const begin iterator over graph SharedNode nodes.
-    auto    cbegin() const -> typename SharedNodes::const_iterator { return _nodes.cbegin(); }
+    inline auto     cbegin() const -> typename SharedNodes::const_iterator { return _nodes.cbegin(); }
     //! Return a const end iterator over graph SharedNode nodes.
-    auto    cend() const -> typename SharedNodes::const_iterator { return _nodes.cend(); }
+    inline auto     cend() const -> typename SharedNodes::const_iterator { return _nodes.cend(); }
 
 private:
     SharedNodes         _nodes;
@@ -798,7 +800,7 @@ public:
      * \return the inserted edge (if an error occurs a gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
-    virtual auto    createEdge( const std::string& className, WeakNode source, WeakNode destination ) noexcept( false ) -> WeakEdge;
+    virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakNode destination ) noexcept( false );
 
     /*! Insert a directed edge created outside of GTpo into the graph.
      *
@@ -839,16 +841,31 @@ public:
      *
      * Worst case complexity is O(edge count).
      * \return A shared reference on edge, en empty shared reference otherwise (result == false).
-     * \throw no GTpo exception (might throw a std::bad_weak_ptr).
+     * \throw noexcept.
      */
-    auto        findEdge( WeakNode source, WeakNode destination ) const noexcept( false ) -> WeakEdge;
+    auto        findEdge( WeakNode source, WeakNode destination ) const noexcept -> WeakEdge;
     /*! \brief Test if a directed edge exists between nodes \c source and \c destination.
      *
      * This method only test a 1 degree relationship (ie a direct edge between \c source
      * and \c destination). Worst case complexity is O(edge count).
-     * \throw no GTpo exception (might throw a std::bad_weak_ptr).
+     * \throw noexcept.
      */
-    auto        hasEdge( WeakNode source, WeakNode destination ) const noexcept( false ) -> bool;
+    auto        hasEdge( WeakNode source, WeakNode destination ) const noexcept -> bool;
+    /*! \brief Look for the first directed restricted hyper edge between \c source node and \c destination edge and return it.
+     *
+     * Worst case complexity is O(edge count).
+     * \return A shared reference on edge, en empty shared reference otherwise (result == false).
+     * \throw noexcept.
+     */
+    auto        findEdge( WeakNode source, WeakEdge destination ) const noexcept -> WeakEdge;
+    /*! \brief Test if a directed restricted hyper edge exists between nodes \c source and \c destination.
+     *
+     * This method only test a 1 degree relationship (ie a direct edge between \c source
+     * and \c destination). Worst case complexity is O(edge count).
+     * \throw noexcept.
+     */
+    auto        hasEdge( WeakNode source, WeakEdge destination ) const noexcept -> bool;
+
     //! Return the number of edges currently existing in graph.
     auto        getEdgeCount( ) const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
     /*! \brief Return the number of (parallel) directed edges between nodes \c source and \c destination.
@@ -862,14 +879,14 @@ public:
      */
     auto        getEdgeCount( WeakNode source, WeakNode destination ) const noexcept( false ) -> unsigned int;
 
+    //! Use fast search container to find if a given \c edge is part of this graph.
+    auto        contains( WeakEdge edge ) const noexcept -> bool;
+
     //! Graph main edges container.
-    auto        getEdges() const -> const SharedEdges& { return _edges; }
-    //! Return a const begin iterator over graph SharedEdge edges.
-    auto        cbeginEdges() const -> typename SharedEdges::const_iterator { return _edges.cbegin(); }
-    //! Return a const end iterator over graph SharedEdge edges.
-    auto        cendEdges() const -> typename SharedEdges::const_iterator { return _edges.cend(); }
+    inline auto getEdges() const noexcept -> const SharedEdges& { return _edges; }
 private:
-    SharedEdges  _edges;
+    SharedEdges     _edges;
+    WeakEdgesSearch _edgesSearch;
     //@}
     //-------------------------------------------------------------------------
 
@@ -892,7 +909,7 @@ public:
      * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if insertion fails.
      */
-    virtual auto    createGroup( const std::string& className ) noexcept( false ) -> WeakGroup;
+    virtual WeakGroup   createGroup( const std::string& className ) noexcept( false );
 
     /*! Insert a node group into the graph.
      *
@@ -914,7 +931,7 @@ public:
     auto        hasGroup( const WeakGroup& group ) const -> bool;
 
     //! Return the number of edges currently existing in graph.
-    inline auto getGroupCount( ) const noexcept -> unsigned int { return static_cast<int>( _groups.size() ); }
+    inline auto getGroupCount( ) const noexcept -> int { return static_cast<int>( _groups.size() ); }
 
     //! Graph main edges container.
     inline auto getGroups() const noexcept -> const SharedGroups& { return _groups; }

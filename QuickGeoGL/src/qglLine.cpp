@@ -70,19 +70,21 @@ auto    Line::setP2( QPointF p2 ) noexcept -> void
 /* Qt QML Scene Graph Interface *///-------------------------------------------
 QSGNode* Line::updatePaintNode( QSGNode* oldNode, UpdatePaintNodeData* )
 {
+    //qDebug() << "qgl::Line::updatePaintNode(): this=" << this << "\toldNode=" << oldNode << "\twidth=" << width() << "\theight=" << height();
     qgl::SGLineNode* lineNode = reinterpret_cast< qgl::SGLineNode* >( oldNode );
     if ( lineNode == nullptr ) {
         lineNode = new qgl::SGLineNode{};
         setDirty(Dirty);
         _node = lineNode;
     }
-
     if ( _node != nullptr ) {
         if ( isDirty( Line::P1Dirty ) ||
              isDirty( Line::P2Dirty ) ) {
-            if ( getLineFlag(P1Valid) && getLineFlag(P2Valid) &&
-                 _line.length() > MinLength )
+            if ( getLineFlag(P1Valid) &&
+                 getLineFlag(P2Valid) &&
+                 _line.length() > MinLength ) {
                 _node->updateGeometry( _line.p1(), _line.p2() );
+            }
         }
         if ( isDirty( Line::WidthDirty ) ) {
             // FIXME: move that to SG node
@@ -102,7 +104,7 @@ QSGNode* Line::updatePaintNode( QSGNode* oldNode, UpdatePaintNodeData* )
         }
         cleanDirtyFlags();
     }
-    return lineNode;
+    return _node;
 }
 //-----------------------------------------------------------------------------
 

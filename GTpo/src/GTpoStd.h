@@ -49,43 +49,43 @@ class Group;
 template < typename Node, typename Edge, typename Group >
 struct PropertiesAccessors : public gtpo::PropertiesAccessors<Node, Edge, Group> {
     // Node accessors
-    static inline const std::string& getNodeLabel( const Node* n ) { return n->getLabel(); }
-    static inline void               setNodeLabel( Node* n, const std::string& label ) { n->setLabel( label ); }
+    static inline const std::string  getLabel( const Node* n ) noexcept { return n->getLabel(); }
+    static inline void               setLabel( Node* n, const std::string& label ) noexcept { n->setLabel( label ); }
 
-    static inline double    getNodeX( const Node* n ) { return n->getX(); }
-    static inline void      setNodeX( Node* n, double x ) { n->setX( x ); }
+    static inline double    getX( const Node* n ) noexcept { return n->getX(); }
+    static inline void      setX( Node* n, double x ) noexcept { n->setX( x ); }
 
-    static inline double    getNodeY( const Node* n ) { return n->getY(); }
-    static inline void      setNodeY( Node* n, double y ) { n->setY( y ); }
+    static inline double    getY( const Node* n ) noexcept { return n->getY(); }
+    static inline void      setNodeY( Node* n, double y ) noexcept { n->setY( y ); }
 
-    static inline double    getNodeWidth( const Node* n ) { return n->getWidth(); }
-    static inline void      setNodeWidth( Node* n, double w ) { n->setWidth( w ); }
+    static inline double    getWidth( const Node* n ) noexcept { return n->getWidth(); }
+    static inline void      setWidth( Node* n, double w ) noexcept { n->setWidth( w ); }
 
-    static inline double    getNodeHeight( const Node* n ) { return n->getHeight(); }
-    static inline void      setNodeHeight( Node* n, double h ) { n->setHeight( h ); }
+    static inline double    getHeight( const Node* n ) noexcept { return n->getHeight(); }
+    static inline void      setHeight( Node* n, double h ) noexcept { n->setHeight( h ); }
 
     // Edge accessors
-    static inline double    getEdgeWeight( const Edge* e ) { return e->getWeight(); }
-    static inline void      setEdgeWeight( Edge* e, double w ) { e->setWeight( w ); }
+    static inline double    getWeight( const Edge* e ) noexcept { return e->getWeight(); }
+    static inline void      setWeight( Edge* e, double w ) noexcept { e->setWeight( w ); }
 
     // Group accessors
-    static inline const std::string&    getGroupLabel( const Group* g ) { return g->getLabel(); }
-    static inline void                  setGroupLabel( Group* g, const std::string& l ) { g->setLabel( l ); }
+    static inline const std::string     getLabel( const Group* g ) noexcept { return g->getLabel(); }
+    static inline void                  setLabel( Group* g, const std::string& l ) noexcept { g->setLabel( l ); }
 
-    static inline double        getGroupX( const Group* g ) { return g->getX(); }
-    static inline void          setGroupX( Group* g, double x ) { g->setX( x ); }
+    static inline double        getX( const Group* g ) noexcept { return g->getX(); }
+    static inline void          setX( Group* g, double x ) noexcept { g->setX( x ); }
 
-    static inline double        getGroupY( const Group* g ) { return g->getY(); }
-    static inline void          setGroupY( Group* g, double y ) { g->setY( y ); }
+    static inline double        getY( const Group* g ) noexcept { return g->getY(); }
+    static inline void          setY( Group* g, double y ) noexcept { g->setY( y ); }
 
-    static inline double        getGroupWidth( const Group* g ) { return g->getWidth(); }
-    static inline void          setGroupWidth( Group* g, double width ) { g->setWidth( width ); }
+    static inline double        getWidth( const Group* g ) noexcept { return g->getWidth(); }
+    static inline void          setWidth( Group* g, double width ) noexcept { g->setWidth( width ); }
 
-    static inline double        getGroupHeight( const Group* g ) { return g->getHeight(); }
-    static inline void          setGroupHeight( Group* g, double height ) { g->setHeight( height ); }
+    static inline double        getHeight( const Group* g ) noexcept { return g->getHeight(); }
+    static inline void          setHeight( Group* g, double height ) noexcept { g->setHeight( height ); }
 
-    static inline bool          getGroupCollapsed( const Group* g ) { return g->getCollapsed(); }
-    static inline void          setGroupCollapsed( Group* g, bool collapsed ) { g->setCollapsed( collapsed ); }
+    static inline bool          getGroupCollapsed( const Group* g ) noexcept { return g->getCollapsed(); }
+    static inline void          setGroupCollapsed( Group* g, bool collapsed ) noexcept { g->setCollapsed( collapsed ); }
 };
 
 

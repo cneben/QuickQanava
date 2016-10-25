@@ -86,8 +86,7 @@ Q_OBJECT
 public:
     explicit Navigable( QQuickItem* parent = 0 );
     virtual ~Navigable( ) { }
-private:
-    Q_DISABLE_COPY( Navigable )
+    Navigable( const Navigable& ) = delete;
 
 public:
     /*! \brief Enable or disable navigation (navigation is enabled by default).

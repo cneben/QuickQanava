@@ -86,6 +86,62 @@ Item {
                 }
             }
         }
+    } // Frame: arrowTest1
+
+    Frame {
+        id: arrowUnitialized
+        anchors.left: parent.left;          anchors.leftMargin: 10
+        anchors.top: arrowTest1.bottom;    anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Arrow - unitialized:" }
+        Qgl.Arrow {
+            id: uninitializedArrow
+            lineWidth: 1.0
+            color: "blue"
+        }
+        Rectangle {
+            x: uninitializedArrow.x; y: uninitializedArrow.y
+            width: uninitializedArrow.width; height: uninitializedArrow.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
+    }
+    Frame {
+        id: arowZeroLength
+        anchors.left: arrowUnitialized.right;  anchors.leftMargin: 10
+        anchors.top: arrowTest1.bottom;        anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Line - zero length:" }
+        Qgl.Arrow {
+            id: zeroLengthArrow
+            lineWidth: 1.0
+            p1: Qt.point( 10.0, 40.0 )
+            p2: Qt.point( 10.0, 40.0 )
+            color: "blue"
+        }
+        Rectangle {
+            x: zeroLengthArrow.x; y: zeroLengthArrow.y
+            width: zeroLengthArrow.width; height: zeroLengthArrow.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
+    }
+    Frame {
+        id: linesOnepxLength
+        anchors.left: arowZeroLength.right;   anchors.leftMargin: 10
+        anchors.top: arrowTest1.bottom;       anchors.topMargin: 10
+        width: 200; height: 75
+        Label { Layout.fillHeight: false; text: "Qgl.Line - 1px length:" }
+        Qgl.Arrow {
+            id: onePxLengthArrow
+            lineWidth: 1.0
+            p1: Qt.point( 10.0, 40.0 )
+            p2: Qt.point( 11.0, 41.0 )
+            color: "blue"
+        }
+        Rectangle {
+            x: onePxLengthArrow.x; y: onePxLengthArrow.y
+            width: onePxLengthArrow.width; height: onePxLengthArrow.height
+            color: "transparent"; border.width: 1; border.color: "violet"
+        }
     }
 }
 

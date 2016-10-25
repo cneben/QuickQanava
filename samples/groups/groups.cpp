@@ -34,12 +34,10 @@
 using namespace qan;
 
 //-----------------------------------------------------------------------------
-MainView::MainView( ) :
-    QQuickView( )
+MainView::MainView( ) : QQuickView{}
 {
     QuickQanava::initialize();
     setSource( QUrl( "qrc:/main.qml" ) );
-    qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
 }
 
 int	main( int argc, char** argv )

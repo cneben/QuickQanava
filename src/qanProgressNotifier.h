@@ -49,13 +49,11 @@ class ProgressNotifier : public QObject,
     //@{
     Q_OBJECT
 public:
-    ProgressNotifier( QObject* parent = nullptr );
+    explicit ProgressNotifier( QObject* parent = nullptr );
     virtual ~ProgressNotifier() { }
-private:
-    Q_DISABLE_COPY( ProgressNotifier )
+    ProgressNotifier( const ProgressNotifier& ) = delete;
     //@}
     //-------------------------------------------------------------------------
-
 
     /*! \name Progress Monitoring *///-----------------------------------------
     //@{

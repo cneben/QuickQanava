@@ -53,7 +53,7 @@ class ConvexPolygonBackground : public QQuickItem
     Q_OBJECT
 public:
     explicit ConvexPolygonBackground( QQuickItem* parent = nullptr );
-    virtual ~ConvexPolygonBackground() { /*_node destroyed by its SG parent*/ }
+    virtual ~ConvexPolygonBackground() { }
     ConvexPolygonBackground( const ConvexPolygonBackground& ) = delete;
     ConvexPolygonBackground& operator=(const ConvexPolygonBackground& ) = delete;
 
@@ -116,8 +116,6 @@ private:
     //@{
 protected:
     virtual QSGNode*        updatePaintNode( QSGNode*, UpdatePaintNodeData* ) override;
-private:
-    SGConvexPolygonNode*    _node{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };
@@ -140,7 +138,7 @@ class ConvexPolygon : public QQuickItem
     Q_OBJECT
 public:
     explicit ConvexPolygon( QQuickItem* parent = nullptr );
-    virtual ~ConvexPolygon() { /*_node destroyed by its SG parent*/ }
+    virtual ~ConvexPolygon();
     ConvexPolygon( const ConvexPolygon& ) = delete;
     ConvexPolygon& operator=(const ConvexPolygon& ) = delete;
 protected slots:
@@ -172,10 +170,10 @@ signals:
 public:
     //! Polygon color, default to black.
     Q_PROPERTY( QQuickItem* background READ getBackground CONSTANT FINAL )
-    inline auto     getBackground() const noexcept -> QQuickItem* { return _background.get(); }
+    inline auto     getBackground() const noexcept -> QQuickItem* { return _background; }
 private:
     //! Polygon background.
-    std::unique_ptr<ConvexPolygonBackground>    _background{nullptr};
+    ConvexPolygonBackground*    _background{nullptr};
     //@}
     //-------------------------------------------------------------------------
 
@@ -186,14 +184,14 @@ public:
     Q_PROPERTY(ConvexPolygonBorder* border READ getBorder CONSTANT )
     inline auto     getBorder() -> ConvexPolygonBorder* { return &_border; }
 private:
-    ConvexPolygonBorder     _border{nullptr};
-    inline auto             createBorderLine() noexcept -> void;
+    ConvexPolygonBorder     _border;
+    inline auto             updateBorderLine() noexcept -> void;
 protected slots:
     void    borderColorChanged() noexcept;
     void    borderWidthChanged() noexcept;
     void    borderVisibleChanged() noexcept;
 private:
-    std::unique_ptr<qgl::PolyLine>  _borderLine{nullptr};
+    qgl::PolyLine*  _borderLine{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

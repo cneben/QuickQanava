@@ -67,8 +67,7 @@ public:
      */
     explicit Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = 0 );
     virtual ~Style( ) { }
-private:
-    Q_DISABLE_COPY( Style )
+    Style( const Style& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -144,10 +143,9 @@ public:
      * Style \c metaTarget is "qan::Node". NodeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
-    NodeStyle( QString name = "", QString target = "", QObject* parent = 0 );
+    explicit NodeStyle( QString name = "", QString target = "", QObject* parent = 0 );
     virtual ~NodeStyle( ) { }
-private:
-    Q_DISABLE_COPY( NodeStyle )
+    NodeStyle( const NodeStyle& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -231,10 +229,9 @@ public:
      * Style \c metaTarget is "qan::Edge". EdgeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
-    EdgeStyle( QString name = "", QString target = "", QObject* parent = 0 );
+    explicit EdgeStyle( QString name = "", QString target = "", QObject* parent = 0 );
     virtual ~EdgeStyle( ) { }
-private:
-    Q_DISABLE_COPY( EdgeStyle )
+    EdgeStyle( const EdgeStyle& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 

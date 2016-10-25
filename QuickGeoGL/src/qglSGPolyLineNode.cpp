@@ -45,7 +45,7 @@ const QSGGeometry::AttributeSet& SGPolyLineNode::geometryAttributes()
         QSGGeometry::Attribute::create(1, 2, GL_FLOAT ),
         QSGGeometry::Attribute::create(2, 2, GL_FLOAT )
     };
-    static QSGGeometry::AttributeSet set = { 3, 6 * sizeof( GL_FLOAT ), attr };
+    static QSGGeometry::AttributeSet set = { 3, 6 * sizeof( float ), attr };
     return set;
 }
 
@@ -54,9 +54,9 @@ SGPolyLineNode::SGPolyLineNode( const QVector<QPointF>& points ) noexcept :
 {
     setFlag( QSGNode::OwnedByParent, true );
     try {
-        _material = std::make_unique<qgl::SGPolyLineAAMaterial>();
-        setMaterial( _material.get() );
-        setFlag( QSGNode::OwnsMaterial, false );
+        _material = new qgl::SGPolyLineAAMaterial{};
+        setFlag( QSGNode::OwnsMaterial );
+        setMaterial( _material );
         markDirty( QSGNode::DirtyMaterial );
     } catch (...) { }
     createGeometry(points);
@@ -67,15 +67,15 @@ void    SGPolyLineNode::createGeometry( const QVector<QPointF>& points )
     if ( _gadget.pointCount != points.size() ||
          _gadget.points == nullptr ) {
         try {
-            _geometry = std::make_unique<QSGGeometry>( geometryAttributes( ), points.size() );
+            _geometry = new QSGGeometry{ geometryAttributes( ), points.size() };
             _geometry->setDrawingMode( GL_LINE_STRIP );
-            _geometry->setLineWidth( 2);
-            setGeometry( _geometry.get() );
-            setFlag( QSGNode::OwnsGeometry, false );
+            setFlag( QSGNode::OwnsGeometry );
+            setGeometry( _geometry );
             _gadget.pointCount = points.size();
             _gadget.points = reinterpret_cast< PolyLinePoint* >( _geometry->vertexData( ) );
             markDirty( QSGNode::DirtyGeometry );
         }  catch ( const std::bad_alloc& ) {
+            _geometry = nullptr;
             _gadget.pointCount = 0;
             _gadget.points = nullptr;
         }
@@ -114,20 +114,22 @@ void    SGPolyLineNode::updateGeometry( const QVector<QPointF>& points )
         _gadget.points[ p ].ppY = _gadget.points[ p - 1 ].y;
         _gadget.points[ p ].npX = _gadget.points[ p ].x;
         _gadget.points[ p ].npY = _gadget.points[ p ].y;
-        markDirty( QSGNode::DirtyGeometry );
-    }
-}
 
-void    SGPolyLineNode::updateClosedGeometry( bool closed )
-{
-    if ( _gadget.pointCount >= 4 &&     // A polyline with less than 4 vertices can't be closed: minimal closed polyline=[P0 - P1 - P2 - P3=P0]
-         _gadget.points != nullptr ) {
-        int p{ _gadget.pointCount - 1 };
-        // If path is closed, point 0 previous is last point, otherwise point 0 previous is point 0
-        _gadget.points[ 0 ].ppX = _gadget.points[ closed ? p-1 : 0 ].x;
-        _gadget.points[ 0 ].ppY = _gadget.points[ closed ? p-1 : 0 ].y;
-        _gadget.points[ p ].npX = _gadget.points[ closed ? 1 : p ].x;
-        _gadget.points[ p ].npY = _gadget.points[ closed ? 1 : p ].y;
+        if ( _gadget.pointCount >= 3 &&
+             _gadget.points != nullptr ) {  // Test if closing is applyied
+            const auto& first = _gadget.points[0];
+            const auto& last = _gadget.points[_gadget.pointCount-1];
+            if ( qFuzzyCompare( 1.f + first.x, 1.f + last.x ) &&
+                 qFuzzyCompare( 1.f + first.y, 1.f + last.y ) ) {
+                int p{ _gadget.pointCount - 1 };
+                // If path is closed, point 0 previous is last point, otherwise point 0 previous is point 0
+                _gadget.points[ 0 ].ppX = _gadget.points[ p-1 ].x;
+                _gadget.points[ 0 ].ppY = _gadget.points[ p-1 ].y;
+                _gadget.points[ p ].npX = _gadget.points[ 1 ].x;
+                _gadget.points[ p ].npY = _gadget.points[ 1 ].y;
+            }
+        }
+
         markDirty( QSGNode::DirtyGeometry );
     }
 }

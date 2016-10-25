@@ -40,14 +40,14 @@
 
 namespace qgl { // ::qgl
 
-class Arrow : public qgl::Line
+class Arrow : public QQuickItem
 {
     /*! \name Arrow QuickItem*///----------------------------------------------
     //@{
     Q_OBJECT
 public:
     explicit Arrow( QQuickItem* parent = nullptr );
-    ~Arrow() { }    // Non virtual
+    virtual ~Arrow();
     Arrow( const Arrow& ) = delete;
     Arrow& operator=(const Arrow& ) = delete;
 
@@ -160,9 +160,9 @@ protected:
     auto        updateCapStyle() noexcept -> void;
 
 protected:
-    std::unique_ptr<qgl::Line>          _line{nullptr};
-    std::unique_ptr<qgl::ConvexPolygon> _p1Arrow{nullptr};
-    std::unique_ptr<qgl::ConvexPolygon> _p2Arrow{nullptr};
+    qgl::Line*          _line{nullptr};
+    qgl::ConvexPolygon* _p1Arrow{nullptr};
+    qgl::ConvexPolygon* _p2Arrow{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

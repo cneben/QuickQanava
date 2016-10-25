@@ -58,7 +58,7 @@ Group::~Group( )
     }
 }
 
-qan::Graph* Group::getGraph()
+qan::Graph* Group::getGraph() noexcept
 {
     return qobject_cast<qan::Graph* >( gtpo::GenGroup< qan::Config >::getGraph() );
 }
