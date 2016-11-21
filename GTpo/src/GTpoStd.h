@@ -56,7 +56,7 @@ struct PropertiesAccessors : public gtpo::PropertiesAccessors<Node, Edge, Group>
     static inline void      setX( Node* n, double x ) noexcept { n->setX( x ); }
 
     static inline double    getY( const Node* n ) noexcept { return n->getY(); }
-    static inline void      setNodeY( Node* n, double y ) noexcept { n->setY( y ); }
+    static inline void      setY( Node* n, double y ) noexcept { n->setY( y ); }
 
     static inline double    getWidth( const Node* n ) noexcept { return n->getWidth(); }
     static inline void      setWidth( Node* n, double w ) noexcept { n->setWidth( w ); }

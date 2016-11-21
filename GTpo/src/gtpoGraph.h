@@ -327,8 +327,8 @@ public:
     inline auto setHDst( WeakEdge hDst ) noexcept -> void { _hDst = hDst; }
     inline auto getHDst() const noexcept -> const WeakEdge& { return _hDst; }
     inline auto getInHEdges() const noexcept -> const WeakEdges& { return _hInEdges; }
-    inline auto addInHEdge(WeakEdge inHEdge ) -> void;
-    inline auto removeInHEdge(WeakEdge inHEdge ) -> void;
+    inline auto addInHEdge( WeakEdge inHEdge ) -> void;
+    inline auto removeInHEdge( WeakEdge inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
 protected:
     inline auto getInHEdges() noexcept -> WeakEdges& { return _inHEdges; }
@@ -801,6 +801,9 @@ public:
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
     virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakNode destination ) noexcept( false );
+
+    //! Create a restricted directed hyperedge from \c source node to \c destination edge.
+    virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakEdge destination ) noexcept( false );
 
     /*! Insert a directed edge created outside of GTpo into the graph.
      *

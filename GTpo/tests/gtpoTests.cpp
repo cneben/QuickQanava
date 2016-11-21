@@ -467,7 +467,7 @@ TEST(GTpoTopo, removeEdgeWithHEdge)
 // GTpo serialization tests
 //-----------------------------------------------------------------------------
 
-TEST(GTpo, protobufInOut)
+TEST(GTpo, protobufNodeEdges)
 {
     gtpo::GenGraph<> go;
     auto n1 = go.createNode();
@@ -485,13 +485,39 @@ TEST(GTpo, protobufInOut)
     gtpo::GenGraph<> gi;
 
     gtpo::ProtoSerializer<> ps;
-    ps.serializeOutTo( go, std::string( "test.gtpo" ) );
-    ps.serializeInFrom( std::string( "test.gtpo" ), gi );
+    ps.serializeOutTo( go, std::string( "protobufNodeEdges.gtpo" ) );
+    ps.serializeInFrom( std::string( "protobufNodeEdges.gtpo" ), gi );
 
     EXPECT_EQ( go.getNodeCount(), gi.getNodeCount() );
     EXPECT_EQ( go.getEdges().size(), gi.getEdges().size() );
     EXPECT_EQ( go.getGroups().size(), gi.getGroups().size() );
     EXPECT_TRUE( true );
+}
+
+TEST(GTpo, protobufHEdges)
+{
+    gtpo::GenGraph<> go;
+    auto n1 = go.createNode();
+    auto n2 = go.createNode();
+    auto n3 = go.createNode();
+    auto e1 = go.createEdge(n1, n2);
+    auto he1 = go.createEdge( n3, e1 );
+    EXPECT_EQ( go.getNodeCount(), 3 );
+    EXPECT_EQ( go.getEdges().size(), 2 );
+
+    gtpo::GenGraph<> gi;
+    gtpo::ProtoSerializer<> ps;
+    ps.serializeOutTo( go, std::string( "protobufHEdges.gtpo" ) );
+    ps.serializeInFrom( std::string( "protobufHEdges.gtpo" ), gi );
+
+    EXPECT_EQ( gi.getNodeCount(), 3 );
+    EXPECT_EQ( gi.getEdges().size(), 2 );
+    if ( gi.getNodes().size() >= 3 &&
+         gi.getEdges().size() >= 2 ) {
+        auto ni3 = gi.getNodes()[2];
+        auto ei1 = gi.getEdges()[0];
+        EXPECT_TRUE( gi.hasEdge( ni3, ei1 ) );
+    } else ASSERT_TRUE( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -630,15 +656,15 @@ public:
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
 protected:
-    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
-    virtual void    groupInserted( WeakGroup& ) override { mockGroupInserted(); }
-    virtual void    groupRemoved( WeakGroup& ) override { mockGroupRemoved(); }
-    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( WeakNode& ) noexcept override { mockNodeInserted(); }
+    virtual void    nodeRemoved( WeakNode& ) noexcept override { mockNodeRemoved(); }
+    virtual void    nodeModified( WeakNode& ) noexcept override { mockNodeModified(); }
+    virtual void    edgeInserted( WeakEdge& ) noexcept override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( WeakEdge& ) noexcept override { mockEdgeRemoved(); }
+    virtual void    edgeModified( WeakEdge& ) noexcept override { mockEdgeModified(); }
+    virtual void    groupInserted( WeakGroup& ) noexcept override { mockGroupInserted(); }
+    virtual void    groupRemoved( WeakGroup& ) noexcept override { mockGroupRemoved(); }
+    virtual void    groupModified( WeakGroup& ) noexcept override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -664,13 +690,13 @@ public:
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
 protected:
-    virtual void    nodeInserted( WeakNode& ) override { mockNodeInserted(); }
-    virtual void    nodeRemoved( WeakNode& ) override { mockNodeRemoved(); }
-    virtual void    nodeModified( WeakNode& ) override { mockNodeModified(); }
-    virtual void    edgeInserted( WeakEdge& ) override { mockEdgeInserted(); }
-    virtual void    edgeRemoved( WeakEdge& ) override { mockEdgeRemoved(); }
-    virtual void    edgeModified( WeakEdge& ) override { mockEdgeModified(); }
-    virtual void    groupModified( WeakGroup& ) override { mockGroupModified(); }
+    virtual void    nodeInserted( WeakNode& ) noexcept override { mockNodeInserted(); }
+    virtual void    nodeRemoved( WeakNode& ) noexcept override { mockNodeRemoved(); }
+    virtual void    nodeModified( WeakNode& ) noexcept override { mockNodeModified(); }
+    virtual void    edgeInserted( WeakEdge& ) noexcept override { mockEdgeInserted(); }
+    virtual void    edgeRemoved( WeakEdge& ) noexcept override { mockEdgeRemoved(); }
+    virtual void    edgeModified( WeakEdge& ) noexcept override { mockEdgeModified(); }
+    virtual void    groupModified( WeakGroup& ) noexcept override { mockGroupModified(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -699,7 +725,7 @@ TEST(GTpo, stpoEchoBehaviour)
         mockBehaviour->enable();
 
         // Behaviour notify virtual methods should be called when graph topology changes
-        g.addBehaviour( mockBehaviour );
+        g.addBehaviour( std::unique_ptr<MockGraphBehaviour>(mockBehaviour) );
 
         // nodeInserted() notification
         EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));
@@ -707,7 +733,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // nodeModified() notification
         EXPECT_CALL(*mockBehaviour, mockNodeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setNodeLabel( n.lock().get(), "test" );
+        stpo::Graph::Configuration::setLabel( n.lock().get(), "test" );
 
         // nodeInserted() notification
         EXPECT_CALL(*mockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
@@ -721,7 +747,7 @@ TEST(GTpo, stpoEchoBehaviour)
 
         // edgeModified() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeModified()).Times(AtLeast(1));
-        stpo::Graph::Configuration::setEdgeWeight( e.lock().get(), 0.5 );
+        stpo::Graph::Configuration::setWeight( e.lock().get(), 0.5 );
 
         // edgeRemoved() notification
         EXPECT_CALL(*mockBehaviour, mockEdgeRemoved()).Times(AtLeast(1));
@@ -749,7 +775,7 @@ TEST(GTpo, stpoEchoBehaviour)
             using MockGroupBehaviour = GroupBehaviourMock< stpo::Graph::Configuration >;
             auto group2 = g.createGroup();
             auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
-            group2.lock()->addBehaviour( groupMockBehaviour );
+            group2.lock()->addBehaviour( std::unique_ptr<MockGroupBehaviour>(groupMockBehaviour) );
 
             // nodeInserted() notification
             EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(AtLeast(1));

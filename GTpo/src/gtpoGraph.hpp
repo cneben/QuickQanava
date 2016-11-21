@@ -228,8 +228,8 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
 {
     auto sourcePtr = source.lock();
     auto destinationPtr = destination.lock();
-    if ( sourcePtr == nullptr ||
-         destinationPtr == nullptr )
+    if ( !sourcePtr ||
+         !destinationPtr )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Edge): Insertion of edge failed, either source node and/or destination edge is expired." );
 
     auto edge = std::make_shared< typename Config::Edge >();
@@ -237,7 +237,9 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
     Config::template insert< SharedEdges >::into( _edges, edge );
     Config::template insert< WeakEdgesSearch >::into( _edgesSearch, edge );
     edge->setSrc( source );
+    std::cerr << "destination.get()=" << destinationPtr.get() << std::endl;
     edge->setHDst( destination );
+    std::cerr << "edge->getHDst().expired()=" << edge->getHDst().expired() << std::endl;
     try {
         sourcePtr->addOutEdge( edge );
         destinationPtr->addInHEdge( edge );
@@ -252,9 +254,13 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
 template < class Config >
 typename GenGraph< Config >::WeakEdge    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakNode dst ) noexcept( false )
 {
-    if ( className == "gtpo::Edge" )
-        return createEdge( src, dst );
-    return WeakEdge{};
+    return ( className == "gtpo::Edge" ) ? createEdge( src, dst ) : WeakEdge{};
+}
+
+template < class Config >
+typename GenGraph< Config >::WeakEdge    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakEdge dst ) noexcept( false )
+{
+    return ( className == "gtpo::Edge" ) ? createEdge( src, dst ) : WeakEdge{};
 }
 
 template < class Config >
@@ -290,19 +296,19 @@ auto    GenGraph< Config >::insertEdge( SharedEdge edge ) -> WeakEdge
 template < class Config >
 void    GenGraph< Config >::removeEdge( WeakNode source, WeakNode destination )
 {
-    if ( source.expired() || destination.expired() )
+    if ( source.expired() ||
+         destination.expired() )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::removeEdge(): Topology error." );
 
     // Find the edge associed with source / destination
-    auto edgeIter = _edges.end();
-    if ( _edges.begin() != _edges.end( ) ) {
-        edgeIter = std::find_if( _edges.begin(), _edges.end(),
+    if ( _edges.size() == 0 )
+        return; // Fast exit
+    auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
                                  [=](const SharedEdge& e ){
                                     return ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                              compare_weak_ptr<>( e->getDst(), destination ) );
                                     }
-        );
-    }
+                                 ); // std::find_if
     if ( edgeIter != _edges.end() )
         removeEdge( *edgeIter );
 }

@@ -41,33 +41,34 @@
 class EchoBehaviour : public stpo::Graph::Behaviour
 {
 public:
-    void    nodeInserted( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeInserted() node=" << node.lock() << std::endl; }
-    void    nodeRemoved( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeRemoved() node=" << node.lock() << std::endl; }
-    void    nodeModified( stpo::Graph::WeakNode& node ) override { std::cout << "EchoBehaviour::nodeModified() node=" << node.lock() << std::endl; }
-    void    edgeInserted( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeInserted() edge=" << edge.lock() << std::endl; }
-    void    edgeRemoved( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeRemoved() edge=" << edge.lock() << std::endl; }
-    void    edgeModified( stpo::Graph::WeakEdge& edge ) override { std::cout << "EchoBehaviour::edgeModified() edge=" << edge.lock() << std::endl; }
+    virtual void    nodeInserted( stpo::Graph::WeakNode& node ) noexcept override { std::cout << "EchoBehaviour::nodeInserted() node=" << node.lock() << std::endl; }
+    virtual void    nodeRemoved( stpo::Graph::WeakNode& node ) noexcept override { std::cout << "EchoBehaviour::nodeRemoved() node=" << node.lock() << std::endl; }
+    virtual void    nodeModified( stpo::Graph::WeakNode& node ) noexcept override { std::cout << "EchoBehaviour::nodeModified() node=" << node.lock() << std::endl; }
+    virtual void    edgeInserted( stpo::Graph::WeakEdge& edge ) noexcept override { std::cout << "EchoBehaviour::edgeInserted() edge=" << edge.lock() << std::endl; }
+    virtual void    edgeRemoved( stpo::Graph::WeakEdge& edge ) noexcept override { std::cout << "EchoBehaviour::edgeRemoved() edge=" << edge.lock() << std::endl; }
+    virtual void    edgeModified( stpo::Graph::WeakEdge& edge ) noexcept override { std::cout << "EchoBehaviour::edgeModified() edge=" << edge.lock() << std::endl; }
 };
 
 int	main( int /*argc*/, char** /*argv*/ )
 {
     stpo::Graph sg;
 
-    auto echoBehaviour = std::make_unique< EchoBehaviour >( );
-    sg.addBehaviour( echoBehaviour.release() );
+    auto echoBehaviour = std::make_unique< EchoBehaviour >();
+    // FIXME....
+    //sg.addBehaviour( echoBehaviour );
 
     std::cout << "Expecting nodeInserted() call" << std::endl;
     auto n1 = sg.createNode();
-    stpo::Graph::SharedNode sharedN1 = n1.lock();
-    if ( sharedN1 ) {
+    stpo::Graph::SharedNode n1Ptr = n1.lock();
+    if ( n1Ptr ) {
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::Config::setNodeX( sharedN1.get(), 1.0 );
+        stpo::Config::setX( n1Ptr.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::Config::setNodeY( sharedN1.get(), 1.0 );
+        stpo::Config::setY( n1Ptr.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::Config::setNodeWidth( sharedN1.get(), 1.0 );
+        stpo::Config::setWidth( n1Ptr.get(), 1.0 );
         std::cout << "Expecting nodeModified() call" << std::endl;
-        stpo::Config::setNodeHeight( sharedN1.get(), 1.0 );
+        stpo::Config::setHeight( n1Ptr.get(), 1.0 );
     }
 
     std::cout << "Expecting nodeInserted() call" << std::endl;
@@ -77,8 +78,8 @@ int	main( int /*argc*/, char** /*argv*/ )
     std::cout << "Expecting edgeInserted() call" << std::endl;
     auto e1 = sg.createEdge( n1, n2 );
     std::cout << "Expecting edgeModified() call" << std::endl;
-    stpo::Graph::SharedEdge sharedE1 = e1.lock();
-    stpo::Config::setEdgeWeight( sharedE1.get(), 1.0 );
+    stpo::Graph::SharedEdge e1Ptr = e1.lock();
+    stpo::Config::setWeight( e1Ptr.get(), 1.0 );
 
     std::cout << "Expecting edgeRemoved() call" << std::endl;
     sg.removeEdge( e1 );

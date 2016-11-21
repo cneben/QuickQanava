@@ -37,11 +37,28 @@ Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem( parent )
 {
     _containerItem = new QQuickItem( this );
-    //_containerItem->setSmooth(true);
-    //_containerItem->setAntialiasing(true);
-
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
+}
+
+void    Navigable::centerOn( QQuickItem* item )
+{
+    // Algorithm:
+        // 1. Project navigable view center in container item CS.
+        // 2. Compute vector from navigable view center to item center in container item CS.
+        // 3. Translate container by (-) this vector.
+    qDebug() << "qan::Navigable::centerOn(): item=" << item;
+    if ( _containerItem == nullptr ||
+         item == nullptr )
+        return;
+    if ( item->parentItem() != getContainerItem() )
+        return;
+    QPointF navigableCenter{ width() / 2., height() / 2. };
+    QPointF navigableCenterContainerCs = mapToItem( _containerItem, navigableCenter );
+    QPointF itemCenterContainerCs{ item->mapToItem( _containerItem, QPointF{ item->width() / 2., item->height() / 2. } ) };
+    QPointF translation{ navigableCenterContainerCs - itemCenterContainerCs };
+    _containerItem->setPosition( QPointF{ _containerItem->x() + translation.x(),
+                                          _containerItem->y() + translation.y() } );
 }
 
 void    Navigable::fitInView( )

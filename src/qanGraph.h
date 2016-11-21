@@ -359,8 +359,11 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     qan::Edge*              insertEdge( QString edgeClassName, qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
-    //! Defined for serialization support, do not use.
+    //! Defined for serialization support, do not use, not part of public API.
     virtual WeakEdge        createEdge( const std::string& className, WeakNode source, WeakNode destination  ) override;
+
+    //! Defined for serialization support, do not use, not part of public API.
+    virtual WeakEdge        createEdge( const std::string& className, WeakNode source, WeakEdge destination  ) override;
 
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
     Q_INVOKABLE void        removeEdge( qan::Node* source, qan::Node* destination );

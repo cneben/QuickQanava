@@ -136,6 +136,9 @@ signals:
     void    containerItemChanged( ); // Never used, avoid a QML warning
 
 public:
+    //! Center the view on a given child item (zoom level is not modified).
+    Q_INVOKABLE void    centerOn( QQuickItem* item );
+
     /*! Fit the area content (\c containerItem childs) in view and update current zoom level.
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.

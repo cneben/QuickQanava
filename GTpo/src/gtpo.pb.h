@@ -282,6 +282,12 @@ class Edge : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   double z() const;
   void set_z(double value);
 
+  // optional int32 dst_edge_id = 6;
+  void clear_dst_edge_id();
+  static const int kDstEdgeIdFieldNumber = 6;
+  ::google::protobuf::int32 dst_edge_id() const;
+  void set_dst_edge_id(::google::protobuf::int32 value);
+
   // optional .google.protobuf.Any user1 = 42;
   bool has_user1() const;
   void clear_user1();
@@ -299,9 +305,10 @@ class Edge : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::google::protobuf::int32 edge_id_;
   ::google::protobuf::int32 src_node_id_;
   double weight_;
+  ::google::protobuf::int32 dst_node_id_;
+  ::google::protobuf::int32 dst_edge_id_;
   double z_;
   ::google::protobuf::Any* user1_;
-  ::google::protobuf::int32 dst_node_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_gtpo_2eproto();
   friend void protobuf_AssignDesc_gtpo_2eproto();
@@ -933,6 +940,20 @@ inline void Edge::set_z(double value) {
   
   z_ = value;
   // @@protoc_insertion_point(field_set:gtpo.pb.Edge.z)
+}
+
+// optional int32 dst_edge_id = 6;
+inline void Edge::clear_dst_edge_id() {
+  dst_edge_id_ = 0;
+}
+inline ::google::protobuf::int32 Edge::dst_edge_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.dst_edge_id)
+  return dst_edge_id_;
+}
+inline void Edge::set_dst_edge_id(::google::protobuf::int32 value) {
+  
+  dst_edge_id_ = value;
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.dst_edge_id)
 }
 
 // optional .google.protobuf.Any user1 = 42;

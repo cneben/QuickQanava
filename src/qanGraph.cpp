@@ -630,9 +630,23 @@ Graph::WeakEdge    Graph::createEdge( const std::string& className, WeakNode sou
     qan::Node* src = static_cast< qan::Node* >( source.lock().get() );
     qan::Node* dst = static_cast< qan::Node* >( destination.lock().get() );
     qan::Edge* edge = nullptr;
-    if ( src != nullptr && dst != nullptr )
+    if ( src != nullptr &&
+         dst != nullptr )
         edge = insertEdge( QString::fromStdString( className ), src, dst );
     return ( edge != nullptr ? edge->shared_from_this() : WeakEdge() ); // Note 20160213: shared_from_this() could be used since the edge has already been added to graph, it
+}
+
+Graph::WeakEdge    Graph::createEdge( const std::string& className, WeakNode source, WeakEdge destination )
+{
+    if ( className.size() == 0 )
+        return WeakEdge();
+    auto src = static_cast< qan::Node* >( source.lock().get() );
+    auto dst = static_cast< qan::Edge* >( destination.lock().get() );
+    qan::Edge* edge = nullptr;
+    if ( src != nullptr &&
+         dst != nullptr )
+        edge = insertEdge( QString::fromStdString( className ), src, dst );
+    return ( edge != nullptr ? edge->shared_from_this() : WeakEdge() );
 }
 
 void    Graph::removeEdge( qan::Node* source, qan::Node* destination )

@@ -96,7 +96,7 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
             gtpo::pb::Edge pbEdge;
             serializeGTpoEdgeOut( edge, pbEdge, objectIdMap );
             anyEdges->PackFrom( pbEdge );
-            return false;
+            return true;
         } );
 
     registerEdgeInFunctor( [=](  const google::protobuf::Any& anyEdge,
@@ -107,16 +107,26 @@ ProtoSerializer< GraphConfig >::ProtoSerializer( std::string nodeDefaultName ,
                 if ( anyEdge.Is< gtpo::pb::Edge >() ) {
                     gtpo::pb::Edge pbEdge;
                     if ( anyEdge.UnpackTo( &pbEdge ) ) {
-                        void* sourceObject = idObjectMap.at( pbEdge.src_node_id() );
-                        void* destinationObject = idObjectMap.at( pbEdge.dst_node_id() );
-                        if ( sourceObject != nullptr &&
-                             destinationObject != nullptr ) {
-                            WeakNode source       = reinterpret_cast< typename GraphConfig::Node* >( sourceObject )->shared_from_this();
-                            WeakNode destination  = reinterpret_cast< typename GraphConfig::Node* >( destinationObject )->shared_from_this();
-                            weakEdge = graph.createEdge( getEdgeDefaultName(), source, destination );
-                            if ( !weakEdge.expired() )
-                                serializeGTpoEdgeIn( pbEdge, weakEdge, idObjectMap );
-                        }
+                        auto source = reinterpret_cast< typename GraphConfig::Node* >( idObjectMap.at( pbEdge.src_node_id() ) )->shared_from_this();
+                        if ( source ) {
+                            if ( pbEdge.dst_node_id() != -1 ) {
+                                auto destinationNode  = reinterpret_cast< typename GraphConfig::Node* >( idObjectMap.at( pbEdge.dst_node_id() ) )->shared_from_this();
+                                if ( destinationNode )                          // Restricted directed edge
+                                    weakEdge = graph.createEdge( getEdgeDefaultName(), source, destinationNode );
+                            } else if ( pbEdge.dst_edge_id() != -1 ) {      // Restricted hyper edge
+                                auto destinationEdge  = reinterpret_cast< typename GraphConfig::Edge* >( idObjectMap.at( pbEdge.dst_edge_id() ) )->shared_from_this();
+                                if ( destinationEdge ) {
+                                    std::cerr << "serializing hedge in..." << std::endl;
+                                    std::cerr << "\tdestinationEdge.get()=" << destinationEdge.get() << std::endl;
+                                    weakEdge = graph.createEdge( getEdgeDefaultName(), source, destinationEdge );
+                                    std::cerr << "\tweakEdge.expired()=" << weakEdge.expired() << std::endl;
+                                    std::cerr << "\tweakEdge.lock()->getHDst().expired()=" << weakEdge.lock()->getHDst().expired() << std::endl;
+                                    std::cerr << "\tweakEdge.lock()->getHDst().lock().get()=" << weakEdge.lock()->getHDst().lock().get() << std::endl;
+                                }
+                            }
+                        } // if source valid
+                        if ( !weakEdge.expired() )
+                            serializeGTpoEdgeIn( pbEdge, weakEdge, idObjectMap );
                     }
                 }
             } catch ( const std::out_of_range& ) { return WeakEdge{}; /* Critical, return empty weakEdge */ }
@@ -235,7 +245,8 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     for ( const auto& edge: graph.getEdges() ) {  // Serialize edges
         const auto& edgeOutFunctor = _edgeOutFunctors.find( edge->getClassName() );
         if ( edgeOutFunctor != _edgeOutFunctors.end() ) {
-            if ( ( edgeOutFunctor->second ) && ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
+            if ( ( edgeOutFunctor->second ) &&
+                 ( edgeOutFunctor->second )( pbGraph.add_edges(), edge, objectIdMap ) ) {
                 ++serializedEdgeCout;
                 edgesProgress.setProgress( ++primitive / primitiveCount );
             }
@@ -248,9 +259,9 @@ auto    ProtoSerializer< GraphConfig >::serializeOut( const Graph& graph,
     pbGraph.set_edge_count( ( int )graph.getEdges().size() );
     pbGraph.set_group_count( ( int )graph.getGroups().size() );
 
-    if ( ( serializedNodeCout + nonSerializableNodeCount ) != (int)graph.getNodeCount() ) // Report errors
+    if ( ( serializedNodeCout + nonSerializableNodeCount ) != static_cast<int>( graph.getNodeCount() ) ) // Report errors
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << ( serializedNodeCout + nonSerializableNodeCount ) << " nodes serialized while there is " << graph.getNodeCount() << " nodes in graph" << std::endl;
-    if ( serializedEdgeCout != (int)graph.getEdges().size() )
+    if ( serializedEdgeCout != static_cast<int>( graph.getEdges().size() ) )
         std::cerr << "gtpo::ProtoSerializer::serializeOut(): Only " << serializedEdgeCout << " edges serialized while there is " << graph.getEdges().size() << " edges in graph" << std::endl;
 
     progress.endProgress();
@@ -288,31 +299,29 @@ void    ProtoSerializer< GraphConfig >::serializeGTpoEdgeOut( const WeakEdge& we
         std::cerr << "ProtoSerializer<>::serializeGTpoEdgeOut(): Warning: Method called with an empty object ID map." << std::endl;
         return;
     }
-    int srcNodeId = -1;
-    int dstNodeId = -1;
     try {
         SharedEdge sharedEdge = weakEdge.lock();
-        if ( sharedEdge == nullptr )
+        if ( !sharedEdge )
             return;
         pbEdge.set_weight( GraphConfig::getWeight( sharedEdge.get() ) );
         pbEdge.set_z( GraphConfig::getZ( sharedEdge.get() ) );
-        int edgeId = -1;
-        try {
-            edgeId = objectIdMap.at( sharedEdge.get() );
-        } catch ( const std::out_of_range& ) { /* non critical */ }
+        int edgeId = objectIdMap.at( sharedEdge.get() );    // Throw
         pbEdge.set_edge_id( edgeId );
+        pbEdge.set_src_node_id(-1); // Default invalid values are necessary for in serialization
+        pbEdge.set_dst_node_id(-1);
+        pbEdge.set_dst_edge_id(-1);
         SharedNode srcNode = sharedEdge->getSrc().lock();
-        SharedNode dstNode = sharedEdge->getDst().lock();
-        if ( !srcNode ||
-             !dstNode )
-            return;
-        srcNodeId = objectIdMap.at( srcNode.get() );
-        dstNodeId = objectIdMap.at( dstNode.get() );
-        if ( srcNodeId != -1 &&
-             dstNodeId != -1 ) {
-            pbEdge.set_src_node_id(srcNodeId);
-            pbEdge.set_dst_node_id(dstNodeId);
-        }
+        if ( srcNode ) {
+            pbEdge.set_src_node_id(objectIdMap.at( srcNode.get() ));
+            SharedNode dstNode = sharedEdge->getDst().lock();
+            if ( dstNode )    // Regular node to node edge
+                pbEdge.set_dst_node_id(objectIdMap.at( dstNode.get() ));
+            else {              // Restricted hyper edge
+                auto dstEdge = sharedEdge->getHDst().lock();
+                if ( dstEdge )
+                    pbEdge.set_dst_edge_id(objectIdMap.at( dstEdge.get() ));
+            }
+        } // srcNode valid
     } catch( const std::out_of_range& ) { /* non critical */ }
       catch( const std::bad_weak_ptr& ) { /* non critical */ }
 }

@@ -22,6 +22,7 @@ message Edge {
     int32   dst_node_id = 3;
     double  weight      = 4;
     double  z           = 5;
+    int32   dst_edge_id = 6;
 
     google.protobuf.Any user1   = 42;  // Reserved for user extensions
 }

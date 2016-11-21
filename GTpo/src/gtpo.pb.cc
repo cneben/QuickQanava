@@ -72,12 +72,13 @@ void protobuf_AssignDesc_gtpo_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _is_default_instance_));
   Edge_descriptor_ = file->message_type(1);
-  static const int Edge_offsets_[6] = {
+  static const int Edge_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, edge_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, src_node_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, dst_node_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, weight_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, z_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, dst_edge_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Edge, user1_),
   };
   Edge_reflection_ =
@@ -202,19 +203,20 @@ void protobuf_AddDesc_gtpo_2eproto() {
     "bel\030\002 \001(\t\022\t\n\001x\030\003 \001(\001\022\t\n\001y\030\004 \001(\001\022\t\n\001z\030\005 \001"
     "(\001\022\r\n\005width\030\006 \001(\001\022\016\n\006height\030\007 \001(\001\022\020\n\010gro"
     "up_id\030\010 \001(\005\022#\n\005user1\030* \001(\0132\024.google.prot"
-    "obuf.Any\"\201\001\n\004Edge\022\017\n\007edge_id\030\001 \001(\005\022\023\n\013sr"
+    "obuf.Any\"\226\001\n\004Edge\022\017\n\007edge_id\030\001 \001(\005\022\023\n\013sr"
     "c_node_id\030\002 \001(\005\022\023\n\013dst_node_id\030\003 \001(\005\022\016\n\006"
-    "weight\030\004 \001(\001\022\t\n\001z\030\005 \001(\001\022#\n\005user1\030* \001(\0132\024"
-    ".google.protobuf.Any\"\237\001\n\005Group\022\020\n\010group_"
-    "id\030\001 \001(\005\022\r\n\005label\030\002 \001(\t\022\t\n\001x\030\003 \001(\001\022\t\n\001y\030"
-    "\004 \001(\001\022\t\n\001z\030\005 \001(\001\022\r\n\005width\030\006 \001(\001\022\016\n\006heigh"
-    "t\030\007 \001(\001\022\020\n\010node_ids\030\014 \003(\005\022#\n\005user1\030* \001(\013"
-    "2\024.google.protobuf.Any\"\006\n\004Void\"\264\001\n\005Graph"
-    "\022\022\n\nnode_count\030\001 \001(\005\022\022\n\nedge_count\030\002 \001(\005"
-    "\022\023\n\013group_count\030\003 \001(\005\022#\n\005nodes\030\014 \003(\0132\024.g"
-    "oogle.protobuf.Any\022#\n\005edges\030\r \003(\0132\024.goog"
-    "le.protobuf.Any\022$\n\006groups\030\016 \003(\0132\024.google"
-    ".protobuf.Anyb\006proto3", 701);
+    "weight\030\004 \001(\001\022\t\n\001z\030\005 \001(\001\022\023\n\013dst_edge_id\030\006"
+    " \001(\005\022#\n\005user1\030* \001(\0132\024.google.protobuf.An"
+    "y\"\237\001\n\005Group\022\020\n\010group_id\030\001 \001(\005\022\r\n\005label\030\002"
+    " \001(\t\022\t\n\001x\030\003 \001(\001\022\t\n\001y\030\004 \001(\001\022\t\n\001z\030\005 \001(\001\022\r\n"
+    "\005width\030\006 \001(\001\022\016\n\006height\030\007 \001(\001\022\020\n\010node_ids"
+    "\030\014 \003(\005\022#\n\005user1\030* \001(\0132\024.google.protobuf."
+    "Any\"\006\n\004Void\"\264\001\n\005Graph\022\022\n\nnode_count\030\001 \001("
+    "\005\022\022\n\nedge_count\030\002 \001(\005\022\023\n\013group_count\030\003 \001"
+    "(\005\022#\n\005nodes\030\014 \003(\0132\024.google.protobuf.Any\022"
+    "#\n\005edges\030\r \003(\0132\024.google.protobuf.Any\022$\n\006"
+    "groups\030\016 \003(\0132\024.google.protobuf.Anyb\006prot"
+    "o3", 722);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "gtpo.proto", &protobuf_RegisterTypes);
   Node::default_instance_ = new Node();
@@ -985,6 +987,7 @@ const int Edge::kSrcNodeIdFieldNumber;
 const int Edge::kDstNodeIdFieldNumber;
 const int Edge::kWeightFieldNumber;
 const int Edge::kZFieldNumber;
+const int Edge::kDstEdgeIdFieldNumber;
 const int Edge::kUser1FieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1015,6 +1018,7 @@ void Edge::SharedCtor() {
   dst_node_id_ = 0;
   weight_ = 0;
   z_ = 0;
+  dst_edge_id_ = 0;
   user1_ = NULL;
 }
 
@@ -1073,7 +1077,6 @@ void Edge::Clear() {
 } while (0)
 
   ZR_(edge_id_, z_);
-  dst_node_id_ = 0;
   if (GetArenaNoVirtual() == NULL && user1_ != NULL) delete user1_;
   user1_ = NULL;
 
@@ -1162,6 +1165,21 @@ bool Edge::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(48)) goto parse_dst_edge_id;
+        break;
+      }
+
+      // optional int32 dst_edge_id = 6;
+      case 6: {
+        if (tag == 48) {
+         parse_dst_edge_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &dst_edge_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectTag(338)) goto parse_user1;
         break;
       }
@@ -1228,6 +1246,11 @@ void Edge::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->z(), output);
   }
 
+  // optional int32 dst_edge_id = 6;
+  if (this->dst_edge_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->dst_edge_id(), output);
+  }
+
   // optional .google.protobuf.Any user1 = 42;
   if (this->has_user1()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
@@ -1263,6 +1286,11 @@ void Edge::SerializeWithCachedSizes(
   // optional double z = 5;
   if (this->z() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->z(), target);
+  }
+
+  // optional int32 dst_edge_id = 6;
+  if (this->dst_edge_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->dst_edge_id(), target);
   }
 
   // optional .google.protobuf.Any user1 = 42;
@@ -1309,6 +1337,13 @@ int Edge::ByteSize() const {
   // optional double z = 5;
   if (this->z() != 0) {
     total_size += 1 + 8;
+  }
+
+  // optional int32 dst_edge_id = 6;
+  if (this->dst_edge_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->dst_edge_id());
   }
 
   // optional .google.protobuf.Any user1 = 42;
@@ -1361,6 +1396,9 @@ void Edge::MergeFrom(const Edge& from) {
   if (from.z() != 0) {
     set_z(from.z());
   }
+  if (from.dst_edge_id() != 0) {
+    set_dst_edge_id(from.dst_edge_id());
+  }
   if (from.has_user1()) {
     mutable_user1()->::google::protobuf::Any::MergeFrom(from.user1());
   }
@@ -1395,6 +1433,7 @@ void Edge::InternalSwap(Edge* other) {
   std::swap(dst_node_id_, other->dst_node_id_);
   std::swap(weight_, other->weight_);
   std::swap(z_, other->z_);
+  std::swap(dst_edge_id_, other->dst_edge_id_);
   std::swap(user1_, other->user1_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -1479,6 +1518,20 @@ void Edge::clear_z() {
   
   z_ = value;
   // @@protoc_insertion_point(field_set:gtpo.pb.Edge.z)
+}
+
+// optional int32 dst_edge_id = 6;
+void Edge::clear_dst_edge_id() {
+  dst_edge_id_ = 0;
+}
+ ::google::protobuf::int32 Edge::dst_edge_id() const {
+  // @@protoc_insertion_point(field_get:gtpo.pb.Edge.dst_edge_id)
+  return dst_edge_id_;
+}
+ void Edge::set_dst_edge_id(::google::protobuf::int32 value) {
+  
+  dst_edge_id_ = value;
+  // @@protoc_insertion_point(field_set:gtpo.pb.Edge.dst_edge_id)
 }
 
 // optional .google.protobuf.Any user1 = 42;
