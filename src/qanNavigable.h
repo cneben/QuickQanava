@@ -274,7 +274,10 @@ signals:
     void        zoomMinChanged( );
 
 signals:
-    //! Emitted whenever the mouse is right clicked in the containe.
+    //! Emitted whenever the mouse is clicked in the container.
+    void    clicked( QVariant pos );
+
+    //! Emitted whenever the mouse is right clicked in the container.
     void    rightClicked( QVariant pos );
 
     //! Emitted whenever the container item is scaled (zoomed) or panned.

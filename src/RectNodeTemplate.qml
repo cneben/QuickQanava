@@ -36,7 +36,7 @@ import QuickQanava 2.0 as Qan
  */
 Item {
     id: template
-    property         var    node
+    property         var    node: undefined
     default property alias  children : contentLayout.children
 
     onWidthChanged: { if ( node ) node.setDefaultBoundingShape() }

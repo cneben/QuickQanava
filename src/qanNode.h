@@ -68,7 +68,7 @@ public:
     virtual ~Node( );
     Node( const Node& ) = delete;
 public:
-    auto                getClassName() const noexcept -> std::string { return getDynamicClassName(); }
+    inline auto         getClassName() const noexcept -> std::string { return getDynamicClassName(); }
     virtual std::string getDynamicClassName() const noexcept { return "qan::Node"; }
 public:
     //! Shortcut to gtpo::GenNode<>::getGraph().
@@ -103,17 +103,18 @@ signals:
 
 public:
     //! Read-only abstract item model of this node in nodes.
-    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes NOTIFY inNodesChanged FINAL )
+    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
     QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInNodes() ) ); }
-signals:
-    void                inNodesChanged( );
 
 public:
     //! Read-only abstract item model of this node out nodes.
-    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes NOTIFY outNodesChanged FINAL )
+    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes CONSTANT FINAL )
     QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &getOutNodes() ) ); }
-signals:
-    void                outNodesChanged();
+
+public:
+    //! Read-only abstract item model of this node out nodes.
+    Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
+    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &getOutEdges() ) ); }
     //@}
     //-------------------------------------------------------------------------
 

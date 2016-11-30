@@ -2,7 +2,7 @@ TEMPLATE	= app
 TARGET		= test-style
 CONFIG		+= qt warn_on thread c++14
 DEFINES		+= QANAVA  
-QT              += widgets core gui qml quick charts
+QT              += widgets core gui qml quick charts quickcontrols2
 
 INCLUDEPATH     +=  ../../src
 

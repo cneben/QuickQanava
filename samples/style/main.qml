@@ -17,11 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 2.5
-import QtQuick.Extras 1.4
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.2
-import QtQuick.Dialogs 1.2
+import QtQuick          2.7
+import QtQuick.Extras   1.4
+import QtQuick.Controls 2.0
+import QtQuick.Layouts  1.3
+import QtQuick.Dialogs  1.2
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -29,42 +29,61 @@ import "qrc:/QuickProperties" as Qps
 
 Item {
     anchors.fill: parent
-    property alias nodeDelegate : topology.nodeDelegate
 
-    Dialog {
+    /*Qan.Edge {
+        id: edge
+        anchors.centerIn: parent; width: 150; height: 55
+        label: "Qan.Edge"
+        onWidthChanged: {
+            edge.p1 = Qt.point( 0, 0 )
+            edge.p2 = Qt.point( 35, 10 )
+            //edge.p1 = Qt.point( 10, previewHeight / 2 );
+            //edge.p2 = Qt.point( width - 10, previewHeight / 2 );
+        }
+        //style: styleProperties
+        //Drag.active: mouseArea.drag.active
+        //Drag.dragType: Drag.Automatic; Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
+        acceptDrops: false // Don't allow style DnD inside style browser
+    }*/
+
+    Popup {
         id: styleSelectionDialog
+        x: ( parent.width - width ) / 2.
+        y: ( parent.height - height) / 2.
+        width: 350; height: 300
         visible: false
-        title: "Select Node Style"
+        modal: true
         property var targetNode: undefined
         property var styleToApply: undefined
-        contentItem: Item {
-            implicitWidth: 350; implicitHeight: 300
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 4
-                Qan.StyleListView {
-                    Layout.fillWidth: true; Layout.fillHeight: true
-                    id: nodeStyleList
-                    graph: topology
-                    model: topology.styleManager.nodeStylesModel
-                    onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
-                    onStyleClicked: { styleSelectionDialog.styleToApply = style }
-                }
-                Button {
-                    Layout.alignment: Qt.AlignRight
-                    text: "Apply"
-                    enabled: styleSelectionDialog.styleToApply !== undefined
-                    onClicked: {
-                        if ( styleSelectionDialog.styleToApply &&
-                             styleSelectionDialog.targetNode )
-                                styleSelectionDialog.targetNode.style = styleSelectionDialog.styleToApply
-                        styleSelectionDialog.targetNode = undefined
-                        styleSelectionDialog.styleToApply = undefined
-                        styleSelectionDialog.close()
-                    }
+        ColumnLayout {
+            anchors.fill: parent; anchors.margins: 4
+            Label {
+                text: "Select Node Style:"
+                font.bold: true
+            }
+            Qan.StyleListView {
+                Layout.fillWidth: true; Layout.fillHeight: true
+                id: nodeStyleList
+                graph: graph
+                model: graph.styleManager.nodeStylesModel
+                onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
+                onStyleClicked: { styleSelectionDialog.styleToApply = style }
+            }
+            Button {
+                Layout.alignment: Qt.AlignRight
+                text: "Apply"
+                enabled: styleSelectionDialog.styleToApply !== undefined
+                onClicked: {
+                    if ( styleSelectionDialog.styleToApply &&
+                            styleSelectionDialog.targetNode )
+                        styleSelectionDialog.targetNode.style = styleSelectionDialog.styleToApply
+                    styleSelectionDialog.targetNode = undefined
+                    styleSelectionDialog.styleToApply = undefined
+                    styleSelectionDialog.close()
                 }
             }
         }
-    } // Dialog: styleSelectionDialog
+    } // Popup: styleSelectionDialog
     Qan.ProgressNotifier { // Empty progress notifier
         id: progressNotifier
         onShowProgress: { }
@@ -88,12 +107,13 @@ Item {
             qanSerializer.saveGraphTo( graph, saveGraphAsDialog.fileUrls, progressNotifier )
         }
     }
-
     Menu {
         id: menu
         title: "Main Menu"
+        closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
         property var targetNode: undefined
         property var targetEdge: undefined
+        onClosed: { targetNode = undefined; targetEdge = undefined }
         MenuItem {
             text: "Load"
             onTriggered: { openGraphDialog.open() }
@@ -104,7 +124,7 @@ Item {
         }
         MenuItem {
             text: "Clear all styles"
-            onTriggered: { topology.styleManager.clear(); }
+            onTriggered: { graph.styleManager.clear(); }
         }
         MenuItem {
             text: "Add new style"
@@ -112,97 +132,101 @@ Item {
         }
         MenuItem {
             text: "Select node style"
-            enabled: menu.targetNode !== undefined && menu.targetNode !== null
-            onTriggered: { styleSelectionDialog.targetNode = menu.targetNode; styleSelectionDialog.open() }
+            enabled: menu.targetNode !== undefined &&
+                     menu.targetNode !== null
+            onTriggered: {
+                styleSelectionDialog.targetNode = menu.targetNode
+                styleSelectionDialog.open()
+            }
         }
         MenuItem {
             text: "Reset node style"
-            enabled: menu.targetNode != undefined
+            enabled: menu.targetNode !== undefined && menu.targetNode !== null
             onTriggered: { menu.targetNode.style = null }
         }
         MenuItem {
             text: "Select edge style"
-            enabled: menu.targetEdge != undefined
+            enabled: menu.targetEdge !== undefined && menu.targetEdge !== null
             onTriggered: { styleSelectionDialog.open() }
         }
         MenuItem {
             text: "Reset edge style"
-            enabled: menu.targetEdge != undefined
+            enabled: menu.targetEdge !== undefined && menu.targetEdge !== null
             onTriggered: {  }
         }
     }
-
     Qan.GraphView {
         id: graphViewconfiguration
         anchors.fill: parent
-        graph       : topology
+        //graph       : graph
         navigable   : true
-        Qan.Graph {
-            id: topology
+        graph       : Qan.Graph {
+            id: graph
             objectName: "graph"
             enableConnectorDropNode: true
-
             Component.onCompleted: {
-                var n1 = topology.insertNode()
+                var n1 = graph.insertNode()
                 n1.label = "N1"
-                var n2 = topology.insertNode()
+                var n2 = graph.insertNode()
                 n2.label = "N2"
-                var n3 = topology.insertNode()
+                var n3 = graph.insertNode()
                 n3.label = "N3"
-                topology.insertEdge( n1, n2 )
-                topology.insertEdge( n2, n3 )
-                console.debug( "hasEdge(n1,n2)=" + topology.hasEdge( n1, n2 ) )
+                graph.insertEdge( n1, n2 )
+                graph.insertEdge( n2, n3 )
             }
-            onNodeRightClicked: { menu.targetNode = node; menu.popup() }
+            onNodeRightClicked: {
+                menu.targetNode = node; menu.targetEdge = undefined
+                var globalPos = node.mapToItem( graph, pos.x, pos.y )
+                menu.x = globalPos.x; menu.y = globalPos.y
+                menu.open()
+            }
         } // Qan.Graph: graph
-        onRightClicked: { menu.targetNode = undefined; menu.targetEdge = undefined; menu.popup() }
+        onRightClicked: {
+            menu.targetNode = undefined; menu.targetEdge = undefined
+            var globalPos = mapToItem( graph, pos.x, pos.y )
+            menu.x = globalPos.x; menu.y = globalPos.y
+            menu.open()
+        }
     }
 
-    Rectangle {
+    Pane {
         id: styleBrowser
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 15
-        width: 250; height: 350
-        color: "lightblue"; border.color: "black"; border.width: 2
+        width: 280; height: 350
         Qan.StyleListView {
             anchors.fill: parent
             anchors.margins: 4
-            model: topology.styleManager
-            graph: topology
+            model: graph.styleManager
+            graph: graph
             onStyleClicked: { }
-            onStyleDoubleClicked: { styleEditorDialog.hilightStyle( style ) }
+            onStyleDoubleClicked: { styleEditor.hilightStyle( style ) }
         }
-    } // Rectangle: styleEditor
-
-    Rectangle {
-        id: styleEditorDialog
+    } // Frame: styleBrowser
+    Pane {
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: styleBrowser.left; anchors.rightMargin: 15
-        width: 250; height: 350
-        color: "lightblue"; border.color: "black"; border.width: 2
-
-        function    hilightStyle( style ) { // Change selection to a given style and hilight it
-            styleSelectionCb.currentIndex = -1
-            styleSelectionCb.currentIndex = topology.styleManager.itemIndex( style )
-        }
+        width: 280; height: 350
         ColumnLayout {
             id: layout
-            anchors.fill: parent; anchors.margins: 4
+            anchors.fill: parent; /*anchors.margins: 4*/
             ComboBox {
-                id: styleSelectionCb
+                id: styleCb
                 Layout.fillWidth: true
-                editText: "Nodes"
-                model: topology.styleManager
+                displayText: "Nodes"
+                model: graph.styleManager
                 textRole: "itemLabel"
-                onCurrentIndexChanged: {
-                    if ( currentIndex >= 0 )
-                        styleEditor.properties = topology.styleManager.getStyleAt( currentIndex )
-                }
             }
             Qps.PropertiesEditor {
                 id: styleEditor
                 Layout.fillWidth: true; Layout.fillHeight: true
+                model: graph.styleManager.getStyleAt( styleCb.currentIndex )
+                flickableDirection: Flickable.HorizontalAndVerticalFlick
+                function    hilightStyle( style ) { // Change selection to a given style and hilight it
+                    styleCb.currentIndex = -1
+                    styleCb.currentIndex = graph.styleManager.listReference.itemIndex( style )
+                }
             }
         }
-    } // Rectangle: styleEditor
+    } // Frame: styleEditor
 }

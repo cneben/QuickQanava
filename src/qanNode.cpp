@@ -39,7 +39,7 @@ namespace qan { // ::qan
 /* Node Object Management *///-------------------------------------------------
 Node::Node( QQuickItem* parent ) :
     gtpo::GenNode< qan::Config >( parent ),
-    _defaultStyle{ new qan::NodeStyle{ "", "qan::Node" } },
+    _defaultStyle{ new qan::NodeStyle{ "", QStringLiteral("qan::Node") } },
     _style{ nullptr }
 {
     setAcceptDrops( true );
@@ -225,7 +225,8 @@ void    Node::dropEvent( QDropEvent* event )
 
 void    Node::mouseDoubleClickEvent(QMouseEvent* event )
 {
-    emit nodeDoubleClicked( this, event->localPos() );
+    if ( event->button() == Qt::LeftButton )
+        emit nodeDoubleClicked( this, event->localPos() );
 }
 
 void    Node::mouseMoveEvent(QMouseEvent* event )
@@ -445,7 +446,8 @@ bool    Node::isInsideBoundingShape( QPointF p )
 /* Node Group Management *///--------------------------------------------------
 void    Node::ungroup( )
 {
-    if ( getQanGroup() != nullptr && getGraph()->hasGroup( getQanGroup() ) )
+    if ( getQanGroup() != nullptr &&
+         getGraph()->hasGroup( getQanGroup() ) )
         getQanGroup()->removeNode( this );
 }
 

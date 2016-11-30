@@ -61,7 +61,7 @@ public:
     virtual ~Group( );
     Group( const Group& ) = delete;
 public:
-    auto                getClassName() const noexcept -> std::string { return getDynamicClassName(); }
+    inline auto         getClassName() const noexcept -> std::string { return getDynamicClassName(); }
     virtual std::string getDynamicClassName() const noexcept { return "qan::Group"; }
 public:
     //! Shortcut to gtpo::GenGroup<>::getGraph().

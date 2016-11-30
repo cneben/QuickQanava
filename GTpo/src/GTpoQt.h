@@ -91,6 +91,9 @@ struct ContainerAccessors : public gtpo::ContainerAccessors
 
 } // ::qtpo
 
+#ifndef COMPARE_WEAK_PTR
+#define COMPARE_WEAK_PTR
+
 template< typename T >
 inline bool operator==(const std::weak_ptr<T>& e1, const std::weak_ptr<T>& e2)
 {
@@ -102,6 +105,8 @@ inline uint qHash(const std::weak_ptr<T>& t, uint seed ) /*noexcept( qHash(t) ) 
 {
     return qHash( static_cast<T*>( t.lock().get() ), seed );
 }
+
+#endif
 
 #endif // GTpoQt_h
 

@@ -279,7 +279,7 @@ public:
     GenEdge(const GenEdge& ) = delete;
 
     //! Return node class name (default to "gtpo::Edge").
-    std::string getClassName() const noexcept { return "gtpo::Edge"; }
+    inline std::string  getClassName() const noexcept { return "gtpo::Edge"; }
 protected:
     inline Graph*       getGraph() noexcept { return _graph; }
     inline const Graph* getGraph() const noexcept { return _graph; }
@@ -323,6 +323,7 @@ private:
     //@{
 public:
     using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
+    using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
 
     inline auto setHDst( WeakEdge hDst ) noexcept -> void { _hDst = hDst; }
     inline auto getHDst() const noexcept -> const WeakEdge& { return _hDst; }
@@ -330,6 +331,9 @@ public:
     inline auto addInHEdge( WeakEdge inHEdge ) -> void;
     inline auto removeInHEdge( WeakEdge inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
+
+    inline auto getInHNodes() const noexcept -> const WeakNodes& { return _inHNodes; }
+
 protected:
     inline auto getInHEdges() noexcept -> WeakEdges& { return _inHEdges; }
 private:
@@ -337,6 +341,8 @@ private:
     WeakEdge    _hDst;
     //! Restricted in hyper edges (ie an in hyper edge with this edge as a destination).
     WeakEdges   _inHEdges;
+    //! Restricted hyper in nodes (ie all source node for in restricted hyper edges).
+    WeakNodes   _inHNodes;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -375,7 +381,7 @@ public:
     GenNode& operator=( GenNode const& ) = delete;
 
     //! Return node class name (default to "gtpo::Node").
-    std::string getClassName() const noexcept { return "gtpo::Node"; }
+    inline std::string      getClassName() const noexcept { return "gtpo::Node"; }
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.
     using BehaviourableBase = gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
@@ -520,7 +526,7 @@ public:
     GenGroup& operator=( GenGroup const& ) = delete;
 
     //! Return group class name (default to "gtpo::Group").
-    std::string         getClassName() const noexcept { return "gtpo::Group"; }
+    inline std::string  getClassName() const noexcept { return "gtpo::Group"; }
 
 protected:
     inline Graph*       getGraph() noexcept { return _graph; }

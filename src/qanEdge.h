@@ -34,6 +34,7 @@
 // Qanava headers
 #include "./qanConfig.h"
 #include "./qanStyle.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
 
@@ -54,7 +55,7 @@ public:
     Edge( const Edge& ) = delete;
 
     //! Return getDynamicClassName() (default to "qan::Edge").
-    std::string         getClassName() const noexcept { return getDynamicClassName(); }
+    inline std::string  getClassName() const noexcept { return getDynamicClassName(); }
     virtual std::string getDynamicClassName() const noexcept { return "qan::Edge"; }
 public:
     // Qt property for gtpo::Edge serializable standard property.
@@ -87,6 +88,13 @@ public:
     void        setDestinationEdge( qan::Edge* destination );
 signals:
     void        destinationEdgeChanged( );
+
+public:
+    //! Read-only abstract item model of this edge in hyper nodes.
+    Q_PROPERTY( QAbstractItemModel* inHNodes READ qmlGetInHNodes NOTIFY inHNodesChanged FINAL )
+    QAbstractItemModel* qmlGetInHNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInHNodes() ) ); }
+signals:
+    void        inHNodesChanged( );
 
 protected:
     //! Configure either a node or an edge (for hyper edges) item.

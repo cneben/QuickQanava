@@ -189,7 +189,7 @@ public:
     inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0; }
 
 public:
-    using SelectedNodes = qps::ContainerListModel< QVector, qan::Node* > ;
+    using SelectedNodes = qps::ContainerModel< QVector, qan::Node* > ;
 
     //! Read-only list model of currently selected nodes.
     Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
@@ -320,11 +320,8 @@ public:
 
 public:
     //! Access the list of nodes with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel NOTIFY nodesModelChanged FINAL )
-    QAbstractItemModel* getNodesModel( ) const { return ( QAbstractItemModel* )( &getNodes() ); }
-signals:
-    /*! \note Never used, defined for QML compatibility. */
-    void                nodesModelChanged();
+    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
+    QAbstractItemModel* getNodesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -376,11 +373,8 @@ public:
 
 public:
     //! Access the list of edges with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel NOTIFY edgesModelChanged FINAL )
-    QAbstractItemModel* getEdgesModel( ) const { return ( QAbstractItemModel* )( &getEdges() ); }
-signals:
-    /*! \note Never used, defined for QML compatibility. */
-    void                edgesModelChanged();
+    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
+    QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
 
 signals:
     /*! Emitted whenever a node registered in this graph is clicked.

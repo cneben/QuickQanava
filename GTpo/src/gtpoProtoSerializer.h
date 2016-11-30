@@ -81,11 +81,11 @@ protected:
     const std::string&  getGroupDefaultName() { return _groupDefaultName; }
 private:
     //! Default class name for nodes (default to "gtpo::Node").
-    std::string _nodeDefaultName = std::string( "gtpo::Node" );
+    std::string _nodeDefaultName = "gtpo::Node"s;
     //! Default class name for edges (default to "gtpo::Edge").
-    std::string _edgeDefaultName = std::string( "gtpo::Edge" );
+    std::string _edgeDefaultName = "gtpo::Edge"s;
     //! Default class name for groups (default to "gtpo::Group").
-    std::string _groupDefaultName = std::string( "gtpo::Group" );
+    std::string _groupDefaultName = "gtpo::Group"s;
     //@}
     //-------------------------------------------------------------------------
 

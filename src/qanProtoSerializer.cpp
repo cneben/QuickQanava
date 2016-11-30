@@ -68,7 +68,7 @@ ProtoSerializer::ProtoSerializer( QObject* parent )  :
                 qan::pb::Node pbQanNode;
                 if ( !anyNode.UnpackTo( &pbQanNode ) )
                     throw std::runtime_error( "Error while unpacking protobuf qan::pb::Node" );
-                weakNode = graph.createNode( std::string( "qan::Node" ) );
+                weakNode = graph.createNode( "qan::Node" );
                 qan::Node* qanNode = qobject_cast< qan::Node* >( weakNode.lock().get() );
                 if ( qanNode == nullptr )
                     throw std::runtime_error( "Creation of a qan::Node fails." );

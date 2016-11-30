@@ -45,7 +45,7 @@
 #include <GTpoQt>
 
 // QuickProperties headers
-#include "../QuickProperties/src/qpsContainerListModel.h"
+#include "../QuickProperties/src/qpsContainerModel.h"
 
 // QuickQanava headers
 #include "./qanNavigable.h"
@@ -70,9 +70,9 @@ struct ContainerAccessors : public gtpo::ContainerAccessors
     };
 
     template < typename T >
-    struct insert< qps::ContainerListModel<QVector, T> > {
+    struct insert< qps::ContainerModel<QVector, T> > {
         template <typename ItemT>
-        static void  into( qps::ContainerListModel<QVector, T>& c, ItemT t ) { c.append( t ); }
+        static void  into( qps::ContainerModel<QVector, T>& c, ItemT t ) { c.append( t ); }
     };
 
     template <typename T >
@@ -95,9 +95,9 @@ struct ContainerAccessors : public gtpo::ContainerAccessors
     };
 
     template < typename T >
-    struct remove< qps::ContainerListModel<QVector, T> > {
+    struct remove< qps::ContainerModel<QVector, T> > {
         template <typename ItemT>
-        static void  from( qps::ContainerListModel<QVector, T>& c, ItemT t ) { c.removeAll( t ); }
+        static void  from( qps::ContainerModel<QVector, T>& c, ItemT t ) { c.removeAll( t ); }
     };
 
     template < typename T >
@@ -195,10 +195,10 @@ public:
     using Group = qan::Group;
 
     template <class ...Args>
-    using NodeContainer = qps::ContainerListModel< QVector, Args... >;
+    using NodeContainer = qps::ContainerModel< QVector, Args... >;
 
     template <class ...Args>
-    using EdgeContainer = qps::ContainerListModel< QVector, Args... >;
+    using EdgeContainer = qps::ContainerModel< QVector, Args... >;
 
     template < class ...Args >
     using SearchContainer = QSet< Args... >;

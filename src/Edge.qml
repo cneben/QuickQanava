@@ -40,7 +40,7 @@ Qan.Edge {
         id: arrow
         p1: arrowEdge.p1
         p2: arrowEdge.p2
-        p2CapSize: 4
-        lineWidth: 2.0
+        p2CapSize: arrowEdge.style ? arrowEdge.style.arrowSize : 4
+        lineWidth: arrowEdge.style ? arrowEdge.style.lineWidth : 2
     }
 }

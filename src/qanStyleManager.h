@@ -60,15 +60,17 @@ class StylesFilterModel : public QSortFilterProxyModel
     Q_OBJECT
 public:
     /*! Build a styles list model filtered by style target.             */
-    explicit StylesFilterModel( QString target, QObject* parent = 0 ) : QSortFilterProxyModel( parent ),
-        _target( target ) {     Q_ASSERT( !_target.isEmpty( ) ); }
+    explicit StylesFilterModel( QString target ) : QSortFilterProxyModel{ nullptr },
+        _target{ target } {
+        if ( target.isEmpty() )
+            qWarning() << "qan::StylesFilteModel::StylesFilterModel{}: Warning: Creating a style filter model with an empty target.";
+    }
     virtual ~StylesFilterModel( ) { }
     StylesFilterModel ( const StylesFilterModel& ) = delete;
 private:
     QString         _target;
     //@}
     //-------------------------------------------------------------------------
-
 
     /*! \name Interview Interface *///-----------------------------------------
     //@{
@@ -106,7 +108,7 @@ public:
     StyleManager( const StyleManager& ) = delete;
 public:
     //! Clear this manager from all its content (default node and edge styles are cleared too).
-    Q_INVOKABLE virtual void    clear() override;
+    Q_INVOKABLE virtual void    clear();
     //@}
     //-------------------------------------------------------------------------
 
@@ -144,12 +146,12 @@ public:
     bool                    removeStyle( QString styleName );
 
     //! Return a style with a given name, return \c nullptr if no such style exists.
-    Q_INVOKABLE qan::Style* findStyleByName( QString styleName );
+    qan::Style*             findStyleByName( QString styleName );
     //! Return a style defined as default for a given class name.
     /*!
         \return the oldest registered style with the requested target or \c nullptr if no such style exists.
      */
-    Q_INVOKABLE qan::Style* findStyleByTarget( QString targetName );
+    qan::Style*             findStyleByTarget( QString targetName );
     //! Get a list of all styles targeted for a specific class name (might be empty()).
     QList< qan::Style* >    getStylesByTarget( QString targetName );
 
@@ -157,13 +159,13 @@ public:
     void                    setDefaultNodeStyle( QString targetName, qan::NodeStyle* defaultNodeStyle );
 
     //! Get the default style for a specific node \c targetName.
-    Q_INVOKABLE qan::Style* getDefaultNodeStyle( QString targetName );
+    qan::Style*             getDefaultNodeStyle( QString targetName );
 
     //! Set style \c defaultEdgeStyle a the default style for a specific class of edge \c targetName.
     void                    setDefaultEdgeStyle( QString targetName, qan::EdgeStyle* defaultEdgeStyle );
 
     //! Get the default style for a specific edge \c targetName.
-    Q_INVOKABLE qan::Style* getDefaultEdgeStyle( QString targetName );
+    qan::Style*             getDefaultEdgeStyle( QString targetName );
 
     using TargetNodeStyleMap = QMap< QString, qan::NodeStyle* >;
     const TargetNodeStyleMap&   getDefaultNodeStyles( ) const { return _defaultNodeStyles; }
@@ -199,25 +201,16 @@ private:
     QMap< QString, QAbstractItemModel* > _targetModelMap;
 
 public:
-    Q_PROPERTY( QAbstractItemModel* nodeStylesModel READ getNodeStylesModel NOTIFY nodeStylesModelChanged FINAL )
+    Q_PROPERTY( QAbstractItemModel* nodeStylesModel READ getNodeStylesModel CONSTANT FINAL )
     QAbstractItemModel* getNodeStylesModel( ) { return getStylesModelForTarget( "qan::Node" ); }
-signals:
-    //! Never used, defined to avoid a QML NOTIFY warning.
-    void                nodeStylesModelChanged( );
 
 public:
-    Q_PROPERTY( QAbstractItemModel* edgeStylesModel READ getEdgeStylesModel NOTIFY edgeStylesModelChanged FINAL )
+    Q_PROPERTY( QAbstractItemModel* edgeStylesModel READ getEdgeStylesModel CONSTANT FINAL )
     QAbstractItemModel* getEdgeStylesModel( ) { return getStylesModelForTarget( "qan::Edge" ); }
-signals:
-    //! Never used, defined to avoid a QML NOTIFY warning.
-    void                edgeStylesModelChanged( );
 
 public:
-    Q_PROPERTY( QAbstractItemModel* hEdgesStylesModel READ getHEdgeStylesModel NOTIFY hEdgeStylesModelChanged FINAL )
+    Q_PROPERTY( QAbstractItemModel* hEdgesStylesModel READ getHEdgeStylesModel CONSTANT FINAL )
     QAbstractItemModel* getHEdgeStylesModel( ) { return getStylesModelForTarget( "qan::HEdge" ); }
-signals:
-    //! Never used, defined to avoid a QML NOTIFY warning.
-    void                hEdgeStylesModelChanged( );
     //@}
     //-------------------------------------------------------------------------
 };

@@ -40,10 +40,11 @@ auto GenEdge< Config >::addInHEdge( WeakEdge inHEdge ) -> void
         throw gtpo::bad_topology_error( "gtpo::GenEdge<>::addInHEdge(): Error: Input hyper edge is null." );
     SharedEdge inHEdgePtr{ inHEdge.lock() };
     if ( inHEdgePtr != nullptr ) {
-        //SharedNode source{ inHEdgePtr->getSrc().lock() };
         if ( inHEdgePtr->getHDst().expired() )
             inHEdgePtr->setHDst( this->shared_from_this() );
         Config::template insert< WeakEdges >::into( _inHEdges, inHEdge );
+        if ( !inHEdgePtr->getSrc().expired() )
+            Config::template insert< WeakNodes >::into( _inHNodes, inHEdgePtr->getSrc() );
     }
 }
 
@@ -56,6 +57,7 @@ auto GenEdge< Config >::removeInHEdge( WeakEdge inHEdge ) -> void
     if ( inHEdgePtr != nullptr ) {
         inHEdgePtr->setHDst( SharedEdge{} );
         Config::template remove< WeakEdges >::from( _inHEdges, inHEdge );
+        Config::template remove< WeakNodes >::from( _inHNodes, inHEdgePtr->getSrc() );
     }
 }
 //-----------------------------------------------------------------------------
@@ -345,7 +347,7 @@ void    GenGraph< Config >::removeEdge( WeakEdge edge )
 
     // If there is in hyper edges, remove them since their destination edge is beeing destroyed
     if ( edgePtr->getInHDegree() > 0 ) {
-        auto inHEdges{ edgePtr->getInHEdges() };    // Make a deep copy of in hyper edges
+        auto& inHEdges{ edgePtr->getInHEdges() };    // Make a deep copy of in hyper edges
         for ( auto& inHEdge : inHEdges )
             removeEdge( inHEdge );
     }

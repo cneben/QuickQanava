@@ -25,5 +25,11 @@ test-topology.depends  = quickqanava2
 test-progress.subdir   = samples/progress
 test-progress.depends  = quickqanava2
 
-SUBDIRS +=  quickqanava2 test-navigable test-custom test-groups test-hedges test-style test-topology test-progress
-#SUBDIRS +=  test-hedges
+SUBDIRS +=  quickqanava2
+SUBDIRS +=  test-navigable
+SUBDIRS +=  test-custom
+SUBDIRS +=  test-groups
+SUBDIRS +=  test-style
+SUBDIRS +=  test-progress
+SUBDIRS +=  test-hedges
+SUBDIRS +=  test-topology

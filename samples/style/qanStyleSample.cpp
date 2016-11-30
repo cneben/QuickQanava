@@ -34,15 +34,15 @@
 #include "./qanStyleSample.h"
 
 // Qt headers
-//#include <QGuiApplication>
 #include <QApplication>
+#include <QQuickStyle>
 
 using namespace qan;
 
 //-----------------------------------------------------------------------------
 MainView::MainView( ) :
-    QQuickView( ),
-    _serializer{ new qan::ProtoSerializer() }
+    QQuickView{},
+    _serializer{new qan::ProtoSerializer{}}
 {
     QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
     QuickProperties::initialize( engine(), translator.data() );
@@ -51,19 +51,19 @@ MainView::MainView( ) :
     engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer.data() );
 
     setSource( QUrl( "qrc:/main.qml" ) );
-    qan::Graph* g = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
-    Q_ASSERT( g != nullptr );
-
-    qan::StyleManager& styleManager = g->styleManager();
-    styleManager.generateDefaultStyles();
-    qan::NodeStyle* nodeStyle = styleManager.createNodeStyle( "Blue Node", "qan::Node" );
-    nodeStyle->setBackColor( QColor( 0, 0, 255 ) );
+    qan::Graph* graph = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );
+    if ( graph != nullptr ) {
+        auto& styleManager = graph->styleManager();
+        styleManager.generateDefaultStyles();
+        qan::NodeStyle* nodeStyle = styleManager.createNodeStyle( "Blue Node", "qan::Node" );
+        nodeStyle->setBackColor( QColor( 0, 0, 255 ) );
+    }
 }
 //-----------------------------------------------------------------------------
 
 int	main( int argc, char** argv )
 {
-    //QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
     QApplication app(argc, argv);
 
     MainView mainView;

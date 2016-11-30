@@ -28,6 +28,7 @@
 // QT headers
 #include <QFont>
 #include <QQuickItemGrabResult>
+#include <QQmlEngine>
 
 // Qanava headers
 #include "./qanGraph.h"
@@ -65,6 +66,8 @@ qan::Style* StylesFilterModel::getStyleAt( int styleIndex )
     QModelIndex sourceIndex = mapToSource( index( styleIndex, 0 ) );
     if ( sourceIndex.isValid( ) )
         styleProperties = propertiesList->at(  sourceIndex.row( ) );
+    if ( styleProperties != nullptr )
+        QQmlEngine::setObjectOwnership( styleProperties, QQmlEngine::CppOwnership );
     return static_cast< qan::Style* >( styleProperties );
 }
 
@@ -85,8 +88,7 @@ bool    StylesFilterModel::hasStyle( QString styleName )
     qps::PropertiesList* propertiesList = static_cast< qps::PropertiesList* >( sourceModel( ) );
     if ( propertiesList == nullptr )
         return false;
-    foreach ( qps::Properties* p, *propertiesList )
-    {
+    for ( auto& p : *propertiesList ) {
         qan::Style* s = static_cast< qan::Style* >( p );
         if ( s->getName( ) == styleName )
             return true;
@@ -100,16 +102,17 @@ bool    StylesFilterModel::hasStyle( QString styleName )
 StyleManager::StyleManager( QObject* parent ) :
     qps::PropertiesList( parent )
 {
-    setItemDisplayRole( "name" ); // Use 'name' property for abstract list model display role
+    setItemDisplayRole( QStringLiteral("name") ); // Use 'name' property for abstract list model display role
 }
 
 StyleManager::~StyleManager( )
 {
     // Styles destroyed in qps::PropertiesList::~PropertiesList
-
+    for ( const auto& model : _targetModelMap )
+        delete model;
     // _targetModelMap model maps will be destroyed by their parent QObject.
     _targetModelMap.clear();
-    for ( const auto defaultStyle : _defaultNodeStyles )
+    for ( const auto& defaultStyle : _defaultNodeStyles )
         delete defaultStyle;
     _defaultNodeStyles.clear();
     _defaultEdgeStyles.clear();
@@ -118,7 +121,7 @@ StyleManager::~StyleManager( )
 void    StyleManager::clear()
 {
     qps::PropertiesList::clear( true );
-    for ( const auto model : _targetModelMap )
+    for ( const auto& model : _targetModelMap )
         delete model;
     _targetModelMap.clear();
     _defaultNodeStyles.clear();
@@ -129,12 +132,12 @@ void    StyleManager::clear()
 /* Style Management *///-------------------------------------------------------
 void    StyleManager::generateDefaultStyles()
 {
-    qan::NodeStyle* nodeStyle = createNodeStyle( "default node" );
-    qan::EdgeStyle* edgeStyle = createEdgeStyle( "default edge" );
+    qan::NodeStyle* nodeStyle = createNodeStyle( QStringLiteral("default node") );
+    qan::EdgeStyle* edgeStyle = createEdgeStyle( QStringLiteral("default edge") );
     if ( nodeStyle != nullptr )
-        setDefaultNodeStyle( "qan::Node", nodeStyle );
+        setDefaultNodeStyle( QStringLiteral("qan::Node"), nodeStyle );
     if ( edgeStyle != nullptr )
-        setDefaultEdgeStyle( "qan::Edge", edgeStyle );
+        setDefaultEdgeStyle( QStringLiteral("qan::Edge"), edgeStyle );
 }
 
 Style*  StyleManager::createStyle( QString styleName, QString targetName, QString metaTarget )
@@ -143,6 +146,8 @@ Style*  StyleManager::createStyle( QString styleName, QString targetName, QStrin
         return nullptr;
     Style* style = new qan::Style( styleName, targetName, metaTarget, this );
     qps::PropertiesList::append( style );
+    if ( style != nullptr )
+        QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
 }
 
@@ -152,6 +157,8 @@ qan::NodeStyle* StyleManager::createNodeStyle( QString styleName, QString target
         return nullptr;
     NodeStyle* style = new qan::NodeStyle( styleName, targetName, this );
     qps::PropertiesList::append( style );
+    if ( style != nullptr )
+        QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
 }
 
@@ -161,6 +168,8 @@ qan::EdgeStyle* StyleManager::createEdgeStyle( QString styleName, QString target
         return nullptr;
     EdgeStyle* style = new qan::EdgeStyle( styleName, targetName, this );
     qps::PropertiesList::append( style );
+    if ( style != nullptr )
+        QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
 }
 
@@ -178,8 +187,10 @@ Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyle
             duplicatedStyleName = styleName + QString( " 2" );
         duplicatedStyle = style->duplicate( duplicatedStyleName, this );
     }
-    if ( duplicatedStyle != nullptr )
+    if ( duplicatedStyle != nullptr ) {
         qps::PropertiesList::append( duplicatedStyle );
+        QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
+    }
     return duplicatedStyle;
 }
 
@@ -215,8 +226,8 @@ Style*  StyleManager::findStyleByTarget( QString targetName )
     if ( targetName.isEmpty( ) )
         return nullptr;
     qan::Style* style( nullptr );
-    foreach( qps::Properties* p, getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
-        Style* s = qobject_cast< qan::Style* >( p );
+    for ( auto& properties : getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
+        Style* s = qobject_cast< qan::Style* >( properties );
         if ( s->getTarget( ) == targetName ) {
             style = s;
             break;
@@ -266,13 +277,17 @@ qan::Style*     StyleManager::getDefaultEdgeStyle( QString targetName )
 /* Styles Model Management *///------------------------------------------------
 QAbstractItemModel*     StyleManager::getStylesModelForTarget( QString target )
 {
+    if ( target.isEmpty() )
+        return nullptr;
     QAbstractProxyModel* targetModel = static_cast< QAbstractProxyModel* >( _targetModelMap.value( target, nullptr ) );
-    if ( targetModel == nullptr )
-    {
-        targetModel = new StylesFilterModel( target, this );
+    if ( targetModel == nullptr ) {
+        targetModel = new StylesFilterModel{target};
         targetModel->setSourceModel( this );
         _targetModelMap.insert( target, targetModel );
     }
+    if ( targetModel != nullptr )
+        QQmlEngine::setObjectOwnership( targetModel, QQmlEngine::CppOwnership );
+
     return targetModel;
 }
 //-----------------------------------------------------------------------------

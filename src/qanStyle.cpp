@@ -51,9 +51,9 @@ Style::Style( QString name, QString target, QString metaTarget, QObject* parent 
 Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
 {
     Style* dst = nullptr;
-    if ( getMetaTarget() == "qan::Node" )
+    if ( getMetaTarget() == QStringLiteral("qan::Node") )
         dst = new qan::NodeStyle( duplicatedStyleName, getTarget(), dstParent  );
-    else if ( getMetaTarget() == "qan::Edge" )
+    else if ( getMetaTarget() == QStringLiteral("qan::Edge") )
         dst = new qan::EdgeStyle( duplicatedStyleName, getTarget(), dstParent  );
     else
         dst = new Style( duplicatedStyleName, getTarget(), getMetaTarget( ), dstParent );
@@ -69,7 +69,7 @@ Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
 
 /* Node Style Object Management *///-------------------------------------------
 NodeStyle::NodeStyle( QString name, QString target, QObject* parent ) :
-    qan::Style( name, target, "qan::Node", parent )
+    qan::Style( name, target, QStringLiteral("qan::Node"), parent )
 {
 }
 //-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ NodeStyle::NodeStyle( QString name, QString target, QObject* parent ) :
 
 /* Edge Style Object Management *///-------------------------------------------
 EdgeStyle::EdgeStyle( QString name, QString target, QObject* parent ) :
-    qan::Style( name, target, "qan::Edge", parent )
+    qan::Style( name, target, QStringLiteral("qan::Edge"), parent )
 {
 }
 //-----------------------------------------------------------------------------

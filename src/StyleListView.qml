@@ -25,42 +25,30 @@
 // \date	2015 10 18
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.2
-import QtQuick.Controls 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick          2.7
+import QtQuick.Layouts  1.3
+import QtQuick.Controls 2.0
 
-import "qrc:/QuickProperties" as Qps
-import QuickProperties 2.0 as Qps
+import "qrc:/QuickProperties"   as Qps
+import QuickProperties 2.0      as Qps
 
-import QuickQanava 2.0 as Qan
+import QuickQanava 2.0          as Qan
 
 /*! \brief Show a selectable list of style with a live style preview.
  *
  */
 Qps.PropertiesListView {
     id: styleListView
-    clip: true
 
     // Public:
-    //! Specify the delegate desired height (default to list view width).
-    property real   desiredDelegateWidth: styleListView.width
-
-    //! Specify the delegate desired height (default to 55).
-    property real   desiredDelegateHeight: 55
-
-    //! Read only property containing the currently selected style (may be undefined).
-    property var    selectedStyle: current
-
-    //! Color used for the text inside this creator (default to black).
-    property color  textColor: Qt.rgba( 0., 0., 0., 1.0)
-
+    //! Specify the delegate desired height for the style preview items (default to 55).
+    property real   previewHeight: 55
     property var    graph: undefined
 
     //! Hilight a specific style, so its get the current selection and appears at the center of the view.
     function    hilightStyle( style ) {
-        if ( model ) {
+        if ( model &&
+             style) {
             var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
             if ( styleIndex !== -1 )
                 currentIndex = styleIndex
@@ -82,9 +70,9 @@ Qps.PropertiesListView {
                                                   itemData ? itemData.metaTarget : "" )
         }
     }
-
     function selectStyleDelegate( target, metaTarget ) {
-        var styleTarget = ( metaTarget === "" || metaTarget.length === 0 ? target : metaTarget ) // Note 20160404: Use meta target by default
+        var styleTarget = ( metaTarget === "" ? target :
+                                                metaTarget ) // Note 20160404: Use meta target by default
         switch ( styleTarget ) {
         case "qan::Node": return nodeStyleDelegate
         case "qan::Edge": return edgeStyleDelegate
@@ -93,20 +81,17 @@ Qps.PropertiesListView {
         }
         return defaultStyleDelegate
     }
-
     Component {
         id: defaultStyleDelegate
         Item {
-            property var delegateStyle : styleProperties
-            onDelegateStyleChanged: {
-                label.text = ""
-                if ( delegateStyle != undefined && delegateStyle != null ) {
-                    label.text = "Style:" + styleProperties.name
-                }
+            width: styleListView.width; height: previewHeight
+            Label {
+                id: label;
+                anchors.fill: parent;
+                wrapMode: Text.Wrap;
+                verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+                text: styleProperties ? "Style:" + styleProperties.name : ""
             }
-            width: desiredDelegateWidth
-            height: desiredDelegateHeight
-            Text { id: label; anchors.fill: parent; color: "black"; wrapMode: Text.Wrap; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter }
             MouseArea {
                 anchors.fill: parent
                 onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
@@ -114,18 +99,14 @@ Qps.PropertiesListView {
             }
         }
     } // Component: defaultStyleDelegate
-
     Component {
         id: nodeStyleDelegate
         Item {
             id: nodeStyleDelegateWrapper
-            width: desiredDelegateWidth
-            height: desiredDelegateHeight
+            width: styleListView.width;    height: previewHeight
             Item {
                 id: nodeContainer
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
                 Component.onCompleted: {
                     if ( !styleProperties )
                         return;
@@ -136,78 +117,78 @@ Qps.PropertiesListView {
                         if ( node ) {
                             node.parent = nodeContainer
                             node.label = styleProperties.name
-                            node.anchors.fill = nodeContainer;
-                            node.anchors.margins = 5
+                            node.anchors.fill = nodeContainer; node.anchors.margins = 5
                             node.resizable = false
 
                             node.Layout.minimumWidth = width
                             node.Layout.minimumHeight = height
 
                             node.style = styleProperties
-                            node.acceptDrops = false // Don't allow style DnD inside style browser
-                            node.dropable = false     // Concern only QuickQanava group drops, set to false
+                            node.acceptDrops = false    // Don't allow style DnD inside style browser
+                            node.dropable = false       // Concern only QuickQanava group drops, set to false
                         }
                     }
                 }
-                property var draggedNodeStyle: styleProperties
+                property var draggedNodeStyle: styleProperties  // Used from C++ for drop
                 Drag.active: mouseArea.drag.active
                 Drag.dragType: Drag.Automatic
-                Drag.hotSpot.x: 10
-                Drag.hotSpot.y: 10
+                Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
             }
             MouseArea {
                 id: mouseArea
                 anchors.fill: parent
+                anchors.leftMargin: 15; anchors.rightMargin: 15
+                anchors.topMargin: 5; anchors.bottomMargin: 5
                 drag.target: nodeContainer
                 onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
                 onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
             }
         }
     } // Component: nodeStyleDelegate
-
     Component {
         id: edgeStyleDelegate
         Item {
             id: edgeStyleDelegateWrapper
-            width: desiredDelegateWidth
-            height: desiredDelegateHeight
-            property var delegateStyle : styleProperties
-            onDelegateStyleChanged: {
-                label.text = ""
-                edge.label = ""
-                if ( delegateStyle ) {
-                    label.text = styleProperties.name
-                    edge.label = styleProperties.name
+            width: styleListView.width;    height: previewHeight
+            Item {
+                id: edgeContainer
+                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                Component.onCompleted: {
+                    if ( !styleProperties )
+                        return;
+                    var styleTarget = ( styleProperties.target.length === 0 ? styleProperties.metaTarget :
+                                                                              styleProperties.target ) // Targeting either target or metaTarget
+                    if ( styleListView.graph ) {
+                        var edge = graph.createEdgeItem( styleTarget );
+                        if ( edge ) {
+                            edge.parent = edgeContainer
+                            edge.label = styleProperties.name
+                            edge.anchors.fill = edgeContainer; edge.anchors.margins = 5
+                            edge.setLine( Qt.point( 15, previewHeight / 2 ),
+                                          Qt.point( width - 15, previewHeight / 2 ) );
+                            edge.style = styleProperties
+                            edge.acceptDrops=false
+                        }
+                    }
                 }
-            }
-            Qan.Edge {
-                id: edge
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                label: styleProperties.name
-                onWidthChanged: { setLine( Qt.point( 10, desiredDelegateHeight / 2 ),
-                                           Qt.point( width - 10, desiredDelegateHeight / 2 ) ) }
-                style: styleProperties
-                property var draggedEdgeStyle: styleProperties
+                property var draggedEdgeStyle: styleProperties      // Used from C++ for drop
                 Drag.active: mouseArea.drag.active
                 Drag.dragType: Drag.Automatic
-                Drag.hotSpot.x: 10
-                Drag.hotSpot.y: 10
-                acceptDrops: false // Don't allow style DnD inside style browser
-            }
-            Text {
-                id: label
-                x: ( edgeStyleDelegateWrapper.width - contentWidth ) / 2
-                y: 3
-                text: styleProperties.name
+                Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
             }
             MouseArea {
                 id: mouseArea
-                anchors.fill: parent
-                drag.target: edge
+                anchors.fill: parent;
+                anchors.leftMargin: 15; anchors.rightMargin: 15
+                anchors.topMargin: 5; anchors.bottomMargin: 5
+                drag.target: edgeContainer
                 onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
                 onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
+            }
+            Label {
+                id: label
+                anchors.horizontalCenter: parent.horizontalCenter;  anchors.topMargin: 8
+                text: styleProperties ? styleProperties.name : ""
             }
         }
     } // Component: edgeStyleDelegate

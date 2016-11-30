@@ -254,7 +254,7 @@ public:
     void            setLineWidth( qreal lineWidth ) { _lineWidth = lineWidth; emit lineWidthChanged( ); emit styleModified();  }
     qreal           getLineWidth( ) const { return _lineWidth; }
 protected:
-    qreal           _lineWidth = 1.0;
+    qreal           _lineWidth = 2.0;
 signals:
     void            lineWidthChanged( );
 

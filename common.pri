@@ -21,6 +21,8 @@ DEFINES         += "GTPO_HAVE_PROTOCOL_BUFFER"
 INCLUDEPATH     += $$PWD/src
 INCLUDEPATH     += $$PWD/QuickProperties/src
 
+include(./QuickGeoGL/src/quickgeogl.pri)
+
 CONFIG(release, debug|release) {
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267 -w34100  # Remove C4100 unreferenced formal parameter
     win32:      LIBS	+=  $$PROTOCOL_BUFFER3_LIBDIR_RELEASE/libprotobuf.lib

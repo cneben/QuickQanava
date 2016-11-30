@@ -724,7 +724,7 @@ void    Graph::removeGroup( qan::Group* group )
         return;
     // Reparent all group childrens (ie node) to graph before destructing the group
     // otherwise all child iems get destructed too
-    auto groupNodes{group->getNodes()};
+    auto& groupNodes{group->getNodes()};
     for ( auto& node : groupNodes ) {
         auto nodePtr{ node.lock() };
         if ( nodePtr != nullptr ) {

@@ -47,7 +47,6 @@ void    Navigable::centerOn( QQuickItem* item )
         // 1. Project navigable view center in container item CS.
         // 2. Compute vector from navigable view center to item center in container item CS.
         // 3. Translate container by (-) this vector.
-    qDebug() << "qan::Navigable::centerOn(): item=" << item;
     if ( _containerItem == nullptr ||
          item == nullptr )
         return;
@@ -305,6 +304,8 @@ void    Navigable::mousePressEvent( QMouseEvent* event )
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
     if ( getNavigable() ) {
+        if ( event->button( ) == Qt::LeftButton )
+            emit clicked( event->localPos( ) );
         if ( event->button( ) == Qt::RightButton )
             emit rightClicked( event->localPos( ) );
         _leftButtonPressed = false;
