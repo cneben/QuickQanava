@@ -247,12 +247,29 @@ public:
     GraphBehaviour( const GraphBehaviour& ) = delete;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
+    using WeakNode      = std::weak_ptr< typename Config::Node >;
+    using WeakEdge      = std::weak_ptr< typename Config::Edge >;
+    using Group         = typename Config::Group;
+    using SharedGroup   = std::shared_ptr< typename Config::Group >;
     using WeakGroup     = std::weak_ptr< typename Config::Group >;
 
     //! Called immediatly after group \c weakGroup has been inserted in graph.
     virtual void    groupInserted( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
     //! Called immediatly before group \c weakGroup is removed from graph.
     virtual void    groupRemoved( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
+
+    /*! \name Edge Notification Interface *///---------------------------------
+    //@{
+public:
+    //! Called immediatly after \c weakEdge has been inserted.
+    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
+    //! Called when \c weakEdge is about to be removed.
+    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
+    //! \copydoc gtpo::EdgeBehaviour::edgeModified()
+    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
+    //@}
+    //-------------------------------------------------------------------------
+
 };
 
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
@@ -338,11 +355,11 @@ protected:
      * \endcode
      */
     template < class T >
-    auto    notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) noexcept -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)(T&) noexcept, T& arg ) noexcept -> void;
 
     //! Similar to notifyBahaviours() but without arguments.
     template < class T >
-    auto    notifyBehaviours( void (Behaviour::*method)() ) noexcept -> void;
+    auto    notifyBehaviours( void (Behaviour::*method)() noexcept ) noexcept -> void;
 
 private:
     Behaviours  _behaviours;

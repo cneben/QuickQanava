@@ -1,6 +1,5 @@
 
 TEMPLATE	= lib
-LANGUAGE	= C++
 DEFINES		+= QANAVA
 TARGET		= quickqanava2
 DESTDIR		= ../build

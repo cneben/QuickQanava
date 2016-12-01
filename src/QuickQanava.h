@@ -29,7 +29,7 @@
 #define QuickQanava_h
 
 // GTpo headers
-#include "gtpo.h"
+#include "GTpo.h"
 
 // QuickGeoGL headers
 #include "../QuickGeoGL/src/QuickGeoGL.h"

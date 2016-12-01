@@ -7,7 +7,6 @@ QT		+= widgets core gui qml quick charts
 
 include(../../GTpo/src/gtpo.pri)
 include(../../QuickProperties/src/quickproperties.pri)
-include(../../QuickProperties/src/quickpropertiespb.pri)
 include(../../src/quickqanava.pri)
 include(../../common.pri)
 
@@ -19,8 +18,7 @@ OTHER_FILES   +=  main.qml          \
                   ControlNode.qml   \
                   DiamondNode.qml
 
-RESOURCES   +=  ../../src/QuickQanava2.qrc                       \
-                custom.qrc
+RESOURCES   +=  custom.qrc
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -lprotobuf

@@ -327,7 +327,7 @@ public:
 
     inline auto setHDst( WeakEdge hDst ) noexcept -> void { _hDst = hDst; }
     inline auto getHDst() const noexcept -> const WeakEdge& { return _hDst; }
-    inline auto getInHEdges() const noexcept -> const WeakEdges& { return _hInEdges; }
+    inline auto getInHEdges() const noexcept -> const WeakEdges& { return _inHEdges; }
     inline auto addInHEdge( WeakEdge inHEdge ) -> void;
     inline auto removeInHEdge( WeakEdge inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }

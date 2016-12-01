@@ -218,7 +218,8 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakNode destination ) 
         destinationPtr->addInEdge( edge );
         if ( sourcePtr.get() != destinationPtr.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
             Config::template remove<WeakNodes>::from( _rootNodes, destination );    // Otherwise destination is no longer a root node
-        BehaviourableBase::notifyEdgeInserted( WeakEdge{edge} );
+        auto weakEdge = WeakEdge{edge};
+        BehaviourableBase::notifyEdgeInserted( weakEdge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Node): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
@@ -246,7 +247,8 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
         sourcePtr->addOutEdge( edge );
         destinationPtr->addInHEdge( edge );
         // Note: hEdge does not modify root nodes.
-        BehaviourableBase::notifyEdgeInserted( WeakEdge{edge} );
+        auto weakEdge = WeakEdge{edge};
+        BehaviourableBase::notifyEdgeInserted( weakEdge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Edge): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
@@ -288,7 +290,8 @@ auto    GenGraph< Config >::insertEdge( SharedEdge edge ) -> WeakEdge
             if ( hDestination != nullptr )
                 hDestination->addInHEdge( edge );
         }
-        BehaviourableBase::notifyEdgeInserted( WeakEdge{edge} );
+        auto weakEdge{WeakEdge{edge}};
+        BehaviourableBase::notifyEdgeInserted( weakEdge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }

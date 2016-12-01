@@ -15,9 +15,7 @@ HEADERS	+=  ./groups.h
 
 OTHER_FILES   +=  main.qml
 
-RESOURCES   +=  ../../QuickGeoGL/src/QuickGeoGL.qrc             \
-                ../../src/QuickQanava2.qrc                       \
-                groups.qrc
+RESOURCES   += groups.qrc
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2 

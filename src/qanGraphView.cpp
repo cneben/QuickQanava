@@ -37,7 +37,7 @@ namespace qan { // ::qan
 
 /* GraphView Object Management *///--------------------------------------------
 GraphView::GraphView( QQuickItem* parent ) :
-    qan::Navigable( )
+    qan::Navigable{ parent }
 {
     setAntialiasing( true );
     setSmooth( true );

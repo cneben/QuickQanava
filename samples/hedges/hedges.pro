@@ -8,7 +8,6 @@ INCLUDEPATH     +=  ../../QuickProperties/src
 
 include(../../GTpo/src/gtpo.pri)
 include(../../QuickProperties/src/quickproperties.pri)
-include(../../QuickProperties/src/quickpropertiespb.pri)
 include(../../src/quickqanava.pri)
 include(../../common.pri)
 
