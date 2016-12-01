@@ -30,7 +30,6 @@
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
-#include "../../src/qanProtoSerializer.h"
 #include "./qanStyleSample.h"
 
 // Qt headers
@@ -41,14 +40,15 @@ using namespace qan;
 
 //-----------------------------------------------------------------------------
 MainView::MainView( ) :
-    QQuickView{},
-    _serializer{new qan::ProtoSerializer{}}
+    QQuickView{}
 {
     QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
     QuickProperties::initialize( engine(), translator.data() );
     QuickQanava::initialize();
-
-    engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer.data() );
+#ifdef QUICKQANAVA_HAS_PROTOBUF
+    _serializer = new qan::ProtoSerializer{};
+    engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer );
+#endif
 
     setSource( QUrl( "qrc:/main.qml" ) );
     qan::Graph* graph = qobject_cast< qan::Graph* >( rootObject( )->findChild< QQuickItem* >( "graph" ) );

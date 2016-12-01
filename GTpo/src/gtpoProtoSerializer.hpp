@@ -30,7 +30,7 @@
 // \date	2016 02 10
 //-----------------------------------------------------------------------------
 
-#ifdef GTPO_HAVE_PROTOCOL_BUFFER
+#ifdef GTPO_HAS_PROTOBUF
 
 #include "gtpo.pb.h"
 

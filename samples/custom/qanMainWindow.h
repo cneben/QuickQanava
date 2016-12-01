@@ -41,11 +41,9 @@
 class MainView : public QQuickView
 {
     Q_OBJECT
-
 public:
-    MainView( );
+    MainView();
     virtual ~MainView( ) { }
-
 protected:
     qan::Graph*			_graph;
 };

@@ -35,4 +35,7 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.AbstractGraphView {
     id: graphView
+
+    onClicked: graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
+    onRightClicked: graphView.focus = true
 }

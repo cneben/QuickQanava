@@ -40,7 +40,7 @@
 #include <fstream>
 #include <unordered_map>    // ObjectIdMap
 
-#ifdef GTPO_HAVE_PROTOCOL_BUFFER
+#ifdef GTPO_HAS_PROTOBUF
 
 // Protocol Buffer headers
 #ifdef _MSC_VER
@@ -265,7 +265,7 @@ protected:
 
 #include "./gtpoProtoSerializer.hpp"
 
-#endif
+#endif // GTPO_HAS_PROTOBUF
 
 #endif // gtpoProtoSerializer_h
 

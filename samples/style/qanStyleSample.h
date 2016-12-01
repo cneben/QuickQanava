@@ -30,7 +30,9 @@
 
 // QuickQanava headers
 #include <QuickQanava>
+#ifdef QUICKQANAVA_HAS_PROTOBUF
 #include "../../src/qanProtoSerializer.h"
+#endif
 
 // QT headers
 #include <QQuickView>
@@ -41,8 +43,11 @@ class MainView : public QQuickView
 public:
     MainView( );
     virtual ~MainView( ) { }
+#ifdef QUICKQANAVA_HAS_PROTOBUF
 private:
-    QScopedPointer< qan::ProtoSerializer > _serializer;
+    // FIXME: serializer is leaked...
+    qan::ProtoSerializer*   _serializer;
+#endif
 };
 
 #endif // qanStyleSample_h

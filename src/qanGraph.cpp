@@ -199,10 +199,6 @@ bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers )
     if ( node.getSelected() ) {
         if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
             removeFromSelection( node );
-        /*else {
-            clearSelection();       // Clicking on a node without CTRL disable the existing multiple selection
-            addToSelection( node );
-        }*/ // Note: no or we loose multiple selection dragging
     } else {
         switch ( getSelectionPolicy() ) {
         case SelectionPolicy::SelectOnClick:

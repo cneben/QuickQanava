@@ -29,19 +29,14 @@ import "." as Qan
 Qan.GraphView {
     id: graphView
     anchors.fill: parent
-
-    graph       : topology
     navigable   : true
-
-    Qan.Graph {
+    graph: Qan.Graph {
         id: topology
         objectName: "graph"
         anchors.fill: parent
-
         onGroupClicked: { console.debug( "Group " + group.label + " clicked" ) }
         onGroupDoubleClicked: { console.debug( "Group " + group.label + " double clicked" ) }
         onGroupRightClicked: { console.debug( "Group " + group.label + " right clicked" ) }
-
         Component.onCompleted: {
             var n1 = topology.insertNode( )
             n1.label = "N1"
@@ -58,11 +53,9 @@ Qan.GraphView {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         width: 300
-
         Button {
             text: "No Layout Group"
             onClicked: {
-                console.debug("debug")
                 var gg = topology.insertGroup()
                 if ( gg )
                     gg.label = "Group"

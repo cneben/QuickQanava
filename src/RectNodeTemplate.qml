@@ -25,10 +25,12 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Layouts 1.2
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
+import QtQuick              2.7
+import QtQuick.Layouts      1.3
+import QtQuick.Controls     2.0
+import QtGraphicalEffects   1.0
+
+import QuickQanava          2.0 as Qan
 
 /*! \brief Default template component for building a custom rectangular qan::Node item.
  *
@@ -44,11 +46,9 @@ Item {
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
-        z: 1
         radius: 2
         color: node.style.backColor
-        border.color: node.style.borderColor
-        border.width: node.style.borderWidth
+        border.color: node.style.borderColor;   border.width: node.style.borderWidth
         antialiasing: true
     }
     DropShadow {
@@ -62,24 +62,13 @@ Item {
         visible: node.style.hasShadow
         transparentBorder: true
     }
-
-    Connections {
-        target: node
-        onNodeDoubleClicked: {
-            nodeLabel.visible = false
-            nodeLabelEditor.forceActiveFocus();
-            nodeLabelEditor.selectAll()
-        }
-    }
-
     ColumnLayout {
         id: layout
         anchors.fill: parent
-        anchors.margins: background.radius
-        z: 3
+        anchors.margins: background.radius / 2; spacing: 0
+        visible: !labelEditor.visible
         Text {
             id: nodeLabel
-            z: 4
             Layout.fillWidth: true
             Layout.fillHeight: contentLayout.children.length === 0
             Layout.preferredHeight: contentHeight
@@ -90,33 +79,22 @@ Item {
             maximumLineCount: 3 // Must be set, otherwise elide don't work and we end up with single line text
             elide: Text.ElideRight; wrapMode: Text.Wrap
         }
-        TextInput {
-            id: nodeLabelEditor
-            z: 5
-            Layout.preferredWidth: nodeLabel.width
-            Layout.preferredHeight: nodeLabel.height
-            text: node.label
-            onAccepted: {
-                if ( text.length == 0 )
-                    text = node.label  // Do not allow empty labels
-                else node.label = text
-                focus = false;  // Release focus once the label has been edited
-                nodeLabel.visible = true
-            }
-            onEditingFinished: { visible = false; }
-            onActiveFocusChanged: {
-                if ( !activeFocus )
-                    nodeLabel.visible = true;
-            }
-            visible: !nodeLabel.visible
-        }
         Item {
             id: contentLayout
-            z: 5
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.fillWidth: true;
             Layout.fillHeight: true
             visible: contentLayout.children.length > 0  // Hide if the user has not added any content
         }
+    }
+    Connections {
+        target: node
+        onNodeDoubleClicked: labelEditor.visible = true
+    }
+    NodeLabelEditor {
+        id: labelEditor
+        anchors.fill: parent
+        anchors.margins: background.radius / 2
+        node: parent.node
     }
 }

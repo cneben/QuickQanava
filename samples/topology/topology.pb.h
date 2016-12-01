@@ -42,7 +42,7 @@ class QanImgNode;
 
 // ===================================================================
 
-class QanImgNode : public ::google::protobuf::Message {
+class QanImgNode : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.QanImgNode) */ {
  public:
   QanImgNode();
   virtual ~QanImgNode();
@@ -76,7 +76,11 @@ class QanImgNode : public ::google::protobuf::Message {
       ::google::protobuf::io::CodedInputStream* input);
   void SerializeWithCachedSizes(
       ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
   int GetCachedSize() const { return _cached_size_; }
   private:
   void SharedCtor();
@@ -169,6 +173,7 @@ inline ::gtpo::pb::Node* QanImgNode::mutable_base() {
   return base_;
 }
 inline ::gtpo::pb::Node* QanImgNode::release_base() {
+  // @@protoc_insertion_point(field_release:qan.pb.QanImgNode.base)
   
   ::gtpo::pb::Node* temp = base_;
   base_ = NULL;
@@ -229,6 +234,7 @@ inline ::std::string* QanImgNode::mutable_img_data() {
   return img_data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* QanImgNode::release_img_data() {
+  // @@protoc_insertion_point(field_release:qan.pb.QanImgNode.img_data)
   
   return img_data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

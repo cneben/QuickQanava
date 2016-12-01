@@ -35,10 +35,8 @@ import "." as Qan
 
 Qan.AbstractNode {
     id: rectNode
-    Layout.preferredWidth: 110
-    Layout.preferredHeight: 50
-    width: Layout.preferredWidth
-    height: Layout.preferredHeight
+    width: 110
+    height: 50
     Qan.RectNodeTemplate {
         anchors.fill: parent
         node : rectNode

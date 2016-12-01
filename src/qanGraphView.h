@@ -67,6 +67,10 @@ private:
     QPointer< qan::Graph >  _graph{ nullptr };
 signals:
     void            graphChanged( );
+
+protected:
+    //! Called when the mouse is clicked in the container (base implementation empty).
+    virtual void    navigableClicked(QPointF pos) override;
     //@}
     //-------------------------------------------------------------------------
 };

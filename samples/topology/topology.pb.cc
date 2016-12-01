@@ -29,6 +29,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 }  // namespace
 
 
+void protobuf_AssignDesc_topology_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AssignDesc_topology_2eproto() {
   protobuf_AddDesc_topology_2eproto();
   const ::google::protobuf::FileDescriptor* file =
@@ -62,6 +63,7 @@ inline void protobuf_AssignDescriptorsOnce() {
                  &protobuf_AssignDesc_topology_2eproto);
 }
 
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -75,6 +77,7 @@ void protobuf_ShutdownFile_topology_2eproto() {
   delete QanImgNode_reflection_;
 }
 
+void protobuf_AddDesc_topology_2eproto() GOOGLE_ATTRIBUTE_COLD;
 void protobuf_AddDesc_topology_2eproto() {
   static bool already_here = false;
   if (already_here) return;
@@ -100,16 +103,6 @@ struct StaticDescriptorInitializer_topology_2eproto {
     protobuf_AddDesc_topology_2eproto();
   }
 } static_descriptor_initializer_topology_2eproto_;
-
-namespace {
-
-static void MergeFromFail(int line) GOOGLE_ATTRIBUTE_COLD;
-static void MergeFromFail(int line) {
-  GOOGLE_CHECK(false) << __FILE__ << ":" << line;
-}
-
-}  // namespace
-
 
 // ===================================================================
 
@@ -185,6 +178,7 @@ QanImgNode* QanImgNode::New(::google::protobuf::Arena* arena) const {
 }
 
 void QanImgNode::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.QanImgNode)
   if (GetArenaNoVirtual() == NULL && base_ != NULL) delete base_;
   base_ = NULL;
   img_data_size_ = 0;
@@ -193,7 +187,7 @@ void QanImgNode::Clear() {
 
 bool QanImgNode::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:qan.pb.QanImgNode)
   for (;;) {
@@ -285,14 +279,14 @@ void QanImgNode::SerializeWithCachedSizes(
   // @@protoc_insertion_point(serialize_end:qan.pb.QanImgNode)
 }
 
-::google::protobuf::uint8* QanImgNode::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
+::google::protobuf::uint8* QanImgNode::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:qan.pb.QanImgNode)
   // optional .gtpo.pb.Node base = 1;
   if (this->has_base()) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, *this->base_, target);
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->base_, false, target);
   }
 
   // optional int32 img_data_size = 4;
@@ -312,6 +306,7 @@ void QanImgNode::SerializeWithCachedSizes(
 }
 
 int QanImgNode::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.QanImgNode)
   int total_size = 0;
 
   // optional .gtpo.pb.Node base = 1;
@@ -342,19 +337,27 @@ int QanImgNode::ByteSize() const {
 }
 
 void QanImgNode::MergeFrom(const ::google::protobuf::Message& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.QanImgNode)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   const QanImgNode* source = 
       ::google::protobuf::internal::DynamicCastToGenerated<const QanImgNode>(
           &from);
   if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.QanImgNode)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.QanImgNode)
     MergeFrom(*source);
   }
 }
 
 void QanImgNode::MergeFrom(const QanImgNode& from) {
-  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.QanImgNode)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
   if (from.has_base()) {
     mutable_base()->::gtpo::pb::Node::MergeFrom(from.base());
   }
@@ -368,12 +371,14 @@ void QanImgNode::MergeFrom(const QanImgNode& from) {
 }
 
 void QanImgNode::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.QanImgNode)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void QanImgNode::CopyFrom(const QanImgNode& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.QanImgNode)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -428,6 +433,7 @@ const ::gtpo::pb::Node& QanImgNode::base() const {
   return base_;
 }
 ::gtpo::pb::Node* QanImgNode::release_base() {
+  // @@protoc_insertion_point(field_release:qan.pb.QanImgNode.base)
   
   ::gtpo::pb::Node* temp = base_;
   base_ = NULL;
@@ -488,6 +494,7 @@ void QanImgNode::clear_img_data() {
   return img_data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
  ::std::string* QanImgNode::release_img_data() {
+  // @@protoc_insertion_point(field_release:qan.pb.QanImgNode.img_data)
   
   return img_data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

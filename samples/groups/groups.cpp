@@ -37,7 +37,7 @@ using namespace qan;
 MainView::MainView( ) : QQuickView{}
 {
     QuickQanava::initialize();
-    setSource( QUrl( "qrc:/main.qml" ) );
+    setSource( QUrl{"qrc:/main.qml"} );
 }
 
 int	main( int argc, char** argv )

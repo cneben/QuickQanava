@@ -25,10 +25,11 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Layouts 1.2
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
+import QtQuick              2.7
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
+
+import QuickQanava          2.0 as Qan
 
 
 /*! \brief Default component template for building a custom qan::Node Item with an arbitrary geometry drawn into a JS Canvas2D.
@@ -38,24 +39,23 @@ import QuickQanava 2.0 as Qan
 Item {
     id: template
 
-    property         var    node
-    property         alias  symbol: nodeSymbol.sourceComponent
+    property         var    node     : undefined
+    property         alias  symbol   : nodeSymbol.sourceComponent
     default property alias  children : templateContentLayout.children
 
     function requestPaint( ) {
-        if ( nodeSymbol.item !== null )
+        if ( nodeSymbol.item )
             nodeSymbol.item.requestPaint( );
     }
     onNodeChanged: {
-        if ( node !== undefined && node !== null )
+        if ( node )
             nodeUpdateBoundingShape.target = node
     }
-
-    Loader {
+    Loader {    // Node symbol is node background
         id: nodeSymbol
         anchors.fill: parent
         onItemChanged: {
-            if ( item != null )
+            if ( item )
                 backgroundShadow.source = item
         }
     }
@@ -75,8 +75,8 @@ Item {
     ColumnLayout {
         id: nodeLayout
         anchors.fill: parent
-        z: 3
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        visible: !labelEditor.visible
         Text {
             id: nodeLabel
             Layout.fillWidth: true;
@@ -90,23 +90,31 @@ Item {
         }
         Item {
             id: templateContentLayout
-            z: 4
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.fillWidth: true; Layout.fillHeight: true
             visible: templateContentLayout.children.length > 0  // Hide if the user has not added any content
         }
     }
-
+    Connections {
+        target: node
+        onNodeDoubleClicked: labelEditor.visible = true
+    }
+    NodeLabelEditor {
+        id: labelEditor
+        anchors.fill: parent
+        anchors.margins: 4
+        node: parent.node
+    }
     // Bounding shape management
     Connections {
         id: nodeUpdateBoundingShape
         onUpdateBoundingShape: {
-            if ( nodeSymbol.item !== null )
+            if ( nodeSymbol.item )
                 nodeSymbol.item.updateSymbolPolygon()
         }
     }
     Component.onCompleted: {
-        if ( nodeSymbol.item != null )
+        if ( nodeSymbol.item )
             nodeSymbol.item.updateSymbolPolygon()
     }
 }

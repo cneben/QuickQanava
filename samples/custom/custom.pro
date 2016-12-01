@@ -1,14 +1,10 @@
 TEMPLATE	= app
 TARGET		= test-custom
 CONFIG		+= qt warn_on thread c++14
-DEFINES		+= QANAVA  
-LANGUAGE	= C++
-QT		+= widgets core gui qml quick charts
+QT		+= widgets core gui qml quick
 
-include(../../GTpo/src/gtpo.pri)
-include(../../QuickProperties/src/quickproperties.pri)
-include(../../src/quickqanava.pri)
-include(../../common.pri)
+include(../../quickqanava-common.pri)
+include(../../src/quickqanava-conf.pri)
 
 SOURCES	+=  qanMainWindow.cpp
 HEADERS	+=  qanMainWindow.h
@@ -20,16 +16,3 @@ OTHER_FILES   +=  main.qml          \
 
 RESOURCES   +=  custom.qrc
 
-CONFIG(release, debug|release) {
-    linux-g++*:     LIBS	+= -lprotobuf
-    android:        LIBS	+= -lprotobuf
-    win32-msvc*:    LIBS	+= $$PROTOCOL_BUFFER3_LIBDIR_RELEASE/libprotobuf.lib
-    win32-g++*:     LIBS	+= -lprotobuf
-}
-
-CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -lprotobuf
-    android:        LIBS	+= -lprotobuf
-    win32-msvc*:    LIBS	+= $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
-    win32-g++*:     LIBS	+= -lprotobuf
-}

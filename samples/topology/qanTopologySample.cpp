@@ -33,7 +33,6 @@
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
-#include "../../src/qanProtoSerializer.h"
 
 // Qt headers
 #include <QGuiApplication>
@@ -42,8 +41,9 @@
 // Topology sample headers
 #include "./qanTopologySample.h"
 #include "./qanImgNode.h"
+#ifdef QUICKQANAVA_HAS_PROTOBUF
 #include "./topology.pb.h"
-
+#endif
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 
@@ -51,8 +51,7 @@ using namespace qan;
 
 //-----------------------------------------------------------------------------
 MainView::MainView( ) :
-    QQuickView( ),
-    _serializer{ new qan::ProtoSerializer() }
+    QQuickView( )
 {
     QQuickStyle::setStyle("Material");
     QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
@@ -61,6 +60,8 @@ MainView::MainView( ) :
     qmlRegisterType< qan::ImgNode >( "QuickQanava", 2, 0, "AbstractImgNode");
     qmlRegisterType< qan::ImageItem >( "QuickQanava", 2, 0, "ImageItem");
 
+#ifdef QUICKQANAVA_HAS_PROTOBUF
+    _serializer = new qan::ProtoSerializer{};
     _serializer->registerNodeOutFunctor( "qan::ImgNode",
                                          []( google::protobuf::Any* anyNodes,
                                          const qan::ProtoSerializer::WeakNode& weakNode,
@@ -110,8 +111,8 @@ MainView::MainView( ) :
             }
             return node;
         } );
-    engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer.data() );
-
+    engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer );
+#endif
     setSource( QUrl( "qrc:/main.qml" ) );
 }
 //-----------------------------------------------------------------------------

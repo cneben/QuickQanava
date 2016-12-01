@@ -20,7 +20,7 @@ benchmarks.depends  = gtpo
 
 SUBDIRS +=  gtpo
 SUBDIRS +=  tests
-#SUBDIRS +=  sample-basic
-#SUBDIRS +=  sample-behaviour
-#SUBDIRS +=  sample-serializer
+SUBDIRS +=  sample-basic
+SUBDIRS +=  sample-behaviour
+SUBDIRS +=  sample-serializer
 #SUBDIRS +=  benchmarks

@@ -1,38 +1,14 @@
 TEMPLATE	= app
 TARGET		= test-groups
 CONFIG		+= qt warn_on thread c++14
-LANGUAGE	= C++
-QT		+= widgets core gui qml quick charts
+QT		+= widgets core gui qml quick
 INCLUDEPATH     +=  ../../src
 INCLUDEPATH     +=  ../../QuickProperties/src
 
-include(../../common.pri)
-GTPO_DIR        =  ../../GTpo/src
-INCLUDEPATH	+= $$GTPO_DIR
+include(../../quickqanava-common.pri)
+include(../../src/quickqanava-conf.pri)
 
-SOURCES	+=  ./groups.cpp
-HEADERS	+=  ./groups.h
-
-OTHER_FILES   +=  main.qml
-
-RESOURCES   += groups.qrc
-
-CONFIG(release, debug|release) {
-    linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2 
-    android:        LIBS	+= -L../../build/ -lquickqanava2 
-    win32-msvc*:    PRE_TARGETDEPS +=  ../../build/quickqanava2.lib
-    win32-msvc*:    LIBS	+= ../../build/quickqanava2.lib
-    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2 
-}
-
-CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -L../../build/ -lquickqanava2d
-    android:        LIBS	+= -L../../build/ -lquickqanava2d
-    win32-msvc*:    PRE_TARGETDEPS += ../../build/quickqanava2d.lib
-    win32-msvc*:    LIBS	+= ../../build/quickqanava2d.lib
-    win32-g++*:     LIBS	+= -L../../build/ -lquickqanava2d 
-}
-
-
-
-
+SOURCES     += ./groups.cpp
+HEADERS     += ./groups.h
+OTHER_FILES += ./main.qml
+RESOURCES   += ./groups.qrc

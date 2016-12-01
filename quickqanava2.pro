@@ -1,33 +1,35 @@
 TEMPLATE    =   subdirs
 CONFIG      +=  ordered      # Well I know, but no choice...
 
-quickqanava2.file    = src/quickqanava2.pro
-quickqanava2.depends = 
+include(./quickqanava-common.pri)
+
+quickqanava.file    = src/quickqanava-build-lib.pro
+quickqanava.depends =
 
 test-navigable.subdir   = samples/navigable
-test-navigable.depends  = quickqanava2
+test-navigable.depends  = quickqanava
 
 test-custom.subdir   = samples/custom
-test-custom.depends  = quickqanava2
+test-custom.depends  = quickqanava
 
 test-groups.subdir   = samples/groups
-test-groups.depends  = quickqanava2
+test-groups.depends  = quickqanava
 
 test-hedges.subdir   = samples/hedges
-test-hedges.depends  = quickqanava2
+test-hedges.depends  = quickqanava
 
 test-style.subdir   = samples/style
-test-style.depends  = quickqanava2
+test-style.depends  = quickqanava
 
 test-topology.subdir   = samples/topology
-test-topology.depends  = quickqanava2
+test-topology.depends  = quickqanava
 
 test-progress.subdir   = samples/progress
-test-progress.depends  = quickqanava2
+test-progress.depends  = quickqanava
 
-SUBDIRS +=  quickqanava2
-SUBDIRS +=  test-navigable
 SUBDIRS +=  test-custom
+SUBDIRS +=  quickqanava
+SUBDIRS +=  test-navigable
 SUBDIRS +=  test-groups
 SUBDIRS +=  test-style
 SUBDIRS +=  test-progress

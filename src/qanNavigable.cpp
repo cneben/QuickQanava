@@ -95,11 +95,12 @@ void    Navigable::fitInView( )
         _zoomModified = false;
 
         // Don't use setZoom() because we force a TopLeft scale
-        if ( isValidZoom( fitZoom ) ) {
+        if ( isValidZoom(fitZoom) ) {
             _zoom = fitZoom;
-            _containerItem->setScale( _zoom );
+            _containerItem->setScale(_zoom);
             emit zoomChanged();
-            emit containerItemModified( );
+            emit containerItemModified();
+            navigableContainerItemModified();
         }
     }
 }
@@ -118,7 +119,7 @@ void    Navigable::setZoom( qreal zoom )
     if ( isValidZoom( zoom ) ) {
         switch ( _zoomOrigin ) {
         case QQuickItem::Center: {
-            zoomOn( QPointF( width( ) / 2., height() / 2. ),
+            zoomOn( QPointF{ width( ) / 2., height() / 2. },
                     zoom );
         }
             break;
@@ -128,7 +129,8 @@ void    Navigable::setZoom( qreal zoom )
             _containerItem->setScale( _zoom );
             _zoomModified = true;
             emit zoomChanged();
-            emit containerItemModified( );
+            emit containerItemModified();
+            navigableContainerItemModified();
         }
     }
 }
@@ -162,6 +164,7 @@ void    Navigable::zoomOn( QPointF center, qreal zoom )
         _panModified = true;
         emit zoomChanged();
         emit containerItemModified();
+        navigableContainerItemModified();
     }
 }
 
@@ -271,14 +274,15 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
 void    Navigable::mouseMoveEvent( QMouseEvent* event )
 {
     if ( getNavigable() ) {
-        if ( _leftButtonPressed && !_lastPan.isNull( ) ) {
-            QPointF delta = _lastPan - event->localPos( );
-            QPointF p( QPointF( _containerItem->x( ), _containerItem->y( ) ) - delta );
-            _containerItem->setX( p.x( ) );
-            _containerItem->setY( p.y( ) );
-            emit containerItemModified( );
+        if ( _leftButtonPressed && !_lastPan.isNull() ) {
+            QPointF delta = _lastPan - event->localPos();
+            QPointF p{ QPointF{ _containerItem->x(), _containerItem->y() } - delta };
+            _containerItem->setX( p.x() );
+            _containerItem->setY( p.y() );
+            emit containerItemModified();
+            navigableContainerItemModified();
             _panModified = true;
-            _lastPan = event->localPos( );
+            _lastPan = event->localPos();
         }
     }
     QQuickItem::mouseMoveEvent( event );
@@ -287,27 +291,30 @@ void    Navigable::mouseMoveEvent( QMouseEvent* event )
 void    Navigable::mousePressEvent( QMouseEvent* event )
 {
     if ( getNavigable() ) {
-        if ( event->button( ) == Qt::LeftButton ) {
+        if ( event->button() == Qt::LeftButton ) {
             _leftButtonPressed = true;
-            _lastPan = event->localPos( );
-            event->accept( );
+            _lastPan = event->localPos();
+            event->accept();
             return;
         }
-        if ( event->button( ) == Qt::RightButton ) {
-            event->accept( );
+        if ( event->button() == Qt::RightButton ) {
+            event->accept();
             return;
         }
     }
-    event->ignore( );
+    event->ignore();
 }
 
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
     if ( getNavigable() ) {
-        if ( event->button( ) == Qt::LeftButton )
-            emit clicked( event->localPos( ) );
-        if ( event->button( ) == Qt::RightButton )
-            emit rightClicked( event->localPos( ) );
+        if ( event->button() == Qt::LeftButton ) {
+            emit clicked( event->localPos() );
+            navigableClicked( event->localPos() );
+        } else if ( event->button() == Qt::RightButton ) {
+            emit rightClicked( event->localPos() );
+            navigableRightClicked(event->localPos() );
+        }
         _leftButtonPressed = false;
     }
     QQuickItem::mouseReleaseEvent( event );
@@ -316,9 +323,10 @@ void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 void    Navigable::wheelEvent( QWheelEvent* event )
 {
     if ( getNavigable() ) {
-        qreal zoomFactor = ( event->angleDelta( ).y( ) > 0. ? _zoomIncrement : -_zoomIncrement );
-        zoomOn( QPointF( event->x( ), event->y( ) ),
-                getZoom( ) + zoomFactor );
+        qreal zoomFactor = ( event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement );
+        zoomOn( QPointF{ static_cast<qreal>(event->x()),
+                         static_cast<qreal>(event->y()) },
+                getZoom() + zoomFactor );
     }
     // Note 20160117: NavigableArea is opaque for wheel events
     //QQuickItem::wheelEvent( event );

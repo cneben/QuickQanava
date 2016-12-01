@@ -93,7 +93,7 @@ public:
      */
     Q_PROPERTY( bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL )
     //! \sa navigable
-    inline qreal    getNavigable( ) const { return _navigable; }
+    inline bool     getNavigable( ) const { return _navigable; }
     //! \sa navigable
     void            setNavigable( bool navigable ) { _navigable = navigable; emit navigableChanged(); }
 private:
@@ -282,6 +282,14 @@ signals:
 
     //! Emitted whenever the container item is scaled (zoomed) or panned.
     void    containerItemModified( );
+
+protected:
+    //! Called when the mouse is clicked in the container (base implementation empty).
+    virtual void    navigableClicked(QPointF pos) { Q_UNUSED(pos); }
+    //! Called when the mouse is right clicked in the container (base implementation empty).
+    virtual void    navigableRightClicked(QPointF pos) { Q_UNUSED(pos); }
+    //! Called when the container item is scaled (zoomed) or panned (base implementation empty).
+    virtual void    navigableContainerItemModified() { }
 
 protected:
     virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;

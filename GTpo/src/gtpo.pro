@@ -6,7 +6,7 @@ DESTDIR		= ../build
 CONFIG		+= warn_on thread staticlib c++14
 QT		+= core 
 
-include (../common.pri)
+include (../common-gtpo.pri)
 
 HEADERS +=  ./gtpoUtils.h               \
             ./gtpoGraph.h               \

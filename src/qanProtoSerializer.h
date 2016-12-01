@@ -28,6 +28,7 @@
 #ifndef qanProtoSerializer_h
 #define qanProtoSerializer_h
 
+#ifdef QUICKQANAVA_HAS_PROTOBUF
 #ifdef _MSC_VER
 #pragma warning(disable: 4100)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
 #pragma warning(disable: 4267)  // Disable warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
@@ -153,6 +154,8 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::ProtoSerializer )
+
+#endif
 
 #endif // qanProtoSerializer_h
 
