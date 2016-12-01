@@ -4,7 +4,6 @@ CONFIG      +=  ordered      # Well I know, but no choice...
 include(./quickqanava-common.pri)
 
 quickqanava.file    = src/quickqanava-build-lib.pro
-quickqanava.depends =
 
 test-navigable.subdir   = samples/navigable
 test-navigable.depends  = quickqanava
@@ -27,8 +26,8 @@ test-topology.depends  = quickqanava
 test-progress.subdir   = samples/progress
 test-progress.depends  = quickqanava
 
-SUBDIRS +=  test-custom
 SUBDIRS +=  quickqanava
+SUBDIRS +=  test-custom
 SUBDIRS +=  test-navigable
 SUBDIRS +=  test-groups
 SUBDIRS +=  test-style

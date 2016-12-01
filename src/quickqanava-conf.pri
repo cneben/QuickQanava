@@ -20,19 +20,19 @@ contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
 }
 
 CONFIG(release, debug|release) {
-    linux-g++*:     LIBS	+= -L$$PWD/../build/ -lquickqanava
-    android:        LIBS	+= -L$$PWD/../build/ -lquickqanava
-    win32-msvc*:    PRE_TARGETDEPS +=  $$PWD/../build/quickqanava.lib
+    linux-g++*:     LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanava
+    android:        LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanava
+    win32-msvc*:    PRE_TARGETDEPS += $$PWD/../build/quickqanava.lib
     win32-msvc*:    LIBS	+= $$PWD/../build/quickqanava.lib
-    win32-g++*:     LIBS	+= -L$$PWD/../build/ -lquickqanava
+    win32-g++*:     LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanava
 }
 
 CONFIG(debug, debug|release) {
-    linux-g++*:     LIBS	+= -L$$PWD/../build/ -lquickqanavad
-    android:        LIBS	+= -L$$PWD/../build/ -lquickqanavad
+    linux-g++*:     LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanavad
+    android:        LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanavad
     win32-msvc*:    PRE_TARGETDEPS += $$PWD/../build/quickqanavad.lib
     win32-msvc*:    LIBS	+= $$PWD/../build/quickqanavad.lib
-    win32-g++*:     LIBS	+= -L$$PWD/../build/ -lquickqanavad
+    win32-g++*:     LIBS	+= -L$$OUT_PWD/../../build/ -L$$OUT_PWD/../build/ -lquickqanavad
 }
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
     linux-g++*:     LIBS	+= -lprotobuf
