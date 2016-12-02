@@ -25,10 +25,10 @@
 // \date	2015 06 20
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Layouts 1.2
-import QuickQanava 2.0 as Qan
+import QtQuick          2.7
+import QtQuick.Layouts  1.3
 
+import QuickQanava      2.0 as Qan
 import QuickGeoGL           1.0 as Qgl
 import "qrc:/QuickGeoGL"    1.0 as Qgl
 

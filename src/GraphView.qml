@@ -25,9 +25,10 @@
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QtQuick              2.7
+
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
 /*! \brief Visual view for a Qan.Graph component.
  *

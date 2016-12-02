@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick 2.5
+import QtQuick 2.7
 
 import "qrc:/QuickQanava" as Qan
 import QuickQanava 2.0 as Qan

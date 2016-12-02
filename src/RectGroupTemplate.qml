@@ -25,13 +25,13 @@
 // \date	2016 06 21
 //-----------------------------------------------------------------------------
 
-import QtQuick                  2.7
-import QtQuick.Controls         1.4
-import QtQuick.Layouts          1.3
-import QtGraphicalEffects       1.0
+import QtQuick              2.7
+import QtQuick.Controls     1.4
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
 
-import QuickQanava 2.0  as Qan
-import "."              as Qan
+import QuickQanava 2.0      as Qan
+import "qrc:/QuickQanava"   as Qan
 
 Item {
     id: template

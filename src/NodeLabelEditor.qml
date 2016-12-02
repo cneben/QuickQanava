@@ -28,9 +28,6 @@
 import QtQuick              2.7
 import QtQuick.Controls     2.0
 
-import QuickQanava          2.0 as Qan
-
-
 /*! \brief Reusable component for visual edition of node labels with on-demand loading.
  *
  * Set the target node to be edited with the 'node' property, editor is invisble by default.
