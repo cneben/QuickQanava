@@ -196,15 +196,6 @@ auto    ProtoSerializer::serializeQanNodeOut( const WeakNode& weakNode, qan::pb:
         gtpo::ProtoSerializer< qan::Config >::serializeGTpoNodeOut( weakNode,
                                                                     *pbQanNode.mutable_base(),
                                                                     objectIdMap ); // Serialize base gtpo.pb.GTpoNode
-    std::shared_ptr< qan::Node > qanNode = std::static_pointer_cast< qan::Node >( weakNode.lock() );
-    /*if ( qanNode != nullptr && qanNode->getStyle() != nullptr ) {
-        int styleId = -1;
-        try {
-            styleId = objectIdMap.at( qanNode->getStyle() );
-        } catch ( const std::out_of_range& ) { }
-          catch ( ... ) { }
-        pbQanNode.set_style_id( styleId );  // Default to -1 if there is a style mapping error
-    }*/
 }
 
 auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void

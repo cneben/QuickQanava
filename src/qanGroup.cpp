@@ -92,9 +92,9 @@ auto    Group::insertNode( qan::Node* node, bool drop ) -> void
         // Note 20150907: Set a default position corresponding to the drop position, it will usually be modified
         // if a layout has been configured in this group
         if ( drop ) // Do not map position if the insertion didn't result from a drag and drop action (for example when inserting a node for in serialization)
-            node->setPosition( node->mapToItem( getContainer( ), QPointF( 0., 0. ) ) );
-        node->setParentItem( getContainer( ) );
-        groupMoved( ); // Force call to groupMoved() to update group adjacent edges
+            node->setPosition( node->mapToItem( getContainer(), QPointF{ 0., 0. } ) );
+        node->setParentItem( getContainer() );
+        groupMoved(); // Force call to groupMoved() to update group adjacent edges
         endProposeNodeDrop();
     } catch ( std::bad_weak_ptr ) { return; }
       catch ( gtpo::bad_topology_error ) { return; }
