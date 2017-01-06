@@ -94,7 +94,7 @@ private:
     QPointer< QQuickItem >  _flickable{ nullptr };
 
 public:
-    /*! Size of the bottom right handler component (default to \c 9x9).
+    /*! \brief Size of the bottom right handler component (default to \c 9x9).
      *
      * \note Setting an empty or invalid size has not effect, use \c autoHideHandler property to control
      * handler visibility (or set it's opacity to a given value).
@@ -108,7 +108,7 @@ private:
     QSizeF      _handlerSize{ 9.0, 9.0 };
 
 public:
-    /*! Color of the bottom right handler component (default to \c Qt::black).
+    /*! \brief Color of the bottom right handler component (default to \c Qt::black).
      *
      * \note For a default rectangular handler, color is border color, background is
      * set to transparent, use getHandler()->setProperty() to change this default behaviour.
@@ -122,7 +122,7 @@ private:
     QColor      _handlerColor{ Qt::black };
 
 public:
-    /*! Radius of the bottom right handler rectangle component (default to \c 4).
+    /*! \brief Radius of the bottom right handler rectangle component (default to \c 4).
      */
     Q_PROPERTY( qreal handlerRadius READ getHandlerRadius WRITE setHandlerRadius NOTIFY handlerRadiusChanged FINAL )
     void        setHandlerRadius( qreal handlerRadius );
@@ -133,7 +133,7 @@ private:
     qreal       _handlerRadius{ 4.0 };
 
 public:
-    /*! Radius of the bottom right handler rectangle component (default to \c 4).
+    /*! \brief Radius of the bottom right handler rectangle component (default to \c 4).
      */
     Q_PROPERTY( qreal handlerWidth READ getHandlerWidth WRITE setHandlerWidth NOTIFY handlerWidthChanged FINAL )
     void        setHandlerWidth( qreal handlerWidth );

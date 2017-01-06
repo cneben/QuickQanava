@@ -13,15 +13,13 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/gtpoBehaviour.hpp         \
             $$PWD/gtpoProgressNotifier.h    \
             $$PWD/gtpoSerializer.h          \
-            $$PWD/gtpoGmlSerializer.h       \
-            $$PWD/gtpoGmlSerializer.hpp     \
             $$PWD/gtpoNode.hpp              \
             $$PWD/gtpoGroup.hpp             \
             $$PWD/GTpo.h                    \
             $$PWD/GTpoQt.h                  \
             $$PWD/GTpoStd.h
 
-SOURCES +=  $$PWD/pugixml/src/pugixml.cpp
+SOURCES +=
 
 contains(DEFINES, GTPO_HAS_PROTOBUF) {
     message("GTpo: Protocol Buffer v3 support enabled.")

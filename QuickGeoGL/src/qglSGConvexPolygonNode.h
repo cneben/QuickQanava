@@ -67,7 +67,7 @@ public:
     auto        createGeometry( const QPolygonF& polygon ) noexcept -> void;
     auto        updateGeometry( const QPolygonF& polygon ) noexcept -> void;
 
-    /*! Every time you access the underlining polyline gadget, this node consider that you have modified it, internal geometry may be updated.
+    /*! \brief Every time you access the underlining polyline gadget, this node consider that you have modified it, internal geometry may be updated.
      *
      * \note Automatically call setDirty().
      */

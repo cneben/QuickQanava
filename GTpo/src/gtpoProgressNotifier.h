@@ -131,7 +131,7 @@ public:
 
     using   IProgressNotifierPtr = std::unique_ptr< IProgressNotifier >;
 
-    /*! Return a sub progress notifier previously reserved using reserveSubProgress(), or throw std::exception if no reservation was made.
+    /*! \brief Return a sub progress notifier previously reserved using reserveSubProgress(), or throw std::exception if no reservation was made.
      *
      * Creating a sub progress will introduce a new level in progress reporting. For example, if you are
      * extending GTpo, you might have custom serialization to process with its own progress reporting.
@@ -238,7 +238,7 @@ public:
         onModified();
     }
 
-    /*! Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
+    /*! \brief Return the current overall progress, taking into account configured \c phaseCount and current phase progress.
      *
      * When a sub progress notifier is attached to this progress notifier, getProgress()
      * return a global progress valid for all progress notifier, otherwise, it return the

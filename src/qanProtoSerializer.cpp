@@ -25,14 +25,12 @@
 // \date	2016 02 11
 //-----------------------------------------------------------------------------
 
-// QuickProperties headers
-#include "qpsPbSerializer.h"
-
 // QuickQanava headers
 #include "./qanProtoSerializer.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable: 4100)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
+#pragma warning(disable:4100)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
+#pragma warning(disable:4267)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
 #endif
 #include "./quickqanava.pb.h"
 
@@ -201,30 +199,15 @@ auto    ProtoSerializer::serializeQanNodeOut( const WeakNode& weakNode, qan::pb:
 auto    ProtoSerializer::serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void
 {
     qan::Node* qanNode = qobject_cast< qan::Node* >( weakNode.lock().get() );
-    if ( qanNode != nullptr ) {
+    if ( qanNode != nullptr )
         gtpo::ProtoSerializer< qan::Config >::serializeGTpoNodeIn( pbQanNode.base(), weakNode, idObjectMap ); // Serialize base gtpo.pb.GTpoNode
-
-        // Note 20160404: This code should not find any style since style manager is serialized _after_ topology, kept
-        // if a node is serialized in from the network...
-        /*void* styleObject{ nullptr };
-        try {
-            if ( pbQanNode.style_id() != -1 )
-                styleObject = idObjectMap.at( pbQanNode.style_id() );
-        }   catch ( const std::out_of_range& ) { styleObject = nullptr; }
-            catch ( ... ) { styleObject = nullptr; }
-
-        if ( styleObject != nullptr ) {
-            qan::NodeStyle* nodeStyle = reinterpret_cast< qan::NodeStyle* >( styleObject );
-            qanNode->setStyle( nodeStyle );
-        }*/
-    }
 }
 
 auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
                                                    const qan::StyleManager& styleManager,
                                                    qan::pb::StyleManager& pbStyleManager ) -> void
 {
-    for ( const auto style : styleManager )
+    for ( const auto style : qAsConst( styleManager.getStyles() ) )
         _gtpoSerializer.addObjectId( style );
     const ObjectIdMap& objectIdMap = _gtpoSerializer.getObjectIdMap();
 
@@ -243,8 +226,8 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
         std::cerr << "qan::ProtoSerializer::saveStyleManager(): Warning: Out of range access in objectIdMap.";
     }
 
-    pbStyleManager.set_style_count( styleManager.size() );
-    for ( auto style : styleManager ) {
+    pbStyleManager.set_style_count( styleManager.getStyles().size() );
+    for ( const auto style : qAsConst( styleManager.getStyles() ) ) {
         qan::Style* qanStyle = qobject_cast< qan::Style* >( style );
         int styleId = -1;
         try {
@@ -268,8 +251,8 @@ auto    ProtoSerializer::serializeStyleManagerOut( const qan::Graph& graph,
                     pbStyle->add_edge_ids( edgeIter->second );
                 }
             }
-            qps::pb::QtObject* pbProperties = pbStyle->mutable_properties();
-            qps::PbSerializer::serializeOut( *qanStyle, *pbProperties );
+            if ( pbStyle->mutable_properties() != nullptr )
+                 serializeOut( *qanStyle, *pbStyle->mutable_properties() );
         }
     }
 
@@ -345,7 +328,7 @@ auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& p
         }
         if ( style != nullptr ) {
             idObjectMap.insert( std::make_pair( pbStyle.id(), style ) );
-            qps::PbSerializer::serializeIn( pbStyle.properties(), *style );
+            serializeIn( pbStyle.properties(), *style );
         }
     }
 
@@ -372,6 +355,124 @@ auto    ProtoSerializer::serializeStyleManagerIn( const qan::pb::StyleManager& p
     }
 }
 //-----------------------------------------------------------------------------
+
+/* Qt Types Serialization Helpers *///-----------------------------------------
+auto    ProtoSerializer::isValidQVariant( const QVariant& qVariant ) -> bool {
+    return qVariant.isValid() && isValidQVariantType( qVariant.type() );
+}
+
+auto    ProtoSerializer::isValidQVariantType( const QVariant::Type qVariantType ) -> bool
+{
+    return (    qVariantType == QVariant::String        ||
+                qVariantType == QVariant::Date          ||
+                qVariantType == QVariant::DateTime      ||
+                qVariantType == QVariant::Double        ||
+                qVariantType == QVariant::Char          ||
+                qVariantType == QVariant::Color         ||
+                qVariantType == QVariant::Bool          ||
+                qVariantType == QVariant::Font          ||
+                qVariantType == QVariant::LongLong      ||
+                qVariantType == QVariant::Int           ||
+                qVariantType == QVariant::Point         ||
+                qVariantType == QVariant::PointF        ||
+                qVariantType == QVariant::Polygon       ||
+                qVariantType == QVariant::PolygonF      ||
+                qVariantType == QVariant::Quaternion    ||
+                qVariantType == QVariant::Rect          ||
+                qVariantType == QVariant::RectF         ||
+                qVariantType == QVariant::Size          ||
+                qVariantType == QVariant::SizeF         ||
+                qVariantType == QVariant::String );
+}
+
+auto    ProtoSerializer::serializeOut( const QObject& qObject, qan::pb::QtObject& pbObject, int hiddenStaticPropertiesCount ) -> void
+{
+    // Serialize static properties
+    int pCount = qObject.metaObject( )->propertyCount( );
+    for ( int i = hiddenStaticPropertiesCount; i < pCount; ++i ) {
+        QMetaProperty metaProperty = qObject.metaObject( )->property( i );
+        QVariant v = qObject.property( metaProperty.name( ) );
+        if ( isValidQVariant(v) ) {
+            pbObject.add_properties_names( metaProperty.name() );
+            auto pbProperty = pbObject.add_properties();
+            serializeOut( v, *pbProperty );
+        }
+    }
+
+    // Serialize dynamic properties
+    QList< QByteArray > dynamicProperties = qObject.dynamicPropertyNames( );
+    for ( int d = 0; d < dynamicProperties.size( ); d++ ) {
+        QString propertyName = dynamicProperties.at( d );
+        QVariant v = qObject.property( propertyName.toLatin1( ) );
+        if ( isValidQVariant( v ) ) {
+            pbObject.add_properties_names( propertyName.toStdString() );
+            auto pbProperty = pbObject.add_properties();
+            serializeOut( v, *pbProperty );
+        }
+    }
+}
+
+auto    ProtoSerializer::serializeIn( const qan::pb::QtObject& pbObject, QObject& qObject ) -> void
+{
+    if ( pbObject.properties().size() != pbObject.properties_names().size() )
+        return;
+    auto pbPropertiesNames = pbObject.properties_names().data();
+    if ( !pbPropertiesNames )
+        return;
+    int p{0};
+    for ( auto& pbProperty : std::as_const(pbObject.properties()) ) {
+        QVariant value;
+        serializeIn( pbProperty, value );
+        const std::string& propertyName = pbObject.properties_names().Get(p);
+        int pi = qObject.metaObject()->indexOfProperty(propertyName.c_str());
+        if ( pi != -1 ) {   // If we serialize in to a static property, check that it is writable
+            QMetaProperty mp = qObject.metaObject()->property( pi ); // before calling setProperty()
+            if ( mp.isWritable() )
+                qObject.setProperty( propertyName.c_str(), value );
+        } else
+            qObject.setProperty( propertyName.c_str(), value );
+        p++;
+    }
+}
+
+auto    ProtoSerializer::serializeOut( const QVariant& qVariant, qan::pb::QtVariant& pbVariant ) -> void
+{
+    // Serialize QVariant to a QDataStream in a QBuffer
+    QByteArray qArray{};
+    QDataStream qStream{&qArray, QIODevice::WriteOnly};
+    qStream << qVariant;
+    if ( qStream.status() != QDataStream::Ok )
+        throw std::runtime_error( "qan::PbSerializer::serializeOut<QVariant>(): Error: QDataStream can't save given QVariant." );
+
+    // Serialize the QBuffer to our PB QVariant
+    pbVariant.set_variant_type( static_cast<int>( qVariant.type() ) );
+    pbVariant.set_variant_data_size( qArray.size() );
+    if ( qArray.data() == nullptr )
+        throw std::runtime_error( "qan::PbSerializer::serializeOut<QVariant>(): Error: Can't acces to out byte array." );
+    pbVariant.set_variant_data( (char*)qArray.data(), static_cast<size_t>( qArray.size() ) );
+}
+
+auto    ProtoSerializer::serializeIn( const qan::pb::QtVariant& pbVariant, QVariant& qVariant ) -> void
+{
+    // Serialize the QBuffer to our PB QVariant
+    long pbDataSize{ pbVariant.variant_data_size() };
+    if ( pbDataSize > 0 ) {
+        QByteArray qArray{};
+        qArray.resize( pbDataSize );
+        std::memcpy( static_cast<void*>( qArray.data() ),     // DST
+                     const_cast<void*>( static_cast<const void*>( pbVariant.variant_data().data() ) ),                                                     // SRC
+                     static_cast<size_t>( pbDataSize ) );
+        if ( qArray.isEmpty() )
+            throw std::runtime_error( "qan::PbSerializer::serializeIn<QVariant>(): Error: Can't write to QBuffer." );
+        QDataStream qStream{&qArray, QIODevice::ReadOnly};
+        qStream >> qVariant;
+        if ( qStream.status() != QDataStream::Ok )
+            throw std::runtime_error( "qan::PbSerializer::serializeIn<QVariant>(): Error: QDataStream can't restore to QVariant." );
+        if ( qVariant.type() != pbVariant.variant_type() )
+            throw std::runtime_error( "qan::PbSerializer::serializeIn<QVariant>(): Error: Serialized QVariant has an incorrect type." );
+    }
+}
+//-------------------------------------------------------------------------
 
 } // ::qan
 

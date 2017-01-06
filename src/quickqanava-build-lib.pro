@@ -8,9 +8,7 @@ QT		+= core widgets gui xml qml quick
 
 include(../quickqanava-common.pri)
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
-    # Specific QuickProperties configuration
-    DEFINES += QUICKPROPERTIES_HAS_PROTOBUF
-    include(../QuickProperties/src/quickproperties-pb-conf.pri)
+    include(./quickqanava-pb-conf.pri)
 
     # Specific GTpo configuration
     DEFINES += GTPO_HAS_PROTOBUF
@@ -18,11 +16,11 @@ contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
     win32-msvc*:INCLUDEPATH     	+= $$PROTOCOL_BUFFER3_DIR/include
     win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/lib
     win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_DEBUG    = $$PROTOCOL_BUFFER3_DIR/lib
-    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34100  # Remove C4100 unreferenced formal parameter
-    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267  # Remove C4267 conversion from size_t to int (protobuf)
+    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON += -w34100  # Remove C4100 unreferenced formal parameter
+    win32-msvc*: QMAKE_CXXFLAGS_WARN_ON += -w34267  # Remove C4267 conversion from size_t to int (protobuf)
 }
 include(../GTpo/src/gtpo.pri)
-include(../QuickProperties/src/quickproperties.pri)
+include(../QuickContainers/src/quickcontainers.pri)
 include(../QuickGeoGL/src/quickgeogl.pri)
 
 HEADERS +=  ./QuickQanava.h             \
@@ -67,6 +65,7 @@ OTHER_FILES +=  ./quickqanava.proto         \
                 ./Node.qml                  \
                 ./Edge.qml                  \
                 ./StyleListView.qml         \
+                ./StyleEditor.qml           \
                 ./ConnectorDropNode.qml     \
                 ./NodeLabelEditor.qml
 

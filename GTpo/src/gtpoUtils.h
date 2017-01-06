@@ -99,12 +99,12 @@ auto    find_weak_ptr( const C& container, const T& element ) -> bool {
  * default implementations for accessors working with most STL containers.
  */
 struct ContainerAccessors {
-    /*! Generic "item inserter" for list/set/vector, specialize for your custom container types.
+    /*! \brief Generic "item inserter" for list/set/vector, specialize for your custom container types.
      */
     template <typename T>
     struct insert { };
 
-    /*! Generic "item remover" for list/set/vector, specialize for your custom container types.
+    /*! \brief Generic "item remover" for list/set/vector, specialize for your custom container types.
      *
      * \code
      *   using IntList = std::list< int >;

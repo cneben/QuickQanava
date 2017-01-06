@@ -54,8 +54,8 @@ class Group : public gtpo::GenGroup< qan::Config >
     Q_OBJECT
 public:
     //! Group constructor.
-    explicit Group( QQuickItem* parent = 0 );
-    /*! Remove any childs group who have no QQmlEngine::CppOwnership.
+    explicit Group( QQuickItem* parent = nullptr );
+    /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
     virtual ~Group( );
@@ -138,7 +138,7 @@ protected slots:
     /*! \name Group DnD Management *///----------------------------------------
     //@{
 public:
-    /*! Define if the group could actually be dragged by mouse.
+    /*! \brief Define if the group could actually be dragged by mouse.
      *
      * Set this property to true if you want to allow this group to be moved by mouse (if false, the node position is
      * fixed and should be changed programmatically).
@@ -153,7 +153,7 @@ signals:
     void            draggableChanged( );
 
 public:
-    /*! Define if the group actually accept insertion of nodes via drag'n drop (default to true).
+    /*! \brief Define if the group actually accept insertion of nodes via drag'n drop (default to true).
      *
      * Default to true.
      *
@@ -168,7 +168,7 @@ signals:
     void            acceptDropsChanged( );
 
 public:
-    /*! Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
+    /*! \brief Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
      *
      *  When sets to true, group will use a shadow node (_shadowDropNode) to hilight the position of a node that is actually dragged over
      *  this group to show its position when dropped and inserted in the group (it is quite costly, and the group layout must include support for
@@ -194,7 +194,7 @@ signals:
     void            hilightDragChanged( );
 
 public:
-    /*! Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
+    /*! \brief Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
      *
      * \sa qan::Layout::proposeNodeDrop( ) for a detailled explanation.
      */
@@ -207,7 +207,7 @@ private:
     qan::Node*      _shadowDropNode = nullptr;
 
 public:
-    /*! Should be set from the group concrete QML component to indicate the group content item (otherwise, this will be used).
+    /*! \brief Should be set from the group concrete QML component to indicate the group content item (otherwise, this will be used).
      *
      * For example, if the actual container for node is a child of the concrete group component (most of the time, an Item or a Rectangle, use the
      * following code to set 'container' property:

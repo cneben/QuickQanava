@@ -47,11 +47,11 @@ void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) noexcept
         inNodeInserted( *inNode );
 }
 
-void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode ) noexcept
+void    NodeBehaviour::inNodeAboutToBeRemoved( WeakNode& weakInNode ) noexcept
 {
     SharedNode inNode = weakInNode.lock();
     if ( inNode != nullptr )
-        inNodeRemoved( *inNode );
+        inNodeAboutToBeRemoved( *inNode );
 }
 
 void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode ) noexcept

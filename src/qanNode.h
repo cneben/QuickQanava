@@ -61,8 +61,8 @@ class Node : public gtpo::GenNode< qan::Config >
     Q_OBJECT
 public:
     //! Node constructor.
-    explicit Node( QQuickItem* parent = 0 );
-    /*! Remove any childs node who have no QQmlEngine::CppOwnership.
+    explicit Node( QQuickItem* parent = nullptr );
+    /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
      *
      */
     virtual ~Node( );
@@ -146,7 +146,7 @@ signals:
     void            selectedChanged( );
 
 public:
-    /*! Item used to hilight selection (usually a Rectangle quick item).
+    /*! \brief Item used to hilight selection (usually a Rectangle quick item).
      *
      */
     Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
@@ -176,7 +176,7 @@ public:
     /*! \name Node DnD Management *///-----------------------------------------
     //@{
 public:
-    /*! Define if the node could actually be dragged by mouse.
+    /*! \brief Define if the node could actually be dragged by mouse.
      *
      * Set this property to true if you want to allow this node to be moved by mouse (if false, the node position is
      * fixed and should be changed programmatically).
@@ -191,7 +191,7 @@ signals:
     void            draggableChanged( );
 
 public:
-    /*! Define if the node could actually be dropped in another node or in a node group.
+    /*! \brief Define if the node could actually be dropped in another node or in a node group.
      *
      * Set this property to true if you want to allow this node to be dropped in a qan::Group automatically.
      * Default to true.
@@ -206,7 +206,7 @@ signals:
     void            dropableChanged( );
 
 public:
-    /*! Define if the node actually accept drops from other node (default to true).
+    /*! \brief Define if the node actually accept drops from other node (default to true).
      *
      * This property allow use of DropNode component that is a node droppable on another node (that has acceptDrops=true),
      * it it actually used for EdgeCreatorDropNode component to dynamically connect edges.
@@ -313,7 +313,7 @@ public:
     virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
 
 public:
-    /*! Polygon used for mouse event clipping, and edge arrow clipping.
+    /*! \brief Polygon used for mouse event clipping, and edge arrow clipping.
      *
      * An intersection shape is automatically generated for rectangular nodes, it can be sets by the user
      * manually with setIntersectionShape() or setIntersectionShapeFromQml() if the node graphical representation is
@@ -334,7 +334,7 @@ protected:
 private:
     QPolygonF           _boundingShape;
 protected:
-    /*! Invoke this method from a concrete node component in QML for non rectangular nodes.
+    /*! \brief Invoke this method from a concrete node component in QML for non rectangular nodes.
      * \code
      * // In a component "inheriting" from QanNode:
      *
@@ -355,7 +355,7 @@ protected:
      */
     Q_INVOKABLE virtual void    setBoundingShape( QVariantList boundingPolygon );
 
-    /*! Test if a point in the node local CCS is inside the current intersection shape.
+    /*! \brief Test if a point in the node local CCS is inside the current intersection shape.
      *
      * Usefull to accept or reject mouse drag event in QML custom node components.
      * \code
@@ -374,7 +374,7 @@ protected:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    /*! Ungroup this node from its current group.
+    /*! \brief Ungroup this node from its current group.
      *
      * Method can be called even if the node is not actually part of a group.
      * \sa qan::Group::ungroup()

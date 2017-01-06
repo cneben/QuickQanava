@@ -29,7 +29,6 @@
 #include <google/protobuf/map.h>
 #include <google/protobuf/map_field_inl.h>
 #include <google/protobuf/unknown_field_set.h>
-#include "quickproperties.pb.h"
 #include "gtpo.pb.h"
 // @@protoc_insertion_point(includes)
 
@@ -43,10 +42,218 @@ void protobuf_ShutdownFile_quickqanava_2eproto();
 
 class Graph;
 class Node;
+class QtObject;
+class QtVariant;
 class Style;
 class StyleManager;
 
 // ===================================================================
+
+class QtVariant : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.QtVariant) */ {
+ public:
+  QtVariant();
+  virtual ~QtVariant();
+
+  QtVariant(const QtVariant& from);
+
+  inline QtVariant& operator=(const QtVariant& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const QtVariant& default_instance();
+
+  void Swap(QtVariant* other);
+
+  // implements Message ----------------------------------------------
+
+  inline QtVariant* New() const { return New(NULL); }
+
+  QtVariant* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const QtVariant& from);
+  void MergeFrom(const QtVariant& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(QtVariant* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 variant_type = 1;
+  void clear_variant_type();
+  static const int kVariantTypeFieldNumber = 1;
+  ::google::protobuf::int32 variant_type() const;
+  void set_variant_type(::google::protobuf::int32 value);
+
+  // optional int32 variant_data_size = 2;
+  void clear_variant_data_size();
+  static const int kVariantDataSizeFieldNumber = 2;
+  ::google::protobuf::int32 variant_data_size() const;
+  void set_variant_data_size(::google::protobuf::int32 value);
+
+  // optional bytes variant_data = 3;
+  void clear_variant_data();
+  static const int kVariantDataFieldNumber = 3;
+  const ::std::string& variant_data() const;
+  void set_variant_data(const ::std::string& value);
+  void set_variant_data(const char* value);
+  void set_variant_data(const void* value, size_t size);
+  ::std::string* mutable_variant_data();
+  ::std::string* release_variant_data();
+  void set_allocated_variant_data(::std::string* variant_data);
+
+  // @@protoc_insertion_point(class_scope:qan.pb.QtVariant)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 variant_type_;
+  ::google::protobuf::int32 variant_data_size_;
+  ::google::protobuf::internal::ArenaStringPtr variant_data_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_quickqanava_2eproto();
+  friend void protobuf_AssignDesc_quickqanava_2eproto();
+  friend void protobuf_ShutdownFile_quickqanava_2eproto();
+
+  void InitAsDefaultInstance();
+  static QtVariant* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class QtObject : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.QtObject) */ {
+ public:
+  QtObject();
+  virtual ~QtObject();
+
+  QtObject(const QtObject& from);
+
+  inline QtObject& operator=(const QtObject& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const QtObject& default_instance();
+
+  void Swap(QtObject* other);
+
+  // implements Message ----------------------------------------------
+
+  inline QtObject* New() const { return New(NULL); }
+
+  QtObject* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const QtObject& from);
+  void MergeFrom(const QtObject& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(QtObject* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string properties_names = 1;
+  int properties_names_size() const;
+  void clear_properties_names();
+  static const int kPropertiesNamesFieldNumber = 1;
+  const ::std::string& properties_names(int index) const;
+  ::std::string* mutable_properties_names(int index);
+  void set_properties_names(int index, const ::std::string& value);
+  void set_properties_names(int index, const char* value);
+  void set_properties_names(int index, const char* value, size_t size);
+  ::std::string* add_properties_names();
+  void add_properties_names(const ::std::string& value);
+  void add_properties_names(const char* value);
+  void add_properties_names(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& properties_names() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_properties_names();
+
+  // repeated .qan.pb.QtVariant properties = 2;
+  int properties_size() const;
+  void clear_properties();
+  static const int kPropertiesFieldNumber = 2;
+  const ::qan::pb::QtVariant& properties(int index) const;
+  ::qan::pb::QtVariant* mutable_properties(int index);
+  ::qan::pb::QtVariant* add_properties();
+  ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >*
+      mutable_properties();
+  const ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >&
+      properties() const;
+
+  // @@protoc_insertion_point(class_scope:qan.pb.QtObject)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> properties_names_;
+  ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant > properties_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_quickqanava_2eproto();
+  friend void protobuf_AssignDesc_quickqanava_2eproto();
+  friend void protobuf_ShutdownFile_quickqanava_2eproto();
+
+  void InitAsDefaultInstance();
+  static QtObject* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class Style : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:qan.pb.Style) */ {
  public:
@@ -147,14 +354,14 @@ class Style : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::std::string* release_target();
   void set_allocated_target(::std::string* target);
 
-  // optional .qps.pb.QtObject properties = 5;
+  // optional .qan.pb.QtObject properties = 5;
   bool has_properties() const;
   void clear_properties();
   static const int kPropertiesFieldNumber = 5;
-  const ::qps::pb::QtObject& properties() const;
-  ::qps::pb::QtObject* mutable_properties();
-  ::qps::pb::QtObject* release_properties();
-  void set_allocated_properties(::qps::pb::QtObject* properties);
+  const ::qan::pb::QtObject& properties() const;
+  ::qan::pb::QtObject* mutable_properties();
+  ::qan::pb::QtObject* release_properties();
+  void set_allocated_properties(::qan::pb::QtObject* properties);
 
   // repeated int32 node_ids = 6 [packed = true];
   int node_ids_size() const;
@@ -188,7 +395,7 @@ class Style : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::internal::ArenaStringPtr meta_target_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr target_;
-  ::qps::pb::QtObject* properties_;
+  ::qan::pb::QtObject* properties_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > node_ids_;
   mutable int _node_ids_cached_byte_size_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > edge_ids_;
@@ -531,6 +738,171 @@ class Graph : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
+// QtVariant
+
+// optional int32 variant_type = 1;
+inline void QtVariant::clear_variant_type() {
+  variant_type_ = 0;
+}
+inline ::google::protobuf::int32 QtVariant::variant_type() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_type)
+  return variant_type_;
+}
+inline void QtVariant::set_variant_type(::google::protobuf::int32 value) {
+  
+  variant_type_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_type)
+}
+
+// optional int32 variant_data_size = 2;
+inline void QtVariant::clear_variant_data_size() {
+  variant_data_size_ = 0;
+}
+inline ::google::protobuf::int32 QtVariant::variant_data_size() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_data_size)
+  return variant_data_size_;
+}
+inline void QtVariant::set_variant_data_size(::google::protobuf::int32 value) {
+  
+  variant_data_size_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_data_size)
+}
+
+// optional bytes variant_data = 3;
+inline void QtVariant::clear_variant_data() {
+  variant_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& QtVariant::variant_data() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_data)
+  return variant_data_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void QtVariant::set_variant_data(const ::std::string& value) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_data)
+}
+inline void QtVariant::set_variant_data(const char* value) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:qan.pb.QtVariant.variant_data)
+}
+inline void QtVariant::set_variant_data(const void* value, size_t size) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:qan.pb.QtVariant.variant_data)
+}
+inline ::std::string* QtVariant::mutable_variant_data() {
+  
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtVariant.variant_data)
+  return variant_data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* QtVariant::release_variant_data() {
+  // @@protoc_insertion_point(field_release:qan.pb.QtVariant.variant_data)
+  
+  return variant_data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void QtVariant::set_allocated_variant_data(::std::string* variant_data) {
+  if (variant_data != NULL) {
+    
+  } else {
+    
+  }
+  variant_data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), variant_data);
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.QtVariant.variant_data)
+}
+
+// -------------------------------------------------------------------
+
+// QtObject
+
+// repeated string properties_names = 1;
+inline int QtObject::properties_names_size() const {
+  return properties_names_.size();
+}
+inline void QtObject::clear_properties_names() {
+  properties_names_.Clear();
+}
+inline const ::std::string& QtObject::properties_names(int index) const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtObject.properties_names)
+  return properties_names_.Get(index);
+}
+inline ::std::string* QtObject::mutable_properties_names(int index) {
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtObject.properties_names)
+  return properties_names_.Mutable(index);
+}
+inline void QtObject::set_properties_names(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:qan.pb.QtObject.properties_names)
+  properties_names_.Mutable(index)->assign(value);
+}
+inline void QtObject::set_properties_names(int index, const char* value) {
+  properties_names_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:qan.pb.QtObject.properties_names)
+}
+inline void QtObject::set_properties_names(int index, const char* value, size_t size) {
+  properties_names_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:qan.pb.QtObject.properties_names)
+}
+inline ::std::string* QtObject::add_properties_names() {
+  // @@protoc_insertion_point(field_add_mutable:qan.pb.QtObject.properties_names)
+  return properties_names_.Add();
+}
+inline void QtObject::add_properties_names(const ::std::string& value) {
+  properties_names_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:qan.pb.QtObject.properties_names)
+}
+inline void QtObject::add_properties_names(const char* value) {
+  properties_names_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:qan.pb.QtObject.properties_names)
+}
+inline void QtObject::add_properties_names(const char* value, size_t size) {
+  properties_names_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:qan.pb.QtObject.properties_names)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+QtObject::properties_names() const {
+  // @@protoc_insertion_point(field_list:qan.pb.QtObject.properties_names)
+  return properties_names_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+QtObject::mutable_properties_names() {
+  // @@protoc_insertion_point(field_mutable_list:qan.pb.QtObject.properties_names)
+  return &properties_names_;
+}
+
+// repeated .qan.pb.QtVariant properties = 2;
+inline int QtObject::properties_size() const {
+  return properties_.size();
+}
+inline void QtObject::clear_properties() {
+  properties_.Clear();
+}
+inline const ::qan::pb::QtVariant& QtObject::properties(int index) const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtObject.properties)
+  return properties_.Get(index);
+}
+inline ::qan::pb::QtVariant* QtObject::mutable_properties(int index) {
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtObject.properties)
+  return properties_.Mutable(index);
+}
+inline ::qan::pb::QtVariant* QtObject::add_properties() {
+  // @@protoc_insertion_point(field_add:qan.pb.QtObject.properties)
+  return properties_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >*
+QtObject::mutable_properties() {
+  // @@protoc_insertion_point(field_mutable_list:qan.pb.QtObject.properties)
+  return &properties_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >&
+QtObject::properties() const {
+  // @@protoc_insertion_point(field_list:qan.pb.QtObject.properties)
+  return properties_;
+}
+
+// -------------------------------------------------------------------
+
 // Style
 
 // optional int32 id = 1;
@@ -679,7 +1051,7 @@ inline void Style::set_allocated_target(::std::string* target) {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.target)
 }
 
-// optional .qps.pb.QtObject properties = 5;
+// optional .qan.pb.QtObject properties = 5;
 inline bool Style::has_properties() const {
   return !_is_default_instance_ && properties_ != NULL;
 }
@@ -687,26 +1059,26 @@ inline void Style::clear_properties() {
   if (GetArenaNoVirtual() == NULL && properties_ != NULL) delete properties_;
   properties_ = NULL;
 }
-inline const ::qps::pb::QtObject& Style::properties() const {
+inline const ::qan::pb::QtObject& Style::properties() const {
   // @@protoc_insertion_point(field_get:qan.pb.Style.properties)
   return properties_ != NULL ? *properties_ : *default_instance_->properties_;
 }
-inline ::qps::pb::QtObject* Style::mutable_properties() {
+inline ::qan::pb::QtObject* Style::mutable_properties() {
   
   if (properties_ == NULL) {
-    properties_ = new ::qps::pb::QtObject;
+    properties_ = new ::qan::pb::QtObject;
   }
   // @@protoc_insertion_point(field_mutable:qan.pb.Style.properties)
   return properties_;
 }
-inline ::qps::pb::QtObject* Style::release_properties() {
+inline ::qan::pb::QtObject* Style::release_properties() {
   // @@protoc_insertion_point(field_release:qan.pb.Style.properties)
   
-  ::qps::pb::QtObject* temp = properties_;
+  ::qan::pb::QtObject* temp = properties_;
   properties_ = NULL;
   return temp;
 }
-inline void Style::set_allocated_properties(::qps::pb::QtObject* properties) {
+inline void Style::set_allocated_properties(::qan::pb::QtObject* properties) {
   delete properties_;
   properties_ = properties;
   if (properties) {
@@ -998,6 +1370,10 @@ inline void Graph::set_allocated_style_manager(::qan::pb::StyleManager* style_ma
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

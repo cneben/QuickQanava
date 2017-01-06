@@ -127,7 +127,7 @@ signals:
     void        p2CapStyleChanged();
 
 public:
-    /*! Source cap size, arrow base size for \c ArrowCap, circle radius for \c CircleCap, default to 8.0.
+    /*! \brief Source cap size, arrow base size for \c ArrowCap, circle radius for \c CircleCap, default to 8.0.
      *
      * \note Arrow protect against \c p1CapSize beeing inferior to \c lineWidth.
      */
@@ -140,7 +140,7 @@ signals:
     void        p1CapSizeChanged();
 
 public:
-    /*! Destination cap size, arrow base size for \c ArrowCap, circle radius for \c CircleCap, default to 8.0.
+    /*! \brief Destination cap size, arrow base size for \c ArrowCap, circle radius for \c CircleCap, default to 8.0.
      *
      * \note Arrow protect against \c p2CapSize beeing inferior to \c lineWidth.
      */

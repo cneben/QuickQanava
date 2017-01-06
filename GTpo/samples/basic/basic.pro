@@ -10,7 +10,8 @@ INCLUDEPATH +=  ../../src
 SOURCES	+=  basic.cpp
 HEADERS	+=  basic.h
 
-include (../../common.pri)
+include (../../gtpo-common.pri)
+DEFINES     -= "GTPO_HAS_PROTOBUF"
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lgtpo -lprotobuf

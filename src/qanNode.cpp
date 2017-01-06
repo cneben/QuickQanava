@@ -172,17 +172,12 @@ void    Node::dragEnterEvent( QDragEnterEvent* event )
             event->accept(); // This is propably a drag initated with type=Drag.Internal, for exemple a connector drop node, accept by default...
             QQuickItem::dragEnterEvent( event );
             return;
-        }
-
-        if ( event->source() != nullptr ) { // Get the source item from the quick drag attached object received
-            QVariant source = event->source()->property( "source" );
-            if ( source.isValid() ) {
-                QQuickItem* sourceItem = source.value< QQuickItem* >( );
-                QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-                if ( draggedStyle.isValid() ) {
-                    event->accept();
-                    return;
-                }
+        } else { // Get the source item from the quick drag attached object received
+            QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
+            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+            if ( draggedStyle.isValid() ) {
+                event->accept();
+                return;
             }
         }
         event->ignore();
@@ -208,16 +203,14 @@ void	Node::dragLeaveEvent( QDragLeaveEvent* event )
 
 void    Node::dropEvent( QDropEvent* event )
 {
-    if ( getAcceptDrops() && event->source() != nullptr ) { // Get the source item from the quick drag attached object received
-        QVariant source = event->source()->property( "source" );
-        if ( source.isValid() ) {
-            QQuickItem* sourceItem = source.value< QQuickItem* >( );
-            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-            if ( draggedStyle.isValid() ) {
-                qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
-                if ( draggedNodeStyle != nullptr )
-                    setStyle( draggedNodeStyle );
-            }
+    if ( getAcceptDrops() &&
+         event->source() != nullptr ) { // Get the source item from the quick drag attached object received
+        QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
+        QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
+        if ( draggedStyle.isValid() ) {
+            qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
+            if ( draggedNodeStyle != nullptr )
+                setStyle( draggedNodeStyle );
         }
     }
     QQuickItem::dropEvent( event );
@@ -291,7 +284,6 @@ void    Node::mouseReleaseEvent( QMouseEvent* event )
 
 auto    Node::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection ) -> void
 {
-    qDebug() << "beginDragMove(): dragInitiaMousePos=" << dragInitialMousePos;
     setDragActive( true );
     _dragInitialMousePos = dragInitialMousePos;
     _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();

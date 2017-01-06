@@ -36,14 +36,12 @@ namespace qan { // ::qan
 
 /* Style Object Management *///------------------------------------------------
 Style::Style( QString name, QString target, QString metaTarget, QObject* parent ) :
-    Properties( parent ),
-    _target( target ),
-    _metaTarget( metaTarget ),
-    _name( name )
+    QObject{ parent },
+    _target{ target },
+    _metaTarget{ metaTarget },
+    _name{ name }
 {
-    // Hide system static properties from qps::Properties and qan::Style
-    monitorStaticProperties( );
-    hideStaticProperties( 5 );
+
 }
 //-----------------------------------------------------------------------------
 
@@ -58,7 +56,8 @@ Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
     else
         dst = new Style( duplicatedStyleName, getTarget(), getMetaTarget( ), dstParent );
     if ( dst != nullptr ) {
-        duplicateTo( dst );
+        // FIXME QPS
+        //duplicateTo( dst );
         dst->setName( duplicatedStyleName );    // Name has probably be set to this style name during copy, reset it...
         dst->setProperty( "name", duplicatedStyleName );
     }

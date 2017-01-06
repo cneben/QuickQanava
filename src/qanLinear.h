@@ -49,7 +49,7 @@ class Linear : public qan::Layout
     Q_OBJECT
 public:
     //! Linear constructor.
-    explicit Linear( QObject* parent = 0 ) noexcept;
+    explicit Linear( QObject* parent = nullptr ) noexcept;
     virtual ~Linear() { }
     Linear ( const Linear& ) = delete;
     //@}
@@ -58,7 +58,7 @@ public:
     /*! \name Linear Layout Management *///------------------------------------
     //@{
 public:
-    /*! Spacing used between laidout nodes.
+    /*! \brief Spacing used between laidout nodes.
      *
      * Default to 15.
      */

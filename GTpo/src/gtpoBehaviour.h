@@ -75,7 +75,7 @@ public:
 
     /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
      */
-    virtual void    inNodeRemoved( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
+    virtual void    inNodeAboutToBeRemoved( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
 
     /*! \brief Called immediatly after an in node has been removed.
      */
@@ -147,19 +147,19 @@ public:
     Behaviour& operator=( const Behaviour& ) = delete;
 
 public:
-    /*! Enable this behaviour until it is disabled again with a call to disable().
+    /*! \brief Enable this behaviour until it is disabled again with a call to disable().
      *
      * \note enabling a disabled behaviour does not apply behaviour on changes made
      *       while it was disabled.
      * \sa isEnabled() for enabled state description.
      */
     inline auto     enable() noexcept -> void { _enabled = true; notifyEnabledChanged(); }
-    /*! Disable this behaviour until it is enabled back wit a call to enable().
+    /*! \brief Disable this behaviour until it is enabled back wit a call to enable().
      *
      * \sa isEnabled() for enabled state description.
      */
     inline auto     disable() noexcept -> void { _enabled = false; notifyEnabledChanged(); }
-    /*! Return the actual "enabled" state for this behaviour.
+    /*! \brief Return the actual "enabled" state for this behaviour.
      *
      *  This method could be usefull in very specific use cases, such as serialization or insertion of a large number
      *  of nodes in a graph or group where this behaviour is applied.
@@ -224,7 +224,7 @@ public:
     /*! \name Group Notification Interface *///--------------------------------
     //@{
 public:
-    /*! Called whenever group \c weakGroup has been modified.
+    /*! \brief Called whenever group \c weakGroup has been modified.
      *
      * Called in the following situations:
      * \li node or edge inserted or removed from group
@@ -346,7 +346,7 @@ public:
     inline auto    getBehaviours() const noexcept -> const Behaviours& { return _behaviours; }
 
 protected:
-    /*! Apply a method pointer on all registered behaviours.
+    /*! \brief Apply a method pointer on all registered behaviours.
      *
      * Example use:
      * \code
@@ -358,8 +358,7 @@ protected:
     auto    notifyBehaviours( void (Behaviour::*method)(T&) noexcept, T& arg ) noexcept -> void;
 
     //! Similar to notifyBahaviours() but without arguments.
-    template < class T >
-    auto    notifyBehaviours( void (Behaviour::*method)() noexcept ) noexcept -> void;
+    auto    notifyBehaviours0( void (Behaviour::*method)() noexcept ) noexcept -> void;
 
 private:
     Behaviours  _behaviours;
@@ -369,7 +368,7 @@ private:
     /*! \name Static Behaviours Management *///--------------------------------
     //@{
 public:
-    /*! Apply a functor on all registered static behaviours.
+    /*! \brief Apply a functor on all registered static behaviours.
      *
      * Example use:
      * \code

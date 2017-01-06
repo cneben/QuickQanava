@@ -25,8 +25,8 @@
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
 
-// QuickProperties headers
-#include "../../QuickProperties/src/QuickProperties.h"
+// QuickContainers headers
+#include "../../QuickContainers/src/QuickContainers.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
@@ -42,8 +42,6 @@ using namespace qan;
 MainView::MainView( ) :
     QQuickView{}
 {
-    QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
-    QuickProperties::initialize( engine(), translator.data() );
     QuickQanava::initialize();
 #ifdef QUICKQANAVA_HAS_PROTOBUF
     _serializer = new qan::ProtoSerializer{};

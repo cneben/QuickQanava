@@ -138,7 +138,7 @@ public:
     static  auto    serializeQanNodeIn(  const qan::pb::Node& pbQanNode, WeakNode& weakNode, IdObjectMap& idObjectMap ) -> void;
 
 protected:
-    /*! Save style manager \c styleManager in graph \c graph to Protocol Buffer message \c pbStyleManager.
+    /*! \brief Save style manager \c styleManager in graph \c graph to Protocol Buffer message \c pbStyleManager.
      *
      * Arguments \c graph and \c objectIdMap are used to serialize the mapping between graph nodes and their associed style.
      */
@@ -147,6 +147,39 @@ protected:
                                    qan::pb::StyleManager& pbStyleManager ) -> void;
     auto serializeStyleManagerIn( const qan::pb::StyleManager& pbStyleManager,
                                   qan::StyleManager& styleManager  ) -> void;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Qt Types Serialization Helpers *///------------------------------
+    //@{
+public:
+    inline static auto  isValidQVariant( const QVariant& qVariant ) -> bool;
+    inline static auto  isValidQVariantType( const QVariant::Type qVariantType ) -> bool;
+
+    /*! \brief Serialize OUT a QObject to a qan::pb::QObject Protocol Buffer message.
+     *
+     * \arg    hiddenStaticPropertiesCount number of static properties that should be skipped before serializing static properties (for ex with 1, objectName will not be serialized).
+     * \note    qan::Properties are serialized as regular QObjects.
+     * \throw   std::runtime_error if an error occurs.
+     */
+    static auto serializeOut( const QObject& qObject, qan::pb::QtObject& pbObject, int hiddenStaticPropertiesCount = 0 ) -> void;
+
+    /*! \brief Serialize In a qan::pb::QObject Protocol Buffer message to a QObject.
+     *
+     * \note    qan::Properties are serialized as regular QObjects.
+     * \throw   std::runtime_error if an error occurs.
+     */
+    static auto serializeIn( const qan::pb::QtObject& pbObject, QObject& qObject ) -> void;
+
+    /*! \brief Serialize a QVariant to a qan::pb::QtVariant message, \c qVariant type must be supported (is isValidQVariant() or isValidQVariantType() must return true for this QVariant).
+     *
+     * \sa isValidQVariant() isValidQVariantType()
+     */
+    static auto serializeOut( const QVariant& qVariant, qan::pb::QtVariant& pbVariant ) -> void;
+
+    /*! \brief Serialize a qan::pb::QtVariant message to a QVariant.
+     */
+    static auto serializeIn( const qan::pb::QtVariant& pbVariant, QVariant& qVariant ) -> void;
     //@}
     //-------------------------------------------------------------------------
 };

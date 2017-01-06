@@ -84,7 +84,7 @@ class Navigable : public QQuickItem
 {
 Q_OBJECT
 public:
-    explicit Navigable( QQuickItem* parent = 0 );
+    explicit Navigable( QQuickItem* parent = nullptr );
     virtual ~Navigable( ) { }
     Navigable( const Navigable& ) = delete;
 

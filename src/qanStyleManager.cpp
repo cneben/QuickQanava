@@ -46,52 +46,65 @@ bool    StylesFilterModel::filterAcceptsColumn( int sourceColumn, const QModelIn
 bool    StylesFilterModel::filterAcceptsRow( int sourceRow, const QModelIndex& sourceParent) const
 {
     Q_UNUSED( sourceParent );
-    qps::PropertiesList* propertiesList = static_cast< qps::PropertiesList* >( sourceModel( ) );
-    if ( propertiesList == nullptr )
+    if ( sourceRow < 0 )
         return false;
 
-    qan::Style* style = static_cast< qan::Style* >( propertiesList->at( sourceRow ) );
-    if ( style != nullptr && style->getTarget( ) == _target )
-        return true;
-
+    ObjectVectorModel* styles = qobject_cast< ObjectVectorModel* >( sourceModel( ) );
+    if ( styles != nullptr ) {
+        qan::Style* style = qobject_cast< qan::Style* >( styles->at( sourceRow ) );
+        if ( style != nullptr &&
+             style->getTarget( ) == _target )
+            return true;
+    }
     return false;
 }
 
 qan::Style* StylesFilterModel::getStyleAt( int styleIndex )
 {
-    qps::Properties* styleProperties = nullptr;
-    qps::PropertiesList* propertiesList = static_cast< qps::PropertiesList* >( sourceModel( ) );
-    if ( propertiesList == nullptr )
+    if ( styleIndex < 0 )
         return nullptr;
-    QModelIndex sourceIndex = mapToSource( index( styleIndex, 0 ) );
-    if ( sourceIndex.isValid( ) )
-        styleProperties = propertiesList->at(  sourceIndex.row( ) );
-    if ( styleProperties != nullptr )
-        QQmlEngine::setObjectOwnership( styleProperties, QQmlEngine::CppOwnership );
-    return static_cast< qan::Style* >( styleProperties );
+
+    ObjectVectorModel* styles = qobject_cast<ObjectVectorModel*>( sourceModel() );
+    if ( styles != nullptr ) {
+        QModelIndex sourceIndex = mapToSource( index( styleIndex, 0 ) );
+        if ( sourceIndex.isValid() ) {
+            const auto style = styles->at( sourceIndex.row() );
+            if ( style != nullptr )
+                QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
+            return qobject_cast< qan::Style* >( style );
+        }
+    }
+    return nullptr;
 }
 
 int     StylesFilterModel::getStyleIndex( qan::Style* style )
 {
     if ( style == nullptr )
         return -1;
-    qps::PropertiesList* propertiesList = static_cast< qps::PropertiesList* >( sourceModel( ) );
-    if ( propertiesList == nullptr )
-        return -1;
-    int srcStyleIndex = propertiesList->indexOf( style );
-    QModelIndex dstStyleIndex = mapFromSource( propertiesList->index( srcStyleIndex ) );
-    return ( dstStyleIndex.isValid( ) ? dstStyleIndex.row( ) : -1 );
+
+    const auto styles = qobject_cast<ObjectVectorModel*>( sourceModel() );
+    if ( styles != nullptr ) {
+        int srcStyleIndex = styles->indexOf( style );
+        QModelIndex dstStyleIndex = mapFromSource( styles->index( srcStyleIndex ) );
+        if ( dstStyleIndex.isValid() )
+            return dstStyleIndex.row();
+    }
+    return -1;
 }
 
 bool    StylesFilterModel::hasStyle( QString styleName )
 {
-    qps::PropertiesList* propertiesList = static_cast< qps::PropertiesList* >( sourceModel( ) );
-    if ( propertiesList == nullptr )
+    if ( styleName.isEmpty() )
         return false;
-    for ( auto& p : *propertiesList ) {
-        qan::Style* s = static_cast< qan::Style* >( p );
-        if ( s->getName( ) == styleName )
-            return true;
+
+    const auto styles = qobject_cast<ObjectVectorModel* >( sourceModel() );
+    if ( styles != nullptr ) {
+        for ( const auto& p : qAsConst( *styles ) ) {
+            qan::Style* s = qobject_cast< qan::Style* >( p );
+            if ( s != nullptr &&
+                 s->getName( ) == styleName )
+                return true;
+        }
     }
     return false;
 }
@@ -100,14 +113,14 @@ bool    StylesFilterModel::hasStyle( QString styleName )
 
 /* Style Object Management *///------------------------------------------------
 StyleManager::StyleManager( QObject* parent ) :
-    qps::PropertiesList( parent )
+    QObject( parent )
 {
-    setItemDisplayRole( QStringLiteral("name") ); // Use 'name' property for abstract list model display role
+    _styles.setItemDisplayRole( QStringLiteral("name") ); // Use 'name' property for abstract list model display role
 }
 
 StyleManager::~StyleManager( )
 {
-    // Styles destroyed in qps::PropertiesList::~PropertiesList
+    // Styles destroyed in qvs::PropertiesList::~PropertiesList
     for ( const auto& model : _targetModelMap )
         delete model;
     // _targetModelMap model maps will be destroyed by their parent QObject.
@@ -116,11 +129,12 @@ StyleManager::~StyleManager( )
         delete defaultStyle;
     _defaultNodeStyles.clear();
     _defaultEdgeStyles.clear();
+    _styles.clear();
 }
 
 void    StyleManager::clear()
 {
-    qps::PropertiesList::clear( true );
+    _styles.clear( true );
     for ( const auto& model : _targetModelMap )
         delete model;
     _targetModelMap.clear();
@@ -142,10 +156,11 @@ void    StyleManager::generateDefaultStyles()
 
 Style*  StyleManager::createStyle( QString styleName, QString targetName, QString metaTarget )
 {
-    if ( !styleName.isEmpty( ) )
+    if ( styleName.isEmpty( ) )
         return nullptr;
+
     Style* style = new qan::Style( styleName, targetName, metaTarget, this );
-    qps::PropertiesList::append( style );
+    _styles.append( style );
     if ( style != nullptr )
         QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
@@ -155,8 +170,9 @@ qan::NodeStyle* StyleManager::createNodeStyle( QString styleName, QString target
 {
     if ( styleName.isEmpty() )
         return nullptr;
+
     NodeStyle* style = new qan::NodeStyle( styleName, targetName, this );
-    qps::PropertiesList::append( style );
+    _styles.append( style );
     if ( style != nullptr )
         QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
@@ -166,8 +182,9 @@ qan::EdgeStyle* StyleManager::createEdgeStyle( QString styleName, QString target
 {
     if ( styleName.isEmpty() )
         return nullptr;
+
     EdgeStyle* style = new qan::EdgeStyle( styleName, targetName, this );
-    qps::PropertiesList::append( style );
+    _styles.append( style );
     if ( style != nullptr )
         QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     return style;
@@ -188,7 +205,7 @@ Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyle
         duplicatedStyle = style->duplicate( duplicatedStyleName, this );
     }
     if ( duplicatedStyle != nullptr ) {
-        qps::PropertiesList::append( duplicatedStyle );
+        _styles.append( duplicatedStyle );
         QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     }
     return duplicatedStyle;
@@ -200,51 +217,50 @@ bool    StyleManager::removeStyle( QString styleName )
         return false;
     qan::Style* style = findStyleByName( styleName );
     if ( style != nullptr ) {
-        remove( style );
+        _styles.remove( style );
         return true;
     }
     return false;
 }
 
-Style*  StyleManager::findStyleByName( QString styleName )
+Style*  StyleManager::findStyleByName( QString styleName ) const
 {
     if ( styleName.isEmpty( ) )
         return nullptr;
-    qan::Style* style = nullptr;
-    foreach( qps::Properties* p, getContainer( ) ) {   // Slow, but there shouldn't be so many styles...
-        qan::Style* s = qobject_cast< qan::Style* >( p );
-        if ( s->getName( ) == styleName ) {
-            style = s;
-            break;
-        }
+    for ( const auto object : qAsConst(_styles) ) {   // Slow, but there shouldn't be so many styles...
+        const auto style = qobject_cast< const qan::Style* >( object );
+        if ( style != nullptr &&
+             style->getName( ) == styleName )
+            return const_cast<Style*>(style);
     }
-    return style;
+    return nullptr;
 }
 
-Style*  StyleManager::findStyleByTarget( QString targetName )
+Style*  StyleManager::findStyleByTarget( QString targetName ) const
 {
     if ( targetName.isEmpty( ) )
         return nullptr;
-    qan::Style* style( nullptr );
-    for ( auto& properties : getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
-        Style* s = qobject_cast< qan::Style* >( properties );
-        if ( s->getTarget( ) == targetName ) {
-            style = s;
-            break;
-        }
+
+    for ( const auto properties : qAsConst(_styles) ) {       // Slow, but there shouldn't be so many styles...
+        const auto style = qobject_cast< const qan::Style* >( properties );
+        if ( style != nullptr &&
+             style->getTarget( ) == targetName )
+            return const_cast<Style*>(style);
     }
-    return style;
+    return nullptr;
 }
 
-QList< qan::Style* >     StyleManager::getStylesByTarget( QString targetName )
+QList< qan::Style* >     StyleManager::getStylesByTarget( QString targetName ) const
 {
     if ( targetName.isEmpty() )
-        return QList<qan::Style*>();
+        return QList<qan::Style*>{};
+
     QList< qan::Style* > styles;
-    foreach( qps::Properties* p, getContainer( ) ) {       // Slow, but there shouldn't be so many styles...
-        Style* s = qobject_cast< qan::Style* >( p );
-        if ( s->getTarget( ) == QString( targetName ) )
-            styles.append( s );
+    for ( const auto object : qAsConst(_styles) ) {       // Slow, but there shouldn't be so many styles...
+        const auto style = qobject_cast< const qan::Style* >( object );
+        if ( style != nullptr &&
+             style->getTarget() == targetName )
+            styles.append( const_cast<qan::Style*>(style) );
     }
     return styles;
 }
@@ -282,7 +298,7 @@ QAbstractItemModel*     StyleManager::getStylesModelForTarget( QString target )
     QAbstractProxyModel* targetModel = static_cast< QAbstractProxyModel* >( _targetModelMap.value( target, nullptr ) );
     if ( targetModel == nullptr ) {
         targetModel = new StylesFilterModel{target};
-        targetModel->setSourceModel( this );
+        targetModel->setSourceModel( &_styles );
         _targetModelMap.insert( target, targetModel );
     }
     if ( targetModel != nullptr )

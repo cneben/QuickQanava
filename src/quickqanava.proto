@@ -1,15 +1,25 @@
 syntax = "proto3"; 
-import "quickproperties.proto";
 import "gtpo.proto";
 
 package qan.pb;
+
+message QtVariant {
+    int32   variant_type        = 1;
+    int32   variant_data_size   = 2;
+    bytes   variant_data        = 3;
+}
+
+message QtObject {
+    repeated string     properties_names    = 1;
+    repeated QtVariant  properties          = 2;
+}
 
 message Style {
     int32               id           = 1;
     string              meta_target  = 2;
     string              name         = 3;
     string              target       = 4;
-    qps.pb.QtObject     properties   = 5;
+    QtObject            properties   = 5;
     repeated int32      node_ids     = 6 [packed=true]; // Id of node where this style apply
     repeated int32      edge_ids     = 7 [packed=true]; // Id of node where this style apply
 }

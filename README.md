@@ -6,7 +6,7 @@
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
-2016 (october): Warning massive change in master repository, report compilation problems to benoit@destrat.io
+2017 (january): Warning massive change in master repository, report compilation problems to benoit@destrat.io (Removed dependency to QuickProperties and PugiXML)
 
 QuickQanava 
 ============================
@@ -30,14 +30,8 @@ For any questions, please contact: benoit@destrat.io
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
 | ---                       | :---:             | :---:                           | :---:           |
 | GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |      MIT        |
-| Pugi XML                  | No                |       **Yes**                   |      MIT        |
-| QuickProperties2          | **Yes**           |       **Yes** (GIT submodule)   |      LPGL       |
 | Protocol Buffer v3        | No                |       No                        |    Permissive   |
 | Google Test/Mock          | No                |       No                        |    Permissive   |
-
-- **PugiXML** is released under an MIT licence, it is compatible with *GTpo* an is included directly in *GTpo* source tree. For more informations on PugiXML, see:
-  - PugiXML homepage: http://pugixml.org/
-  - PugiXML GitHub: https://github.com/zeux/pugixml
 
 - **Protocol Buffer v3**: Protocol Buffer is used for binary serialization of graph, it is not a mandatory dependency, until you include the "qanSerializer.h" header. Protocol Buffer installation instructions can be found on:
   - Protocol Buffer homepage: https://developers.google.com/protocol-buffers/
@@ -51,8 +45,8 @@ For any questions, please contact: benoit@destrat.io
 ```sh
 git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
-git submodule init
-git submodule update
+#git submodule init		# No longer necessary since 2017/01
+#git submodule update
 # Eventually, launch Protocol Buffer compiler with ./run_protoc.sh
 ```
 2. Open quickqanava2.pro in QtCreator
@@ -85,5 +79,5 @@ License
 
 [LGPLv3](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
-Copyright (c) 2016 Delia Stratégie
+Copyright (c) 2017 Delia Stratégie
 

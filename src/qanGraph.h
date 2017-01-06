@@ -59,8 +59,8 @@ class Graph : public gtpo::GenGraph< qan::Config >
     //@{
 public:
     //! Graph default constructor.
-    explicit Graph( QQuickItem* parent = 0 ) noexcept;
-    /*! Graph default destructor.
+    explicit Graph( QQuickItem* parent = nullptr ) noexcept;
+    /*! \brief Graph default destructor.
      *
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
@@ -68,7 +68,7 @@ public:
     virtual ~Graph( ) { clearDelegates(); }
     Graph( const Graph& ) = delete;
 public:
-    /*! Clear this graph topology and styles.
+    /*! \brief Clear this graph topology and styles.
      *
      * \note Registered  node and edge delegates are not cleared, you must manually call clearDelegate()
      * to clear the delegates registered with registerNodeDelegate() and registerEdgeDelegate().
@@ -80,7 +80,7 @@ public:
     Q_INVOKABLE void    removeControlNode( qan::Node* node );
 
 public:
-    /*! Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.
+    /*! \brief Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.
      *
      * Using childAt() method will most of the time return qan::Edge items since childAt() use bounding boxes
      * for item detection.
@@ -89,13 +89,13 @@ public:
      */
     Q_INVOKABLE QQuickItem* graphChildAt(qreal x, qreal y) const;
 
-    /*! Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
+    /*! \brief Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
      *
      */
     Q_INVOKABLE qan::Group*  groupAt( const QPointF& p, const QSizeF& s ) const;
 
 public:
-    /*! Quick item used as a parent for all graphics item "factored" by this graph (default to this).
+    /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
      *
      * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
      * graphics items.
@@ -116,7 +116,7 @@ private:
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
-    /*! Graph node selection policy (default to \c SelectOnClick);
+    /*! \brief Graph node selection policy (default to \c SelectOnClick);
      * \li \c NoSelection: Selection of nodes is disabled.
      * \li \c SelectOnClick (default): Node is selected when clicked, multiple selection is allowed with CTRL.
      * \li \c SelectOnCtrlClick: Node is selected only when CTRL is pressed, multiple selection is allowed with CTRL.
@@ -125,7 +125,7 @@ public:
     Q_ENUM(SelectionPolicy)
 
 public:
-    /*! Current graph selection policy.
+    /*! \brief Current graph selection policy.
      *
      * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
      */
@@ -168,14 +168,14 @@ signals:
     void            selectionMarginChanged( );
 
 public:
-    /*! Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
+    /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
      *
      * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
      * method will always return false.
      */
     bool    selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
 
-    /*! Add a node in the current selection.
+    /*! \brief Add a node in the current selection.
      */
     void    addToSelection( qan::Node& node );
 
@@ -189,7 +189,7 @@ public:
     inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0; }
 
 public:
-    using SelectedNodes = qps::ContainerModel< QVector, qan::Node* > ;
+    using SelectedNodes = qcm::ContainerModel< QVector, qan::Node* > ;
 
     //! Read-only list model of currently selected nodes.
     Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
@@ -253,7 +253,7 @@ protected:
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void setCppOwnership( QQuickItem* item );
 protected:
-    /*! Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
+    /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
      *
      * \note Internally used to generate selection rectangles around node, but part of the public API.
      */
@@ -274,7 +274,7 @@ public:
     using Node              = typename Config::Node;
     using WeakNode          = std::weak_ptr< typename Config::Node >;
 
-    /*! Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
+    /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
      * A gtpo::bad_topology_error could be thrown if insertion in base graph fails.
      *
@@ -292,7 +292,7 @@ public:
     //! Insert a new node with a given class name \c nodeClassName and return a pointer on it if creation succeed (\c nullptr otherwise).
     Q_INVOKABLE qan::Node*  insertNode( QString nodeClassName );
 
-    /*! Call either insertNode(QQmlComponent) or insertNode(QString) according to the QVariant concrete type.
+    /*! \brief Call either insertNode(QQmlComponent) or insertNode(QString) according to the QVariant concrete type.
      *
      * End user should usually not care about this method, it is declared only because QML often implicitely
      * cast QML "Component" object to "string", creating confusion when insertNode() is called.
@@ -302,7 +302,7 @@ public:
     //! Defined for serialization support, do not use.
     virtual WeakNode        createNode( const std::string& className ) override;
 
-    /*! Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
+    /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
@@ -377,17 +377,17 @@ public:
     QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
 
 signals:
-    /*! Emitted whenever a node registered in this graph is clicked.
+    /*! \brief Emitted whenever a node registered in this graph is clicked.
      *
      *  \sa nodeClicked()
      */
     void            edgeClicked( QVariant edge, QVariant pos );
-    /*! Emitted whenever a node registered in this graph is right clicked.
+    /*! \brief Emitted whenever a node registered in this graph is right clicked.
      *
      *  \sa nodeRightClicked()
      */
     void            edgeRightClicked( QVariant edge, QVariant pos );
-    /*! Emitted whenever a node registered in this graph is double clicked.
+    /*! \brief Emitted whenever a node registered in this graph is double clicked.
      *
      *  \sa nodeDoubleClicked()
      */
@@ -429,7 +429,7 @@ signals:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
-    /*! Graph style manager (ie list of style applicable to graph primitive).
+    /*! \brief Graph style manager (ie list of style applicable to graph primitive).
      */
     Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager NOTIFY styleManagerChanged FINAL )
     qan::StyleManager*  getStyleManager( ) { return _styleManager.data(); }

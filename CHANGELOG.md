@@ -1,6 +1,10 @@
+## 2017/01/06:
+Remove dependency to QuickProperties, move Qt abstract container code to library QuickContainers.
+Style management has been deeply refactored: style edition is still not 100% functional.
+
 ## 2016/10/12:
 Fix a severe bug in convex polygon OGL rendering code.
-Fix Arrow component to prevent caps beeing rendered when the line length is too small.
+Fix Arrow component to prevent caps being rendered when the line length is too small.
 Fix a regression in ConnectorDropNode component.
 Fix qan::Edge rendering code.
 Add reduced directed hyper edge support (not be part of the public API).
@@ -18,7 +22,7 @@ Fix method qan::Graph::graphChildAt().
 Small JS fixes in Qan.Graph component.
 
 ## 2016/08/16:
-Create a Qan.GraphView component to split grahv visualization from Qan.Graph: subclasses of qan::Graph could now be used
+Create a Qan.GraphView component to split grahh visualization from Qan.Graph: subclasses of qan::Graph could now be used
 in any graph view.
 
 ## 2016/07/26:
@@ -37,7 +41,7 @@ Massive optimization of node dragging code: node dragging is now 100% c++, Mouse
 no longer necessary in Qan.RectNodeTemplate (faster node JS compilation and creation, and way faster runtime execution)
 Remove Qt drag event handling from qan::Group (do not have a look to Qt internal drag and drop code if you don't want to
 loose all faith in the framework). Various qan::Group optimization and cleaning.
-Fix the c++ bottom right resizer to work perfeclty at non 1.0 zoom level.
+Fix the c++ bottom right resizer to work perfectly at non 1.0 zoom level.
 
 ## 2016/07/10:
 WARNING: Main graph interface has changed: it is no longer necessary to enclose Qan.Graph in a Qan.Navigable.

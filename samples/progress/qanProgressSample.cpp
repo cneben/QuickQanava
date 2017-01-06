@@ -25,8 +25,8 @@
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
 
-// QuickProperties headers
-#include "../../QuickProperties/src/QuickProperties.h"
+// QuickContainers headers
+#include "../../QuickContainers/src/QuickContainers.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
@@ -88,8 +88,7 @@ void    Consumer::consume( qan::ProgressNotifier* notifier )
 MainView::MainView( ) :
     QQuickView( )
 {
-    QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
-    QuickProperties::initialize( engine(), translator.data() );
+    QuickContainers::initialize();
     QuickQanava::initialize();
 
     qmlRegisterType< ::Consumer >( "QuickQanava", 2, 0, "Consumer");

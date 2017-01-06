@@ -108,7 +108,7 @@ public slots:
     //! Call updateItem() (override updateItem() to an empty method for invisible edges).
     virtual void        updateItemSlot( ) { updateItem(); }
 public:
-    /*! Update edge bounding box according to source and destination item actual position and size.
+    /*! \brief Update edge bounding box according to source and destination item actual position and size.
      *
      * \note When overriding, call base implementation at the beginning of user implementation.
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
@@ -208,7 +208,7 @@ signals:
     /*! \name Drag'nDrop Management  *///--------------------------------------
     //@{
 public:
-    /*! Define if the edge actually accept drops.
+    /*! \brief Define if the edge actually accept drops.
      *
      * When set to false, the edge will not be styleable by DnD and hyper edge drop connector
      * won't works.
@@ -229,7 +229,7 @@ protected:
     //! Return true if point is actually on the edge (not only in edge bounding rect).
     virtual bool    contains( const QPointF& point ) const override;
 
-    /*! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    /*! \brief Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
      *
      * Drag enter event are not restricted to the edge bounding rect but to the edge line with a distance delta, computing
      * that value is quite coslty, if you don't need to accept drops, use setAcceptDrops( false ).

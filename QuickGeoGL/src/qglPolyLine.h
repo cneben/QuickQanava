@@ -81,7 +81,7 @@ signals:
     void        colorChanged();
 
 public:
-    /*! Set to true to force this polyline to act as closed path, with last point automatically chained to first one, default to false.
+    /*! \brief Set to true to force this polyline to act as closed path, with last point automatically chained to first one, default to false.
      *
      * \warning Changing \c closed property dynamically is a costly operation since it involve modify
      * poly line geometry internally. To avoid unecessary updates, set the \c closed property to true
@@ -92,7 +92,7 @@ public:
     auto        setClosed( bool closed ) noexcept -> void;
 private:
     bool        _closed{false};
-    /*! Apply the current \c closed property to the internal geometry.
+    /*! \brief Apply the current \c closed property to the internal geometry.
      *
      * If \c closed is true and the last vertex doesn't equal the first vertex, close the path by joining last vertex to first vertex.
      * If \c closed is false and the last vertex equals the first vertex, remove the last vertex to open the path.

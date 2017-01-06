@@ -96,22 +96,23 @@ template < class Config >
 auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 {
     gtpo::assert_throw( !inEdge.expired(), "gtpo::GenNode<>::removeInEdge(): Error: In edge has expired" );
-    SharedNode sharedNode = this->shared_from_this();
-    SharedEdge ownedInEdge = inEdge.lock( );
-    SharedNode ownedInEdgeDst = ownedInEdge->getDst().lock();
-    gtpo::assert_throw( ownedInEdgeDst != nullptr &&    // in edge dst must be this node
-                        ownedInEdgeDst == sharedNode, "gtpo::GenNode<>::removeInEdge(): Error: In edge destination is expired or different from this node.");
+    auto nodePtr = this->shared_from_this();
+    auto inEdgePtr = inEdge.lock( );
+    auto inEdgeDstPtr = inEdgePtr->getDst().lock();
+    gtpo::assert_throw( inEdgeDstPtr &&    // in edge dst must be this node
+                        inEdgeDstPtr == nodePtr, "gtpo::GenNode<>::removeInEdge(): Error: In edge destination is expired or different from this node.");
 
-    auto ownedInEdgeSrc = ownedInEdge->getSrc().lock();
-    gtpo::assert_throw( ownedInEdgeSrc != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
-    notifyInNodeRemoved( ownedInEdge->getSrc() );
+    auto inEdgeSrcPtr = inEdgePtr->getSrc().lock();
+    gtpo::assert_throw( inEdgeSrcPtr != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
+    notifyInNodeAboutToBeRemoved( inEdgePtr->getSrc() );
     Config::template remove< WeakEdges >::from( _inEdges, inEdge );
-    Config::template remove< WeakNodes >::from( _inNodes, ownedInEdge->getSrc() );
+    Config::template remove< WeakNodes >::from( _inNodes, inEdgePtr->getSrc() );
     if ( getInDegree() == 0 ) {
         Graph* graph{ getGraph() };
         if ( graph != nullptr )
-            graph->installRootNode( WeakNode( sharedNode ) );
+            graph->installRootNode( WeakNode{ nodePtr } );
     }
+    notifyInNodeRemoved();
 }
 //-----------------------------------------------------------------------------
 
@@ -124,10 +125,17 @@ auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) noexcept -> 
 }
 
 template < class Config >
-auto    GenNode< Config >::notifyInNodeRemoved( WeakNode& inNode ) noexcept -> void
+auto    GenNode< Config >::notifyInNodeAboutToBeRemoved( WeakNode& inNode ) noexcept -> void
 {
-    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeRemoved, inNode );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved( inNode ); } );
+    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeAboutToBeRemoved, inNode );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeAboutToBeRemoved( inNode ); } );
+}
+
+template < class Config >
+auto    GenNode< Config >::notifyInNodeRemoved() noexcept -> void
+{
+    BehaviourableBase::notifyBehaviours0( &gtpo::NodeBehaviour<Config>::inNodeRemoved );
+    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved(); } );
 }
 
 template < class Config >

@@ -479,7 +479,8 @@ private:
     /*! \name Node Behaviours Notifications *///-------------------------------
     //@{
     inline auto    notifyInNodeInserted( WeakNode& outNode ) noexcept -> void;
-    inline auto    notifyInNodeRemoved( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyInNodeAboutToBeRemoved( WeakNode& outNode ) noexcept -> void;
+    inline auto    notifyInNodeRemoved( ) noexcept -> void;
     inline auto    notifyOutNodeInserted( WeakNode& outNode ) noexcept -> void;
     inline auto    notifyOutNodeRemoved( WeakNode& outNode ) noexcept -> void;
     inline auto    notifyOutNodeRemoved() noexcept -> void;
@@ -647,7 +648,7 @@ public:
     GenGraph( const GenGraph& ) = delete;
     GenGraph& operator=( const GenGraph& ) = delete;
 
-    /*! Clear the graph from all its content (nodes, edges, groups, behaviours).
+    /*! \brief Clear the graph from all its content (nodes, edges, groups, behaviours).
      *
      * \note Graph behaviours are cleared after the topology, if you do not want to take into account topology
      * changes when clearing the graph, disable all behaviours before calling clear().
@@ -701,7 +702,7 @@ public:
      */
     auto    createNode( ) noexcept( false ) -> WeakNode;
 
-    /*! Create a node with the given \c className and insert it into the graph.
+    /*! \brief Create a node with the given \c className and insert it into the graph.
      *
      * Default implementation only create node and edges corresponding to gtpo::GenNode::getClassName().
      * This method is mainly usefull when a hierarchy of virtual node should be serialized.
@@ -713,7 +714,7 @@ public:
      */
     virtual WeakNode    createNode( const std::string& className ) noexcept( false );
 
-    /*! Insert a node created outside of GTpo into the graph.
+    /*! \brief Insert a node created outside of GTpo into the graph.
      *
      * If your nodes must be created outside of GTpo (ie not with the createNode() method),
      * the only way of giving node ownership to GTpo is trought the insertNode method.
@@ -727,7 +728,7 @@ public:
      */
     auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode;
 
-    /*! Remove node \c node from graph.
+    /*! \brief Remove node \c node from graph.
      *
      * Complexity depend on Config::NodeContainer.
      * \throw gtpo::bad_topology_error if node can't be removed (or node is not valid).
@@ -747,7 +748,7 @@ public:
      * \throw gtpo::bad_topology_error if \c node in degree is different from 0.
      */
     auto    installRootNode( WeakNode node ) noexcept( false ) -> void;
-    /*! Test if a given \c node is a root node.
+    /*! \brief Test if a given \c node is a root node.
      *
      * This method is safer than testing node->getInDegree()==0, since it check
      * \c node in degree and its presence in the internal root node cache.
@@ -811,7 +812,7 @@ public:
     //! Create a restricted directed hyperedge from \c source node to \c destination edge.
     virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakEdge destination ) noexcept( false );
 
-    /*! Insert a directed edge created outside of GTpo into the graph.
+    /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *
      * \param edge must have a valid source and destination set otherwise a bad topology exception will be thrown.
      * \sa insertNode()
@@ -920,7 +921,7 @@ public:
      */
     virtual WeakGroup   createGroup( const std::string& className ) noexcept( false );
 
-    /*! Insert a node group into the graph.
+    /*! \brief Insert a node group into the graph.
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */

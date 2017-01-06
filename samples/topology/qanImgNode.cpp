@@ -25,8 +25,8 @@
 // \date	2016 02 09
 //-----------------------------------------------------------------------------
 
-// QuickProperties headers
-#include "../../QuickProperties/src/QuickProperties.h"
+// QuickContainers headers
+#include "../../QuickContainers/src/QuickContainers.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"

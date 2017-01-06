@@ -8,11 +8,11 @@ INCLUDEPATH += $$PWD/../src
 RESOURCES   += $$PWD/../src/QuickQanava.qrc
 
 INCLUDEPATH += $$PWD/../GTpo/src
-INCLUDEPATH += $$PWD/../QuickProperties/src
-RESOURCES   += $$PWD/../QuickProperties/src/QuickProperties.qrc
+INCLUDEPATH += $$PWD/../QuickContainers/src
+RESOURCES   += $$PWD/../QuickContainers/src/QuickContainers.qrc
 
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
-    DEFINES += QUICKPROPERTIES_HAS_PROTOBUF # Specific QuickProperties configuration
+    message("QuickQanava: Protocol Buffer v3 support enabled.")
     DEFINES += GTPO_HAS_PROTOBUF    # Specific GTpo configuration
     win32-msvc*:INCLUDEPATH += $$PROTOCOL_BUFFER3_DIR/include
     win32-msvc*:PROTOCOL_BUFFER3_LIBDIR_RELEASE  = $$PROTOCOL_BUFFER3_DIR/lib

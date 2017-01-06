@@ -29,26 +29,54 @@ import QtQuick          2.7
 import QtQuick.Layouts  1.3
 import QtQuick.Controls 2.0
 
-import "qrc:/QuickProperties"   as Qps
-import QuickProperties 2.0      as Qps
-
-import QuickQanava 2.0          as Qan
+import QuickQanava      2.0 as Qan
 
 /*! \brief Show a selectable list of style with a live style preview.
  *
  */
-Qps.PropertiesListView {
+ListView {
     id: styleListView
+
+    clip: true
+    flickableDirection : Flickable.VerticalFlick
+    spacing: 4
+    highlightFollowsCurrentItem: false
+    focus: true
+
+    //! List view default selection bar color (default to "lightsteelblue").
+    property color  hilightColor: "lightsteelblue"
+    //! List view default selection bar opacity (default to 85%).
+    property real   hilightOpacity: 0.85
+    //! Hilight rectangle corners radius (default to 2.0).
+    property real   hilightRadius: 2
 
     // Public:
     //! Specify the delegate desired height for the style preview items (default to 55).
     property real   previewHeight: 55
     property var    graph: undefined
 
+    /*onModelChanged: {
+        if ( model &&               // Select the first "properties" when a new model is sets
+             model.itemCount > 0 )
+            currentIndex = 0
+    }*/
+    highlight: propertiesHighlightBar
+    Component {
+        id: propertiesHighlightBar
+        Rectangle {
+            x: styleListView.currentItem.x;         y: styleListView.currentItem.y
+            width: styleListView.currentItem.width; height: styleListView.currentItem.height
+            color: styleListView.hilightColor
+            opacity: styleListView.hilightOpacity
+            radius: hilightRadius
+            Behavior on x { SpringAnimation { duration: 150; spring: 1.8; damping: 0.12 } }
+            Behavior on y { SpringAnimation { duration: 150; spring: 1.8; damping: 0.12 } }
+        }
+    }
     //! Hilight a specific style, so its get the current selection and appears at the center of the view.
     function    hilightStyle( style ) {
         if ( model &&
-             style) {
+             style ) {
             var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
             if ( styleIndex !== -1 )
                 currentIndex = styleIndex

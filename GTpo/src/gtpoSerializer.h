@@ -61,7 +61,7 @@ public:
     virtual ~OutSerializer() = default;
     OutSerializer( const OutSerializer< GraphConfig >& ) = delete;
 
-    /*! Serialize \c graph out.
+    /*! \brief Serialize \c graph out.
      *
      * \throw std::exception if an error occurs.
      */
@@ -82,7 +82,7 @@ public:
     virtual ~InSerializer() = default;
     InSerializer( const InSerializer< GraphConfig >& ) = delete;
 
-    /*! Serialize \c graph in.
+    /*! \brief Serialize \c graph in.
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */
@@ -110,7 +110,7 @@ public:
     Serializer( const Serializer< GraphConfig >& ) = delete;
 
 public:
-    /*! Serialize \c graph out.
+    /*! \brief Serialize \c graph out.
      *
      * \throw std::exception if an error occurs.
      */
@@ -131,7 +131,7 @@ public:
             os.close();
     }
 
-    /*! Serialize \c graph in from stream \c is.
+    /*! \brief Serialize \c graph in from stream \c is.
      *
      * \throw std::exception if an error occurs, graph might be let in an "invalid state" and should no longer be used.
      */

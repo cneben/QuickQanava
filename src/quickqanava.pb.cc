@@ -22,6 +22,12 @@ namespace pb {
 
 namespace {
 
+const ::google::protobuf::Descriptor* QtVariant_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  QtVariant_reflection_ = NULL;
+const ::google::protobuf::Descriptor* QtObject_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  QtObject_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Style_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Style_reflection_ = NULL;
@@ -47,7 +53,40 @@ void protobuf_AssignDesc_quickqanava_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "quickqanava.proto");
   GOOGLE_CHECK(file != NULL);
-  Style_descriptor_ = file->message_type(0);
+  QtVariant_descriptor_ = file->message_type(0);
+  static const int QtVariant_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtVariant, variant_type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtVariant, variant_data_size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtVariant, variant_data_),
+  };
+  QtVariant_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      QtVariant_descriptor_,
+      QtVariant::default_instance_,
+      QtVariant_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(QtVariant),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtVariant, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtVariant, _is_default_instance_));
+  QtObject_descriptor_ = file->message_type(1);
+  static const int QtObject_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtObject, properties_names_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtObject, properties_),
+  };
+  QtObject_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      QtObject_descriptor_,
+      QtObject::default_instance_,
+      QtObject_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(QtObject),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtObject, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QtObject, _is_default_instance_));
+  Style_descriptor_ = file->message_type(2);
   static const int Style_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Style, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Style, meta_target_),
@@ -68,7 +107,7 @@ void protobuf_AssignDesc_quickqanava_2eproto() {
       sizeof(Style),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Style, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Style, _is_default_instance_));
-  StyleManager_descriptor_ = file->message_type(1);
+  StyleManager_descriptor_ = file->message_type(3);
   static const int StyleManager_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StyleManager, style_count_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StyleManager, styles_),
@@ -88,7 +127,7 @@ void protobuf_AssignDesc_quickqanava_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(StyleManager, _is_default_instance_));
   StyleManager_DefaultNodeStylesEntry_descriptor_ = StyleManager_descriptor_->nested_type(0);
   StyleManager_DefaultEdgeStylesEntry_descriptor_ = StyleManager_descriptor_->nested_type(1);
-  Node_descriptor_ = file->message_type(2);
+  Node_descriptor_ = file->message_type(4);
   static const int Node_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, base_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, style_id_),
@@ -104,7 +143,7 @@ void protobuf_AssignDesc_quickqanava_2eproto() {
       sizeof(Node),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Node, _is_default_instance_));
-  Graph_descriptor_ = file->message_type(3);
+  Graph_descriptor_ = file->message_type(5);
   static const int Graph_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Graph, graph_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Graph, style_manager_),
@@ -133,6 +172,10 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      QtVariant_descriptor_, &QtVariant::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      QtObject_descriptor_, &QtObject::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Style_descriptor_, &Style::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -164,6 +207,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_quickqanava_2eproto() {
+  delete QtVariant::default_instance_;
+  delete QtVariant_reflection_;
+  delete QtObject::default_instance_;
+  delete QtObject_reflection_;
   delete Style::default_instance_;
   delete Style_reflection_;
   delete StyleManager::default_instance_;
@@ -181,33 +228,39 @@ void protobuf_AddDesc_quickqanava_2eproto() {
   already_here = true;
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  ::qps::pb::protobuf_AddDesc_quickproperties_2eproto();
   ::gtpo::pb::protobuf_AddDesc_gtpo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021quickqanava.proto\022\006qan.pb\032\025quickproper"
-    "ties.proto\032\ngtpo.proto\"\230\001\n\005Style\022\n\n\002id\030\001"
-    " \001(\005\022\023\n\013meta_target\030\002 \001(\t\022\014\n\004name\030\003 \001(\t\022"
-    "\016\n\006target\030\004 \001(\t\022$\n\nproperties\030\005 \001(\0132\020.qp"
-    "s.pb.QtObject\022\024\n\010node_ids\030\006 \003(\005B\002\020\001\022\024\n\010e"
-    "dge_ids\030\007 \003(\005B\002\020\001\"\312\002\n\014StyleManager\022\023\n\013st"
-    "yle_count\030\001 \001(\005\022\035\n\006styles\030\002 \003(\0132\r.qan.pb"
-    ".Style\022H\n\023default_node_styles\030\003 \003(\0132+.qa"
-    "n.pb.StyleManager.DefaultNodeStylesEntry"
-    "\022H\n\023default_edge_styles\030\004 \003(\0132+.qan.pb.S"
-    "tyleManager.DefaultEdgeStylesEntry\0328\n\026De"
-    "faultNodeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
-    "ue\030\002 \001(\005:\0028\001\0328\n\026DefaultEdgeStylesEntry\022\013"
-    "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"5\n\004Node\022\033"
-    "\n\004base\030\001 \001(\0132\r.gtpo.pb.Node\022\020\n\010style_id\030"
-    "\002 \001(\005\"S\n\005Graph\022\035\n\005graph\030\001 \001(\0132\016.gtpo.pb."
-    "Graph\022+\n\rstyle_manager\030\002 \001(\0132\024.qan.pb.St"
-    "yleManagerb\006proto3", 698);
+    "\n\021quickqanava.proto\022\006qan.pb\032\ngtpo.proto\""
+    "R\n\tQtVariant\022\024\n\014variant_type\030\001 \001(\005\022\031\n\021va"
+    "riant_data_size\030\002 \001(\005\022\024\n\014variant_data\030\003 "
+    "\001(\014\"K\n\010QtObject\022\030\n\020properties_names\030\001 \003("
+    "\t\022%\n\nproperties\030\002 \003(\0132\021.qan.pb.QtVariant"
+    "\"\230\001\n\005Style\022\n\n\002id\030\001 \001(\005\022\023\n\013meta_target\030\002 "
+    "\001(\t\022\014\n\004name\030\003 \001(\t\022\016\n\006target\030\004 \001(\t\022$\n\npro"
+    "perties\030\005 \001(\0132\020.qan.pb.QtObject\022\024\n\010node_"
+    "ids\030\006 \003(\005B\002\020\001\022\024\n\010edge_ids\030\007 \003(\005B\002\020\001\"\312\002\n\014"
+    "StyleManager\022\023\n\013style_count\030\001 \001(\005\022\035\n\006sty"
+    "les\030\002 \003(\0132\r.qan.pb.Style\022H\n\023default_node"
+    "_styles\030\003 \003(\0132+.qan.pb.StyleManager.Defa"
+    "ultNodeStylesEntry\022H\n\023default_edge_style"
+    "s\030\004 \003(\0132+.qan.pb.StyleManager.DefaultEdg"
+    "eStylesEntry\0328\n\026DefaultNodeStylesEntry\022\013"
+    "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\0328\n\026Defaul"
+    "tEdgeStylesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002"
+    " \001(\005:\0028\001\"5\n\004Node\022\033\n\004base\030\001 \001(\0132\r.gtpo.pb"
+    ".Node\022\020\n\010style_id\030\002 \001(\005\"S\n\005Graph\022\035\n\005grap"
+    "h\030\001 \001(\0132\016.gtpo.pb.Graph\022+\n\rstyle_manager"
+    "\030\002 \001(\0132\024.qan.pb.StyleManagerb\006proto3", 836);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "quickqanava.proto", &protobuf_RegisterTypes);
+  QtVariant::default_instance_ = new QtVariant();
+  QtObject::default_instance_ = new QtObject();
   Style::default_instance_ = new Style();
   StyleManager::default_instance_ = new StyleManager();
   Node::default_instance_ = new Node();
   Graph::default_instance_ = new Graph();
+  QtVariant::default_instance_->InitAsDefaultInstance();
+  QtObject::default_instance_->InitAsDefaultInstance();
   Style::default_instance_->InitAsDefaultInstance();
   StyleManager::default_instance_->InitAsDefaultInstance();
   Node::default_instance_->InitAsDefaultInstance();
@@ -221,6 +274,767 @@ struct StaticDescriptorInitializer_quickqanava_2eproto {
     protobuf_AddDesc_quickqanava_2eproto();
   }
 } static_descriptor_initializer_quickqanava_2eproto_;
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int QtVariant::kVariantTypeFieldNumber;
+const int QtVariant::kVariantDataSizeFieldNumber;
+const int QtVariant::kVariantDataFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+QtVariant::QtVariant()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:qan.pb.QtVariant)
+}
+
+void QtVariant::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+QtVariant::QtVariant(const QtVariant& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:qan.pb.QtVariant)
+}
+
+void QtVariant::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  variant_type_ = 0;
+  variant_data_size_ = 0;
+  variant_data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+QtVariant::~QtVariant() {
+  // @@protoc_insertion_point(destructor:qan.pb.QtVariant)
+  SharedDtor();
+}
+
+void QtVariant::SharedDtor() {
+  variant_data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void QtVariant::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* QtVariant::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return QtVariant_descriptor_;
+}
+
+const QtVariant& QtVariant::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_quickqanava_2eproto();
+  return *default_instance_;
+}
+
+QtVariant* QtVariant::default_instance_ = NULL;
+
+QtVariant* QtVariant::New(::google::protobuf::Arena* arena) const {
+  QtVariant* n = new QtVariant;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void QtVariant::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.QtVariant)
+#if defined(__clang__)
+#define ZR_HELPER_(f) \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
+  __builtin_offsetof(QtVariant, f) \
+  _Pragma("clang diagnostic pop")
+#else
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<QtVariant*>(16)->f)
+#endif
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(variant_type_, variant_data_size_);
+  variant_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
+}
+
+bool QtVariant::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:qan.pb.QtVariant)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 variant_type = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &variant_type_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_variant_data_size;
+        break;
+      }
+
+      // optional int32 variant_data_size = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_variant_data_size:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &variant_data_size_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_variant_data;
+        break;
+      }
+
+      // optional bytes variant_data = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_variant_data:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_variant_data()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:qan.pb.QtVariant)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:qan.pb.QtVariant)
+  return false;
+#undef DO_
+}
+
+void QtVariant::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:qan.pb.QtVariant)
+  // optional int32 variant_type = 1;
+  if (this->variant_type() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->variant_type(), output);
+  }
+
+  // optional int32 variant_data_size = 2;
+  if (this->variant_data_size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->variant_data_size(), output);
+  }
+
+  // optional bytes variant_data = 3;
+  if (this->variant_data().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->variant_data(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:qan.pb.QtVariant)
+}
+
+::google::protobuf::uint8* QtVariant::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:qan.pb.QtVariant)
+  // optional int32 variant_type = 1;
+  if (this->variant_type() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->variant_type(), target);
+  }
+
+  // optional int32 variant_data_size = 2;
+  if (this->variant_data_size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->variant_data_size(), target);
+  }
+
+  // optional bytes variant_data = 3;
+  if (this->variant_data().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->variant_data(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:qan.pb.QtVariant)
+  return target;
+}
+
+int QtVariant::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.QtVariant)
+  int total_size = 0;
+
+  // optional int32 variant_type = 1;
+  if (this->variant_type() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->variant_type());
+  }
+
+  // optional int32 variant_data_size = 2;
+  if (this->variant_data_size() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->variant_data_size());
+  }
+
+  // optional bytes variant_data = 3;
+  if (this->variant_data().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->variant_data());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void QtVariant::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.QtVariant)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const QtVariant* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const QtVariant>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.QtVariant)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.QtVariant)
+    MergeFrom(*source);
+  }
+}
+
+void QtVariant::MergeFrom(const QtVariant& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.QtVariant)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.variant_type() != 0) {
+    set_variant_type(from.variant_type());
+  }
+  if (from.variant_data_size() != 0) {
+    set_variant_data_size(from.variant_data_size());
+  }
+  if (from.variant_data().size() > 0) {
+
+    variant_data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.variant_data_);
+  }
+}
+
+void QtVariant::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.QtVariant)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void QtVariant::CopyFrom(const QtVariant& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.QtVariant)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QtVariant::IsInitialized() const {
+
+  return true;
+}
+
+void QtVariant::Swap(QtVariant* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void QtVariant::InternalSwap(QtVariant* other) {
+  std::swap(variant_type_, other->variant_type_);
+  std::swap(variant_data_size_, other->variant_data_size_);
+  variant_data_.Swap(&other->variant_data_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata QtVariant::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = QtVariant_descriptor_;
+  metadata.reflection = QtVariant_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// QtVariant
+
+// optional int32 variant_type = 1;
+void QtVariant::clear_variant_type() {
+  variant_type_ = 0;
+}
+ ::google::protobuf::int32 QtVariant::variant_type() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_type)
+  return variant_type_;
+}
+ void QtVariant::set_variant_type(::google::protobuf::int32 value) {
+  
+  variant_type_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_type)
+}
+
+// optional int32 variant_data_size = 2;
+void QtVariant::clear_variant_data_size() {
+  variant_data_size_ = 0;
+}
+ ::google::protobuf::int32 QtVariant::variant_data_size() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_data_size)
+  return variant_data_size_;
+}
+ void QtVariant::set_variant_data_size(::google::protobuf::int32 value) {
+  
+  variant_data_size_ = value;
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_data_size)
+}
+
+// optional bytes variant_data = 3;
+void QtVariant::clear_variant_data() {
+  variant_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& QtVariant::variant_data() const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtVariant.variant_data)
+  return variant_data_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void QtVariant::set_variant_data(const ::std::string& value) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:qan.pb.QtVariant.variant_data)
+}
+ void QtVariant::set_variant_data(const char* value) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:qan.pb.QtVariant.variant_data)
+}
+ void QtVariant::set_variant_data(const void* value, size_t size) {
+  
+  variant_data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:qan.pb.QtVariant.variant_data)
+}
+ ::std::string* QtVariant::mutable_variant_data() {
+  
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtVariant.variant_data)
+  return variant_data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* QtVariant::release_variant_data() {
+  // @@protoc_insertion_point(field_release:qan.pb.QtVariant.variant_data)
+  
+  return variant_data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void QtVariant::set_allocated_variant_data(::std::string* variant_data) {
+  if (variant_data != NULL) {
+    
+  } else {
+    
+  }
+  variant_data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), variant_data);
+  // @@protoc_insertion_point(field_set_allocated:qan.pb.QtVariant.variant_data)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int QtObject::kPropertiesNamesFieldNumber;
+const int QtObject::kPropertiesFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+QtObject::QtObject()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:qan.pb.QtObject)
+}
+
+void QtObject::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+QtObject::QtObject(const QtObject& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:qan.pb.QtObject)
+}
+
+void QtObject::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+}
+
+QtObject::~QtObject() {
+  // @@protoc_insertion_point(destructor:qan.pb.QtObject)
+  SharedDtor();
+}
+
+void QtObject::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void QtObject::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* QtObject::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return QtObject_descriptor_;
+}
+
+const QtObject& QtObject::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_quickqanava_2eproto();
+  return *default_instance_;
+}
+
+QtObject* QtObject::default_instance_ = NULL;
+
+QtObject* QtObject::New(::google::protobuf::Arena* arena) const {
+  QtObject* n = new QtObject;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void QtObject::Clear() {
+// @@protoc_insertion_point(message_clear_start:qan.pb.QtObject)
+  properties_names_.Clear();
+  properties_.Clear();
+}
+
+bool QtObject::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:qan.pb.QtObject)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated string properties_names = 1;
+      case 1: {
+        if (tag == 10) {
+         parse_properties_names:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_properties_names()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->properties_names(this->properties_names_size() - 1).data(),
+            this->properties_names(this->properties_names_size() - 1).length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "qan.pb.QtObject.properties_names"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(10)) goto parse_properties_names;
+        if (input->ExpectTag(18)) goto parse_properties;
+        break;
+      }
+
+      // repeated .qan.pb.QtVariant properties = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_properties:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_properties:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_properties()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_loop_properties;
+        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:qan.pb.QtObject)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:qan.pb.QtObject)
+  return false;
+#undef DO_
+}
+
+void QtObject::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:qan.pb.QtObject)
+  // repeated string properties_names = 1;
+  for (int i = 0; i < this->properties_names_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->properties_names(i).data(), this->properties_names(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "qan.pb.QtObject.properties_names");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->properties_names(i), output);
+  }
+
+  // repeated .qan.pb.QtVariant properties = 2;
+  for (unsigned int i = 0, n = this->properties_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->properties(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:qan.pb.QtObject)
+}
+
+::google::protobuf::uint8* QtObject::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:qan.pb.QtObject)
+  // repeated string properties_names = 1;
+  for (int i = 0; i < this->properties_names_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->properties_names(i).data(), this->properties_names(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "qan.pb.QtObject.properties_names");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(1, this->properties_names(i), target);
+  }
+
+  // repeated .qan.pb.QtVariant properties = 2;
+  for (unsigned int i = 0, n = this->properties_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        2, this->properties(i), false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:qan.pb.QtObject)
+  return target;
+}
+
+int QtObject::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:qan.pb.QtObject)
+  int total_size = 0;
+
+  // repeated string properties_names = 1;
+  total_size += 1 * this->properties_names_size();
+  for (int i = 0; i < this->properties_names_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->properties_names(i));
+  }
+
+  // repeated .qan.pb.QtVariant properties = 2;
+  total_size += 1 * this->properties_size();
+  for (int i = 0; i < this->properties_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->properties(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void QtObject::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:qan.pb.QtObject)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const QtObject* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const QtObject>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:qan.pb.QtObject)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:qan.pb.QtObject)
+    MergeFrom(*source);
+  }
+}
+
+void QtObject::MergeFrom(const QtObject& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:qan.pb.QtObject)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  properties_names_.MergeFrom(from.properties_names_);
+  properties_.MergeFrom(from.properties_);
+}
+
+void QtObject::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:qan.pb.QtObject)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void QtObject::CopyFrom(const QtObject& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:qan.pb.QtObject)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QtObject::IsInitialized() const {
+
+  return true;
+}
+
+void QtObject::Swap(QtObject* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void QtObject::InternalSwap(QtObject* other) {
+  properties_names_.UnsafeArenaSwap(&other->properties_names_);
+  properties_.UnsafeArenaSwap(&other->properties_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata QtObject::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = QtObject_descriptor_;
+  metadata.reflection = QtObject_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// QtObject
+
+// repeated string properties_names = 1;
+int QtObject::properties_names_size() const {
+  return properties_names_.size();
+}
+void QtObject::clear_properties_names() {
+  properties_names_.Clear();
+}
+ const ::std::string& QtObject::properties_names(int index) const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtObject.properties_names)
+  return properties_names_.Get(index);
+}
+ ::std::string* QtObject::mutable_properties_names(int index) {
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtObject.properties_names)
+  return properties_names_.Mutable(index);
+}
+ void QtObject::set_properties_names(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:qan.pb.QtObject.properties_names)
+  properties_names_.Mutable(index)->assign(value);
+}
+ void QtObject::set_properties_names(int index, const char* value) {
+  properties_names_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:qan.pb.QtObject.properties_names)
+}
+ void QtObject::set_properties_names(int index, const char* value, size_t size) {
+  properties_names_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:qan.pb.QtObject.properties_names)
+}
+ ::std::string* QtObject::add_properties_names() {
+  // @@protoc_insertion_point(field_add_mutable:qan.pb.QtObject.properties_names)
+  return properties_names_.Add();
+}
+ void QtObject::add_properties_names(const ::std::string& value) {
+  properties_names_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:qan.pb.QtObject.properties_names)
+}
+ void QtObject::add_properties_names(const char* value) {
+  properties_names_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:qan.pb.QtObject.properties_names)
+}
+ void QtObject::add_properties_names(const char* value, size_t size) {
+  properties_names_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:qan.pb.QtObject.properties_names)
+}
+ const ::google::protobuf::RepeatedPtrField< ::std::string>&
+QtObject::properties_names() const {
+  // @@protoc_insertion_point(field_list:qan.pb.QtObject.properties_names)
+  return properties_names_;
+}
+ ::google::protobuf::RepeatedPtrField< ::std::string>*
+QtObject::mutable_properties_names() {
+  // @@protoc_insertion_point(field_mutable_list:qan.pb.QtObject.properties_names)
+  return &properties_names_;
+}
+
+// repeated .qan.pb.QtVariant properties = 2;
+int QtObject::properties_size() const {
+  return properties_.size();
+}
+void QtObject::clear_properties() {
+  properties_.Clear();
+}
+const ::qan::pb::QtVariant& QtObject::properties(int index) const {
+  // @@protoc_insertion_point(field_get:qan.pb.QtObject.properties)
+  return properties_.Get(index);
+}
+::qan::pb::QtVariant* QtObject::mutable_properties(int index) {
+  // @@protoc_insertion_point(field_mutable:qan.pb.QtObject.properties)
+  return properties_.Mutable(index);
+}
+::qan::pb::QtVariant* QtObject::add_properties() {
+  // @@protoc_insertion_point(field_add:qan.pb.QtObject.properties)
+  return properties_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >*
+QtObject::mutable_properties() {
+  // @@protoc_insertion_point(field_mutable_list:qan.pb.QtObject.properties)
+  return &properties_;
+}
+const ::google::protobuf::RepeatedPtrField< ::qan::pb::QtVariant >&
+QtObject::properties() const {
+  // @@protoc_insertion_point(field_list:qan.pb.QtObject.properties)
+  return properties_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
 
@@ -242,7 +1056,7 @@ Style::Style()
 
 void Style::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  properties_ = const_cast< ::qps::pb::QtObject*>(&::qps::pb::QtObject::default_instance());
+  properties_ = const_cast< ::qan::pb::QtObject*>(&::qan::pb::QtObject::default_instance());
 }
 
 Style::Style(const Style& from)
@@ -390,7 +1204,7 @@ bool Style::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .qps.pb.QtObject properties = 5;
+      // optional .qan.pb.QtObject properties = 5;
       case 5: {
         if (tag == 42) {
          parse_properties:
@@ -498,7 +1312,7 @@ void Style::SerializeWithCachedSizes(
       4, this->target(), output);
   }
 
-  // optional .qps.pb.QtObject properties = 5;
+  // optional .qan.pb.QtObject properties = 5;
   if (this->has_properties()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       5, *this->properties_, output);
@@ -568,7 +1382,7 @@ void Style::SerializeWithCachedSizes(
         4, this->target(), target);
   }
 
-  // optional .qps.pb.QtObject properties = 5;
+  // optional .qan.pb.QtObject properties = 5;
   if (this->has_properties()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
@@ -639,7 +1453,7 @@ int Style::ByteSize() const {
         this->target());
   }
 
-  // optional .qps.pb.QtObject properties = 5;
+  // optional .qan.pb.QtObject properties = 5;
   if (this->has_properties()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -726,7 +1540,7 @@ void Style::MergeFrom(const Style& from) {
     target_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.target_);
   }
   if (from.has_properties()) {
-    mutable_properties()->::qps::pb::QtObject::MergeFrom(from.properties());
+    mutable_properties()->::qan::pb::QtObject::MergeFrom(from.properties());
   }
 }
 
@@ -922,7 +1736,7 @@ void Style::clear_target() {
   // @@protoc_insertion_point(field_set_allocated:qan.pb.Style.target)
 }
 
-// optional .qps.pb.QtObject properties = 5;
+// optional .qan.pb.QtObject properties = 5;
 bool Style::has_properties() const {
   return !_is_default_instance_ && properties_ != NULL;
 }
@@ -930,26 +1744,26 @@ void Style::clear_properties() {
   if (GetArenaNoVirtual() == NULL && properties_ != NULL) delete properties_;
   properties_ = NULL;
 }
-const ::qps::pb::QtObject& Style::properties() const {
+const ::qan::pb::QtObject& Style::properties() const {
   // @@protoc_insertion_point(field_get:qan.pb.Style.properties)
   return properties_ != NULL ? *properties_ : *default_instance_->properties_;
 }
-::qps::pb::QtObject* Style::mutable_properties() {
+::qan::pb::QtObject* Style::mutable_properties() {
   
   if (properties_ == NULL) {
-    properties_ = new ::qps::pb::QtObject;
+    properties_ = new ::qan::pb::QtObject;
   }
   // @@protoc_insertion_point(field_mutable:qan.pb.Style.properties)
   return properties_;
 }
-::qps::pb::QtObject* Style::release_properties() {
+::qan::pb::QtObject* Style::release_properties() {
   // @@protoc_insertion_point(field_release:qan.pb.Style.properties)
   
-  ::qps::pb::QtObject* temp = properties_;
+  ::qan::pb::QtObject* temp = properties_;
   properties_ = NULL;
   return temp;
 }
-void Style::set_allocated_properties(::qps::pb::QtObject* properties) {
+void Style::set_allocated_properties(::qan::pb::QtObject* properties) {
   delete properties_;
   properties_ = properties;
   if (properties) {

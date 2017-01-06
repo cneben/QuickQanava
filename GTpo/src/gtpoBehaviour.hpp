@@ -50,8 +50,7 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
 }
 
 template < class Behaviour, class SBehaviours  >
-template < class T >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)() ) noexcept -> void
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours0( void (Behaviour::*method)() ) noexcept -> void
 {
     for ( auto& behaviour : _behaviours )
         if ( behaviour != nullptr )

@@ -28,12 +28,13 @@
 #ifndef qanStyle_h
 #define qanStyle_h
 
-// QuickProperties headers
-#include "../QuickProperties/src/qpsProperties.h"
+// QuickContainers headers
+#include "../QuickContainers/src/qcmObjectModel.h"
 
 // QT headers
 #include <QColor>
 #include <QFont>
+#include <QSizeF>
 
 namespace qan { // ::qan
 
@@ -42,8 +43,8 @@ namespace qan { // ::qan
  *  Style instances should be created from StyleManager createStyle() or createStyleFrom() methods,
  *  and associed to nodes trought their setStyle() method. Changing a style property will
  *  automatically be reflected in styled nodes or edges appearance. While Style use standard QObject
- *  properties to store style settings, the qps::Properties interface should be use to sets properties
- *  or style edition for Properties exposed trought Interview item model will fail.
+ *  properties to store style settings, the QuickContainers ObjectModel interface could be use to edit
+ *  style properties.
  *
  *  Main qan::Style properties are:
  * \li \b name: Style name as it will appears in style edition dialogs.
@@ -54,18 +55,18 @@ namespace qan { // ::qan
  * \sa qan::Node::setStyle()
  * \sa qan::Edge::setStyle()
  */
-class Style : public qps::Properties
+class Style : public QObject
 {
     Q_OBJECT
     /*! \name Style Object Management *///-------------------------------------
     //@{
 public:
-    /*! Style constructor with style name initialisation.
+    /*! \brief Style constructor with style name initialisation.
      * \param target  class name for this style default target (ex: with target
      * set to qan::Node, style will be applied by default to every qan::Node
      * created in the graph).
      */
-    explicit Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = 0 );
+    explicit Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = nullptr );
     virtual ~Style( ) { }
     Style( const Style& ) = delete;
     //@}
@@ -77,44 +78,42 @@ public:
     //! Style target (class name of the target primitive for example "qan::Node" or "qan::Edge").
     Q_PROPERTY( QString target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL )
     //! Get this style default target class name (eg qan::Node for a style that apply to node).
-    QString     getTarget( ) { return _target; }
+    inline QString  getTarget() const noexcept { return _target; }
     //! Defined only for serialization purposes, do not change style target dynamically.
-    void        setTarget( QString target ) { _target = target; emit targetChanged(); }
+    inline void     setTarget( QString target ) noexcept { if ( target != _target ) { _target = target; emit targetChanged(); } }
 signals:
     //! \sa target
     void        targetChanged( );
 private:
     //! \sa target
-    QString     _target = QString{ "" };
+    QString     _target{ QStringLiteral("") };
 
 public:
     //! Style meta target (root class name of the target primitive for example "qan::Node" for a custom qan::CustomNode node).
     Q_PROPERTY( QString metaTarget READ getMetaTarget WRITE setMetaTarget NOTIFY metaTargetChanged FINAL )
     //! Get this style default meta target class name, it should return either "qan::Node", "qan::Edge" or "qan::HEdge".
-    QString     getMetaTarget( ) { return _metaTarget; }
+    inline QString  getMetaTarget( ) const noexcept { return _metaTarget; }
     //! Defined only for serialization purposes, do not change style meta target dynamically.
-    void        setMetaTarget( QString metaTarget ) { _metaTarget = metaTarget; emit metaTargetChanged(); }
+    inline void     setMetaTarget( QString metaTarget ) noexcept { if ( metaTarget != _metaTarget ) { _metaTarget = metaTarget; emit metaTargetChanged(); } }
 signals:
     //! \sa metaTarget
     void        metaTargetChanged( );
 private:
     //! \sa metaTarget
-    QString     _metaTarget = QString{ "" };
-protected:
-    //! Style target class name is usually set in Style ctor.
-    void        setTargets( QString target, QString metaTarget ) { _target = target; _metaTarget = metaTarget; }
+    QString     _metaTarget{ QStringLiteral("") };
 
 public:
     Q_PROPERTY( QString name READ getName WRITE setName NOTIFY nameChanged FINAL )
-    void        setName( QString name ) { _name = name; emit nameChanged( ); }
-    QString     getName( ) { return _name; }
+    inline  void        setName( QString name ) noexcept { if ( name != _name ) { _name = name; emit nameChanged( ); } }
+    inline  QString     getName( ) noexcept { return _name; }
+    inline  QString     getName() const noexcept { return _name; }
 signals:
     void        nameChanged( );
 private:
-    QString     _name = QString{ "" };
+    QString     _name{ QStringLiteral("") };
 
 public:
-    /*! Generate a deep copy of this Style object, ownsership return to the caller.
+    /*! \brief Generate a deep copy of this Style object, ownsership return to the caller.
      *
      * Static properties of this source object may be converted in dynamic properties in
      * destination object as their is no way to dynamically generate static properties with
@@ -138,12 +137,12 @@ class NodeStyle : public qan::Style
     /*! \name NodeStyle Object Management *///---------------------------------
     //@{
 public:
-    /*! Style constructor with style \c name and \c target initialisation.
+    /*! \brief Style constructor with style \c name and \c target initialisation.
      *
      * Style \c metaTarget is "qan::Node". NodeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
-    explicit NodeStyle( QString name = "", QString target = "", QObject* parent = 0 );
+    explicit NodeStyle( QString name = "", QString target = "", QObject* parent = nullptr );
     virtual ~NodeStyle( ) { }
     NodeStyle( const NodeStyle& ) = delete;
     //@}
@@ -224,12 +223,12 @@ class EdgeStyle : public qan::Style
     /*! \name EdgeStyle Object Management *///---------------------------------
     //@{
 public:
-    /*! Edge style constructor with style \c name and \c target initialisation.
+    /*! \brief Edge style constructor with style \c name and \c target initialisation.
      *
      * Style \c metaTarget is "qan::Edge". EdgeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
-    explicit EdgeStyle( QString name = "", QString target = "", QObject* parent = 0 );
+    explicit EdgeStyle( QString name = "", QString target = "", QObject* parent = nullptr );
     virtual ~EdgeStyle( ) { }
     EdgeStyle( const EdgeStyle& ) = delete;
     //@}

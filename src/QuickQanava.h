@@ -34,6 +34,9 @@
 // QuickGeoGL headers
 #include "../QuickGeoGL/src/QuickGeoGL.h"
 
+// QuickContainers headers
+#include "../QuickContainers/src/QuickContainers.h"
+
 // Qanava headers
 #include "./qanConfig.h"
 #include "./qanEdge.h"
@@ -49,6 +52,7 @@
 struct QuickQanava {
     static void initialize() {
         QuickGeoGL::initialize();
+        QuickContainers::initialize();
 
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");

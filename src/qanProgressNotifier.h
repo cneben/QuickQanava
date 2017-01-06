@@ -58,7 +58,7 @@ public:
     /*! \name Progress Monitoring *///-----------------------------------------
     //@{
 public:
-    /*! Read-only value of the current overall progress between 0.0 (action 0% done) and 1.0 (action 100% done).
+    /*! \brief Read-only value of the current overall progress between 0.0 (action 0% done) and 1.0 (action 100% done).
      *
      */
     Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged FINAL )
@@ -92,7 +92,7 @@ protected:
     }
 
 public:
-    /*! Read-only progress value for current phase between 0. (action 0% done) and 1. (action 100% done), or -1 if progression is unknown.
+    /*! \brief Read-only progress value for current phase between 0. (action 0% done) and 1. (action 100% done), or -1 if progression is unknown.
      *
      * The action currently monitored could eventually be cancelled with a call to cancel() if the receiver supports it.
      */
@@ -102,9 +102,8 @@ signals:
     void            phaseProgressChanged();
 
 public:
-    /*! Label for the current progress phase, usually set in beginPhase().
+    /*! \brief Label for the current progress phase, usually set in beginPhase().
      *
-     * FIXME: Reactivate phase label support in Qan2...
      */
     Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged FINAL )
     QString         getQmlPhaseLabel() const { return QString::fromStdString( getLabel() ); }

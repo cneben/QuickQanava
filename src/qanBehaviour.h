@@ -56,7 +56,7 @@ public:
     using WeakNode  = std::weak_ptr< qan::Config::Node >;
 
     virtual void    inNodeInserted( WeakNode& weakInNode ) noexcept override;
-    virtual void    inNodeRemoved( WeakNode& weakInNode ) noexcept override;
+    virtual void    inNodeAboutToBeRemoved( WeakNode& weakInNode ) noexcept override;
     virtual void    inNodeRemoved() noexcept override { }
 
     virtual void    outNodeInserted( WeakNode& weakOutNode ) noexcept override;
@@ -67,7 +67,7 @@ public:
 
 protected:
     virtual void    inNodeInserted( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
-    virtual void    inNodeRemoved( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
+    virtual void    inNodeAboutToBeRemoved( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
 
     virtual void    outNodeInserted( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
     virtual void    outNodeRemoved( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }

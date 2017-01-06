@@ -1,6 +1,8 @@
 TEMPLATE    =   subdirs
 CONFIG      +=  ordered      # Well I know, but no choice...
 
+include (./gtpo-common.pri)
+
 gtpo.file    = src/gtpo.pro
 
 sample-basic.subdir   = samples/basic
@@ -22,5 +24,5 @@ SUBDIRS +=  gtpo
 SUBDIRS +=  tests
 SUBDIRS +=  sample-basic
 SUBDIRS +=  sample-behaviour
-SUBDIRS +=  sample-serializer
+#SUBDIRS +=  sample-serializer
 #SUBDIRS +=  benchmarks

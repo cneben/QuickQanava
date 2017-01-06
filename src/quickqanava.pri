@@ -7,7 +7,7 @@ QT          += core widgets gui qml quick
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
     # Specific QuickProperties configuration
     DEFINES += QUICKPROPERTIES_HAS_PROTOBUF
-    include(../QuickProperties/src/quickproperties-pb-conf.pri)
+    include(./quickqanava-pb-conf.pri)
 
     # Specific GTpo configuration
     DEFINES += GTPO_HAS_PROTOBUF
@@ -19,7 +19,7 @@ contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267  # Remove C4267 conversion from size_t to int (protobuf)
 }
 include(../GTpo/src/gtpo.pri)
-include(../QuickProperties/src/quickproperties.pri)
+include(../QuickContainers/src/quickcontainers.pri)
 include(../QuickGeoGL/src/quickgeogl.pri)
 
 DEPENDPATH      += $$PWD
@@ -84,15 +84,6 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/Node.qml                  \
                 $$PWD/Edge.qml                  \
                 $$PWD/StyleListView.qml         \
+                $$PWD/StyleEditor.qml           \
                 $$PWD/ConnectorDropNode.qml     \
                 $$PWD/NodeLabelEditor.qml
-
-contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
-OTHER_FILES +=  $$PWD/quickqanava.proto         \
-
-HEADERS +=      $$PWD/qanProtoSerializer.h      \       # Protocol Buffer serialization
-                $$PWD/quickqanava.pb.h
-
-SOURCES     +=  $$PWD/qanProtoSerializer.cpp    \   # Protocol Buffer serialization
-                $$PWD/quickqanava.pb.cc
-}

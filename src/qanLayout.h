@@ -55,7 +55,7 @@ class Layout : public QObject,
     Q_OBJECT
 public:
     //! Layout constructor.
-    explicit Layout( QObject* parent = 0 ) noexcept : QObject( parent ), _orientation( Qt::Horizontal ) { }
+    explicit Layout( QObject* parent = nullptr ) noexcept : QObject( parent ), _orientation( Qt::Horizontal ) { }
     virtual ~Layout( ) { }
     Layout( const Layout& ) = delete;
     //@}
@@ -64,7 +64,7 @@ public:
     /*! \name Layout Interface *///--------------------------------------------
     //@{
 public:
-    /*! List of nodes managed by this layout.
+    /*! \brief List of nodes managed by this layout.
      *
      * This property could be set either from QML or C++, usually, it is a qan::Group or qan::Graph node list get
      * with qan::Group::getNodes() or qan::Graph::getNodes().
@@ -85,7 +85,7 @@ signals:
 //    void            nodesChanged( );
 
 public:
-    /*! Layout orientation (might not be supported by all actal layouts implementation).
+    /*! \brief Layout orientation (might not be supported by all actal layouts implementation).
      *
      * Default to Qt::Horizontal.
      *
@@ -104,7 +104,7 @@ public slots:
     virtual void    layout( ) { }
 
 public:
-    /*! Propose a node drop before it is actually dropped into the layout (usually called by a qan::Group while a node is hovered over a group before insertion).
+    /*! \brief Propose a node drop before it is actually dropped into the layout (usually called by a qan::Group while a node is hovered over a group before insertion).
      *
      *  This method doesn't return anything, it must modify 'shadowNode' position or topology in the '_nodes' node list. Theses modification will be reflected on
      *  candidate node 'node' if the node is finally dropped in this layout trought qan::Group. An example implementation of this method in qan::Linear show how to
@@ -124,22 +124,22 @@ public:
     /*! \name Layout Topology Utilities *///-----------------------------------
     //@{
 public:
-    /*! Return all root nodes in a given restricted set of nodes (ie every nodes with a 0 in degree, or no super nodes in the given nodes set).
+    /*! \brief Return all root nodes in a given restricted set of nodes (ie every nodes with a 0 in degree, or no super nodes in the given nodes set).
      *
      * \param node must be inside nodes
      */
     //static void            collectNodeGroupRootNodes( qan::NodeList& nodes, qan::Node::List& rootNodes );
-    /*! Return a node in degree in a given restricted set of nodes (ie a node that has multiple super nodes, but none of them member of the group will have an in degree of 0).
+    /*! \brief Return a node in degree in a given restricted set of nodes (ie a node that has multiple super nodes, but none of them member of the group will have an in degree of 0).
      *
      * \param node must be inside nodes
      */
     //static int             getNodeGroupInDegree( qan::NodeList& nodes, qan::Node& node );
-    /*! Collect every node super node that is actually a member of the given node set.
+    /*! \brief Collect every node super node that is actually a member of the given node set.
      *
      * \param node must be inside nodes
      */
     //static void            collectNodeGroupInNodes( qan::NodeList& nodes, qan::Node& node, qan::Node::List& groupInNodes );
-    /*! Collect every node sub node that is actually a member of the given node set.
+    /*! \brief Collect every node sub node that is actually a member of the given node set.
      *
      * \param node must be inside nodes
      */

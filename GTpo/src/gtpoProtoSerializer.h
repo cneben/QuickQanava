@@ -104,7 +104,7 @@ public:
 public:
     using   ObjectIdMap = std::unordered_map< void*, int >;
 
-    /*! Generate an int ID mapping between \c graph nodes/edges/groups.
+    /*! \brief Generate an int ID mapping between \c graph nodes/edges/groups.
      *
      * This method should be called before calling serializeOut() and between consecutive
      * calls to serializeOut().
@@ -112,14 +112,14 @@ public:
      * \note Existing mapping is cleared.
      */
     auto                    generateObjectIdMap( const Graph& graph ) -> ObjectIdMap&;
-    /*! Generate a valid id for a new object, add an object to the actual object id map an return the id.
+    /*! \brief Generate a valid id for a new object, add an object to the actual object id map an return the id.
      *
      * \note if the object is already registered, it's actual id is returned.
      * \return -1 if an error occurs or an interger >= 0 if insertion suceed.
      */
     auto                    addObjectId( const void* object ) -> int;
 
-    /*! Get the id of an already registered object, if it is not registered, return -1.
+    /*! \brief Get the id of an already registered object, if it is not registered, return -1.
      *
      * \return -1 if an error occurs or an interger >= 0 if insertion suceed.
      */
@@ -170,7 +170,7 @@ public:
                           gtpo::pb::Graph& pbGraph,
                           gtpo::IProgressNotifier& progress ) -> void;
 
-    /*! Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.Node \c pbNode.
+    /*! \brief Serialize GTpo node \c weakNode to Protocol Buffer gtpo.pb.Node \c pbNode.
      *
      * \throw noexcept
      */
@@ -178,7 +178,7 @@ public:
 
     static void     serializeGTpoEdgeOut( const WeakEdge& weakEdge, gtpo::pb::Edge& pbEdge, const ObjectIdMap& objectIdMap );
 
-    /*! Serialize GTpo group \c weakGroup to Protocol Buffer gtpo.pb.Group \c pbGroup.
+    /*! \brief Serialize GTpo group \c weakGroup to Protocol Buffer gtpo.pb.Group \c pbGroup.
      *
      * \throw noexcept
      */
@@ -230,7 +230,7 @@ public:
 
     static void     serializeGTpoEdgeIn( const gtpo::pb::Edge& pbEdge, WeakEdge& weakEdge, IdObjectMap& idObjectMap );
 
-    /*! Serialize Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup to GTpo group \c weakGroup.
+    /*! \brief Serialize Protocol Buffer gtpo.pb.GTpoGroup \c pbGroup to GTpo group \c weakGroup.
      *
      * \throw noexcept
      */

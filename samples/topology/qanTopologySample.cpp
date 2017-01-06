@@ -28,8 +28,8 @@
 // STD headers
 #include <cstring>   // std::memcpy on g++5.2 ...
 
-// QuickProperties headers
-#include "../../QuickProperties/src/QuickProperties.h"
+// QuickContainers headers
+#include "../../QuickContainers/src/QuickContainers.h"
 
 // QuickQanava headers
 #include "../../src/QuickQanava.h"
@@ -54,8 +54,6 @@ MainView::MainView( ) :
     QQuickView( )
 {
     QQuickStyle::setStyle("Material");
-    QScopedPointer< qps::AbstractTranslator > translator{ new qps::AbstractTranslator() };
-    QuickProperties::initialize( engine(), translator.data() );
     QuickQanava::initialize();
     qmlRegisterType< qan::ImgNode >( "QuickQanava", 2, 0, "AbstractImgNode");
     qmlRegisterType< qan::ImageItem >( "QuickQanava", 2, 0, "ImageItem");

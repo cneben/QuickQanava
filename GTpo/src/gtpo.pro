@@ -6,7 +6,7 @@ DESTDIR		= ../build
 CONFIG		+= warn_on thread staticlib c++14
 QT		+= core 
 
-include (../common-gtpo.pri)
+include (../gtpo-common.pri)
 
 HEADERS +=  ./gtpoUtils.h               \
             ./gtpoGraph.h               \
@@ -19,13 +19,17 @@ HEADERS +=  ./gtpoUtils.h               \
             ./gtpoBehaviour.hpp         \
             ./gtpoSerializer.h          \
             ./gtpoProgressNotifier.h    \
-            ./gtpoGmlSerializer.h       \
-            ./gtpoGmlSerializer.hpp     \
-            ./gtpoProtoSerializer.h     \
-            ./gtpoProtoSerializer.hpp   \
             ./GTpo.h                    \
             ./GTpoQt.h                  \
             ./GTpoStd.h
+
+
+contains(DEFINES, GTPO_HAS_PROTOBUF) {
+
+HEADERS +=  ./gtpoProtoSerializer.h     \
+            ./gtpoProtoSerializer.hpp
+
+}
 
 OTHER_FILES +=  ./GTpo          \
                 ./GTpoStd       \
@@ -34,8 +38,7 @@ OTHER_FILES +=  ./GTpo          \
                 ../common.pri   \
                 ./GTpo.pri
 
-SOURCES +=  ./gtpo.pb.cc                \
-            ./pugixml/src/pugixml.cpp
+SOURCES +=  ./gtpo.pb.cc
 
 CONFIG(release, debug|release) {
     linux-g++*:     TARGET    = gtpo

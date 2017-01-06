@@ -1,7 +1,7 @@
 # Global GTpo configuration file
 
 # Comment if you do not intent to serialize graph to Protocol Buffer
-DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
+DEFINES     += "GTPO_HAS_PROTOBUF"
 
 # On win32, manually set the path to protocol buffer source and library directories (on linux,
 # GTpo will usually find Protocol Buffer directly if "make install" has been run

@@ -32,8 +32,8 @@
 #include <QSortFilterProxyModel>
 #include <QQuickImageProvider>
 
-// QuickProperties headers
-#include "../QuickProperties/src/qpsPropertiesList.h"
+// QuickContainers headers
+#include "../QuickContainers/src/qcmContainerModel.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"
@@ -42,6 +42,13 @@ namespace qan { // ::qan
 
 class IDInterface;
 class Graph;
+
+class ObjectVectorModel : public qcm::ContainerModel<QVector, QObject*>
+{
+    Q_OBJECT
+public:
+    explicit ObjectVectorModel( QObject* parent = nullptr ) : qcm::ContainerModel<QVector, QObject*>(parent) { }
+};
 
 /*! Model a styles list model filtered by style target.
  *
@@ -59,7 +66,7 @@ class StylesFilterModel : public QSortFilterProxyModel
     //@{
     Q_OBJECT
 public:
-    /*! Build a styles list model filtered by style target.             */
+    /*! \brief Build a styles list model filtered by style target.             */
     explicit StylesFilterModel( QString target ) : QSortFilterProxyModel{ nullptr },
         _target{ target } {
         if ( target.isEmpty() )
@@ -79,11 +86,6 @@ protected:
     virtual bool    filterAcceptsRow( int sourceRow, const QModelIndex& sourceParent) const;
 
 public:
-    //! \sa qps::PropertiesList::itemCount()
-    Q_INVOKABLE int                 itemCount( ) { return rowCount( QModelIndex( ) ); }
-    //! \sa qps::PropertiesList::itemAt()
-    Q_INVOKABLE qps::Properties*    itemAt( int styleIndex ) { return getStyleAt( styleIndex ); }
-
     //! Return the style corresponding to this model index (it is different from PropertiesModel index since we are in a model proxy...).
     Q_INVOKABLE qan::Style* getStyleAt( int styleIndex );
     //! FIXME.
@@ -96,7 +98,7 @@ public:
 
 /*! Factory for Style objects in a Graph.
  */
-class StyleManager : public qps::PropertiesList
+class StyleManager : public QObject
 {
     Q_OBJECT
     /*! \name Style Object Management *///-------------------------------------
@@ -115,45 +117,45 @@ public:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
-    /*! Generate default styles for node and edge.
+    /*! \brief Generate default styles for node and edge.
      *
      * Generate a "default node" qan::NodeStyle and a "default edge" qan::EdgeStyle registered
      * using setNodeDefaultStyle() and setEdgeDefaultStyle().
      */
     Q_INVOKABLE void            generateDefaultStyles();
 
-    /*! Create an empty style and register it in this manager.
+    /*! \brief Create an empty style and register it in this manager.
      *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails.
      */
     Q_INVOKABLE qan::Style*     createStyle( QString styleName, QString targetName = QString( "" ), QString metaTarget = QString( "" ) );
-    /*! Create an empty node style and register it in this manager.
+    /*! \brief Create an empty node style and register it in this manager.
      *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails.
      */
     Q_INVOKABLE qan::NodeStyle* createNodeStyle( QString styleName, QString targetName = QString( "" ) );
-    /*! Create an empty edge style and register it in this manager.
+    /*! \brief Create an empty edge style and register it in this manager.
      *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails.
      */
     Q_INVOKABLE qan::EdgeStyle* createEdgeStyle( QString styleName, QString targetName = QString( "" ) );
 
-    /*! Create a copy of an existing style, return it and register it in this manager.
+    /*! \brief Create a copy of an existing style, return it and register it in this manager.
      *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails (either the requested style
      *          does not exists, or a style with the same name already exists.
      */
     Q_INVOKABLE qan::Style* duplicateStyle( QString styleName, QString duplicatedStyleName );
-    /*! Remove an existing style from this manager and automatically delete it.
+    /*! \brief Remove an existing style from this manager and automatically delete it.
      *  \return true if the style was succesfully removed.
      */
     bool                    removeStyle( QString styleName );
 
     //! Return a style with a given name, return \c nullptr if no such style exists.
-    qan::Style*             findStyleByName( QString styleName );
+    qan::Style*             findStyleByName( QString styleName ) const;
     //! Return a style defined as default for a given class name.
     /*!
         \return the oldest registered style with the requested target or \c nullptr if no such style exists.
      */
-    qan::Style*             findStyleByTarget( QString targetName );
+    qan::Style*             findStyleByTarget( QString targetName ) const;
     //! Get a list of all styles targeted for a specific class name (might be empty()).
-    QList< qan::Style* >    getStylesByTarget( QString targetName );
+    QList< qan::Style* >    getStylesByTarget( QString targetName ) const;
 
     //! Set style \c defaultNodeStyle a the default style for a specific class of nodes \c targetName.
     void                    setDefaultNodeStyle( QString targetName, qan::NodeStyle* defaultNodeStyle );
@@ -174,14 +176,23 @@ public:
 private:
     TargetNodeStyleMap      _defaultNodeStyles;
     TargetEdgeStyleMap      _defaultEdgeStyles;
+
+public:
+    Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
+    inline QAbstractItemModel*      qmlGetStyles() noexcept { return &_styles; }
+    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }
+private:
+    //! Style containers
+    ObjectVectorModel           _styles;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Styles Model Management *///-------------------------------------
     //@{
 public:
-    Q_INVOKABLE qan::Style*         getStyleAt( int s ) { return qobject_cast< qan::Style* >( at( s ) ); }
-    /*! Get a style manager model for styles with a specific target.
+    Q_INVOKABLE qan::Style*         getStyleAt( int s ) { return qobject_cast< qan::Style* >( _styles.at( s ) ); }
+
+    /*! \brief Get a style manager model for styles with a specific target.
      *
      *  Use this method to get an Interview model of styles registered in this manager
      *  with a specific target. For example, a model exposing styles applying only to
@@ -196,7 +207,7 @@ public:
      */
     Q_INVOKABLE QAbstractItemModel*     getStylesModelForTarget( QString target );
 private:
-    /*! Map filtered proxy models of qan::PropertiesList getPropertiesListModel() for
+    /*! \brief Map filtered proxy models of qan::PropertiesList getPropertiesListModel() for
      * a specific style target. */
     QMap< QString, QAbstractItemModel* > _targetModelMap;
 

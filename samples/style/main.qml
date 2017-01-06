@@ -23,29 +23,12 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
 import QtQuick.Dialogs  1.2
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "qrc:/QuickProperties" as Qps
+import QuickQanava          2.0 as Qan
+import "."                  as Qan
+import "qrc:/QuickQanava"   as Qan
 
 Item {
     anchors.fill: parent
-
-    /*Qan.Edge {
-        id: edge
-        anchors.centerIn: parent; width: 150; height: 55
-        label: "Qan.Edge"
-        onWidthChanged: {
-            edge.p1 = Qt.point( 0, 0 )
-            edge.p2 = Qt.point( 35, 10 )
-            //edge.p1 = Qt.point( 10, previewHeight / 2 );
-            //edge.p2 = Qt.point( width - 10, previewHeight / 2 );
-        }
-        //style: styleProperties
-        //Drag.active: mouseArea.drag.active
-        //Drag.dragType: Drag.Automatic; Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
-        acceptDrops: false // Don't allow style DnD inside style browser
-    }*/
-
     Popup {
         id: styleSelectionDialog
         x: ( parent.width - width ) / 2.
@@ -65,7 +48,8 @@ Item {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 id: nodeStyleList
                 graph: graph
-                model: graph.styleManager.nodeStylesModel
+                //model: graph.styleManager.nodeStylesModel
+                model: graph.styleManager.styles
                 onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
                 onStyleClicked: { styleSelectionDialog.styleToApply = style }
             }
@@ -158,7 +142,6 @@ Item {
     Qan.GraphView {
         id: graphViewconfiguration
         anchors.fill: parent
-        //graph       : graph
         navigable   : true
         graph       : Qan.Graph {
             id: graph
@@ -197,7 +180,7 @@ Item {
         Qan.StyleListView {
             anchors.fill: parent
             anchors.margins: 4
-            model: graph.styleManager
+            model: graph.styleManager.styles
             graph: graph
             onStyleClicked: { }
             onStyleDoubleClicked: { styleEditor.hilightStyle( style ) }
@@ -209,22 +192,22 @@ Item {
         width: 280; height: 350
         ColumnLayout {
             id: layout
-            anchors.fill: parent; /*anchors.margins: 4*/
+            anchors.fill: parent
             ComboBox {
                 id: styleCb
                 Layout.fillWidth: true
-                displayText: "Nodes"
-                model: graph.styleManager
+                displayText: "Select a Style"
+                model: graph.styleManager.styles
                 textRole: "itemLabel"
             }
-            Qps.PropertiesEditor {
+            Qan.StyleEditor {
                 id: styleEditor
                 Layout.fillWidth: true; Layout.fillHeight: true
-                model: graph.styleManager.getStyleAt( styleCb.currentIndex )
+                style: graph.styleManager.getStyleAt( styleCb.currentIndex )
                 flickableDirection: Flickable.HorizontalAndVerticalFlick
                 function    hilightStyle( style ) { // Change selection to a given style and hilight it
                     styleCb.currentIndex = -1
-                    styleCb.currentIndex = graph.styleManager.listReference.itemIndex( style )
+                    styleCb.currentIndex = graph.styleManager.styles.listReference.itemIndex( style )
                 }
             }
         }

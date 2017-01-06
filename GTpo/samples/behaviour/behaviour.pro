@@ -10,7 +10,7 @@ INCLUDEPATH +=  ../../src
 SOURCES	+=  behaviour.cpp
 HEADERS	+=  behaviour.h
 
-include( ../../common.pri)
+include( ../../gtpo-common.pri)
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lgtpo -lprotobuf
