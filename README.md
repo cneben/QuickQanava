@@ -6,14 +6,14 @@
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
-2017 (january): Warning massive change in master repository, report compilation problems to benoit@destrat.io (Removed dependency to QuickProperties and PugiXML)
+2017 (January): Warning massive changes in master repository, report compilation problems to benoit@destrat.io (Removed dependency to QuickProperties and PugiXML)
 
 QuickQanava 
 ============================
 
-`QuickQanava` is a C++11/Qt/QML library designed to display graphs in a Qt/QML application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relationnal content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
+`QuickQanava` is a C++11/Qt/QML library designed to display graphs in a Qt/QML application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
 
-`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickProperties](https://github.com/cneben/quickproperties)* (LGPL).
+`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
 
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
