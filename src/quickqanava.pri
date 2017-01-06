@@ -37,9 +37,9 @@ CONFIG(release, debug|release) {
 CONFIG(debug, debug|release) {
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267 -w34100  # Remove C4100 unreferenced formal parameter
     win32:      LIBS	+=  $$PROTOCOL_BUFFER3_LIBDIR_DEBUG/libprotobufd.lib
-    linux-g++*:     LIBS	+= -lprotobufd
-    android:        LIBS	+= -lprotobufd
-    win32-g++*:     LIBS	+= -lprotobufd
+    linux-g++*:     LIBS	+= -lprotobuf
+    android:        LIBS	+= -lprotobuf
+    win32-g++*:     LIBS	+= -lprotobuf
 }
 }
 

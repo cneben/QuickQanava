@@ -25,6 +25,11 @@
 // \date	2016 02 11
 //-----------------------------------------------------------------------------
 
+// STD headers
+#include <fstream>
+#include <utility>  // std::as_const
+#include <cstring>  // std::memcpy
+
 // QuickQanava headers
 #include "./qanProtoSerializer.h"
 
@@ -34,11 +39,7 @@
 #endif
 #include "./quickqanava.pb.h"
 
-// STD headers
-#include <fstream>
-
 namespace qan { // ::qan
-
 
 /* Qan ProtoSerializer Object Management *///----------------------------------
 ProtoSerializer::ProtoSerializer( QObject* parent )  :
@@ -420,7 +421,7 @@ auto    ProtoSerializer::serializeIn( const qan::pb::QtObject& pbObject, QObject
     if ( !pbPropertiesNames )
         return;
     int p{0};
-    for ( auto& pbProperty : std::as_const(pbObject.properties()) ) {
+    for ( auto& pbProperty : qAsConst(pbObject.properties()) ) {
         QVariant value;
         serializeIn( pbProperty, value );
         const std::string& propertyName = pbObject.properties_names().Get(p);

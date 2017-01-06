@@ -27,10 +27,10 @@ test-progress.subdir   = samples/progress
 test-progress.depends  = quickqanava
 
 SUBDIRS +=  quickqanava
-#SUBDIRS +=  test-custom
-#SUBDIRS +=  test-navigable
-#SUBDIRS +=  test-groups
-#SUBDIRS +=  test-hedges
+SUBDIRS +=  test-custom
+SUBDIRS +=  test-navigable
+SUBDIRS +=  test-groups
+SUBDIRS +=  test-hedges
 SUBDIRS +=  test-style
-#SUBDIRS +=  test-progress
+SUBDIRS +=  test-progress
 SUBDIRS +=  test-topology

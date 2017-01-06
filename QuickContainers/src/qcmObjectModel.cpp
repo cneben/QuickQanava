@@ -25,6 +25,9 @@
 // \date	2015 05 01
 //-----------------------------------------------------------------------------
 
+// Std headers
+#include <cstring>  // std::strcmp
+
 // QT headers
 #include <QtGlobal>
 #include <QMetaProperty>

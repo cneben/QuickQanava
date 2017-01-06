@@ -33,7 +33,7 @@
 #include <QAbstractListModel>
 
 // QuickContainers headers
-#include "./qcmObjectmodel.h"
+#include "./qcmObjectModel.h"
 #include "./qcmAbstractContainerModel.h"
 #include "./qcmContainerConcept.h"
 #include "./qcmContainerModelComposerListReference.h"
