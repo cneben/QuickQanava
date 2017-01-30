@@ -1,7 +1,7 @@
 /*
-    This file is part of Quick Qanava library.
+    This file is part of QuickQanava library.
 
-    Copyright (C) 2008-2015 Benoit AUTHEMAN
+    Copyright (C) 2008-2017 Benoit AUTHEMAN
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

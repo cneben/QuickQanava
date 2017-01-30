@@ -9,13 +9,16 @@ Both QuickQanava and QuickProperties should be initialized in your c++ main func
 ~~~~~~~~~~~~~{.cpp}
 #include <QuickQanava>
 
- // _translator should be a scoped pointer member of your QQuickView:
-    QScopedPointer< qps::AbstractTranslator > _translator{ new qps::AbstractTranslator() };
-	
- // ...
- // In your custom QQuickView constructor:
-    QuickProperties::initialize( engine(), _translator.data() );	// <--- translator could just be left to nullptr if you don't need internationalization
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+	// Or in a custom QQuickView constructor:
     QuickQanava::initialize();
+	engine.load( ... );
+    return app.exec();
+}
 ~~~~~~~~~~~~~
 
 Then, in QML import QuickQanava:
@@ -30,7 +33,7 @@ Qan.Graph {
     id: graph
     anchors.fill: parent
     Component.onCompleted: {
-        var n1 = graph.insertNode( )
+        var n1 = graph.insertNode()
         n1.label = "Hello World"
     }
 }
@@ -41,23 +44,22 @@ Topology
 
 ### Navigation
 
-A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, `Qan.Graph` must be used as a child of `Qan.GraphView` component:
+A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, `Qan.Graph` component must be defined in the `graph` property of a `Qan.GraphView` component:
 ~~~~~~~~~~~~~{.cpp}
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
-  graph       : topology
   navigable   : true
-  Qan.Graph {
-    id: topology
-    anchors.fill: parent
-    clip: true
-    onNodeRightClicked: {
-      /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
-      menu.x = globalPos.x; menu.y = globalPos.y						// For example to open a popup menu
-      menu.open()*/
-    }
-  } // Qan.Graph: topology
+  graph: Qan.Graph {
+      id: topology
+      anchors.fill: parent
+      clip: true
+      onNodeRightClicked: {
+        /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
+        menu.x = globalPos.x; menu.y = globalPos.y						// For example to open a popup menu
+        menu.open()*/
+      }
+    } // Qan.Graph: topology
   onRightClicked: {
     /*var globalPos = graphView.mapToItem( topology, pos.x, pos.y ) // Conversion from graph view coordinate system to user view coordinate system
     menu.x = globalPos.x; menu.y = globalPos.y							// For example to open a popup menu
@@ -82,12 +84,10 @@ QuickQanava allow visual connection of node with the `Qan.ConnectorDropNode` com
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
-  graph       : topology
-  Qan.Graph {
-    id: topology
+  graph : Qan.Graph {
     anchors.fill: parent
     enableConnectorDropNode: true
-  } // Qan.Graph: opology
+  } // Qan.Graph
 } // Qan.GraphView
 ~~~~~~~~~~~~~
 
