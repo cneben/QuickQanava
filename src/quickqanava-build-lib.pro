@@ -37,6 +37,7 @@ HEADERS +=  ./QuickQanava.h             \
             ./qanStyle.h                \
             ./qanStyleManager.h         \
             ./qanNavigable.h            \
+            ./qanPointGrid.h            \
             ./fqlBottomRightResizer.h
 
 SOURCES +=  ./qanEdge.cpp               \
@@ -51,6 +52,7 @@ SOURCES +=  ./qanEdge.cpp               \
             ./qanStyle.cpp              \
             ./qanStyleManager.cpp       \
             ./qanNavigable.cpp          \
+            ./qanPointGrid.cpp          \
             ./fqlBottomRightResizer.cpp
 
 OTHER_FILES +=  ./quickqanava.proto         \

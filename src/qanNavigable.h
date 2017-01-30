@@ -31,6 +31,9 @@
 // QT headers
 #include <QQuickItem>
 
+// QuickQanava headers
+#include "./qanPointGrid.h"
+
 namespace qan { // ::qan
 
 /*! \brief Provide a pannable/zoomable container for quick items.
@@ -82,12 +85,18 @@ namespace qan { // ::qan
  */
 class Navigable : public QQuickItem
 {
+    /*! \name Navigable Object Management *///---------------------------------
+    //@{
 Q_OBJECT
 public:
     explicit Navigable( QQuickItem* parent = nullptr );
     virtual ~Navigable( ) { }
     Navigable( const Navigable& ) = delete;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Navigation Management *///---------------------------------------
+    //@{
 public:
     /*! \brief Enable or disable navigation (navigation is enabled by default).
      */
@@ -302,6 +311,32 @@ protected:
     QQuickItem* _containerItem{ nullptr };
     bool        _leftButtonPressed{ false };
     QPointF     _lastPan{};
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Grid Management *///---------------------------------------------
+    //@{
+public:
+    /*! \brief User defined background grid.
+     *
+     * Grid is automatically updated on zoom/pan or navigable content view modification.
+     *
+     * \note may be nullptr (undefined in QML).
+     */
+    Q_PROPERTY( qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL )
+    //! \copydoc grid
+    qan::Grid*  getGrid() { return _grid.data(); }
+    void        setGrid( qan::Grid* grid );
+private:
+    //! Force update of grid.
+    void        updateGrid() noexcept;
+    //! \copydoc grid
+    QPointer<qan::Grid> _grid;
+signals:
+    //! \copydoc grid
+    void        gridChanged( );
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan

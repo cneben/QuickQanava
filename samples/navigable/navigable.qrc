@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>navigable.qml</file>
+        <file>image.qml</file>
+        <file>grid.qml</file>
         <file>image.jpg</file>
+        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

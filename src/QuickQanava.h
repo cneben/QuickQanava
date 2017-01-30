@@ -37,12 +37,13 @@
 // QuickContainers headers
 #include "../QuickContainers/src/QuickContainers.h"
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanConfig.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
+#include "./qanPointGrid.h"
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
@@ -60,6 +61,8 @@ struct QuickQanava {
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
+        qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
+        qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
         qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");
         qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");
         qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");

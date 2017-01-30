@@ -33,6 +33,7 @@
 
 namespace qan { // ::qan
 
+/* Navigable Object Management *///--------------------------------------------
 Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem( parent )
 {
@@ -40,7 +41,9 @@ Navigable::Navigable( QQuickItem* parent ) :
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
 }
+//-----------------------------------------------------------------------------
 
+/* Navigation Management *///--------------------------------------------------
 void    Navigable::centerOn( QQuickItem* item )
 {
     // Algorithm:
@@ -58,6 +61,7 @@ void    Navigable::centerOn( QQuickItem* item )
     QPointF translation{ navigableCenterContainerCs - itemCenterContainerCs };
     _containerItem->setPosition( QPointF{ _containerItem->x() + translation.x(),
                                           _containerItem->y() + translation.y() } );
+    updateGrid();
 }
 
 void    Navigable::fitInView( )
@@ -101,6 +105,7 @@ void    Navigable::fitInView( )
             emit zoomChanged();
             emit containerItemModified();
             navigableContainerItemModified();
+            updateGrid();
         }
     }
 }
@@ -165,6 +170,7 @@ void    Navigable::zoomOn( QPointF center, qreal zoom )
         emit zoomChanged();
         emit containerItemModified();
         navigableContainerItemModified();
+        updateGrid();
     }
 }
 
@@ -268,6 +274,8 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
                 _containerItem->setX( _containerItem->x( ) + xd );
             }
         }
+
+        updateGrid();
     }
 }
 
@@ -283,6 +291,8 @@ void    Navigable::mouseMoveEvent( QMouseEvent* event )
             navigableContainerItemModified();
             _panModified = true;
             _lastPan = event->localPos();
+
+            updateGrid();
         }
     }
     QQuickItem::mouseMoveEvent( event );
@@ -328,8 +338,39 @@ void    Navigable::wheelEvent( QWheelEvent* event )
                          static_cast<qreal>(event->y()) },
                 getZoom() + zoomFactor );
     }
+    updateGrid();
+
     // Note 20160117: NavigableArea is opaque for wheel events
     //QQuickItem::wheelEvent( event );
 }
+//-----------------------------------------------------------------------------
+
+/* Grid Management *///--------------------------------------------------------
+void    Navigable::setGrid( qan::Grid* grid )
+{
+    if ( grid != _grid ) {
+        _grid = grid;
+        if ( _grid ) {
+            _grid->setParentItem( this );
+            _grid->setZ( -1.0 );
+            connect( grid, &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
+                     this, &Navigable::updateGrid );    // take into account any grid property change while grid was hidden.
+        }
+        updateGrid();
+        emit gridChanged();
+    }
+}
+
+void    Navigable::updateGrid() noexcept
+{
+    if ( _grid &&
+         _containerItem != nullptr ) {
+        // Generate a view rect to update grid
+        QRectF viewRect{ _containerItem->mapFromItem(this, {0.,0.}),
+                         _containerItem->mapFromItem(this, {width(), height()}) };
+        _grid->updateGrid(viewRect, *_containerItem, *this );
+    }
+}
+//-----------------------------------------------------------------------------
 
 } // ::qan

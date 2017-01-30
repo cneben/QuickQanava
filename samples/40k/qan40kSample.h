@@ -18,29 +18,18 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software.
+// This file is a part of the QuickQanava software library.
 //
-// \file	navigable.cpp
-// \author	benoit@qanava.org
-// \date	2016 01 14
+// \file	qan40kSample.h
+// \author	benoit@destrat.io
+// \date	2017 01 29
 //-----------------------------------------------------------------------------
 
-// Qt headers
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickStyle>
+#ifndef qan40kSample_h
+#define qan40kSample_h
 
 // QuickQanava headers
-#include "../../src/qanNavigable.h"
+#include <QuickQanava>
 
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle("Material");
-    qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-    qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
-    QQmlApplicationEngine engine;
-    engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
-    return app.exec();
-}
+#endif // qan40kSample_h
+

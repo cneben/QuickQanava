@@ -195,8 +195,8 @@ public:
     Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
     QAbstractListModel* getSelectedNodesModel( ) { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
 
-    auto    getSelectedNodes( ) noexcept -> SelectedNodes& { return _selectedNodes; }
-    auto    getSelectedNodes( ) const noexcept -> const SelectedNodes& { return _selectedNodes; }
+    auto                getSelectedNodes( ) noexcept -> SelectedNodes& { return _selectedNodes; }
+    auto                getSelectedNodes( ) const noexcept -> const SelectedNodes& { return _selectedNodes; }
 signals:
     void                selectedNodesChanged();
 private:
