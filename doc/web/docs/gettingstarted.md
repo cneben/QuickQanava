@@ -6,7 +6,7 @@ Simple Directed Graph
 
 Both QuickQanava and QuickProperties should be initialized in your c++ main function:
 
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 #include <QuickQanava>
 
 int main(int argc, char *argv[])
@@ -19,16 +19,16 @@ int main(int argc, char *argv[])
 	engine.load( ... );
     return app.exec();
 }
-~~~~~~~~~~~~~
+```
 
 Then, in QML import QuickQanava:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-~~~~~~~~~~~~~
+```
 
 And create a `Qan.Graph` component:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 Qan.Graph {
     id: graph
     anchors.fill: parent
@@ -37,7 +37,7 @@ Qan.Graph {
         n1.label = "Hello World"
     }
 }
-~~~~~~~~~~~~~
+```
 
 Topology
 ------------------
@@ -45,7 +45,7 @@ Topology
 ### Navigation
 
 A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, `Qan.Graph` component must be defined in the `graph` property of a `Qan.GraphView` component:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
@@ -66,7 +66,7 @@ Qan.GraphView {
 	menu.open()*/
   }
 } // Qan.GraphView
-~~~~~~~~~~~~~
+```
 
 Navigation could be disabled by setting the `navigable` property to false (it default to true).
 
@@ -80,7 +80,7 @@ QuickQanava allow visual connection of node with the `Qan.ConnectorDropNode` com
 
 ![Groups](images/visual-node-connector.gif)
 
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
@@ -89,7 +89,7 @@ Qan.GraphView {
     enableConnectorDropNode: true
   } // Qan.Graph
 } // Qan.GraphView
-~~~~~~~~~~~~~
+```
 
 Selection
 ------------------
@@ -111,7 +111,7 @@ All theses properties could be changed dynamically.
 Selection could also be disabled at node level by setting `Qan.Node.selectable` to false, node become unselectable even if global graph selection policy is not set to `NoSelection`.
 
 Current multiple selection (or single selection) is available trought Qan.Graph `selectedNodes` property. `selectedNodes` is a list model, it can be used in any QML view, or iterated from C++ to read the current selection:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 // Viewing the actual selected nodes with a QML ListView:
 ListView {
 	id: selectionListView
@@ -136,17 +136,17 @@ ListView {
 		}
 	}
 }
-~~~~~~~~~~~~~
+```
 
 In C++, `selectedNodes` could be iterated directly, the current node should be tested to ensure it is non nullptr, since the underlining model is thread-safe and could have
 been modified from another thread:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 	auto graph = std::make_unique<qan::Graph>();
     for ( auto& node : graph->getSelectNodes() ) {
         if ( node != nullptr )
             node->doWhateverYouWant();
     }
-~~~~~~~~~~~~~
+```
 
 Example of `Qan.AbstractGraph.SelectOnClick` selection policy with multiple selection dragging inside a group:
 ![selection](images/Selection.gif)
@@ -157,7 +157,7 @@ Using Groups
 
 ![Groups](images/groups-overview.gif)
 
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 Qan.Graph {
   id: graph
   objectName: "graph"
@@ -177,7 +177,7 @@ Qan.Graph {
     gg.label = "Group"
   }
 } // Qan.Graph: graph
-~~~~~~~~~~~~~
+```
 
 
 Displaying Custom Nodes
@@ -200,7 +200,7 @@ Preferred way for dealing with persistance in QuickQanava is writing to Protocol
 4. Call qan::ProtoSerializer saveGraphTo() or loadGraphFrom().
 
 For example, if you have defined a custom "image node" called qan::ImageNode, write a protobuf3 message to store persistent data:
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 // File custom.proto
 syntax = "proto3"; 
 import "gtpo.proto";
@@ -212,18 +212,19 @@ message QanImgNode {
     int32   img_data_size=4;
     bytes   img_data=5;
 }
-~~~~~~~~~~~~~
+```
 
 Compile this Protobuf IDL file with the following command:
-~~~~~~~~~~~~~{.cpp}
+``` bash
+#!/bin/bash
 $ protoc custom.proto --cpp_out=.
-~~~~~~~~~~~~~
+```
 
 > Note: It might be necessary to manually copy "gtpo.proto" and "quickqanava.proto" in your .proto directory before calling `protoc`, theses files could be removed once custom.pb.cc and custom.pb.h have been generated.
 
 You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configuration file, and register custom in/out functors in a qan::ProtoSerializer. Mapping between functors and the target node is done via the first string parameter of registerNodeOutFunctor(), the value must correspond to qan::Node::getDynamicClassName().
 
-~~~~~~~~~~~~~{.cpp}
+``` cpp
 #include <QuickQanava>
  // ...
 	QScopedPointer< qan::ProtoSerializer > _serializer{ new qan::ProtoSerializer() };
@@ -246,7 +247,7 @@ You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configur
 				}
 			}
 	}
-~~~~~~~~~~~~~
+```
 
 See the topology sample for a compilable example.
 

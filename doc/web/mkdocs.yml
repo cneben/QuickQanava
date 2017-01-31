@@ -15,22 +15,32 @@ theme: 'material'
 repo_name: 'GitHub'
 repo_url: 'https://github.com/cneben/QuickQanava'
 
-copyright: 'Copyright (c) 2016 Delia Stratégie'
+copyright: 'Copyright &copy; 2017 Delia Stratégie'
 
 #extra_css: ['extra.css']
  
 extra:
   version: '0.6'
-  logo: 'images/logo-footer.png'
+  logo: 'images/logo.png'
   palette:
-    primary: 'cyan'
-    accent: 'orange'
+    primary: 'light blue'
+    accent: 'amber'
   font:
     text: 'Roboto'
     code: 'Roboto Mono'
   author:
     github: 'cneben'
+  social:
+    - type: 'github'
+      link: 'https://github.com/cneben'
+    - type: 'linkedin'
+      link: 'https://www.linkedin.com/in/benoit-autheman-895a20a3/'
 
 markdown_extensions:
-  - codehilite(css_class=code)
   - admonition
+  - codehilite(linenums=true)
+  - footnotes
+  - meta
+  - toc(permalink=true)
+  
+  
