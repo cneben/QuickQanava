@@ -262,8 +262,10 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
         return nullptr;
     }
     QQuickItem* item = nullptr;
+    //auto* context = QQmlEngine::contextForObject(this);
     if ( component->isReady() ) {
-        QObject* object = component->create( );
+        //QObject* object = component->create(context);
+        QObject* object = component->create();
         if ( object != nullptr && !component->isError() ) {
             QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );

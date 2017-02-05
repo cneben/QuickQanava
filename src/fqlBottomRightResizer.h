@@ -59,24 +59,26 @@ public:
     /*! \name Resizer Management *///------------------------------------------
     //@{
 public:
-    Q_PROPERTY( QString handlerComponent READ getHandlerComponent WRITE setHandlerComponent NOTIFY handlerComponentChanged FINAL )
-    void        setHandlerComponent( QString handlerComponentString );
-    QString     getHandlerComponent( ) const { return _handlerComponentString; }
+    Q_PROPERTY( QQuickItem* handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL )
+    void                    setHandler( QQuickItem* handler ) noexcept;
+    QQuickItem*             getHandler( ) const noexcept;
 signals:
-    void        handlerComponentChanged();
+    void                    handlerChanged();
 private:
-    QString     _handlerComponentString{ "" };
-    QScopedPointer< QQmlComponent > _handlerComponent{ nullptr };
+    QPointer< QQuickItem >  _handler{ nullptr };
 
 public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
     Q_PROPERTY( QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL )
     void        setTarget( QQuickItem* target );
-    QQuickItem* getTarget( ) const { return _target.data(); }
+    QQuickItem* getTarget( ) const noexcept { return _target.data(); }
 signals:
     void        targetChanged();
 private:
     QPointer< QQuickItem >  _target{ nullptr };
+private:
+    void        configureHandler(QQuickItem& handler) noexcept;
+    void        configureTarget(QQuickItem& target) noexcept;
 private slots:
     void        onTargetXChanged();
     void        onTargetYChanged();
@@ -84,7 +86,7 @@ private slots:
     void        onTargetHeightChanged();
 
 public:
-    //! When a resizer is used on an item that is _inside_ a Flickable QML component, bind the flickable to this property to automatically disable flicking whild resizing is active.
+    //! When a resizer is used on an item that is _inside_ a Flickable QML component, bind the flickable to this property to automatically disable flicking during \c target resizing.
     Q_PROPERTY( QQuickItem* flickable READ getFlickable WRITE setFlickable NOTIFY flickableChanged FINAL )
     void        setFlickable( QQuickItem* flickable ) { _flickable = flickable; emit flickableChanged(); }
     QQuickItem* getFlickable( ) const { return _flickable.data(); }
@@ -144,7 +146,7 @@ private:
     qreal       _handlerWidth{ 4.0 };
 
 public:
-    //! Target could not be resized below \c minimumTargetSize (default to \c 50x50).
+    //! Target could not be resized below \c minimumTargetSize (default to \c empty).
     Q_PROPERTY( QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL )
     //! \sa minimumTargetSize
     void        setMinimumTargetSize( QSizeF minimumTargetSize );
@@ -155,7 +157,7 @@ signals:
     void        minimumTargetSizeChanged();
 private:
     //! \sa minimumTargetSize
-    QSizeF      _minimumTargetSize{ 50., 50. };
+    QSizeF      _minimumTargetSize{};
 
 public:
     //! Set to true to hide the resize handler component when the resize area is not hovered (default to \c false).
@@ -168,7 +170,7 @@ private:
     bool        _autoHideHandler{ false };
 
 private:
-    QPointer< QQuickItem >  _handler{ nullptr };
+    //QPointer< QQuickItem >  _handler{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 

@@ -23,7 +23,7 @@ extra:
   version: '0.6'
   logo: 'images/logo.png'
   palette:
-    primary: 'light blue'
+    primary: 'indigo'
     accent: 'amber'
   font:
     text: 'Roboto'

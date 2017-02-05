@@ -68,28 +68,28 @@ bool    Node::operator==( const qan::Node& right ) const
 /* Selection Management *///---------------------------------------------------
 void    Node::onWidthChanged()
 {
-    qreal selectionWeight{ 3. };
-    qreal selectionMargin{ 3. };
-    qan::Graph* graph = getGraph();
-    if ( graph != nullptr ) {
-        selectionWeight = graph->getSelectionWeight();
-        selectionMargin = graph->getSelectionMargin();
-    }
-    if ( _selectionItem != nullptr )
+    if ( _selectionItem != nullptr ) {  // Update selection item
+        qreal selectionWeight{ 3. }, selectionMargin{ 3. };
+        const auto graph = getGraph();
+        if ( graph != nullptr ) {
+            selectionWeight = graph->getSelectionWeight();
+            selectionMargin = graph->getSelectionMargin();
+        }
         _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
+    }
 }
 
 void    Node::onHeightChanged()
 {
-    qreal selectionWeight{ 3. };
-    qreal selectionMargin{ 3. };
-    qan::Graph* graph = getGraph();
-    if ( graph != nullptr ) {
-        selectionWeight = graph->getSelectionWeight();
-        selectionMargin = graph->getSelectionMargin();
-    }
-    if ( _selectionItem != nullptr )
+    if ( _selectionItem != nullptr ) {
+        qreal selectionWeight{ 3. }, selectionMargin{ 3. };
+        const auto graph = getGraph();
+        if ( graph != nullptr ) {
+            selectionWeight = graph->getSelectionWeight();
+            selectionMargin = graph->getSelectionMargin();
+        }
         _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
+    }
 }
 
 void    Node::setSelectable( bool selectable )

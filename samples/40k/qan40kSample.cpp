@@ -35,6 +35,7 @@
 #include <QtQml>
 #include <QQuickItem>
 #include <QQuickStyle>
+#include <QElapsedTimer>
 
 // Topology sample headers
 #include "./qan40kSample.h"
@@ -65,6 +66,7 @@ int	main( int argc, char** argv )
         //auto defaultNode = graph->get
         if ( graph ) {
             unsigned int n = 0;
+            QElapsedTimer t; t.start();
             //QImage image(":/qt4logo4k.png");
             QImage image(":/qt4logo1k.png");
             qWarning() << "image: width=" << image.width() << "\theight=" << image.height();
@@ -78,11 +80,13 @@ int	main( int argc, char** argv )
                     auto node = graph->insertNode();    // FIXME
                     node->setX(nodeX);
                     node->setY(nodeY);
+                    node->setMinimumSize( {defaultWidth / 2., defaultHeight / 2.} );
                     node->setWidth(defaultWidth);
                     node->setHeight(defaultHeight);
                     //node->setLabel( QString::number(n++) );
                 }
             }
+            qWarning() << "Node components creation took " << t.elapsed() << "ms";
         }
     }
 

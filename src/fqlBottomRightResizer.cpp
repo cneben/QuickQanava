@@ -33,12 +33,23 @@ BottomRightResizer::~BottomRightResizer( )
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-void    BottomRightResizer::setHandlerComponent( QString handlerComponentString )
+void    BottomRightResizer::setHandler( QQuickItem* handler ) noexcept
 {
-    _handlerComponentString = handlerComponentString;
-    if ( _target != nullptr )   // If there is already a target, force update the target, it will take the new component
-        setTarget( _target );   // string into account.
-    emit handlerComponentChanged();
+    if ( handler != _handler.data() ) {
+        if ( _handler ) {
+            if ( QQmlEngine::objectOwnership(_handler.data()) == QQmlEngine::CppOwnership )
+                _handler.data()->deleteLater();
+        }
+        _handler = handler;
+        emit handlerChanged();
+    }
+    if ( _target )      // Force target reconfiguration for new handler
+        configureTarget(*_target);
+}
+
+QQuickItem* BottomRightResizer::getHandler( ) const noexcept
+{
+    return ( _handler ? _handler.data() : nullptr );
 }
 
 void    BottomRightResizer::setTarget( QQuickItem* target )
@@ -50,66 +61,79 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
         return;
     }
 
-    QQmlEngine* engine = qmlEngine( this );
-    if ( engine != nullptr ) {
-        _handlerComponent.reset( new QQmlComponent(engine) );
-        if ( _handler != nullptr )
-            _handler->deleteLater(); // Delete the existing handler
-        QString handlerComponentQml = _handlerComponentString;
-        if ( handlerComponentQml.isEmpty() ) {  // If no custom QML code has been set for handler component, use a default rectangle
-            std::stringstream rectQmlStr; rectQmlStr << "import QtQuick 2.4\n  Rectangle { width:" << _handlerSize.width() <<
-                                                        "; height:" << _handlerSize.height() <<
-                                                        "; border.width:4; radius:3" <<
-                                                        "; border.color:\"" << _handlerColor.name().toStdString() << "\"" <<
-                                                        "; color:Qt.rgba(0.,0.,0.,0.); }";
-            handlerComponentQml = QString::fromStdString( rectQmlStr.str() );
-        }
-        _handlerComponent->setData( handlerComponentQml.toUtf8(), QUrl() );
-        if ( _handlerComponent->isReady() ) {
-            _handler = qobject_cast<QQuickItem*>(_handlerComponent->create());
-            if ( _handler != nullptr ) {
-                engine->setObjectOwnership( _handler, QQmlEngine::CppOwnership );
-                _handler->setOpacity( _autoHideHandler ? 0. : 1. );
-                _handler->setSize( _handlerSize );
-                _handler->setZ( z() + 1. );
-                QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
-                if ( handlerBorder != nullptr ) {
-                    handlerBorder->setProperty( "color", _handlerColor );
+    if ( _handler == nullptr ) {
+        QQmlEngine* engine = qmlEngine( this );
+        if ( engine != nullptr ) {
+            QQmlComponent defaultHandlerComponent{engine};
+            QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
+                        QStringLiteral("width:")    + QString::number(_handlerSize.width()) + QStringLiteral(";") +
+                        QStringLiteral("height:")   + QString::number(_handlerSize.height()) + QStringLiteral(";") +
+                        QStringLiteral("border.width:4;radius:3;") +
+                        QStringLiteral("border.color:\"") + _handlerColor.name() + QStringLiteral("\";") +
+                        QStringLiteral("color:Qt.rgba(0.,0.,0.,0.); }") };
+            defaultHandlerComponent.setData( handlerQml.toUtf8(), QUrl{} );
+            if ( defaultHandlerComponent.isReady() ) {
+                _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
+                if ( _handler )
+                    engine->setObjectOwnership( _handler.data(), QQmlEngine::CppOwnership );
+                else {
+                    qWarning() << "FastQml: fql::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
+                    qWarning() << "QML Component status=" << defaultHandlerComponent.status();
                 }
-                _handler->setVisible( true );
-                _handler->setParentItem( this );
-                _handler->setAcceptedMouseButtons( Qt::LeftButton );
-                _handler->setAcceptHoverEvents( true );
             }
-        } else {
-            qDebug() << "FastQml: fql::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
-            qDebug() << handlerComponentQml;
-            qDebug() << "QML Component status=" << _handlerComponent->status();
         }
     }
+
+    // Configure handler on given target
+    if ( _handler != nullptr )
+        configureHandler(*_handler);
 
     _target = target;
-    if ( _target != nullptr ) { // Check that target size is not bellow resizer target minimum size
-        if ( !_minimumTargetSize.isEmpty() ) {
-            if ( _target->width() < _minimumTargetSize.width() )
-                _target->setWidth( _minimumTargetSize.width() );
-            if ( _target->height() < _minimumTargetSize.height() )
-                _target->setHeight( _minimumTargetSize.height() );
-        }
+    if ( _target )
+        configureTarget(*_target);
+    emit targetChanged();
+}
 
-        if ( target != parentItem() ) { // Resizer is not in target sibling (ie is not a child of target)
-            connect( _target.data(), &QQuickItem::xChanged, this, &BottomRightResizer::onTargetXChanged );
-            connect( _target.data(), &QQuickItem::yChanged, this, &BottomRightResizer::onTargetYChanged );
-            setX( target->x() );
-            setY( target->y() );
-        }
+void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
+{
+    handler.setOpacity( _autoHideHandler ? 0. : 1. );
+    handler.setSize( _handlerSize );
+    handler.setZ( z() + 1. );
+    QObject* handlerBorder = handler.property( "border" ).value<QObject*>();
+    if ( handlerBorder != nullptr )
+        handlerBorder->setProperty( "color", _handlerColor );
+    handler.setVisible( true );
+    handler.setParentItem( this );
+    handler.setAcceptedMouseButtons( Qt::LeftButton );
+    handler.setAcceptHoverEvents( true );
+}
 
-        connect( _target.data(), &QQuickItem::widthChanged, this, &BottomRightResizer::onTargetWidthChanged );
-        connect( _target.data(), &QQuickItem::heightChanged, this, &BottomRightResizer::onTargetHeightChanged );
+void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
+{
+    qDebug() << "configureTarget(): minimumTargetSize=" << _minimumTargetSize;
+    if ( !_minimumTargetSize.isEmpty() ) { // Check that target size is not bellow resizer target minimum size
+        if ( target.width() < _minimumTargetSize.width() )
+            target.setWidth( _minimumTargetSize.width() );
+        if ( target.height() < _minimumTargetSize.height() )
+            target.setHeight( _minimumTargetSize.height() );
     }
+
+    if ( &target != parentItem() ) { // Resizer is not in target sibling (ie is not a child of target)
+        connect( &target,   &QQuickItem::xChanged,
+                 this,      &BottomRightResizer::onTargetXChanged );
+        connect( &target,   &QQuickItem::yChanged,
+                 this,      &BottomRightResizer::onTargetYChanged );
+        setX( target.x() );
+        setY( target.y() );
+    }
+
+    connect( &target,   &QQuickItem::widthChanged,
+             this,      &BottomRightResizer::onTargetWidthChanged );
+    connect( &target,   &QQuickItem::heightChanged,
+             this,      &BottomRightResizer::onTargetHeightChanged );
+
     onTargetWidthChanged();
     onTargetHeightChanged();
-    emit targetChanged();
 }
 
 void    BottomRightResizer::onTargetXChanged()

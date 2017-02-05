@@ -73,6 +73,7 @@ Item {
             Layout.fillHeight: contentLayout.children.length === 0
             Layout.preferredHeight: contentHeight
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            textFormat: Text.PlainText
             text: node.label
             font: node.style.labelFont
             horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter
@@ -96,5 +97,6 @@ Item {
         anchors.fill: parent
         anchors.margins: background.radius / 2
         node: parent.node
+        visible: false
     }
 }
