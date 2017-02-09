@@ -110,7 +110,6 @@ void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
 
 void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
 {
-    qDebug() << "configureTarget(): minimumTargetSize=" << _minimumTargetSize;
     if ( !_minimumTargetSize.isEmpty() ) { // Check that target size is not bellow resizer target minimum size
         if ( target.width() < _minimumTargetSize.width() )
             target.setWidth( _minimumTargetSize.width() );
