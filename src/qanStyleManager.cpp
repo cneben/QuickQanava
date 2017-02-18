@@ -25,12 +25,12 @@
 // \date	2015 06 05
 //-----------------------------------------------------------------------------
 
-// QT headers
+// Qt headers
 #include <QFont>
 #include <QQuickItemGrabResult>
 #include <QQmlEngine>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanStyleManager.h"
 

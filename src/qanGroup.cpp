@@ -30,7 +30,7 @@
 #include <QPainter>
 #include <QPainterPath>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanGroup.h"
 #include "./qanGraph.h"
 #include "./qanLayout.h"

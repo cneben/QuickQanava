@@ -28,7 +28,7 @@
 #ifndef qanNode_h
 #define qanNode_h
 
-// QT headers
+// Qt headers
 #include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>

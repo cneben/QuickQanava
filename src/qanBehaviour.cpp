@@ -28,7 +28,7 @@
 // Qt headers
 // Nil
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanBehaviour.h"
 
 namespace qan { // ::qan

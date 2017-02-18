@@ -28,7 +28,7 @@
 #ifndef qanPointGrid_h
 #define qanPointGrid_h
 
-// QT headers
+// Qt headers
 #include <QtQml>
 #include <QQuickItem>
 

@@ -25,7 +25,7 @@
 // \date	2016 03 23
 //-----------------------------------------------------------------------------
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanGroup.h"
 #include "./qanLinear.h"
 

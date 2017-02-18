@@ -28,7 +28,7 @@
 #ifndef canNavigable_h
 #define canNavigable_h
 
-// QT headers
+// Qt headers
 #include <QQuickItem>
 
 // QuickQanava headers

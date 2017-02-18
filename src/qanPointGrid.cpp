@@ -29,7 +29,7 @@
 #include <cmath>        // std::round
 #include <iostream>
 
-// QT headers
+// Qt headers
 
 // QuickQanava headers
 #include "./qanPointGrid.h"

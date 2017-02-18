@@ -28,7 +28,7 @@
 #ifndef qanStyleManager_h
 #define qanStyleManager_h
 
-// QT headers
+// Qt headers
 #include <QSortFilterProxyModel>
 #include <QQuickImageProvider>
 

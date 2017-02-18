@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QPainterPath>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanNode.h"
 #include "./qanGroup.h"
 #include "./qanGraph.h"

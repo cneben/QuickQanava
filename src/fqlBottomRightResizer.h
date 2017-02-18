@@ -9,7 +9,7 @@
 #ifndef fqlBottomRightResizer_h
 #define fqlBottomRightResizer_h
 
-// QT headers
+// Qt headers
 #include <QtQml>
 #include <QQuickItem>
 

@@ -25,10 +25,10 @@
 // \date	2015 06 05
 //-----------------------------------------------------------------------------
 
-// QT headers
+// Qt headers
 #include <QFont>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanStyle.h"
 #include "./qanGraph.h"
 

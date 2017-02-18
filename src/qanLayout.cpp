@@ -25,7 +25,7 @@
 // \date	2015 09 07
 //-----------------------------------------------------------------------------
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanNode.h"
 #include "./qanGraph.h"
 #include "./qanGroup.h"

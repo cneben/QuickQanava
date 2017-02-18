@@ -32,7 +32,7 @@
 #pragma warning(disable: 4100)  // Disable unreferenced formal parameter warning for Protocol Buffer generated code
 #endif
 
-// QT headers
+// Qt headers
 #include <QObject>
 #include <QList>
 #include <QVector>

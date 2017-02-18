@@ -28,7 +28,7 @@
 #ifndef qanGroup_h
 #define qanGroup_h
 
-// QT headers
+// Qt headers
 #include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>

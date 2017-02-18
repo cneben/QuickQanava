@@ -31,7 +31,7 @@
 // Qt headers
 #include <QLineF>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanConfig.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"

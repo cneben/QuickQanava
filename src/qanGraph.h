@@ -31,7 +31,7 @@
 // GTpo headers
 #include <GTpo>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanConfig.h"
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
@@ -39,7 +39,7 @@
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
 
-// QT headers
+// Qt headers
 #include <QQuickItem>
 #include <QSharedPointer>
 #include <QAbstractListModel>

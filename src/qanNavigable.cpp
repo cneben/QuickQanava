@@ -25,10 +25,10 @@
 // \date	2015 07 19
 //-----------------------------------------------------------------------------
 
-// QT headers
+// Qt headers
 // Nil
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanNavigable.h"
 
 namespace qan { // ::qan

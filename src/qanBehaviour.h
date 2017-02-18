@@ -28,14 +28,14 @@
 #ifndef qanBehaviour_h
 #define qanBehaviour_h
 
-// QT headers
+// Qt headers
 #include <QObject>
 
 // GTpo headers
 #include <memory>   // FIXME 20160404: remove that later, memory was missing from gtpoBehaviour.h
 #include "../GTpo/src/gtpoBehaviour.h"
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanConfig.h"
 
 namespace qan { // ::qan

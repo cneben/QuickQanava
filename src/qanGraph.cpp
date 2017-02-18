@@ -34,7 +34,7 @@
 // GTpo headers
 #include "gtpoRandomGraph.h"
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 

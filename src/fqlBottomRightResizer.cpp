@@ -9,7 +9,7 @@
 // Std headers
 #include <sstream>
 
-// QT headers
+// Qt headers
 #include <QCursor>
 #include <QMouseEvent>
 

@@ -28,7 +28,7 @@
 // Qt headers
 #include <QQuickItem>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanNavigable.h"
 #include "./qanGraphView.h"
 #include "./qanGraph.h"

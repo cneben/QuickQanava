@@ -33,7 +33,7 @@
 #include <QSizeF>
 #include <QtQml>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanLayout.h"
 
 namespace qan { // ::qan

@@ -31,7 +31,7 @@
 // QuickContainers headers
 #include "../QuickContainers/src/qcmObjectModel.h"
 
-// QT headers
+// Qt headers
 #include <QColor>
 #include <QFont>
 #include <QSizeF>

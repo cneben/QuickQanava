@@ -31,12 +31,12 @@
 // GTpo headers
 #include <GTpo>
 
-// Qanava headers
+// QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
 
-// QT headers
+// Qt headers
 #include <QQuickItem>
 #include <QPointer>
 

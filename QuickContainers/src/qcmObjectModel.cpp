@@ -28,7 +28,7 @@
 // Std headers
 #include <cstring>  // std::strcmp
 
-// QT headers
+// Qt headers
 #include <QtGlobal>
 #include <QMetaProperty>
 #include <QVariant>
