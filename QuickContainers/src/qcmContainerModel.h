@@ -136,8 +136,7 @@ class ContainerModel : public AbstractContainerModel
     /*! \name ContainerModel Object Management *///------------------------
     //@{
 public:
-    //! Parent must be the qcm::Graph managing nodes exposed in this model.
-    ContainerModel( QObject* parent = nullptr ) :
+    explicit ContainerModel( QObject* parent = nullptr ) :
         AbstractContainerModel( parent ) { }
     virtual ~ContainerModel( ) { }
     ContainerModel( const ContainerModel<Container, T>& container ) = delete;

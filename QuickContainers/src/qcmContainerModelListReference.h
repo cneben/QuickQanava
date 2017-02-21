@@ -150,6 +150,7 @@ public:
     Q_INVOKABLE virtual bool        clear() const { return false; }
     Q_INVOKABLE virtual int         count() const { return 0; }
     Q_INVOKABLE virtual void        remove(QObject *object) const { Q_UNUSED(object); }
+    Q_INVOKABLE virtual bool        contains(QObject *object) const { return itemIndex(object) >= 0; }
 public:
     //! Return the element at the requested container \c index position.
     Q_INVOKABLE virtual QVariant    itemAt( int index ) { Q_UNUSED(index); return QVariant{}; }
