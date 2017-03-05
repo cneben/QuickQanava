@@ -53,14 +53,15 @@ NodeItem::NodeItem(QQuickItem* parent) :
 
 NodeItem::~NodeItem() { }
 
-auto NodeItem::node() noexcept -> qan::Node* { return _node.data(); }
-auto NodeItem::node() const noexcept -> const qan::Node* { return _node.data(); }
-auto NodeItem::graph() const noexcept -> qan::Graph* { return node() != nullptr &&
-                                                              node()->getGraph() != nullptr ? node()->getGraph() :
-                                                                                              nullptr; }
-auto NodeItem::graph() noexcept -> const qan::Graph* { return node() != nullptr &&
-                                                              node()->getGraph() != nullptr ? node()->getGraph() :
-                                                                                              nullptr; }
+auto NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
+auto NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
+
+auto NodeItem::getGraph() const noexcept -> const qan::Graph* { return _node &&
+                                                                       _node->getGraph() != nullptr ? _node->getGraph() :
+                                                                                                      nullptr; }
+auto NodeItem::getGraph() noexcept -> qan::Graph* { return _node &&
+                                                           _node->getGraph() != nullptr ? _node->getGraph() :
+                                                                                          nullptr; }
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
@@ -68,9 +69,8 @@ void    NodeItem::onWidthChanged()
 {
     if ( _selectionItem != nullptr ) {  // Update selection item
         qreal selectionWeight{ 3. }, selectionMargin{ 3. };
-        if ( node() != nullptr &&
-             node()->getGraph() != nullptr ) {
-            const auto graph = node()->getGraph();
+        const auto graph = getGraph();
+        if ( graph != nullptr ) {
             selectionWeight = graph->getSelectionWeight();
             selectionMargin = graph->getSelectionMargin();
         }
@@ -82,9 +82,8 @@ void    NodeItem::onHeightChanged()
 {
     if ( _selectionItem != nullptr ) {
         qreal selectionWeight{3.}, selectionMargin{3.};
-        if ( node() != nullptr &&
-             node()->getGraph() != nullptr ) {
-            const auto graph = node()->getGraph();
+        const auto graph = getGraph();
+        if ( graph != nullptr ) {
             selectionWeight = graph->getSelectionWeight();
             selectionMargin = graph->getSelectionMargin();
         }
@@ -122,11 +121,9 @@ void NodeItem::setSelectionItem( QQuickItem* selectionItem )
     }
     _selectionItem.reset( selectionItem );
     _selectionItem->setParentItem( this );  // Configure Quick item
-    if ( node() != nullptr &&
-         node()->getGraph() != nullptr ) {
-        const auto graph = node()->getGraph();
+    const auto graph = getGraph();
+    if ( graph != nullptr )
         configureSelectionItem( graph->getSelectionColor(), graph->getSelectionWeight(), graph->getSelectionMargin() );
-    }
     _selectionItem->setVisible( isSelectable() && getSelected() );
     emit selectionItemChanged();
 }
@@ -253,10 +250,11 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
 
         // Selection management
         if ( event->button() == Qt::LeftButton &&
-             node() && node()->isSelectable() &&
-             node()->getGraph() != nullptr ) {
-            qan::Graph* graph = node()->getGraph();
-            graph->selectNode( *node(), event->modifiers() );
+             getNode() &&
+             getNode()->isSelectable() ) {
+            const auto graph = getGraph();
+            if ( graph != nullptr )
+                graph->selectNode( *getNode(), event->modifiers() );
         }
 
         // QML notifications
@@ -286,7 +284,7 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
     // If there is a selection, keep start position for all selected nodes.
     if ( dragSelection ) {
         // FIXME QAN3
-        const auto graph = graph();
+        const auto graph = getGraph();
         if ( graph != nullptr &&
              graph->hasMultipleSelection() ) {
             for ( auto& selectedNode : graph->getSelectedNodes() )
@@ -300,9 +298,9 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
 
 auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
 {
-    const auto graph = node() != nullptr && node()->getGraph() != nullptr ? node()->getGraph() : nullptr;
-    if ( graph ) {
-        if ( graph->getControlNodes().contains( node()->shared_from_this() ) )   // Do not try to drag a control node in a group...
+    const auto graph = getGraph();
+    if ( graph != nullptr ) {
+        if ( graph->getControlNodes().contains( getNode()->shared_from_this() ) )   // Do not try to drag a control node in a group...
             return;
 
         // FIXME QAN3

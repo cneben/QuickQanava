@@ -67,14 +67,12 @@ public:
     virtual ~NodeItem( );
     NodeItem( const NodeItem& ) = delete;
 public:
-    //! Shortcut to gtpo::GenNode<>::getGraph().
-    //qan::Graph*     getGraph() noexcept;
     inline auto setNode(qan::Node* node) noexcept { _node = node; }
-    auto node() noexcept -> qan::Node*;
-    auto node() const noexcept -> const qan::Node*;
+    auto getNode() noexcept -> qan::Node*;
+    auto getNode() const noexcept -> const qan::Node*;
 protected:
-    auto graph() const noexcept -> qan::Graph*;
-    auto graph() noexcept -> const qan::Graph*;
+    auto getGraph() const noexcept -> const qan::Graph*;
+    auto getGraph() noexcept -> qan::Graph*;
 private:
     QPointer<qan::Node> _node{nullptr};
 

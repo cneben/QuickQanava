@@ -69,7 +69,9 @@ public:
     Node( const Node& ) = delete;
 public:
     //! Shortcut to gtpo::GenNode<>::getGraph().
-    qan::Graph*     getGraph() noexcept;
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
 public:
     /*!
      * \note only label is taken into account for equality comparison.

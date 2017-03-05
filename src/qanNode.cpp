@@ -54,9 +54,12 @@ Node::~Node()
         _item->deleteLater();
 }
 
-qan::Graph* Node::getGraph() noexcept
-{
+qan::Graph* Node::getGraph() noexcept {
     return qobject_cast< qan::Graph* >( gtpo::GenNode< qan::GraphConfig >::getGraph() );
+}
+
+const qan::Graph* Node::getGraph() const noexcept {
+    return qobject_cast< const qan::Graph* >( gtpo::GenNode< qan::GraphConfig >::getGraph() );
 }
 
 bool    Node::operator==( const qan::Node& right ) const
@@ -68,7 +71,7 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 {
     if ( nodeItem != nullptr ) {
         _item = nodeItem;
-        if ( nodeItem->node() != this )
+        if ( nodeItem->getNode() != this )
             nodeItem->setNode(this);
     }
 }
