@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="QuickGeoGL/qglLineAAFsh.glsl">qglLineAAFsh.glsl</file>
+        <file alias="QuickGeoGL/qglLineAAGsh.glsl">qglLineAAGsh.glsl</file>
+        <file alias="QuickGeoGL/qglLineAAVsh.glsl">qglLineAAVsh.glsl</file>
+        <file alias="QuickGeoGL/qglPolyLineAAFsh.glsl">qglPolyLineAAFsh.glsl</file>
+        <file alias="QuickGeoGL/qglPolyLineAAGsh.glsl">qglPolyLineAAGsh.glsl</file>
+        <file alias="QuickGeoGL/qglPolyLineAAVsh.glsl">qglPolyLineAAVsh.glsl</file>
+        <file alias="QuickGeoGL/qmldir">qmldir</file>
+    </qresource>
+</RCC>

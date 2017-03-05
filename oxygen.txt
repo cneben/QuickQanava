@@ -1,0 +1,3 @@
+Qanava include files checkbox.svg, arrow-right.svg and media-playback-start.svg (slighty modified and renamed to envelop.svg) from Oxygen icon set licensed under the LGPLv3. 
+
+Originals SVG files for these icons could be found on: http://www.oxygen-icons.org/

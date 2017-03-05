@@ -1,0 +1,122 @@
+/*
+    This file is part of QuickQanava library.
+
+    Copyright (C) 2008-2017 Benoit AUTHEMAN
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//-----------------------------------------------------------------------------
+// This file is a part of the QuickQanava software library.
+//
+// \file	qanProgressNotifier.h
+// \author	benoit@destrat.io
+// \date	2016 02 15
+//-----------------------------------------------------------------------------
+
+#ifndef qanProgressNotifier_h
+#define qanProgressNotifier_h
+
+// GTpo headers
+#include "gtpoSerializer.h"
+
+// QuickQanava headers
+#include "./qanGraphConfig.h"
+
+namespace qan { // ::qan
+
+/*! Standard interface used to monitor progress for long synchronous operation, such as in/out serialization.
+ *
+ * \note QApplication::processEvents() will be called automatically in setProgress() every time the progress changes from more
+ *       than 5% to ensure that the calling UI will stay responsive.
+ * \sa qan::Graph::serializeIn(), qan::Graph::serializeOut()
+ */
+class ProgressNotifier : public QObject,
+                         public gtpo::ProgressNotifier
+{
+    /*! \name ProgressNotyfier Object Management *///--------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit ProgressNotifier( QObject* parent = nullptr );
+    virtual ~ProgressNotifier() { }
+    ProgressNotifier( const ProgressNotifier& ) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Progress Monitoring *///-----------------------------------------
+    //@{
+public:
+    /*! \brief Read-only value of the current overall progress between 0.0 (action 0% done) and 1.0 (action 100% done).
+     *
+     */
+    Q_PROPERTY( double progress READ getProgress NOTIFY progressChanged FINAL )
+
+    //! Called from task, force show of associed progress dialog.
+    virtual void    beginProgress( const std::string& label = "" ) override {
+        gtpo::ProgressNotifier::beginProgress( label );
+        emit showProgress();
+        QCoreApplication::processEvents( );
+    }
+    //! Called from task, force progress end and hide associed dialog.
+    virtual void    endProgress() override {
+        gtpo::ProgressNotifier::endProgress();
+        emit hideProgress();
+        QCoreApplication::processEvents( );
+    }
+signals:
+    //! \sa progress
+    void            progressChanged();
+    void            showProgress();
+    void            hideProgress();
+
+protected:
+    //! Called whenever the overall progress change.
+    virtual void    onModified() override {
+        QCoreApplication::processEvents( );
+        emit phaseProgressChanged();
+        emit progressChanged();
+        emit phaseLabelChanged();
+        QCoreApplication::processEvents( );
+    }
+
+public:
+    /*! \brief Read-only progress value for current phase between 0. (action 0% done) and 1. (action 100% done), or -1 if progression is unknown.
+     *
+     * The action currently monitored could eventually be cancelled with a call to cancel() if the receiver supports it.
+     */
+    Q_PROPERTY( double phaseProgress READ getPhaseProgress NOTIFY phaseProgressChanged FINAL )
+signals:
+    //! \sa phaseProgress
+    void            phaseProgressChanged();
+
+public:
+    /*! \brief Label for the current progress phase, usually set in beginPhase().
+     *
+     */
+    Q_PROPERTY( QString phaseLabel READ getQmlPhaseLabel NOTIFY phaseLabelChanged FINAL )
+    QString         getQmlPhaseLabel() const { return QString::fromStdString( getLabel() ); }
+signals:
+    //! \sa phaseLabel
+    void            phaseLabelChanged();
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+} // ::qan
+
+QML_DECLARE_TYPE( qan::ProgressNotifier )
+
+#endif // qanProgressNotifier_h
+

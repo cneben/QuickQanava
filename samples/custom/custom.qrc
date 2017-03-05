@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>custom.qml</file>
+        <file>CustomNode.qml</file>
+        <file>ControlNode.qml</file>
+        <file>DiamondNode.qml</file>
+        <file>qtquickcontrols2.conf</file>
+    </qresource>
+</RCC>

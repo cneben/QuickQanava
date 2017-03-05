@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>geometry.qml</file>
+        <file>lines.qml</file>
+        <file>crashtest.qml</file>
+        <file>polygons.qml</file>
+        <file>arrows.qml</file>
+        <file>polylines.qml</file>
+    </qresource>
+</RCC>

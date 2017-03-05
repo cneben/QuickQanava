@@ -1,0 +1,3 @@
+.svg,is extracted from Breeze 
+Icon set, from https://github.com/NitruxSA/breeze-icon-theme and are re-distributed under 
+their original LGPL v3 licence.

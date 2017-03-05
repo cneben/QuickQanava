@@ -1,0 +1,42 @@
+syntax = "proto3"; 
+import "gtpo.proto";
+
+package qan.pb;
+
+message QtVariant {
+    int32   variant_type        = 1;
+    int32   variant_data_size   = 2;
+    bytes   variant_data        = 3;
+}
+
+message QtObject {
+    repeated string     properties_names    = 1;
+    repeated QtVariant  properties          = 2;
+}
+
+message Style {
+    int32               id           = 1;
+    string              meta_target  = 2;
+    string              name         = 3;
+    string              target       = 4;
+    QtObject            properties   = 5;
+    repeated int32      node_ids     = 6 [packed=true]; // Id of node where this style apply
+    repeated int32      edge_ids     = 7 [packed=true]; // Id of node where this style apply
+}
+
+message StyleManager {
+    int32       style_count                 = 1;
+    repeated    Style styles                = 2;
+    map<string, int32> default_node_styles  = 3;
+    map<string, int32> default_edge_styles  = 4;
+}
+
+message Node {
+    gtpo.pb.Node    base            = 1;
+    int32           style_id        = 2;
+}
+
+message Graph {
+    gtpo.pb.Graph   graph           = 1;
+    StyleManager    style_manager   = 2;
+}
