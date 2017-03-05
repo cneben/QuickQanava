@@ -279,27 +279,50 @@ void    Graph::mousePressEvent( QMouseEvent* event )
 //-----------------------------------------------------------------------------
 
 /* Delegates Management *///---------------------------------------------------
-auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
+//auto    Graph::createFromComponent( QQmlComponent* component ) -> QQuickItem*
+QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge )
 {
     if ( component == nullptr ) {
-        qDebug() << "qan::Graph::createFromDelegate(): Error called with a nullptr delegate component";
+        qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
+        return nullptr;
+    }
+    if ( node == nullptr && edge == nullptr ) {
+        qWarning() << "qan::Graph::createFromComponent(): Error called with nullptr node and edge component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
     if ( component->isReady() ) {
-        QObject* object = component->create();
+        const auto rootContext = qmlContext(this);
+        if ( rootContext == nullptr ) {
+            qWarning() << "qan::Graph::createFromComponent(): Error can't access to local QML context.";
+            return nullptr;
+        }
+        QObject* object = component->beginCreate(rootContext);
+        //QObject* object = component->create();
         if ( object != nullptr &&
              !component->isError() ) {
-            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
-            item = qobject_cast< QQuickItem* >( object );
-            item->setVisible( true );
-            item->setParentItem( getContainerItem() );
+            if ( node != nullptr ) {
+                const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
+                if ( nodeItem != nullptr )
+                    nodeItem->setNode(node);
+            } else if ( edge != nullptr ) {
+                /*const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
+                if ( edgeItem != nullptr )
+                    edgeItem->setEdge(edge);*/
+            }
+            component->completeCreate();
+            if ( !component->isError() ) {
+                QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+                item = qobject_cast< QQuickItem* >( object );
+                item->setVisible( true );
+                item->setParentItem( getContainerItem() );
+            } // Warning: object migh leak
         } else {
-            qDebug() << "qan::Graph::createFromDelegate(): Failed to create a concrete QQuickItem from QML component:";
+            qDebug() << "qan::Graph::createFromComponent(): Failed to create a concrete QQuickItem from QML component:";
             qDebug() << "\t" << component->errorString();
         }
     } else {
-        qDebug() << "qan::Graph::createFromDelegate(): QML component is not ready:";
+        qDebug() << "qan::Graph::createFromComponent(): QML component is not ready:";
         qDebug() << "\t" << component->errorString();
     }
 
@@ -347,8 +370,10 @@ void    Graph::registerGroupDelegate( QString groupClass, QQmlComponent* groupCo
 
 QQuickItem* Graph::createNodeItem( QString nodeClass )
 {
+    // FIXME QAN3
+/*
     if ( _nodeClassComponents.contains( nodeClass ) )
-        return createFromDelegate( _nodeClassComponents.value( nodeClass ) );
+        return createFromComponent( _nodeClassComponents.value( nodeClass ) );*/
     return nullptr;
     // FIXME QAN3
     //return new QQuickItem();    // Is should never happen, otherwise it is leaked.
@@ -356,8 +381,10 @@ QQuickItem* Graph::createNodeItem( QString nodeClass )
 
 QQuickItem* Graph::createEdgeItem( QString edgeClass )
 {
+    // FIXME QAN3
+/*
     if ( _edgeClassComponents.contains( edgeClass ) )
-        return createFromDelegate( _edgeClassComponents.value( edgeClass ) );
+        return createFromComponent( _edgeClassComponents.value( edgeClass ) );*/
     return nullptr;
     // FIXME QAN3
     //return new QQuickItem();    // Is should never happen, otherwise it is leaked.
@@ -418,8 +445,9 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
     }
     auto node = std::make_shared<qan::Node>();
     if ( node ) {
-        qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromDelegate( nodeComponent ) );
+        qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent, node.get() ) );
         if ( nodeItem != nullptr ) {
+            nodeItem->setNode(node.get());
             auto notifyNodeClicked = [this,&node] (qan::NodeItem* nodeItem, QPointF p) {
                 if ( _itemNodeMap.contains(nodeItem) )
                     emit this->nodeClicked(node.get(), p);
@@ -439,10 +467,10 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
             connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
             node->setItem(nodeItem);
 
-            // FIXME QAN3   Ca il faut le faire uniqument lorsque l'item est selectionné bordel
+            // FIXME QAN3 à faire uniqument lorsque l'item est selectionné bordel
             //node->setSelectionItem( createRectangle( node ) );
         }
-        GTpoGraph::insertNode( std::shared_ptr<qan::Node>{node} );
+        GTpoGraph::insertNode( node );
     } else
         qDebug() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
     return node.get();
@@ -593,7 +621,7 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName,
         return nullptr;
     auto edge = std::make_shared<qan::Edge>();
     try {
-        auto edgeItem = static_cast< qan::EdgeItem* >( createFromDelegate( edgeComponent ) );
+        auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, nullptr, edge.get() ) );
         edge->setItem(edgeItem);
         edgeItem->setSourceItem( source->getItem() );
         edgeItem->setDestinationItem( destination->getItem() );
@@ -644,7 +672,7 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Ed
         edge = new qan::Edge{};
         if ( edge != nullptr ) {
             // FIXME QAN3
-            //edge = static_cast< qan::Edge* >( createFromDelegate( edgeComponent ) );
+            //edge = static_cast< qan::Edge* >( createFromComponent( edgeComponent ) );
             //edge->setSourceItem( source );
             //edge->setDestinationEdge( destination );
 
@@ -768,7 +796,7 @@ qan::Group* Graph::insertGroup( QString className )
     auto group = std::make_shared<qan::Group>();
     if ( group != nullptr ) {
         // FIXME QAN3
-        //auto group =  static_cast< qan::Group* >( createFromDelegate( groupComponent ) );
+        //auto group =  static_cast< qan::Group* >( createFromComponent( groupComponent ) );
         //GTpoGraph::insertGroup( group );
         //QQmlEngine::setObjectOwnership( group, QQmlEngine::CppOwnership );
 

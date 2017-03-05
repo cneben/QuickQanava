@@ -67,14 +67,18 @@ public:
     virtual ~NodeItem( );
     NodeItem( const NodeItem& ) = delete;
 public:
+    Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
+    auto        getNode() noexcept -> qan::Node*;
+    auto        getNode() const noexcept -> const qan::Node*;
     inline auto setNode(qan::Node* node) noexcept { _node = node; }
-    auto getNode() noexcept -> qan::Node*;
-    auto getNode() const noexcept -> const qan::Node*;
-protected:
-    auto getGraph() const noexcept -> const qan::Graph*;
-    auto getGraph() noexcept -> qan::Graph*;
 private:
     QPointer<qan::Node> _node{nullptr};
+
+protected:
+    //! Secure shortcut to getNode().getGraph().
+    auto getGraph() const noexcept -> const qan::Graph*;
+    //! \copydoc getGraph()
+    auto getGraph() noexcept -> qan::Graph*;
 
 public:
     //! Node minimum size (it can't be resized below if resizable is true).

@@ -38,28 +38,29 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
-    property         var    node: undefined
+    property         var    nodeItem: undefined
     default property alias  children : contentLayout.children
 
-    onWidthChanged: { if ( node ) node.setDefaultBoundingShape() }
-    onHeightChanged: { if ( node ) node.setDefaultBoundingShape() }
+    onWidthChanged: { if ( node ) nodeItem.setDefaultBoundingShape() }
+    onHeightChanged: { if ( node ) nodeItem.setDefaultBoundingShape() }
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
         radius: 2
-        color: node.style.backColor
-        border.color: node.style.borderColor;   border.width: node.style.borderWidth
+        color: nodeItem.node.style.backColor
+        border.color: nodeItem.node.style.borderColor;
+        border.width: nodeItem.node.style.borderWidth
         antialiasing: true
     }
     DropShadow {
         id: backgroundShadow
         anchors.fill: parent
         source: background
-        horizontalOffset: node.style.shadowOffset.width
-        verticalOffset: node.style.shadowOffset.height
+        horizontalOffset: nodeItem.node.style.shadowOffset.width
+        verticalOffset: nodeItem.node.style.shadowOffset.height
         radius: 4; samples: 8
-        color: node.style.shadowColor
-        visible: node.style.hasShadow
+        color: nodeItem.node.style.shadowColor
+        visible: nodeItem.node.style.hasShadow
         transparentBorder: true
     }
     ColumnLayout {
@@ -74,8 +75,8 @@ Item {
             Layout.preferredHeight: contentHeight
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             textFormat: Text.PlainText
-            text: node.label
-            font: node.style.labelFont
+            text: nodeItem.node.label
+            font: nodeItem.node.style.labelFont
             horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter
             maximumLineCount: 3 // Must be set, otherwise elide don't work and we end up with single line text
             elide: Text.ElideRight; wrapMode: Text.Wrap
@@ -89,14 +90,14 @@ Item {
         }
     }
     Connections {
-        target: node
+        target: nodeItem
         onNodeDoubleClicked: labelEditor.visible = true
     }
     NodeLabelEditor {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: background.radius / 2
-        node: parent.node
+        node: parent.nodeItem
         visible: false
     }
 }

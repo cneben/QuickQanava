@@ -51,7 +51,7 @@ NodeItem::NodeItem(QQuickItem* parent) :
              this, &qan::NodeItem::onHeightChanged );
 }
 
-NodeItem::~NodeItem() { }
+NodeItem::~NodeItem() { /* Nil */ }
 
 auto NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }

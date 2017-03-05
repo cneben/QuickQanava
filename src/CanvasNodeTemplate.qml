@@ -38,8 +38,7 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
-
-    property         var    node     : undefined
+    property         var    nodeItem : undefined
     property         alias  symbol   : nodeSymbol.sourceComponent
     default property alias  children : templateContentLayout.children
 
@@ -47,9 +46,9 @@ Item {
         if ( nodeSymbol.item )
             nodeSymbol.item.requestPaint( );
     }
-    onNodeChanged: {
-        if ( node )
-            nodeUpdateBoundingShape.target = node
+    onNodeItemChanged: {
+        if ( nodeItem )
+            nodeUpdateBoundingShape.target = nodeItem
     }
     Loader {    // Node symbol is node background
         id: nodeSymbol
@@ -62,13 +61,13 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
-        horizontalOffset: node.style.shadowOffset.width
-        verticalOffset: node.style.shadowOffset.height
+        horizontalOffset: nodeItem.node.style.shadowOffset.width
+        verticalOffset: nodeItem.node.style.shadowOffset.height
         radius: 8.0
         samples: 16
         smooth: true
-        color: node.style.shadowColor
-        visible: node.style.hasShadow
+        color: nodeItem.node.style.shadowColor
+        visible: nodeItem.node.style.hasShadow
         transparentBorder: true
     }
 
@@ -84,8 +83,8 @@ Item {
             Layout.margins: 5
             width: parent.width
             verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
-            text: node.label
-            font: node.style.labelFont
+            text: nodeItem.node.label
+            font: nodeItem.node.style.labelFont
             wrapMode: Text.Wrap;    elide: Text.ElideRight; maximumLineCount: 4
         }
         Item {
@@ -96,14 +95,14 @@ Item {
         }
     }
     Connections {
-        target: node
+        target: nodeItem
         onNodeDoubleClicked: labelEditor.visible = true
     }
     NodeLabelEditor {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: 4
-        node: parent.node
+        node: parent.nodeItem
     }
     // Bounding shape management
     Connections {

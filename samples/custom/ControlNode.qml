@@ -25,17 +25,16 @@
 // \date	2016 07 13
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
+import QtQuick              2.8
+import QtQuick.Controls     2.1
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
 
 import QuickQanava 2.0 as Qan
 
 Qan.NodeItem {
     id: customNode
-    width: 160; height: 150
+    width: 160; height: 180
     x: 150; y: 15
     Item {
         anchors.fill: parent
@@ -45,7 +44,7 @@ Qan.NodeItem {
             border.color: "violet"; border.width: 2
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 4
-                Text {
+                Label {
                     anchors.fill: parent; anchors.margins: 5
                     text: "Node with controls"
                     color: "lightgray"

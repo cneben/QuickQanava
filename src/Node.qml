@@ -30,11 +30,11 @@ import QuickQanava  2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
 Qan.NodeItem {
-    id: rectNode
+    id: rectNodeItem
     width: 110
     height: 50
     Qan.RectNodeTemplate {
         anchors.fill: parent
-        node : rectNode
+        nodeItem : rectNodeItem
     }
 }

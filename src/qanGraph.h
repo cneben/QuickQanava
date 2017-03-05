@@ -244,8 +244,8 @@ public:
     Q_INVOKABLE QQuickItem* createEdgeItem( QString edgeClass );
 
 protected:
-    //! Create a graph primitive using the given delegate \c component.
-    Q_INVOKABLE QQuickItem* createFromDelegate( QQmlComponent* component );
+    //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
+    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge = nullptr );
 
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void setCppOwnership( QQuickItem* item );

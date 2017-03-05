@@ -25,13 +25,11 @@
 // \date	2015 08 25
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QtQuick              2.8
+import QtQuick.Layouts      1.3
+
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"       as Qan
 
 Qan.NodeItem {
     id: diamondNode
@@ -43,7 +41,7 @@ Qan.NodeItem {
     Qan.CanvasNodeTemplate {
         id: template
         anchors.fill: parent
-        node : diamondNode
+        nodeItem : diamondNode
         symbol: Canvas {
             anchors.fill: parent
             z: 1

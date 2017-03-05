@@ -25,32 +25,36 @@
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
+import QtQuick              2.8
+import QtQuick.Controls     2.1
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
+
+import QuickQanava          2.0 as Qan
 
 Qan.NodeItem {
     id: customNode
-    width: 110
-    height: 40
-    x: 15
-    y: 15
+    width: 110; height: 60
+    x: 15;      y: 15
     Item {
         anchors.fill: parent
         Rectangle {
+            id: background
             anchors.fill: parent
-            radius: 10
-            color: "blue"
-            border.color: "violet"
-            border.width: 2
-            Text {
+            radius: 10; color: light
+            border.color: "violet"; border.width: 2
+            readonly property color dark: "blue"
+            readonly property color light: "lightblue"
+            Label {
                 anchors.fill: parent
                 anchors.margins: 5
                 text: "Custom Node"
-                color: "lightgray"
+            }
+            CheckBox {
+                anchors.bottom: parent.bottom; anchors.left: parent.left
+                text: "Light"
+                checked: background.color === background.light
+                onClicked: background.color = ( background.color === background.light ? background.dark : background.light )
             }
         }
     }
