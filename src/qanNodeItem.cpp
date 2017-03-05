@@ -55,6 +55,12 @@ NodeItem::~NodeItem() { }
 
 auto NodeItem::node() noexcept -> qan::Node* { return _node.data(); }
 auto NodeItem::node() const noexcept -> const qan::Node* { return _node.data(); }
+auto NodeItem::graph() const noexcept -> qan::Graph* { return node() != nullptr &&
+                                                              node()->getGraph() != nullptr ? node()->getGraph() :
+                                                                                              nullptr; }
+auto NodeItem::graph() noexcept -> const qan::Graph* { return node() != nullptr &&
+                                                              node()->getGraph() != nullptr ? node()->getGraph() :
+                                                                                              nullptr; }
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
@@ -280,16 +286,15 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
     // If there is a selection, keep start position for all selected nodes.
     if ( dragSelection ) {
         // FIXME QAN3
-        /*
-        qan::Graph* graph = getGraph();
+        const auto graph = graph();
         if ( graph != nullptr &&
-             getGraph()->hasMultipleSelection() ) {
+             graph->hasMultipleSelection() ) {
             for ( auto& selectedNode : graph->getSelectedNodes() )
                 if ( selectedNode != nullptr &&
-                     selectedNode != this )
-                    selectedNode->beginDragMove( dragInitialMousePos, false );
+                     selectedNode->getItem() != nullptr &&
+                     selectedNode->getItem() != this )
+                    selectedNode->getItem()->beginDragMove( dragInitialMousePos, false );
         }
-        */
     }
 }
 

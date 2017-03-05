@@ -44,6 +44,7 @@
 namespace qan { // ::qan
 
 class Node;
+class Graph;
 
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
  *
@@ -71,6 +72,9 @@ public:
     inline auto setNode(qan::Node* node) noexcept { _node = node; }
     auto node() noexcept -> qan::Node*;
     auto node() const noexcept -> const qan::Node*;
+protected:
+    auto graph() const noexcept -> qan::Graph*;
+    auto graph() noexcept -> const qan::Graph*;
 private:
     QPointer<qan::Node> _node{nullptr};
 
