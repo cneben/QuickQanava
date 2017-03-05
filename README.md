@@ -6,8 +6,7 @@
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
-2017/01/30: Master under modification to add support for grids, wait for 2017/02/01 for a stable/compilable version on master.
-2017/01: Warning major changes in master repository, report compilation problems to benoit@destrat.io (dependencies to QuickProperties and PugiXML removed)
+**2017/03/05:** See 'dev' for latest changes: [dev README and roadmap](https://github.com/cneben/QuickQanava/blob/dev/README.md)
 
 QuickQanava 
 ============================
