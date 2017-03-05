@@ -38,16 +38,17 @@
 namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
-Node::Node() :
+Node::Node(QObject* parent) :
     gtpo::GenNode< qan::GraphConfig >{},
     _defaultStyle{ new qan::NodeStyle{ "", QStringLiteral("qan::Node") } },
     _style{ nullptr }
 {
+    Q_UNUSED(parent)
     setStyle( _defaultStyle.data() );
     //setResizable( true );
 }
 
-Node::~Node( )
+Node::~Node()
 {
     if ( _item )
         _item->deleteLater();

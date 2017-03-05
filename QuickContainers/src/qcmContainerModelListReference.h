@@ -201,6 +201,7 @@ private:
     }
     inline auto appendImpl( QObject*, ItemDispatcherBase::shared_ptr_type )                 const ->bool { return false; }
     inline auto appendImpl( QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> bool {
+        (void)object;
         /*if ( _containerModel ) {
             auto itemConcretePtr = qobject_cast<typename ContainerModel::ItemT::element_type*>(object);
             if ( itemConcretePtr ) {    // Do not try to build a new shared_ptr if conversion to concrete type fails

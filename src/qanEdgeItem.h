@@ -32,11 +32,14 @@
 #include <QLineF>
 
 // QuickQanava headers
+#include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanNodeItem.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
 
+class Edge;
 class NodeItem;
 
 //! Weighted directed edge linking two nodes in a graph.

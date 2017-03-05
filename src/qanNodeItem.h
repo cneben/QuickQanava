@@ -33,11 +33,13 @@
 #include <QPointF>
 #include <QPolygonF>
 #include <QDrag>
+#include <QPointer>
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
 

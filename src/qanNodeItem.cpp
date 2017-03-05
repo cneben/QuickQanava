@@ -30,6 +30,7 @@
 #include <QPainterPath>
 
 // QuickQanava headers
+#include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanGraph.h"
 
@@ -74,7 +75,7 @@ void    NodeItem::onWidthChanged()
 void    NodeItem::onHeightChanged()
 {
     if ( _selectionItem != nullptr ) {
-        qreal selectionWeight{ 3. }, selectionMargin{ 3. };
+        qreal selectionWeight{3.}, selectionMargin{3.};
         if ( node() != nullptr &&
              node()->getGraph() != nullptr ) {
             const auto graph = node()->getGraph();
@@ -245,15 +246,12 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
         forceActiveFocus();
 
         // Selection management
-        // FIXME QAN3
-        /*
-        if ( isSelectable() &&
-             event->button() == Qt::LeftButton &&
-             getGraph() != nullptr ) {
-            qan::Graph* graph = getGraph();
-            graph->selectNode( *this, event->modifiers() );
+        if ( event->button() == Qt::LeftButton &&
+             node() && node()->isSelectable() &&
+             node()->getGraph() != nullptr ) {
+            qan::Graph* graph = node()->getGraph();
+            graph->selectNode( *node(), event->modifiers() );
         }
-        */
 
         // QML notifications
         if ( event->button() == Qt::LeftButton )
@@ -297,43 +295,44 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
 
 auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
 {
-    // FIXME QAN3
-    /*
-    if ( getGraph()->getControlNodes().contains( this->shared_from_this() ) )   // Do not try to drag a control node in a group...
-         return;
+    const auto graph = node() != nullptr && node()->getGraph() != nullptr ? node()->getGraph() : nullptr;
+    if ( graph ) {
+        if ( graph->getControlNodes().contains( node()->shared_from_this() ) )   // Do not try to drag a control node in a group...
+            return;
 
-    if ( getQanGroup() != nullptr ) {
-        getQanGroup()->removeNode( this );
-        _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and
-                                                    // thus position (same scene pos but different local pos)
-        _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-    }
+        // FIXME QAN3
+        /*if ( getQanGroup() != nullptr ) {
+            getQanGroup()->removeNode( this );
+            _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and
+            // thus position (same scene pos but different local pos)
+            _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
+        }*/
 
-    QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
-    setX( startPos.x() + delta.x() );
-    setY( startPos.y() + delta.y() );
+        QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
+        setX( startPos.x() + delta.x() );
+        setY( startPos.y() + delta.y() );
 
-    if ( dragSelection ) {
-        if ( getGraph() != nullptr ) {
-            for ( auto& node : getGraph()->getSelectedNodes() )
-                if ( node != nullptr && node != this ) {
-                    node->dragMove( dragInitialMousePos, delta, false );
-                }
+        if ( dragSelection ) {
+            for ( auto& node : graph->getSelectedNodes() )
+                if ( node != nullptr &&
+                     node->getItem() != nullptr &&
+                     node->getItem() != this )
+                    node->getItem()->dragMove( dragInitialMousePos, delta, false );
         }
-    }
 
-    // Eventually, propose a node group drop after move
-    qan::Group* group = getGraph()->groupAt( position(), { width(), height() } );
-    if ( group != nullptr &&
-         getDropable() ) {
+        // Eventually, propose a node group drop after move
+        qan::Group* group = graph->groupAt( position(), { width(), height() } );
+        /*if ( group != nullptr &&
+             getDropable() ) {
             group->proposeNodeDrop( group->getContainer(), this );
             _lastProposedGroup = group;
+        }*/
+        if ( group == nullptr &&
+             _lastProposedGroup != nullptr ) {
+            _lastProposedGroup->endProposeNodeDrop();
+            _lastProposedGroup = nullptr;
+        }
     }
-    if ( group == nullptr && _lastProposedGroup != nullptr ) {
-        _lastProposedGroup->endProposeNodeDrop();
-        _lastProposedGroup = nullptr;
-    }
-    */
 }
 
 auto    NodeItem::endDragMove( bool dragSelection ) -> void

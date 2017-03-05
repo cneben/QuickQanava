@@ -45,6 +45,7 @@ namespace qan { // ::qan
 
 class Graph;
 class Group;
+class NodeItem;
 
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
  *
@@ -60,7 +61,7 @@ class Node : public gtpo::GenNode< qan::GraphConfig >
     Q_OBJECT
 public:
     //! Node constructor.
-    Node();
+    explicit Node(QObject* parent=nullptr);
     /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
      *
      */
@@ -75,6 +76,7 @@ public:
      */
     bool    operator==( const qan::Node& right ) const;
 
+    QPointer<qan::Node> _selfff;
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem FINAL )
     inline qan::NodeItem*   getItem() noexcept { return _item.data(); }

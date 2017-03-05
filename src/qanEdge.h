@@ -39,6 +39,8 @@
 
 namespace qan { // ::qan
 
+class EdgeItem;
+
 //! Weighted directed edge linking two nodes in a graph.
 /*!
     \nosubgrouping
@@ -52,6 +54,7 @@ public:
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge();
     Edge( const Edge& ) = delete;
+    virtual ~Edge() { /* Nil */ }
 
 public:
     Q_PROPERTY( qan::EdgeItem* item READ getItem FINAL )
