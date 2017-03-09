@@ -28,19 +28,19 @@
 import QtQuick          2.7
 import QtQuick.Layouts  1.3
 
-import QuickQanava      2.0 as Qan
+import QuickQanava          2.0 as Qan
 import QuickGeoGL           1.0 as Qgl
 import "qrc:/QuickGeoGL"    1.0 as Qgl
 
-Qan.Edge {
-    id: arrowEdge
+Qan.EdgeItem {
+    id: edgeItem
     property color  color: Qt.rgba(0,0,0,1)
     Qgl.Arrow {
         anchors.fill: parent
         id: arrow
-        p1: arrowEdge.p1
-        p2: arrowEdge.p2
-        p2CapSize: arrowEdge.style ? arrowEdge.style.arrowSize : 4
-        lineWidth: arrowEdge.style ? arrowEdge.style.lineWidth : 2
+        p1: edgeItem.p1
+        p2: edgeItem.p2
+        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
+        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
     }
 }

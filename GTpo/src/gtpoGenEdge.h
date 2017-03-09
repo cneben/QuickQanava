@@ -158,6 +158,12 @@ private:
     //-------------------------------------------------------------------------
 };
 
+template <class Config = GraphConfig>
+class GenGroupEdge : public gtpo::GenEdge<Config>
+{
+
+};
+
 } // ::gtpo
 
 #include "./gtpoGenEdge.hpp"

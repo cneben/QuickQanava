@@ -35,7 +35,7 @@
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
-#include "./qanNode.h"
+#include "./qanGroup.h"
 
 namespace qan { // ::qan
 
@@ -56,9 +56,14 @@ public:
      */
     virtual ~GroupItem( );
     GroupItem( const GroupItem& ) = delete;
+
 public:
-    //! Shortcut to gtpo::GenGroup<>::getGraph().
-    //qan::Graph*     getGraph() noexcept;
+    Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
+    auto        getGroup() noexcept -> qan::Group*;
+    auto        getGroup() const noexcept -> const qan::Group*;
+    inline auto setGroup(qan::Group* group) noexcept { _group = group; }
+private:
+    QPointer<qan::Group> _group{nullptr};
     //@}
     //-------------------------------------------------------------------------
 

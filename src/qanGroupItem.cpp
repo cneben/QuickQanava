@@ -53,6 +53,11 @@ GroupItem::~GroupItem( )
             child->setParent( nullptr );
     }*/
 }
+
+
+auto GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
+auto GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
+
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------

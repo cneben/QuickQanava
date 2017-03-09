@@ -44,93 +44,6 @@
 
 namespace gtpo { // ::gtpo
 
-/*! \brief Define a node observer interface.
- *
- */
-template < class Config >
-class NodeBehaviour
-{
-public:
-    NodeBehaviour( const std::string& name ) noexcept : _name( name ) { }
-    virtual ~NodeBehaviour() = default;
-    NodeBehaviour( const NodeBehaviour& ) = delete;
-    NodeBehaviour& operator=( const NodeBehaviour& ) = delete;
-
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
-    using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
-    using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
-
-public:
-    inline auto getName() const noexcept -> const std::string& { return _name; }
-protected:
-    inline auto setName( const std::string& name )  noexcept -> void { _name = name; }
-private:
-    std::string _name = "";
-
-public:
-    /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
-     */
-    virtual void    inNodeInserted( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
-
-    /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
-     */
-    virtual void    inNodeAboutToBeRemoved( WeakNode& weakInNode )  noexcept { (void)weakInNode; }
-
-    /*! \brief Called immediatly after an in node has been removed.
-     */
-    virtual void    inNodeRemoved()  noexcept { }
-
-    /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
-     */
-    virtual void    outNodeInserted( WeakNode& weakOutNode )  noexcept { (void)weakOutNode; }
-
-    /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
-     */
-    virtual void    outNodeRemoved( WeakNode& weakOutNode )  noexcept { (void)weakOutNode; }
-
-    /*! \brief Called immediatly after an out-edge has been removed.
-     */
-    virtual void    outNodeRemoved()  noexcept { }
-
-    /*! \brief Called immedialty after \c weakNode has been modified.
-     *
-     * Creating, inserting or removing a node does not generate a nodeModified() call.
-     *
-     * A call to nodeModified() usually follow a node property modification trought
-     * the gtpo::GenGraph::Config PropertiesConfig interface.
-     */
-    virtual void    nodeModified( WeakNode& weakNode ) noexcept { (void)weakNode; }
-};
-
-
-/*! \brief Define an edge observer interface.
- *
- */
-template < class Config >
-class EdgeBehaviour
-{
-public:
-    EdgeBehaviour() noexcept {}
-    virtual ~EdgeBehaviour() = default;
-    EdgeBehaviour( const EdgeBehaviour& ) = delete;
-    EdgeBehaviour& operator=( const EdgeBehaviour& ) = delete;
-
-    using Edge              = typename Config::Edge;
-    using SharedEdge        = std::shared_ptr< typename Config::Edge >;
-    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
-
-    /*! \brief Called immediatly after \c weakEdge has been modified.
-     *
-     * Creating, inserting or removing an edge does not generate an edgeModified() call.
-     *
-     * A call to edgeModified() usually follow an edge property modification trought
-     * the gtpo::GenGraph::Config PropertiesConfig interface.
-     */
-    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-};
-
-
 /*! \brief Base class for concrete behaviours.
  *
  * \image html behaviour-class.png
@@ -140,11 +53,18 @@ template <class Config >
 class Behaviour
 {
 public:
-    Behaviour() noexcept { }
+    Behaviour( const std::string& name = {} ) noexcept : _name{name} { }
     virtual ~Behaviour() { }
 
     explicit Behaviour( const Behaviour& ) = delete;
     Behaviour& operator=( const Behaviour& ) = delete;
+
+public:
+    inline auto getName() const noexcept -> const std::string& { return _name; }
+protected:
+    inline auto setName( const std::string& name )  noexcept -> void { _name = name; }
+private:
+    std::string _name = "";
 
 public:
     /*! \brief Enable this behaviour until it is disabled again with a call to disable().
@@ -176,100 +96,21 @@ protected:
     bool            _enabled = true;
 };
 
-/*! \brief Define an observer interface to catch changes in a gtpo::GenGroup.
+/*! \brief Define an edge observer interface.
  *
  */
 template < class Config >
-class GroupBehaviour :  public Behaviour< Config >
-{
-    /*! \name GroupBehaviour Object Management *///----------------------------
-    //@{
-public:
-    GroupBehaviour() noexcept { }
-    virtual ~GroupBehaviour() = default;
-    GroupBehaviour( const GroupBehaviour& ) = delete;
-    GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
-
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using Group         = typename Config::FinalGroup;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Node Notification Interface *///---------------------------------
-    //@{
-    //! Called immediatly after \c weakNode has been inserted.
-    virtual void    nodeInserted( WeakNode& weakNode ) noexcept { (void)weakNode; }
-    //! Called when \c weakNode is about to be removed.
-    virtual void    nodeRemoved( WeakNode& weakNode ) noexcept { (void)weakNode; }
-    //! \copydoc gtpo::NodeBehaviour::nodeModified()
-    virtual void    nodeModified( WeakNode& weakNode ) noexcept { (void)weakNode; }
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Edge Notification Interface *///---------------------------------
-    //@{
-public:
-    //! Called immediatly after \c weakEdge has been inserted.
-    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //! Called when \c weakEdge is about to be removed.
-    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //! \copydoc gtpo::EdgeBehaviour::edgeModified()
-    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Group Notification Interface *///--------------------------------
-    //@{
-public:
-    /*! \brief Called whenever group \c weakGroup has been modified.
-     *
-     * Called in the following situations:
-     * \li node or edge inserted or removed from group
-     * \li group label changed
-     */
-    virtual void    groupModified( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
-    //@}
-    //-------------------------------------------------------------------------
-};
-
-/*! \brief Define an observer interface to catch changes in a gtpo::GenGraph.
- *
- */
-template < class Config >
-class GraphBehaviour :  public GroupBehaviour< Config >
+class EdgeBehaviour : public Behaviour<Config>
 {
 public:
-    GraphBehaviour() noexcept { }
-    virtual ~GraphBehaviour() { }
-    GraphBehaviour( const GraphBehaviour& ) = delete;
-    GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
+    EdgeBehaviour() noexcept {}
+    virtual ~EdgeBehaviour() = default;
+    EdgeBehaviour( const EdgeBehaviour& ) = delete;
+    EdgeBehaviour& operator=( const EdgeBehaviour& ) = delete;
 
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using Group         = typename Config::FinalGroup;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
-
-    //! Called immediatly after group \c weakGroup has been inserted in graph.
-    virtual void    groupInserted( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
-    //! Called immediatly before group \c weakGroup is removed from graph.
-    virtual void    groupRemoved( WeakGroup& weakGroup ) noexcept { (void)weakGroup; }
-
-    /*! \name Edge Notification Interface *///---------------------------------
-    //@{
-public:
-    //! Called immediatly after \c weakEdge has been inserted.
-    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //! Called when \c weakEdge is about to be removed.
-    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //! \copydoc gtpo::EdgeBehaviour::edgeModified()
-    virtual void    edgeModified( WeakEdge& weakEdge ) noexcept { (void)weakEdge; }
-    //@}
-    //-------------------------------------------------------------------------
-
+    using Edge              = typename Config::Edge;
+    using SharedEdge        = std::shared_ptr< typename Config::Edge >;
+    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
 };
 
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
@@ -312,7 +153,7 @@ public:
 
 public:
     //! Clear all actually regsitered behaviours (they are automatically deleted).
-    inline  auto    clear( ) -> void { _behaviours.clear(); }
+    inline  auto    clear() -> void { _behaviours.clear(); }
     //@}
     //-------------------------------------------------------------------------
 
@@ -357,6 +198,9 @@ protected:
     template < class T >
     auto    notifyBehaviours( void (Behaviour::*method)(T&) noexcept, T& arg ) noexcept -> void;
 
+    template < class T, class T2 >
+    auto    notifyBehaviours( void (Behaviour::*method)(T&, T2&) noexcept, T& arg, T2&) noexcept -> void;
+
     //! Similar to notifyBahaviours() but without arguments.
     auto    notifyBehaviours0( void (Behaviour::*method)() noexcept ) noexcept -> void;
 
@@ -382,100 +226,6 @@ public:
 private:
     SBehaviours  _sBehaviours;
     //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Notification Helper Methods *///---------------------------------
-    //@{
-public:
-
-    // Group Behaviours Notification
-    template < class Node >
-    auto    notifyNodeInserted( Node& node ) noexcept -> void;
-
-    template < class Node >
-    auto    notifyNodeRemoved( Node& node ) noexcept -> void;
-
-    //! Notify all behaviors that node \c node inside this group has been modified.
-    template < class Node >
-    auto    notifyNodeModified( Node& node ) noexcept -> void;
-
-    template < class Edge >
-    auto    notifyEdgeInserted( Edge& edge ) noexcept -> void;
-
-    template < class Edge >
-    auto    notifyEdgeRemoved( Edge& edge ) noexcept -> void;
-
-    //! Notify all behaviors that node \c node inside this group has been modified.
-    template < class Edge >
-    auto    notifyEdgeModified( Edge& edge ) noexcept -> void;
-
-    // GraphBehaviours Notification
-    template < class Group >
-    auto    notifyGroupInserted( Group& group ) noexcept -> void;
-
-    template < class Group >
-    auto    notifyGroupRemoved( Group& group ) noexcept -> void;
-
-    //! Notify all behaviors that group \c group has been modified.
-    template < class G >
-    auto    notifyGroupModified( G& group ) noexcept -> void;
-    //@}
-    //-------------------------------------------------------------------------
-};
-
-/*! \brief Collect and maintain a group adjacent edge set when a node is removed or inserted in a group.
- *
- *  This behaviour should be used with GraphGroupAjacentEdgesBehaviour.
- */
-template < class Config >
-class GroupAdjacentEdgesBehaviour : public GroupBehaviour< Config >
-{
-    /* Group Edge Set Behaviour *///-------------------------------------------
-public:
-    GroupAdjacentEdgesBehaviour() noexcept = default;
-    virtual ~GroupAdjacentEdgesBehaviour() = default;
-    GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = delete;
-    GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
-
-    using SharedNode    = std::shared_ptr< typename Config::FinalNode >;
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedEdge    = std::shared_ptr< typename Config::FinalEdge >;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-
-public:
-    virtual void    groupModified( WeakGroup& weakGroup ) noexcept override { (void)weakGroup; }
-    virtual void    nodeInserted( WeakNode& weakNode ) noexcept override;
-    virtual void    nodeRemoved( WeakNode& weakNode ) noexcept override;
-    //-------------------------------------------------------------------------
-};
-
-/*! \brief Collect and maintain a group adjacent edge set and group edge set.
- *
- */
-template < class Config >
-class GraphGroupAjacentEdgesBehaviour : public GraphBehaviour< Config >
-{
-    /* Group Edge Set Behaviour *///-------------------------------------------
-public:
-    GraphGroupAjacentEdgesBehaviour() noexcept { }
-    virtual ~GraphGroupAjacentEdgesBehaviour() { }
-    GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
-    GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
-
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge          = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedEdge        = std::shared_ptr< typename Config::FinalEdge >;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
-    using WeakGroup         = std::weak_ptr< typename Config::FinalGroup >;
-    using SharedGroup       = std::shared_ptr< typename Config::FinalGroup >;
-
-public:
-    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept override;
-    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept override;
     //-------------------------------------------------------------------------
 };
 

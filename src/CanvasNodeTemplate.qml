@@ -42,9 +42,9 @@ Item {
     property         alias  symbol   : nodeSymbol.sourceComponent
     default property alias  children : templateContentLayout.children
 
-    function requestPaint( ) {
+    function requestPaint() {
         if ( nodeSymbol.item )
-            nodeSymbol.item.requestPaint( );
+            nodeSymbol.item.requestPaint();
     }
     onNodeItemChanged: {
         if ( nodeItem )

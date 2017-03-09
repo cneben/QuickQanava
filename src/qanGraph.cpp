@@ -39,6 +39,7 @@
 #include "./qanNavigable.h"
 #include "./qanNodeItem.h"
 #include "./qanEdgeItem.h"
+#include "./qanGroupItem.h"
 
 namespace qan { // ::qan
 
@@ -280,14 +281,19 @@ void    Graph::mousePressEvent( QMouseEvent* event )
 
 /* Delegates Management *///---------------------------------------------------
 //auto    Graph::createFromComponent( QQmlComponent* component ) -> QQuickItem*
-QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge )
+QQuickItem* Graph::createFromComponent( QQmlComponent* component,
+                                        qan::Node* node,
+                                        qan::Edge* edge,
+                                        qan::Group* group )
 {
     if ( component == nullptr ) {
         qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
-    if ( node == nullptr && edge == nullptr ) {
-        qWarning() << "qan::Graph::createFromComponent(): Error called with nullptr node and edge component.";
+    if ( node == nullptr &&
+         edge == nullptr &&
+         group == nullptr ) {
+        qWarning() << "qan::Graph::createFromComponent(): Error called with nullptr node, edge and group component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
@@ -309,6 +315,10 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Node* nod
                 /*const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
                 if ( edgeItem != nullptr )
                     edgeItem->setEdge(edge);*/
+            } else if ( group != nullptr ) {
+                const auto groupItem = qobject_cast<qan::GroupItem*>(object);
+                if ( groupItem != nullptr )
+                    groupItem->setGroup(group);
             }
             component->completeCreate();
             if ( !component->isError() ) {
@@ -316,14 +326,14 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Node* nod
                 item = qobject_cast< QQuickItem* >( object );
                 item->setVisible( true );
                 item->setParentItem( getContainerItem() );
-            } // Warning: object migh leak
+            } // FIXME QAN3: Warning: object migh leak
         } else {
-            qDebug() << "qan::Graph::createFromComponent(): Failed to create a concrete QQuickItem from QML component:";
-            qDebug() << "\t" << component->errorString();
+            qWarning() << "qan::Graph::createFromComponent(): Failed to create a concrete QQuickItem from QML component:";
+            qWarning() << "\t" << component->errorString();
         }
     } else {
-        qDebug() << "qan::Graph::createFromComponent(): QML component is not ready:";
-        qDebug() << "\t" << component->errorString();
+        qWarning() << "qan::Graph::createFromComponent(): QML component is not ready:";
+        qWarning() << "\t" << component->errorString();
     }
 
     return item;
@@ -342,7 +352,7 @@ void    Graph::registerNodeDelegate( QString nodeClass, QQmlComponent* nodeCompo
 {
     if ( nodeClass.isEmpty() ||
          nodeComponent == nullptr ) {
-        qDebug() << "qan::Graph::registerNodeDelegate(): Error: Trying to register a node delegate with empty class name or null delegate component";
+        qWarning() << "qan::Graph::registerNodeDelegate(): Error: Trying to register a node delegate with empty class name or null delegate component";
         return;
     }
     _nodeClassComponents.insert( nodeClass, nodeComponent );
@@ -352,7 +362,7 @@ void    Graph::registerEdgeDelegate( QString edgeClass, QQmlComponent* edgeCompo
 {
     if ( edgeClass.isEmpty() ||
          edgeComponent == nullptr ) {
-        qDebug() << "qan::Graph::registerEdgeDelegate(): Error: Trying to register an edge delegate with empty class name or null delegate component";
+        qWarning() << "qan::Graph::registerEdgeDelegate(): Error: Trying to register an edge delegate with empty class name or null delegate component";
         return;
     }
     _edgeClassComponents.insert( edgeClass, edgeComponent );
@@ -362,7 +372,7 @@ void    Graph::registerGroupDelegate( QString groupClass, QQmlComponent* groupCo
 {
     if ( groupClass.isEmpty() ||
          groupComponent == nullptr ) {
-        qDebug() << "qan::Graph::registerGroupDelegate(): Error: Trying to register a group delegate with empty class name or null delegate component";
+        qWarning() << "qan::Graph::registerGroupDelegate(): Error: Trying to register a group delegate with empty class name or null delegate component";
         return;
     }
     _groupClassComponents.insert( groupClass, groupComponent );
@@ -400,10 +410,10 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
             QString componentQml = "import QtQuick 2.7\n  Rectangle{ }";
             _rectangleComponent->setData( componentQml.toUtf8(), QUrl() );
             if ( !_rectangleComponent->isReady() ) {
-                qDebug() << "qan::Graph::createRectangle(): Error: Can't create at Qt Quick Rectangle object:";
-                qDebug() << componentQml;
-                qDebug() << "QML Component status=" << _rectangleComponent->status();
-                qDebug() << "QML Component errors=" << _rectangleComponent->errors();
+                qWarning() << "qan::Graph::createRectangle(): Error: Can't create at Qt Quick Rectangle object:";
+                qWarning() << "\t" << componentQml;
+                qWarning() << "\tQML Component status=" << _rectangleComponent->status();
+                qWarning() << "\tQML Component errors=" << _rectangleComponent->errors();
             }
         }
     }
@@ -420,13 +430,13 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
             QQmlEngine::setObjectOwnership( rectangle, QQmlEngine::CppOwnership );
         }
         if ( rectangle == nullptr && object != nullptr ) {
-            qDebug() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+            qWarning() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
             delete object;      // Somtehing has been created, but it is not a rectangle !
             return nullptr;
         }
         return rectangle;
     } else {
-        qDebug() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
+        qWarning() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
     }
     return nullptr;
 }
@@ -440,7 +450,7 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
             nodeComponent = _nodeClassComponents.value( "qan::Node", nullptr );
     }
     if ( nodeComponent == nullptr ) {
-        qDebug() << "qan::Graph::insertNode(): Error: Can't find a valid node delegate component.";
+        qWarning() << "qan::Graph::insertNode(): Error: Can't find a valid node delegate component.";
         return nullptr;
     }
     auto node = std::make_shared<qan::Node>();
@@ -472,7 +482,7 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
         }
         GTpoGraph::insertNode( node );
     } else
-        qDebug() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
+        qWarning() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
     return node.get();
 }
 
@@ -502,7 +512,7 @@ qan::Node*  Graph::insertNode( QString nodeClassName )
 qan::Node*  Graph::insertNode( QVariant nodeArgument )
 {
     if ( !nodeArgument.isValid() ) {
-        qDebug() << "qan::Graph::insertNode(QVariant): Error: Called with invalid QVariant.";
+        qWarning() << "qan::Graph::insertNode(QVariant): Error: Called with invalid QVariant.";
         return nullptr;
     }
     if ( nodeArgument.type() == QVariant::String ) {
@@ -512,7 +522,7 @@ qan::Node*  Graph::insertNode( QVariant nodeArgument )
         if ( nodeComponent != nullptr )
             return insertNode( nodeComponent );
     }
-    qDebug() << "qan::Graph::insertNode(QVariant): Error: Called with unsupported QVariant argument type (must be either QString or QQmlComponent.";
+    qWarning() << "qan::Graph::insertNode(QVariant): Error: Called with unsupported QVariant argument type (must be either QString or QQmlComponent.";
     return nullptr;
 }
 
@@ -578,7 +588,7 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
                 return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
     }
-    qDebug() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
     return nullptr;
 }
 
@@ -603,7 +613,7 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName, QObject* source, QObject* 
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
                 return insertEdge( edgeClassName, sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
     }
-    qDebug() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
     return nullptr;
 }
 
@@ -649,10 +659,10 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName,
                      this, SIGNAL( edgeDoubleClicked( QVariant, QVariant ) ) );
             */
     } catch ( gtpo::bad_topology_error e ) {
-        qDebug() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
+        qWarning() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
     }
     catch ( ... ) {
-        qDebug() << "qan::Graph::insertEdge(): Error: Topology error.";
+        qWarning() << "qan::Graph::insertEdge(): Error: Topology error.";
     }
     return edge.get();
 }
@@ -698,10 +708,10 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Ed
                      */
         }
     } catch ( gtpo::bad_topology_error e ) {
-        qDebug() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
+        qWarning() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
     }
     catch ( ... ) {
-        qDebug() << "qan::Graph::insertEdge(): Error: Topology error.";
+        qWarning() << "qan::Graph::insertEdge(): Error: Topology error.";
     }
     return edge;
 }
@@ -766,7 +776,7 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
-Graph::WeakGroup   Graph::createGroup( const std::string& className )
+/*Graph::WeakGroup   Graph::createGroup( const std::string& className )
 {
     if ( className.size() == 0 )
         return WeakGroup{};
@@ -781,20 +791,26 @@ Graph::WeakGroup   Graph::createGroup( const std::string& className )
         connect( group, &qan::Group::groupDoubleClicked,
                  this,  &qan::Graph::groupDoubleClicked );
         */
-    }
-    return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
-}
+//    }
+//    return ( group != nullptr ? group->shared_from_this() : WeakGroup{} );
+//}
 
-qan::Group* Graph::insertGroup( QString className )
+qan::Group* Graph::insertGroup()
 {
     QQmlComponent* groupComponent{ nullptr };
-    groupComponent = _groupClassComponents.value( className, nullptr );
+    //groupComponent = _groupClassComponents.value( className, nullptr );
+    groupComponent = _groupClassComponents.value( "qan::Group", nullptr );
     if ( groupComponent == nullptr ) {
-        qDebug() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
+        qWarning() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
         return nullptr;
     }
-    auto group = std::make_shared<qan::Group>();
+    //auto group = std::make_shared<qan::Group>();
+    auto group = new qan::Group{};
     if ( group != nullptr ) {
+        qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent, nullptr, nullptr, group ) );
+        if ( groupItem != nullptr ) {
+            groupItem->setGroup(group);
+
         // FIXME QAN3
         //auto group =  static_cast< qan::Group* >( createFromComponent( groupComponent ) );
         //GTpoGraph::insertGroup( group );
@@ -809,12 +825,10 @@ qan::Group* Graph::insertGroup( QString className )
         connect( group.get(), &qan::Group::groupDoubleClicked,
                  this, &qan::Graph::groupDoubleClicked );
         */
+        }
     } else
-        qDebug() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
-
-    // FIXME QAN3
-    //return group;
-    return nullptr;
+        qWarning() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
+    return group;
 }
 
 void    Graph::removeGroup( qan::Group* group )
@@ -844,11 +858,14 @@ bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
-    WeakGroup weakGroup;
+    // FIXME QAN3
+    /*WeakGroup weakGroup;
     try {
         weakGroup = WeakGroup{ group->shared_from_this() };
-    } catch ( std::bad_weak_ptr ) { return false; }
-    return gtpo::GenGraph< qan::GraphConfig >::hasGroup( weakGroup );
+    } catch ( std::bad_weak_ptr ) { return false; }*/
+    Q_ASSERT(false);
+    //return gtpo::GenGraph< qan::GraphConfig >::hasGroup( weakGroup );
+    return false;
 }
 //-----------------------------------------------------------------------------
 

@@ -46,7 +46,7 @@ auto GenNode< Config >::addOutEdge( WeakEdge outEdgePtr ) -> void
         Config::template container_adapter< WeakEdges >::insert( outEdgePtr, _outEdges );
         if ( !outEdge->getDst().expired() ) {
             Config::template container_adapter< WeakNodes >::insert( outEdge->getDst(), _outNodes );
-            notifyOutNodeInserted( outEdge->getDst() );
+            notifyOutNodeInserted( outEdge->getDst(), WeakEdge{outEdge} );
         }
     }
 }
@@ -65,7 +65,7 @@ auto GenNode< Config >::addInEdge( WeakEdge inEdgePtr ) -> void
         Config::template container_adapter< WeakEdges >::insert( inEdgePtr, _inEdges );
         if ( !inEdge->getSrc().expired() ) {
             Config::template container_adapter< WeakNodes >::insert( inEdge->getSrc(), _inNodes );
-            notifyInNodeInserted( inEdge->getSrc() );
+            notifyInNodeInserted( inEdge->getSrc(), inEdgePtr );
         }
     }
 }
@@ -82,7 +82,7 @@ auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
     auto outEdgeDst = outEdgePtr->getDst().lock();
     if ( outEdgeDst != nullptr ) {
         gtpo::assert_throw( outEdgeDst != nullptr, "gtpo::GenNode<>::removeOutEdge(): Error: Out edge destination is expired." );
-        notifyOutNodeRemoved( outEdgePtr->getDst() );
+        notifyOutNodeRemoved( outEdgePtr->getDst(), outEdge );
     }
     Config::template container_adapter<WeakEdges>::remove( outEdge, _outEdges );
     Config::template container_adapter<WeakNodes>::remove( outEdgePtr->getDst(), _outNodes );
@@ -91,6 +91,7 @@ auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
         if ( graph != nullptr )
             graph->installRootNode( WeakNode{ this->shared_from_this() } );
     }
+    notifyOutNodeRemoved();
 }
 
 template < class Config >
@@ -105,7 +106,7 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
 
     auto inEdgeSrcPtr = inEdgePtr->getSrc().lock();
     gtpo::assert_throw( inEdgeSrcPtr != nullptr, "gtpo::GenNode<>::removeInEdge(): Error: In edge source is expired." );
-    notifyInNodeAboutToBeRemoved( inEdgePtr->getSrc() );
+    notifyInNodeRemoved( inEdgePtr->getSrc(), inEdge );
     Config::template container_adapter< WeakEdges >::remove( inEdge, _inEdges );
     Config::template container_adapter< WeakNodes >::remove( inEdgePtr->getSrc(), _inNodes );
     if ( getInDegree() == 0 ) {
@@ -114,43 +115,6 @@ auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
             graph->installRootNode( WeakNode{ nodePtr } );
     }
     notifyInNodeRemoved();
-}
-//-----------------------------------------------------------------------------
-
-/* GenNode Behaviour Notifications *///----------------------------------------
-template < class Config >
-auto    GenNode< Config >::notifyInNodeInserted( WeakNode& inNode ) noexcept -> void
-{
-    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeInserted, inNode );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeInserted( inNode ); } );
-}
-
-template < class Config >
-auto    GenNode< Config >::notifyInNodeAboutToBeRemoved( WeakNode& inNode ) noexcept -> void
-{
-    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::inNodeAboutToBeRemoved, inNode );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeAboutToBeRemoved( inNode ); } );
-}
-
-template < class Config >
-auto    GenNode< Config >::notifyInNodeRemoved() noexcept -> void
-{
-    BehaviourableBase::notifyBehaviours0( &gtpo::NodeBehaviour<Config>::inNodeRemoved );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.inNodeRemoved(); } );
-}
-
-template < class Config >
-auto    GenNode< Config >::notifyOutNodeInserted( WeakNode& outNode ) noexcept -> void
-{
-    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeInserted, outNode );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeInserted( outNode ); } );
-}
-
-template < class Config >
-auto    GenNode< Config >::notifyOutNodeRemoved( WeakNode& outNode ) noexcept -> void
-{
-    BehaviourableBase::notifyBehaviours( &gtpo::NodeBehaviour<Config>::outNodeRemoved, outNode );
-    this->sNotifyBehaviours( [&](auto& behaviour) { behaviour.outNodeRemoved( outNode ); } );
 }
 //-----------------------------------------------------------------------------
 

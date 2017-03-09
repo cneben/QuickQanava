@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	qtpoTests.cpp
+// \file	gtpoTests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
@@ -28,6 +28,9 @@
 // Google Test
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+// GTpo headers
+#include "../src/gtpoUtils.h"
 
 int main(int argc, char **argv) {
     //::testing::InitGoogleMock(&argc, argv);
@@ -38,5 +41,10 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
 }
 
+TEST(GTpoUtils, assertThrow)
+{
+    EXPECT_THROW( gtpo::assert_throw(false, "" ), gtpo::bad_topology_error );
+    EXPECT_NO_THROW( gtpo::assert_throw(true, "" ) );
+}
 
 

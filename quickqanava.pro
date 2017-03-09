@@ -11,6 +11,9 @@ test-navigable.depends  = quickqanava
 test-custom.subdir   = samples/custom
 test-custom.depends  = quickqanava
 
+test-connector.subdir   = samples/connector
+test-connector.depends  = quickqanava
+
 test-groups.subdir   = samples/groups
 test-groups.depends  = quickqanava
 
@@ -32,8 +35,9 @@ test-40k.depends    = quickqanava
 #SUBDIRS +=  quickqanava
 #SUBDIRS +=  test-40k
 SUBDIRS +=  test-custom
+#SUBDIRS +=  test-connector
 #SUBDIRS +=  test-navigable
-#SUBDIRS +=  test-groups
+SUBDIRS +=  test-groups
 #SUBDIRS +=  test-hedges
 #SUBDIRS +=  test-style
 #SUBDIRS +=  test-progress

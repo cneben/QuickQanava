@@ -33,7 +33,7 @@ import QtGraphicalEffects   1.0
 import QuickQanava  2.0 as Qan
 import "."          as Qan
 
-Qan.AbstractGroup {
+Qan.GroupItem {
     id: group
     x: 0;   y: 0
     width: template.content.width;

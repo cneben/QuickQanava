@@ -17,6 +17,14 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/gtpoRandomGraph.h         \
             $$PWD/gtpoBehaviour.h           \
             $$PWD/gtpoBehaviour.hpp         \
+            $$PWD/gtpoGraphBehaviour.h      \
+            $$PWD/gtpoGraphBehaviour.hpp    \
+            $$PWD/gtpoNodeBehaviour.h       \
+            $$PWD/gtpoNodeBehaviour.hpp     \
+            $$PWD/gtpoGroupBehaviour.h      \
+            $$PWD/gtpoGroupBehaviour.hpp    \
+            $$PWD/gtpoAdjacentBehaviour.h   \
+            $$PWD/gtpoAdjacentBehaviour.hpp \
             $$PWD/gtpoProgressNotifier.h    \
             $$PWD/gtpoSerializer.h          \
             $$PWD/gtpoContainerAdapter.h    \

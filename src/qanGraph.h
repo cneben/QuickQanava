@@ -245,7 +245,7 @@ public:
 
 protected:
     //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
-    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge = nullptr );
+    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge = nullptr, qan::Group* group = nullptr );
 
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void setCppOwnership( QQuickItem* item );
@@ -401,10 +401,10 @@ signals:
     //@{
 public:
     //! Defined for serialization support, do not use.
-    virtual WeakGroup       createGroup( const std::string& className ) override;
+    //virtual WeakGroup       createGroup( const std::string& className ) override;
 
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
-    Q_INVOKABLE qan::Group* insertGroup( QString className = "qan::Group" );
+    Q_INVOKABLE qan::Group* insertGroup();
 
     //! Shortcut to gtpo::GenGraph<>::removeGroup().
     Q_INVOKABLE void        removeGroup( qan::Group* group );

@@ -45,6 +45,7 @@
 #include "./gtpoUtils.h"
 #include "./gtpoBehaviour.h"
 #include "./gtpoGraphConfig.h"
+#include "./gtpoNodeBehaviour.h"
 
 namespace gtpo { // ::gtpo
 
@@ -60,8 +61,8 @@ class GenGroup;
  */
 template <class Config = DefaultConfig>
 class GenNode : public Config::NodeBase,
-                public gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
-                                            typename Config::NodeBehaviours >,
+                public gtpo::BehaviourableNode< gtpo::NodeBehaviour< Config >,
+                                                typename Config::NodeBehaviours >,
                 public std::enable_shared_from_this<typename Config::FinalNode>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
@@ -152,17 +153,6 @@ public:
     inline auto getGroup( ) const noexcept -> const WeakGroup& { return _group; }
 private:
     WeakGroup   _group;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Node Behaviours Notifications *///-------------------------------
-    //@{
-    inline auto    notifyInNodeInserted( WeakNode& outNode ) noexcept -> void;
-    inline auto    notifyInNodeAboutToBeRemoved( WeakNode& outNode ) noexcept -> void;
-    inline auto    notifyInNodeRemoved( ) noexcept -> void;
-    inline auto    notifyOutNodeInserted( WeakNode& outNode ) noexcept -> void;
-    inline auto    notifyOutNodeRemoved( WeakNode& outNode ) noexcept -> void;
-    inline auto    notifyOutNodeRemoved() noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 };

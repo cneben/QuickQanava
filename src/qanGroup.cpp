@@ -54,63 +54,6 @@ Group::~Group()
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
-auto    Group::insertNode( WeakNode weakNode ) -> void
-{
-    SharedNode node = weakNode.lock();
-    if ( node != nullptr ) {
-        qan::Node* qanNode = qobject_cast< qan::Node* >( node.get() );
-        if ( qanNode != nullptr )
-            insertNode( qanNode, false );  // If the node is a QuickQanava qan::Node, insert it "graphically" before adding it to graph topology.
-        else    // Should not happen
-            gtpo::GenGroup< qan::GraphConfig >::insertNode( weakNode );
-    }
-}
-
-auto    Group::insertNode( qan::Node* node, bool drop ) -> void
-{
-    if ( node == nullptr )
-        return;
-    WeakNode weakNode;
-    try {
-        weakNode = WeakNode{ node->shared_from_this() };
-        gtpo::GenGroup< qan::GraphConfig >::insertNode( weakNode );
-
-        // FIXME QAN3
-        /*if ( getContainer( ) == nullptr )   // A container must have configured in concrete QML group component
-            return;
-
-        // Note 20150907: Set a default position corresponding to the drop position, it will usually be modified
-        // if a layout has been configured in this group
-        if ( drop ) // Do not map position if the insertion didn't result from a drag and drop action (for example when inserting a node for in serialization)
-            node->setPosition( node->mapToItem( getContainer(), QPointF{ 0., 0. } ) );
-        node->setParentItem( getContainer() );
-        groupMoved(); // Force call to groupMoved() to update group adjacent edges
-        */
-        endProposeNodeDrop();
-    } catch ( std::bad_weak_ptr ) { return; }
-      catch ( gtpo::bad_topology_error ) { return; }
-}
-
-auto    Group::removeNode( const qan::Node* node ) -> void
-{
-    // FIXME QAN3
-/*    if ( node == nullptr )
-        return;
-    qan::Node* mutableNode = const_cast< qan::Node* >( node );
-    WeakNode weakNode;
-    try {
-        QPointF nodePos{ node->position() };
-        mutableNode->setParentItem( getGraph()->getContainerItem() );
-        mutableNode->setPosition( nodePos + position() );
-        mutableNode->setDraggable( true );
-        mutableNode->setDropable( true );
-
-        weakNode = WeakNode{ const_cast< qan::Node* >( node )->shared_from_this() };
-        gtpo::GenGroup< qan::GraphConfig >::removeNode( weakNode );
-    } catch ( std::bad_weak_ptr ) { return; }
-    */
-}
-
 bool    Group::hasNode( qan::Node* node ) const
 {
     if ( node == nullptr )

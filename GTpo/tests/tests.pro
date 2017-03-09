@@ -18,8 +18,9 @@ win32-msvc*:INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
 
 SOURCES	+=  ./gtpoTests.cpp         \
             ./gtpoContainers.cpp    \
-            ./gtpoTopology.cpp      #\
-            #./gtpoBehaviour.cpp     \
+            ./gtpoTopology.cpp      \
+            ./gtpoGroups.cpp        \
+            ./gtpoBehaviour.cpp     \
             #./gtpoConcrete.cpp
 
 HEADERS	+=  

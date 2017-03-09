@@ -64,7 +64,7 @@ public:
     //@{
 public:
     //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
-    auto                insertNode( WeakNode weakNode ) -> void;
+    //auto                insertNode( WeakNode weakNode ) -> void;
 
     /*! \brief Insert an existing QuickQanava node \c node into gthis group.
      *
@@ -74,10 +74,10 @@ public:
      *
      * \note Call gtpo::GenGroup<qan::Config>::insertNode() during insertion.
      */
-    Q_INVOKABLE auto    insertNode( qan::Node* node, bool drop = true ) -> void;
+    //Q_INVOKABLE auto    insertNode( qan::Node* node, bool drop = true ) -> void;
 
     //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
-    auto                removeNode( const qan::Node* node ) -> void;
+    //auto                removeNode( const qan::Node* node ) -> void;
 
     //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
@@ -116,8 +116,8 @@ public:
      * Default to true.
      */
     Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void             setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
-    bool             getDraggable( ) { return _draggable; }
+    void            setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
+    bool            getDraggable( ) { return _draggable; }
 private:
     bool            _draggable = true;
 signals:

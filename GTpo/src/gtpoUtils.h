@@ -65,7 +65,7 @@ public:
 template < class E = gtpo::bad_topology_error >
 auto    assert_throw( bool expr, std::string message = std::string{ "" } ) noexcept( false ) -> void {
     if ( !expr )
-        throw E( message );
+        throw E{ message };
 }
 
 //! Compare two std::weak_ptr that must have been checked for expired() and nullptr content (ie use_count()==0).

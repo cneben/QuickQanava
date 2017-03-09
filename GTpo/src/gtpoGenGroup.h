@@ -43,16 +43,14 @@
 
 // GTpo headers
 #include "./gtpoUtils.h"
-#include "./gtpoBehaviour.h"
+#include "./gtpoGenNode.h"
 #include "./gtpoGraphConfig.h"
+#include "./gtpoGroupBehaviour.h"
 
 namespace gtpo { // ::gtpo
 
 template <class Config>
 class GenGraph;
-
-template <class Config>
-class GenNode;
 
 template <class Config>
 class GenGroup;
@@ -61,11 +59,10 @@ class GenGroup;
  *
  * \nosubgrouping
 */
-template <class Config = DefaultConfig>
-class GenGroup : public Config::GroupBase,
-                 public gtpo::Behaviourable< gtpo::GroupBehaviour< Config >,
-                                             typename Config::GroupBehaviours >,
-                 public std::enable_shared_from_this<typename Config::FinalGroup>
+template <class Config = gtpo::GraphConfig>
+class GenGroup : public gtpo::GenNode<Config>,
+                 public gtpo::BehaviourableGroup< gtpo::GroupBehaviour< Config >,
+                                                  typename Config::GroupBehaviours >
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
@@ -84,7 +81,7 @@ public:
     using WeakGroup         = std::weak_ptr< typename Config::FinalGroup >;
     using SharedGroup       = std::shared_ptr< typename Config::FinalGroup >;
 
-    GenGroup() noexcept : Config::GroupBase{} { }
+    GenGroup() noexcept : gtpo::GenNode<Config>() { }
     ~GenGroup() {
         if ( _graph != nullptr )
             std::cerr << "gtpo::GenGroup<>::~GenGroup(): Warning: Group has been destroyed before beeing removed from the graph." << std::endl;
@@ -92,27 +89,12 @@ public:
     }
     GenGroup( const GenGroup& ) = delete;
     GenGroup& operator=( GenGroup const& ) = delete;
-
-protected:
-    inline Graph*       getGraph() noexcept { return _graph; }
-    inline const Graph* getGraph() const noexcept { return _graph; }
-private:
-    inline void         setGraph( Graph* graph ) noexcept { _graph = graph; }
-public: // FIXME
-    Graph*              _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    /*! \brief Insert node \c weakNode in this group.
-     *
-     * \note \c weakNode getGroup() will return this if insertion succeed.
-     */
-    auto        insertNode( WeakNode weakNode ) noexcept( false ) -> void;
-    auto        removeNode( const WeakNode& weakNode ) noexcept( false ) -> void;
-
     //! Return group's nodes.
     inline auto getNodes() noexcept -> const WeakNodes& { return _nodes; }
 
@@ -137,16 +119,6 @@ public:
 protected:
     WeakEdgesSearch _edges;
     WeakEdgesSearch _adjacentEdges;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Behaviours Management *///---------------------------------------
-    //@{
-public:
-    //! User friendly shortcut to this group concrete behaviour.
-    using Behaviour = GroupBehaviour< Config >;
-    //! User friendly shortcut type to this group concrete Behaviourable base type.
-    using BehaviourableBase = Behaviourable< Behaviour, typename Config::GraphBehaviours >;
     //@}
     //-------------------------------------------------------------------------
 };

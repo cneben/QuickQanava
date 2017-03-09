@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	qtpoTests.cpp
+// \file	gtpoTopology.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
@@ -107,29 +107,6 @@ TEST(GTpoTopology, graphClearNodeEdge)
     EXPECT_TRUE( n1.expired() );
     EXPECT_TRUE( n2.expired() );
     EXPECT_TRUE( e1.expired() );
-}
-
-TEST(GTpoTopology, graphClearNodeEdgeGroups)
-{
-    // TEST: clearing a graph with two nodes linked by an edge in a group should lead to an empty graph
-    gtpo::GenGraph<> g;
-    auto n = g.createNode();
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    auto e1 = g.createEdge(n1, n2);
-    auto g1 = g.createGroup();
-    {
-        auto g1Ptr = g1.lock();     // g1Ptr is released at the end of block to ensure all groups are cleared
-        if ( g1Ptr != nullptr ) {
-            g1Ptr->insertNode( n1 );
-            g1Ptr->insertNode( n2 );
-        }
-    }
-    g.clear();
-    EXPECT_TRUE( n1.expired() );
-    EXPECT_EQ( g.getNodeCount(), 0 );
-    EXPECT_EQ( g.getGroupCount(), 0 );
-    EXPECT_TRUE( g1.expired() );
 }
 
 TEST(GTpoTopology, createEdgeBadTopology)

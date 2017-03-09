@@ -20,28 +20,31 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	groups.h
-// \author	benoit@qanava.org
-// \date	2016 03 23
+// \file	connector.cpp
+// \author	benoit@destrat.io
+// \date	2017 03 06
 //-----------------------------------------------------------------------------
 
-#ifndef groups_h
-#define qangroups_h
+// Qt headers
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
 // QuickQanava headers
 #include <QuickQanava>
 
-// QT headers
-#include <QQuickView>
+using namespace qan;
 
-class MainView : public QQuickView
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
 {
-    Q_OBJECT
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QuickQanava::initialize();
+    QQmlApplicationEngine engine;
+    engine.load(QUrl("qrc:/connector.qml"));
+    return app.exec();
+}
+//-----------------------------------------------------------------------------
 
-public:
-    MainView( );
-    virtual ~MainView( ) { }
-};
-
-#endif // groups_h
 

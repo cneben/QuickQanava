@@ -33,25 +33,29 @@
 namespace gtpo { // ::gtpo
 
 /* Group Nodes Management *///-------------------------------------------------
-template < class Config >
+// FIXME GTPO2
+/*template < class Config >
 auto GenGroup< Config >::insertNode( WeakNode weakNode ) -> void
 {
     gtpo::assert_throw( !weakNode.expired(), "gtpo::GenGroup<>::removeNode(): Error: trying to insert an expired node in group." );
     SharedNode node = weakNode.lock();
     gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::removeNode(): Error: trying to insert an expired node in group." );
     try {
-        SharedGroup group{ this->shared_from_this() };
+    */
+        // FIXME GTPO2
+        /*SharedGroup group{ this->shared_from_this() };
         WeakGroup weakGroup{ group };
         node->setGroup( weakGroup );
         Config::template container_adapter<WeakNodes>::insert( node, _nodes );
 
         this->notifyGroupModified( weakGroup );        // Notification
         this->notifyNodeInserted( weakNode );
-        getGraph()->notifyGroupModified( weakGroup );
-    } catch (...) { gtpo::assert_throw( false, "gtpo::GenGroup<>::insertNode(): Error: can't insert node in group." ); }
-}
+        getGraph()->notifyGroupModified( weakGroup );*/
+/*    } catch (...) { gtpo::assert_throw( false, "gtpo::GenGroup<>::insertNode(): Error: can't insert node in group." ); }
+}*/
 
-template < class Config >
+// FIXME GTPO2
+/*template < class Config >
 auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
 {
     gtpo::assert_throw( !weakNode.expired(), "gtpo::GenGroup<>::removeNode(): Error: trying to remove an expired node from group." );
@@ -68,6 +72,7 @@ auto GenGroup< Config >::removeNode( const WeakNode& weakNode ) -> void
     node->setGroup( emptyGroup );
     Config::template container_adater<WeakNodes>::remove( _nodes, node );
 }
+*/
 
 template < class Config >
 auto GenGroup< Config >::hasNode( const WeakNode& node ) const noexcept -> bool

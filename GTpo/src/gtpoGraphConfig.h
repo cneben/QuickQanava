@@ -44,6 +44,7 @@
 // GTpo headers
 #include "./gtpoUtils.h"
 #include "./gtpoBehaviour.h"
+#include "./gtpoAdjacentBehaviour.h"
 #include "./gtpoContainerAdapter.h"
 
 namespace gtpo { // ::gtpo
@@ -58,7 +59,16 @@ template <class Config>
 class GenEdge;
 
 template <class Config>
+class GenGroupEdge;
+
+template <class Config>
 class GenGroup;
+
+template <class Config>
+class GraphGroupAjacentEdgesBehaviour;
+
+template <class Config>
+class GroupAdjacentEdgesBehaviour;
 
 /*! Default configuration for GTpo primitive, containers and behaviours.
  *
@@ -74,18 +84,21 @@ struct GraphConfig
     //! Define gtpo::GenGroup base class.
     using GroupBase = Empty;
 
-    using FinalNode     = gtpo::GenNode<GraphConfig>;
-    using FinalEdge     = gtpo::GenEdge<GraphConfig>;
-    using FinalGroup    = gtpo::GenGroup<GraphConfig>;
+    using FinalNode         = gtpo::GenNode<GraphConfig>;
+    using FinalEdge         = gtpo::GenEdge<GraphConfig>;
+    using FinalGroup        = gtpo::GenGroup<GraphConfig>;
+    using FinalGroupEdge    = gtpo::GenGroupEdge<GraphConfig>;
 
     //! Static behaviours that should be used for node (default to empty node behaviour tuple).
     using NodeBehaviours = std::tuple<>;
 
     //! Static behaviours that should be used for graph  (default to empty graph behaviour tuple).
-    using GraphBehaviours = std::tuple<>;
+    //using GraphBehaviours = std::tuple<>;
+    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< GraphConfig > >;
 
     //! Static behaviours that should be used for graph (default to empty group behaviour tuple).
-    using GroupBehaviours = std::tuple<>;
+    //using GroupBehaviours = std::tuple<>;
+    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< GraphConfig > >;
 
     template <typename T>
     using container_adapter = gtpo::std_container_adapter<T>;
