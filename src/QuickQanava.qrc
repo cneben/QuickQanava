@@ -10,7 +10,7 @@
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
         <file alias="QuickQanava/StyleEditor.qml">StyleEditor.qml</file>
-        <file alias="QuickQanava/ConnectorDropNode.qml">ConnectorDropNode.qml</file>
+        <file alias="QuickQanava/VisualConnector.qml">VisualConnector.qml</file>
         <file alias="QuickQanava/NodeLabelEditor.qml">NodeLabelEditor.qml</file>
         <file alias="QuickQanava/qmldir">qmldir</file>
     </qresource>

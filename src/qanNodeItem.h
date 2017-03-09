@@ -48,7 +48,7 @@ class Graph;
 
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
  *
- * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or ConnectorDropNode are not used nor necessary), consider disabling
+ * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or VisualConnector are not used nor necessary), consider disabling
  * drag'n'drop support by setting the \c acceptsDrops and \c droppable properties to false, it could improve performances significantly.
  *
  * \nosubgrouping

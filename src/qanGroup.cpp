@@ -32,6 +32,7 @@
 
 // QuickQanava headers
 #include "./qanGroup.h"
+#include "./qanGroupItem.h"
 #include "./qanGraph.h"
 
 namespace qan { // ::qan
@@ -50,6 +51,15 @@ Group::~Group()
         if ( QQmlEngine::objectOwnership( child ) != QQmlEngine::CppOwnership )
             child->setParent( nullptr );
     }*/
+}
+
+void    Group::setItem(qan::GroupItem* item) noexcept
+{
+    if ( item != nullptr ) {
+        _item = item;
+        if ( item->getGroup() != this )
+            item->setGroup(this);
+    }
 }
 //-----------------------------------------------------------------------------
 

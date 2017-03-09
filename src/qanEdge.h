@@ -57,6 +57,8 @@ public:
     virtual ~Edge() { /* Nil */ }
 
 public:
+    friend class qan::EdgeItem;
+
     Q_PROPERTY( qan::EdgeItem* item READ getItem FINAL )
     inline qan::EdgeItem*   getItem() noexcept { return _item.data(); }
     void                    setItem(qan::EdgeItem* edgeItem) noexcept;

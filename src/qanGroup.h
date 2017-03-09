@@ -36,8 +36,11 @@
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanNode.h"
+#include "./qanGroupItem.h"
 
 namespace qan { // ::qan
+
+class GroupItem;
 
 /*! \brief Model a graphics group of nodes.
  *
@@ -56,7 +59,13 @@ public:
      */
     virtual ~Group();
     Group( const Group& ) = delete;
+
 public:
+    Q_PROPERTY( qan::GroupItem* item READ getItem FINAL )
+    inline qan::GroupItem*  getItem() noexcept { return _item.data(); }
+    void                    setItem(qan::GroupItem* item) noexcept;
+private:
+    QPointer<qan::GroupItem> _item;
     //@}
     //-------------------------------------------------------------------------
 

@@ -312,9 +312,9 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 if ( nodeItem != nullptr )
                     nodeItem->setNode(node);
             } else if ( edge != nullptr ) {
-                /*const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
+                const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
                 if ( edgeItem != nullptr )
-                    edgeItem->setEdge(edge);*/
+                    edgeItem->setEdge(edge);
             } else if ( group != nullptr ) {
                 const auto groupItem = qobject_cast<qan::GroupItem*>(object);
                 if ( groupItem != nullptr )
@@ -632,21 +632,22 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName,
     auto edge = std::make_shared<qan::Edge>();
     try {
         auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, nullptr, edge.get() ) );
-        edge->setItem(edgeItem);
-        edgeItem->setSourceItem( source->getItem() );
-        edgeItem->setDestinationItem( destination->getItem() );
+        if ( edgeItem != nullptr ) {
+            edge->setItem(edgeItem);
+            edgeItem->setSourceItem( source->getItem() );
+            edgeItem->setDestinationItem( destination->getItem() );
 
-        WeakNode sharedSource{ source->shared_from_this() };
-        WeakNode sharedDestination{ destination->shared_from_this() };
-        edge->setSrc( sharedSource );
-        edge->setDst( sharedDestination );
-        GTpoGraph::insertEdge( SharedEdge{edge} );  // Note: Do not use shared_from_this()
+            WeakNode sharedSource{ source->shared_from_this() };
+            WeakNode sharedDestination{ destination->shared_from_this() };
+            edge->setSrc( sharedSource );
+            edge->setDst( sharedDestination );
+            GTpoGraph::insertEdge( SharedEdge{edge} );  // Note: Do not use shared_from_this()
 
-        qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
-        if ( defaultStyle != nullptr )
-            edge->setStyle( defaultStyle );
-        // FIXME QAN3
-        /*
+            qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
+            if ( defaultStyle != nullptr )
+                edge->setStyle( defaultStyle );
+            // FIXME QAN3
+            /*
             edge->setVisible( true );
             edge->updateItem();
 
@@ -658,6 +659,7 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName,
             connect( edge, SIGNAL( edgeDoubleClicked( QVariant, QVariant ) ),
                      this, SIGNAL( edgeDoubleClicked( QVariant, QVariant ) ) );
             */
+        }
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertEdge(): Error: Topology error:" << e.what();
     }
@@ -810,6 +812,8 @@ qan::Group* Graph::insertGroup()
         qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent, nullptr, nullptr, group ) );
         if ( groupItem != nullptr ) {
             groupItem->setGroup(group);
+
+            group->setItem(groupItem);
 
         // FIXME QAN3
         //auto group =  static_cast< qan::Group* >( createFromComponent( groupComponent ) );

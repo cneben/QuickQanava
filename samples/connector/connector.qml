@@ -30,18 +30,25 @@ ApplicationWindow {
     id: window
     visible: true
     width: 1280; height: 720
-    title: "Custom nodes sample"
+    title: "Edge/Visual connector sample"
     Pane { anchors.fill: parent }
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
         navigable   : true
         graph: Qan.Graph {
+            enableConnector: true
             id: graph
             Component.onCompleted: {
                 var s1 = graph.insertNode()
+                s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
                 var d1 = graph.insertNode()
+                d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
                 var d2 = graph.insertNode()
+                d2.label = "D2"; d2.item.x = 250; d2.item.y = 150
+
+                graph.insertEdge(s1, d1)
+                graph.insertEdge(s1, d2)
             }
         }
     }  // Qan.GraphView

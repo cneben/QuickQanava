@@ -90,5 +90,5 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/Edge.qml                  \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \
-                $$PWD/ConnectorDropNode.qml     \
+                $$PWD/VisualConnector.qml       \
                 $$PWD/NodeLabelEditor.qml

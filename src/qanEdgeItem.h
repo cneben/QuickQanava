@@ -55,7 +55,13 @@ public:
     //! Edge constructor with source, destination and weight initialization.
     explicit EdgeItem(QQuickItem* parent = nullptr);
     EdgeItem( const EdgeItem& ) = delete;
-protected:
+
+public:
+    Q_PROPERTY( qan::Edge* edge READ getEdge CONSTANT FINAL )
+    auto        getEdge() noexcept -> qan::Edge*;
+    auto        getEdge() const noexcept -> const qan::Edge*;
+    inline auto setEdge(qan::Edge* edge) noexcept { _edge = edge; }
+private:
     QPointer<qan::Edge>    _edge;
     //@}
     //-------------------------------------------------------------------------
@@ -63,22 +69,25 @@ protected:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
+    Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem NOTIFY sourceItemChanged FINAL )
     //qan::NodeItem*  getSourceItem( ) { return static_cast< qan::NodeItem* >( !getSrc().expired() ? getSrc().lock().get() : nullptr ); }
     // FIXME QAN3
-    qan::NodeItem*  getSourceItem( ) { return nullptr; }
-    void            setSourceItem( qan::NodeItem* source );
+    qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }
+    void                    setSourceItem( qan::NodeItem* source );
+private:
+    QPointer<qan::NodeItem> _sourceItem;
 signals:
-    void            sourceItemChanged( );
+    void                    sourceItemChanged( );
 
 public:
-    Q_PROPERTY( qan::NodeItem* destinationItem READ getDestinationItem() WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
+    Q_PROPERTY( qan::NodeItem* destinationItem READ getDestinationItem() NOTIFY destinationItemChanged FINAL )
     //qan::NodeItem*  getDestinationItem( ) { return static_cast< qan::NodeItem* >( !getDst().expired() ? getDst().lock().get() : nullptr ); }
-    // FIXME QAN3
-    qan::NodeItem*  getDestinationItem( ) { return nullptr; }
-    void            setDestinationItem( qan::NodeItem* destination );
+    qan::NodeItem*          getDestinationItem( ) { return _destinationItem.data(); }
+    void                    setDestinationItem( qan::NodeItem* destination );
+private:
+    QPointer<qan::NodeItem> _destinationItem;
 signals:
-    void            destinationItemChanged( );
+    void                    destinationItemChanged( );
 
 public:
     Q_PROPERTY( qan::EdgeItem* destinationEdge READ getDestinationEdge() WRITE setDestinationEdge NOTIFY destinationEdgeChanged FINAL )

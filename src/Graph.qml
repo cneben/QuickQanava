@@ -32,8 +32,8 @@ import "qrc:/QuickQanava"   as Qan
 /*! \brief Graph is the QML view for qan::Graph
  *
  * Visual connection of nodes:
- *   \li Visual connection of nodes with ConnectorDropNode is enabled by setting the \c enableConnectorDropNode property to \c true (default to false).
- *   \li Class name for the edges created by the visual node connector could be changed with property \c connectorDropNodeEdgeClassName (default to qan::Edge).
+ *   \li Visual connection of nodes with VisualConnector is enabled by setting the \c enableVisualConnector property to \c true (default to false).
+ *   \li Class name for the edges created by the visual node connector could be changed with property \c connectorEdgeClassName (default to qan::Edge).
  *   \li When an edge is created with the visual node connector, the signal \c edgeInsertedVisually with the newly inserted \c edge as an argument.
  */
 Qan.AbstractGraph {
@@ -50,36 +50,36 @@ Qan.AbstractGraph {
     property alias      resizeHandlerColor: nodeResizer.handlerColor
 
     //! Set to true to enable visual edge creation via a droppable connector control (default to true).
-    property bool   enableConnectorDropNode: false
+    property bool   enableConnector: false
     //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
-    property string connectorDropNodeEdgeClassName: "qan::Edge"
-    property color  connectorDropNodeEdgeColor: Qt.rgba(0,0,0,1)
+    property string connectorEdgeClassName: "qan::Edge"
+    property color  connectorEdgeColor: Qt.rgba(0,0,0,1)
 
     // Private:
-    property Component  connectorDropNodeComponent: Qt.createComponent( "qrc:/QuickQanava/ConnectorDropNode.qml" )
-    onConnectorDropNodeComponentChanged: {
-        connectorDropNodeComponent.edgeClassName = connectorDropNodeEdgeClassName
+    property Component  connectorComponent: Qt.createComponent( "qrc:/QuickQanava/VisualConnector.qml" )
+    onConnectorComponentChanged: {
+        connectorComponent.edgeClassName = connectorEdgeClassName
     }
     property var        connectorDropNode: undefined
     property color      connectorDropNodeColor: "darkblue"
 
     //! Turn visual creation of hyper edges on or off (default to off).
     property bool       visualHEdgeCreationEnabled: false
-    onEnableConnectorDropNodeChanged: {
-        if ( !enableConnectorDropNode &&
+    onEnableConnectorChanged: {
+        if ( !enableConnector &&
              connectorDropNode &&
              graph.hasNode( connectorDropNode ) )
             graph.removeNode( connectorDropNode )
 
-        if ( enableConnectorDropNode &&
+        if ( enableConnector &&
              !connectorDropNode &&
-             connectorDropNodeComponent ) {
-            connectorDropNode = graph.insertNode( graph.connectorDropNodeComponent )
+             connectorComponent ) {
+            connectorDropNode = graph.insertNode( graph.connectorComponent )
             if ( connectorDropNode ) {
-                connectorDropNode.edgeClassName = connectorDropNodeEdgeClassName
+                connectorDropNode.edgeClassName = connectorEdgeClassName
                 connectorDropNode.visible = false
                 connectorDropNode.graph = graph
-                connectorDropNode.edgeColor = Qt.binding( function() { return graph.connectorDropNodeEdgeColor; } )
+                connectorDropNode.edgeColor = Qt.binding( function() { return graph.connectorEdgeColor; } )
                 connectorDropNode.connectorColor = Qt.binding( function() { return graph.connectorDropNodeColor; } )
                 connectorDropNode.hEdgeCreationEnabled = Qt.binding( function() { return graph.visualHEdgeCreationEnabled; } )
             }

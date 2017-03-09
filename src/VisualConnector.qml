@@ -24,20 +24,20 @@ import QuickQanava 2.0 as Qan
 
 /*! \brief Droppable node control that allow direct mouse/touch edge creation between nodes.
  *
- * \image html ConnectorDropNode.png
+ * \image html VisualConnector.png
  *
  * Example use in QML:
  * \code
  * Qan.Graph {
- *   enableConnectorDropNode: true
+ *   enableConnector: true
  * }
  * \endcode
  *
- * \note ConnectorDropNode visible property is automatically set to false until it has been associed to an existing "host" node
+ * \note VisualConnector visible property is automatically set to false until it has been associed to an existing "host" node
  *       with setHostNode().
  */
-Qan.AbstractNode {
-    id: connectorDropNode
+Qan.NodeItem {
+    id: visualConnector
 
     width: radius * 2
     height: radius * 2
@@ -47,7 +47,7 @@ Qan.AbstractNode {
     visible: false
     clip: false
     label: "Connector Drop Node"
-    serializable: false // Don't serialize "helper control node"
+    //serializable: false // Don't serialize "helper control node"
     selectable: false
     antialiasing: true
 
@@ -106,7 +106,7 @@ Qan.AbstractNode {
         }
         else if ( Drag.target &&                        // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
                   ( graph.isNode(Drag.target) ||
-                    ( connectorDropNode.hEdgeCreationEnabled && graph.isEdge(Drag.target) ) ) )
+                    ( visualConnector.hEdgeCreationEnabled && graph.isEdge(Drag.target) ) ) )
                  {
                      parent.z = Drag.target.z + 1
                      connectionSymbol.state = "HILIGHT"
@@ -126,21 +126,21 @@ Qan.AbstractNode {
         radius : width / 2.
         smooth: true
         antialiasing: true
-        property real   borderWidth: connectorDropNode.connectorLineWidth
-        border.color: connectorDropNode.connectorColor
+        property real   borderWidth: visualConnector.connectorLineWidth
+        border.color: visualConnector.connectorColor
         border.width: borderWidth
         states: [
             State { name: "NORMAL";
                 PropertyChanges {
                     target: connectionSymbol;
-                    borderWidth: connectorDropNode.connectorLineWidth;
+                    borderWidth: visualConnector.connectorLineWidth;
                     scale: 1.0
                 }
             },
             State { name: "HILIGHT"
                 PropertyChanges {
                     target: connectionSymbol;
-                    borderWidth: connectorDropNode.connectorHilightLineWidth;
+                    borderWidth: visualConnector.connectorHilightLineWidth;
                     scale: 1.7
                 }
             }
@@ -155,9 +155,9 @@ Qan.AbstractNode {
     }
     property var sourceNode
     onSourceNodeChanged: {
-        if ( visible && connectorDropNode.parent !== null ) {
-            connectorDropNode.x = connectorDropNode.parent.width + xMargin
-            connectorDropNode.y = 0
+        if ( visible && visualConnector.parent !== null ) {
+            visualConnector.x = visualConnector.parent.width + xMargin
+            visualConnector.y = 0
             connectionSymbol.state = "NORMAL"
         }
     }
@@ -167,50 +167,50 @@ Qan.AbstractNode {
     MouseArea {
         id: dropDestArea
         anchors.fill: parent
-        drag.target: connectorDropNode
+        drag.target: visualConnector
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         enabled: true
         onReleased: {
-            if ( !connectorDropNode.graph )
+            if ( !visualConnector.graph )
                 return
-            var src = connectorDropNode.sourceNode
-            var dst = connectorDropNode.Drag.target
+            var src = visualConnector.sourceNode
+            var dst = visualConnector.Drag.target
             var edge = null
             if ( src && dst ) {
-                if ( connectorDropNode.graph.isNode( dst ) ) {
-                    if ( !connectorDropNode.graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
-                        edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
-                } else if ( connectorDropNode.hEdgeCreationEnabled &&
-                            connectorDropNode.graph.isEdge( dst ) ) {           // Do not create an hyper edge on an hyper edge
-                    if ( !connectorDropNode.graph.hasEdge( src, dst ) &&
-                            !connectorDropNode.graph.isHyperEdge( dst ) )
-                        edge = connectorDropNode.graph.insertEdge( edgeClassName, src, dst )
+                if ( visualConnector.graph.isNode( dst ) ) {
+                    if ( !visualConnector.graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
+                        edge = visualConnector.graph.insertEdge( edgeClassName, src, dst )
+                } else if ( visualConnector.hEdgeCreationEnabled &&
+                            visualConnector.graph.isEdge( dst ) ) {           // Do not create an hyper edge on an hyper edge
+                    if ( !visualConnector.graph.hasEdge( src, dst ) &&
+                            !visualConnector.graph.isHyperEdge( dst ) )
+                        edge = visualConnector.graph.insertEdge( edgeClassName, src, dst )
                 }
             }
             if ( edge ) {    // Notify graph user of the edge creation
-                edge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
-                connectorDropNode.graph.edgeInsertedVisually( edge )
+                edge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+                visualConnector.graph.edgeInsertedVisually( edge )
             }
             // Restore original position
             connectionSymbol.state = "NORMAL"
-            connectorDropNode.x = connectorDropNode.parent.width + xMargin
-            connectorDropNode.y = 0
-            if ( connectorDropNode.dummyEdge ) {
-                connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
-                connectorDropNode.dummyEdge = undefined
+            visualConnector.x = visualConnector.parent.width + xMargin
+            visualConnector.y = 0
+            if ( visualConnector.dummyEdge ) {
+                visualConnector.graph.removeEdge( visualConnector.dummyEdge )
+                visualConnector.dummyEdge = undefined
             }
         }
         onPressed : {
             mouse.accepted = true
-            //if ( !connectorDropNode.graph.hasEdge( connectorDropNode.sourceNode, connectorDropNode ) ) {
-                if ( connectorDropNode.dummyEdge ) {
-                    connectorDropNode.graph.removeEdge( connectorDropNode.dummyEdge )
-                    connectorDropNode.dummyEdge = undefined
+            //if ( !visualConnector.graph.hasEdge( visualConnector.sourceNode, visualConnector ) ) {
+                if ( visualConnector.dummyEdge ) {
+                    visualConnector.graph.removeEdge( visualConnector.dummyEdge )
+                    visualConnector.dummyEdge = undefined
                 }
-                connectorDropNode.dummyEdge = connectorDropNode.graph.insertEdge( edgeClassName, connectorDropNode.sourceNode, connectorDropNode )
-                connectorDropNode.dummyEdge.color = Qt.binding( function() { return connectorDropNode.edgeColor; } )
-                connectorDropNode.dummyEdge.z = connectorDropNode.sourceNode.z
+                visualConnector.dummyEdge = visualConnector.graph.insertEdge( edgeClassName, visualConnector.sourceNode, visualConnector )
+                visualConnector.dummyEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+                visualConnector.dummyEdge.z = visualConnector.sourceNode.z
             //}
         }
     }

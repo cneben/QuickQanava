@@ -32,6 +32,7 @@
 // QuickQanava headers
 #include "./qanEdgeItem.h"
 #include "./qanNodeItem.h"
+#include "./qanGroupItem.h"
 #include "./qanGraph.h"
 
 namespace qan { // ::qan
@@ -39,7 +40,6 @@ namespace qan { // ::qan
 /* Edge Object Management *///-------------------------------------------------
 EdgeItem::EdgeItem( QQuickItem* parent ) :
     QQuickItem{},
-    _edge( nullptr ),
     _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
 {
     setStyle( _defaultStyle.data() );
@@ -49,6 +49,9 @@ EdgeItem::EdgeItem( QQuickItem* parent ) :
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setAcceptDrops( true );
 }
+
+auto EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
+auto EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.data(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
@@ -67,19 +70,19 @@ auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
         QMetaProperty srcWidth  = srcMetaObj->property( srcMetaObj->indexOfProperty( "width" ) );
         QMetaProperty srcHeight = srcMetaObj->property( srcMetaObj->indexOfProperty( "height" ) );
         if ( !srcX.isValid() || !srcX.hasNotifySignal() ) {
-            qDebug() << "qan::EdgeItem::setSourceItem(): Error: can't access source x property.";
+            qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source x property.";
             return;
         }
         if (  !srcY.isValid() || !srcY.hasNotifySignal() ) {
-            qDebug() << "qan::EdgeItem::setSourceItem(): Error: can't access source y property.";
+            qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source y property.";
             return;
         }
         if (  !srcWidth.isValid() || !srcWidth.hasNotifySignal() ) {
-            qDebug() << "qan::EdgeItem::setSourceItem(): Error: can't access source width property.";
+            qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source width property.";
             return;
         }
         if (  !srcHeight.isValid() || !srcHeight.hasNotifySignal() ) {
-            qDebug() << "qan::EdgeItem::setSourceItem(): Error: can't access source height property.";
+            qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source height property.";
             return;
         }
         connect( source, srcX.notifySignal(),       this, updateItemSlot );
@@ -87,6 +90,7 @@ auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
         connect( source, srcZ.notifySignal(),       this, updateItemSlot );
         connect( source, srcWidth.notifySignal(),   this, updateItemSlot );
         connect( source, srcHeight.notifySignal(),  this, updateItemSlot );
+        _sourceItem = source;
         emit sourceItemChanged();
         if ( source->z() < z() )
             setZ( source->z() );
@@ -97,6 +101,7 @@ auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
 auto    EdgeItem::setDestinationItem( qan::NodeItem* destination ) -> void
 {
     configureDestinationItem( destination );
+    _destinationItem = destination;
     emit destinationItemChanged();
     updateItem();
 }
@@ -104,6 +109,8 @@ auto    EdgeItem::setDestinationItem( qan::NodeItem* destination ) -> void
 void    EdgeItem::setDestinationEdge( qan::EdgeItem* destination )
 {
     configureDestinationItem( destination );
+    //FIXME QAN3
+    //_destinationItem = destination;
     emit destinationEdgeChanged();
     updateItem();
 }
@@ -152,80 +159,101 @@ void    EdgeItem::configureDestinationItem( QQuickItem* item )
 //-----------------------------------------------------------------------------
 
 /* Edge Drawing Management *///------------------------------------------------
-void    EdgeItem::updateItem( )
+void    EdgeItem::updateItem()
 {
-    // FIXME QAN3
-    /*
-    auto source = getSrc().lock();
+    if ( !_edge )
+        return;
+    /*auto source = getSrc().lock();
     auto destination = getDst().lock();
     auto hDestination = getHDst().lock();
     if ( source == nullptr ||
          ( destination == nullptr && hDestination == nullptr ) ) {
         update(); // Note 20160218: Force a simple update, since for example in edge style preview edge, there is no src and dst.
         return;
+    }*/
+    qan::Graph* graph = static_cast< qan::Graph* >( _edge->getGraph() );
+    if ( graph == nullptr )
+        return;
+
+    qan::NodeItem* srcItem = _sourceItem.data();
+    if ( srcItem == nullptr )
+        return;
+
+    qan::Node*  srcNode = static_cast< qan::Node* >( _edge->getSrc().lock().get() );
+    qan::GroupItem* srcGroupItem = nullptr;
+    auto srcNodeGroup = srcNode->getGroup().lock();
+    if ( srcNodeGroup )
+        srcGroupItem = srcNodeGroup->getItem();
+
+    qan::Node*  dstNode = static_cast< qan::Node* >( _edge->getDst().lock().get() );
+    qan::NodeItem* dstNodeItem = nullptr;
+    if ( dstNode != nullptr )
+        dstNodeItem = dstNode->getItem();
+
+    qan::EdgeItem* dstEdgeItem = nullptr;
+    qan::Edge*  dstEdge = static_cast< qan::Edge* >( _edge->getHDst().lock().get() );
+    if ( dstNodeItem == nullptr &&
+         dstEdge != nullptr )
+        dstEdgeItem = dstEdge->getItem();
+    QQuickItem* dstItem = ( dstNodeItem != nullptr ? qobject_cast<QQuickItem*>(dstNodeItem) :
+                                                     qobject_cast<QQuickItem*>(dstEdgeItem) );
+
+    QQuickItem* graphContainerItem = graph->getContainerItem();
+
+    if ( graphContainerItem == nullptr ||
+         srcItem == nullptr ||
+         dstItem == nullptr ||
+         ( dstNodeItem == nullptr && dstEdgeItem == nullptr ) )
+        return;
+
+    qreal sourceZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
+    QPointF srcPos = srcItem->mapToItem( graphContainerItem, QPointF{ 0, 0 } );
+    QRectF srcBr{ srcPos, QSizeF{ srcItem->width(), srcItem->height() } };
+
+    // Compute a global bounding boxe according to the actual src and dst
+    QPointF dstPos = dstItem->mapToItem( graphContainerItem, QPointF{ 0, 0 } );
+    QRectF dstBr{ dstPos, QSizeF{ dstItem->width(), dstItem->height() } };
+    QRectF br = srcBr.united( dstBr );
+    setPosition( br.topLeft() );
+    setSize( br.size() );
+
+    // Mapping src shape polygon to this CCS
+    QPolygonF srcBoundingShape{_sourceItem->getBoundingShape().size()};
+    int p = 0;
+    for ( const auto& point: srcItem->getBoundingShape() )
+        srcBoundingShape[p++] = mapFromItem( srcItem, point );
+    QPointF sourceBrCenter = srcBoundingShape.boundingRect().center();
+
+    if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
+        // Update edge z to source or destination maximum x
+        qreal dstZ = srcGroupItem != nullptr ? srcGroupItem->z() + dstNodeItem->z() : dstNodeItem->z();
+        setZ( qMax( sourceZ, dstZ ) );
+        p = 0;
+        QPolygonF dstBoundingShape{dstNodeItem->getBoundingShape().size()};
+        for ( const auto& point: dstNodeItem->getBoundingShape() )
+            dstBoundingShape[p++] = mapFromItem( dstNodeItem, point );
+        QLineF line = getLineIntersection( sourceBrCenter,
+                                           dstBoundingShape.boundingRect().center( ),
+                                           srcBoundingShape, dstBoundingShape );
+        _p1 = line.p1();
+        emit p1Changed();
+        _p2 = line.pointAt( 1 - 2 / line.length() );    // Note 20161001: Hack to take into account arrow border of 2px
+        emit p2Changed();
+        setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
     }
-    qan::Graph* graph = static_cast< qan::Graph* >( getGraph() );
-    qan::Node*  sourceNode = static_cast< qan::Node* >( source.get() );
-    qan::Node*  destinationNode = static_cast< qan::Node* >( destination.get() );
-    qan::Edge*  destinationEdge = static_cast< qan::Edge* >( hDestination.get() );
-    QQuickItem* destinationItem = ( destinationNode != nullptr ? static_cast<QQuickItem*>(destinationNode) :
-                                                                 static_cast<QQuickItem*>(destinationEdge) );
-    if ( graph != nullptr &&
-         sourceNode != nullptr &&
-         destinationItem != nullptr )  {
-        qreal sourceZ = sourceNode->getQanGroup() != nullptr ? sourceNode->getQanGroup()->z() + sourceNode->z() :
-                                                               sourceNode->z();
-        QPointF srcPos = sourceNode->mapToItem( graph->getContainerItem(), QPointF{ 0, 0 } );
-        QRectF srcBr{ srcPos, QSizeF{ sourceNode->width(), sourceNode->height() } };
-
-        // Compute a global bounding boxe according to the actual src and dst
-        QPointF dstPos = destinationItem->mapToItem( graph->getContainerItem(), QPointF{ 0, 0 } );
-        QRectF dstBr{ dstPos, QSizeF{ destinationItem->width(), destinationItem->height() } };
-        QRectF br = srcBr.united( dstBr );
-        setPosition( br.topLeft() );
-        setSize( br.size() );
-
-        // Mapping src shape polygon to this CCS
-        QPolygonF srcBoundingShape{sourceNode->getBoundingShape().size()};
-        int p = 0;
-        for ( const auto& point: sourceNode->getBoundingShape() )
-            srcBoundingShape[p++] = mapFromItem( sourceNode, point );
-        QPointF sourceBrCenter = srcBoundingShape.boundingRect( ).center( );
-
-        if ( destinationNode != nullptr ) {        // Regular Node -> Node edge
-            // Update edge z to source or destination maximum x
-            qreal dstZ = destinationNode->getQanGroup() != nullptr ? destinationNode->getQanGroup()->z() + destinationNode->z() :
-                                                                     destinationNode->z();
-            setZ( qMax( sourceZ, dstZ ) );
-            p = 0;
-            QPolygonF dstBoundingShape{destinationNode->getBoundingShape().size()};
-            for ( const auto& point: destinationNode->getBoundingShape() )
-                dstBoundingShape[p++] = mapFromItem( destinationNode, point );
-            QLineF line = getLineIntersection( sourceBrCenter,
-                                               dstBoundingShape.boundingRect( ).center( ),
-                                               srcBoundingShape, dstBoundingShape );
-            _p1 = line.p1();
+    else if ( dstEdgeItem != nullptr ) {            // Node -> Edge restricted hyper edge
+        setZ( qMax( sourceZ, dstEdgeItem->z() ) );  // Update edge z to source or destination maximum x
+        QLineF destinationEdgeLine{ mapFromItem( dstEdgeItem, dstEdgeItem->getP1() ),
+                    mapFromItem( dstEdgeItem, dstEdgeItem->getP2() ) };
+        if ( destinationEdgeLine.length() > 0.001 ) {
+            QLineF line{ sourceBrCenter, destinationEdgeLine.pointAt( 0.5 ) };
+            _p1 = getLineIntersection( line.p1(), line.p2(), srcBoundingShape );
             emit p1Changed();
             _p2 = line.pointAt( 1 - 2 / line.length() );    // Note 20161001: Hack to take into account arrow border of 2px
             emit p2Changed();
             setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
         }
-        else if ( destinationEdge != nullptr )     // Node -> Edge restricted hyper edge
-        {
-            setZ( qMax( sourceZ, destinationEdge->z() ) ); // Update edge z to source or destination maximum x
-            QLineF destinationEdgeLine{ mapFromItem( destinationEdge, destinationEdge->getP1() ),
-                                        mapFromItem( destinationEdge, destinationEdge->getP2() ) };
-            if ( destinationEdgeLine.length() > 0.001 ) {
-                QLineF line{ sourceBrCenter, destinationEdgeLine.pointAt( 0.5 ) };
-                _p1 = getLineIntersection( line.p1(), line.p2(), srcBoundingShape );
-                emit p1Changed();
-                _p2 = line.pointAt( 1 - 2 / line.length() );    // Note 20161001: Hack to take into account arrow border of 2px
-                emit p2Changed();
-                setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
-            }
-        }
     }
-    */
 }
 
 void    EdgeItem::setLine( QPoint src, QPoint dst )

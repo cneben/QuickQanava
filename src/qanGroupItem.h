@@ -39,6 +39,8 @@
 
 namespace qan { // ::qan
 
+class Group;
+
 /*! \brief Model a graphics group of nodes.
  *
  * \nosubgrouping

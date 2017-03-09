@@ -49,7 +49,7 @@ class NodeItem;
 
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
  *
- * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or ConnectorDropNode are not used nor necessary), consider disabling
+ * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or VisualConnector are not used nor necessary), consider disabling
  * drag'n'drop support by setting the \c acceptsDrops and \c droppable properties to false, it could improve performances significantly.
  *
  * \nosubgrouping
@@ -78,6 +78,7 @@ public:
      */
     bool    operator==( const qan::Node& right ) const;
 
+    // FIXME QAN3
     QPointer<qan::Node> _selfff;
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem FINAL )
@@ -230,19 +231,10 @@ signals:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    /*! \brief Ungroup this node from its current group.
-     *
-     * Method can be called even if the node is not actually part of a group.
-     * \sa qan::Group::ungroup()
-     * \sa qan::Graph::insertNode()
-     */
-    // FIXME QAN3
-    /*Q_INVOKABLE virtual void    ungroup( );
-
-    Q_INVOKABLE qan::Group*     qmlGetGroup( ) { return getQanGroup(); }
+    Q_INVOKABLE qan::Group*     qmlGetGroup() { return getGroup().lock().get(); }
 
     //! Shortcut to gtpo::GenNode<>::getGroup().
-    qan::Group*                 getQanGroup( );*/
+    //qan::Group*                 getGroup();
     //@}
     //-------------------------------------------------------------------------
 };

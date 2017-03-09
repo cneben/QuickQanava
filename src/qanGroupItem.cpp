@@ -29,6 +29,7 @@
 
 // QuickQanava headers
 #include "./qanGroupItem.h"
+#include "./qanGroup.h"
 
 namespace qan { // ::qan
 
@@ -54,10 +55,8 @@ GroupItem::~GroupItem( )
     }*/
 }
 
-
 auto GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
