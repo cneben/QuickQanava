@@ -32,37 +32,24 @@ ApplicationWindow {
     width: 1280; height: 720
     title: "Custom nodes sample"
     Pane { anchors.fill: parent }
-    Qan.GraphView {
-        id: graphView
+    ColumnLayout {
         anchors.fill: parent
-        navigable   : true
-        graph: Qan.Graph {
-            id: graph
-            property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )
-            property var controlNodeDelegate: Qt.createComponent( "qrc:/ControlNode.qml" )
-            property var diamondNodeDelegate: Qt.createComponent( "qrc:/DiamondNode.qml" )
-            Component.onCompleted: {
-                var rectNode = graph.insertNode()
-                rectNode.label = "Rectangle"
-                rectNode.item.x = 45; rectNode.item.y = 140
-
-                var customNode = graph.insertNode(customNodeDelegate)
-                customNode.item.x = 45; customNode.item.y = 280
-
-                var diamondNode = graph.insertNode(diamondNodeDelegate)
-                diamondNode.label = "Diamond"
-                diamondNode.item.x = 280; diamondNode.item.y = 170
-
-                var controlNode = graph.insertNode(controlNodeDelegate)
-                controlNode.item.x = 540; controlNode.item.y = 140
-
-                //var g = graph.insertGroup()
-                //g.label = "Group"
-            }
+        TabBar {
+            id: tabBar
+            Layout.preferredWidth: 450; Layout.fillHeight: false
+            TabButton { text: qsTr("Default Nodes") }
+            TabButton { text: qsTr("Custom Nodes") }
         }
-    }  // Qan.GraphView
+        StackLayout {
+            clip: true
+            Layout.fillWidth: true; Layout.fillHeight: true
+            currentIndex: tabBar.currentIndex
+            Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
+            Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
+        }
+    }
     RowLayout {
-        anchors.top: parent.top;    anchors.left: parent.left
+        anchors.top: parent.top;    anchors.right: parent.right
         CheckBox {
             text: qsTr("Dark")
             checked: ApplicationWindow.contentItem.Material.theme === Material.Dark

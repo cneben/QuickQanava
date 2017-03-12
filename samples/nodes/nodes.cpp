@@ -42,7 +42,7 @@ int	main( int argc, char** argv )
     QQuickStyle::setStyle("Material");
     QuickQanava::initialize();
     QQmlApplicationEngine engine;
-    engine.load(QUrl("qrc:/custom.qml"));
+    engine.load(QUrl("qrc:/nodes.qml"));
     return app.exec();
 }
 //-----------------------------------------------------------------------------

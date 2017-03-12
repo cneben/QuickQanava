@@ -348,24 +348,25 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
         qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent, node.get() ) );
         if ( nodeItem != nullptr ) {
             nodeItem->setNode(node.get());
+            node->setItem(nodeItem);
+
             auto notifyNodeClicked = [this,&node] (qan::NodeItem* nodeItem, QPointF p) {
-                if ( _itemNodeMap.contains(nodeItem) )
-                    emit this->nodeClicked(node.get(), p);
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeClicked(nodeItem->getNode(), p);
             };
             connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
 
             auto notifyNodeRightClicked = [this, &node] (qan::NodeItem* nodeItem, QPointF p) {
-                if ( _itemNodeMap.contains(nodeItem) )
-                    emit this->nodeRightClicked(node.get(), p);
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeRightClicked(nodeItem->getNode(), p);
             };
             connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
 
             auto notifyNodeDoubleClicked = [this, &node] (qan::NodeItem* nodeItem, QPointF p) {
-                if ( _itemNodeMap.contains(nodeItem) )
-                    emit this->nodeDoubleClicked(node.get(), p);
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeDoubleClicked(nodeItem->getNode(), p);
             };
             connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
-            node->setItem(nodeItem);
 
             // FIXME QAN3 à faire uniqument lorsque l'item est selectionné bordel
             //node->setSelectionItem( createRectangle( node ) );
@@ -386,20 +387,20 @@ qan::Node*  Graph::insertNode()
          nodeItem  != nullptr ) {
         nodeItem->setNode(node);
         auto notifyNodeClicked = [this,&node] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( _itemNodeMap.contains(nodeItem) )
-                emit this->nodeClicked(node.get(), p);
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeClicked(nodeItem->getNode(), p);
         };
         connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
 
         auto notifyNodeRightClicked = [this, &node] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( _itemNodeMap.contains(nodeItem) )
-                emit this->nodeRightClicked(node.get(), p);
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeRightClicked(nodeItem->getNode(), p);
         };
         connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
 
         auto notifyNodeDoubleClicked = [this, &node] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( _itemNodeMap.contains(nodeItem) )
-                emit this->nodeDoubleClicked(node.get(), p);
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
         connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
         node->setItem(nodeItem);

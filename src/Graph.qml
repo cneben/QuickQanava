@@ -59,24 +59,26 @@ Qan.AbstractGraph {
     }
     property real maxZ: -1.
     onNodeClicked: {
-        if ( !node ) {
-            connectorDropNode.visible = false
+        if ( node ) {
+            maxZ = Math.max( node.z + 1, maxZ + 1 )
+            node.z = maxZ + 1;
+            if ( node.qmlGetGroup() )
+                node.qmlGetGroup.z = maxZ
+            if ( connector )
+                connector.sourceNode = node;
+            if ( node.resizable ) {
+                // FIXME QAN3
+                /*nodeResizer.parent = node
+                nodeResizer.minimumTargetSize = node.minimumSize
+                nodeResizer.target = node
+                nodeResizer.visible = true
+                */
+            } else
+                nodeResizer.visible = false
+        } else {
+            connector.visible = false
             resizer.visible = false
         }
-        maxZ = Math.max( node.z + 1, maxZ + 1 )
-        node.z = maxZ + 1;
-        if ( node.qmlGetGroup() )
-            node.qmlGetGroup.z = maxZ
-        if ( connectorDropNode )
-            connectorDropNode.setHostNode( node );
-        if ( node.resizable ) {
-            nodeResizer.parent = node
-            nodeResizer.minimumTargetSize = node.minimumSize
-            nodeResizer.target = node
-            nodeResizer.visible = true
-
-        } else
-            nodeResizer.visible = false
     }
     onGroupClicked: {
         maxZ = Math.max(group.z, maxZ)

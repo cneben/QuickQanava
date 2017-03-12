@@ -8,8 +8,8 @@ quickqanava.file    = src/quickqanava-build-lib.pro
 test-navigable.subdir   = samples/navigable
 test-navigable.depends  = quickqanava
 
-test-custom.subdir   = samples/custom
-test-custom.depends  = quickqanava
+test-nodes.subdir   = samples/nodes
+test-nodes.depends  = quickqanava
 
 test-connector.subdir   = samples/connector
 test-connector.depends  = quickqanava
@@ -34,7 +34,7 @@ test-40k.depends    = quickqanava
 
 #SUBDIRS +=  quickqanava
 #SUBDIRS +=  test-40k
-SUBDIRS +=  test-custom
+SUBDIRS +=  test-nodes
 SUBDIRS +=  test-connector
 #SUBDIRS +=  test-navigable
 SUBDIRS +=  test-groups

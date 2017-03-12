@@ -55,8 +55,7 @@ class Connector;
  *
  * \nosubgrouping
 */
-class Graph : public gtpo::GenGraph< qan::GraphConfig >/*,
-              public QQmlParserStatus*/
+class Graph : public gtpo::GenGraph< qan::GraphConfig >
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
@@ -206,9 +205,6 @@ protected:
     QQuickItem*                     createRectangle( QQuickItem* parent );
 private:
     std::unique_ptr<QQmlComponent>  _rectangleComponent{nullptr};
-
-private:
-    QMap< qan::NodeItem*, qan::Node* >  _itemNodeMap;
     //@}
     //-------------------------------------------------------------------------
 
