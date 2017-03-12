@@ -123,22 +123,6 @@ public:
      * changes when clearing the graph, disable all behaviours before calling clear().
      */
     void    clear() noexcept;
-public:
-    /*! \brief Any already inserted node could be added as a control node to prevent it destruction when clear() is called.
-     *
-     * Add a node as a control node when it is used as an utility in the graph and has no meaning in topology, usually
-     * a control node serializable property is set to false.
-     */
-    inline void         addControlNode( SharedNode node ) {
-        Config::template container_adapter< SharedNodes >::insert( node, _controlNodes );
-    }
-    inline void         removeControlNode( SharedNode node ) {
-        Config::template container_adapter< SharedNodes >::insert( node, _controlNodes );
-    }
-public:
-    inline const SharedNodes&  getControlNodes() const noexcept { return _controlNodes; }
-protected:
-    SharedNodes                 _controlNodes;
     //@}
     //-------------------------------------------------------------------------
 

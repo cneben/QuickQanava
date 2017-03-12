@@ -300,10 +300,6 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
 {
     const auto graph = getGraph();
     if ( graph != nullptr ) {
-
-        //if ( graph->getControlNodes().contains( getNode()->shared_from_this() ) )   // Do not try to drag a control node in a group...
-        //    return;
-
         // FIXME QAN3
         /*if ( getQanGroup() != nullptr ) {
             getQanGroup()->removeNode( this );

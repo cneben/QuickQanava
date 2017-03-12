@@ -105,11 +105,10 @@ Qan.Connector {
         } else {
                 if ( sourceNode &&
                      sourceNode.item &&
-                     Drag.target === sourceNode.item ) {       // Do not create a circuit on source node
+                     Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
                     connectionSymbol.state = "NORMAL"
-                } else if ( Drag.target.node /*&&
-                            graph.isNode(Drag.target.node)*/ ) /*|| // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
-                    ( visualConnector.hEdgeCreationEnabled && graph.isEdge(Drag.target) )*/
+                } else if ( Drag.target.node ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
+                            ( hEdgeCreationEnabled && Drag.target.edge ) )
                 {
                     parent.z = Drag.target.z + 1
                     connectionSymbol.state = "HILIGHT"
@@ -160,7 +159,6 @@ Qan.Connector {
         if ( sourceNode.item )
             setHostNode(sourceNode.item)
     }
-    //property var edge: graph && sourceNode && node ? graph.insertEdge(sourceNode, node) : undefined
     MouseArea {
         id: dropDestArea
         anchors.fill: parent
@@ -181,15 +179,15 @@ Qan.Connector {
             var src = visualConnector.sourceNode
             var dst = visualConnector.Drag.target
             var createdEdge = null
-            if ( src && dst ) {
-                if ( graph.isNode( dst ) &&
-                     !graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
-                        createdEdge = graph.insertEdge( src, dst )
+            if ( graph && src && dst ) {
+                if ( dst.node &&
+                     !graph.hasEdge( src, dst.node ) )     // Do not insert parrallel edgse
+                        createdEdge = graph.insertEdge( src, dst.node )
                 else if ( hEdgeCreationEnabled &&
-                          graph.isEdge( dst ) &&
-                          !graph.hasEdge( src, dst ) &&
-                          !graph.isHyperEdge( dst ) ) // Do not create an hyper edge on an hyper edge
-                        createdEdge = graph.insertEdge( src, dst )
+                         dst.edge &&
+                          !graph.hasEdge( src, dst.edge ) /*&&  // FIXME QAN3 add an isHyperEdge method on qan::Edge
+                          !graph.isHyperEdge( dst.edge )*/ ) // Do not create an hyper edge on an hyper edge
+                        createdEdge = graph.insertEdge( src, dst.edge )
             }
             if ( createdEdge ) {    // Notify graph user of the edge creation
                 createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
@@ -199,10 +197,6 @@ Qan.Connector {
             }
         }
         onPressed : {
-            /*z = 50000
-            connectionSymbol.z = 50000
-            if ( edgeItem )
-                edgeItem.z = 50000*/
             mouse.accepted = true
             if ( sourceNode &&
                  sourceNode.item ) {
@@ -216,9 +210,5 @@ Qan.Connector {
             }
         }
     }
-    // QuickQanava Qan.Node interface
-    signal  nodeClicked( var node, var p )
-    signal  nodeDoubleClicked( var node, var p )
-    signal  nodeRightClicked( var node, var p )
 }
 

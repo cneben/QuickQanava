@@ -88,9 +88,6 @@ public:
     Q_INVOKABLE virtual void    qmlClearGraph() noexcept;
     void                        clear() noexcept;
 
-    Q_INVOKABLE void    addControlNode( qan::Node* node );
-    Q_INVOKABLE void    removeControlNode( qan::Node* node );
-
 public:
     /*! \brief Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.
      *
@@ -240,9 +237,6 @@ public:
      */
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
-    //! Test if a given \c item is a node registered in the graph.
-    Q_INVOKABLE bool        isNode( QQuickItem* item ) const;
-
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount( ) { return GTpoGraph::getNodeCount(); }
 
@@ -283,12 +277,6 @@ public:
 
     //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
     Q_INVOKABLE bool        hasEdge( qan::Node* source, qan::Node* destination ) const;
-
-    //! Test if a given \c item is an edge registered in the graph.
-    Q_INVOKABLE bool        isEdge( QQuickItem* item ) const;
-
-    //! Test if a given edge \c edge is an  hyper edge.
-    Q_INVOKABLE bool        isHyperEdge( QQuickItem* item ) const;
 
 public:
     //! Access the list of edges with an abstract item model interface.

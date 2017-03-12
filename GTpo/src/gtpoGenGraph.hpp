@@ -37,7 +37,6 @@ template < class Config >
 GenGraph< Config >::~GenGraph()
 {
     clear();
-    _controlNodes.clear();
 }
 
 template < class Config >
@@ -60,9 +59,6 @@ void    GenGraph< Config >::clear() noexcept
         group->_graph = nullptr;
     _groups.clear();
     BehaviourableBase::clear();
-
-    for ( auto& node: _controlNodes )    // Reinsert control nodes
-        insertNode( node );
 }
 //-----------------------------------------------------------------------------
 

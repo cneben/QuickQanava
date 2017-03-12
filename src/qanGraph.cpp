@@ -86,19 +86,6 @@ void    Graph::clear() noexcept
     _styleManager->clear();
 }
 
-void    Graph::addControlNode( qan::Node* node )
-{
-    if ( node != nullptr )
-        gtpo::GenGraph< qan::GraphConfig >::addControlNode( node->shared_from_this( ) );
-}
-
-void    Graph::removeControlNode( qan::Node* node )
-{
-    if ( node == nullptr )
-        return;
-    gtpo::GenGraph< qan::GraphConfig >::removeControlNode( node->shared_from_this( ) );
-}
-
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
     if ( getContainerItem() == nullptr )
@@ -461,19 +448,6 @@ void    Graph::removeNode( qan::Node* node )
     } catch ( std::bad_weak_ptr ) { return; }
     GTpoGraph::removeNode( weakNode );
 }
-
-bool    Graph::isNode( QQuickItem* item ) const
-{
-    if ( item == nullptr ||
-         !item->inherits( "qan::Node" ) ) // "Fast" exit if item is not a qan::Node...
-        return false;
-    /*if ( !item->inherits( "qan::Node" ) )
-        return false;   // "Fast" exit if item is not a qan::Node...*/
-    qan::Node* node = qobject_cast< qan::Node* >( item );
-    if ( node == nullptr )
-        return false;
-    return GTpoGraph::contains( node->shared_from_this() );
-}
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
@@ -616,28 +590,6 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
         sharedDestination = WeakNode{ destination->shared_from_this() };
     } catch ( std::bad_weak_ptr e ) { return false; }
     return GTpoGraph::hasEdge( sharedSource, sharedDestination );
-}
-
-bool    Graph::isEdge( QQuickItem* item ) const
-{
-    if ( !item->inherits( "qan::Edge" ) )
-        return false;   // "Fast" exit if item is not a qan::Edge...
-    qan::Edge* edge = qobject_cast< qan::Edge* >( item );
-    if ( edge == nullptr )
-        return false;
-    return GTpoGraph::contains( edge->shared_from_this() );
-}
-
-bool    Graph::isHyperEdge( QQuickItem* item ) const
-{
-    if ( !isEdge(item)) // "Fast" exit if item is not a qan::Edge...
-        return false;
-    qan::Edge* edge = qobject_cast< qan::Edge* >( item );
-    if ( edge == nullptr )
-        return false;
-    return ( edge == nullptr ||
-             ( !edge->getHDst().expired() &&
-               edge->getHDst().lock() != nullptr ) );
 }
 //-----------------------------------------------------------------------------
 
