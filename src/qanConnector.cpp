@@ -88,8 +88,11 @@ auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> vo
                         _edgeItem->setDestinationItem(this);
                     }
                     emit edgeItemChanged();
+                } else {
+                    qWarning() << "qan::Connector::setEdgeComponent(): Error while creating edge:";
+                    qWarning() << "\t" << _edgeComponent->errors();
                 }
-            } // FIXME: error msg
+            }
         }
         emit edgeComponentChanged();
     }

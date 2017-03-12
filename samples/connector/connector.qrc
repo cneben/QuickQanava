@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>connector.qml</file>
+        <file>default.qml</file>
+        <file>custom.qml</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

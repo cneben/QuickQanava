@@ -31,39 +31,26 @@ ApplicationWindow {
     visible: true
     width: 1280; height: 720
     title: "Edge/Visual connector sample"
+
     Pane { anchors.fill: parent }
-    Qan.GraphView {
-        id: graphView
+    ColumnLayout {
         anchors.fill: parent
-        navigable   : true
-        graph: Qan.Graph {
-            connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
-            id: graph
-            Component.onCompleted: {
-                var d1 = graph.insertNode()
-                d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
-                var d2 = graph.insertNode()
-                d2.label = "D2"; d2.item.x = 250; d2.item.y = 150
-
-                var s1 = graph.insertNode()
-                s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
-
-                graph.insertEdge(s1, d1)
-                graph.insertEdge(s1, d2)
-
-                var d3 = graph.insertNode()
-                d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
-                graph.setConnectorSource(s1)    // SAMPLE: ... and eventually configured manually on a specific node until user select another one
-            }
+        TabBar {
+            id: tabBar
+            Layout.preferredWidth: 450; Layout.fillHeight: false
+            TabButton { text: qsTr("Default Connector") }
+            TabButton { text: qsTr("Custom Connector") }
         }
-    }  // Qan.GraphView
+        StackLayout {
+            clip: true
+            Layout.fillWidth: true; Layout.fillHeight: true
+            currentIndex: tabBar.currentIndex
+            Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
+            Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
+        }
+    }
     RowLayout {
         anchors.top: parent.top;    anchors.right: parent.right
-        CheckBox {
-            text: qsTr("Enabled Visual Connector")
-            checked: graph.connectorEnabled
-            onClicked: graph.connectorEnabled = checked
-        }
         CheckBox {
             text: qsTr("Dark")
             checked: ApplicationWindow.contentItem.Material.theme === Material.Dark

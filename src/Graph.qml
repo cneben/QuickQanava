@@ -39,19 +39,33 @@ import "qrc:/QuickQanava"   as Qan
 Qan.AbstractGraph {
     id: graph
 
-    property alias      resizeHandlerColor: nodeResizer.handlerColor
+    property alias  resizeHandlerColor: nodeResizer.handlerColor
 
-    //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
-    // FIXME QAN3
-    property string connectorEdgeClassName: "qan::Edge"
+    //! Color of the visual connector edge line.
     property color  connectorEdgeColor: Qt.rgba(0,0,0,1)
-
-    // FIXME QAN3
-    property color  connectorDropNodeColor: "darkblue"
-
+    //! Color of the visual connector draggable item.
+    property color  connectorColor: "darkblue"
     //! Turn visual creation of hyper edges on or off (default to off).
-    // FIXME QAN3
-    property bool       visualHEdgeCreationEnabled: false
+    property bool   connectorHEdgeEnabled: false
+    onConnectorChanged: {
+        if ( connector ) {
+            connectorEdgeColor = connector.edgeColor
+            connectorColor = connector.connectorColor
+            connectorHEdgeEnabled = connector.hEdgeEnabled
+        }
+    }
+    onConnectorEdgeColorChanged: {
+        if ( connector )
+            connector.edgeColor = connectorEdgeColor
+    }
+    onConnectorColorChanged: {
+        if ( connector )
+            connector.connectorColor = connectorColor
+    }
+    onConnectorHEdgeEnabledChanged: {
+        if ( connector )
+            connector.hEdgeEnabled = connectorHEdgeEnabled
+    }
 
     Qan.BottomRightResizer {
         id: nodeResizer

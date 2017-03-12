@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QApplication>
 #include <QGuiApplication>
 #include <QtQml>
 #include <QQuickStyle>
@@ -38,7 +39,8 @@ using namespace qan;
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
     QuickQanava::initialize();
     QQmlApplicationEngine engine;

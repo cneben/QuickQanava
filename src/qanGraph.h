@@ -130,7 +130,7 @@ public:
     Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
 signals:
     //! Emitted when an edge has been inserted in graph by a visual connector.
-    void                edgeInsertedByConnector( qan::Edge* edge );
+    void                connectorEdgeInserted( qan::Edge* edge );
 public:
     //! Enable or disable visual connector of nodes in the graph (default to false).
     Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
@@ -143,10 +143,12 @@ private:
 
 public:
     //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).
-    Q_PROPERTY( qan::Connector* connector READ getConnector CONSTANT FINAL )
+    Q_PROPERTY( qan::Connector* connector READ getConnector NOTIFY connectorChanged FINAL )
     qan::Connector*             getConnector() noexcept;
 private:
     QScopedPointer<qan::Connector> _connector{};
+signals:
+    void                        connectorChanged();
     //@}
     //-------------------------------------------------------------------------
 

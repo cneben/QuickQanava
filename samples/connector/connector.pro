@@ -8,7 +8,9 @@ include(../../src/quickqanava.pri)
 
 SOURCES     +=  connector.cpp
 
-OTHER_FILES +=  connector.qml
+OTHER_FILES +=  connector.qml   \
+                default.qml     \
+                custom.qml
 
 RESOURCES   +=  connector.qrc
 

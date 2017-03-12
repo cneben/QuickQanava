@@ -68,6 +68,7 @@ void    Graph::componentComplete()
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
         if ( connectorComponent ) {
             _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), nullptr)) );
+            emit connectorChanged();
             if (_connector)
                 _connector->setGraph(this);
             _connector->setEnabled(getConnectorEnabled());

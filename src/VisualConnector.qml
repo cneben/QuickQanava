@@ -42,10 +42,8 @@ Qan.Connector {
     x: parent.width + leftMargin;  y: 0
 
     visible: false
-    clip: false
-    label: "Connector Drop Node"
     selectable: false
-    antialiasing: true
+    clip: false; antialiasing: true
 
     // Public
     //! Edge color (default to black).
@@ -64,13 +62,18 @@ Qan.Connector {
     property real   connectorHilightLineWidth: 4
 
     //! Enable or disable visual creation of hyper edges.
-    property bool   hEdgeCreationEnabled: false
+    property bool   hEdgeEnabled: false
 
     property real   leftMargin: 7
 
     edgeComponent: Component{ Qan.Edge{} }
 
-    signal edgeInsertedByConnector()
+    signal connectorEdgeInserted()
+
+    onEdgeItemChanged: {
+        if (edgeItem)
+            edgeItem.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+    }
 
     // Private properties
     /*! \brief Set the connector target (is the node that will display the control and that will be used as 'source' for edge creation).
@@ -108,7 +111,7 @@ Qan.Connector {
                      Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
                     connectionSymbol.state = "NORMAL"
                 } else if ( Drag.target.node ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
-                            ( hEdgeCreationEnabled && Drag.target.edge ) )
+                            ( hEdgeEnabled && Drag.target.edge ) )
                 {
                     parent.z = Drag.target.z + 1
                     connectionSymbol.state = "HILIGHT"
@@ -183,7 +186,7 @@ Qan.Connector {
                 if ( dst.node &&
                      !graph.hasEdge( src, dst.node ) )     // Do not insert parrallel edgse
                         createdEdge = graph.insertEdge( src, dst.node )
-                else if ( hEdgeCreationEnabled &&
+                else if ( hEdgeEnabled &&
                          dst.edge &&
                           !graph.hasEdge( src, dst.edge ) /*&&  // FIXME QAN3 add an isHyperEdge method on qan::Edge
                           !graph.isHyperEdge( dst.edge )*/ ) // Do not create an hyper edge on an hyper edge
@@ -191,9 +194,9 @@ Qan.Connector {
             }
             if ( createdEdge ) {    // Notify graph user of the edge creation
                 createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
-                edgeInsertedByConnector( createdEdge );
+                connectorEdgeInserted( createdEdge );
                 if ( visualConnector.graph )
-                    visualConnector.graph.edgeInsertedByConnector( createdEdge )
+                    visualConnector.graph.connectorEdgeInserted( createdEdge )
             }
         }
         onPressed : {
