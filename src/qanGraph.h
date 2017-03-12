@@ -101,7 +101,7 @@ public:
     /*! \brief Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
      *
      */
-    Q_INVOKABLE qan::Group*  groupAt( const QPointF& p, const QSizeF& s ) const;
+    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s ) const;
 
 public:
     /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
@@ -133,14 +133,14 @@ signals:
     //! Emitted when an edge has been inserted in graph by a visual connector.
     void                edgeInsertedByConnector( qan::Edge* edge );
 public:
-    //! Enable or disable visual connector of nodes in the graph (default to true).
+    //! Enable or disable visual connector of nodes in the graph (default to false).
     Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
     inline bool     getConnectorEnabled() const noexcept { return _connectorEnabled; }
     void            setConnectorEnabled( bool connectorEnabled ) noexcept;
 signals:
     void            connectorEnabledChanged();
 private:
-    bool            _connectorEnabled{true};
+    bool            _connectorEnabled{false};
 
 public:
     //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).

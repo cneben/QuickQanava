@@ -37,7 +37,7 @@ ApplicationWindow {
         anchors.fill: parent
         navigable   : true
         graph: Qan.Graph {
-            connectorEnabled: true
+            connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
             id: graph
             Component.onCompleted: {
                 var d1 = graph.insertNode()
@@ -53,12 +53,17 @@ ApplicationWindow {
 
                 var d3 = graph.insertNode()
                 d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
-                graph.setConnectorSource(s1)
+                graph.setConnectorSource(s1)    // SAMPLE: ... and eventually configured manually on a specific node until user select another one
             }
         }
     }  // Qan.GraphView
     RowLayout {
         anchors.top: parent.top;    anchors.right: parent.right
+        CheckBox {
+            text: qsTr("Enabled Visual Connector")
+            checked: graph.connectorEnabled
+            onClicked: graph.connectorEnabled = checked
+        }
         CheckBox {
             text: qsTr("Dark")
             checked: ApplicationWindow.contentItem.Material.theme === Material.Dark

@@ -47,13 +47,11 @@ Qan.AbstractGraph {
     property color  connectorEdgeColor: Qt.rgba(0,0,0,1)
 
     // FIXME QAN3
-    property color      connectorDropNodeColor: "darkblue"
+    property color  connectorDropNodeColor: "darkblue"
 
     //! Turn visual creation of hyper edges on or off (default to off).
     // FIXME QAN3
     property bool       visualHEdgeCreationEnabled: false
-    // FIXME QAN3
-    signal  edgeInsertedVisually( var edge );
 
     Qan.BottomRightResizer {
         id: nodeResizer

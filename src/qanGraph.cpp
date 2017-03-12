@@ -70,6 +70,8 @@ void    Graph::componentComplete()
             _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), nullptr)) );
             if (_connector)
                 _connector->setGraph(this);
+            _connector->setEnabled(getConnectorEnabled());
+            _connector->setVisible(getConnectorEnabled());
         }
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
 }
@@ -157,43 +159,20 @@ void    Graph::setContainerItem( QQuickItem* containerItem )
 void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
 {
     if ( _connector ) {
-            if ( sourceNode != nullptr ) {
-                _connector->setSourceNode(sourceNode);
-                _connector->setVisible(true);
-            } else
-                _connector->setVisible(false);
-        }
+        if ( sourceNode != nullptr )
+            _connector->setSourceNode(sourceNode);
+        _connector->setVisible(getConnectorEnabled());
+        _connector->setEnabled(getConnectorEnabled());
+    }
 }
 
 void    Graph::setConnectorEnabled( bool connectorEnabled ) noexcept
 {
-    /*if ( !enableConnector &&
-         connectorDropNode &&
-         graph.hasNode( connectorDropNode ) )
-        graph.removeNode( connectorDropNode )
-
-    if ( enableConnector &&
-         !connectorDropNode &&
-         connectorComponent ) {
-        connectorDropNode = graph.insertNode( graph.connectorComponent )
-        if ( connectorDropNode ) {
-            connectorDropNode.edgeClassName = connectorEdgeClassName
-            connectorDropNode.visible = false
-            //connectorDropNode.graph = graph
-            connectorDropNode.edgeColor = Qt.binding( function() { return graph.connectorEdgeColor; } )
-            connectorDropNode.connectorColor = Qt.binding( function() { return graph.connectorDropNodeColor; } )
-            connectorDropNode.hEdgeCreationEnabled = Qt.binding( function() { return graph.visualHEdgeCreationEnabled; } )
-        }
-    }*/
-
-
     if ( connectorEnabled != _connectorEnabled ) {
         _connectorEnabled = connectorEnabled;
-
-        if ( connectorEnabled ) {   // Eventually create a connector node
-
-        } else {                    // Remove the connector node
-
+        if ( _connector ) {
+            _connector->setVisible(connectorEnabled);
+            _connector->setEnabled(connectorEnabled);
         }
         emit connectorEnabledChanged();
     }
