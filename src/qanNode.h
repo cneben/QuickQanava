@@ -40,7 +40,6 @@
 #include "./qanBehaviour.h"
 #include "./qanNodeItem.h"
 
-//! Main QuickQanava namespace
 namespace qan { // ::qan
 
 class Graph;
@@ -67,19 +66,22 @@ public:
      */
     virtual ~Node();
     Node( const Node& ) = delete;
+
 public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
     //! Shortcut to gtpo::GenNode<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
+
 public:
     /*!
      * \note only label is taken into account for equality comparison.
      */
     bool    operator==( const qan::Node& right ) const;
 
-    // FIXME QAN3
-    QPointer<qan::Node> _selfff;
+    static  QObject*    createDelegate();
+
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem FINAL )
     inline qan::NodeItem*   getItem() noexcept { return _item.data(); }

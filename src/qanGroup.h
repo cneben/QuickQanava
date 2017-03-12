@@ -40,6 +40,7 @@
 
 namespace qan { // ::qan
 
+class Graph;
 class GroupItem;
 
 /*! \brief Model a graphics group of nodes.
@@ -61,6 +62,15 @@ public:
     Group( const Group& ) = delete;
 
 public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    //! Shortcut to gtpo::GenGroup<>::getGraph().
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
+
+public:
+    friend class qan::GroupItem;
+
     Q_PROPERTY( qan::GroupItem* item READ getItem FINAL )
     inline qan::GroupItem*  getItem() noexcept { return _item.data(); }
     void                    setItem(qan::GroupItem* item) noexcept;

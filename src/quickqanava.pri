@@ -50,6 +50,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanEdgeItem.h             \
             $$PWD/qanNode.h                 \
             $$PWD/qanNodeItem.h             \
+            $$PWD/qanConnector.h            \
             $$PWD/qanBehaviour.h            \
             $$PWD/qanGroup.h                \
             $$PWD/qanGroupItem.h            \
@@ -67,6 +68,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanEdgeItem.cpp           \
             $$PWD/qanNode.cpp               \
             $$PWD/qanNodeItem.cpp           \
+            $$PWD/qanConnector.cpp          \
             $$PWD/qanBehaviour.cpp          \
             $$PWD/qanGraph.cpp              \
             $$PWD/qanGroup.cpp              \

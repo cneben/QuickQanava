@@ -64,8 +64,9 @@ public:
     /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
      *
      */
-    virtual ~NodeItem( );
+    virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
+
 public:
     Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
     auto        getNode() noexcept -> qan::Node*;
@@ -74,11 +75,13 @@ public:
 private:
     QPointer<qan::Node> _node{nullptr};
 
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph )
 protected:
     //! Secure shortcut to getNode().getGraph().
-    auto getGraph() const noexcept -> const qan::Graph*;
+    auto    getGraph() const noexcept -> const qan::Graph*;
     //! \copydoc getGraph()
-    auto getGraph() noexcept -> qan::Graph*;
+    auto    getGraph() noexcept -> qan::Graph*;
 
 public:
     //! Node minimum size (it can't be resized below if resizable is true).

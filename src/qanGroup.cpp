@@ -53,6 +53,14 @@ Group::~Group()
     }*/
 }
 
+qan::Graph*         Group::getGraph() noexcept {
+    return qobject_cast< qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+}
+
+const qan::Graph*   Group::getGraph() const noexcept {
+    return qobject_cast< const qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+}
+
 void    Group::setItem(qan::GroupItem* item) noexcept
 {
     if ( item != nullptr ) {

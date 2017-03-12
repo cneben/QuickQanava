@@ -39,6 +39,7 @@
 
 namespace qan { // ::qan
 
+class Graph;
 class Edge;
 class NodeItem;
 
@@ -54,6 +55,7 @@ class EdgeItem : public QQuickItem
 public:
     //! Edge constructor with source, destination and weight initialization.
     explicit EdgeItem(QQuickItem* parent = nullptr);
+    virtual ~EdgeItem();
     EdgeItem( const EdgeItem& ) = delete;
 
 public:
@@ -63,15 +65,25 @@ public:
     inline auto setEdge(qan::Edge* edge) noexcept { _edge = edge; }
 private:
     QPointer<qan::Edge>    _edge;
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged )
+    //! Secure shortcut to getEdge().getGraph().
+    auto    getGraph() const noexcept -> const qan::Graph*;
+    //! \copydoc getGraph()
+    auto    getGraph() noexcept -> qan::Graph*;
+    auto    setGraph(qan::Graph*) noexcept -> void;
+signals:
+    void    graphChanged();
+private:
+    QPointer<qan::Graph> _graph;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem NOTIFY sourceItemChanged FINAL )
-    //qan::NodeItem*  getSourceItem( ) { return static_cast< qan::NodeItem* >( !getSrc().expired() ? getSrc().lock().get() : nullptr ); }
-    // FIXME QAN3
+    Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }
     void                    setSourceItem( qan::NodeItem* source );
 private:
@@ -80,8 +92,7 @@ signals:
     void                    sourceItemChanged( );
 
 public:
-    Q_PROPERTY( qan::NodeItem* destinationItem READ getDestinationItem() NOTIFY destinationItemChanged FINAL )
-    //qan::NodeItem*  getDestinationItem( ) { return static_cast< qan::NodeItem* >( !getDst().expired() ? getDst().lock().get() : nullptr ); }
+    Q_PROPERTY( qan::NodeItem* destinationItem READ getDestinationItem WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
     qan::NodeItem*          getDestinationItem( ) { return _destinationItem.data(); }
     void                    setDestinationItem( qan::NodeItem* destination );
 private:
@@ -100,7 +111,7 @@ signals:
 
 protected:
     //! Configure either a node or an edge (for hyper edges) item.
-    void        configureDestinationItem( QQuickItem* item );
+    void            configureDestinationItem( QQuickItem* item );
     //@}
     //-------------------------------------------------------------------------
 

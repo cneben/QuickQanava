@@ -47,11 +47,11 @@ SGPolyLineAAShader::SGPolyLineAAShader( ) :
     if ( _gsh == nullptr ) {
         _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
         if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglPolyLineAAGsh.glsl" ) )
-            qDebug( ) << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader compilation fails: " << _gsh->log( );
+            qWarning() << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader compilation fails: " << _gsh->log( );
     }
     if ( _gsh != nullptr &&
          !program()->addShader( _gsh ) )
-        qDebug( ) << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader could not be added to OGL program.";
+        qWarning() << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader could not be added to OGL program.";
 
     setShaderSourceFile( QOpenGLShader::Fragment, ":/QuickGeoGL/qglPolyLineAAFsh.glsl");
 }
@@ -61,7 +61,7 @@ void	SGPolyLineAAShader::updateState(const RenderState & state, QSGMaterial* new
     QSGMaterialShader::updateState( state, newMaterial, oldMaterial );
     if ( program() == nullptr ||
          !program()->isLinked( ) ) {
-        qDebug() << "qgl::SGPolyLineAAShader::updateState(): Error: Material shader is not linked.";
+        qWarning() << "qgl::SGPolyLineAAShader::updateState(): Error: Material shader is not linked.";
         return;
     }
     if ( state.isMatrixDirty( ) ) {
@@ -83,7 +83,7 @@ void SGPolyLineAAShader::initialize( )
     QSGMaterialShader::initialize();
     if ( program() == nullptr ||
          !program()->isLinked( ) ) {
-        qDebug() << "qgl::SGLineAAShader::initialize(): Error: Material shader is not linked.";
+        qWarning() << "qgl::SGLineAAShader::initialize(): Error: Material shader is not linked.";
         return;
     }
     _combMatrixId = program( )->uniformLocation( "combmatrix" );

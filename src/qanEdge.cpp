@@ -30,11 +30,11 @@
 #include <QPainter>
 
 // QuickQanava headers
+#include "./qanGraph.h"
+#include "./qanNode.h"
+#include "./qanGroup.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
-#include "./qanGroup.h"
-#include "./qanNode.h"
-#include "./qanGraph.h"
 
 namespace qan { // ::qan
 
@@ -44,6 +44,14 @@ Edge::Edge() :
     _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
 {
     setStyle( _defaultStyle.data() );
+}
+
+qan::Graph* Edge::getGraph() noexcept {
+    return qobject_cast< qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
+}
+
+const qan::Graph* Edge::getGraph() const noexcept {
+    return qobject_cast< const qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
 }
 
 void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept

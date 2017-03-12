@@ -5,19 +5,20 @@
 
   - **GTpo** (Configurable topology library):
      - [X] Redesign and optimize GTpo generic containers accessors (remove properties management from GTpo, it has nothing to do with topology).
-     - [ ] Redesign GTPO to support group -> node and group -> group topology with full restricted hyperlink support.
+     - [X] Redesign GTPO to support group -> node and group -> group topology with full restricted hyperlink support.
      - [X] Increase GTpo test coverage to 100%.
-	 - [ ] Remove all virtual overhead with current getClassName() / getObjectName() code.
+	 - [X] Remove all virtual overhead with current getClassName() / getObjectName() code.
 	 - [ ] Redesign the serialization framework from scratch.
 	 - [ ] Add native configurable ID mapping.
   - **QuickContainers** (QT/QML observable adapter for STL or Qt containers):	 
     - [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
+  - [80%] Redesign qan::Graph interface for creating content.
   - [50%] Add _efficient_ support for non visual nodes and edges, non visual edges should have a very small footprint (ie non QQuickItem...).
   - [ ] Update samples for full QQC2 controls support.
+  - [80%] Redesign visual connection of nodes (add support for custom visual component, invisible edge creation, etc.).
   - [ ] Add a 100% C++ interface (currently QML delegate components definition still are necessary).
      - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
   - [ ] Add full support for groups inside group (ie subgraphs).
-  - [ ] Redesign visual edge connector interface.
   - [ ] Add full support for Bezier curve edge.
      - [ ] Use Qt 5.9 PathItem for lines, curves and poly rendering instead of QuickGeoGL (QuickGeoGl is probaly faster for simple AA lines with its vertex shader, but QuickGeoGL is too complex to maintain).
   - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.

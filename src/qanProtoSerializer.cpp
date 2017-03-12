@@ -83,11 +83,11 @@ ProtoSerializer::ProtoSerializer( QObject* parent )  :
 void    ProtoSerializer::saveGraphTo( qan::Graph* graph, QString fileName, qan::ProgressNotifier* progress )
 {
     if ( fileName.isEmpty() ) {
-        qDebug() << "qan::ProtoSerializer::saveGraphTo(): Error: file name is invalid.";
+        qWarning() << "qan::ProtoSerializer::saveGraphTo(): Error: file name is invalid.";
         return;
     }
     if ( graph == nullptr ) {
-        qDebug() << "qan::ProtoSerializer::saveGraphTo(" << fileName << "): Error: graph is nullptr.";
+        qWarning() << "qan::ProtoSerializer::saveGraphTo(" << fileName << "): Error: graph is nullptr.";
         return;
     }
     QUrl url( fileName );

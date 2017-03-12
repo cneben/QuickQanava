@@ -39,6 +39,7 @@
 
 namespace qan { // ::qan
 
+class Graph;
 class EdgeItem;
 
 //! Weighted directed edge linking two nodes in a graph.
@@ -55,6 +56,13 @@ public:
     explicit Edge();
     Edge( const Edge& ) = delete;
     virtual ~Edge() { /* Nil */ }
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    //! Shortcut to gtpo::GenEdge<>::getGraph().
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
 
 public:
     friend class qan::EdgeItem;

@@ -43,4 +43,9 @@ Qan.EdgeItem {
         p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
         lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
     }
+    /*Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        border.color: "violet"; border.width: 1
+    }*/
 }

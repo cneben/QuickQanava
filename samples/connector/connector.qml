@@ -37,23 +37,28 @@ ApplicationWindow {
         anchors.fill: parent
         navigable   : true
         graph: Qan.Graph {
-            enableConnector: true
+            connectorEnabled: true
             id: graph
             Component.onCompleted: {
-                var s1 = graph.insertNode()
-                s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
                 var d1 = graph.insertNode()
                 d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
                 var d2 = graph.insertNode()
                 d2.label = "D2"; d2.item.x = 250; d2.item.y = 150
 
+                var s1 = graph.insertNode()
+                s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
+
                 graph.insertEdge(s1, d1)
                 graph.insertEdge(s1, d2)
+
+                var d3 = graph.insertNode()
+                d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
+                graph.setConnectorSource(s1)
             }
         }
     }  // Qan.GraphView
     RowLayout {
-        anchors.top: parent.top;    anchors.left: parent.left
+        anchors.top: parent.top;    anchors.right: parent.right
         CheckBox {
             text: qsTr("Dark")
             checked: ApplicationWindow.contentItem.Material.theme === Material.Dark

@@ -53,15 +53,11 @@ NodeItem::NodeItem(QQuickItem* parent) :
 
 NodeItem::~NodeItem() { /* Nil */ }
 
-auto NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
-auto NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
+auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
+auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
 
-auto NodeItem::getGraph() const noexcept -> const qan::Graph* { return _node &&
-                                                                       _node->getGraph() != nullptr ? _node->getGraph() :
-                                                                                                      nullptr; }
-auto NodeItem::getGraph() noexcept -> qan::Graph* { return _node &&
-                                                           _node->getGraph() != nullptr ? _node->getGraph() :
-                                                                                          nullptr; }
+auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _node ? _node->getGraph() : nullptr; }
+auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _node? _node->getGraph() : nullptr; }
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
@@ -76,6 +72,7 @@ void    NodeItem::onWidthChanged()
         }
         _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
     }
+    generateDefaultBoundingShape();
 }
 
 void    NodeItem::onHeightChanged()
@@ -89,6 +86,7 @@ void    NodeItem::onHeightChanged()
         }
         _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
     }
+    generateDefaultBoundingShape();
 }
 
 void    NodeItem::setSelectable( bool selectable )
@@ -116,7 +114,7 @@ void    NodeItem::setSelected( bool selected )
 void NodeItem::setSelectionItem( QQuickItem* selectionItem )
 {
     if ( selectionItem == nullptr ) {
-        qDebug() << "qan::NodeItem::setSelectionItem(): Error: Can't set a nullptr selection hilight item.";
+        qWarning() << "qan::NodeItem::setSelectionItem(): Error: Can't set a nullptr selection hilight item.";
         return;
     }
     _selectionItem.reset( selectionItem );
@@ -198,11 +196,13 @@ void    NodeItem::dropEvent( QDropEvent* event )
     if ( getAcceptDrops() &&
          event->source() != nullptr ) { // Get the source item from the quick drag attached object received
         QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-        QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
-        if ( draggedStyle.isValid() ) {
-            qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
-            if ( draggedNodeStyle != nullptr )
-                setStyle( draggedNodeStyle );
+        if ( sourceItem != nullptr ) {
+            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
+            if ( draggedStyle.isValid() ) {
+                qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
+                if ( draggedNodeStyle != nullptr )
+                    setStyle( draggedNodeStyle );
+            }
         }
     }
     QQuickItem::dropEvent( event );
@@ -300,8 +300,9 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
 {
     const auto graph = getGraph();
     if ( graph != nullptr ) {
-        if ( graph->getControlNodes().contains( getNode()->shared_from_this() ) )   // Do not try to drag a control node in a group...
-            return;
+
+        //if ( graph->getControlNodes().contains( getNode()->shared_from_this() ) )   // Do not try to drag a control node in a group...
+        //    return;
 
         // FIXME QAN3
         /*if ( getQanGroup() != nullptr ) {
@@ -348,15 +349,15 @@ auto    NodeItem::endDragMove( bool dragSelection ) -> void
         qan::Group* group = getGraph()->groupAt( pos, { width(), height() } );
         if ( group != nullptr )
             group->insertNode( this );
-    }
+    }*/
 
-    setDragActive( false );
+    setDragActive(false);
     _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends
     _dragInitialPos = { 0., 0. };
     _lastProposedGroup = nullptr;
 
     // If there is a selection, end drag for the whole selection
-    if ( dragSelection ) {
+    /*if ( dragSelection ) {
         qan::Graph* graph = getGraph();
         if ( graph != nullptr &&
              getGraph()->hasMultipleSelection() ) {

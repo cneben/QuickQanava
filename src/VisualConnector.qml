@@ -36,18 +36,14 @@ import QuickQanava 2.0 as Qan
  * \note VisualConnector visible property is automatically set to false until it has been associed to an existing "host" node
  *       with setHostNode().
  */
-Qan.NodeItem {
+Qan.Connector {
     id: visualConnector
-
-    width: radius * 2
-    height: radius * 2
-    x: parent.width + xMargin
-    y: 0
+    width: radius * 2;  height: radius * 2
+    x: parent.width + leftMargin;  y: 0
 
     visible: false
     clip: false
     label: "Connector Drop Node"
-    //serializable: false // Don't serialize "helper control node"
     selectable: false
     antialiasing: true
 
@@ -70,52 +66,60 @@ Qan.NodeItem {
     //! Enable or disable visual creation of hyper edges.
     property bool   hEdgeCreationEnabled: false
 
-    //! Qan.Graph where this connector drop node is registered
-    property var    graph : undefined
+    property real   leftMargin: 7
 
-    property real   xMargin: 7
+    edgeComponent: Component{ Qan.Edge{} }
 
+    signal edgeInsertedByConnector()
+
+    // Private properties
     /*! \brief Set the connector target (is the node that will display the control and that will be used as 'source' for edge creation).
      *
      * \note this item will automatically be reparented to host node, and displayed in host node top right.
      */
     function setHostNode( hostNode ) {
-        visible = ( hostNode !== null && hostNode !== undefined )
+        // FIXME QAN3
+        //visible = ( hostNode !== null &&
+        //           hostNode !== undefined )
         parent = hostNode
-        sourceNode = hostNode
         if ( hostNode )   // Force drop node position updates
-            x = Qt.binding( function(){ return hostNode.width + xMargin } )
+            x = Qt.binding( function(){ return hostNode.width + leftMargin } )
         else x = 0
         connectionSymbol.state = "NORMAL"
     }
 
-    // Private properties
-    acceptDrops: false  // Base qan::Node should not accept drop, or control will "drop on itself" !
-
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
-
     Drag.onTargetChanged: { // Hilight a target node
-        if ( !Drag.target )
+        console.debug( "Drag.target=" + Drag.target )
+        if ( Drag.target )
+            console.debug( "Drag.target.node=" + Drag.target.node )
+        if ( Drag.target )
+            parent.z = Drag.target.z + 1
+        //if ( graph &&
+        //     Drag.target &&
+        //     Drag.target.node )
+        //    console.debug( "Target is a node=" + graph.isNode(Drag.target.node) )
+        if ( !Drag.target ) {
             connectionSymbol.state = "NORMAL"
-        else if ( Drag.target &&
-                   Drag.target === sourceNode ) {       // Do not create a circuit on source node
-            connectionSymbol.state = "NORMAL"
-            if ( dummyEdge )
-                dummyEdge.visible = false
+        } else {
+                if ( sourceNode &&
+                     sourceNode.item &&
+                     Drag.target === sourceNode.item ) {       // Do not create a circuit on source node
+                    connectionSymbol.state = "NORMAL"
+                } else if ( Drag.target.node /*&&
+                            graph.isNode(Drag.target.node)*/ ) /*|| // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
+                    ( visualConnector.hEdgeCreationEnabled && graph.isEdge(Drag.target) )*/
+                {
+                    parent.z = Drag.target.z + 1
+                    connectionSymbol.state = "HILIGHT"
+                    if ( edgeItem ) {
+                        edgeItem.visible = true
+                        edgeItem.z = parent.z  // Edge should be always on top
+                    }
+                }
+            }
         }
-        else if ( Drag.target &&                        // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
-                  ( graph.isNode(Drag.target) ||
-                    ( visualConnector.hEdgeCreationEnabled && graph.isEdge(Drag.target) ) ) )
-                 {
-                     parent.z = Drag.target.z + 1
-                     connectionSymbol.state = "HILIGHT"
-                     if ( dummyEdge ) {
-                         dummyEdge.visible = true
-                         dummyEdge.z = parent.z  // Edge should be always on top
-                     }
-                 }
-    }
 
     Rectangle {
         id: connectionSymbol
@@ -123,9 +127,8 @@ Qan.NodeItem {
         z: 15
         state: "NORMAL"
         color: Qt.rgba(0, 0, 0, 0)
-        radius : width / 2.
-        smooth: true
-        antialiasing: true
+        radius: width / 2.
+        smooth: true;   antialiasing: true
         property real   borderWidth: visualConnector.connectorLineWidth
         border.color: visualConnector.connectorColor
         border.width: borderWidth
@@ -153,65 +156,64 @@ Qan.NodeItem {
                 from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: connectionSymbol; properties: "borderWidth, scale"; duration: 150 }
             } ]
     }
-    property var sourceNode
     onSourceNodeChanged: {
-        if ( visible && visualConnector.parent !== null ) {
-            visualConnector.x = visualConnector.parent.width + xMargin
-            visualConnector.y = 0
-            connectionSymbol.state = "NORMAL"
-        }
+        if ( sourceNode.item )
+            setHostNode(sourceNode.item)
     }
-    //! Modify this property to create edge with a specific class name (default to qan::Edge).
-    property var edgeClassName: "qan::Edge"
-    property var dummyEdge: undefined
+    //property var edge: graph && sourceNode && node ? graph.insertEdge(sourceNode, node) : undefined
     MouseArea {
         id: dropDestArea
         anchors.fill: parent
         drag.target: visualConnector
+        drag.threshold: 1.      // Note 20170311: Avoid a nasty delay between mouse position and dragged item position
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         enabled: true
         onReleased: {
+            // Restore original position
+            connectionSymbol.state = "NORMAL"
+            visualConnector.x = visualConnector.parent.width + leftMargin
+            visualConnector.y = 0
+            if ( edgeItem )
+                edgeItem.visible = false
             if ( !visualConnector.graph )
                 return
             var src = visualConnector.sourceNode
             var dst = visualConnector.Drag.target
-            var edge = null
+            var createdEdge = null
             if ( src && dst ) {
-                if ( visualConnector.graph.isNode( dst ) ) {
-                    if ( !visualConnector.graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
-                        edge = visualConnector.graph.insertEdge( edgeClassName, src, dst )
-                } else if ( visualConnector.hEdgeCreationEnabled &&
-                            visualConnector.graph.isEdge( dst ) ) {           // Do not create an hyper edge on an hyper edge
-                    if ( !visualConnector.graph.hasEdge( src, dst ) &&
-                            !visualConnector.graph.isHyperEdge( dst ) )
-                        edge = visualConnector.graph.insertEdge( edgeClassName, src, dst )
-                }
+                if ( graph.isNode( dst ) &&
+                     !graph.hasEdge( src, dst ) )     // Do not insert parrallel edgse
+                        createdEdge = graph.insertEdge( src, dst )
+                else if ( hEdgeCreationEnabled &&
+                          graph.isEdge( dst ) &&
+                          !graph.hasEdge( src, dst ) &&
+                          !graph.isHyperEdge( dst ) ) // Do not create an hyper edge on an hyper edge
+                        createdEdge = graph.insertEdge( src, dst )
             }
-            if ( edge ) {    // Notify graph user of the edge creation
-                edge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
-                visualConnector.graph.edgeInsertedVisually( edge )
-            }
-            // Restore original position
-            connectionSymbol.state = "NORMAL"
-            visualConnector.x = visualConnector.parent.width + xMargin
-            visualConnector.y = 0
-            if ( visualConnector.dummyEdge ) {
-                visualConnector.graph.removeEdge( visualConnector.dummyEdge )
-                visualConnector.dummyEdge = undefined
+            if ( createdEdge ) {    // Notify graph user of the edge creation
+                createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+                edgeInsertedByConnector( createdEdge );
+                if ( visualConnector.graph )
+                    visualConnector.graph.edgeInsertedByConnector( createdEdge )
             }
         }
         onPressed : {
+            /*z = 50000
+            connectionSymbol.z = 50000
+            if ( edgeItem )
+                edgeItem.z = 50000*/
             mouse.accepted = true
-            //if ( !visualConnector.graph.hasEdge( visualConnector.sourceNode, visualConnector ) ) {
-                if ( visualConnector.dummyEdge ) {
-                    visualConnector.graph.removeEdge( visualConnector.dummyEdge )
-                    visualConnector.dummyEdge = undefined
-                }
-                visualConnector.dummyEdge = visualConnector.graph.insertEdge( edgeClassName, visualConnector.sourceNode, visualConnector )
-                visualConnector.dummyEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
-                visualConnector.dummyEdge.z = visualConnector.sourceNode.z
-            //}
+            if ( sourceNode &&
+                 sourceNode.item ) {
+                parent: visualConnector.graph.containerItem;
+                edgeItem.graph = visualConnector.graph
+                edgeItem.sourceItem = sourceNode.item
+                edgeItem.destinationItem = visualConnector
+                edgeItem.visible = true
+                //edge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+                //edge.z = sourceNode.item.z
+            }
         }
     }
     // QuickQanava Qan.Node interface

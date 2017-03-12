@@ -46,7 +46,7 @@ GraphView::GraphView( QQuickItem* parent ) :
 void    GraphView::setGraph( qan::Graph* graph )
 {
     if ( graph == nullptr ) {
-        qDebug() << "qan::GraphView::setGraph(): Error: Setting a nullptr graph in Qan.GraphView is not supported.";
+        qWarning() << "qan::GraphView::setGraph(): Error: Setting a nullptr graph in Qan.GraphView is not supported.";
         return;
     }
     _graph = graph;
@@ -57,9 +57,8 @@ void    GraphView::setGraph( qan::Graph* graph )
 void    GraphView::navigableClicked(QPointF pos)
 {
     Q_UNUSED(pos);
-    // FIXME QAN3
-//    if ( _graph != nullptr )
-//         _graph->clearSelection();
+    if ( _graph )
+        _graph->clearSelection();
 }
 //-----------------------------------------------------------------------------
 

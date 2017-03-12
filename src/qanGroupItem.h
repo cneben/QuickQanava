@@ -66,6 +66,14 @@ public:
     inline auto setGroup(qan::Group* group) noexcept { _group = group; }
 private:
     QPointer<qan::Group> _group{nullptr};
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+protected:
+    //! Secure shortcut to getGroup().getGraph().
+    auto    getGraph() const noexcept -> const qan::Graph*;
+    //! \copydoc getGraph()
+    auto    getGraph() noexcept -> qan::Graph*;
     //@}
     //-------------------------------------------------------------------------
 

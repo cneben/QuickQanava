@@ -41,18 +41,26 @@
 
 // Qt headers
 #include <QQuickItem>
+#include <QQmlParserStatus>
 #include <QSharedPointer>
 #include <QAbstractListModel>
 
+//! Main QuickQanava namespace
 namespace qan { // ::qan
+
+class Graph;
+class Connector;
 
 /*! \brief FIXME.
  *
  * \nosubgrouping
 */
-class Graph : public gtpo::GenGraph< qan::GraphConfig >
+class Graph : public gtpo::GenGraph< qan::GraphConfig >/*,
+              public QQmlParserStatus*/
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+
     using GTpoGraph = gtpo::GenGraph< qan::GraphConfig >;
 
     /*! \name Graph Object Management *///-------------------------------------
@@ -67,6 +75,10 @@ public:
      */
     virtual ~Graph();
     Graph( const Graph& ) = delete;
+public:
+    //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
+    void    componentComplete() override;
+
 public:
     /*! \brief Clear this graph topology and styles.
      *
@@ -106,10 +118,230 @@ public:
     inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
     void                        setContainerItem( QQuickItem* containerItem );
 signals:
-    //! Used internally, never change containerItem.
-    void                        containerItemChanged( ); // Never used, avoid a QML warning
+    void                        containerItemChanged();
 private:
     QPointer< QQuickItem >      _containerItem{nullptr};
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Visual connection Management *///--------------------------------
+    //@{
+public:
+    /*! \brief Set the visual connector source node.
+     *
+     * \note If \c sourceNode is nullptr, visual connector is hidden.
+     */
+    Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
+signals:
+    //! Emitted when an edge has been inserted in graph by a visual connector.
+    void                edgeInsertedByConnector( qan::Edge* edge );
+public:
+    //! Enable or disable visual connector of nodes in the graph (default to true).
+    Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
+    inline bool     getConnectorEnabled() const noexcept { return _connectorEnabled; }
+    void            setConnectorEnabled( bool connectorEnabled ) noexcept;
+signals:
+    void            connectorEnabledChanged();
+private:
+    bool            _connectorEnabled{true};
+
+public:
+    //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).
+    Q_PROPERTY( qan::Connector* connector READ getConnector CONSTANT FINAL )
+    qan::Connector*             getConnector() noexcept;
+private:
+    QScopedPointer<qan::Connector> _connector{};
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Delegates Management *///----------------------------------------
+    //@{
+public:
+    //! Default delegate for qan::Node and Qan.Node nodes.
+    Q_PROPERTY( QQmlComponent* nodeDelegate READ getNodeDelegate WRITE setNodeDelegate NOTIFY nodeDelegateChanged FINAL )
+    inline QQmlComponent*   getNodeDelegate() noexcept { return _nodeDelegate.get(); }
+protected:
+    void                    setNodeDelegate(QQmlComponent* nodeDelegate) noexcept;
+    void                    setNodeDelegate(std::unique_ptr<QQmlComponent> nodeDelegate) noexcept;
+signals:
+    void                    nodeDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _nodeDelegate;
+
+public:
+    //! Default delegate for qan::Edge and Qan.Edge edges.
+    Q_PROPERTY( QQmlComponent* edgeDelegate READ getEdgeDelegate WRITE setEdgeDelegate NOTIFY edgeDelegateChanged FINAL )
+    inline QQmlComponent*   getEdgeDelegate() noexcept { return _edgeDelegate.get(); }
+protected:
+    void                    setEdgeDelegate(QQmlComponent* edgeDelegate) noexcept;
+    void                    setEdgeDelegate(std::unique_ptr<QQmlComponent> edgeDelegate) noexcept;
+signals:
+    void                    edgeDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _edgeDelegate;
+
+public:
+    //! Default delegate for qan::Group and Qan.Group groups.
+    Q_PROPERTY( QQmlComponent* groupDelegate READ getGroupDelegate WRITE setGroupDelegate NOTIFY groupDelegateChanged FINAL )
+    inline QQmlComponent*   getGroupDelegate() noexcept { return _groupDelegate.get(); }
+protected:
+    void                    setGroupDelegate(QQmlComponent* groupDelegate) noexcept;
+    void                    setGroupDelegate(std::unique_ptr<QQmlComponent> groupDelegate) noexcept;
+signals:
+    void                    groupDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _groupDelegate;
+
+protected:
+    //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
+    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node = nullptr,
+                                                                           qan::Edge* edge = nullptr,
+                                                                           qan::Group* group = nullptr );
+
+    //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
+    static void             setCppOwnership( QQuickItem* item );
+
+protected:
+    /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
+     *
+     * \note Internally used to generate selection rectangles around node, but part of the public API.
+     */
+    QQuickItem*                     createRectangle( QQuickItem* parent );
+private:
+    std::unique_ptr<QQmlComponent>  _rectangleComponent{nullptr};
+
+private:
+    QMap< qan::NodeItem*, qan::Node* >  _itemNodeMap;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Graph Node Management *///---------------------------------------
+    //@{
+public:
+    using Node              = typename GraphConfig::FinalNode;
+    using WeakNode          = std::weak_ptr< typename GraphConfig::FinalNode >;
+
+    /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
+     *
+     * A gtpo::bad_topology_error could be thrown if insertion in base graph fails.
+     *
+     * A default node delegate must have been registered with registerNodeDelegate() if
+     * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
+     * Qan.Graph is used, with a rectangular node delegate for default node.
+     *
+     * \note graph keep ownership of the returned node.
+     */
+    Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
+
+    template < class Node_t >
+    qan::Node*              insertNode();
+
+    /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
+     */
+    Q_INVOKABLE void        removeNode( qan::Node* node );
+
+    //! Test if a given \c item is a node registered in the graph.
+    Q_INVOKABLE bool        isNode( QQuickItem* item ) const;
+
+    //! Shortcut to gtpo::GenGraph<>::getNodeCount().
+    Q_INVOKABLE int         getNodeCount( ) { return GTpoGraph::getNodeCount(); }
+
+public:
+    //! Access the list of nodes with an abstract item model interface.
+    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
+    QAbstractItemModel*     getNodesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
+
+signals:
+    /*! \brief Emitted whenever a node registered in this graph is clicked.
+     */
+    void            nodeClicked( qan::Node* node, QPointF pos );
+    /*! \brief Emitted whenever a node registered in this graph is right clicked.
+     */
+    void            nodeRightClicked( qan::Node* node, QPointF pos );
+    /*! \brief Emitted whenever a node registered in this graph is double clicked.
+     */
+    void            nodeDoubleClicked( qan::Node* node, QPointF pos );
+    //-------------------------------------------------------------------------
+
+    /*! \name Graph Edge Management *///---------------------------------------
+    //@{
+public:
+    //! QML shortcut to insertEdge() method.
+    Q_INVOKABLE qan::Edge*  insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::insertEdge().
+    qan::Edge*              insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::insertEdge().
+    qan::Edge*              insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::removeEdge().
+    Q_INVOKABLE void        removeEdge( qan::Node* source, qan::Node* destination );
+
+    //! Shortcut to gtpo::GenGraph<>::removeEdge().
+    Q_INVOKABLE void        removeEdge( qan::Edge* edge );
+
+    //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
+    Q_INVOKABLE bool        hasEdge( qan::Node* source, qan::Node* destination ) const;
+
+    //! Test if a given \c item is an edge registered in the graph.
+    Q_INVOKABLE bool        isEdge( QQuickItem* item ) const;
+
+    //! Test if a given edge \c edge is an  hyper edge.
+    Q_INVOKABLE bool        isHyperEdge( QQuickItem* item ) const;
+
+public:
+    //! Access the list of edges with an abstract item model interface.
+    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
+    QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
+
+signals:
+    /*! \brief Emitted whenever a node registered in this graph is clicked.
+     *
+     *  \sa nodeClicked()
+     */
+    void            edgeClicked( QVariant edge, QVariant pos );
+    /*! \brief Emitted whenever a node registered in this graph is right clicked.
+     *
+     *  \sa nodeRightClicked()
+     */
+    void            edgeRightClicked( QVariant edge, QVariant pos );
+    /*! \brief Emitted whenever a node registered in this graph is double clicked.
+     *
+     *  \sa nodeDoubleClicked()
+     */
+    void            edgeDoubleClicked( QVariant edge, QVariant pos );
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Graph Group Management *///--------------------------------------
+    //@{
+public:
+    //! Defined for serialization support, do not use.
+    //virtual WeakGroup       createGroup( const std::string& className ) override;
+
+    //! Shortcut to gtpo::GenGraph<>::insertGroup().
+    Q_INVOKABLE qan::Group* insertGroup();
+
+    //! Shortcut to gtpo::GenGraph<>::removeGroup().
+    Q_INVOKABLE void        removeGroup( qan::Group* group );
+
+    //! Return true if \c group is registered in graph.
+    bool                    hasGroup( qan::Group* group ) const;
+
+    //! Shortcut to gtpo::GenGraph<>::getGroupCount().
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
+
+signals:
+    /*! \brief Emitted when a group registered in this graph is clicked.
+     */
+    void            groupClicked( qan::Group* group, QPointF pos );
+    /*! \brief Emitted when a group registered in this graph is right clicked.
+     */
+    void            groupRightClicked( qan::Group* group, QPointF pos );
+    /*! \brief Emitted when a group registered in this graph is double clicked.
+     */
+    void            groupDoubleClicked( qan::Group* group, QPointF pos );
     //@}
     //-------------------------------------------------------------------------
 
@@ -204,227 +436,6 @@ private:
 
 protected:
     virtual void        mousePressEvent(QMouseEvent* event ) override;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Delegates Management *///----------------------------------------
-    //@{
-public:
-    /*! \brief Register a QML component that should be used as a delegate for a class nodes referred as \c nodeClass.
-     *
-     * Graph keep ownership for \c nodeComponent.
-     */
-    Q_INVOKABLE void        registerNodeDelegate( QString nodeClass, QQmlComponent* nodeComponent );
-
-    /*! \brief Register a QML component that should be used as a delegate for a class of edges referred as \c edgeClass.
-     *
-     * Graph keep ownership for \c nodeComponent.
-     */
-    Q_INVOKABLE void        registerEdgeDelegate( QString edgeClass, QQmlComponent* edgeComponent );
-
-    /*! \brief Register a QML component that should be used as a delegate for a class of groups referred as \c groupClass.
-     *
-     * Graph keep ownership for \c groupComponent.
-     */
-    Q_INVOKABLE void        registerGroupDelegate( QString groupClass, QQmlComponent* groupComponent );
-
-    /*! \brief Create a node item using the delegate component currently registered under \c nodeClass.
-     *
-     * Graph keep ownership for returned item.
-     * \return an item created with the delegate registered for \c edgeClass, or an empty QQuickItem (\c nullptr is never returned).
-     * \sa registerNodeDelegate()
-     */
-    Q_INVOKABLE QQuickItem* createNodeItem( QString nodeClass );
-    /*! \brief Create an edge item using the delegate component currently registered under \c edgeClass.
-     *
-     * Graph keep ownership for returned item.
-     * \return an item created with the delegate registered for \c nodeClass, or an empty QQuickItem (\c nullptr is never returned).
-     * \sa registerNodeDelegate()
-     */
-    Q_INVOKABLE QQuickItem* createEdgeItem( QString edgeClass );
-
-protected:
-    //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
-    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node, qan::Edge* edge = nullptr, qan::Group* group = nullptr );
-
-    //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
-    static void setCppOwnership( QQuickItem* item );
-protected:
-    /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
-     *
-     * \note Internally used to generate selection rectangles around node, but part of the public API.
-     */
-    QQuickItem*     createRectangle( QQuickItem* parent );
-private:
-    std::unique_ptr< QQmlComponent >   _rectangleComponent{nullptr};
-
-private:
-    QMap< QString, QQmlComponent* > _nodeClassComponents;
-    QMap< QString, QQmlComponent* > _edgeClassComponents;
-    QMap< QString, QQmlComponent* > _groupClassComponents;
-
-    QMap< qan::NodeItem*, qan::Node* >  _itemNodeMap;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Graph Node Management *///---------------------------------------
-    //@{
-public:
-    using Node              = typename GraphConfig::FinalNode;
-    using WeakNode          = std::weak_ptr< typename GraphConfig::FinalNode >;
-
-    /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
-     *
-     * A gtpo::bad_topology_error could be thrown if insertion in base graph fails.
-     *
-     * A default node delegate must have been registered with registerNodeDelegate() if
-     * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
-     * Qan.Graph is used, with a rectangular node delegate for default node.
-     *
-     * \note graph keep ownership of the returned node.
-     */
-    Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
-
-    //! Shortcut to GTpoGraph::insertNode.
-    WeakNode                insertNode( SharedNode node );
-
-    //! Insert a new node with a given class name \c nodeClassName and return a pointer on it if creation succeed (\c nullptr otherwise).
-    Q_INVOKABLE qan::Node*  insertNode( QString nodeClassName );
-
-    /*! \brief Call either insertNode(QQmlComponent) or insertNode(QString) according to the QVariant concrete type.
-     *
-     * End user should usually not care about this method, it is declared only because QML often implicitely
-     * cast QML "Component" object to "string", creating confusion when insertNode() is called.
-     */
-    Q_INVOKABLE qan::Node*  insertNode( QVariant nodeArguments );
-
-    //! Defined for serialization support, do not use.
-    // FIXME QAN3
-    virtual WeakNode        createNode( const std::string& className ) /*FIXME override*>*/;
-
-    /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
-     */
-    Q_INVOKABLE void        removeNode( qan::Node* node );
-
-    //! Test if a given \c item is a node registered in the graph.
-    Q_INVOKABLE bool        isNode( QQuickItem* item ) const;
-
-    //! Test if a given \c item is an edge registered in the graph.
-    Q_INVOKABLE bool        isEdge( QQuickItem* item ) const;
-
-    //! Test if a given edge \c edge is an  hyper edge.
-    Q_INVOKABLE bool        isHyperEdge( QQuickItem* item ) const;
-
-    //! Shortcut to gtpo::GenGraph<>::getNodeCount().
-    Q_INVOKABLE int         getNodeCount( ) { return GTpoGraph::getNodeCount(); }
-
-public:
-    //! Access the list of nodes with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
-    QAbstractItemModel* getNodesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
-
-signals:
-    /*! \brief Emitted whenever a node registered in this graph is clicked.
-     */
-    void            nodeClicked( qan::Node* node, QPointF pos );
-    /*! \brief Emitted whenever a node registered in this graph is right clicked.
-     */
-    void            nodeRightClicked( qan::Node* node, QPointF pos );
-    /*! \brief Emitted whenever a node registered in this graph is double clicked.
-     */
-    void            nodeDoubleClicked( qan::Node* node, QPointF pos );
-    //-------------------------------------------------------------------------
-
-    /*! \name Graph Edge Management *///---------------------------------------
-    //@{
-public:
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    Q_INVOKABLE qan::Edge*  insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    Q_INVOKABLE qan::Edge*  insertEdge( QString edgeClassName, QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( QString edgeClassName, qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( QString edgeClassName, qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Defined for serialization support, do not use, not part of public API.
-    // FIXME QAN3
-    virtual WeakEdge        createEdge( const std::string& className, WeakNode source, WeakNode destination  ) /*FIXME override*/;
-
-    //! Defined for serialization support, do not use, not part of public API.
-    // FIXME QAN3
-    virtual WeakEdge        createEdge( const std::string& className, WeakNode source, WeakEdge destination  ) /*FIXME override*/;
-
-    //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE void        removeEdge( qan::Node* source, qan::Node* destination );
-
-    //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE void        removeEdge( qan::Edge* edge );
-
-    //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
-    Q_INVOKABLE bool        hasEdge( qan::Node* source, qan::Node* destination ) const;
-
-public:
-    //! Access the list of edges with an abstract item model interface.
-    Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
-    QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
-
-signals:
-    /*! \brief Emitted whenever a node registered in this graph is clicked.
-     *
-     *  \sa nodeClicked()
-     */
-    void            edgeClicked( QVariant edge, QVariant pos );
-    /*! \brief Emitted whenever a node registered in this graph is right clicked.
-     *
-     *  \sa nodeRightClicked()
-     */
-    void            edgeRightClicked( QVariant edge, QVariant pos );
-    /*! \brief Emitted whenever a node registered in this graph is double clicked.
-     *
-     *  \sa nodeDoubleClicked()
-     */
-    void            edgeDoubleClicked( QVariant edge, QVariant pos );
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Graph Group Management *///--------------------------------------
-    //@{
-public:
-    //! Defined for serialization support, do not use.
-    //virtual WeakGroup       createGroup( const std::string& className ) override;
-
-    //! Shortcut to gtpo::GenGraph<>::insertGroup().
-    Q_INVOKABLE qan::Group* insertGroup();
-
-    //! Shortcut to gtpo::GenGraph<>::removeGroup().
-    Q_INVOKABLE void        removeGroup( qan::Group* group );
-
-    //! Return true if \c group is registered in graph.
-    bool                    hasGroup( qan::Group* group ) const;
-
-    //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
-
-signals:
-    /*! \brief Emitted when a group registered in this graph is clicked.
-     */
-    void            groupClicked( qan::Group* group, QPointF pos );
-    /*! \brief Emitted when a group registered in this graph is right clicked.
-     */
-    void            groupRightClicked( qan::Group* group, QPointF pos );
-    /*! \brief Emitted when a group registered in this graph is double clicked.
-     */
-    void            groupDoubleClicked( qan::Group* group, QPointF pos );
     //@}
     //-------------------------------------------------------------------------
 

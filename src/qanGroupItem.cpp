@@ -45,18 +45,13 @@ GroupItem::GroupItem( QQuickItem* parent ) : QQuickItem( parent )
              this, &qan::GroupItem::groupMoved );
 }
 
-GroupItem::~GroupItem( )
-{
-    // Force remove all children who hae no cpp ownership
-    // FIXME QAN3   pheraps no longer necessary...
-    /*for ( auto child: childItems() ) {
-        if ( QQmlEngine::objectOwnership( child ) != QQmlEngine::CppOwnership )
-            child->setParent( nullptr );
-    }*/
-}
+GroupItem::~GroupItem() { /* Nil */ }
 
-auto GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
-auto GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
+auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
+auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
+
+auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _group ? _group->getGraph() : nullptr; }
+auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _group ? _group->getGraph() : nullptr; }
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------

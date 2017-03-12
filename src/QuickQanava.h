@@ -43,6 +43,7 @@
 #include "./qanEdgeItem.h"
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
+#include "./qanConnector.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
@@ -59,13 +60,13 @@ struct QuickQanava {
         QuickGeoGL::initialize();
         QuickContainers::initialize();
 
-        qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "Node");
+        qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
         qmlRegisterType< qan::NodeItem >( "QuickQanava", 2, 0, "NodeItem");
-        qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");
+        qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");
         qmlRegisterType< qan::EdgeItem >( "QuickQanava", 2, 0, "EdgeItem");
-        qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "Group");
+        qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
-
+        qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");
 
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");

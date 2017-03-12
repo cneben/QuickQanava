@@ -39,52 +39,20 @@ import "qrc:/QuickQanava"   as Qan
 Qan.AbstractGraph {
     id: graph
 
-    // Public:
-    //! Default delegate for qan::Node and Qan.Node nodes.
-    property Component  nodeDelegate: Qt.createComponent( "qrc:/QuickQanava/Node.qml" )
-    //! Default delegate for qan::Edge and Qan.Edge edges.
-    property Component  edgeDelegate: Qt.createComponent( "qrc:/QuickQanava/Edge.qml" )
-    //! Default delegate for qan::Group and Qan.Group groups.
-    property Component  groupDelegate: Qt.createComponent( "qrc:/QuickQanava/Group.qml" )
-
     property alias      resizeHandlerColor: nodeResizer.handlerColor
 
-    //! Set to true to enable visual edge creation via a droppable connector control (default to true).
-    property bool   enableConnector: false
     //! Modify to create edge with custom class name with connector drop node (default to qan::Edge).
+    // FIXME QAN3
     property string connectorEdgeClassName: "qan::Edge"
     property color  connectorEdgeColor: Qt.rgba(0,0,0,1)
 
-    // Private:
-    property Component  connectorComponent: Qt.createComponent( "qrc:/QuickQanava/VisualConnector.qml" )
-    onConnectorComponentChanged: {
-        connectorComponent.edgeClassName = connectorEdgeClassName
-    }
-    property var        connectorDropNode: undefined
+    // FIXME QAN3
     property color      connectorDropNodeColor: "darkblue"
 
     //! Turn visual creation of hyper edges on or off (default to off).
+    // FIXME QAN3
     property bool       visualHEdgeCreationEnabled: false
-    onEnableConnectorChanged: {
-        if ( !enableConnector &&
-             connectorDropNode &&
-             graph.hasNode( connectorDropNode ) )
-            graph.removeNode( connectorDropNode )
-
-        if ( enableConnector &&
-             !connectorDropNode &&
-             connectorComponent ) {
-            connectorDropNode = graph.insertNode( graph.connectorComponent )
-            if ( connectorDropNode ) {
-                connectorDropNode.edgeClassName = connectorEdgeClassName
-                connectorDropNode.visible = false
-                connectorDropNode.graph = graph
-                connectorDropNode.edgeColor = Qt.binding( function() { return graph.connectorEdgeColor; } )
-                connectorDropNode.connectorColor = Qt.binding( function() { return graph.connectorDropNodeColor; } )
-                connectorDropNode.hEdgeCreationEnabled = Qt.binding( function() { return graph.visualHEdgeCreationEnabled; } )
-            }
-        }
-    }
+    // FIXME QAN3
     signal  edgeInsertedVisually( var edge );
 
     Qan.BottomRightResizer {
@@ -124,13 +92,6 @@ Qan.AbstractGraph {
         maxZ = Math.max(group.z, maxZ)
         group.z = maxZ + 1;
     }
-    Component.onCompleted: {
-        graph.registerNodeDelegate( "qan::Node", nodeDelegate )
-        graph.registerEdgeDelegate( "qan::Edge", edgeDelegate )
-        graph.registerGroupDelegate( "qan::Group", groupDelegate )
-        graph.addControlNode( connectorDropNode )
-    }
-    Component.onDestruction: {
-        graph.removeControlNode( connectorDropNode )
-    }
+    Component.onCompleted: { }
+    Component.onDestruction: { }
 }
