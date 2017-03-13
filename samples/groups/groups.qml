@@ -38,6 +38,7 @@ ApplicationWindow {
         navigable   : true
         graph: Qan.Graph {
             id: topology
+            connectorEnabled: true
             objectName: "graph"
             anchors.fill: parent
             onGroupClicked: { console.debug( "Group " + group.label + " clicked" ) }

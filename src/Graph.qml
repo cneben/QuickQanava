@@ -78,7 +78,8 @@ Qan.AbstractGraph {
             node.z = maxZ + 1;
             if ( node.qmlGetGroup() )
                 node.qmlGetGroup.z = maxZ
-            if ( connector )
+            if ( connector &&
+                 connectorEnabled )
                 connector.sourceNode = node;
             if ( node.resizable ) {
                 // FIXME QAN3

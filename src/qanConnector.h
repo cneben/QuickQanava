@@ -54,7 +54,7 @@ public:
     Connector(const Connector&) = delete;
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph NOTIFY graphChanged FINAL )
+    Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     auto    getGraph() const noexcept -> qan::Graph*;
@@ -67,7 +67,17 @@ signals:
     /*! \name Connector Configuration *///-------------------------------------
     //@{
 public:
-    Q_PROPERTY( QQmlComponent* edgeComponent READ getEdgeComponent WRITE setEdgeComponent FINAL )
+    //! Graphical item used as a draggable destination node selector (initialized and owned from QML).
+    Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
+    auto    getConnectorItem() noexcept -> QQuickItem*;
+    auto    setConnectorItem(QQuickItem* connectorItem) noexcept -> void;
+signals:
+    void    connectorItemChanged();
+protected:
+    QPointer<QQuickItem>  _connectorItem;
+
+public:
+    Q_PROPERTY( QQmlComponent* edgeComponent READ getEdgeComponent WRITE setEdgeComponent NOTIFY edgeComponentChanged FINAL )
     auto    getEdgeComponent() noexcept -> QQmlComponent*;
     auto    setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> void;
 signals:

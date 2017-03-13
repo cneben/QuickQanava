@@ -61,6 +61,18 @@ auto    Connector::getGraph() const noexcept -> qan::Graph* { return _graph.data
 //-----------------------------------------------------------------------------
 
 /* Connector Configuration *///------------------------------------------------
+auto    Connector::getConnectorItem() noexcept -> QQuickItem* { return _connectorItem.data(); }
+
+auto    Connector::setConnectorItem(QQuickItem* connectorItem) noexcept -> void
+{
+    if ( _connectorItem != connectorItem ) {
+        if ( _connectorItem )
+            _connectorItem->deleteLater();
+        _connectorItem = connectorItem;
+        emit connectorItemChanged();
+    }
+}
+
 auto    Connector::getEdgeComponent() noexcept -> QQmlComponent* { return _edgeComponent.data(); }
 
 auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> void
@@ -114,6 +126,7 @@ void    Connector::setSourceNode( qan::Node* sourceNode )
         else {
             connect( sourceNode, &QObject::destroyed,
                      this,      &Connector::sourceNodeDestroyed );
+            setVisible(true);
         }
         emit sourceNodeChanged();
     }

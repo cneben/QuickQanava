@@ -30,9 +30,47 @@ Qan.GraphView {
     id: graphView
     anchors.fill: parent
     navigable   : true
+    ToolTip { id: toolTip; timeout: 2500 }
+    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+
     graph: Qan.Graph {
-        connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
+        connectorEnabled: true
         id: graph
+        Qan.VisualConnector {
+            id: customConnector
+            graph: graphView.graph
+            topMargin: graph.connector.height + 15
+            connectorItem: Control {
+                parent: customConnector
+                anchors.fill: parent
+                hoverEnabled: true
+                ToolTip.visible: hovered &&
+                                 ( !customConnector.connectorDragged || state === "HILIGHT" )
+                onStateChanged: {
+                    ToolTip.text = ( state === "HILIGHT" ? "Drop to connect" : "Drag on a target node" )
+                }
+                states: [
+                    State { name: "NORMAL"; PropertyChanges { target: customConnectorItem; scale: 1.0 } },
+                    State { name: "HILIGHT"; PropertyChanges { target: customConnectorItem; scale: 1.7 } }
+                ]
+                transitions: [
+                    Transition { from: "NORMAL"; to: "HILIGHT"; PropertyAnimation { target: customConnectorItem; properties: "borderWidth, scale"; duration: 100 } },
+                    Transition { from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: customConnectorItem; properties: "borderWidth, scale"; duration: 150 } }
+                ]
+                Image {
+                    anchors.fill: parent
+                    id: customConnectorItem
+                    source: "qrc:/fa_link.png"
+                    state: "NORMAL"; smooth: true;   antialiasing: true
+                }
+            }
+            createDefaultEdge: false    // SAMPLE: When createDefaultEdge is set to false, VisualConnector does not use Qan.Graph.insertEdge()
+                                        // to create edge, but instead emit requestEdgeCreation (see below) to allow user to create custom
+                                        // edge (either specifying a custom edge component, or calling a user defined method on graph).
+            onRequestEdgeCreation: {
+                notifyUser("Edge creation requested between " + src.label + " and " + dst.label )
+            }
+        }
         Component.onCompleted: {
             var d1 = graph.insertNode()
             d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
@@ -47,7 +85,14 @@ Qan.GraphView {
 
             var d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
-            graph.setConnectorSource(s1)    // SAMPLE: ... and eventually configured manually on a specific node until user select another one
+            graph.setConnectorSource(s1)
+            customConnector.sourceNode = s1
+        }
+        onNodeClicked: {
+            if ( node && node.item ) {
+                customConnector.sourceNode = node
+            } else
+                customConnector.visible = false
         }
     }
 }  // Qan.GraphView

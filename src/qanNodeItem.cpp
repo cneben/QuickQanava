@@ -105,10 +105,10 @@ void    NodeItem::setSelected( bool selected )
     if ( getSelectionItem() != nullptr &&
          isSelectable() )
         getSelectionItem()->setVisible( selected );
-    if ( _selected == selected ) // Binding loop protection, and avoid unnecessary redraws
-        return;
-    _selected = selected;
-    emit selectedChanged( );
+    if ( _selected != selected ) { // Binding loop protection
+        _selected = selected;
+        emit selectedChanged( );
+    }
 }
 
 void NodeItem::setSelectionItem( QQuickItem* selectionItem )
