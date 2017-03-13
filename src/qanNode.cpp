@@ -75,40 +75,6 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
             nodeItem->setNode(this);
     }
 }
-
-void    Node::setResizable( bool resizable )
-{
-    if ( resizable != _resizable ) {
-        _resizable = resizable;
-        emit resizableChanged();
-    }
-}
-//-----------------------------------------------------------------------------
-
-/* Selection Management *///---------------------------------------------------
-void    Node::setSelectable( bool selectable )
-{
-    // FIXME QAN3   code absolument merdique (setVisible ???) faire plus explicite
-    if ( _selectable == selectable )
-        return;
-//    if ( getSelectionItem() != nullptr &&
-//         getSelectionItem()->isVisible() )
-//        getSelectionItem()->setVisible( false );
-    _selectable = selectable;
-    emit selectableChanged();
-}
-
-void    Node::setSelected( bool selected )
-{
-    // FIXME QAN3   code absolument merdique (setVisible ???) faire plus explicite
-/*    if ( getSelectionItem() != nullptr &&
-         isSelectable() )
-        getSelectionItem()->setVisible( selected );
-    if ( _selected == selected ) // Binding loop protection, and avoid unnecessary redraws
-        return;
-    _selected = selected;*/
-    emit selectedChanged( );
-}
 //-----------------------------------------------------------------------------
 
 /* Behaviours Management *///--------------------------------------------------

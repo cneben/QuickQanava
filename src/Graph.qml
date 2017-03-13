@@ -69,27 +69,32 @@ Qan.AbstractGraph {
 
     Qan.BottomRightResizer {
         id: nodeResizer
+        parent: graph.containerItem
         visible: false
     }
     property real maxZ: -1.
     onNodeClicked: {
         if ( node ) {
-            maxZ = Math.max( node.z + 1, maxZ + 1 )
-            node.z = maxZ + 1;
+            maxZ = Math.max( node.item.z + 1, maxZ + 1 )
+            node.item.z = maxZ + 1;
             if ( node.qmlGetGroup() )
                 node.qmlGetGroup.z = maxZ
             if ( connector &&
                  connectorEnabled )
                 connector.sourceNode = node;
-            if ( node.resizable ) {
-                // FIXME QAN3
-                /*nodeResizer.parent = node
-                nodeResizer.minimumTargetSize = node.minimumSize
-                nodeResizer.target = node
-                nodeResizer.visible = true
-                */
-            } else
+            if ( nodeResizer &&
+                 //nodeResizer.target !== node.item &&    // Do not bind on target multiple times
+                 node.item &&
+                 node.item.resizable ) {
+                //nodeResizer.parent = node.item
+                nodeResizer.minimumTargetSize = node.item.minimumSize
+                nodeResizer.target = node.item
+                nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
+                nodeResizer.z = node.item.z + 1.
+            } else {
+                nodeResizer.target = null
                 nodeResizer.visible = false
+            }
         } else {
             connector.visible = false
             resizer.visible = false

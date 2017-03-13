@@ -41,14 +41,6 @@ Item {
     property         var    nodeItem: undefined
     default property alias  children : contentLayout.children
 
-    // FIXME QAN3
-    /*onNodeItemChanged: {
-        if (nodeItem)
-            nodeItem.setDefaultBoundingShape();
-    }
-    onWidthChanged: { if ( nodeItem ) nodeItem.setDefaultBoundingShape() }
-    onHeightChanged: { if ( nodeItem ) nodeItem.setDefaultBoundingShape() }*/
-
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size

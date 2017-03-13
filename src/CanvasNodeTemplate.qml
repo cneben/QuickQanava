@@ -46,10 +46,11 @@ Item {
         if ( nodeSymbol.item )
             nodeSymbol.item.requestPaint();
     }
-    onNodeItemChanged: {
+    // FIXME QAN3
+    /*onNodeItemChanged: {
         if ( nodeItem )
             nodeUpdateBoundingShape.target = nodeItem
-    }
+    }*/
     Loader {    // Node symbol is node background
         id: nodeSymbol
         anchors.fill: parent
@@ -105,9 +106,9 @@ Item {
         node: parent.nodeItem
     }
     // Bounding shape management
-    Connections {
+    /*Connections {
         id: nodeUpdateBoundingShape
-        onUpdateBoundingShape: {
+        onRequestUpdateBoundingShape: {
             if ( nodeSymbol.item )
                 nodeSymbol.item.updateSymbolPolygon()
         }
@@ -115,5 +116,5 @@ Item {
     Component.onCompleted: {
         if ( nodeSymbol.item )
             nodeSymbol.item.updateSymbolPolygon()
-    }
+    }*/
 }

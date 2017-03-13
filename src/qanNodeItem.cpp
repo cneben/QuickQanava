@@ -72,7 +72,9 @@ void    NodeItem::onWidthChanged()
         }
         _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
     }
-    generateDefaultBoundingShape();
+    if ( _complexBoundingShape )            // Invalidate actual bounding shape
+        emit requestUpdateBoundingShape();
+    else setDefaultBoundingShape();
 }
 
 void    NodeItem::onHeightChanged()
@@ -86,7 +88,9 @@ void    NodeItem::onHeightChanged()
         }
         _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
     }
-    generateDefaultBoundingShape();
+    if ( _complexBoundingShape )            // Invalidate actual bounding shape
+        emit requestUpdateBoundingShape();
+    else setDefaultBoundingShape();
 }
 
 void    NodeItem::setSelectable( bool selectable )
@@ -105,6 +109,9 @@ void    NodeItem::setSelected( bool selected )
     if ( getSelectionItem() != nullptr &&
          isSelectable() )
         getSelectionItem()->setVisible( selected );
+
+    // FIXME Qan3: create selection item here
+
     if ( _selected != selected ) { // Binding loop protection
         _selected = selected;
         emit selectedChanged( );
@@ -155,6 +162,43 @@ void    NodeItem::configureSelectionItem( qreal selectionWeight, qreal selection
 //-----------------------------------------------------------------------------
 
 /* Drag'nDrop Management *///--------------------------------------------------
+void    NodeItem::setResizable( bool resizable ) noexcept
+{
+    if ( resizable != _resizable ) {
+        _resizable = resizable;
+        emit resizableChanged();
+    }
+}
+
+void    NodeItem::setDraggable( bool draggable ) noexcept
+{
+    if ( draggable != _draggable ) {
+        _draggable = draggable;
+        if ( !draggable ) {
+            setDragActive(false);
+            endDragMove();
+        }
+        emit draggableChanged();
+    }
+}
+
+void    NodeItem::setDropable( bool dropable ) noexcept
+{
+    if ( dropable != _dropable ) {
+        _dropable = dropable;
+        emit dropableChanged();
+    }
+}
+
+void    NodeItem::setAcceptDrops( bool acceptDrops ) noexcept
+{
+    if ( acceptDrops != _acceptDrops ) {
+        _acceptDrops = acceptDrops;
+        setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops );
+        emit acceptDropsChanged();
+    }
+}
+
 void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
 {
     if ( getAcceptDrops() ) {
@@ -240,6 +284,7 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event )
         QPointF delta( curLocalPos - startLocalPos );
         dragMove( event->windowPos(), delta );
     }
+    QQuickItem::mouseMoveEvent(event);
 }
 
 void    NodeItem::mousePressEvent( QMouseEvent* event )
@@ -251,10 +296,11 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
         // Selection management
         if ( event->button() == Qt::LeftButton &&
              getNode() &&
-             getNode()->isSelectable() ) {
+             getNode()->getItem() != nullptr &&
+             getNode()->getItem()->isSelectable() ) {
             const auto graph = getGraph();
-            if ( graph != nullptr )
-                graph->selectNode( *getNode(), event->modifiers() );
+            //if ( graph != nullptr )
+            //    graph->selectNode( *getNode(), event->modifiers() );
         }
 
         // QML notifications
@@ -391,13 +437,19 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
+void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
 {
-    QQuickItem::geometryChanged( newGeometry, oldGeometry );
-    emit updateBoundingShape(); // Invalidate actual bounding shape
+    if ( complexBoundingShape != _complexBoundingShape ) {
+        _complexBoundingShape = complexBoundingShape;
+        if ( !complexBoundingShape )
+            setDefaultBoundingShape();
+        else
+            emit requestUpdateBoundingShape();
+        emit complexBoundingShapeChanged();
+    }
 }
 
-QPolygonF   NodeItem::getBoundingShape( )
+QPolygonF   NodeItem::getBoundingShape() noexcept
 {
     if ( _boundingShape.isEmpty( ) )
         _boundingShape = generateDefaultBoundingShape( );
@@ -434,28 +486,6 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
         setBoundingShape( generateDefaultBoundingShape() );
     return _boundingShape.containsPoint( p, Qt::OddEvenFill );
 }
-//-----------------------------------------------------------------------------
-
-/* Node Group Management *///--------------------------------------------------
-// FIXME QAN3
-/*
-void    NodeItem::ungroup( )
-{
-
-    if ( getQanGroup() != nullptr &&
-         getGraph()->hasGroup( getQanGroup() ) )
-        getQanGroup()->removeNode( this );
-
-}
-
-qan::Group* NodeItem::getQanGroup( )
-{
-    WeakGroup weakGroup = gtpo::GenNode<qan::GraphConfig>::getGroup();
-    if ( weakGroup.expired() )
-        return nullptr;
-    return weakGroup.lock().get();
-}
-*/
 //-----------------------------------------------------------------------------
 
 } // ::qan

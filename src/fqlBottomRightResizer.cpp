@@ -22,7 +22,6 @@ namespace fql {  // ::fql
 BottomRightResizer::BottomRightResizer( QQuickItem* parent ) :
     QQuickItem( parent )
 {
-    setFiltersChildMouseEvents( true );
 }
 
 BottomRightResizer::~BottomRightResizer( )
@@ -41,6 +40,8 @@ void    BottomRightResizer::setHandler( QQuickItem* handler ) noexcept
                 _handler.data()->deleteLater();
         }
         _handler = handler;
+        if ( _handler )
+            _handler->installEventFilter(this);
         emit handlerChanged();
     }
     if ( _target )      // Force target reconfiguration for new handler
@@ -74,8 +75,11 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
             defaultHandlerComponent.setData( handlerQml.toUtf8(), QUrl{} );
             if ( defaultHandlerComponent.isReady() ) {
                 _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
-                if ( _handler )
+                if ( _handler ) {
                     engine->setObjectOwnership( _handler.data(), QQmlEngine::CppOwnership );
+                    _handler->setParentItem(this);
+                    _handler->installEventFilter(this);
+                }
                 else {
                     qWarning() << "FastQml: fql::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
                     qWarning() << "QML Component status=" << defaultHandlerComponent.status();
@@ -254,11 +258,13 @@ void    BottomRightResizer::setAutoHideHandler( bool autoHideHandler )
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *event )
+bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
 {
+    if ( item != _handler )
+        return QObject::eventFilter(item, event);
     bool accepted{ false };
     if ( _handler != nullptr &&
-         item == _handler ) {
+         item == _handler.data() ) {
         switch ( event->type() ) {
         case QEvent::HoverEnter:
         {
@@ -335,11 +341,10 @@ bool    BottomRightResizer::childMouseEventFilter( QQuickItem *item, QEvent *eve
         }
             break;
         default:
-            return accepted;
+            accepted = false;
         }
-        return accepted;
     }
-    return accepted;
+    return accepted ? true : QObject::eventFilter(item, event);
 }
 //-------------------------------------------------------------------------
 

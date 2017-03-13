@@ -90,35 +90,6 @@ private:
     QPointer<qan::NodeItem> _item;
 
 public:
-    // Qt property for gtpo::Node serializable standard property.
-    // FIXME QAN3
-/*    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
-    void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
-signals:
-    void            serializableChanged();
-    */
-public:
-    // Qt property for gtpo::Node resizable standard property.
-    // FIXME QAN3
-    Q_PROPERTY( bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL )
-    inline bool     getResizable() const noexcept { return _resizable; }
-    void            setResizable( bool resizable );
-private:
-    bool            _resizable{true};
-signals:
-    void            resizableChanged();
-
-public:
-    //! Node minimum size (it can't be resized below if resizable is true).
-    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
-    QSizeF          getMinimumSize() const { return _minimumSize; }
-    void            setMinimumSize( QSizeF minimumSize ) { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
-private:
-    QSizeF          _minimumSize = QSizeF{ 100., 45. };
-signals:
-    void            minimumSizeChanged();
-
-public:
     //! Read-only abstract item model of this node in nodes.
     Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
     QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInNodes() ) ); }
@@ -135,31 +106,6 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Selection Management *///----------------------------------------
-    //@{
-public:
-    //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
-    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
-    void            setSelectable( bool selectable );
-    inline bool     getSelectable( ) const { return _selectable; }
-    inline bool     isSelectable( ) const { return _selectable; }
-private:
-    bool            _selectable = true;
-signals:
-    void            selectableChanged( );
-
-public:
-    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
-    //! FIXME: Actually, selected state cannot be set programmatically.
-    void            setSelected( bool selected );
-    inline bool     getSelected( ) const { return _selected; }
-private:
-    bool            _selected = false;
-signals:
-    void            selectedChanged( );
-    //@}
-    //-------------------------------------------------------------------------
-
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
@@ -167,39 +113,6 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Node DnD Management *///-----------------------------------------
-    //@{
-public:
-    /*! \brief Define if the node could actually be dragged by mouse.
-     *
-     * Set this property to true if you want to allow this node to be moved by mouse (if false, the node position is
-     * fixed and should be changed programmatically).
-     * Default to true.
-     */
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void            setDraggable( bool draggable ) noexcept { _draggable = draggable; emit draggableChanged( ); }
-    inline bool     getDraggable( ) const noexcept { return _draggable; }
-private:
-    bool            _draggable = true;
-signals:
-    void            draggableChanged( );
-
-public:
-    /*! \brief Define if the node could actually be dropped in another node or in a node group.
-     *
-     * Set this property to true if you want to allow this node to be dropped in a qan::Group automatically.
-     * Default to true.
-     * Setting this property to false may lead to a significant performance improvement if group dropping is not needed.
-     */
-    Q_PROPERTY( bool dropable READ getDropable WRITE setDropable NOTIFY dropableChanged FINAL )
-    void            setDropable( bool dropable ) noexcept { _dropable = dropable; emit dropableChanged( ); }
-    inline bool     getDropable( ) const noexcept { return _dropable; }
-private:
-    bool            _dropable = true;
-signals:
-    void            dropableChanged( );
-    //@}
-    //-------------------------------------------------------------------------
 
     /*! \name Appearance Management *///---------------------------------------
     //@{

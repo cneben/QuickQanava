@@ -38,7 +38,7 @@ Qan.GraphView {
         id: graph
         Qan.VisualConnector {
             id: customConnector
-            graph: graphView.graph
+            graph: graphView.graph                    // SAMPLE: When configuring  a custom visual connector, VisualConnector.graph must be set manually
             topMargin: graph.connector.height + 15
             connectorItem: Control {
                 parent: customConnector

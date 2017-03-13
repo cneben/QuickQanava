@@ -182,7 +182,9 @@ signals:
     //! Emmited immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd( QSizeF targetSize );
 protected:
-    virtual bool    childMouseEventFilter(QQuickItem *item, QEvent *event) override;
+    //virtual bool    childMouseEventFilter(QQuickItem *item, QEvent *event) override;
+
+     virtual bool   eventFilter(QObject *obj, QEvent *event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
     QPointF         _dragInitialPos{ 0., 0. };

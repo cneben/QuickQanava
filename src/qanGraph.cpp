@@ -735,8 +735,10 @@ bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers )
 
     bool selectNode{ false };
     bool ctrlPressed = modifiers & Qt::ControlModifier;
+    if ( node.getItem() == nullptr )
+        return false;
 
-    if ( node.getSelected() ) {
+    if ( node.getItem()->getSelected() ) {
         if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
             removeFromSelection( node );
     } else {
@@ -767,7 +769,8 @@ void    Graph::addToSelection( qan::Node& node )
 
         // FIXME QAN3
         //node.configureSelectionItem( getSelectionColor(), getSelectionWeight(), getSelectionMargin() );
-        node.setSelected( true );
+        if ( node.getItem() != nullptr )
+            node.getItem()->setSelected( true );
     }
 }
 
@@ -775,14 +778,16 @@ void    Graph::removeFromSelection( qan::Node& node )
 {
     if ( _selectedNodes.contains( &node ) )
         _selectedNodes.remove( &node );
-    node.setSelected( false );
+    if ( node.getItem() != nullptr )
+        node.getItem()->setSelected( false );
 }
 
 void    Graph::clearSelection()
 {
     for ( auto& node : _selectedNodes )
-        if ( node != nullptr )
-            node->setSelected( false );
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->setSelected( false );
     _selectedNodes.clear();
 }
 

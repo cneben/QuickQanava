@@ -32,16 +32,56 @@ Qan.GraphView {
     navigable   : true
     graph: Qan.Graph {
         id: graph
+        resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
         Component.onCompleted: {
             var n1 = graph.insertNode()
             n1.label = "test"
-            n1.ToolTip.text = "testttt"
         }
-        onNodeClicked: { notifyUser( "Node <b>" + node.label + "</b> clicked" ) }
+        onNodeClicked: {
+            notifyUser( "Node <b>" + node.label + "</b> clicked" )
+            nodeEditor.node = node
+        }
         onNodeRightClicked: { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
         onNodeDoubleClicked: { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
     }
     ToolTip { id: toolTip; timeout: 2500 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
+
+    Frame {
+        id: nodeEditor
+        property var node: undefined
+        onNodeChanged: nodeItem = node ? node.item : undefined
+        property var nodeItem: undefined
+        anchors.bottom: parent.bottom; anchors.bottomMargin: 15
+        anchors.right: parent.right; anchors.rightMargin: 15
+        ColumnLayout {
+            Label {
+                text: nodeEditor.node ? "Editing node <b>" + nodeEditor.node.label + "</b>": "Select a node..."
+            }
+            CheckBox {
+                text: "Draggable"
+                enabled: nodeEditor.nodeItem !== undefined
+                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.draggable : false
+                onClicked: nodeEditor.nodeItem.draggable = checked
+            }
+            CheckBox {
+                text: "Resizable"
+                enabled: nodeEditor.nodeItem !== undefined
+                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.resizable : false
+                onClicked: nodeEditor.nodeItem.resizable = checked
+            }
+            CheckBox {
+                text: "Selected (read-only)"
+                enabled: false
+                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selected : false
+            }
+            CheckBox {
+                text: "Selectable"
+                enabled: nodeEditor.nodeItem != null
+                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selectable : false
+                onClicked: nodeEditor.nodeItem.selectable = checked
+            }
+        }
+    }
 }  // Qan.GraphView
 
