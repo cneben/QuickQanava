@@ -95,7 +95,7 @@ Item {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: background.radius / 2
-        node: parent.nodeItem
+        node: parent.nodeItem.node
         visible: false
     }
 }

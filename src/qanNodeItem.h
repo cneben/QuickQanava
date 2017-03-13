@@ -51,6 +51,16 @@ class Graph;
  * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or VisualConnector are not used nor necessary), consider disabling
  * drag'n'drop support by setting the \c acceptsDrops and \c droppable properties to false, it could improve performances significantly.
  *
+ * Bounding shape generation could be done in the following two ways:
+ * - Using the default behavior for rectangular node with \c complexBoundingShape set to false (default value), bounding
+ * shape is automatically generated on node \c width or \c height change in \c generateDefaultBoundingShape().
+ * - Using dedicated code by setting \c complexBoundingShape to true and with a call to \c setBoundingShape() from a custom
+ * \c onRequestUpdateBoundingShape() signal handler.
+ *
+ * Signal \c requestUpdateBoundingShape won't be emitted for non complex bounding shape.
+ *
+ * Optionally, you could choose to set \c complexBoundingShape to false and override \c generateDefaultBoundingShape() method.
+ *
  * \nosubgrouping
  */
 class NodeItem : public QQuickItem

@@ -183,7 +183,13 @@ Qan.Graph {
 Displaying Custom Nodes
 ------------------
 
-See the `custom` sample for more informations on specifying custom delegates for nodes and edges.
+See the `custom.qml` file in `nodes` sample for more informations on specifying custom delegates for nodes and edges.
+
+When defining custom nodes with complex geometry (ie. non rectangular), there is multiple ways to take bounding shape generation into account :
+  - Using the default behavior for rectangular node with complexBoundingShape set to false (default value), bounding shape is automatically generated on node width or height change in generateDefaultBoundingShape().
+  - Using dedicated code by setting complexBoundingShape to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.
+
+Note that signal requestUpdateBoundingShape won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override \c generateDefaultBoundingShape() method.
 
 Defining Styles
 ------------------

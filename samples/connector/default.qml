@@ -32,7 +32,7 @@ Qan.GraphView {
     anchors.fill: parent
     navigable   : true
     graph: Qan.Graph {
-        connectorEnabled: false              // SAMPLE: This is where visual connection of node is enabled...
+        connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
         id: graph
         Component.onCompleted: {
             var d1 = graph.insertNode()

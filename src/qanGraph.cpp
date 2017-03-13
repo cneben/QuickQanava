@@ -685,16 +685,15 @@ void    Graph::setSelectionColor( QColor selectionColor ) noexcept
 {
     _selectionColor = selectionColor;
     for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-
-        // FIXME QAN3
-        /*if ( node != nullptr &&
-             node->getSelectionItem() != nullptr ) {
-            QQuickItem* selectionItem = node->getSelectionItem();
+        if ( node != nullptr &&
+             node->getItem() != nullptr &&
+             node->getItem()->getSelectionItem() != nullptr ) {
+            QQuickItem* selectionItem = node->getItem()->getSelectionItem();
             selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
-            QObject* rectangleBorder = node->getSelectionItem()->property( "border" ).value<QObject*>();
+            QObject* rectangleBorder = selectionItem->property( "border" ).value<QObject*>();
             if ( rectangleBorder != nullptr )
                 rectangleBorder->setProperty( "color", selectionColor );
-        }*/
+        }
     }
     emit selectionColorChanged();
 }
@@ -705,10 +704,9 @@ void    Graph::setSelectionWeight( qreal selectionWeight ) noexcept
         return;
     _selectionWeight = selectionWeight;
     for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-        // FIXME QAN3
-        /*if ( node != nullptr )
-            node->configureSelectionItem( selectionWeight, getSelectionMargin() );
-            */
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->configureSelectionItem( selectionWeight, getSelectionMargin() );
     }
     emit selectionWeightChanged();
 }
@@ -719,11 +717,9 @@ void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
         return;
     _selectionMargin = selectionMargin;
     for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-        // FIXME QAN3
-        /*
-        if ( node != nullptr )
-            node->configureSelectionItem( getSelectionWeight(), selectionMargin );
-        */
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->configureSelectionItem( getSelectionWeight(), selectionMargin );
     }
     emit selectionMarginChanged();
 }
@@ -766,11 +762,13 @@ void    Graph::addToSelection( qan::Node& node )
 {
     if ( !_selectedNodes.contains( &node ) ) {
         _selectedNodes.append( &node );
-
-        // FIXME QAN3
-        //node.configureSelectionItem( getSelectionColor(), getSelectionWeight(), getSelectionMargin() );
-        if ( node.getItem() != nullptr )
+        if ( node.getItem() != nullptr ) {
+            // Eventually, create and configure node item selection item
+            if ( node.getItem()->getSelectionItem() == nullptr )
+                node.getItem()->setSelectionItem(createRectangle(node.getItem()));
+            node.getItem()->configureSelectionItem( getSelectionColor(), getSelectionWeight(), getSelectionMargin() );
             node.getItem()->setSelected( true );
+        }
     }
 }
 

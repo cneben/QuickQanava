@@ -199,7 +199,7 @@ protected:
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void             setCppOwnership( QQuickItem* item );
 
-protected:
+public:
     /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
      *
      * \note Internally used to generate selection rectangles around node, but part of the public API.

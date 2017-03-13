@@ -35,7 +35,9 @@ Qan.GraphView {
         resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
         Component.onCompleted: {
             var n1 = graph.insertNode()
-            n1.label = "test"
+            n1.label = "Node 1"; n1.item.x=15; n1.item.y= 25
+            var n2 = graph.insertNode()
+            n2.label = "Node 2"; n2.item.x=15; n2.item.y= 125
         }
         onNodeClicked: {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )
@@ -46,7 +48,11 @@ Qan.GraphView {
     }
     ToolTip { id: toolTip; timeout: 2500 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
-
+    Label {
+        anchors.left: parent.left; anchors.leftMargin: 15
+        anchors.bottom: parent.bottom; anchors.bottomMargin: 15
+        text: "Use CTRL+Click to select multiples nodes"
+    }
     Frame {
         id: nodeEditor
         property var node: undefined

@@ -101,6 +101,8 @@ void    NodeItem::setSelectable( bool selectable )
          getSelectionItem()->isVisible() )
         getSelectionItem()->setVisible( false );
     _selectable = selectable;
+    if ( _selected && !_selectable )
+        setSelected(false);
     emit selectableChanged();
 }
 
@@ -110,7 +112,10 @@ void    NodeItem::setSelected( bool selected )
          isSelectable() )
         getSelectionItem()->setVisible( selected );
 
-    // FIXME Qan3: create selection item here
+    if ( selected &&                        // Eventually create selection item
+         getSelectionItem() == nullptr &&
+         getGraph() != nullptr )
+        setSelectionItem(getGraph()->createRectangle( this ) );
 
     if ( _selected != selected ) { // Binding loop protection
         _selected = selected;
@@ -299,8 +304,8 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
              getNode()->getItem() != nullptr &&
              getNode()->getItem()->isSelectable() ) {
             const auto graph = getGraph();
-            //if ( graph != nullptr )
-            //    graph->selectNode( *getNode(), event->modifiers() );
+            if ( graph != nullptr )
+                graph->selectNode( *getNode(), event->modifiers() );
         }
 
         // QML notifications
@@ -399,16 +404,17 @@ auto    NodeItem::endDragMove( bool dragSelection ) -> void
     _lastProposedGroup = nullptr;
 
     // If there is a selection, end drag for the whole selection
-    /*if ( dragSelection ) {
+    if ( dragSelection ) {
         qan::Graph* graph = getGraph();
         if ( graph != nullptr &&
              getGraph()->hasMultipleSelection() ) {
             for ( auto& selectedNode : graph->getSelectedNodes() )
-                if ( selectedNode != nullptr && selectedNode != this )
-                    selectedNode->endDragMove( false );
+                if ( selectedNode != nullptr &&
+                     selectedNode->getItem() != nullptr &&
+                     selectedNode->getItem() != this )
+                    selectedNode->getItem()->endDragMove( false );
         }
     }
-    */
 }
 //-----------------------------------------------------------------------------
 
