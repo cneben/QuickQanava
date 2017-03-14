@@ -30,6 +30,8 @@
 
 // QuickQanava headers
 #include "./qanBehaviour.h"
+#include "./qanNode.h"
+#include "./qanEdge.h"
 
 namespace qan { // ::qan
 

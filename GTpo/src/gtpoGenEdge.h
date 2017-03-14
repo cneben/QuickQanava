@@ -52,7 +52,7 @@ namespace gtpo { // ::gtpo
 template <class Config>
 class GenGraph;
 
-template <class Config>
+template <class Config, class ConcreteNode>
 class GenNode;
 
 template <class Config>
@@ -72,10 +72,14 @@ class GenEdge : public Config::EdgeBase,
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 public:
     using Graph         = GenGraph<Config>;
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using SharedNode    = std::shared_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedEdge    = std::shared_ptr< typename Config::FinalEdge >;
+
+    using WeakNode      = typename GenNode<Config, typename Config::FinalNode>::Weak;
+    using SharedNode    = typename GenNode<Config, typename Config::FinalNode>::Shared;
+
+    using Weak          = std::weak_ptr<typename Config::FinalEdge>;
+    using Shared        = std::shared_ptr<typename Config::FinalEdge>;
+    using WeakEdge      = Weak;
+    using SharedEdge    = Shared;
 
     GenEdge() noexcept : Config::EdgeBase{} {}
     explicit GenEdge( WeakNode& src, WeakNode& dst ) :
@@ -165,8 +169,6 @@ class GenGroupEdge : public gtpo::GenEdge<Config>
 };
 
 } // ::gtpo
-
-#include "./gtpoGenEdge.hpp"
 
 #endif // gtpoGenEdge_h
 

@@ -42,6 +42,7 @@
 
 namespace qan { // ::qan
 
+class NodeBehaviour;
 class Graph;
 class Group;
 class NodeItem;
@@ -113,7 +114,6 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-
     /*! \name Appearance Management *///---------------------------------------
     //@{
 private:
@@ -146,7 +146,11 @@ signals:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    Q_INVOKABLE qan::Group*     qmlGetGroup() { return getGroup().lock().get(); }
+    Q_INVOKABLE qan::Group*     qmlGetGroup() {
+        // FIXME QAN3
+        return nullptr;
+        //return qobject_cast<qan::Group*>(getGroup().lock().get());
+    }
 
     //! Shortcut to gtpo::GenNode<>::getGroup().
     //qan::Group*                 getGroup();

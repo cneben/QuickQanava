@@ -35,6 +35,7 @@
 
 // GTpo headers
 #include "./gtpoGraphBehaviour.h"
+#include "./gtpoGenGroup.h"
 #include "./gtpoGroupBehaviour.h"
 
 namespace gtpo { // ::gtpo
@@ -53,14 +54,13 @@ public:
     GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = delete;
     GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
 
-    using SharedNode    = std::shared_ptr< typename Config::FinalNode >;
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedEdge    = std::shared_ptr< typename Config::FinalEdge >;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
+    using WeakNode      = typename GenNode<Config>::Weak;
+    using SharedNode    = typename GenNode<Config>::Shared;
 
+    using WeakEdge          = typename GenEdge<Config>::Weak;
+    using SharedGroup       = std::shared_ptr< GenGroup<Config> >;
+    using Group             = typename Config::FinalGroup;
+    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 public:
     virtual void    nodeInserted( WeakNode& weakNode ) noexcept override;
     virtual void    nodeRemoved( WeakNode& weakNode ) noexcept override;
@@ -80,13 +80,9 @@ public:
     GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
     GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
 
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge          = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedEdge        = std::shared_ptr< typename Config::FinalEdge >;
+    using WeakEdge  = typename GenEdge<Config>::Weak;
+    using Group     = typename Config::FinalGroup;
     using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
-    using WeakGroup         = std::weak_ptr< typename Config::FinalGroup >;
-    using SharedGroup       = std::shared_ptr< typename Config::FinalGroup >;
 
 public:
     virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept override;

@@ -108,8 +108,6 @@ Qan.Connector {
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
         //console.debug( "Drag.target=" + Drag.target )
-        //if ( Drag.target )
-        //    console.debug( "Drag.target.node=" + Drag.target.node )
         if ( Drag.target )
             visualConnector.z = Drag.target.z + 1
         if ( !Drag.target && connectorItem ) {
@@ -192,8 +190,8 @@ Qan.Connector {
                 }
                 else if ( hEdgeEnabled &&
                          dst.edge &&
-                          !graph.hasEdge( src, dst.edge ) /*&&  // FIXME QAN3 add an isHyperEdge method on qan::Edge
-                          !graph.isHyperEdge( dst.edge )*/ ) { // Do not create an hyper edge on an hyper edge
+                          !graph.hasEdge( src, dst.edge ) &&
+                          !dst.isHyperEdge() ) {            // Do not create an hyper edge on an hyper edge
                     if ( createDefaultEdge )
                         createdEdge = graph.insertEdge( src, dst.edge )
                     else requestEdgeCreation(src, dst.node)

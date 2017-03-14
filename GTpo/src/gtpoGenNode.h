@@ -43,7 +43,6 @@
 
 // GTpo headers
 #include "./gtpoUtils.h"
-#include "./gtpoBehaviour.h"
 #include "./gtpoGraphConfig.h"
 #include "./gtpoNodeBehaviour.h"
 
@@ -55,15 +54,17 @@ class GenGraph;
 template <class Config>
 class GenGroup;
 
+template <class Config>
+class GenEdge;
+
 /*! \brief Base class for modelling nodes with an in/out edges list in a gtpo::GenGraph graph.
  *
  * \nosubgrouping
  */
-template <class Config = DefaultConfig>
+template <class Config = gtpo::GraphConfig, class ConcreteNode = typename Config::FinalNode >
 class GenNode : public Config::NodeBase,
-                public gtpo::BehaviourableNode< gtpo::NodeBehaviour< Config >,
-                                                typename Config::NodeBehaviours >,
-                public std::enable_shared_from_this<typename Config::FinalNode>
+                public gtpo::BehaviourableNode< gtpo::NodeBehaviour< Config >, std::tuple<> >,
+                public std::enable_shared_from_this<ConcreteNode>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
@@ -71,13 +72,15 @@ class GenNode : public Config::NodeBase,
     //@{
 public:
     using Graph         = GenGraph<Config>;
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using SharedNode    = std::shared_ptr< typename Config::FinalNode >;
+    using Weak          = std::weak_ptr< typename Config::FinalNode >;
+    using Shared        = std::shared_ptr< typename Config::FinalNode >;
+    using WeakNode      = Weak;
+    using SharedNode    = Shared;
     using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.
-    using BehaviourableBase = gtpo::Behaviourable< gtpo::NodeBehaviour< Config >,
-                                                   typename Config::NodeBehaviours >;
+    using BehaviourableBase = gtpo::Behaviourable< gtpo::NodeBehaviour< Config >, std::tuple<> >;
+                                                   //typename Config::NodeBehaviours >;
 
     GenNode() noexcept : Config::NodeBase{} { }
     ~GenNode() {
@@ -103,9 +106,9 @@ public: // FIXME
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
+    using WeakEdge      = typename GenEdge<Config>::Weak;
+    using SharedEdge    = typename GenEdge<Config>::Shared;
     using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
-    using SharedEdge    = std::shared_ptr< typename Config::FinalEdge >;
 
     /*! \brief Insert edge \c outEdge as an out edge for this node.
      *
@@ -147,19 +150,16 @@ private:
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using WeakGroup = std::weak_ptr< typename Config::FinalGroup >;
-    inline auto setGroup( WeakGroup& group ) noexcept -> void { _group = group; }
-    inline auto getGroup( ) noexcept -> WeakGroup& { return _group; }
-    inline auto getGroup( ) const noexcept -> const WeakGroup& { return _group; }
+    inline auto setGroup( std::weak_ptr<typename Config::FinalGroup>& group ) noexcept -> void { _group = group; }
+    inline auto getGroup( ) noexcept -> std::weak_ptr<typename Config::FinalGroup>& { return _group; }
+    inline auto getGroup( ) const noexcept -> const std::weak_ptr<typename Config::FinalGroup>& { return _group; }
 private:
-    WeakGroup   _group;
+    std::weak_ptr<typename Config::FinalGroup> _group;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
-
-#include "./gtpoGenNode.hpp"
 
 #endif // gtpoGenNode_h
 

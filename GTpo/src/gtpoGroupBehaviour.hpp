@@ -56,7 +56,7 @@ template < class Node >
 auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) noexcept -> void
 {
     notifyBehaviours< Node >( &Behaviour::nodeInserted, node );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
+    sNotifyBehaviours( [&node](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
 }
 
 template < class Behaviour, class SBehaviours >

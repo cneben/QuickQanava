@@ -214,7 +214,7 @@ private:
     //@{
 public:
     using Node              = typename GraphConfig::FinalNode;
-    using WeakNode          = std::weak_ptr< typename GraphConfig::FinalNode >;
+    using WeakNode          = GTpoGraph::WeakNode;
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -229,7 +229,7 @@ public:
     Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
 
     template < class Node_t >
-    qan::Node*              insertNode();
+    qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr );
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
@@ -262,11 +262,16 @@ public:
     Q_INVOKABLE qan::Edge*  insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
 
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
+    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
 
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    qan::Edge*              insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
+    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
+protected:
+    template < class Edge_t >
+    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
+
+public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
     Q_INVOKABLE void        removeEdge( qan::Node* source, qan::Node* destination );
 
@@ -286,26 +291,23 @@ signals:
      *
      *  \sa nodeClicked()
      */
-    void            edgeClicked( QVariant edge, QVariant pos );
+    void            edgeClicked( qan::Edge* edge, QPointF pos );
     /*! \brief Emitted whenever a node registered in this graph is right clicked.
      *
      *  \sa nodeRightClicked()
      */
-    void            edgeRightClicked( QVariant edge, QVariant pos );
+    void            edgeRightClicked( qan::Edge* edge, QPointF pos );
     /*! \brief Emitted whenever a node registered in this graph is double clicked.
      *
      *  \sa nodeDoubleClicked()
      */
-    void            edgeDoubleClicked( QVariant edge, QVariant pos );
+    void            edgeDoubleClicked( qan::Edge* edge, QPointF pos );
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    //! Defined for serialization support, do not use.
-    //virtual WeakGroup       createGroup( const std::string& className ) override;
-
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE qan::Group* insertGroup();
 
@@ -317,6 +319,12 @@ public:
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
+
+    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    auto            groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void;
+
+    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.

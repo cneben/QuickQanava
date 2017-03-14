@@ -35,8 +35,19 @@
 
 // GTpo headers
 #include "./gtpoBehaviour.h"
+#include "./gtpoGenGroup.h"
+#include "./gtpoGenNode.h"
 
 namespace gtpo { // ::gtpo
+
+//template < class Config, class ConcreteNode >
+//class GenNode;
+
+template < class Config >
+class GenEdge;
+
+template < class Config >
+class GenGroup;
 
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGroup.
  *
@@ -52,11 +63,8 @@ public:
     GroupBehaviour( const GroupBehaviour& ) = delete;
     GroupBehaviour& operator=( const GroupBehaviour& ) = delete;
 
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using Group         = typename Config::FinalGroup;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
+    using WeakNode      = typename GenNode<Config>::Weak;
+    using WeakGroup     = std::weak_ptr<GenGroup<Config>>;
     //@}
     //-------------------------------------------------------------------------
 

@@ -20,7 +20,7 @@ SOURCES	+=  ./gtpoTests.cpp         \
             ./gtpoContainers.cpp    \
             ./gtpoTopology.cpp      \
             ./gtpoGroups.cpp        \
-            ./gtpoBehaviour.cpp     \
+            ./gtpoBehaviour.cpp
             #./gtpoConcrete.cpp
 
 HEADERS	+=  

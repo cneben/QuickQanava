@@ -83,6 +83,8 @@ private:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
+    Q_INVOKABLE             bool isHyperEdge() const;
+public:
     Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }
     void                    setSourceItem( qan::NodeItem* source );
@@ -93,7 +95,7 @@ signals:
 
 public:
     Q_PROPERTY( qan::NodeItem* destinationItem READ getDestinationItem WRITE setDestinationItem NOTIFY destinationItemChanged FINAL )
-    qan::NodeItem*          getDestinationItem( ) { return _destinationItem.data(); }
+    qan::NodeItem*          getDestinationItem( ) noexcept { return _destinationItem.data(); }
     void                    setDestinationItem( qan::NodeItem* destination );
 private:
     QPointer<qan::NodeItem> _destinationItem;
@@ -102,13 +104,12 @@ signals:
 
 public:
     Q_PROPERTY( qan::EdgeItem* destinationEdge READ getDestinationEdge() WRITE setDestinationEdge NOTIFY destinationEdgeChanged FINAL )
-    // FIXME QAN3
-    //qan::EdgeItem*  getDestinationEdge( ) { return static_cast< qan::EdgeItem* >( !getHDst().expired() ? getHDst().lock().get() : nullptr ); }
-    qan::EdgeItem*  getDestinationEdge( ) { return nullptr; }
+    qan::EdgeItem*  getDestinationEdge() noexcept { return _destinationEdge.data(); }
     void            setDestinationEdge( qan::EdgeItem* destination );
 signals:
     void            destinationEdgeChanged( );
-
+private:
+    QPointer<qan::EdgeItem> _destinationEdge;
 protected:
     //! Configure either a node or an edge (for hyper edges) item.
     void            configureDestinationItem( QQuickItem* item );
@@ -154,9 +155,9 @@ protected:
     virtual void    mouseDoubleClickEvent( QMouseEvent* event ) override;
     virtual void    mousePressEvent( QMouseEvent* event ) override;
 signals:
-    void            edgeClicked( QVariant edge, QVariant pos );
-    void            edgeRightClicked( QVariant edge, QVariant pos );
-    void            edgeDoubleClicked( QVariant edge, QVariant pos );
+    void            edgeClicked( qan::EdgeItem* edge, QPointF pos );
+    void            edgeRightClicked( qan::EdgeItem* edge, QPointF pos );
+    void            edgeDoubleClicked( qan::EdgeItem* edge, QPointF pos );
 private:
     inline qreal    distanceFromLine( const QPointF& p, const QLineF& line ) const;
 
@@ -193,28 +194,6 @@ signals:
 private slots:
     //! Called when the style associed to this edge is destroyed.
     void            styleDestroyed( QObject* style );
-
-public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    //! Set this edge label.
-    void            setLabel( const QString& label );
-    //! Get this edge label.
-    const QString&  getLabel( ) const { return _label; }
-protected:
-    QString         _label{""};
-signals:
-    void            labelChanged( );
-
-public:
-    Q_PROPERTY( qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL )
-    //! Get edge's weight.
-    inline qreal    getWeight( ) const { return _weight; }
-    //! Set edge's weight.
-    void            setWeight( qreal weight );
-protected:
-    qreal           _weight{1.0};
-signals:
-    void            weightChanged( );
     //@}
     //-------------------------------------------------------------------------
 

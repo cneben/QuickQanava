@@ -54,8 +54,8 @@ public:
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
-    using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
-    using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+    using WeakEdge      = typename GenEdge<GraphConfig>::Weak;
+    using SharedEdge    = typename GenEdge<GraphConfig>::Shared;
 
     OutSerializer() = default;
     virtual ~OutSerializer() = default;
@@ -98,12 +98,12 @@ class Serializer :  public InSerializer< GraphConfig >,
 {
 public:
     using Graph         = GenGraph< GraphConfig >;
-    using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
+    using SharedNode    = typename GenNode<GraphConfig>::Shared;
     using Node          = typename GraphConfig::Node;
-    using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
-    using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
-    using WeakGroup     = std::weak_ptr< typename GraphConfig::Group >;
-    using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+    using WeakNode      = typename GenNode<GraphConfig>::Weak;
+    using SharedEdge    = typename GenEdge<GraphConfig>::Shared;
+    using WeakEdge      = typename GenEdge<GraphConfig>::Weak;
+    using WeakGroup     = typename GenGroup<GraphConfig>::Weak;
 
     Serializer() = default;
     virtual ~Serializer() = default;

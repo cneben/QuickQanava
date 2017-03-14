@@ -43,6 +43,7 @@ NodeItem::NodeItem(QQuickItem* parent) :
     _style{ nullptr }
 {
     setAcceptDrops( true );
+    setFlag( QQuickItem::ItemAcceptsDrops, true );
     setStyle( _defaultStyle.data() );
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
     connect( this, &qan::NodeItem::widthChanged,
@@ -199,7 +200,9 @@ void    NodeItem::setAcceptDrops( bool acceptDrops ) noexcept
 {
     if ( acceptDrops != _acceptDrops ) {
         _acceptDrops = acceptDrops;
-        setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops );
+        if ( acceptDrops &&
+             !(flags().testFlag(QQuickItem::ItemAcceptsDrops)) )
+            setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops );
         emit acceptDropsChanged();
     }
 }
@@ -334,7 +337,6 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
 
     // If there is a selection, keep start position for all selected nodes.
     if ( dragSelection ) {
-        // FIXME QAN3
         const auto graph = getGraph();
         if ( graph != nullptr &&
              graph->hasMultipleSelection() ) {
@@ -350,14 +352,16 @@ auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSe
 auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
 {
     const auto graph = getGraph();
-    if ( graph != nullptr ) {
-        // FIXME QAN3
-        /*if ( getQanGroup() != nullptr ) {
-            getQanGroup()->removeNode( this );
+    if ( _node &&
+         graph != nullptr ) {
+        if ( _node->getGroup().lock() ) {
+            // FIXME QAN3
+            graph->ungroupNode(_node->getGroup().lock().get(), _node );
+            //_node->getGroup().lock()->removeNode( _node );
             _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and
             // thus position (same scene pos but different local pos)
             _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-        }*/
+        }
 
         QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
         setX( startPos.x() + delta.x() );
@@ -372,31 +376,35 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
         }
 
         // Eventually, propose a node group drop after move
-        qan::Group* group = graph->groupAt( position(), { width(), height() } );
-        /*if ( group != nullptr &&
-             getDropable() ) {
-            group->proposeNodeDrop( group->getContainer(), this );
-            _lastProposedGroup = group;
-        }*/
-        if ( group == nullptr &&
-             _lastProposedGroup != nullptr ) {
-            _lastProposedGroup->endProposeNodeDrop();
-            _lastProposedGroup = nullptr;
+        if ( getDropable() ) {
+            qan::Group* group = graph->groupAt( position(), { width(), height() } );
+            qDebug() << "qan::NodeItem::dragMove(): group=" << group;
+            if ( _node &&
+                 group != nullptr &&
+                 group->getItem() != nullptr ) {
+                group->getItem()->proposeNodeDrop(_node.data());
+                _lastProposedGroup = group;
+            } else if ( group == nullptr &&
+                        _lastProposedGroup != nullptr &&
+                        _lastProposedGroup->getItem() != nullptr ) {
+                _lastProposedGroup->getItem()->endProposeNodeDrop();
+                _lastProposedGroup = nullptr;
+            }
         }
     }
 }
 
 auto    NodeItem::endDragMove( bool dragSelection ) -> void
 {
-    // FIXME QAN3
-    /*
     if ( getDropable() ) {
-        //qDebug() << "drop pos=" << pos << "\twidth=" << width() << "\theight=" << height();
+        // FIXME QAN3: map to global graph container
         const auto pos = position(); //parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
         qan::Group* group = getGraph()->groupAt( pos, { width(), height() } );
-        if ( group != nullptr )
-            group->insertNode( this );
-    }*/
+        if ( getGraph() != nullptr &&
+             group != nullptr &&
+             _node )
+            getGraph()->groupNode( group, _node.data() );
+    }
 
     setDragActive(false);
     _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends

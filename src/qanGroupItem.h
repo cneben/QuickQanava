@@ -39,6 +39,7 @@
 
 namespace qan { // ::qan
 
+class Graph;
 class Group;
 
 /*! \brief Model a graphics group of nodes.
@@ -77,62 +78,12 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Nodes Management *///--------------------------------------
-    //@{
-public:
-    //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
-//    auto                insertNode( WeakNode weakNode ) -> void;
-
-    /*! \brief Insert an existing QuickQanava node \c node into gthis group.
-     *
-     * \param drop specify if the node insertion is the result of a drag and drop (default), in that case,
-     * the node position will be mapped in group coordinate system. If false (for serialization or in case
-     * of a "prograObjectIdMapmmatic" insertion, node keep its current position and size.
-     *
-     * \note Call gtpo::GenGroup<qan::Config>::insertNode() during insertion.
-     */
-//    Q_INVOKABLE auto    insertNode( qan::Node* node, bool drop = true ) -> void;
-
-    //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
-//    auto                removeNode( const qan::Node* node ) -> void;
-
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
-//    Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Appearance Management *///---------------------------------------
-    //@{
-public:
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
-    void        setCollapsed( bool collapsed );
-    bool        getCollapsed( ) const { return _collapsed; }
-private:
-    bool        _collapsed = false;
-signals:
-    void        collapsedChanged( );
-
-public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
-    QString     getLabel( ) const { return _label; }
-private:
-    QString     _label = QString{ "" };
-signals:
-    void        labelChanged( );
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Group Behaviour/Layout Management *///---------------------------
+    /*! \name Group DnD Management *///----------------------------------------
     //@{
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
-    void                groupMoved( );
-    //@}
-    //-------------------------------------------------------------------------
+    void            groupMoved( );
 
-    /*! \name Group DnD Management *///----------------------------------------
-    //@{
 public:
     /*! \brief Define if the group could actually be dragged by mouse.
      *
@@ -190,11 +141,12 @@ signals:
     void            hilightDragChanged( );
 
 public:
+    //! Configure \c nodeItem in this group item.
+    virtual void    configureNode(qan::NodeItem* nodeItem);
+
     /*! \brief Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
-     *
-     * \sa qan::Layout::proposeNodeDrop( ) for a detailled explanation.
      */
-    virtual void    proposeNodeDrop( QQuickItem* container, qan::Node* node );
+    virtual void    proposeNodeDrop( qan::Node* node );
 
     //! Called at the end of a node drag hover.
     virtual void    endProposeNodeDrop();
@@ -239,11 +191,11 @@ signals:
 
 signals:
     //! Emmited whenever the group is clicked (even at the start of a dragging operation).
-    void    groupClicked( qan::Group* group, QPointF p );
+    void    groupClicked( qan::GroupItem* group, QPointF p );
     //! Emmited whenever the group is double clicked.
-    void    groupDoubleClicked( qan::Group* group, QPointF p );
+    void    groupDoubleClicked( qan::GroupItem* group, QPointF p );
     //! Emmited whenever the group is right clicked.
-    void    groupRightClicked( qan::Group* group, QPointF p );
+    void    groupRightClicked( qan::GroupItem* group, QPointF p );
     //@}
     //-------------------------------------------------------------------------
 };

@@ -36,6 +36,8 @@ import "qrc:/QuickQanava"   as Qan
 Item {
     id: template
     x: 0;   y: 0
+    // FIXME QAN3
+    z: 0
     width: Math.max( content.width, 75 )
     height: Math.max( content.height, 40 )
 
@@ -80,7 +82,8 @@ Item {
                 onClicked: group.collapsed = !group.collapsed
             }
         }
-        TextInput {
+        // FIXME QAN3
+        /*TextInput {
             id: nameText
             text: group.label
             font.pointSize: nameTextSize; font.bold: nameTextBold
@@ -100,7 +103,7 @@ Item {
             drag.target: group
             preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
             onDoubleClicked: { nameText.forceActiveFocus(); nameText.selectAll() }
-        }
+        }*/
     } // RowLayout: collapser + label
     Item {
         id: content

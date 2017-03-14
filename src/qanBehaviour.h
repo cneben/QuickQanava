@@ -32,11 +32,11 @@
 #include <QObject>
 
 // GTpo headers
-#include <memory>   // FIXME 20160404: remove that later, memory was missing from gtpoBehaviour.h
-#include "../GTpo/src/gtpoBehaviour.h"
+#include "../GTpo/src/gtpoNodeBehaviour.h"
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
+#include "./qanEdge.h"
 
 namespace qan { // ::qan
 

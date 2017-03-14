@@ -35,7 +35,16 @@
 
 #include "./gtpoUtils.h"
 #include "./gtpoBehaviour.h"
+#include "./gtpoGenNode.h"
+#include "./gtpoGenGroup.h"
+#include "./gtpoGenEdge.h"
 #include "./gtpoGenGraph.h"
+
+#include "./gtpoGenNode.hpp"
+#include "./gtpoGenGroup.hpp"
+#include "./gtpoGenEdge.hpp"
+#include "./gtpoGenGraph.hpp"
+
 #include "./gtpoSerializer.h"
 #include "./gtpoRandomGraph.h"
 #include "./gtpoProgressNotifier.h"

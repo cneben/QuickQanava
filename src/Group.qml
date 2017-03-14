@@ -35,7 +35,7 @@ import "."          as Qan
 
 Qan.GroupItem {
     id: group
-    x: 0;   y: 0
+    x: 0;   y: 0; z:0
     width: template.content.width;
     height: template.content.height
     Layout.preferredWidth: 150

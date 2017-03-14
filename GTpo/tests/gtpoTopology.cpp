@@ -98,7 +98,7 @@ TEST(GTpoTopology, graphClearNodeEdge)
     gtpo::GenGraph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
-    auto e1 = g.createEdge(n1, n2);
+    auto e1 = g.createEdge<gtpo::GenEdge<>>(n1, n2);
     EXPECT_EQ( g.getNodeCount(), 2 );
     EXPECT_TRUE( g.contains(e1) );
     g.clear();

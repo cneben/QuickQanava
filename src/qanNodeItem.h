@@ -124,7 +124,6 @@ signals:
 
 public:
     Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
-    //! FIXME: Actually, selected state cannot be set programmatically.
     void            setSelected( bool selected );
     inline bool     getSelected() const noexcept { return _selected; }
 private:

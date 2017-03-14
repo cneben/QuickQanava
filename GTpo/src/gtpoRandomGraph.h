@@ -78,8 +78,9 @@ public:
             int outNodeCount = outNodeDist( gen );
             for ( int outNode = 0; outNode < outNodeCount; ++outNode ) {
                 auto destination = nodes[ nodeIndexDist( gen ) ];
-                if ( !gtpo::compare_weak_ptr( source, destination ) )
-                graph.createEdge( config.edgeClassName, source, destination );
+                //if ( !gtpo::compare_weak_ptr( source, destination ) )
+                    // FIXME QAN3
+                //graph.createEdge( config.edgeClassName, source, destination );
             }
         }
 

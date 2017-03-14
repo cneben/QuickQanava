@@ -38,6 +38,12 @@
 
 namespace gtpo { // ::gtpo
 
+template < class Config, class ConcreteNode >
+class GenNode;
+
+template < class Config >
+class GenEdge;
+
 /*! \brief Define a node observer interface.
  *
  */
@@ -50,11 +56,11 @@ public:
     NodeBehaviour( const NodeBehaviour& ) = delete;
     NodeBehaviour& operator=( const NodeBehaviour& ) = delete;
 
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge          = std::weak_ptr< typename Config::FinalEdge >;
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
+    using WeakNode          = typename GenNode<Config, typename Config::FinalNode>::Weak;
+    using SharedNode        = typename GenNode<Config, typename Config::FinalNode>::Shared;
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
+    using WeakEdge          = typename GenEdge<Config>::Weak;
 
 public:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.

@@ -82,22 +82,6 @@ private:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    //! Shortcut to gtpo::GenGroup<qan::Config>::insertNode().
-    //auto                insertNode( WeakNode weakNode ) -> void;
-
-    /*! \brief Insert an existing QuickQanava node \c node into gthis group.
-     *
-     * \param drop specify if the node insertion is the result of a drag and drop (default), in that case,
-     * the node position will be mapped in group coordinate system. If false (for serialization or in case
-     * of a "prograObjectIdMapmmatic" insertion, node keep its current position and size.
-     *
-     * \note Call gtpo::GenGroup<qan::Config>::insertNode() during insertion.
-     */
-    //Q_INVOKABLE auto    insertNode( qan::Node* node, bool drop = true ) -> void;
-
-    //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
-    //auto                removeNode( const qan::Node* node ) -> void;
-
     //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
     //@}
@@ -141,75 +125,12 @@ private:
     bool            _draggable = true;
 signals:
     void            draggableChanged( );
-
-public:
-    /*! \brief Define if the group actually accept insertion of nodes via drag'n drop (default to true).
-     *
-     * Default to true.
-     *
-     * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
-     */
-    // FIXME QAN3
-/*    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
-    void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
-    bool             getAcceptDrops( ) { return _acceptDrops; }
-private:
-    bool            _acceptDrops = true;
-signals:
-    void            acceptDropsChanged( );*/
-
-public:
-    /*! \brief Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
-     *
-     *  When sets to true, group will use a shadow node (_shadowDropNode) to hilight the position of a node that is actually dragged over
-     *  this group to show its position when dropped and inserted in the group (it is quite costly, and the group layout must include support for
-     *  qan::Layout::proposeNodeDrop( ), such as qan::Linear and qan::OrderedTree).
-     *
-     *  When hilightDrag is set to true, your concrete QML qan::Node should call qan::dropNode() and qan::Node::proposeNodeDrop().
-     *  Default to true.
-     *
-     *  Example of a group with a qan::HierarchyTree layout and group's 'hilightDrag' property sets to true: node "n2" insertion position is hilighted with a shadow node before node is actually dropped into the group:
-     *  \image html 20150908_NP_group-hilight-drag.png
-     *
-     * \sa proposeNodeDrop()
-     * \sa qan::Node::dropNode()
-     * \sa qan::Node::proposeNodeDrop()
-     * \sa qan::Layout::proposeNodeDrop()
-     */
-    Q_PROPERTY( bool hilightDrag READ getHilightDrag WRITE setHilightDrag NOTIFY hilightDragChanged FINAL )
-    void             setHilightDrag( bool hilightDrag ) { _hilightDrag = hilightDrag; emit hilightDragChanged( ); }
-    bool             getHilightDrag( ) { return _hilightDrag; }
-protected:
-    bool            _hilightDrag = true;
-signals:
-    void            hilightDragChanged( );
-
-public:
-    /*! \brief Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
-     *
-     * \sa qan::Layout::proposeNodeDrop( ) for a detailled explanation.
-     */
-    virtual void    proposeNodeDrop( QQuickItem* container, qan::Node* node );
-
-    //! Called at the end of a node drag hover.
-    virtual void    endProposeNodeDrop();
-private:
-    //! Shadow node managed internally by group used to hilight node position before a node is dropped in this group, or when a node is moved inside the group.
-    qan::Node*      _shadowDropNode = nullptr;
-
-signals:
-    //! Emmited whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragEnter( );
-    //! Emmited whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragLeave( );
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-//QML_DECLARE_TYPE( qan::Group )
-//Q_DECLARE_METATYPE( std::shared_ptr<qan::Group> )
-//Q_DECLARE_METATYPE( std::weak_ptr<qan::Group> )
+QML_DECLARE_TYPE( qan::Group )
 
 #endif // qanGroup_h

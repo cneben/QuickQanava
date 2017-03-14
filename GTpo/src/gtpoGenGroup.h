@@ -42,27 +42,25 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
+#include "./gtpoGraphConfig.h"
 #include "./gtpoUtils.h"
 #include "./gtpoGenNode.h"
-#include "./gtpoGraphConfig.h"
+#include "./gtpoGenEdge.h"
 #include "./gtpoGroupBehaviour.h"
+#include "./gtpoAdjacentBehaviour.h"
 
 namespace gtpo { // ::gtpo
 
-template <class Config>
-class GenGraph;
-
-template <class Config>
-class GenGroup;
 
 /*! \brief Base class for modelling groups of nodes in a gtpo::GenGraph graph.
  *
  * \nosubgrouping
 */
 template <class Config = gtpo::GraphConfig>
-class GenGroup : public gtpo::GenNode<Config>,
+class GenGroup : public gtpo::GenNode<Config, typename Config::FinalGroup>,
                  public gtpo::BehaviourableGroup< gtpo::GroupBehaviour< Config >,
-                                                  typename Config::GroupBehaviours >
+                                                  std::tuple< gtpo::GroupAdjacentEdgesBehaviour< Config > > >
+                                                    //typename Config::GroupBehaviours>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
@@ -71,17 +69,19 @@ class GenGroup : public gtpo::GenNode<Config>,
 public:
     using Graph             = GenGraph<Config>;
 
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
+    using WeakNode          = typename GenNode<Config>::Weak;
+    using SharedNode        = typename GenNode<Config>::Shared;
     using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
 
-    using WeakEdge          = std::weak_ptr< typename Config::FinalEdge >;
+    using WeakEdge          = typename GenEdge<Config>::Weak;
     using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 
-    using WeakGroup         = std::weak_ptr< typename Config::FinalGroup >;
-    using SharedGroup       = std::shared_ptr< typename Config::FinalGroup >;
+    using Weak          = std::weak_ptr< typename Config::FinalGroup >;
+    using Shared        = std::shared_ptr< typename Config::FinalGroup >;
+    using WeakGroup     = Weak;
+    using SharedGroup   = Shared;
 
-    GenGroup() noexcept : gtpo::GenNode<Config>() { }
+    GenGroup() noexcept : gtpo::GenNode<Config, typename Config::FinalGroup>() { }
     ~GenGroup() {
         if ( _graph != nullptr )
             std::cerr << "gtpo::GenGroup<>::~GenGroup(): Warning: Group has been destroyed before beeing removed from the graph." << std::endl;
@@ -124,8 +124,6 @@ protected:
 };
 
 } // ::gtpo
-
-#include "./gtpoGenGroup.hpp"
 
 #endif // gtpoGenGroup_h
 

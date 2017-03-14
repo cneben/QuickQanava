@@ -96,10 +96,10 @@ public:
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
-    using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
-    using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
-    using WeakGroup     = std::weak_ptr< typename GraphConfig::Group >;
-    using SharedGroup   = std::shared_ptr< typename GraphConfig::Group >;
+    using WeakEdge      = typename GenEdge<Config>::Weak;
+    using SharedEdge    = typename GenEdge<Config>::Shared;
+    using SharedGroup   = typename GenGroup<Config>::Shared;
+    using WeakGroup     = typename GenGroup<Config>::Weak;
 
 public:
     using   ObjectIdMap = std::unordered_map< void*, int >;

@@ -35,6 +35,8 @@
 
 // GTpo headers
 #include "./gtpoBehaviour.h"
+#include "./gtpoGenNode.h"
+#include "./gtpoGenEdge.h"
 
 namespace gtpo { // ::gtpo
 
@@ -45,16 +47,14 @@ template < class Config >
 class GraphBehaviour :  public Behaviour< Config >
 {
 public:
-    GraphBehaviour() noexcept { }
-    virtual ~GraphBehaviour() { }
+    GraphBehaviour() noexcept {}
+    virtual ~GraphBehaviour() {}
     GraphBehaviour( const GraphBehaviour& ) = delete;
     GraphBehaviour& operator=( const GraphBehaviour& ) = delete;
 
-    using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
-    using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
-    using Group         = typename Config::FinalGroup;
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
+    using WeakNode      = typename GenNode<Config>::Weak;
+    using WeakEdge      = typename GenEdge<Config>::Weak;
+    using WeakGroup     = typename GenGroup<Config>::Weak;
 
 public:
     //! Called immediatly after node \c weakNode has been inserted in graph.

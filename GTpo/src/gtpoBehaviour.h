@@ -96,23 +96,6 @@ protected:
     bool            _enabled = true;
 };
 
-/*! \brief Define an edge observer interface.
- *
- */
-template < class Config >
-class EdgeBehaviour : public Behaviour<Config>
-{
-public:
-    EdgeBehaviour() noexcept {}
-    virtual ~EdgeBehaviour() = default;
-    EdgeBehaviour( const EdgeBehaviour& ) = delete;
-    EdgeBehaviour& operator=( const EdgeBehaviour& ) = delete;
-
-    using Edge              = typename Config::Edge;
-    using SharedEdge        = std::shared_ptr< typename Config::Edge >;
-    using WeakEdge          = std::weak_ptr< typename Config::Edge >;
-};
-
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
 // There is more complex O(N) solutions available on SO
 template< class F, class...Ts, std::size_t...Is >

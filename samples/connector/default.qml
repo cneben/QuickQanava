@@ -50,7 +50,7 @@ Qan.GraphView {
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
             graph.setConnectorSource(s1)    // SAMPLE: ... and eventually configured manually on a specific node until user select another one
         }
-        onConnectorEdgeInserted: {
+        function getEdgeDescription(edge) {
             var edgeSrcDst = "unknown"
             if ( edge && edge.item ) {
                 var edgeItem = edge.item
@@ -62,8 +62,13 @@ Qan.GraphView {
                      edgeItem.destinationItem.node )
                     edgeSrcDst += edgeItem.destinationItem.node.label
             }
-            notifyUser("Edge inserted: " + edgeSrcDst )
+            return edgeSrcDst
         }
+
+        onConnectorEdgeInserted: { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
+        onEdgeClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
+        onEdgeDoubleClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
+        onEdgeRightClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
     }
     ToolTip { id: toolTip; timeout: 2500 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }

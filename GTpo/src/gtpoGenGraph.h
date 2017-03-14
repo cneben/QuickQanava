@@ -43,12 +43,12 @@
 
 // GTpo headers
 #include "./gtpoUtils.h"
-#include "./gtpoBehaviour.h"
-#include "./gtpoGenEdge.h"
-#include "./gtpoGenGroup.h"
-#include "./gtpoGenNode.h"
 #include "./gtpoGraphConfig.h"
+#include "./gtpoGenEdge.h"
+#include "./gtpoGenNode.h"
+#include "./gtpoGenGroup.h"
 #include "./gtpoGraphBehaviour.h"
+#include "./gtpoAdjacentBehaviour.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -56,6 +56,9 @@ namespace gtpo { // ::gtpo
 
 template <class Config>
 class GenGraph;
+
+template <class Config>
+class GraphGroupAjacentEdgesBehaviour;
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *
@@ -69,7 +72,9 @@ class GenGraph;
  */
 template < class Config = GraphConfig >
 class GenGraph : public Config::GraphBase,
-                 public gtpo::BehaviourableGraph< gtpo::GraphBehaviour< Config >, typename Config::GraphBehaviours >
+                 public gtpo::BehaviourableGraph< gtpo::GraphBehaviour< Config >,
+                                                  std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< Config > > >
+                                                    //typename Config::GraphBehaviours >
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
@@ -77,28 +82,28 @@ public:
     using Configuration     = Config;
     using Graph             = GenGraph<Config>;
 
-    using Node              = typename Config::FinalNode;
-    using SharedNode        = std::shared_ptr< typename Config::FinalNode >;
-    using SharedEdge        = std::shared_ptr< typename Config::FinalEdge >;
-    using WeakNode          = std::weak_ptr< typename Config::FinalNode >;
+    using SharedNode        = typename GenNode<Config>::Shared;
+    using WeakNode          = typename GenNode<Config>::Weak;
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
 
-    using WeakEdge          = std::weak_ptr< typename Config::FinalEdge >;
+    using WeakEdge          = typename GenEdge<Config>::Weak;
+    using SharedEdge        = typename GenEdge<Config>::Shared;
     using WeakEdges         = typename Config::template EdgeContainer< WeakEdge >;
     using SharedEdges       = typename Config::template EdgeContainer< SharedEdge >;
     using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
 
-    using SharedGroup   = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = std::weak_ptr< typename Config::FinalGroup >;
+    using SharedGroup   = typename GenGroup<Config>::Shared;
+    using WeakGroup     = typename GenGroup<Config>::Weak;
     using SharedGroups  = typename Config::template NodeContainer< SharedGroup >;
 
     //! User friendly shortcut to this concrete graph behaviour.
     using Behaviour = GraphBehaviour< Config >;
     //! User friendly shortcut type to this concrete graph Behaviourable base type.
     using BehaviourableBase = gtpo::BehaviourableGraph< gtpo::GraphBehaviour< Config >,
-                                                        typename Config::GraphBehaviours >;
+                                                        std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< Config > > >;
+                                                        //typename Config::GraphBehaviours >;
 
 public:
     using Size  = typename SharedNodes::size_type;
@@ -110,7 +115,7 @@ public:
     template < class B >
     explicit GenGraph( B* parent ) noexcept :
         Config::GraphBase{parent},
-        BehaviourableBase{}{ }
+        BehaviourableBase{} { }
 
     ~GenGraph();
 
@@ -153,7 +158,7 @@ public:
      * \return a reference to the created node (graph has ownership for the node).
      * \throw gtpo::bad_topology_error with an error description if creation fails.
      */
-    auto    createNode( ) noexcept( false ) -> WeakNode;
+    auto    createNode() noexcept( false ) -> WeakNode;
 
     /*! \brief Create a node with the given \c className and insert it into the graph.
      *
@@ -189,9 +194,9 @@ public:
     auto    removeNode( WeakNode weakNode ) noexcept( false ) -> void;
 
     //! Return the number of nodes actually registered in graph.
-    auto    getNodeCount( ) const -> Size { return _nodes.size(); }
+    auto    getNodeCount() const -> Size { return _nodes.size(); }
     //! Return the number of root nodes (actually registered in graph)ie nodes with a zero in degree).
-    auto    getRootNodeCount( ) const -> Size { return _rootNodes.size(); }
+    auto    getRootNodeCount() const -> Size { return _rootNodes.size(); }
 
     /*! \brief Install a given \c node in the root node cache.
      *
@@ -217,9 +222,9 @@ public:
     //! Graph main nodes container.
     inline auto     getNodes() const -> const SharedNodes& { return _nodes; }
     //! Return a const begin iterator over graph SharedNode nodes.
-    inline auto     begin( ) const -> typename SharedNodes::const_iterator { return _nodes.begin( ); }
+    inline auto     begin() const -> typename SharedNodes::const_iterator { return _nodes.begin( ); }
     //! Return a const begin iterator over graph SharedNode nodes.
-    inline auto     end( ) const -> typename SharedNodes::const_iterator { return _nodes.end( ); }
+    inline auto     end() const -> typename SharedNodes::const_iterator { return _nodes.end( ); }
 
     //! Return a const begin iterator over graph SharedNode nodes.
     inline auto     cbegin() const -> typename SharedNodes::const_iterator { return _nodes.cbegin(); }
@@ -242,7 +247,7 @@ public:
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
-    template < class Edge_t = typename Config::FinalEdge >
+    template < class Edge_t = typename GenEdge<Config> >
     auto        createEdge( WeakNode source, WeakNode destination ) noexcept(false) -> WeakEdge;
 
     /*! \brief Create a directed hyper edge between \c source node and \c destination edge, then insert it into the graph.
@@ -252,19 +257,6 @@ public:
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
     auto        createEdge( WeakNode source, WeakEdge destination ) noexcept(false) -> WeakEdge;
-
-    /*! \brief Create a directed edge of a given \c className between \c source and \c destination node and insert it into the graph.
-     *
-     * Do not use this method until you are writing a serializer input functor with complex edge virtual hierarchy.
-     *
-     * Complexity is O(1).
-     * \return the inserted edge (if an error occurs a gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
-     */
-    virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakNode destination ) noexcept( false );
-
-    //! Create a restricted directed hyperedge from \c source node to \c destination edge.
-    virtual WeakEdge    createEdge( const std::string& className, WeakNode source, WeakEdge destination ) noexcept( false );
 
     /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *
@@ -331,7 +323,7 @@ public:
     auto        hasEdge( WeakNode source, WeakEdge destination ) const noexcept -> bool;
 
     //! Return the number of edges currently existing in graph.
-    auto        getEdgeCount( ) const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
+    auto        getEdgeCount() const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
     /*! \brief Return the number of (parallel) directed edges between nodes \c source and \c destination.
      *
      * Graph EdgeContainer should support multiple insertions (std::vector, std::list) to enable
@@ -365,15 +357,6 @@ public:
      * \throw a gtpo::bad_topology_error if insertion fails.
      */
     auto            createGroup() noexcept( false ) -> WeakGroup;
-
-    /*! \brief Used for serialization purposes, create a new group with a given class name \c className and insert it into the graph.
-     *
-     * Complexity is O(1).
-     * \arg className desired class name for the create node group (default to gtpo::Group).
-     * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if insertion fails.
-     */
-    //virtual WeakGroup   createGroup( const std::string& className ) noexcept( false );
 
     /*! \brief Insert a node group into the graph.
      *
@@ -415,7 +398,8 @@ public:
         auto node{ weakNode.lock() };
         gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::groupNode(): Error: trying to insert an expired node in group." );
 
-        node->setGroup( weakGroup );
+        using Node = gtpo::GenNode<Config>;
+        node->setGroup( WeakGroup{weakGroup.lock()} );
         Config::template container_adapter<WeakNodes>::insert( weakNode, group->_nodes );
         group->notifyNodeInserted( weakNode );
     }
@@ -428,7 +412,7 @@ public:
         auto subGroup{ weakGroupNode.lock() };
         gtpo::assert_throw( subGroup != nullptr, "gtpo::GenGroup<>::groupNode(): Error: trying to insert an expired group into a group." );
 
-        SharedNode subGroupNode = std::static_pointer_cast<Node>(subGroup);
+        SharedNode subGroupNode = std::static_pointer_cast<GenNode<Config>>(subGroup);
         groupNode( weakGroup, WeakNode{subGroupNode} );
         group->notifyGroupInserted( WeakGroup{subGroup} );
     }
@@ -452,7 +436,7 @@ public:
 
         Config::template container_adapter<WeakNodes>::remove( weakNode, group->_nodes );
         group->notifyNodeRemoved( weakNode );
-        node->setGroup( WeakGroup{} );  // Warning: group must remain valid while notifyNodeRemoved() is called
+        node->setGroup( WeakNode{} );  // Warning: group must remain valid while notifyNodeRemoved() is called
     }
     //! \copydoc ungroupNode()
     auto            ungroupNode( WeakGroup weakGroup, WeakGroup weakGroupNode ) noexcept(false) -> void
@@ -463,7 +447,8 @@ public:
         auto subGroup{ weakGroupNode.lock() };
         gtpo::assert_throw( subGroup != nullptr, "gtpo::GenGroup<>::ungroupNode(): Error: trying to ungroup an expired group from a group." );
 
-        SharedNode subGroupNode = std::static_pointer_cast<Node>(subGroup);
+        //SharedNode subGroupNode = std::static_pointer_cast<SharedNode>(subGroup);
+        SharedNode subGroupNode = std::static_pointer_cast<GenNode<Config>>(subGroup);
         ungroupNode( weakGroup, WeakNode{subGroupNode} );
         group->notifyGroupRemoved( WeakGroup{subGroup} );
     }
@@ -475,8 +460,6 @@ private:
 };
 
 } // ::gtpo
-
-#include "./gtpoGenGraph.hpp"
 
 #endif // gtpoGenGraph_h
 

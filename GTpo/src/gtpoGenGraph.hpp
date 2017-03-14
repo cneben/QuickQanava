@@ -203,8 +203,6 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Edge): Insertion of edge failed, either source node and/or destination edge is expired." );
 
     auto edge = std::make_shared< typename Config::FinalEdge >();
-    // FIXME
-    //edge->setGraph( this );
     edge->_graph = this;
     Config::template container_adapter< SharedEdges >::insert( edge, _edges );
     Config::template container_adapter< WeakEdgesSearch >::insert( edge, _edgesSearch );
@@ -220,18 +218,6 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakEdge destination ) 
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Edge): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
     return edge;
-}
-
-template < class Config >
-typename GenGraph< Config >::WeakEdge    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakNode dst ) noexcept( false )
-{
-    return ( className == "gtpo::Edge" ) ? createEdge( src, dst ) : WeakEdge{};
-}
-
-template < class Config >
-typename GenGraph< Config >::WeakEdge    GenGraph< Config >::createEdge( const std::string& className, WeakNode src, WeakEdge dst ) noexcept( false )
-{
-    return ( className == "gtpo::Edge" ) ? createEdge( src, dst ) : WeakEdge{};
 }
 
 template < class Config >
@@ -396,14 +382,6 @@ auto GenGraph< Config >::createGroup() -> WeakGroup
     } catch (...) { gtpo::assert_throw( false, "gtpo::GenGraph<>::createGroup(): Error: can't insert group in graph." ); }
     return weakGroup;
 }
-
-/*template < class Config >
-typename GenGraph< Config >::WeakGroup   GenGraph< Config >::createGroup( const std::string& className ) noexcept( false )
-{
-    if ( className == "gtpo::Group" )
-        return createGroup();
-    return WeakGroup{};
-}*/
 
 template < class Config >
 auto    GenGraph< Config >::insertGroup( SharedGroup group ) noexcept( false ) -> WeakGroup

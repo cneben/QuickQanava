@@ -33,8 +33,8 @@
 namespace gtpo { // ::gtpo
 
 /* GenNode Edges Management *///-----------------------------------------------
-template < class Config >
-auto GenNode< Config >::addOutEdge( WeakEdge outEdgePtr ) -> void
+template < class Config, class ConcreteNode >
+auto GenNode< Config, ConcreteNode >::addOutEdge( WeakEdge outEdgePtr ) -> void
 {
     assert_throw( !outEdgePtr.expired(), "gtpo::GenNode<>::addOutEdge(): Error: out edge is expired." );
     auto node = this->shared_from_this();
@@ -51,8 +51,8 @@ auto GenNode< Config >::addOutEdge( WeakEdge outEdgePtr ) -> void
     }
 }
 
-template < class Config >
-auto GenNode< Config >::addInEdge( WeakEdge inEdgePtr ) -> void
+template < class Config, class ConcreteNode >
+auto GenNode< Config, ConcreteNode >::addInEdge( WeakEdge inEdgePtr ) -> void
 {
     assert_throw( !inEdgePtr.expired(), "gtpo::GenNode<>::addInEdge(): Error: in edge is expired." );
     auto node = this->shared_from_this();
@@ -70,8 +70,8 @@ auto GenNode< Config >::addInEdge( WeakEdge inEdgePtr ) -> void
     }
 }
 
-template < class Config >
-auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
+template < class Config, class ConcreteNode >
+auto GenNode< Config, ConcreteNode >::removeOutEdge( const WeakEdge outEdge ) -> void
 {
     gtpo::assert_throw( !outEdge.expired(), "gtpo::GenNode<>::removeOutEdge(): Error: Out edge has expired" );
     auto outEdgePtr = outEdge.lock( );
@@ -94,8 +94,8 @@ auto GenNode< Config >::removeOutEdge( const WeakEdge outEdge ) -> void
     notifyOutNodeRemoved();
 }
 
-template < class Config >
-auto GenNode< Config >::removeInEdge( const WeakEdge inEdge ) -> void
+template < class Config, class ConcreteNode >
+auto GenNode< Config, ConcreteNode >::removeInEdge( const WeakEdge inEdge ) -> void
 {
     gtpo::assert_throw( !inEdge.expired(), "gtpo::GenNode<>::removeInEdge(): Error: In edge has expired" );
     auto nodePtr = this->shared_from_this();

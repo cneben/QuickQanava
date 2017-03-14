@@ -64,6 +64,7 @@ ApplicationWindow {
                 text: "No Layout Group"
                 onClicked: {
                     var gg = topology.insertGroup()
+                    gg.z = 0
                     if ( gg )
                         gg.label = "Group"
                 }

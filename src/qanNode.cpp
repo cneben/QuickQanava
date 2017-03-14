@@ -45,7 +45,6 @@ Node::Node(QObject* parent) :
 {
     Q_UNUSED(parent)
     setStyle( _defaultStyle.data() );
-    //setResizable( true );
 }
 
 Node::~Node()

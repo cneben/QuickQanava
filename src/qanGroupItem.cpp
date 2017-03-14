@@ -28,6 +28,7 @@
 // Qt headers
 
 // QuickQanava headers
+#include "./qanGraph.h"
 #include "./qanGroupItem.h"
 #include "./qanGroup.h"
 
@@ -102,7 +103,8 @@ auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _group ? _group->
 //-----------------------------------------------------------------------------
 
 /* Group Appearance Management *///--------------------------------------------
-void    GroupItem::setCollapsed( bool collapsed )
+// FIXME QAN3
+/*void    GroupItem::setCollapsed( bool collapsed )
 {
     // FIXME QAN3
     /*if ( collapsed != _collapsed ) {
@@ -113,85 +115,44 @@ void    GroupItem::setCollapsed( bool collapsed )
                 edge->setVisible( !collapsed );
         }
         emit collapsedChanged( );
-    }*/
-}
+    }
+//}
 //-----------------------------------------------------------------------------
 
-/* Group Behaviour/Layout Management *///--------------------------------------
+/* Group DnD Management *///---------------------------------------------------
 void    GroupItem::groupMoved( )
 {
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
-
-    // FIXME QAN3
-    /*for ( auto weakEdge : getAdjacentEdges() ) {
-        qan::Edge* edge = weakEdge.lock().get();
-        if ( edge != nullptr )
-            edge->updateItem();
-    }
-    if ( getGraph() != nullptr ) {
-        WeakGroup weakGroup{ this->shared_from_this( ) };
-        getGraph()->notifyGroupModified( weakGroup );
-    }
-    */
-}
-//-----------------------------------------------------------------------------
-
-/* Group DnD Management *///---------------------------------------------------
-void    GroupItem::proposeNodeDrop( QQuickItem* container, qan::Node* node )
-{
-    Q_UNUSED( container );
-    Q_UNUSED( node);
-
-    emit nodeDragEnter( );
-    if ( !getHilightDrag( ) )
-        return;
-
-    // FIXME 20160710: Reactivate this code with layouts
-//    if ( _layout == nullptr )   // Can't make a drop proposition without a layout configured in the group
-//        return;
-
-    // Configure a shadow drop node if it has still not been inserted
-    if ( _shadowDropNode == nullptr )
-    {
-//        _shadowDropNode = _graph->insertNode( "" );
-//        _shadowDropNode->setAcceptDrops( false );   // Note 20160104: Necessary to avoid drops in a "dummy/shadow" node.
-        if ( _shadowDropNode != nullptr )
-        {
-            // Copy node topology (restricted to this group nodes)
-            // Note 20150907: created edges will be automatically removed from graph during node destruction
-
-            /*qan::Node::List inNodes; qan::Layout::collectNodeGroupInNodes( _nodes, *node, inNodes );
-            foreach ( qan::Node* inNode, inNodes )
-                _graph->insertEdge( inNode, _shadowDropNode );
-            qan::Node::List outNodes; qan::Layout::collectNodeGroupOutNodes( _nodes, *node, outNodes );
-            foreach ( qan::Node* outNode, outNodes )
-                _graph->insertEdge( _shadowDropNode, outNode );
-            _shadowDropNode->setSize( node->boundingRect( ).size( ) );
-
-            insertNode( _shadowDropNode );  // Insert the shadow node in the group, layout will occurs automatically (and insertNode() will detect that we try to insert a specific shadow node)
-            _shadowDropNode->setOpacity( 0.1 );*/
+    if ( _group ) {
+        for ( auto weakEdge : _group->getAdjacentEdges() ) {
+            qan::Edge* edge = weakEdge.lock().get();
+            if ( edge != nullptr && edge->getItem() != nullptr )
+                edge->getItem()->updateItem();
         }
     }
+}
 
-    // Configure node, so that layout could do an adequat proposition
-    //if ( _shadowDropNode != nullptr )
-    //    _layout->proposeNodeDrop( container, node, _shadowDropNode );
+void    GroupItem::configureNode(qan::NodeItem* nodeItem)
+{
+    if ( nodeItem == nullptr ||
+         getContainer() == nullptr )   // A container must have configured in concrete QML group component
+        return;
+    nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
+    nodeItem->setParentItem( getContainer() );
+    groupMoved(); // Force call to groupMoved() to update group adjacent edges
+    endProposeNodeDrop();
+}
+
+void    GroupItem::proposeNodeDrop( qan::Node* node )
+{
+    Q_UNUSED( node);
+    emit nodeDragEnter( );
 }
 
 void    GroupItem::endProposeNodeDrop()
 {
-    // FIXME QAN3
     emit nodeDragLeave( );
-    /*if ( getHilightDrag( ) &&
-         _shadowDropNode != nullptr &&
-         hasNode( _shadowDropNode ) )
-    {
-        removeNode( _shadowDropNode );
-        // FIXME QAN3
-        //getGraph()->removeNode( _shadowDropNode );
-    }
-    */
 }
 //-----------------------------------------------------------------------------
 

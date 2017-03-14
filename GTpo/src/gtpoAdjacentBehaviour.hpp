@@ -40,7 +40,7 @@ void    GroupAdjacentEdgesBehaviour< Config >::nodeInserted( WeakNode& weakNode 
 {
     SharedNode node = weakNode.lock();
     if ( node ) {
-        SharedGroup group = node->getGroup().lock();
+        auto group = std::static_pointer_cast<GenGroup<Config>>(node->getGroup().lock());
         if ( group ) {
             for ( const auto& inEdge : node->getInEdges() ) // Add all node in/out edges to adjacent edge set
                 Config::template container_adapter<WeakEdgesSearch>::insert( inEdge, group->getAdjacentEdges() );
@@ -55,12 +55,14 @@ void    GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode )
 {
     auto node = weakNode.lock();
     if ( node ) {
-        auto group = node->getGroup().lock();
+        auto group = std::static_pointer_cast<GenGroup<Config>>(node->getGroup().lock());
         if ( group ) {
             // Remove all node in/out edges from group adjacent edge set
             // Except if this edge "other" src or dst is still part of the group
             for ( const auto& inWeakEdge : node->getInEdges() ) {
-                SharedEdge inEdge = inWeakEdge.lock();
+                using WeakEdge = typename GenEdge<Config>::Weak;
+                using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+                auto inEdge = inWeakEdge.lock();
                 if ( inEdge ) {
                     auto inEdgeSrc = inEdge->getSrc().lock();
                     if ( inEdgeSrc &&
@@ -69,9 +71,9 @@ void    GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode )
                 }
             }
             for ( const auto& outWeakEdge : node->getOutEdges() ) {
-                SharedEdge outEdge = outWeakEdge.lock();
+                auto outEdge = outWeakEdge.lock();
                 if ( outEdge ) {
-                    SharedNode outEdgeDst = outEdge->getDst().lock();
+                    auto outEdgeDst = outEdge->getDst().lock();
                     if ( outEdgeDst &&
                          outEdgeDst->getGroup().lock().get() != group.get() )
                         Config::template container_adapter<WeakEdgesSearch>::remove( outWeakEdge, group->getAdjacentEdges() );
@@ -86,18 +88,18 @@ void    GroupAdjacentEdgesBehaviour< Config >::nodeRemoved( WeakNode& weakNode )
 template < class Config >
 void    GraphGroupAjacentEdgesBehaviour< Config >::edgeInserted( WeakEdge& weakEdge ) noexcept
 {
-    SharedEdge edge = weakEdge.lock();
+    auto edge = weakEdge.lock();
     if ( edge != nullptr ) {
         // If either src or dst is inside a group, add edge to group adjacent edge set
-        SharedNode src = edge->getSrc().lock();
+        auto src = edge->getSrc().lock();
         if ( src != nullptr ) {
-            SharedGroup srcGroup = src->getGroup().lock();
+            auto srcGroup = std::static_pointer_cast<Group>(src->getGroup().lock());
             if ( srcGroup != nullptr )
                 Config::template container_adapter<WeakEdgesSearch>::insert( weakEdge, srcGroup->getAdjacentEdges() );
         }
-        SharedNode dst = edge->getDst().lock();
+        auto dst = edge->getDst().lock();
         if ( dst != nullptr ) {
-            SharedGroup dstGroup = dst->getGroup().lock();
+            auto dstGroup = std::static_pointer_cast<Group>(dst->getGroup().lock());
             if ( dstGroup != nullptr )
                 Config::template container_adapter<WeakEdgesSearch>::insert( weakEdge, dstGroup->getAdjacentEdges() );
         }
@@ -110,15 +112,15 @@ void    GraphGroupAjacentEdgesBehaviour< Config >::edgeRemoved( WeakEdge& weakEd
     auto edge = weakEdge.lock();
     if ( edge ) {
         // If either src or dst is inside a group, remove edge from group adjacent edge set
-        SharedNode src = edge->getSrc().lock();
+        auto src = edge->getSrc().lock();
         if ( src != nullptr ) {
-            SharedGroup srcGroup = src->getGroup().lock();
+            auto srcGroup = std::static_pointer_cast<Group>(src->getGroup().lock());
             if ( srcGroup != nullptr )
                 Config::template container_adapter<WeakEdgesSearch>::remove( weakEdge, srcGroup->getAdjacentEdges() );
         }
-        SharedNode dst = edge->getDst().lock();
+        auto dst = edge->getDst().lock();
         if ( dst != nullptr ) {
-            SharedGroup dstGroup = dst->getGroup().lock();
+            auto dstGroup = std::static_pointer_cast<Group>(dst->getGroup().lock());
             if ( dstGroup != nullptr )
                 Config::template container_adapter<WeakEdgesSearch>::remove( weakEdge, dstGroup->getAdjacentEdges() );
         }

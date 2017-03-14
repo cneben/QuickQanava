@@ -72,6 +72,13 @@ auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void {
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
+bool    EdgeItem::isHyperEdge() const
+{
+    if ( _edge )
+        return _edge->getHDst().lock() != nullptr;
+    return false;
+}
+
 auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
 {
     if ( source == nullptr )
@@ -126,8 +133,7 @@ auto    EdgeItem::setDestinationItem( qan::NodeItem* destination ) -> void
 void    EdgeItem::setDestinationEdge( qan::EdgeItem* destination )
 {
     configureDestinationItem( destination );
-    //FIXME QAN3
-    //_destinationItem = destination;
+    _destinationEdge = destination;
     emit destinationEdgeChanged();
     updateItem();
 }
@@ -182,7 +188,7 @@ void    EdgeItem::updateItem()
     qan::GroupItem* srcGroupItem = nullptr;
 
     qan::NodeItem*  dstNodeItem = _destinationItem.data();
-    qan::EdgeItem*  dstEdgeItem = nullptr;
+    qan::EdgeItem*  dstEdgeItem = _destinationEdge.data();
 
     qan::Graph*     graph = getGraph();
     QQuickItem*     graphContainerItem = ( graph != nullptr ? graph->getContainerItem() : this );
@@ -190,7 +196,7 @@ void    EdgeItem::updateItem()
     if ( srcItem == nullptr &&
          _edge ) {
         qan::Node*  srcNode = static_cast< qan::Node* >( _edge->getSrc().lock().get() );
-        auto srcNodeGroup = ( srcNode != nullptr ? srcNode->getGroup().lock() : nullptr );
+        auto srcNodeGroup = qobject_cast<qan::Group*>( srcNode != nullptr ? srcNode->getGroup().lock().get() : nullptr );
         if ( srcNodeGroup )
             srcGroupItem = srcNodeGroup->getItem();
     }
@@ -211,12 +217,9 @@ void    EdgeItem::updateItem()
 
     if ( graphContainerItem == nullptr ||
          srcItem == nullptr ||
-         dstItem == nullptr /*||
-         ( dstNodeItem == nullptr &&
-           dstEdgeItem == nullptr )*/ )
+         dstItem == nullptr )
         return;
 
-    //qDebug() << "graphContainerItem=" << graphContainerItem;
     qreal sourceZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
     QPointF srcPos = srcItem->mapToItem( graphContainerItem, QPointF{ 0, 0 } );
     QRectF srcBr{ srcPos, QSizeF{ srcItem->width(), srcItem->height() } };
@@ -231,7 +234,6 @@ void    EdgeItem::updateItem()
     int p = 0;
     for ( const auto& point: srcItem->getBoundingShape() )
         srcBoundingShape[p++] = _sourceItem->mapToItem( graphContainerItem, point );
-        //srcBoundingShape[p++] = mapFromItem( srcItem, point );
     QPointF sourceBrCenter = srcBoundingShape.boundingRect().center();
 
     if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
@@ -242,33 +244,35 @@ void    EdgeItem::updateItem()
         QPolygonF dstBoundingShape{dstNodeItem->getBoundingShape().size()};
         for ( const auto& point: dstNodeItem->getBoundingShape() )
             dstBoundingShape[p++] = dstNodeItem->mapToItem( graphContainerItem, point );
-            //dstBoundingShape[p++] = mapFromItem( dstNodeItem, point );
         QLineF line = getLineIntersection( sourceBrCenter,
                                            dstBoundingShape.boundingRect().center( ),
                                            srcBoundingShape, dstBoundingShape );
 
-        // Generate a Br with intersection points
-        QRectF br = QRectF{line.p1(), line.p2()}.normalized();
-        //QRectF br = srcBr.united( dstBr );
-        //qDebug() << "br.topLeft=" << br.topLeft();
+        QRectF br = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
         setPosition( br.topLeft() );
         setSize( br.size() );
 
         _p1 = mapFromItem(graphContainerItem, line.p1());
+        _p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
         emit p1Changed();
-        _p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - ( 2 / line.length() ) ) );    // Note 20161001: Hack to take into account arrow border of 2px
         emit p2Changed();
         setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
     }
     else if ( dstEdgeItem != nullptr ) {            // Node -> Edge restricted hyper edge
         setZ( qMax( sourceZ, dstEdgeItem->z() ) );  // Update edge z to source or destination maximum x
-        QLineF destinationEdgeLine{ mapFromItem( dstEdgeItem, dstEdgeItem->getP1() ),
-                    mapFromItem( dstEdgeItem, dstEdgeItem->getP2() ) };
+        QLineF destinationEdgeLine{ dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP1() ),
+                                    dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP2() ) };
         if ( destinationEdgeLine.length() > 0.001 ) {
             QLineF line{ sourceBrCenter, destinationEdgeLine.pointAt( 0.5 ) };
-            _p1 = getLineIntersection( line.p1(), line.p2(), srcBoundingShape );
+            line.setP1(getLineIntersection( sourceBrCenter, line.p2(), srcBoundingShape ));
+
+            QRectF br = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
+            setPosition( br.topLeft() );
+            setSize( br.size() );
+
+            _p1 = mapFromItem(graphContainerItem, line.p1() );
+            _p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - 2/line.length()) );
             emit p1Changed();
-            _p2 = line.pointAt( 1 - 2 / line.length() );    // Note 20161001: Hack to take into account arrow border of 2px
             emit p2Changed();
             setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
         }
@@ -281,7 +285,8 @@ void    EdgeItem::setLine( QPoint src, QPoint dst )
     _p2 = dst; emit p2Changed();
 }
 
-QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const
+QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
+                                        const QPolygonF& polygon ) const
 {
     QLineF line{p1, p2};
     QPointF source{p1};
@@ -297,7 +302,7 @@ QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2, co
 }
 
 QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
-                                   const QPolygonF& srcBp, const QPolygonF& dstBp ) const
+                                       const QPolygonF& srcBp, const QPolygonF& dstBp ) const
 {
     QLineF line{p1, p2};
     QPointF source{p1};
@@ -324,13 +329,13 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
 /* Mouse Management *///-------------------------------------------------------
 void    EdgeItem::mouseDoubleClickEvent( QMouseEvent* event )
 {
-    qreal d = distanceFromLine( event->localPos( ), QLineF{_p1, _p2} );
-    if ( d >= 0. && d < 5. && event->button( ) == Qt::LeftButton ) {
-        emit edgeDoubleClicked( QVariant::fromValue< qan::EdgeItem* >( this ), QVariant( event->localPos( ) ) );
-        event->accept( );
+    qreal d = distanceFromLine( event->localPos(), QLineF{_p1, _p2} );
+    if ( d >= 0. && d < 5. && event->button() == Qt::LeftButton ) {
+        emit edgeDoubleClicked( this, event->localPos() );
+        event->accept();
     }
     else
-        event->ignore( );
+        event->ignore();
     QQuickItem::mouseDoubleClickEvent( event );
 }
 
@@ -338,18 +343,18 @@ void    EdgeItem::mousePressEvent( QMouseEvent* event )
 {
     qreal d = distanceFromLine( event->localPos( ), QLineF{_p1, _p2} );
     if ( d >= 0. && d < 5. ) {
-        if ( event->button( ) == Qt::LeftButton ) {
-            emit edgeClicked( QVariant::fromValue< qan::EdgeItem* >( this ), QVariant( event->localPos( ) ) );
-            event->accept( );
+        if ( event->button() == Qt::LeftButton ) {
+            emit edgeClicked( this, event->localPos() );
+            event->accept();
         }
-        else if ( event->button( ) == Qt::RightButton ) {
-            emit edgeRightClicked( QVariant::fromValue< qan::EdgeItem* >( this ), QVariant( event->localPos( ) ) );
-            event->accept( );
+        else if ( event->button() == Qt::RightButton ) {
+            emit edgeRightClicked( this, event->localPos() );
+            event->accept();
             return;
         }
     }
     else
-        event->ignore( );
+        event->ignore();
 }
 
 qreal   EdgeItem::distanceFromLine( const QPointF& p, const QLineF& line ) const
@@ -378,35 +383,23 @@ void    EdgeItem::setStyle( EdgeStyle* style )
         return;
     if ( style == nullptr )
         style = _defaultStyle.data();
-    if ( _style != nullptr && _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
+    if ( _style != nullptr &&
+         _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
         QObject::disconnect( _style, 0, this, 0 );
     _style = style;
-    connect( _style, &QObject::destroyed, this, &EdgeItem::styleDestroyed );    // Monitor eventual style destruction
-    connect( _style, &qan::EdgeStyle::styleModified, this, &EdgeItem::updateItem );
+    connect( _style,    &QObject::destroyed,
+             this,      &EdgeItem::styleDestroyed );    // Monitor eventual style destruction
+    connect( _style,    &qan::EdgeStyle::styleModified,
+             this,      &EdgeItem::updateItem );
     emit styleChanged( );
 }
 
 void    EdgeItem::styleDestroyed( QObject* style )
 {
-    if ( style != nullptr && style != _defaultStyle.data() ) {
+    if ( style != nullptr &&
+         style != _defaultStyle.data() ) {
         QObject::disconnect( style, 0, this, 0 );
         setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
-    }
-}
-
-void    EdgeItem::setLabel( const QString& label )
-{
-    if ( label != _label ) {
-        _label = label;
-        emit labelChanged( );
-    }
-}
-
-void     EdgeItem::setWeight( qreal weight )
-{
-    if ( !qFuzzyCompare( 1.0 + weight, 1.0 + _weight ) ) {
-        _weight = weight;
-        emit weightChanged();
     }
 }
 //-----------------------------------------------------------------------------
@@ -427,7 +420,6 @@ void    EdgeItem::dragEnterEvent( QDragEnterEvent* event )
             QQuickItem::dragEnterEvent( event );
             return;
         }
-
         if ( event->source() != nullptr ) { // Get the source item from the quick drag attached object received
             QVariant source = event->source()->property( "source" );
             if ( source.isValid() ) {

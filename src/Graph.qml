@@ -83,14 +83,13 @@ Qan.AbstractGraph {
                  connectorEnabled )
                 connector.sourceNode = node;
             if ( nodeResizer &&
-                 //nodeResizer.target !== node.item &&    // Do not bind on target multiple times
                  node.item &&
                  node.item.resizable ) {
-                //nodeResizer.parent = node.item
                 nodeResizer.minimumTargetSize = node.item.minimumSize
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
                 nodeResizer.z = node.item.z + 1.
+                //nodeResizer.z = maxZ + 1000.
             } else {
                 nodeResizer.target = null
                 nodeResizer.visible = false
