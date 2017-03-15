@@ -46,11 +46,6 @@ Item {
         if ( nodeSymbol.item )
             nodeSymbol.item.requestPaint();
     }
-    // FIXME QAN3
-    /*onNodeItemChanged: {
-        if ( nodeItem )
-            nodeUpdateBoundingShape.target = nodeItem
-    }*/
     Loader {    // Node symbol is node background
         id: nodeSymbol
         anchors.fill: parent

@@ -253,8 +253,10 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
              !component->isError() ) {
             if ( node != nullptr ) {
                 const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
-                if ( nodeItem != nullptr )
+                if ( nodeItem != nullptr ) {
                     nodeItem->setNode(node);
+                    nodeItem->setGraph(this);
+                }
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
                 if ( edgeItem != nullptr ) {
@@ -361,6 +363,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
             //const qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(Node_t::createDelegate());
             if ( nodeItem  != nullptr ) {
                 nodeItem->setNode(node.get());
+                nodeItem->setGraph(this);
                 node->setItem(nodeItem);
                 auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                     if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
@@ -412,6 +415,8 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
     if ( sourceNode != nullptr ) {
             if ( qobject_cast<qan::Node*>(destination) != nullptr )
                 return insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
+            else if ( qobject_cast<qan::Group*>(destination) != nullptr )
+                return insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
                 return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
     }
@@ -600,41 +605,47 @@ bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
-    // FIXME QAN3
-    /*WeakGroup weakGroup;
-    try {
-        weakGroup = WeakGroup{ group->shared_from_this() };
-    } catch ( std::bad_weak_ptr ) { return false; }*/
-    Q_ASSERT(false);
-    //return gtpo::GenGraph< qan::GraphConfig >::hasGroup( weakGroup );
-    return false;
+    return GTpoGraph::hasGroup( WeakGroup{group->shared_from_this()} );
 }
 
 auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void
 {
-    try {
-        if ( group != nullptr &&
-             node != nullptr ) {
-            qDebug() << "qan::Graph::groupNode()";
+    if ( group != nullptr &&
+         node != nullptr ) {
+        try {
             GTpoGraph::groupNode( WeakGroup{group->shared_from_this()}, node->shared_from_this() );
-            if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
-                 group->getItem() != nullptr &&
-                 node->getItem() != nullptr ) {
-                group->getItem()->configureNode(node->getItem());
-            }
+        } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
+        if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
+             group->getItem() != nullptr &&
+             node->getItem() != nullptr ) {
+            group->getItem()->groupNodeItem(node->getItem());
         }
     }
-    catch ( ... ) { }   // FIXME QAN3
 }
 
 auto    qan::Graph::ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void
 {
     if ( group != nullptr &&
          node != nullptr ) {
-        qDebug() << "qan::Graph::groupNode()";
+        qDebug() << "qan::Graph::ungroupNode()";
+        try {
+            if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+    }
+}
 
-        // FIXME QAN3
-        //GTpoGraph::groupNode( group->shared_from_this(), node->shared_from_this() );
+auto    qan::Graph::ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        qDebug() << "qan::Graph::ungroupNode(qan::Group*, qan::Group*)";
+        try {
+            /*if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );*/
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
 }
 //-----------------------------------------------------------------------------

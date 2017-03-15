@@ -106,23 +106,4 @@ void    Node::styleDestroyed( QObject* style )
 }
 //-----------------------------------------------------------------------------
 
-/* Node Group Management *///--------------------------------------------------
-// FIXME QAN3
-/*void    Node::ungroup( )
-{
-    if ( getQanGroup() != nullptr &&
-         getGraph()->hasGroup( getQanGroup() ) )
-        getQanGroup()->removeNode( this );
-}
-
-qan::Group* Node::getQanGroup( )
-{
-    WeakGroup weakGroup = gtpo::GenNode<qan::GraphConfig>::getGroup();
-    if ( weakGroup.expired() )
-        return nullptr;
-    return weakGroup.lock().get();
-}
-*/
-//-----------------------------------------------------------------------------
-
 } // ::qan

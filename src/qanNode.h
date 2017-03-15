@@ -146,14 +146,9 @@ signals:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    Q_INVOKABLE qan::Group*     qmlGetGroup() {
-        // FIXME QAN3
-        return nullptr;
-        //return qobject_cast<qan::Group*>(getGroup().lock().get());
-    }
-
-    //! Shortcut to gtpo::GenNode<>::getGroup().
-    //qan::Group*                 getGroup();
+    Q_PROPERTY( qan::Group* group READ qmlGetGroup FINAL )
+protected:
+    inline qan::Group*  qmlGetGroup() noexcept { return getGroup().lock().get(); }
     //@}
     //-------------------------------------------------------------------------
 };

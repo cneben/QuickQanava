@@ -436,7 +436,7 @@ public:
 
         Config::template container_adapter<WeakNodes>::remove( weakNode, group->_nodes );
         group->notifyNodeRemoved( weakNode );
-        node->setGroup( WeakNode{} );  // Warning: group must remain valid while notifyNodeRemoved() is called
+        node->setGroup( WeakGroup{} );  // Warning: group must remain valid while notifyNodeRemoved() is called
     }
     //! \copydoc ungroupNode()
     auto            ungroupNode( WeakGroup weakGroup, WeakGroup weakGroupNode ) noexcept(false) -> void
@@ -447,7 +447,6 @@ public:
         auto subGroup{ weakGroupNode.lock() };
         gtpo::assert_throw( subGroup != nullptr, "gtpo::GenGroup<>::ungroupNode(): Error: trying to ungroup an expired group from a group." );
 
-        //SharedNode subGroupNode = std::static_pointer_cast<SharedNode>(subGroup);
         SharedNode subGroupNode = std::static_pointer_cast<GenNode<Config>>(subGroup);
         ungroupNode( weakGroup, WeakNode{subGroupNode} );
         group->notifyGroupRemoved( WeakGroup{subGroup} );

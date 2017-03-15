@@ -40,6 +40,8 @@
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
 #include "./qanNode.h"
+#include "./qanSelectable.h"
+#include "./qanDraggable.h"
 
 namespace qan { // ::qan
 
@@ -63,17 +65,18 @@ class Graph;
  *
  * \nosubgrouping
  */
-class NodeItem : public QQuickItem
+class NodeItem : public QQuickItem,
+                 public qan::Selectable,
+                 public qan::Draggable
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
     Q_OBJECT
+    Q_INTERFACES(qan::Selectable)
+    Q_INTERFACES(qan::Draggable)
 public:
     //! Node constructor.
     explicit NodeItem( QQuickItem* parent = nullptr );
-    /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
-     *
-     */
     virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
 
@@ -81,17 +84,20 @@ public:
     Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
     auto        getNode() noexcept -> qan::Node*;
     auto        getNode() const noexcept -> const qan::Node*;
-    inline auto setNode(qan::Node* node) noexcept { _node = node; }
+    auto        setNode(qan::Node* node) noexcept -> void;
 private:
     QPointer<qan::Node> _node{nullptr};
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph )
+    auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     //! Secure shortcut to getNode().getGraph().
     auto    getGraph() const noexcept -> const qan::Graph*;
     //! \copydoc getGraph()
     auto    getGraph() noexcept -> qan::Graph*;
+private:
+    QPointer<qan::Graph>    _graph;
 
 public:
     //! Node minimum size (it can't be resized below if resizable is true).
@@ -107,48 +113,24 @@ signals:
 
     /*! \name Selection Management *///----------------------------------------
     //@{
-protected slots:
-    virtual void    onWidthChanged();
-    virtual void    onHeightChanged();
-
 public:
     //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
     Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
-    void            setSelectable( bool selectable );
-    inline bool     getSelectable() const noexcept { return _selectable; }
-    inline bool     isSelectable() const noexcept { return _selectable; }
-private:
-    bool            _selectable{true};
+    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
+    //! \brief Item used to hilight selection (usually a Rectangle quick item).
+    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
+protected:
+    virtual void    emitSelectableChanged() { emit selectableChanged(); }
+    virtual void    emitSelectedChanged() { emit selectedChanged(); }
+    virtual void    emitSelectionItemChanged() { emit selectionItemChanged(); }
 signals:
     void            selectableChanged();
-
-public:
-    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
-    void            setSelected( bool selected );
-    inline bool     getSelected() const noexcept { return _selected; }
-private:
-    bool            _selected{false};
-signals:
     void            selectedChanged();
+    void            selectionItemChanged();
 
-public:
-    /*! \brief Item used to hilight selection (usually a Rectangle quick item).
-     *
-     */
-    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
-    inline QQuickItem*  getSelectionItem() { return _selectionItem.get(); }
-    void                setSelectionItem( QQuickItem* selectionItem );
-private:
-    std::unique_ptr< QQuickItem >  _selectionItem{ nullptr };
-signals:
-    void                selectionItemChanged();
-
-public:
-    //! Update selection hilight item with new color, border weight and margin.
-    void            configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin );
-
-    //! Update selection hilight item with new border weight and margin.
-    void            configureSelectionItem( qreal selectionWeight, qreal selectionMargin );
+protected slots:
+    virtual void    onWidthChanged();
+    virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -163,54 +145,26 @@ protected:
     bool            _resizable{true};
 signals:
     void            resizableChanged();
-
+    /*! \name Draggable Management *///----------------------------------------
+    //@{
 public:
-    /*! \brief Define if the node could actually be dragged by mouse (default to true).
-     *
-     * Set this property to true if you want to allow this node to be moved by mouse (if false, the node position is
-     * fixed and should be changed programmatically).
-     *
-     * Default to true.
-     */
+    //! \copydoc qan::Draggable::_draggable
     Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void            setDraggable( bool draggable ) noexcept;
-    inline bool     getDraggable( ) const noexcept { return _draggable; }
-private:
-    bool            _draggable{true};
+    //! \copydoc qan::Draggable::_dragged
+    Q_PROPERTY( bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL )
+    //! \copydoc qan::Draggable::_dropable
+    Q_PROPERTY( bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL )
+    //! \copydoc qan::Draggable::_acceptDrops
+    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
+protected:
+    virtual void    emitDraggableChanged() override { emit draggableChanged(); }
+    virtual void    emitDraggedChanged() override { emit draggedChanged(); }
+    virtual void    emitAcceptDropsChanged() override { emit acceptDropsChanged(); }
+    virtual void    emitDroppableChanged() override { emit droppableChanged(); }
 signals:
     void            draggableChanged();
-
-public:
-    /*! \brief Define if the node could actually be dropped in another node or in a node group.
-     *
-     * Set this property to true if you want to allow this node to be dropped in a qan::Group automatically.
-     * Default to true.
-     * Setting this property to false may lead to a significant performance improvement if group dropping is not needed.
-     */
-    Q_PROPERTY( bool dropable READ getDropable WRITE setDropable NOTIFY dropableChanged FINAL )
-    void            setDropable( bool dropable ) noexcept;
-    inline bool     getDropable() const noexcept { return _dropable; }
-private:
-    bool            _dropable{true};
-signals:
-    void            dropableChanged();
-
-public:
-    /*! \brief Define if the node actually accept drops from other node (default to true).
-     *
-     * This property allow use of DropNode component that is a node droppable on another node (that has acceptDrops=true),
-     * it it actually used for EdgeCreatorDropNode component to dynamically connect edges.
-     *
-     * Default to true.
-     *
-     * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
-     */
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
-    void            setAcceptDrops( bool acceptDrops ) noexcept;
-    inline bool     getAcceptDrops() const noexcept { return _acceptDrops; }
-private:
-    bool            _acceptDrops{true};
-signals:
+    void            draggedChanged();
+    void            droppableChanged();
     void            acceptDropsChanged();
 
 protected:
@@ -246,16 +200,6 @@ private:
     QPointF         _dragInitialPos{ 0., 0. };
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer< qan::Group >  _lastProposedGroup{ nullptr };
-
-public:
-    //! True when the node is currently beeing dragged.
-    Q_PROPERTY( bool dragged READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL )
-    void             setDragActive( bool dragActive ) { _dragActive = dragActive; emit dragActiveChanged( ); }
-    bool             getDragActive( ) const { return _dragActive; }
-private:
-    bool            _dragActive = false;
-signals:
-    void            dragActiveChanged( );
     //@}
     //-------------------------------------------------------------------------
 
@@ -268,7 +212,7 @@ public:
     //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void                    setStyle( NodeStyle* style );
-    inline qan::NodeStyle*  getStyle( ) const noexcept { return _style.data(); }
+    inline qan::NodeStyle*  getStyle() const noexcept { return _style.data(); }
 private:
     QPointer<qan::NodeStyle>    _style;
 signals:

@@ -77,14 +77,15 @@ Qan.AbstractGraph {
         if ( node ) {
             maxZ = Math.max( node.item.z + 1, maxZ + 1 )
             node.item.z = maxZ + 1;
-            if ( node.qmlGetGroup() )
-                node.qmlGetGroup.z = maxZ
+            if ( node.group )
+                node.group.z = maxZ
             if ( connector &&
                  connectorEnabled )
                 connector.sourceNode = node;
             if ( nodeResizer &&
                  node.item &&
                  node.item.resizable ) {
+                nodeResizer.parent = node.item
                 nodeResizer.minimumTargetSize = node.item.minimumSize
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )

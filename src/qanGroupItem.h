@@ -36,6 +36,10 @@
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanGroup.h"
+#include "./qanNodeItem.h"
+#include "./qanSelectable.h"
+#include "./qanDraggable.h"
+#include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -46,25 +50,27 @@ class Group;
  *
  * \nosubgrouping
  */
-class GroupItem : public QQuickItem
+class GroupItem : public QQuickItem,
+                  public qan::Selectable,
+                  public qan::Draggable
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
+    Q_INTERFACES(qan::Selectable)
+    Q_INTERFACES(qan::Draggable)
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
-    /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
-     *
-     */
-    virtual ~GroupItem( );
+    virtual ~GroupItem();
     GroupItem( const GroupItem& ) = delete;
-
+private:
+    qan::DraggableCtrl<qan::Group, qan::GroupItem> _controller;
 public:
     Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
     auto        getGroup() noexcept -> qan::Group*;
     auto        getGroup() const noexcept -> const qan::Group*;
-    inline auto setGroup(qan::Group* group) noexcept { _group = group; }
+    auto        setGroup(qan::Group* group) noexcept -> void;
 private:
     QPointer<qan::Group> _group{nullptr};
 
@@ -78,41 +84,50 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group DnD Management *///----------------------------------------
+    /*! \name Selection Management *///----------------------------------------
     //@{
+public:
+    //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
+    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
+    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
+    //! \brief Item used to hilight selection (usually a Rectangle quick item).
+    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
+protected:
+    virtual void    emitSelectableChanged() { emit selectableChanged(); }
+    virtual void    emitSelectedChanged() { emit selectedChanged(); }
+    virtual void    emitSelectionItemChanged() { emit selectionItemChanged(); }
+signals:
+    void            selectableChanged();
+    void            selectedChanged();
+    void            selectionItemChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Draggable Management *///----------------------------------------
+    //@{
+public:
+    //! \copydoc qan::Draggable::_draggable
+    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
+    //! \copydoc qan::Draggable::_dragged
+    Q_PROPERTY( bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL )
+    //! \copydoc qan::Draggable::_dropable
+    Q_PROPERTY( bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL )
+    //! \copydoc qan::Draggable::_acceptDrops
+    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
+protected:
+    virtual void    emitDraggableChanged() override { emit draggableChanged(); }
+    virtual void    emitDraggedChanged() override { emit draggedChanged(); }
+    virtual void    emitAcceptDropsChanged() override { emit acceptDropsChanged(); }
+    virtual void    emitDroppableChanged() override { emit droppableChanged(); }
+signals:
+    void            draggableChanged();
+    void            draggedChanged();
+    void            droppableChanged();
+    void            acceptDropsChanged();
+
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
-    void            groupMoved( );
-
-public:
-    /*! \brief Define if the group could actually be dragged by mouse.
-     *
-     * Set this property to true if you want to allow this group to be moved by mouse (if false, the node position is
-     * fixed and should be changed programmatically).
-     * Default to true.
-     */
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void             setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
-    bool             getDraggable( ) { return _draggable; }
-private:
-    bool            _draggable = true;
-signals:
-    void            draggableChanged( );
-
-public:
-    /*! \brief Define if the group actually accept insertion of nodes via drag'n drop (default to true).
-     *
-     * Default to true.
-     *
-     * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
-     */
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
-    void             setAcceptDrops( bool acceptDrops ) { _acceptDrops = acceptDrops; setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops ); emit acceptDropsChanged( ); }
-    bool             getAcceptDrops( ) { return _acceptDrops; }
-private:
-    bool            _acceptDrops = true;
-signals:
-    void            acceptDropsChanged( );
+    void            groupMoved();
 
 public:
     /*! \brief Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
@@ -133,16 +148,19 @@ public:
      * \sa qan::Layout::proposeNodeDrop()
      */
     Q_PROPERTY( bool hilightDrag READ getHilightDrag WRITE setHilightDrag NOTIFY hilightDragChanged FINAL )
-    void             setHilightDrag( bool hilightDrag ) { _hilightDrag = hilightDrag; emit hilightDragChanged( ); }
-    bool             getHilightDrag( ) { return _hilightDrag; }
+    void            setHilightDrag( bool hilightDrag ) { _hilightDrag = hilightDrag; emit hilightDragChanged( ); }
+    inline bool     getHilightDrag() const noexcept { return _hilightDrag; }
 protected:
     bool            _hilightDrag = true;
 signals:
-    void            hilightDragChanged( );
+    void            hilightDragChanged();
 
 public:
-    //! Configure \c nodeItem in this group item.
-    virtual void    configureNode(qan::NodeItem* nodeItem);
+    //! Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem);
+
+    //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
+    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);
 
     /*! \brief Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
      */
@@ -150,9 +168,6 @@ public:
 
     //! Called at the end of a node drag hover.
     virtual void    endProposeNodeDrop();
-private:
-    //! Shadow node managed internally by group used to hilight node position before a node is dropped in this group, or when a node is moved inside the group.
-    qan::Node*      _shadowDropNode = nullptr;
 
 public:
     /*! \brief Should be set from the group concrete QML component to indicate the group content item (otherwise, this will be used).
@@ -188,6 +203,21 @@ signals:
     void            nodeDragEnter( );
     //! Emmited whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
     void            nodeDragLeave( );
+
+protected:
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
+    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
+    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
+    //! Internally used to accept style drops.
+    virtual void    dropEvent( QDropEvent* event ) override;
+
+    virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event ) override;
+    virtual void    mousePressEvent(QMouseEvent* event ) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
 
 signals:
     //! Emmited whenever the group is clicked (even at the start of a dragging operation).

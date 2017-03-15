@@ -34,8 +34,8 @@ test-40k.depends    = quickqanava
 
 #SUBDIRS +=  quickqanava
 #SUBDIRS +=  test-40k
-#SUBDIRS +=  test-nodes
-#SUBDIRS +=  test-connector
+SUBDIRS +=  test-nodes
+SUBDIRS +=  test-connector
 #SUBDIRS +=  test-navigable
 SUBDIRS +=  test-groups
 #SUBDIRS +=  test-hedges

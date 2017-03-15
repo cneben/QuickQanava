@@ -36,8 +36,6 @@ import "qrc:/QuickQanava"   as Qan
 Item {
     id: template
     x: 0;   y: 0
-    // FIXME QAN3
-    z: 0
     width: Math.max( content.width, 75 )
     height: Math.max( content.height, 40 )
 
@@ -110,7 +108,7 @@ Item {
         x: 0; y: 0; z: 3
         visible: !group.collapsed
     }
-    MouseArea {  // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+/*    MouseArea {  // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: dragArea
         z: 2
         anchors.fill: parent
@@ -129,7 +127,7 @@ Item {
             if ( mouse.button === Qt.LeftButton )
                 template.groupDoubleClicked( group, Qt.point( mouse.x, mouse.y ) )
         }
-    }
+    }*/
     Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: groupBackground
         anchors.fill: content

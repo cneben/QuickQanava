@@ -45,14 +45,18 @@ ApplicationWindow {
             onGroupDoubleClicked: { console.debug( "Group " + group.label + " double clicked" ) }
             onGroupRightClicked: { console.debug( "Group " + group.label + " right clicked" ) }
             Component.onCompleted: {
-                var n1 = topology.insertNode( )
+                var n1 = topology.insertNode()
                 n1.label = "N1"
-                var n2 = topology.insertNode( )
+                var n2 = topology.insertNode()
                 n2.label = "N2"
-                var n3 = topology.insertNode( )
+                var n3 = topology.insertNode()
                 n3.label = "N3"
-                topology.insertEdge( n1, n2 )
-                topology.insertEdge( n2, n3 )
+                //topology.insertEdge( n1, n2 )
+                //topology.insertEdge( n2, n3 )
+
+                var g1 = topology.insertGroup()
+                g1.item.x = 250; g1.item.y = 45
+                //topology.insertEdge( n2, g1 )
             }
         } // Qan.Graph: graph
 

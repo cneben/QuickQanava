@@ -43,15 +43,7 @@ Group::Group( QObject* parent ) :
 {
 }
 
-Group::~Group()
-{
-    // Force remove all children who hae no cpp ownership
-    // FIXME QAN3
-    /*for ( auto child: childItems() ) {
-        if ( QQmlEngine::objectOwnership( child ) != QQmlEngine::CppOwnership )
-            child->setParent( nullptr );
-    }*/
-}
+Group::~Group() { /* Nil */ }
 
 qan::Graph*         Group::getGraph() noexcept {
     return qobject_cast< qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );

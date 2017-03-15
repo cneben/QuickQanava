@@ -56,23 +56,20 @@ NodeItem::~NodeItem() { /* Nil */ }
 
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
+auto    NodeItem::setNode(qan::Node* node) noexcept -> void { _node = node; }
 
-auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _node ? _node->getGraph() : nullptr; }
-auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _node? _node->getGraph() : nullptr; }
+auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
+    _graph = graph;
+    qan::Selectable::configure( this, graph );
+}
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
 void    NodeItem::onWidthChanged()
 {
-    if ( _selectionItem != nullptr ) {  // Update selection item
-        qreal selectionWeight{ 3. }, selectionMargin{ 3. };
-        const auto graph = getGraph();
-        if ( graph != nullptr ) {
-            selectionWeight = graph->getSelectionWeight();
-            selectionMargin = graph->getSelectionMargin();
-        }
-        _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
-    }
+    qan::Selectable::updateSelectionWidth();
     if ( _complexBoundingShape )            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
@@ -80,90 +77,10 @@ void    NodeItem::onWidthChanged()
 
 void    NodeItem::onHeightChanged()
 {
-    if ( _selectionItem != nullptr ) {
-        qreal selectionWeight{3.}, selectionMargin{3.};
-        const auto graph = getGraph();
-        if ( graph != nullptr ) {
-            selectionWeight = graph->getSelectionWeight();
-            selectionMargin = graph->getSelectionMargin();
-        }
-        _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
-    }
+    qan::Selectable::updateSelectionHeight();
     if ( _complexBoundingShape )            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
-}
-
-void    NodeItem::setSelectable( bool selectable )
-{
-    if ( _selectable == selectable )
-        return;
-    if ( getSelectionItem() != nullptr &&
-         getSelectionItem()->isVisible() )
-        getSelectionItem()->setVisible( false );
-    _selectable = selectable;
-    if ( _selected && !_selectable )
-        setSelected(false);
-    emit selectableChanged();
-}
-
-void    NodeItem::setSelected( bool selected )
-{
-    if ( getSelectionItem() != nullptr &&
-         isSelectable() )
-        getSelectionItem()->setVisible( selected );
-
-    if ( selected &&                        // Eventually create selection item
-         getSelectionItem() == nullptr &&
-         getGraph() != nullptr )
-        setSelectionItem(getGraph()->createRectangle( this ) );
-
-    if ( _selected != selected ) { // Binding loop protection
-        _selected = selected;
-        emit selectedChanged( );
-    }
-}
-
-void NodeItem::setSelectionItem( QQuickItem* selectionItem )
-{
-    if ( selectionItem == nullptr ) {
-        qWarning() << "qan::NodeItem::setSelectionItem(): Error: Can't set a nullptr selection hilight item.";
-        return;
-    }
-    _selectionItem.reset( selectionItem );
-    _selectionItem->setParentItem( this );  // Configure Quick item
-    const auto graph = getGraph();
-    if ( graph != nullptr )
-        configureSelectionItem( graph->getSelectionColor(), graph->getSelectionWeight(), graph->getSelectionMargin() );
-    _selectionItem->setVisible( isSelectable() && getSelected() );
-    emit selectionItemChanged();
-}
-
-void    NodeItem::configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin )
-{
-    if ( _selectionItem != nullptr ) {
-        _selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
-        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
-        if ( rectangleBorder != nullptr )
-            rectangleBorder->setProperty( "color", QVariant::fromValue<QColor>(selectionColor) );
-    }
-    configureSelectionItem( selectionWeight, selectionMargin );
-}
-
-void    NodeItem::configureSelectionItem( qreal selectionWeight, qreal selectionMargin )
-{
-    if ( _selectionItem != nullptr ) {
-        _selectionItem->setX( -( selectionWeight / 2. + selectionMargin ) );
-        _selectionItem->setY( -( selectionWeight / 2. + selectionMargin ) );
-        _selectionItem->setWidth( width() + selectionWeight + ( selectionMargin * 2 ));
-        _selectionItem->setHeight( height() + selectionWeight + ( selectionMargin * 2 ));
-        _selectionItem->setOpacity( 0.80 );
-        _selectionItem->setProperty( "radius", 4. );
-        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
-        if ( rectangleBorder != nullptr ) {
-            rectangleBorder->setProperty( "width", selectionWeight );
-        }
-    }
 }
 //-----------------------------------------------------------------------------
 
@@ -173,37 +90,6 @@ void    NodeItem::setResizable( bool resizable ) noexcept
     if ( resizable != _resizable ) {
         _resizable = resizable;
         emit resizableChanged();
-    }
-}
-
-void    NodeItem::setDraggable( bool draggable ) noexcept
-{
-    if ( draggable != _draggable ) {
-        _draggable = draggable;
-        if ( !draggable ) {
-            setDragActive(false);
-            endDragMove();
-        }
-        emit draggableChanged();
-    }
-}
-
-void    NodeItem::setDropable( bool dropable ) noexcept
-{
-    if ( dropable != _dropable ) {
-        _dropable = dropable;
-        emit dropableChanged();
-    }
-}
-
-void    NodeItem::setAcceptDrops( bool acceptDrops ) noexcept
-{
-    if ( acceptDrops != _acceptDrops ) {
-        _acceptDrops = acceptDrops;
-        if ( acceptDrops &&
-             !(flags().testFlag(QQuickItem::ItemAcceptsDrops)) )
-            setFlag( QQuickItem::ItemAcceptsDrops, acceptDrops );
-        emit acceptDropsChanged();
     }
 }
 
@@ -270,12 +156,12 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 {
     if ( getDraggable() &&      // Dragging management
          event->buttons() | Qt::LeftButton &&
-         !getDragActive() )
+         !getDragged() )
         beginDragMove( event->windowPos() );
 
     if ( getDraggable() &&
          event->buttons() | Qt::LeftButton &&
-         getDragActive() ) {
+         getDragged() ) {
         // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
         // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
         // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
@@ -325,18 +211,18 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
 void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 {
     Q_UNUSED( event );
-    if ( getDragActive() )
+    if ( getDragged() )
         endDragMove();
 }
 
 auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection ) -> void
 {
-    setDragActive( true );
+    setDragged( true );
     _dragInitialMousePos = dragInitialMousePos;
     _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
 
     // If there is a selection, keep start position for all selected nodes.
-    if ( dragSelection ) {
+    if ( getSelected() && dragSelection ) {
         const auto graph = getGraph();
         if ( graph != nullptr &&
              graph->hasMultipleSelection() ) {
@@ -355,11 +241,9 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
     if ( _node &&
          graph != nullptr ) {
         if ( _node->getGroup().lock() ) {
-            // FIXME QAN3
             graph->ungroupNode(_node->getGroup().lock().get(), _node );
-            //_node->getGroup().lock()->removeNode( _node );
-            _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Resetting position cache since the node has changed parent and
-            // thus position (same scene pos but different local pos)
+            _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Reset position cache since the node has changed parent and
+                                                         // thus position (same scene pos but different local pos)
             _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
         }
 
@@ -376,11 +260,9 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
         }
 
         // Eventually, propose a node group drop after move
-        if ( getDropable() ) {
+        if ( getDroppable() ) {
             qan::Group* group = graph->groupAt( position(), { width(), height() } );
-            qDebug() << "qan::NodeItem::dragMove(): group=" << group;
-            if ( _node &&
-                 group != nullptr &&
+            if ( group != nullptr &&
                  group->getItem() != nullptr ) {
                 group->getItem()->proposeNodeDrop(_node.data());
                 _lastProposedGroup = group;
@@ -396,7 +278,7 @@ auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& d
 
 auto    NodeItem::endDragMove( bool dragSelection ) -> void
 {
-    if ( getDropable() ) {
+    if ( getDroppable() ) {
         // FIXME QAN3: map to global graph container
         const auto pos = position(); //parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
         qan::Group* group = getGraph()->groupAt( pos, { width(), height() } );
@@ -406,7 +288,7 @@ auto    NodeItem::endDragMove( bool dragSelection ) -> void
             getGraph()->groupNode( group, _node.data() );
     }
 
-    setDragActive(false);
+    setDragged(false);
     _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends
     _dragInitialPos = { 0., 0. };
     _lastProposedGroup = nullptr;

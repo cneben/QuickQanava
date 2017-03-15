@@ -326,6 +326,9 @@ public:
     /*! FIXME QAN3 copydoc gtpo::Graph     */
     auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
 
+    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    auto            ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void;
+
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
      */
