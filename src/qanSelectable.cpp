@@ -65,11 +65,14 @@ void    Selectable::setSelected( bool selected ) noexcept
          isSelectable() )
         getSelectionItem()->setVisible( selected );
 
-    if ( selected &&                    // Eventually create selection item
-         getSelectionItem() == nullptr &&
-         _target &&
-         _graph )
-        setSelectionItem( _graph->createRectangle( _target.data() ) );
+    if ( _target &&
+         _graph ) {
+        if ( selected &&                // Eventually create selection item
+             getSelectionItem() == nullptr )
+            setSelectionItem( _graph->createRectangle( _target.data() ) );
+        else if ( !selected )
+            _graph->removeFromSelection(_target.data());
+    }
 
     if ( _selected != selected ) {      // Binding loop protection
         _selected = selected;

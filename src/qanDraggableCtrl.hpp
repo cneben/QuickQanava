@@ -164,12 +164,15 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::beginDragMove( const QPointF& dragIni
         const auto graph = getGraph();
         if ( graph != nullptr &&
              graph->hasMultipleSelection() ) {
-            for ( auto& selectedNode : graph->getSelectedNodes() )
-                if ( selectedNode != nullptr &&
-                     selectedNode->getItem() != nullptr &&
-                     static_cast<QQuickItem*>(selectedNode->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) &&
-                     selectedNode->getGroup().expired() )       // getGroup.expired() === node not in a group
-                    selectedNode->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
+            auto beginDragMoveSelected = [this, &dragInitialMousePos] (auto primitive) {    // Call beginDragMove() on a given node or group
+                if ( primitive != nullptr &&
+                     primitive->getItem() != nullptr &&
+                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
+                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                    primitive->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
+            };
+            std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), beginDragMoveSelected);
+            std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), beginDragMoveSelected);
         }
     }
 }
@@ -194,15 +197,16 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
         _targetItem->setX( startPos.x() + delta.x() );
         _targetItem->setY( startPos.y() + delta.y() );
 
-        if ( dragSelection ) {
-            for ( auto& node : graph->getSelectedNodes() ) {
-                qDebug() << "Dragging selection:" << node->getItem() << "\t_sourceItem=" << _targetItem;
-                if ( node != nullptr &&
-                     node->getItem() != nullptr &&
-                     static_cast<QQuickItem*>(node->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) &&
-                     node->getGroup().expired() )       // Do not drag nodes that are inside a group
-                    node->getItem()->draggableCtrl().dragMove( dragInitialMousePos, delta, false );
-            }
+        if ( dragSelection ) {            
+            auto dragMoveSelected = [this, &dragInitialMousePos, &delta] (auto primitive) { // Call dragMove() on a given node or group
+                if ( primitive != nullptr &&
+                     primitive->getItem() != nullptr &&
+                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
+                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                    primitive->getItem()->draggableCtrl().dragMove( dragInitialMousePos, delta, false );
+            };
+            std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
+            std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), dragMoveSelected);
         }
 
         // Eventually, propose a node group drop after move

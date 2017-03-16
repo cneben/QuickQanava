@@ -407,21 +407,31 @@ public:
      */
     bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
 
+    //! Similar to selectNode() for qan::Group (internally group is a node).
+    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers );
+
     /*! \brief Add a node in the current selection.
      */
     void            addToSelection( qan::Node& node );
+    //! \copydoc addToSelection
+    void            addToSelection( qan::Group& node );
 
     //! Remove a node from the selection.
     void            removeFromSelection( qan::Node& node );
+    //! \copydoc removeFromSelection
+    void            removeFromSelection( qan::Group& node );
+    //! \copydoc removeFromSelection
+    void            removeFromSelection( QQuickItem* item );
 
     //! Clear the current selection.
     void            clearSelection();
 
     //! Return true if multiple node are selected.
-    inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0; }
+    inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
 
 public:
     using SelectedNodes = qcm::ContainerModel< QVector, qan::Node* > ;
+    using SelectedGroups = qcm::ContainerModel< QVector, qan::Group* > ;
 
     //! Read-only list model of currently selected nodes.
     Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
@@ -431,8 +441,12 @@ public:
     inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
 signals:
     void                selectedNodesChanged();
+public:
+    inline auto         getSelectedGroups() noexcept -> SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() const noexcept -> const SelectedGroups& { return _selectedGroups; }
 private:
     SelectedNodes       _selectedNodes;
+    SelectedGroups      _selectedGroups;
 
 protected:
     virtual void        mousePressEvent(QMouseEvent* event ) override;

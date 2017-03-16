@@ -49,6 +49,11 @@ GroupItem::GroupItem( QQuickItem* parent ) :
              this, &qan::GroupItem::groupMoved );
     connect( this, &qan::GroupItem::yChanged,
              this, &qan::GroupItem::groupMoved );
+
+    connect( this, &qan::GroupItem::widthChanged,
+             this, &qan::GroupItem::onWidthChanged );
+    connect( this, &qan::GroupItem::heightChanged,
+             this, &qan::GroupItem::onHeightChanged );
 }
 
 GroupItem::~GroupItem() { /* Nil */ }
@@ -68,6 +73,24 @@ auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _grap
 auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
 //-----------------------------------------------------------------------------
 
+/* Selection Management *///---------------------------------------------------
+void    GroupItem::onWidthChanged()
+{
+    qan::Selectable::updateSelectionWidth();
+    /*if ( _complexBoundingShape )            // Invalidate actual bounding shape
+        emit requestUpdateBoundingShape();
+    else setDefaultBoundingShape();*/
+}
+
+void    GroupItem::onHeightChanged()
+{
+    qan::Selectable::updateSelectionHeight();
+    /*if ( _complexBoundingShape )            // Invalidate actual bounding shape
+        emit requestUpdateBoundingShape();
+    else setDefaultBoundingShape();*/
+}
+//-----------------------------------------------------------------------------
+
 /* Collapse Management *///----------------------------------------------------
 void    GroupItem::setCollapsed( bool collapsed ) noexcept
 {
@@ -80,6 +103,8 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
                  edge->getItem() != nullptr )
                 edge->getItem()->setVisible( !collapsed );
         }
+        if ( qan::Selectable::getSelectionItem() )              // Hide selection item when group is collapsed
+            qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
         emit collapsedChanged();
     }
 }
@@ -165,6 +190,16 @@ void    GroupItem::mouseMoveEvent(QMouseEvent* event )
 
 void    GroupItem::mousePressEvent( QMouseEvent* event )
 {
+    forceActiveFocus();
+
+    // Selection management
+    if ( event->button() == Qt::LeftButton &&
+         getGroup() &&
+         isSelectable() ) {
+        if ( _graph )
+            _graph->selectGroup( *getGroup(), event->modifiers() );
+    }
+
     _draggableCtrl.handleMousePressEvent(event);
 
     if ( event->button() == Qt::LeftButton )

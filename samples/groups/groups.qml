@@ -32,12 +32,12 @@ ApplicationWindow {
     width: 1280; height: 720
     title: "Custom nodes sample"
     Pane { anchors.fill: parent }
+    ToolTip { id: toolTip; timeout: 2000 }
+    function notifyUser(message) { toolTip.text=message; toolTip.open() }
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
         navigable   : true
-        ToolTip { id: toolTip; timeout: 2000 }
-        function notifyUser(message) { toolTip.text=message; toolTip.open() }
         graph: Qan.Graph {
             id: topology
             connectorEnabled: true
@@ -58,11 +58,11 @@ ApplicationWindow {
                 //topology.insertEdge( n2, g1 )
             }
             onGroupClicked: {
-                graphView.notifyUser( "Group <b>" + group.label + "</b> clicked" )
+                window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
                 groupEditor.group = group
             }
-            onGroupDoubleClicked: { graphView.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: { graphView.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
+            onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
+            onGroupRightClicked: { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
 
         RowLayout {

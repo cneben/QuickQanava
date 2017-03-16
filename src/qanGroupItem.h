@@ -64,6 +64,8 @@ public:
     explicit GroupItem( QQuickItem* parent = nullptr );
     virtual ~GroupItem();
     GroupItem( const GroupItem& ) = delete;
+public:
+    qan::DraggableCtrl<qan::Group, qan::GroupItem>& draggableCtrl() { return _draggableCtrl; }
 private:
     qan::DraggableCtrl<qan::Group, qan::GroupItem> _draggableCtrl;
 public:
@@ -103,6 +105,10 @@ signals:
     void            selectableChanged();
     void            selectedChanged();
     void            selectionItemChanged();
+
+protected slots:
+    virtual void    onWidthChanged();
+    virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
 

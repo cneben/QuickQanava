@@ -148,11 +148,9 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
         // Selection management
         if ( event->button() == Qt::LeftButton &&
              getNode() &&
-             getNode()->getItem() != nullptr &&
-             getNode()->getItem()->isSelectable() ) {
-            const auto graph = getGraph();
-            if ( graph != nullptr )
-                graph->selectNode( *getNode(), event->modifiers() );
+             isSelectable() ) {
+            if ( _graph != nullptr )
+                _graph->selectNode( *getNode(), event->modifiers() );
         }
 
         // QML notifications
