@@ -42,6 +42,7 @@
 #include "./qanNode.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
+#include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -79,7 +80,10 @@ public:
     explicit NodeItem( QQuickItem* parent = nullptr );
     virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
-
+public:
+    qan::DraggableCtrl<qan::Node, qan::NodeItem>& draggableCtrl() { return _draggableCtrl; }
+private:
+    qan::DraggableCtrl<qan::Node, qan::NodeItem> _draggableCtrl;
 public:
     Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
     auto        getNode() noexcept -> qan::Node*;
@@ -181,25 +185,6 @@ protected:
     virtual void    mouseMoveEvent(QMouseEvent* event ) override;
     virtual void    mousePressEvent(QMouseEvent* event ) override;
     virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
-
-public:
-    //! \c dragInitialMousePos in window coordinate system.
-    inline  auto    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) -> void;
-    //! \c delta in scene coordinate system.
-    inline  auto    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) -> void;
-    inline  auto    endDragMove( bool dragSelection = true ) -> void;
-
-public:
-    //! Used internally for multiple selection dragging, contain scene position of the node at the beggining of a drag operation.
-    auto            getDragInitialPos() const -> const QPointF& { return _dragInitialPos; }
-
-private:
-    //! Initial global mouse position at the beginning of a node drag operation.
-    QPointF         _dragInitialMousePos{ 0., 0. };
-    //! Node position at the beginning of a node drag.
-    QPointF         _dragInitialPos{ 0., 0. };
-    //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
-    QPointer< qan::Group >  _lastProposedGroup{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 

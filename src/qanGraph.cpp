@@ -265,8 +265,10 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 }
             } else if ( group != nullptr ) {
                 const auto groupItem = qobject_cast<qan::GroupItem*>(object);
-                if ( groupItem != nullptr )
+                if ( groupItem != nullptr ) {
                     groupItem->setGroup(group);
+                    groupItem->setGraph(this);
+                }
             }
             component->completeCreate();
             if ( !component->isError() ) {
@@ -550,14 +552,14 @@ qan::Group* Graph::insertGroup()
         qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent, nullptr, nullptr, group.get() ) );
         if ( groupItem != nullptr ) {
             groupItem->setGroup(group.get());
+            groupItem->setGraph(this);
             group->setItem(groupItem);
-            groupItem->setZ(0);
 
             GTpoGraph::insertGroup( group );
 
             auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
                             if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                                emit this->groupDoubleClicked(groupItem->getGroup(), p);
+                                emit this->groupClicked(groupItem->getGroup(), p);
             };
             connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
 
@@ -620,6 +622,19 @@ auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node ) noexcept(fal
              node->getItem() != nullptr ) {
             group->getItem()->groupNodeItem(node->getItem());
         }
+    }
+}
+
+auto    qan::Graph::groupNode( Group* group, qan::Group* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        qDebug() << "qan::Graph::groupNode(qan::Group*, qan::Group*)";
+        try {
+            /*if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );*/
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
 }
 

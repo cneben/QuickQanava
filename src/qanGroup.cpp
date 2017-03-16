@@ -76,21 +76,4 @@ bool    Group::hasNode( qan::Node* node ) const
 }
 //-----------------------------------------------------------------------------
 
-/* Group Appearance Management *///--------------------------------------------
-void    Group::setCollapsed( bool collapsed )
-{
-    if ( collapsed != _collapsed ) {
-        _collapsed = collapsed;
-        for ( auto weakEdge : getAdjacentEdges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
-            auto edge = weakEdge.lock().get();
-            // FIXME QAN3
-            //if ( edge &&
-                 //static_pointer_cast<>(edge)->getItem() )
-            //    edge->getItem()->setVisible( !collapsed );
-        }
-        emit collapsedChanged();
-    }
-}
-//-----------------------------------------------------------------------------
-
 } // ::qan

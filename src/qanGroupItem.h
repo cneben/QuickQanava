@@ -65,7 +65,7 @@ public:
     virtual ~GroupItem();
     GroupItem( const GroupItem& ) = delete;
 private:
-    qan::DraggableCtrl<qan::Group, qan::GroupItem> _controller;
+    qan::DraggableCtrl<qan::Group, qan::GroupItem> _draggableCtrl;
 public:
     Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
     auto        getGroup() noexcept -> qan::Group*;
@@ -76,11 +76,14 @@ private:
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     //! Secure shortcut to getGroup().getGraph().
     auto    getGraph() const noexcept -> const qan::Graph*;
     //! \copydoc getGraph()
     auto    getGraph() noexcept -> qan::Graph*;
+private:
+    QPointer<qan::Graph>    _graph;
     //@}
     //-------------------------------------------------------------------------
 
@@ -100,6 +103,19 @@ signals:
     void            selectableChanged();
     void            selectedChanged();
     void            selectionItemChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Collapse Management *///-----------------------------------------
+    //@{
+public:
+    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
+    inline bool getCollapsed() const noexcept { return _collapsed; }
+    void        setCollapsed( bool collapsed ) noexcept;
+private:
+    bool        _collapsed{false};
+signals:
+    void        collapsedChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -130,44 +146,17 @@ protected slots:
     void            groupMoved();
 
 public:
-    /*! \brief Define if the group should hilight a node insertion while the user is dragging a node across the group (might be costly).
-     *
-     *  When sets to true, group will use a shadow node (_shadowDropNode) to hilight the position of a node that is actually dragged over
-     *  this group to show its position when dropped and inserted in the group (it is quite costly, and the group layout must include support for
-     *  qan::Layout::proposeNodeDrop( ), such as qan::Linear and qan::OrderedTree).
-     *
-     *  When hilightDrag is set to true, your concrete QML qan::Node should call qan::dropNode() and qan::Node::proposeNodeDrop().
-     *  Default to true.
-     *
-     *  Example of a group with a qan::HierarchyTree layout and group's 'hilightDrag' property sets to true: node "n2" insertion position is hilighted with a shadow node before node is actually dropped into the group:
-     *  \image html 20150908_NP_group-hilight-drag.png
-     *
-     * \sa proposeNodeDrop()
-     * \sa qan::Node::dropNode()
-     * \sa qan::Node::proposeNodeDrop()
-     * \sa qan::Layout::proposeNodeDrop()
-     */
-    Q_PROPERTY( bool hilightDrag READ getHilightDrag WRITE setHilightDrag NOTIFY hilightDragChanged FINAL )
-    void            setHilightDrag( bool hilightDrag ) { _hilightDrag = hilightDrag; emit hilightDragChanged( ); }
-    inline bool     getHilightDrag() const noexcept { return _hilightDrag; }
-protected:
-    bool            _hilightDrag = true;
-signals:
-    void            hilightDragChanged();
-
-public:
     //! Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
     virtual void    groupNodeItem(qan::NodeItem* nodeItem);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);
 
-    /*! \brief Called whenever a node is dragged and moved over this group, usually to hilight an insertion point in group.
-     */
-    virtual void    proposeNodeDrop( qan::Node* node );
+    //! Call at the beginning of another group or node hover operation on this group (usually trigger a visual change to notify user that insertion is possible trought DND).
+    inline void     proposeNodeDrop() noexcept { emit nodeDragEnter( ); }
 
-    //! Called at the end of a node drag hover.
-    virtual void    endProposeNodeDrop();
+    //! End an operation started with proposeNodeDrop().
+    inline void     endProposeNodeDrop() noexcept { emit nodeDragLeave( ); }
 
 public:
     /*! \brief Should be set from the group concrete QML component to indicate the group content item (otherwise, this will be used).

@@ -74,7 +74,7 @@ Qan.AbstractGraph {
     }
     property real maxZ: -1.
     onNodeClicked: {
-        if ( node ) {
+        if ( node && node.item ) {
             maxZ = Math.max( node.item.z + 1, maxZ + 1 )
             node.item.z = maxZ + 1;
             if ( node.group )
@@ -83,7 +83,6 @@ Qan.AbstractGraph {
                  connectorEnabled )
                 connector.sourceNode = node;
             if ( nodeResizer &&
-                 node.item &&
                  node.item.resizable ) {
                 nodeResizer.parent = node.item
                 nodeResizer.minimumTargetSize = node.item.minimumSize
@@ -100,18 +99,15 @@ Qan.AbstractGraph {
             resizer.visible = false
         }
     }
-    onGroupClicked: {
-        maxZ = Math.max(group.z, maxZ)
-        group.z = maxZ + 1;
+    function updateGroupZ(group) {
+        if ( group && group.item ) {
+            maxZ = Math.max( group.item.z + 1, maxZ + 1 )
+            group.item.z = maxZ + 1;
+        }
     }
-    onGroupRightClicked: {
-        maxZ = Math.max(group.z, maxZ)
-        group.z = maxZ + 1;
-    }
-    onGroupDoubleClicked: {
-        maxZ = Math.max(group.z, maxZ)
-        group.z = maxZ + 1;
-    }
+    onGroupClicked: updateGroupZ(group)
+    onGroupRightClicked: updateGroupZ(group)
+    onGroupDoubleClicked: updateGroupZ(group)
     Component.onCompleted: { }
     Component.onDestruction: { }
 }

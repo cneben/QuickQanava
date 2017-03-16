@@ -56,21 +56,21 @@ public:
     DraggableCtrl( const DraggableCtrl& ) = delete;
 
 public:
-    auto        getTarget() noexcept -> Node_t* { return _target.data(); }
-    auto        getTarget() const noexcept -> const Node_t* { return _target.data(); }
+    inline auto getTarget() noexcept -> Node_t* { return _target.data(); }
+    inline auto getTarget() const noexcept -> const Node_t* { return _target.data(); }
     inline auto setTarget(Node_t* target) noexcept { _target = target; }
 private:
     QPointer<Node_t>    _target{nullptr};
 
 public:
-    auto        getTargetItem() noexcept -> NodeItem_t* { return _targetItem.data(); }
-    auto        getTargetItem() const noexcept -> const NodeItem_t* { return _targetItem.data(); }
+    inline auto getTargetItem() noexcept -> NodeItem_t* { return _targetItem.data(); }
+    inline auto getTargetItem() const noexcept -> const NodeItem_t* { return _targetItem.data(); }
     inline auto setTargetItem(NodeItem_t* targetItem) noexcept { _targetItem = targetItem; }
 private:
     QPointer<NodeItem_t>    _targetItem{nullptr};
 
 protected:
-    qan::Graph* getGraph() { return _target ? _target->getGraph() : nullptr; }
+    inline qan::Graph*  getGraph() noexcept { return _target ? _target->getGraph() : nullptr; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -94,9 +94,6 @@ public:
     auto    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) -> void;
     auto    endDragMove( bool dragSelection = true ) -> void;
 
-public:
-    //! Used internally for multiple selection dragging, contain scene position of the node at the beggining of a drag operation.
-    auto                    getDragInitialPos() const -> const QPointF& { return _dragInitialPos; }
 private:
     //! Initial global mouse position at the beginning of a node drag operation.
     QPointF                 _dragInitialMousePos{ 0., 0. };

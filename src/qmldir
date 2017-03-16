@@ -9,6 +9,6 @@ RectNodeTemplate	2.0 RectNodeTemplate.qml
 RectGroupTemplate	2.0 RectGroupTemplate.qml
 CanvasNodeTemplate	2.0 CanvasNodeTemplate.qml
 VisualConnector 2.0 VisualConnector.qml
-NodeLabelEditor	2.0 NodeLabelEditor.qml
+LabelEditor	    2.0 LabelEditor.qml
 StyleListView	2.0 StyleListView.qml
 StyleEditor 	2.0 StyleEditor.qml

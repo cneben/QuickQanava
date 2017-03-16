@@ -94,22 +94,10 @@ Item {
         target: nodeItem
         onNodeDoubleClicked: labelEditor.visible = true
     }
-    NodeLabelEditor {
+    LabelEditor {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: 4
         node: parent.nodeItem
     }
-    // Bounding shape management
-    /*Connections {
-        id: nodeUpdateBoundingShape
-        onRequestUpdateBoundingShape: {
-            if ( nodeSymbol.item )
-                nodeSymbol.item.updateSymbolPolygon()
-        }
-    }
-    Component.onCompleted: {
-        if ( nodeSymbol.item )
-            nodeSymbol.item.updateSymbolPolygon()
-    }*/
 }

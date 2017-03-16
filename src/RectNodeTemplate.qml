@@ -91,11 +91,11 @@ Item {
         target: nodeItem
         onNodeDoubleClicked: labelEditor.visible = true
     }
-    NodeLabelEditor {
+    LabelEditor {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: background.radius / 2
-        node: parent.nodeItem.node
+        target: parent.nodeItem.node
         visible: false
     }
 }

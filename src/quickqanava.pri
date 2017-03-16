@@ -99,4 +99,4 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \
                 $$PWD/VisualConnector.qml       \
-                $$PWD/NodeLabelEditor.qml
+                $$PWD/LabelEditor.qml

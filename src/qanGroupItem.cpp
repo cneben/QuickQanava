@@ -40,10 +40,9 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
+    _draggableCtrl.setTargetItem(this);
 
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
-    _controller.setTargetItem(this);
-    //setSelectable(false);
 
     // Force group connected edges update when the group is moved
     connect( this, &qan::GroupItem::xChanged,
@@ -58,22 +57,37 @@ auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
 auto    GroupItem::setGroup(qan::Group* group) noexcept -> void {
     _group = group;
-    if ( group != nullptr ) {
-        if ( group->getGraph() != nullptr ) {
-            qan::Selectable::configure(this, group->getGraph());
-        } else qWarning() << "qan::GroupItem::setGroup(): Warning: Setting a group that has no valid reference to qan::Graph.";
-    }
-    _controller.setTarget(group);
+    _draggableCtrl.setTarget(group);
 }
 
-auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _group ? _group->getGraph() : nullptr; }
-auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _group ? _group->getGraph() : nullptr; }
+auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
+    _graph = graph;
+    qan::Selectable::configure( this, graph );
+}
+auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
+auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+//-----------------------------------------------------------------------------
+
+/* Collapse Management *///----------------------------------------------------
+void    GroupItem::setCollapsed( bool collapsed ) noexcept
+{
+    if ( _group &&
+         collapsed != _collapsed ) {
+        _collapsed = collapsed;
+        for ( auto weakEdge : _group->getAdjacentEdges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
+            const auto edge = weakEdge.lock() ;
+            if ( edge &&
+                 edge->getItem() != nullptr )
+                edge->getItem()->setVisible( !collapsed );
+        }
+        emit collapsedChanged();
+    }
+}
 //-----------------------------------------------------------------------------
 
 /* Group DnD Management *///---------------------------------------------------
 void    GroupItem::groupMoved()
 {
-    qDebug() << "GroupItem::groupMoved()";
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
@@ -110,50 +124,34 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
     }
 }
 
-void    GroupItem::proposeNodeDrop( qan::Node* node )
-{
-    Q_UNUSED( node);
-    emit nodeDragEnter( );
-}
-
-void    GroupItem::endProposeNodeDrop()
-{
-    emit nodeDragLeave( );
-}
-
-
 void    GroupItem::dragEnterEvent( QDragEnterEvent* event )
 {
-    qDebug() << "qan::GroupItem::dragEnterEvent()";
-    if ( ! _controller.handleDragEnterEvent(event) )
+    if ( ! _draggableCtrl.handleDragEnterEvent(event) )
         event->ignore();
     QQuickItem::dragEnterEvent( event );
 }
 
 void	GroupItem::dragMoveEvent( QDragMoveEvent* event )
 {
-    qDebug() << "qan::GroupItem::dragMoveEvent()";
-    _controller.handleDragMoveEvent(event);
+    _draggableCtrl.handleDragMoveEvent(event);
     QQuickItem::dragMoveEvent( event );
 }
 
 void	GroupItem::dragLeaveEvent( QDragLeaveEvent* event )
 {
-    qDebug() << "qan::GroupItem::dragLeaveEvent()";
-    _controller.handleDragLeaveEvent(event);
+    _draggableCtrl.handleDragLeaveEvent(event);
     QQuickItem::dragLeaveEvent( event );
 }
 
 void    GroupItem::dropEvent( QDropEvent* event )
 {
-    _controller.handleDropEvent(event);
+    _draggableCtrl.handleDropEvent(event);
     QQuickItem::dropEvent( event );
 }
 
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
-    qDebug() << "qan::GroupItem::mouseDoubleClickEvent()";
-    _controller.handleMouseDoubleClickEvent(event);
+    _draggableCtrl.handleMouseDoubleClickEvent(event);
 
     if ( event->button() == Qt::LeftButton )
         emit groupDoubleClicked( this, event->localPos() );
@@ -161,21 +159,23 @@ void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 
 void    GroupItem::mouseMoveEvent(QMouseEvent* event )
 {
-    qDebug() << "qan::GroupItem::mouseMoveEvent()";
-    _controller.handleMouseMoveEvent(event);
+    _draggableCtrl.handleMouseMoveEvent(event);
     QQuickItem::mouseMoveEvent(event);
 }
 
 void    GroupItem::mousePressEvent( QMouseEvent* event )
 {
-    qDebug() << "qan::GroupItem::mousePressEvent()";
-    _controller.handleMousePressEvent(event);
+    _draggableCtrl.handleMousePressEvent(event);
+
+    if ( event->button() == Qt::LeftButton )
+        emit groupClicked( this, event->localPos() );
+    else if ( event->button() == Qt::RightButton )
+        emit groupRightClicked( this, event->localPos() );
 }
 
 void    GroupItem::mouseReleaseEvent( QMouseEvent* event )
 {
-    qDebug() << "qan::GroupItem::mouseReleaseEvent()";
-    _controller.handleMouseReleaseEvent(event);
+    _draggableCtrl.handleMouseReleaseEvent(event);
 }
 //-----------------------------------------------------------------------------
 

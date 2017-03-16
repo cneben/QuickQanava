@@ -34,7 +34,7 @@ import QuickQanava  2.0 as Qan
 import "."          as Qan
 
 Qan.GroupItem {
-    id: group
+    id: groupItem
     x: 0;   y: 0; z:0
     width: template.content.width;
     height: template.content.height
@@ -47,17 +47,14 @@ Qan.GroupItem {
     Qan.RectGroupTemplate {
         id: template
         anchors.fill: parent
-        group: group
-        onGroupClicked: group.groupClicked( group, p )
-        onGroupDoubleClicked: group.groupDoubleClicked( group, p )
-        onGroupRightClicked: group.groupRightClicked( group, p )
+        groupItem: parent
         Qan.BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
             id: groupResizer
             x: 0; y: 0; z: 3
-            visible: !group.collapsed
+            visible: groupItem.item ? !groupItem.item.collapsed : true
             target: template.content
-            minimumTargetSize: Qt.size( Math.max( group.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
-                                        Math.max( group.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
+            minimumTargetSize: Qt.size( Math.max( groupItem.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
+                                        Math.max( groupItem.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
         }
     }
 

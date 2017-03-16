@@ -36,14 +36,13 @@ ApplicationWindow {
         id: graphView
         anchors.fill: parent
         navigable   : true
+        ToolTip { id: toolTip; timeout: 2000 }
+        function notifyUser(message) { toolTip.text=message; toolTip.open() }
         graph: Qan.Graph {
             id: topology
             connectorEnabled: true
             objectName: "graph"
             anchors.fill: parent
-            onGroupClicked: { console.debug( "Group " + group.label + " clicked" ) }
-            onGroupDoubleClicked: { console.debug( "Group " + group.label + " double clicked" ) }
-            onGroupRightClicked: { console.debug( "Group " + group.label + " right clicked" ) }
             Component.onCompleted: {
                 var n1 = topology.insertNode()
                 n1.label = "N1"
@@ -55,30 +54,65 @@ ApplicationWindow {
                 //topology.insertEdge( n2, n3 )
 
                 var g1 = topology.insertGroup()
-                g1.item.x = 250; g1.item.y = 45
+                g1.label = "GROUP"; g1.item.x = 250; g1.item.y = 45
                 //topology.insertEdge( n2, g1 )
             }
+            onGroupClicked: {
+                graphView.notifyUser( "Group <b>" + group.label + "</b> clicked" )
+                groupEditor.group = group
+            }
+            onGroupDoubleClicked: { graphView.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
+            onGroupRightClicked: { graphView.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
 
         RowLayout {
-            anchors.top: parent.top
+            anchors.top: parent.top; anchors.topMargin: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 300
-            Button {
-                text: "No Layout Group"
+            width: 200
+            RoundButton {
+                text: "Group"
                 onClicked: {
                     var gg = topology.insertGroup()
-                    gg.z = 0
                     if ( gg )
                         gg.label = "Group"
                 }
             }
-            Button {
-                text: "Insert Node"
+            RoundButton {
+                text: "Node"
                 onClicked: {
                     var n = topology.insertNode( )
                     if ( n )
                         n.label = "Node"
+                }
+            }
+        }
+        Frame {
+            id: groupEditor
+            property var group: undefined
+            onGroupChanged: groupItem = group ? group.item : undefined
+            property var groupItem: undefined
+            anchors.bottom: parent.bottom; anchors.bottomMargin: 15
+            anchors.right: parent.right; anchors.rightMargin: 15
+            ColumnLayout {
+                Label {
+                    text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
+                }
+                CheckBox {
+                    text: "Draggable"
+                    enabled: groupEditor.groupItem !== undefined
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
+                    onClicked: groupEditor.groupItem.draggable = checked
+                }
+                CheckBox {
+                    text: "Selected (read-only)"
+                    enabled: false
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
+                }
+                CheckBox {
+                    text: "Selectable"
+                    enabled: groupEditor.groupItem != null
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
+                    onClicked: groupEditor.groupItem.selectable = checked
                 }
             }
         }

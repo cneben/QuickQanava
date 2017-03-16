@@ -117,7 +117,7 @@ private:
      *
      * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
      */
-    bool            _acceptDrops = true;
+    bool            _acceptDrops{true};
     //@}
     //-------------------------------------------------------------------------
 };

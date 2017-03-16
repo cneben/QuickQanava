@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanva software. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	NodeCanvasTemplate.qml
+// \file	CanvasTemplate.qml
 // \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
@@ -28,11 +28,12 @@
 import QtQuick              2.7
 import QtQuick.Controls     2.0
 
-/*! \brief Reusable component for visual edition of node labels with on-demand loading.
+/*! \brief Reusable component for visual edition of node and groups labels with on-demand loading.
  *
- * Set the target node to be edited with the 'node' property, editor is invisble by default.
+ * Initialize 'target' property with the node or group that should be edited, editor is invisible by default,
+ * complex label edition component is loaded only when editor \c visible is set to true.
  *
- * \note NodeLabelEditor is basically a loader with an internal edition component using
+ * \note LabelEditor is basically a loader with an internal edition component using
  * a Quick Controls 2 TextField that is loaded only when visible property is sets to true. Internal
  * editor is not unloaded when editor visibility is set to false.
  *
@@ -45,11 +46,11 @@ import QtQuick.Controls     2.0
  *    target: node
  *     onNodeDoubleClicked: labelEditor.visible = true
  *   }
- *   NodeLabelEditor {
+ *   LabelEditor {
  *     id: nodeLabelEditor
  *     anchors.fill: parent
  *     anchors.margins: background.radius / 2
- *     node: parent.node
+ *     target: parent.node
  *   }
  * }
  * \endcode
@@ -60,8 +61,8 @@ Loader {
     id: labelEditorLoader
     visible: false
 
-    //! Editor will target node.label property.
-    property var    node: undefined
+    //! Editor target node or group (or any Qan primitive with a \c label property).
+    property var    target: undefined
 
     onVisibleChanged: {
         if ( visible && !item )
@@ -86,21 +87,19 @@ Loader {
         id: labelEditorComponent
         TextField {
             id: labelTextField
-            anchors.fill: parent
-            text: node ? node.label : ""
+            anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+            text: target ? target.label : ""
             onAccepted: {
-                if ( node &&
+                if ( target &&
                      text.length !== 0 )
-                    node.label = text   // Do not allow empty labels
+                    target.label = text   // Do not allow empty labels
                 focus = false;          // Release focus once the label has been edited
             }
-            onEditingFinished: {
-                labelEditorLoader.visible = false
-            }
+            onEditingFinished: labelEditorLoader.visible = false
             onActiveFocusChanged: {
-                if ( node &&
-                     text !== node.label )  // Ensure that last edition text is removed
-                    text = node.label       // for exemple if edition has been interrupted in a focus change
+                if ( target &&
+                     text !== target.label )  // Ensure that last edition text is removed
+                    text = target.label       // for exemple if edition has been interrupted in a focus change
             }
         }
     }

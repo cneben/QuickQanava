@@ -324,6 +324,9 @@ public:
     auto            groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void;
 
     /*! FIXME QAN3 copydoc gtpo::Graph     */
+    auto            groupNode( qan::Group* group, qan::Group* node ) noexcept(false) -> void;
+
+    /*! FIXME QAN3 copydoc gtpo::Graph     */
     auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
 
     /*! FIXME QAN3 copydoc gtpo::Graph     */

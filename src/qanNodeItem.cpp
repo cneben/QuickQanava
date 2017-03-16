@@ -42,10 +42,14 @@ NodeItem::NodeItem(QQuickItem* parent) :
     _defaultStyle{ new qan::NodeStyle{ "", QStringLiteral("qan::Node") } },
     _style{ nullptr }
 {
-    setAcceptDrops( true );
+    qan::Draggable::configure(this);
+    _draggableCtrl.setTargetItem(this);
+
     setFlag( QQuickItem::ItemAcceptsDrops, true );
-    setStyle( _defaultStyle.data() );
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+
+    setStyle( _defaultStyle.data() );
+
     connect( this, &qan::NodeItem::widthChanged,
              this, &qan::NodeItem::onWidthChanged );
     connect( this, &qan::NodeItem::heightChanged,
@@ -56,14 +60,17 @@ NodeItem::~NodeItem() { /* Nil */ }
 
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
-auto    NodeItem::setNode(qan::Node* node) noexcept -> void { _node = node; }
+auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
+    _node = node;
+    _draggableCtrl.setTarget(node);
+}
 
-auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
-auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
 auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
     _graph = graph;
     qan::Selectable::configure( this, graph );
 }
+auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
@@ -95,89 +102,40 @@ void    NodeItem::setResizable( bool resizable ) noexcept
 
 void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
 {
-    if ( getAcceptDrops() ) {
-        if ( event->source() == nullptr ) {
-            event->accept(); // This is propably a drag initated with type=Drag.Internal, for exemple a connector drop node, accept by default...
-            QQuickItem::dragEnterEvent( event );
-            return;
-        } else { // Get the source item from the quick drag attached object received
-            QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-            if ( draggedStyle.isValid() ) {
-                event->accept();
-                return;
-            }
-        }
+    if ( ! _draggableCtrl.handleDragEnterEvent(event) )
         event->ignore();
-        QQuickItem::dragEnterEvent( event );
-    }
+    QQuickItem::dragEnterEvent( event );
 }
 
 void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
 {
-    if ( getAcceptDrops() ) {
-        event->acceptProposedAction();
-        event->accept();
-    }
+    _draggableCtrl.handleDragMoveEvent(event);
     QQuickItem::dragMoveEvent( event );
 }
 
 void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
 {
-    if ( getAcceptDrops() )
-        event->ignore();
+    _draggableCtrl.handleDragLeaveEvent(event);
     QQuickItem::dragLeaveEvent( event );
 }
 
 void    NodeItem::dropEvent( QDropEvent* event )
 {
-    if ( getAcceptDrops() &&
-         event->source() != nullptr ) { // Get the source item from the quick drag attached object received
-        QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-        if ( sourceItem != nullptr ) {
-            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
-            if ( draggedStyle.isValid() ) {
-                qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
-                if ( draggedNodeStyle != nullptr )
-                    setStyle( draggedNodeStyle );
-            }
-        }
-    }
+    _draggableCtrl.handleDropEvent(event);
     QQuickItem::dropEvent( event );
 }
 
 void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
+    _draggableCtrl.handleMouseDoubleClickEvent(event);
+
     if ( event->button() == Qt::LeftButton )
         emit nodeDoubleClicked( this, event->localPos() );
 }
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 {
-    if ( getDraggable() &&      // Dragging management
-         event->buttons() | Qt::LeftButton &&
-         !getDragged() )
-        beginDragMove( event->windowPos() );
-
-    if ( getDraggable() &&
-         event->buttons() | Qt::LeftButton &&
-         getDragged() ) {
-        // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
-        // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
-        // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
-        // BTW, this code is probably buggy for deep quick item hierarchy.
-        QPointF startLocalPos;
-        QPointF curLocalPos;
-        if ( parentItem() != nullptr ) {
-            startLocalPos = parentItem()->mapFromScene( _dragInitialMousePos );
-            curLocalPos = parentItem()->mapFromScene( event->windowPos() );
-        } else {
-            startLocalPos = _dragInitialMousePos;
-            curLocalPos = event->windowPos();
-        }
-        QPointF delta( curLocalPos - startLocalPos );
-        dragMove( event->windowPos(), delta );
-    }
+    _draggableCtrl.handleMouseMoveEvent(event);
     QQuickItem::mouseMoveEvent(event);
 }
 
@@ -210,101 +168,7 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
 
 void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 {
-    Q_UNUSED( event );
-    if ( getDragged() )
-        endDragMove();
-}
-
-auto    NodeItem::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection ) -> void
-{
-    setDragged( true );
-    _dragInitialMousePos = dragInitialMousePos;
-    _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-
-    // If there is a selection, keep start position for all selected nodes.
-    if ( getSelected() && dragSelection ) {
-        const auto graph = getGraph();
-        if ( graph != nullptr &&
-             graph->hasMultipleSelection() ) {
-            for ( auto& selectedNode : graph->getSelectedNodes() )
-                if ( selectedNode != nullptr &&
-                     selectedNode->getItem() != nullptr &&
-                     selectedNode->getItem() != this )
-                    selectedNode->getItem()->beginDragMove( dragInitialMousePos, false );
-        }
-    }
-}
-
-auto    NodeItem::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
-{
-    const auto graph = getGraph();
-    if ( _node &&
-         graph != nullptr ) {
-        if ( _node->getGroup().lock() ) {
-            graph->ungroupNode(_node->getGroup().lock().get(), _node );
-            _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Reset position cache since the node has changed parent and
-                                                         // thus position (same scene pos but different local pos)
-            _dragInitialPos = parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-        }
-
-        QPointF startPos = parentItem() != nullptr ? parentItem()->mapFromScene( _dragInitialPos ) : _dragInitialPos;
-        setX( startPos.x() + delta.x() );
-        setY( startPos.y() + delta.y() );
-
-        if ( dragSelection ) {
-            for ( auto& node : graph->getSelectedNodes() )
-                if ( node != nullptr &&
-                     node->getItem() != nullptr &&
-                     node->getItem() != this )
-                    node->getItem()->dragMove( dragInitialMousePos, delta, false );
-        }
-
-        // Eventually, propose a node group drop after move
-        if ( getDroppable() ) {
-            qan::Group* group = graph->groupAt( position(), { width(), height() } );
-            if ( group != nullptr &&
-                 group->getItem() != nullptr ) {
-                group->getItem()->proposeNodeDrop(_node.data());
-                _lastProposedGroup = group;
-            } else if ( group == nullptr &&
-                        _lastProposedGroup != nullptr &&
-                        _lastProposedGroup->getItem() != nullptr ) {
-                _lastProposedGroup->getItem()->endProposeNodeDrop();
-                _lastProposedGroup = nullptr;
-            }
-        }
-    }
-}
-
-auto    NodeItem::endDragMove( bool dragSelection ) -> void
-{
-    if ( getDroppable() ) {
-        // FIXME QAN3: map to global graph container
-        const auto pos = position(); //parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
-        qan::Group* group = getGraph()->groupAt( pos, { width(), height() } );
-        if ( getGraph() != nullptr &&
-             group != nullptr &&
-             _node )
-            getGraph()->groupNode( group, _node.data() );
-    }
-
-    setDragged(false);
-    _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends
-    _dragInitialPos = { 0., 0. };
-    _lastProposedGroup = nullptr;
-
-    // If there is a selection, end drag for the whole selection
-    if ( dragSelection ) {
-        qan::Graph* graph = getGraph();
-        if ( graph != nullptr &&
-             getGraph()->hasMultipleSelection() ) {
-            for ( auto& selectedNode : graph->getSelectedNodes() )
-                if ( selectedNode != nullptr &&
-                     selectedNode->getItem() != nullptr &&
-                     selectedNode->getItem() != this )
-                    selectedNode->getItem()->endDragMove( false );
-        }
-    }
+    _draggableCtrl.handleMouseReleaseEvent(event);
 }
 //-----------------------------------------------------------------------------
 

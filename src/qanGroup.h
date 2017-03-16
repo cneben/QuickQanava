@@ -90,15 +90,6 @@ public:
     /*! \name Appearance Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
-    void        setCollapsed( bool collapsed );
-    bool        getCollapsed( ) const { return _collapsed; }
-private:
-    bool        _collapsed = false;
-signals:
-    void        collapsedChanged( );
-
-public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
     QString     getLabel( ) const { return _label; }
