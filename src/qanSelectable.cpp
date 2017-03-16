@@ -54,7 +54,8 @@ void    Selectable::setSelectable( bool selectable ) noexcept
          getSelectionItem()->isVisible() )
         getSelectionItem()->setVisible( false );
     _selectable = selectable;
-    if ( _selected && !_selectable )
+    if ( _selected &&
+         !_selectable )
         setSelected(false);
     emitSelectableChanged();
 }
@@ -70,8 +71,10 @@ void    Selectable::setSelected( bool selected ) noexcept
         if ( selected &&                // Eventually create selection item
              getSelectionItem() == nullptr )
             setSelectionItem( _graph->createRectangle( _target.data() ) );
-        else if ( !selected )
+        else if ( !selected ) {
+            qDebug() << "Calling remove from selection: _target=" << _target;
             _graph->removeFromSelection(_target.data());
+        }
     }
 
     if ( _selected != selected ) {      // Binding loop protection

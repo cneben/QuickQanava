@@ -193,6 +193,7 @@ void    GroupItem::mousePressEvent( QMouseEvent* event )
     forceActiveFocus();
 
     // Selection management
+    qDebug() << "group isSelectable=" << isSelectable();
     if ( event->button() == Qt::LeftButton &&
          getGroup() &&
          isSelectable() ) {

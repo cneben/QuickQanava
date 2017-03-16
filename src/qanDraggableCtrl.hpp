@@ -109,7 +109,7 @@ bool    DraggableCtrl<Node_t, NodeItem_t>::handleMouseMoveEvent(QMouseEvent* eve
     if ( _targetItem->getDraggable() &&      // Dragging management
          event->buttons() | Qt::LeftButton) {
         if ( !_targetItem->getDragged() ) {
-            beginDragMove( event->windowPos() );
+            beginDragMove( event->windowPos(), _targetItem->getSelected() );
             return true;
         } else {
             // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
@@ -126,7 +126,7 @@ bool    DraggableCtrl<Node_t, NodeItem_t>::handleMouseMoveEvent(QMouseEvent* eve
                 curLocalPos = event->windowPos();
             }
             QPointF delta( curLocalPos - startLocalPos );
-            dragMove( event->windowPos(), delta );
+            dragMove( event->windowPos(), delta, _targetItem->getSelected() );
             return true;
         }
     }
@@ -230,6 +230,10 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
 template <class Node_t, class NodeItem_t>
 auto    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection ) -> void
 {
+    _dragInitialMousePos = { 0., 0. };  // Invalid all cached coordinates when drag ends
+    _dragInitialPos = { 0., 0. };
+    _lastProposedGroup = nullptr;
+
     const auto graph = getGraph();
     if ( _targetItem ) {
         if ( _targetItem->getDroppable() &&
@@ -243,21 +247,20 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection ) -> 
                 graph->groupNode( group, _target.data() );
         }
         _targetItem->setDragged(false);
-    }
-    _dragInitialMousePos = { 0., 0. }; // Invalid all cached coordinates when drag ends
-    _dragInitialPos = { 0., 0. };
-    _lastProposedGroup = nullptr;
 
-    // If there is a selection, end drag for the whole selection
-    if ( dragSelection &&
-         graph != nullptr &&
-         graph->hasMultipleSelection() &&
-         _targetItem ) {
-        for ( auto& selectedNode : graph->getSelectedNodes() )
-            if ( selectedNode != nullptr &&
-                 selectedNode->getItem() != nullptr &&
-                 static_cast<QQuickItem*>(selectedNode->getItem()) != static_cast<QQuickItem*>(_targetItem) )
-                selectedNode->getItem()->draggableCtrl().endDragMove( false );
+        if ( dragSelection &&               // If there is a selection, end drag for the whole selection
+             graph != nullptr &&
+             graph->hasMultipleSelection()) {
+            auto enDragMoveSelected = [this] (auto primitive) { // Call dragMove() on a given node or group
+                if ( primitive != nullptr &&
+                     primitive->getItem() != nullptr &&
+                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
+                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                    primitive->getItem()->draggableCtrl().endDragMove( false );
+            };
+            std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);
+            std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), enDragMoveSelected);
+        }
     }
 }
 //-----------------------------------------------------------------------------

@@ -722,72 +722,44 @@ void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
     emit selectionMarginChanged();
 }
 
-bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers )
+template < class Primitive_t >
+bool    selectPrimitiveImpl( Primitive_t& primitive,
+                         Qt::KeyboardModifiers modifiers,
+                         qan::Graph& graph )
 {
-    if ( getSelectionPolicy() == SelectionPolicy::NoSelection )
+    if ( graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection )
         return false;
 
-    bool selectNode{ false };
+    bool selectPrimitive{ false };
     bool ctrlPressed = modifiers & Qt::ControlModifier;
-    if ( node.getItem() == nullptr )
+    if ( primitive.getItem() == nullptr )
         return false;
 
-    if ( node.getItem()->getSelected() ) {
+    if ( primitive.getItem()->getSelected() ) {
         if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
-            removeFromSelection( node );
+            graph.removeFromSelection( primitive );
     } else {
-        switch ( getSelectionPolicy() ) {
-        case SelectionPolicy::SelectOnClick:
-            selectNode = true;        // Click on an unselected node with SelectOnClick = select node
+        switch ( graph.getSelectionPolicy() ) {
+        case qan::Graph::SelectionPolicy::SelectOnClick:
+            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
             if ( !ctrlPressed )
-                clearSelection();
+                graph.clearSelection();
             break;
-        case SelectionPolicy::SelectOnCtrlClick:
-            selectNode = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+        case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
+            selectPrimitive = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
             break;
-        case SelectionPolicy::NoSelection:
-        default: break;
+        case qan::Graph::SelectionPolicy::NoSelection: break;
         }
     }
-    if ( selectNode ) {
-        addToSelection( node );
+    if ( selectPrimitive ) {
+        graph.addToSelection( primitive );
         return true;
     }
     return false;
 }
 
-bool    Graph::selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers )
-{
-    if ( getSelectionPolicy() == SelectionPolicy::NoSelection )
-        return false;
-
-    bool selectNode{ false };
-    bool ctrlPressed = modifiers & Qt::ControlModifier;
-    if ( group.getItem() == nullptr )
-        return false;
-
-    if ( group.getItem()->getSelected() ) {
-        if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
-            removeFromSelection( group );
-    } else {
-        switch ( getSelectionPolicy() ) {
-        case SelectionPolicy::SelectOnClick:
-            selectNode = true;        // Click on an unselected node with SelectOnClick = select node
-            if ( !ctrlPressed )
-                clearSelection();
-            break;
-        case SelectionPolicy::SelectOnCtrlClick:
-            selectNode = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
-            break;
-        case SelectionPolicy::NoSelection: break;
-        }
-    }
-    if ( selectNode ) {
-        addToSelection( group );
-        return true;
-    }
-    return false;
-}
+bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Node>(node, modifiers, *this); }
+bool    Graph::selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Group>(group, modifiers, *this); }
 
 template < class Primitive_t >
 void    addToSelectionImpl( Primitive_t& primitive,
@@ -824,13 +796,15 @@ void    removeFromSelectionImpl( Primitive_t& primitive,
 void    Graph::removeFromSelection( qan::Node& node ) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
 void    Graph::removeFromSelection( qan::Group& group ) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
 void    Graph::removeFromSelection( QQuickItem* item ) {
-    const auto node = qobject_cast<qan::Node*>(item);
-    if ( node != nullptr )
-        removeFromSelection( *node );
-    else {
-        const auto group = qobject_cast<qan::Group*>(item);
-        if ( group != nullptr )
-            removeFromSelection( *group);
+    const auto nodeItem = qobject_cast<qan::NodeItem*>(item);
+    if ( nodeItem != nullptr &&
+         nodeItem->getNode() != nullptr ) {
+        _selectedNodes.remove(nodeItem->getNode());
+    } else {
+        const auto groupItem = qobject_cast<qan::GroupItem*>(item);
+        if ( groupItem != nullptr &&
+             groupItem->getGroup() != nullptr )
+            _selectedGroups.remove(groupItem->getGroup());
     }
 }
 
