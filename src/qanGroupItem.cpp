@@ -55,6 +55,7 @@ GroupItem::GroupItem( QQuickItem* parent ) :
     connect( this, &qan::GroupItem::heightChanged,
              this, &qan::GroupItem::onHeightChanged );
 
+    setStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
 }
 
@@ -73,6 +74,27 @@ auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
 }
 auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
 auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+//-----------------------------------------------------------------------------
+
+/* Style Management *///-------------------------------------------------------
+void    GroupItem::setStyle( qan::Style* style ) noexcept
+{
+    if ( style != _style ) {
+        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
+            QObject::disconnect( _style, 0, this, 0 );
+        _style = style;
+        if ( _style )
+            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
+                     this,      &GroupItem::styleDestroyed );
+        emit styleChanged( );
+    }
+}
+
+void    GroupItem::styleDestroyed( QObject* style )
+{
+    if ( style != nullptr )
+        setStyle( nullptr );   // Set default style when current style is destroyed
+}
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------

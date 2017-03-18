@@ -190,7 +190,7 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Appearance Management *///---------------------------------------
+    /*! \name Style Management *///--------------------------------------------
     //@{
 public:
     //! Node current style object (this property is never null, a default style is returned when no style has been manually set).

@@ -81,31 +81,27 @@ private:
 
 public:
     //! Set style \c defaultNodeStyle a the default style for a specific class of nodes \c delegate.
-    void                    setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle );
+    void                            setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle );
 
     //! Get the style for a specific node \c delegate, if no such style exist, return default node style.
-    qan::NodeStyle*         getNodeStyle( QQmlComponent* delegate );
+    qan::NodeStyle*                 getNodeStyle( QQmlComponent* delegate );
 
     using DelegateNodeStyleMap = QMap< QQmlComponent*, qan::NodeStyle* >;
     const DelegateNodeStyleMap&     getNodeStyles() const noexcept { return _nodeStyles; }
-    qan::NodeStyle&                 getDefaultNodeStyle() noexcept { return  _defaultNodeStyle; }
 private:
     DelegateNodeStyleMap            _nodeStyles;
-    qan::NodeStyle                  _defaultNodeStyle;
 
 public:
     //! Set style \c defaultEdgeStyle a the default style for a specific class of edge \c delegate.
-    void                    setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle );
+    void                            setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle );
 
     //! Get the default style for a specific edge \c delegate, if no such style exist, return default node style.
-    qan::EdgeStyle*         getEdgeStyle( QQmlComponent* delegate );
+    qan::EdgeStyle*                 getEdgeStyle( QQmlComponent* delegate );
 
     using DelegateEdgeStyleMap = QMap< QQmlComponent*, qan::EdgeStyle* >;
     const DelegateEdgeStyleMap&     getEdgeStyles() const noexcept { return  _edgeStyles; }
-    qan::EdgeStyle&                 getDefaultEdgeStyle() noexcept { return  _defaultEdgeStyle; }
 private:
     DelegateEdgeStyleMap            _edgeStyles;
-    qan::EdgeStyle                  _defaultEdgeStyle;
 
 public:
     using ObjectVectorModel = qcm::ContainerModel<QVector, QObject*>;

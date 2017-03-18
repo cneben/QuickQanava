@@ -120,7 +120,9 @@ ApplicationWindow {
             objectName: "graph"
             connectorEnabled: true
             Component.onCompleted: {
+                console.debug("graph.insertNode()")
                 var n1 = graph.insertNode()
+                console.debug("n1=" + n1)
                 n1.label = "N1"
                 var n2 = graph.insertNode()
                 n2.label = "N2"

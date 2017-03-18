@@ -47,6 +47,8 @@ EdgeItem::EdgeItem( QQuickItem* parent ) :
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setAcceptDrops( true );
     setVisible(false);  // Invisible until there is a valid src/dst
+
+    setStyle( qan::Edge::style() );
     setObjectName( QStringLiteral("qan::EdgeItem") );
 }
 

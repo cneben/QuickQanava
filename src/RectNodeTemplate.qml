@@ -72,7 +72,7 @@ Item {
             Layout.preferredHeight: contentHeight
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             textFormat: Text.PlainText
-            text: nodeItem.node ? nodeItem.node.label : ""
+            text: nodeItem && nodeItem.node ? nodeItem.node.label : ""
             horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter
             maximumLineCount: 3 // Must be set, otherwise elide don't work and we end up with single line text
             elide: Text.ElideRight; wrapMode: Text.Wrap

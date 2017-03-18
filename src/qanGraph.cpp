@@ -64,16 +64,21 @@ void    Graph::componentComplete()
         setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
         setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
 
+        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
+        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
+
         // Visual connector initialization
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
         if ( connectorComponent ) {
-            qan::Style& style = _styleManager.getDefaultNodeStyle();
-            _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), style, nullptr)) );
-            emit connectorChanged();
-            if (_connector)
-                _connector->setGraph(this);
-            _connector->setEnabled(getConnectorEnabled());
-            _connector->setVisible(getConnectorEnabled());
+            qan::Style* style = qan::Connector::style();
+            if ( style != nullptr ) {
+                _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
+                emit connectorChanged();
+                if (_connector)
+                    _connector->setGraph(this);
+                _connector->setEnabled(getConnectorEnabled());
+                _connector->setVisible(getConnectorEnabled());
+            } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
         }
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
 }
@@ -257,19 +262,23 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 if ( nodeItem != nullptr ) {
                     nodeItem->setNode(node);
                     nodeItem->setGraph(this);
-                    nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                    //nodeItem->setStyle(&style);
+                    //_styleManager.setStyleComponent(nodeItem->getStyle(), component );
+                    //nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 }
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
                 if ( edgeItem != nullptr ) {
                     edgeItem->setEdge(edge);
                     edgeItem->setGraph(this);
+                    _styleManager.setStyleComponent(edgeItem->getStyle(), component );
                 }
             } else if ( group != nullptr ) {
                 const auto groupItem = qobject_cast<qan::GroupItem*>(object);
                 if ( groupItem != nullptr ) {
                     groupItem->setGroup(group);
                     groupItem->setGraph(this);
+                    _styleManager.setStyleComponent(groupItem->getStyle(), component );
                 }
             }
             component->completeCreate();
@@ -373,37 +382,37 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
         if ( node ) {
             QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
             qan::NodeStyle* nodeStyle = Node_t::style();
-            if ( nodeStyle == nullptr )
-                nodeStyle = &_styleManager.getDefaultNodeStyle();
-            _styleManager.setStyleComponent(nodeStyle, nodeComponent);
-            qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
-                                                                                        *nodeStyle,
-                                                                                        node.get() ) );
-            if ( nodeItem  != nullptr ) {
-                nodeItem->setNode(node.get());
-                nodeItem->setGraph(this);
-                node->setItem(nodeItem);
-                auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                    if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                        emit this->nodeClicked(nodeItem->getNode(), p);
-                };
-                connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
+            if ( nodeStyle != nullptr ) {
+                _styleManager.setStyleComponent(nodeStyle, nodeComponent);
+                qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
+                                                                                            *nodeStyle,
+                                                                                            node.get() ) );
+                if ( nodeItem  != nullptr ) {
+                    nodeItem->setNode(node.get());
+                    nodeItem->setGraph(this);
+                    node->setItem(nodeItem);
+                    auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                            emit this->nodeClicked(nodeItem->getNode(), p);
+                    };
+                    connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
 
-                auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                    if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                        emit this->nodeRightClicked(nodeItem->getNode(), p);
-                };
-                connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+                    auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                            emit this->nodeRightClicked(nodeItem->getNode(), p);
+                    };
+                    connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
 
-                auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                    if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                        emit this->nodeDoubleClicked(nodeItem->getNode(), p);
-                };
-                connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
-                node->setItem(nodeItem);
-                GTpoGraph::insertNode( node );
-            } else
-                qWarning() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
+                    auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                            emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+                    };
+                    connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
+                    node->setItem(nodeItem);
+                    GTpoGraph::insertNode( node );
+                } else
+                    qWarning() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
+            } else qWarning() << "qan::Graph::insertNode(): Error: style() factory has returned a nullptr style.";
         }
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error:" << e.what();
@@ -473,48 +482,46 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
     auto edge = std::make_shared<qan::Edge>();
     try {
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        qan::Style& style = _styleManager.getDefaultEdgeStyle();        // FIXME QAN3 styles
-        _styleManager.setStyleComponent(&style, edgeComponent);
-        auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, style, nullptr, edge.get() ) );
-        if ( edgeItem != nullptr ) {
-            edge->setItem(edgeItem);
-            edgeItem->setSourceItem( src.getItem() );
-            if ( dstNode != nullptr )
-                edgeItem->setDestinationItem( dstNode->getItem() );
-            else if ( dstEdge != nullptr )
-                edgeItem->setDestinationEdge( dstEdge->getItem() );
+        qan::Style* style = Edge_t::style();
+        if ( style != nullptr ) {
+            _styleManager.setStyleComponent(style, edgeComponent);
+            auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, *style, nullptr, edge.get() ) );
+            if ( edgeItem != nullptr ) {
+                edge->setItem(edgeItem);
+                edgeItem->setSourceItem( src.getItem() );
+                if ( dstNode != nullptr )
+                    edgeItem->setDestinationItem( dstNode->getItem() );
+                else if ( dstEdge != nullptr )
+                    edgeItem->setDestinationEdge( dstEdge->getItem() );
 
-            edge->setSrc( src.shared_from_this() );
-            if ( dstNode != nullptr )
-                edge->setDst( dstNode->shared_from_this() );
-            else if ( dstEdge != nullptr)
-                edge->setHDst( dstEdge->shared_from_this() );
+                edge->setSrc( src.shared_from_this() );
+                if ( dstNode != nullptr )
+                    edge->setDst( dstNode->shared_from_this() );
+                else if ( dstEdge != nullptr)
+                    edge->setHDst( dstEdge->shared_from_this() );
 
-            GTpoGraph::insertEdge( edge );
+                GTpoGraph::insertEdge( edge );
 
-            // FIXME QAN3 styles
-            //qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( edgeComponent ) );
-            //if ( defaultStyle != nullptr )
-            //    edge->setStyle( defaultStyle );
+                auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+                        emit this->edgeClicked(edgeItem->getEdge(), p);
+                };
+                connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
 
-            auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                            if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                                emit this->edgeClicked(edgeItem->getEdge(), p);
-                        };
-            connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
+                auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+                        emit this->edgeRightClicked(edgeItem->getEdge(), p);
+                };
+                connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
 
-            auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                            if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                                emit this->edgeRightClicked(edgeItem->getEdge(), p);
-                        };
-            connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
-
-            auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                            if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                                emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
-                        };
-            connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
-        }
+                auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+                        emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
+                };
+                connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
+            } else
+                qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
+        } else qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
     }
@@ -570,39 +577,42 @@ qan::Group* Graph::insertGroup()
     auto group = std::make_shared<qan::Group>();
     if ( group ) {
         QQmlEngine::setObjectOwnership( group.get(), QQmlEngine::CppOwnership );
-        auto& style = _styleManager.getDefaultNodeStyle();
-        qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent,
-                                                                                       style,
-                                                                                       nullptr,
-                                                                                       nullptr,
-                                                                                       group.get() ) );
-        if ( groupItem != nullptr ) {
-            groupItem->setGroup(group.get());
-            groupItem->setGraph(this);
-            group->setItem(groupItem);
+        qan::Style* style = qan::Group::style();
+        if ( style != nullptr ) {
+            // Group styles are not well supported (for the moment 20170317)
+            //_styleManager.setStyleComponent(style, edgeComponent);
+            qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent,
+                                                                                           *style,
+                                                                                           nullptr,
+                                                                                           nullptr,                                                                                           group.get() ) );
+            if ( groupItem != nullptr ) {
+                groupItem->setGroup(group.get());
+                groupItem->setGraph(this);
+                group->setItem(groupItem);
 
-            GTpoGraph::insertGroup( group );
+                GTpoGraph::insertGroup( group );
 
-            auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                                emit this->groupClicked(groupItem->getGroup(), p);
-            };
-            connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
+                auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
 
-            auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                                emit this->groupRightClicked(groupItem->getGroup(), p);
-            };
-            connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
+                auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupRightClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
 
-            auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                                emit this->groupDoubleClicked(groupItem->getGroup(), p);
-            };
-            connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
-        }
-    } else
-        qWarning() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
+                auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupDoubleClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+            } else
+                qWarning() << "qan::Graph::insertGroup(): Warning: Group delegate from QML component creation failed.";
+        } else qWarning() << "qan::Graph::insertGroup(): Error: style() factory has returned a nullptr style.";
+    }
     return group.get();
 }
 

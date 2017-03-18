@@ -60,6 +60,31 @@ auto    Connector::setGraph(qan::Graph* graph) noexcept -> void
 auto    Connector::getGraph() const noexcept -> qan::Graph* { return _graph.data(); }
 //-----------------------------------------------------------------------------
 
+/* Node Static Factories *///--------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Connector_delegate;
+static std::unique_ptr<qan::NodeStyle>  qan_Connector_style;
+
+QQmlComponent*  Connector::delegate(QObject* caller) noexcept
+{
+    qDebug() << "qan::Connector::delegate()";
+    if ( !qan_Connector_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Connector_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/VisualConnector.qml");
+        else qWarning() << "[static]qan::Connector::delegate(): Error: QML engine is nullptr.";
+    }
+    return qan_Connector_delegate.get();
+}
+
+qan::NodeStyle* Connector::style() noexcept
+{
+    if ( !qan_Connector_style )
+        qan_Connector_style = std::make_unique<qan::NodeStyle>();
+    return qan_Connector_style.get();
+}
+//-----------------------------------------------------------------------------
+
 /* Connector Configuration *///------------------------------------------------
 auto    Connector::getConnectorItem() noexcept -> QQuickItem* { return _connectorItem.data(); }
 

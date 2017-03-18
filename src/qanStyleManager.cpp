@@ -40,11 +40,6 @@ namespace qan { // ::qan
 StyleManager::StyleManager( QObject* parent ) :
     QObject{ parent }
 {
-    _styles.setItemDisplayRole( QStringLiteral("name") ); // Use 'name' property for abstract list model display role
-    _styles.append(&_defaultNodeStyle);
-    setStyleComponent(&_defaultNodeStyle, qan::Node::delegate(this) );
-    _styles.append(&_defaultEdgeStyle);
-    setStyleComponent(&_defaultEdgeStyle, qan::Edge::delegate(this) );
 }
 
 StyleManager::~StyleManager( )
@@ -55,9 +50,9 @@ StyleManager::~StyleManager( )
 void    StyleManager::clear()
 {
     _styles.clear();
-    for ( const auto nodeStyle : _nodeStyles )
+/*    for ( const auto nodeStyle : _nodeStyles )
         if ( nodeStyle != nullptr )
-            nodeStyle->deleteLater();
+            nodeStyle->deleteLater();*/
     _nodeStyles.clear();
     _edgeStyles.clear();
 }
@@ -88,7 +83,7 @@ Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyle
 
 void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
 {
-    qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;
+    //qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;
     if ( style != nullptr &&
          component != nullptr ) {
         _styleComponentMap.insert( style, component );
@@ -119,7 +114,8 @@ qan::NodeStyle* StyleManager::getNodeStyle( QQmlComponent* delegate )
     if ( delegate != nullptr &&
          _nodeStyles.contains( delegate ) )
         return _nodeStyles.value( delegate, nullptr );
-    return &_defaultNodeStyle;
+
+    return nullptr;
 }
 
 void    StyleManager::setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle )
@@ -134,7 +130,7 @@ qan::EdgeStyle* StyleManager::getEdgeStyle( QQmlComponent* delegate )
     if ( delegate != nullptr &&
          _edgeStyles.contains( delegate ) )
         return _edgeStyles.value( delegate, nullptr );
-    return &_defaultEdgeStyle;
+    return nullptr;
 }
 
 qan::Style*     StyleManager::getStyleAt( int s )

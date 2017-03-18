@@ -40,6 +40,9 @@ namespace qan { // ::qan
 NodeItem::NodeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
+    setStyle( qan::Node::style() );
+    setObjectName( QStringLiteral("qan::NodeItem") );
+
     qan::Draggable::configure(this);
     _draggableCtrl.setTargetItem(this);
 
@@ -50,8 +53,6 @@ NodeItem::NodeItem(QQuickItem* parent) :
              this, &qan::NodeItem::onWidthChanged );
     connect( this, &qan::NodeItem::heightChanged,
              this, &qan::NodeItem::onHeightChanged );
-
-    setObjectName( QStringLiteral("qan::NodeItem") );
 }
 
 NodeItem::~NodeItem() { /* Nil */ }
@@ -168,7 +169,7 @@ void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 }
 //-----------------------------------------------------------------------------
 
-/* Appearance Management *///--------------------------------------------------
+/* Style Management *///-------------------------------------------------------
 void    NodeItem::setStyle( NodeStyle* style ) noexcept
 {
     if ( style != _style ) {

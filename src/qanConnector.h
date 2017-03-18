@@ -41,6 +41,7 @@ class Node;
 
 /*! \brief Base class for modelling the connector draggable visual node.
  *
+ * \note While qan::Connector is not a qan::Node, it also have a default factory interface component() and style().
  * \nosubgrouping
  */
 class Connector : public qan::NodeItem
@@ -61,6 +62,14 @@ protected:
     QPointer<qan::Graph>    _graph;
 signals:
     void    graphChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Connector Static Factories *///----------------------------------
+    //@{
+public:
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  qan::NodeStyle*     style() noexcept;
     //@}
     //-------------------------------------------------------------------------
 

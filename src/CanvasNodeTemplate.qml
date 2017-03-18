@@ -58,13 +58,13 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
-        horizontalOffset: nodeItem.node.style.shadowRadius
-        verticalOffset: nodeItem.node.style.shadowRadius
+        horizontalOffset: nodeItem.style.shadowRadius
+        verticalOffset: nodeItem.style.shadowRadius
         radius: 8.0
         samples: 16
         smooth: true
-        color: nodeItem.node.style.shadowColor
-        visible: nodeItem.node.style.hasShadow
+        color: nodeItem.style.shadowColor
+        visible: nodeItem.style.hasShadow
         transparentBorder: true
     }
 
@@ -98,6 +98,6 @@ Item {
         id: labelEditor
         anchors.fill: parent
         anchors.margins: 4
-        node: parent.nodeItem
+        target: parent.nodeItem
     }
 }

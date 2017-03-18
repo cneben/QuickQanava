@@ -84,6 +84,7 @@ QQmlComponent*  Node::delegate(QObject* caller) noexcept
         const auto engine = qmlEngine(caller);
         if ( engine != nullptr )
             qan_Node_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Node.qml");
+        else qWarning() << "[static]qan::Node::delegate(): Error: QML engine is nullptr.";
     }
     return qan_Node_delegate.get();
 }
