@@ -96,6 +96,8 @@ public:
     //! Group style object (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::Style* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void                    setStyle( qan::Style* style ) noexcept;
+    //! Generic interface for qan::DraggableCtrl<>::handleDropEvent().
+    void                    setItemStyle( qan::Style* style ) noexcept;
     inline qan::Style*      getStyle() const noexcept { return _style.data(); }
 private:
     QPointer<qan::Style>    _style;

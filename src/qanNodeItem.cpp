@@ -101,7 +101,7 @@ void    NodeItem::setResizable( bool resizable ) noexcept
 
 void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
 {
-    if ( ! _draggableCtrl.handleDragEnterEvent(event) )
+    if ( !_draggableCtrl.handleDragEnterEvent(event) )
         event->ignore();
     QQuickItem::dragEnterEvent( event );
 }
@@ -170,7 +170,7 @@ void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 //-----------------------------------------------------------------------------
 
 /* Style Management *///-------------------------------------------------------
-void    NodeItem::setStyle( NodeStyle* style ) noexcept
+void    NodeItem::setStyle( qan::NodeStyle* style ) noexcept
 {
     if ( style != _style ) {
         if ( _style != nullptr )  // Every style that is non default is disconnect from this node
@@ -181,6 +181,13 @@ void    NodeItem::setStyle( NodeStyle* style ) noexcept
                      this,      &NodeItem::styleDestroyed );
         emit styleChanged( );
     }
+}
+
+void    NodeItem::setItemStyle( qan::Style* style ) noexcept
+{
+    auto nodeStyle = qobject_cast<qan::NodeStyle*>(style);
+    if ( nodeStyle != nullptr )
+        setStyle( nodeStyle );
 }
 
 void    NodeItem::styleDestroyed( QObject* style )

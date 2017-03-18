@@ -387,8 +387,8 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
         if ( _style ) {
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
                      this,      &EdgeItem::styleDestroyed );
-            connect( _style,    &qan::EdgeStyle::styleModified,
-                     this,      &EdgeItem::updateItem );
+            //connect( _style,    &qan::EdgeStyle::styleModified,
+            //         this,      &EdgeItem::updateItem );
         }
         emit styleChanged( );
     }

@@ -112,9 +112,12 @@ ApplicationWindow {
         }
     }
     Qan.GraphView {
-        id: graphViewconfiguration
+        id: graphView
         anchors.fill: parent
         navigable   : true
+        ToolTip { id: toolTip; timeout: 2500 }
+        function notifyUser(message) { toolTip.text=message; toolTip.open() }
+
         graph       : Qan.Graph {
             id: graph
             objectName: "graph"
@@ -155,8 +158,11 @@ ApplicationWindow {
             anchors.margins: 4
             styleManager: graph.styleManager
             graph: graph
-            onStyleClicked: { }
-            //onStyleDoubleClicked: { styleEditor.hilightStyle( style ) }
+            onStyleClicked: { graphView.notifyUser("Style clicked") }
+            onStyleDoubleClicked: {
+                graphView.notifyUser("Style double clicked")
+                /*styleEditor.hilightStyle( style )*/
+            }
         }
     } // Frame: styleBrowser
     Frame {

@@ -90,6 +90,8 @@ void    GroupItem::setStyle( qan::Style* style ) noexcept
     }
 }
 
+void    GroupItem::setItemStyle( qan::Style* style ) noexcept { setStyle( style ); }
+
 void    GroupItem::styleDestroyed( QObject* style )
 {
     if ( style != nullptr )

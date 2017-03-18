@@ -48,10 +48,19 @@ DraggableCtrl<Node_t, NodeItem_t>::~DraggableCtrl() { /* Nil */ }
 template <class Node_t, class NodeItem_t>
 bool    DraggableCtrl<Node_t, NodeItem_t>::handleDragEnterEvent( QDragEnterEvent* event )
 {
-    if ( _targetItem->getAcceptDrops() ) {
+    if ( _targetItem &&
+         _targetItem->getAcceptDrops() ) {
         if ( event->source() == nullptr ) {
             event->accept(); // This is propably a drag initated with type=Drag.Internal, for exemple a connector drop node, accept by default...
             return true;
+        }
+        else { // Get the source item from the quick drag attached object received
+            QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
+            QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+            if ( draggedStyle.isValid() ) {
+                event->accept();
+                return true;
+            }
         }
     }
     return false;
@@ -78,19 +87,19 @@ void	DraggableCtrl<Node_t, NodeItem_t>::handleDragLeaveEvent( QDragLeaveEvent* e
 template <class Node_t, class NodeItem_t>
 void    DraggableCtrl<Node_t, NodeItem_t>::handleDropEvent( QDropEvent* event )
 {
-/*    if ( getAcceptDrops() &&
+    if ( _targetItem &&
+         _targetItem->getAcceptDrops() &&
          event->source() != nullptr ) { // Get the source item from the quick drag attached object received
         QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
         if ( sourceItem != nullptr ) {
-            QVariant draggedStyle = sourceItem->property( "draggedNodeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
+            QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
             if ( draggedStyle.isValid() ) {
-                qan::NodeStyle* draggedNodeStyle = draggedStyle.value< qan::NodeStyle* >( );
-                if ( draggedNodeStyle != nullptr )
-                    setStyle( draggedNodeStyle );
+                auto style = draggedStyle.value<qan::Style*>();
+                if ( style != nullptr )
+                    _targetItem->setItemStyle( style );
             }
         }
     }
-    */
 }
 
 template <class Node_t, class NodeItem_t>
@@ -102,11 +111,8 @@ void    DraggableCtrl<Node_t, NodeItem_t>::handleMouseDoubleClickEvent(QMouseEve
 template <class Node_t, class NodeItem_t>
 bool    DraggableCtrl<Node_t, NodeItem_t>::handleMouseMoveEvent(QMouseEvent* event )
 {
-    if ( _target == nullptr ||
-         _targetItem == nullptr )
-        return false;
-
-    if ( _targetItem->getDraggable() &&      // Dragging management
+    if ( _targetItem != nullptr &&
+         _targetItem->getDraggable() &&      // Dragging management
          event->buttons() | Qt::LeftButton) {
         if ( !_targetItem->getDragged() ) {
             beginDragMove( event->windowPos(), _targetItem->getSelected() );
