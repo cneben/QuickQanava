@@ -38,27 +38,26 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
-    property         var    nodeItem: undefined
+    property var            nodeItem: undefined
     default property alias  children : contentLayout.children
-
     Rectangle {
         id: background
         anchors.fill: parent    // Background follow the content layout implicit size
         radius: 2
-        color: nodeItem.node.style.backColor
-        border.color: nodeItem.node.style.borderColor
-        border.width: nodeItem.node.style.borderWidth
+        color: nodeItem.style.backColor
+        border.color: nodeItem.style.borderColor
+        border.width: nodeItem.style.borderWidth
         antialiasing: true
     }
     DropShadow {
         id: backgroundShadow
         anchors.fill: parent
         source: background
-        horizontalOffset: nodeItem.node.style.shadowOffset.width
-        verticalOffset: nodeItem.node.style.shadowOffset.height
+        horizontalOffset: nodeItem.style.shadowRadius
+        verticalOffset: nodeItem.style.shadowRadius
         radius: 4; samples: 8
-        color: nodeItem.node.style.shadowColor
-        visible: nodeItem.node.style.hasShadow
+        color: nodeItem.style.shadowColor
+        visible: nodeItem.style.hasShadow
         transparentBorder: true
     }
     ColumnLayout {
@@ -66,15 +65,14 @@ Item {
         anchors.fill: parent
         anchors.margins: background.radius / 2; spacing: 0
         visible: !labelEditor.visible
-        Text {
+        Label {
             id: nodeLabel
             Layout.fillWidth: true
             Layout.fillHeight: contentLayout.children.length === 0
             Layout.preferredHeight: contentHeight
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             textFormat: Text.PlainText
-            text: nodeItem.node.label
-            font: nodeItem.node.style.labelFont
+            text: nodeItem.node ? nodeItem.node.label : ""
             horizontalAlignment: Qt.AlignHCenter; verticalAlignment: Qt.AlignVCenter
             maximumLineCount: 3 // Must be set, otherwise elide don't work and we end up with single line text
             elide: Text.ElideRight; wrapMode: Text.Wrap

@@ -48,6 +48,7 @@ class Group;
 
 /*! \brief Model a graphics group of nodes.
  *
+ * \warning \c objectName property is set to "qan::GroupItem" and should not be changed in subclasses.
  * \nosubgrouping
  */
 class GroupItem : public QQuickItem,

@@ -39,16 +39,15 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 EdgeItem::EdgeItem( QQuickItem* parent ) :
-    QQuickItem{},
-    _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
+    QQuickItem{}
 {
-    setStyle( _defaultStyle.data() );
     setParentItem( parent );
     setAntialiasing( true );
     setFlag( QQuickItem::ItemHasContents, true );
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setAcceptDrops( true );
     setVisible(false);  // Invisible until there is a valid src/dst
+    setObjectName( QStringLiteral("qan::EdgeItem") );
 }
 
 EdgeItem::~EdgeItem() { /* Nil */ }
@@ -377,30 +376,26 @@ qreal   EdgeItem::distanceFromLine( const QPointF& p, const QLineF& line ) const
 //-----------------------------------------------------------------------------
 
 /* Style and Properties Management *///----------------------------------------
-void    EdgeItem::setStyle( EdgeStyle* style )
+void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
 {
-    if ( style == _style )
-        return;
-    if ( style == nullptr )
-        style = _defaultStyle.data();
-    if ( _style != nullptr &&
-         _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
-        QObject::disconnect( _style, 0, this, 0 );
-    _style = style;
-    connect( _style,    &QObject::destroyed,
-             this,      &EdgeItem::styleDestroyed );    // Monitor eventual style destruction
-    connect( _style,    &qan::EdgeStyle::styleModified,
-             this,      &EdgeItem::updateItem );
-    emit styleChanged( );
+    if ( style != _style ) {
+        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
+            QObject::disconnect( _style, 0, this, 0 );
+        _style = style;
+        if ( _style ) {
+            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
+                     this,      &EdgeItem::styleDestroyed );
+            connect( _style,    &qan::EdgeStyle::styleModified,
+                     this,      &EdgeItem::updateItem );
+        }
+        emit styleChanged( );
+    }
 }
 
 void    EdgeItem::styleDestroyed( QObject* style )
 {
-    if ( style != nullptr &&
-         style != _defaultStyle.data() ) {
-        QObject::disconnect( style, 0, this, 0 );
-        setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
-    }
+    if ( style != nullptr )
+        setStyle( nullptr );
 }
 //-----------------------------------------------------------------------------
 

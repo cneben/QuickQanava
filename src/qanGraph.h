@@ -192,9 +192,14 @@ private:
 
 protected:
     //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
-    QQuickItem*             createFromComponent( QQmlComponent* component, qan::Node* node = nullptr,
-                                                                           qan::Edge* edge = nullptr,
-                                                                           qan::Group* group = nullptr );
+    QQuickItem*             createFromComponent( QQmlComponent* component,
+                                                 qan::Style& style,
+                                                 qan::Node* node = nullptr,
+                                                 qan::Edge* edge = nullptr,
+                                                 qan::Group* group = nullptr );
+
+    //! Shortcut to createComponent(), mainly used in Qan.StyleList View to generate item for style pre visualization.
+    Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
 
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void             setCppOwnership( QQuickItem* item );
@@ -236,12 +241,12 @@ public:
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
-    Q_INVOKABLE int         getNodeCount( ) { return GTpoGraph::getNodeCount(); }
+    Q_INVOKABLE int         getNodeCount() { return GTpoGraph::getNodeCount(); }
 
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
-    QAbstractItemModel*     getNodesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
+    QAbstractItemModel*     getNodesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -284,7 +289,7 @@ public:
 public:
     //! Access the list of edges with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
-    QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
+    QAbstractItemModel* getEdgesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -367,23 +372,23 @@ public:
 private:
     SelectionPolicy         _selectionPolicy{ SelectionPolicy::SelectOnClick };
 signals:
-    void                    selectionPolicyChanged( );
+    void                    selectionPolicyChanged();
 
 public:
     //! Color for the node selection hilgither component (default to dark blue).
     Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
     void            setSelectionColor( QColor selectionColor ) noexcept;
-    inline QColor   getSelectionColor( ) const noexcept { return _selectionColor; }
+    inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
 private:
     QColor          _selectionColor{ Qt::darkBlue };
 signals:
-    void            selectionColorChanged( );
+    void            selectionColorChanged();
 
 public:
     //! Selection hilgither item stroke width (default to 3.0).
     Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
     void            setSelectionWeight( qreal selectionWeight ) noexcept;
-    inline qreal    getSelectionWeight( ) const noexcept { return _selectionWeight; }
+    inline qreal    getSelectionWeight() const noexcept { return _selectionWeight; }
 private:
     qreal           _selectionWeight{ 3. };
 signals:
@@ -393,11 +398,11 @@ public:
     //! Margin between the selection hilgither item and a selected item (default to 3.0).
     Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
     void            setSelectionMargin( qreal selectionMargin ) noexcept;
-    inline qreal    getSelectionMargin( ) const noexcept { return _selectionMargin; }
+    inline qreal    getSelectionMargin() const noexcept { return _selectionMargin; }
 private:
     qreal           _selectionMargin{ 3. };
 signals:
-    void            selectionMarginChanged( );
+    void            selectionMarginChanged();
 
 public:
     /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
@@ -458,15 +463,11 @@ protected:
 public:
     /*! \brief Graph style manager (ie list of style applicable to graph primitive).
      */
-    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager NOTIFY styleManagerChanged FINAL )
-    qan::StyleManager*  getStyleManager( ) { return _styleManager.data(); }
-    const qan::StyleManager*  getStyleManager( ) const { return _styleManager.data(); }
-    qan::StyleManager&  styleManager( ) { Q_ASSERT( _styleManager != nullptr ); return *_styleManager.data(); }
+    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager CONSTANT FINAL )
+    inline qan::StyleManager*       getStyleManager() noexcept { return &_styleManager; }
+    inline const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
 private:
-    using SharedStyleManager = QSharedPointer< qan::StyleManager >;
-    SharedStyleManager  _styleManager;
-signals:
-    void                styleManagerChanged( );
+    qan::StyleManager   _styleManager;
     //@}
     //-------------------------------------------------------------------------
 

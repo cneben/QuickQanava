@@ -72,13 +72,24 @@ public:
     void                    setItem(qan::EdgeItem* edgeItem) noexcept;
 private:
     QPointer<qan::EdgeItem> _item;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Edge Static Factories *///---------------------------------------
+    //@{
 public:
-    // Qt property for gtpo::Edge serializable standard property.
-    Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
-    void            setSerializableObs( bool serializable ) { setSerializable( serializable ); emit serializableChanged( ); }
-signals:
-    void            serializableChanged();
+    /*! \brief Return the default delegate QML component that should be used to generate edge \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Edge component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Edge.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default edge style will be used).
+     */
+    static  qan::EdgeStyle*     style() noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -93,24 +104,8 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Style and Properties Management *///-----------------------------
+    /*! \name Edge Properties Management *///----------------------------------
     //@{
-private:
-    using SharedEdgeStyle = QSharedPointer< qan::EdgeStyle >;
-    SharedEdgeStyle _defaultStyle;
-public:
-    //! Edge current style object (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::EdgeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void            setStyle( EdgeStyle* style );
-    qan::EdgeStyle* getStyle( ) const { return _style; }
-private:
-    qan::EdgeStyle* _style{nullptr};
-signals:
-    void            styleChanged( );
-private slots:
-    //! Called when the style associed to this edge is destroyed.
-    void            styleDestroyed( QObject* style );
-
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     //! Set this edge label.

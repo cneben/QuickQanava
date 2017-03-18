@@ -5,7 +5,6 @@ QT          += widgets core gui qml quick
 INCLUDEPATH +=  ../../src
 INCLUDEPATH +=  ../../QuickContainers/src
 
-include(../../quickqanava-common.pri)
 include(../../src/quickqanava.pri)
 
 SOURCES     += ./groups.cpp

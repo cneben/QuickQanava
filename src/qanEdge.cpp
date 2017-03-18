@@ -40,10 +40,8 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge() :
-    gtpo::GenEdge< qan::GraphConfig >{},
-    _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
+    gtpo::GenEdge< qan::GraphConfig >{}
 {
-    setStyle( _defaultStyle.data() );
 }
 
 qan::Graph* Edge::getGraph() noexcept {
@@ -61,30 +59,30 @@ void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 }
 //-----------------------------------------------------------------------------
 
-/* Style and Properties Management *///----------------------------------------
-void    Edge::setStyle( EdgeStyle* style )
-{
-    if ( style == _style )
-        return;
-    if ( style == nullptr )
-        style = _defaultStyle.data();
-    if ( _style != nullptr && _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
-        QObject::disconnect( _style, 0, this, 0 );
-    _style = style;
-    connect( _style, &QObject::destroyed, this, &Edge::styleDestroyed );    // Monitor eventual style destruction
-    // FIXME QAN3
-    //connect( _style, &qan::EdgeStyle::styleModified, this, &Edge::updateItem );
-    emit styleChanged( );
-}
+/* Node Static Factories *///--------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Edge_delegate;
+static std::unique_ptr<qan::EdgeStyle>  qan_Edge_style;
 
-void    Edge::styleDestroyed( QObject* style )
+QQmlComponent*  Edge::delegate(QObject* caller) noexcept
 {
-    if ( style != nullptr && style != _defaultStyle.data() ) {
-        QObject::disconnect( style, 0, this, 0 );
-        setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
+    if ( !qan_Edge_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Edge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Edge.qml");
     }
+    return qan_Edge_delegate.get();
 }
 
+qan::EdgeStyle* Edge::style() noexcept
+{
+    if ( !qan_Edge_style )
+        qan_Edge_style = std::make_unique<qan::EdgeStyle>();
+    return qan_Edge_style.get();
+}
+//-----------------------------------------------------------------------------
+
+/* Edge Properties Management *///---------------------------------------------
 void    Edge::setLabel( const QString& label )
 {
     if ( label != _label ) {

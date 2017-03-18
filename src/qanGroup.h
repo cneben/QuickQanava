@@ -79,6 +79,24 @@ private:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Group Static Factories *///---------------------------------------
+    //@{
+public:
+    /*! \brief Return the default delegate QML component that should be used to generate group \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Group.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
+     */
+    static  qan::Style*         style() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:

@@ -64,6 +64,8 @@ class Graph;
  *
  * Optionally, you could choose to set \c complexBoundingShape to false and override \c generateDefaultBoundingShape() method.
  *
+ * \warning NodeItem \c objectName property is set to "qan::NodeItem" and should not be changed in subclasses.
+ *
  * \nosubgrouping
  */
 class NodeItem : public QQuickItem,
@@ -190,21 +192,18 @@ protected:
 
     /*! \name Appearance Management *///---------------------------------------
     //@{
-private:
-    using SharedNodeStyle = QSharedPointer< qan::NodeStyle >;
-    SharedNodeStyle _defaultStyle;
 public:
     //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void                    setStyle( NodeStyle* style );
-    inline qan::NodeStyle*  getStyle() const noexcept { return _style.data(); }
+    void                        setStyle( NodeStyle* style ) noexcept;
+    inline qan::NodeStyle*      getStyle() const noexcept { return _style.data(); }
 private:
     QPointer<qan::NodeStyle>    _style;
 signals:
-    void            styleChanged();
+    void                        styleChanged();
 private slots:
     //! Called when the style associed to this node is destroyed.
-    void            styleDestroyed( QObject* style );
+    void                        styleDestroyed( QObject* style );
     //@}
     //-------------------------------------------------------------------------
 

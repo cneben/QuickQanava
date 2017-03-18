@@ -45,7 +45,10 @@ class NodeItem;
 
 //! Weighted directed edge linking two nodes in a graph.
 /*!
-    \nosubgrouping
+ *
+ * \warning EdgeItem \c objectName property is set to "qan::EdgeItem" and should not be changed in subclasses.
+ *
+ * \nosubgrouping
  */
 class EdgeItem : public QQuickItem
 {
@@ -179,18 +182,15 @@ signals:
 
     /*! \name Style and Properties Management *///-----------------------------
     //@{
-private:
-    using SharedEdgeStyle = QSharedPointer< qan::EdgeStyle >;
-    SharedEdgeStyle _defaultStyle;
 public:
     //! Edge current style object (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::EdgeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void            setStyle( EdgeStyle* style );
-    qan::EdgeStyle* getStyle( ) const { return _style; }
+    void            setStyle( EdgeStyle* style ) noexcept;
+    qan::EdgeStyle* getStyle() const noexcept { return _style.data(); }
 private:
-    qan::EdgeStyle* _style{nullptr};
+    QPointer<qan::EdgeStyle>    _style{nullptr};
 signals:
-    void            styleChanged( );
+    void            styleChanged();
 private slots:
     //! Called when the style associed to this edge is destroyed.
     void            styleDestroyed( QObject* style );

@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
+import QtQuick.Controls     2.1
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -57,8 +58,8 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
-        horizontalOffset: nodeItem.node.style.shadowOffset.width
-        verticalOffset: nodeItem.node.style.shadowOffset.height
+        horizontalOffset: nodeItem.node.style.shadowRadius
+        verticalOffset: nodeItem.node.style.shadowRadius
         radius: 8.0
         samples: 16
         smooth: true
@@ -72,7 +73,7 @@ Item {
         anchors.fill: parent
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         visible: !labelEditor.visible
-        Text {
+        Label {
             id: nodeLabel
             Layout.fillWidth: true;
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -80,7 +81,6 @@ Item {
             width: parent.width
             verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
             text: nodeItem.node.label
-            font: nodeItem.node.style.labelFont
             wrapMode: Text.Wrap;    elide: Text.ElideRight; maximumLineCount: 4
         }
         Item {

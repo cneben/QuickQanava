@@ -39,12 +39,9 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::GenNode< qan::GraphConfig >{},
-    _defaultStyle{ new qan::NodeStyle{ "", QStringLiteral("qan::Node") } },
-    _style{ nullptr }
+    gtpo::GenNode< qan::GraphConfig >{}
 {
     Q_UNUSED(parent)
-    setStyle( _defaultStyle.data() );
 }
 
 Node::~Node()
@@ -76,33 +73,33 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 }
 //-----------------------------------------------------------------------------
 
+/* Node Static Factories *///--------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Node_delegate;
+static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
+
+QQmlComponent*  Node::delegate(QObject* caller) noexcept
+{
+    if ( !qan_Node_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Node_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Node.qml");
+    }
+    return qan_Node_delegate.get();
+}
+
+qan::NodeStyle* Node::style() noexcept
+{
+    if ( !qan_Node_style )
+        qan_Node_style = std::make_unique<qan::NodeStyle>();
+    return qan_Node_style.get();
+}
+//-----------------------------------------------------------------------------
+
 /* Behaviours Management *///--------------------------------------------------
 void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
 {
     addBehaviour( std::move( behaviour ) );
-}
-//-----------------------------------------------------------------------------
-
-/* Appearance Management *///--------------------------------------------------
-void    Node::setStyle( NodeStyle* style )
-{
-    if ( style == _style )
-        return;
-    if ( style == nullptr )
-        style = _defaultStyle.data();
-    if ( _style != nullptr &&
-         _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
-        QObject::disconnect( _style, 0, this, 0 );
-    _style = style;
-    connect( _style, &QObject::destroyed, this, &Node::styleDestroyed );    // Monitor eventual style destruction
-    emit styleChanged( );
-}
-
-void    Node::styleDestroyed( QObject* style )
-{
-    if ( style != nullptr &&
-         style != _defaultStyle.data() )
-        setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
 }
 //-----------------------------------------------------------------------------
 

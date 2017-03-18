@@ -20,37 +20,30 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	hedges.cpp
+// \file	style.cpp
 // \author	benoit@qanava.org
-// \date	2016 10 10
+// \date	2016 02 09
 //-----------------------------------------------------------------------------
 
+// QuickContainers headers
+#include "../../QuickContainers/src/QuickContainers.h"
+
 // QuickQanava headers
-#include "./hedges.h"
+#include "../../src/QuickQanava.h"
 
 // Qt headers
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQuickStyle>
 
 using namespace qan;
-
-//-----------------------------------------------------------------------------
-MainView::MainView( ) :
-    QQuickView( )
-{
-    QuickQanava::initialize();
-    setSource( QUrl( "qrc:/main.qml" ) );
-}
 
 int	main( int argc, char** argv )
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
-    MainView mainView;
-    mainView.setResizeMode( QQuickView::SizeRootObjectToView );
-    mainView.resize( 1024, 700 );
-    mainView.show( );
-    return app.exec( );
+    QuickQanava::initialize();
+    QQmlApplicationEngine engine;
+    engine.load(QUrl("qrc:/style.qml"));
+    return app.exec();
 }
-//-----------------------------------------------------------------------------
 

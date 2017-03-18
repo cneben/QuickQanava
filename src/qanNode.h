@@ -81,15 +81,35 @@ public:
      */
     bool    operator==( const qan::Node& right ) const;
 
-    static  QObject*    createDelegate();
-
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem FINAL )
     inline qan::NodeItem*   getItem() noexcept { return _item.data(); }
     void                    setItem(qan::NodeItem* nodeItem) noexcept;
 private:
     QPointer<qan::NodeItem> _item;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Node Static Factories *///---------------------------------------
+    //@{
+public:
+    /*! \brief Return the default delegate QML component that should be used to generate node \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Node component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Node.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default node style will be used).
+     */
+    static  qan::NodeStyle*     style() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Topology Interface *///------------------------------------------
+    //@{
 public:
     //! Read-only abstract item model of this node in nodes.
     Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
@@ -116,22 +136,6 @@ public:
 
     /*! \name Appearance Management *///---------------------------------------
     //@{
-private:
-    using SharedNodeStyle = QSharedPointer< qan::NodeStyle >;
-    SharedNodeStyle _defaultStyle;
-public:
-    //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void            setStyle( NodeStyle* style );
-    qan::NodeStyle* getStyle( ) const { return _style.data(); }
-private:
-    QPointer<qan::NodeStyle>    _style;
-signals:
-    void            styleChanged( );
-private slots:
-    //! Called when the style associed to this node is destroyed.
-    void            styleDestroyed( QObject* style );
-
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }

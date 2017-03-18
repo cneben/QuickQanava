@@ -38,9 +38,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 NodeItem::NodeItem(QQuickItem* parent) :
-    QQuickItem{parent},
-    _defaultStyle{ new qan::NodeStyle{ "", QStringLiteral("qan::Node") } },
-    _style{ nullptr }
+    QQuickItem{parent}
 {
     qan::Draggable::configure(this);
     _draggableCtrl.setTargetItem(this);
@@ -48,12 +46,12 @@ NodeItem::NodeItem(QQuickItem* parent) :
     setFlag( QQuickItem::ItemAcceptsDrops, true );
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
-    setStyle( _defaultStyle.data() );
-
     connect( this, &qan::NodeItem::widthChanged,
              this, &qan::NodeItem::onWidthChanged );
     connect( this, &qan::NodeItem::heightChanged,
              this, &qan::NodeItem::onHeightChanged );
+
+    setObjectName( QStringLiteral("qan::NodeItem") );
 }
 
 NodeItem::~NodeItem() { /* Nil */ }
@@ -171,25 +169,23 @@ void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 //-----------------------------------------------------------------------------
 
 /* Appearance Management *///--------------------------------------------------
-void    NodeItem::setStyle( NodeStyle* style )
+void    NodeItem::setStyle( NodeStyle* style ) noexcept
 {
-    if ( style == _style )
-        return;
-    if ( style == nullptr )
-        style = _defaultStyle.data();
-    if ( _style != nullptr &&
-         _style != _defaultStyle.data() )  // Every style that is non default is disconnect from this node
-        QObject::disconnect( _style, 0, this, 0 );
-    _style = style;
-    connect( _style, &QObject::destroyed, this, &NodeItem::styleDestroyed );    // Monitor eventual style destruction
-    emit styleChanged( );
+    if ( style != _style ) {
+        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
+            QObject::disconnect( _style, 0, this, 0 );
+        _style = style;
+        if ( _style )
+            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
+                     this,      &NodeItem::styleDestroyed );
+        emit styleChanged( );
+    }
 }
 
 void    NodeItem::styleDestroyed( QObject* style )
 {
-    if ( style != nullptr &&
-         style != _defaultStyle.data() )
-        setStyle( _defaultStyle.data() );   // Set default style when current style is destroyed
+    if ( style != nullptr )
+        setStyle( nullptr );   // Set default style when current style is destroyed
 }
 //-----------------------------------------------------------------------------
 

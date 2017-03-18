@@ -41,6 +41,7 @@ namespace qan { // ::qan
 Group::Group( QObject* parent ) :
     gtpo::GenGroup< qan::GraphConfig >{}
 {
+    Q_UNUSED(parent);
 }
 
 Group::~Group() { /* Nil */ }
@@ -60,6 +61,29 @@ void    Group::setItem(qan::GroupItem* item) noexcept
         if ( item->getGroup() != this )
             item->setGroup(this);
     }
+}
+//-----------------------------------------------------------------------------
+
+/* Group Static Factories *///-------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Group_delegate;
+static std::unique_ptr<qan::Style>      qan_Group_style;
+
+QQmlComponent*  Group::delegate(QObject* caller) noexcept
+{
+    if ( !qan_Group_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Group_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Group.qml");
+    }
+    return qan_Group_delegate.get();
+}
+
+qan::Style*     Group::style() noexcept
+{
+    if ( !qan_Group_style )
+        qan_Group_style = std::make_unique<qan::Style>();
+    return qan_Group_style.get();
 }
 //-----------------------------------------------------------------------------
 

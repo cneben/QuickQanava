@@ -18,7 +18,6 @@
 */
 
 import QtQuick          2.7
-import QtQuick.Extras   1.4
 import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
 import QtQuick.Dialogs  1.2
@@ -27,8 +26,13 @@ import QuickQanava          2.0 as Qan
 import "."                  as Qan
 import "qrc:/QuickQanava"   as Qan
 
-Item {
-    anchors.fill: parent
+ApplicationWindow {
+    id: window
+    visible: true
+    width: 1280; height: 720
+    title: "Style sample"
+    Pane { anchors.fill: parent }
+
     Popup {
         id: styleSelectionDialog
         x: ( parent.width - width ) / 2.
@@ -40,7 +44,7 @@ Item {
         property var styleToApply: undefined
         ColumnLayout {
             anchors.fill: parent; anchors.margins: 4
-            Label {
+            /*Label {
                 text: "Select Node Style:"
                 font.bold: true
             }
@@ -48,7 +52,6 @@ Item {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 id: nodeStyleList
                 graph: graph
-                //model: graph.styleManager.nodeStylesModel
                 model: graph.styleManager.styles
                 onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
                 onStyleClicked: { styleSelectionDialog.styleToApply = style }
@@ -65,32 +68,9 @@ Item {
                     styleSelectionDialog.styleToApply = undefined
                     styleSelectionDialog.close()
                 }
-            }
+            }*/
         }
     } // Popup: styleSelectionDialog
-    Qan.ProgressNotifier { // Empty progress notifier
-        id: progressNotifier
-        onShowProgress: { }
-        onHideProgress: { }
-    }
-    FileDialog {
-        id: openGraphDialog
-        title: "Load a graph from a QuickQanava GTpo file"
-        selectMultiple: false
-        selectExisting: true
-        onAccepted: {
-            qanSerializer.loadGraphFrom( openGraphDialog.fileUrls, graph, progressNotifier )
-        }
-    }
-    FileDialog {
-        id: saveGraphAsDialog
-        title: "Save graph to a QuickQanava GTpo file"
-        selectMultiple: false
-        selectExisting: false
-        onAccepted: {
-            qanSerializer.saveGraphTo( graph, saveGraphAsDialog.fileUrls, progressNotifier )
-        }
-    }
     Menu {
         id: menu
         title: "Main Menu"
@@ -98,14 +78,6 @@ Item {
         property var targetNode: undefined
         property var targetEdge: undefined
         onClosed: { targetNode = undefined; targetEdge = undefined }
-        MenuItem {
-            text: "Load"
-            onTriggered: { openGraphDialog.open() }
-        }
-        MenuItem {
-            text: "Save As"
-            onTriggered: { saveGraphAsDialog.open() }
-        }
         MenuItem {
             text: "Clear all styles"
             onTriggered: { graph.styleManager.clear(); }
@@ -146,7 +118,7 @@ Item {
         graph       : Qan.Graph {
             id: graph
             objectName: "graph"
-            enableConnectorDropNode: true
+            connectorEnabled: true
             Component.onCompleted: {
                 var n1 = graph.insertNode()
                 n1.label = "N1"
@@ -158,21 +130,20 @@ Item {
                 graph.insertEdge( n2, n3 )
             }
             onNodeRightClicked: {
-                menu.targetNode = node; menu.targetEdge = undefined
+                /*menu.targetNode = node; menu.targetEdge = undefined
                 var globalPos = node.mapToItem( graph, pos.x, pos.y )
                 menu.x = globalPos.x; menu.y = globalPos.y
-                menu.open()
+                menu.open()*/
             }
         } // Qan.Graph: graph
         onRightClicked: {
-            menu.targetNode = undefined; menu.targetEdge = undefined
+            /*menu.targetNode = undefined; menu.targetEdge = undefined
             var globalPos = mapToItem( graph, pos.x, pos.y )
             menu.x = globalPos.x; menu.y = globalPos.y
-            menu.open()
+            menu.open()*/
         }
     }
-
-    Pane {
+    Frame {
         id: styleBrowser
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 15
@@ -180,17 +151,17 @@ Item {
         Qan.StyleListView {
             anchors.fill: parent
             anchors.margins: 4
-            model: graph.styleManager.styles
+            styleManager: graph.styleManager
             graph: graph
             onStyleClicked: { }
-            onStyleDoubleClicked: { styleEditor.hilightStyle( style ) }
+            //onStyleDoubleClicked: { styleEditor.hilightStyle( style ) }
         }
     } // Frame: styleBrowser
-    Pane {
+    Frame {
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: styleBrowser.left; anchors.rightMargin: 15
         width: 280; height: 350
-        ColumnLayout {
+        /*ColumnLayout {
             id: layout
             anchors.fill: parent
             ComboBox {
@@ -210,6 +181,6 @@ Item {
                     styleCb.currentIndex = graph.styleManager.styles.listReference.itemIndex( style )
                 }
             }
-        }
+        }*/
     } // Frame: styleEditor
 }

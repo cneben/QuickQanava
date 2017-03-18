@@ -30,6 +30,7 @@ import QtQuick.Layouts  1.3
 import QtQuick.Controls 2.0
 
 import QuickQanava      2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
 /*! \brief Show a selectable list of style with a live style preview.
  *
@@ -55,14 +56,16 @@ ListView {
     property real   previewHeight: 55
     property var    graph: undefined
 
-    /*onModelChanged: {
-        if ( model &&               // Select the first "properties" when a new model is sets
-             model.itemCount > 0 )
-            currentIndex = 0
-    }*/
-    highlight: propertiesHighlightBar
-    Component {
-        id: propertiesHighlightBar
+    property var styleManager: undefined
+    onStyleManagerChanged: {
+        if ( styleManager ) {
+            model = styleManager.styles
+            if ( model &&               // Select the first "properties" when a new model is sets
+                 model.itemCount > 0 )
+                currentIndex = 0
+        } else model = null
+    }
+    highlight: Component {
         Rectangle {
             x: styleListView.currentItem.x;         y: styleListView.currentItem.y
             width: styleListView.currentItem.width; height: styleListView.currentItem.height
@@ -77,9 +80,11 @@ ListView {
     function    hilightStyle( style ) {
         if ( model &&
              style ) {
-            var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
-            if ( styleIndex !== -1 )
-                currentIndex = styleIndex
+            // FIXME QAN3
+            console.debug( "FIXME QAN3" )
+            //var styleIndex = model.getStyleIndex( style )
+            //if ( styleIndex !== -1 )
+            //    currentIndex = styleIndex
         }
     }
 
@@ -90,45 +95,80 @@ ListView {
 
     // Private:
     delegate: Component {
-        Loader {
-            property var    listView:           styleListView
-            property var    styleIndex:         index
-            property var    styleProperties:    itemData
-            sourceComponent: selectStyleDelegate( itemData ? itemData.target : "",
-                                                  itemData ? itemData.metaTarget : "" )
+        Item {
+            id: styleDelegate
+            width: styleListView.width;    height: previewHeight
+            property var    styleItem:  itemData
+            property var    styleComponent:  styleManager.getStyleComponent(itemData)
+            Component.onCompleted: {
+                console.debug( "Qan.StyleListView.delegate.onCompleted():")
+                console.debug( "\tstyleItem=" + styleItem )
+                console.debug( "\tstyleComponent=" + styleComponent )
+                if ( !styleItem ||
+                     !styleComponent ||
+                     !styleListView.graph )
+                    return;
+                var node = graph.createFromComponent( styleComponent, styleItem );
+                console.debug( "node.objectName=" + node.objectName )
+                if ( node ) {
+                    node.parent = styleDelegate
+                    node.anchors.fill = styleDelegate;
+                    node.anchors.margins = 5
+                    console.debug( "node.style=" + node.style )
+                    //node.style = styleItem
+                    console.debug( "node.style=" + node.style )
+                    if ( node.objectName === "Qan.NodeItem" ) {
+                        console.debug( node + " is a Qan.NodeItem" );
+                        node.resizable = false
+                        node.Layout.minimumWidth = width
+                        node.Layout.minimumHeight = height
+                        node.acceptDrops = false    // Don't allow style DnD inside style browser
+                        node.droppable = false      // Concern only QuickQanava group drops, set to false
+                    } else if ( node.objectName === "Qan.EdgeItem" ) {
+                        console.debug( node + " is a Qan.EdgeItem" );
+
+                    }
+                }
+            }
         }
     }
-    function selectStyleDelegate( target, metaTarget ) {
-        var styleTarget = ( metaTarget === "" ? target :
+
+
+
+        /*Component {
+        Loader {
+            property var    listView:   styleListView
+            property var    styleIndex: index
+            property var    styleItem:  itemData
+            property var    styleComponent:  styleManager.getStyleComponent(itemData)
+            // FIXME QAN3 styles
+            //sourceComponent: selectStyleDelegate( itemData ? itemData.target : "",
+            //                                      itemData ? itemData.metaTarget : "" )
+            sourceComponent: selectStyleDelegate( itemData )
+        }
+    }*/
+    /*function selectStyleDelegate( style ) {
+        console.debug( "Qan.StyleListView.selectStyleDelegate(): style=" + style )
+        var styleComponent = styleManager ? styleManager.getStyleComponent(style) : null;
+        console.debug("styleComponent=" + styleComponent)
+        if ( styleComponent )
+            return itemStyleDelegate;
+
+            /*var styleTarget = ( metaTarget === "" ? target :
                                                 metaTarget ) // Note 20160404: Use meta target by default
         switch ( styleTarget ) {
         case "qan::Node": return nodeStyleDelegate
         case "qan::Edge": return edgeStyleDelegate
         case "qan::HEdge": return edgeStyleDelegate
         default: break
-        }
-        return defaultStyleDelegate
-    }
+        }*/
+        // FIXME QAN3 styles
+    //    return defaultStyleDelegate
+   // }
+
+
     Component {
-        id: defaultStyleDelegate
-        Item {
-            width: styleListView.width; height: previewHeight
-            Label {
-                id: label;
-                anchors.fill: parent;
-                wrapMode: Text.Wrap;
-                verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
-                text: styleProperties ? "Style:" + styleProperties.name : ""
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
-                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
-            }
-        }
-    } // Component: defaultStyleDelegate
-    Component {
-        id: nodeStyleDelegate
+        id: itemStyleDelegate
         Item {
             id: nodeStyleDelegateWrapper
             width: styleListView.width;    height: previewHeight
@@ -136,28 +176,32 @@ ListView {
                 id: nodeContainer
                 anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
                 Component.onCompleted: {
-                    if ( !styleProperties )
+                    if ( !styleItem ||
+                         ! styleListView.graph )
                         return;
-                    var styleTarget = ( styleProperties.target.length === 0 ? styleProperties.metaTarget :
-                                                                              styleProperties.target ) // Targeting either target or metaTarget
-                    if ( styleListView.graph ) {
-                        var node = graph.createNodeItem( styleTarget );
-                        if ( node ) {
-                            node.parent = nodeContainer
-                            node.label = styleProperties.name
-                            node.anchors.fill = nodeContainer; node.anchors.margins = 5
-                            node.resizable = false
 
-                            node.Layout.minimumWidth = width
-                            node.Layout.minimumHeight = height
+                    var node = graph.createNodeItem( styleTarget );
+                    if ( node ) {
+                        node.parent = nodeContainer
+                        node.label = styleItem.name
+                        node.anchors.fill = nodeContainer; node.anchors.margins = 5
+                        node.resizable = false
 
-                            node.style = styleProperties
-                            node.acceptDrops = false    // Don't allow style DnD inside style browser
-                            node.dropable = false       // Concern only QuickQanava group drops, set to false
+                        console.debug( "node.line=" + node.line )
+                        if ( node.line ) {
+                            edge.setLine( Qt.point( 15, previewHeight / 2 ),
+                                          Qt.point( width - 15, previewHeight / 2 ) );
                         }
+
+                        node.Layout.minimumWidth = width
+                        node.Layout.minimumHeight = height
+
+                        node.style = styleItem
+                        node.acceptDrops = false    // Don't allow style DnD inside style browser
+                        node.dropable = false       // Concern only QuickQanava group drops, set to false
                     }
                 }
-                property var draggedNodeStyle: styleProperties  // Used from C++ for drop
+                property var draggedNodeStyle: styleItem  // Used from C++ for drop
                 Drag.active: mouseArea.drag.active
                 Drag.dragType: Drag.Automatic
                 Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
@@ -168,8 +212,77 @@ ListView {
                 anchors.leftMargin: 15; anchors.rightMargin: 15
                 anchors.topMargin: 5; anchors.bottomMargin: 5
                 drag.target: nodeContainer
-                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
-                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
+                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleItem ) }
+                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleItem ) }
+            }
+        }
+    } // Component:
+
+    Component {
+        id: defaultStyleDelegate
+        Item {
+            width: styleListView.width; height: previewHeight
+            Label {
+                id: label;
+                anchors.fill: parent;
+                wrapMode: Text.Wrap;
+                verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+                text: styleItem ? "Style:" + styleItem.name : ""
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleItem ) }
+                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleItem ) }
+            }
+        }
+    } // Component: defaultStyleDelegate
+
+
+
+
+    Component {
+        id: nodeStyleDelegate
+        Item {
+            id: nodeStyleDelegateWrapper
+            width: styleListView.width;    height: previewHeight
+            Item {
+                id: nodeContainer
+                anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
+                Component.onCompleted: {
+                    if ( !styleItem )
+                        return;
+                    var styleTarget = ( styleItem.target.length === 0 ? styleItem.metaTarget :
+                                                                              styleItem.target ) // Targeting either target or metaTarget
+                    if ( styleListView.graph ) {
+                        var node = graph.createNodeItem( styleTarget );
+                        if ( node ) {
+                            node.parent = nodeContainer
+                            node.label = styleItem.name
+                            node.anchors.fill = nodeContainer; node.anchors.margins = 5
+                            node.resizable = false
+
+                            node.Layout.minimumWidth = width
+                            node.Layout.minimumHeight = height
+
+                            node.style = styleItem
+                            node.acceptDrops = false    // Don't allow style DnD inside style browser
+                            node.dropable = false       // Concern only QuickQanava group drops, set to false
+                        }
+                    }
+                }
+                property var draggedNodeStyle: styleItem  // Used from C++ for drop
+                Drag.active: mouseArea.drag.active
+                Drag.dragType: Drag.Automatic
+                Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
+            }
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                anchors.leftMargin: 15; anchors.rightMargin: 15
+                anchors.topMargin: 5; anchors.bottomMargin: 5
+                drag.target: nodeContainer
+                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleItem ) }
+                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleItem ) }
             }
         }
     } // Component: nodeStyleDelegate
@@ -182,24 +295,24 @@ ListView {
                 id: edgeContainer
                 anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
                 Component.onCompleted: {
-                    if ( !styleProperties )
+                    if ( !styleItem )
                         return;
-                    var styleTarget = ( styleProperties.target.length === 0 ? styleProperties.metaTarget :
-                                                                              styleProperties.target ) // Targeting either target or metaTarget
+                    var styleTarget = ( styleItem.target.length === 0 ? styleItem.metaTarget :
+                                                                              styleItem.target ) // Targeting either target or metaTarget
                     if ( styleListView.graph ) {
                         var edge = graph.createEdgeItem( styleTarget );
                         if ( edge ) {
                             edge.parent = edgeContainer
-                            edge.label = styleProperties.name
+                            edge.label = styleItem.name
                             edge.anchors.fill = edgeContainer; edge.anchors.margins = 5
                             edge.setLine( Qt.point( 15, previewHeight / 2 ),
                                           Qt.point( width - 15, previewHeight / 2 ) );
-                            edge.style = styleProperties
+                            edge.style = styleItem
                             edge.acceptDrops=false
                         }
                     }
                 }
-                property var draggedEdgeStyle: styleProperties      // Used from C++ for drop
+                property var draggedEdgeStyle: styleItem      // Used from C++ for drop
                 Drag.active: mouseArea.drag.active
                 Drag.dragType: Drag.Automatic
                 Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
@@ -210,13 +323,13 @@ ListView {
                 anchors.leftMargin: 15; anchors.rightMargin: 15
                 anchors.topMargin: 5; anchors.bottomMargin: 5
                 drag.target: edgeContainer
-                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleProperties ) }
-                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleProperties ) }
+                onClicked:       { listView.currentIndex = styleIndex; styleClicked( styleItem ) }
+                onDoubleClicked: { listView.currentIndex = styleIndex; styleDoubleClicked( styleItem ) }
             }
             Label {
                 id: label
                 anchors.horizontalCenter: parent.horizontalCenter;  anchors.topMargin: 8
-                text: styleProperties ? styleProperties.name : ""
+                text: styleItem ? styleItem.name : ""
             }
         }
     } // Component: edgeStyleDelegate

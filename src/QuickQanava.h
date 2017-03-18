@@ -52,7 +52,6 @@
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
-#include "./qanProgressNotifier.h"
 #include "./fqlBottomRightResizer.h"
 
 struct QuickQanava {
@@ -77,7 +76,6 @@ struct QuickQanava {
         qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");
         qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");
         qmlRegisterType< qan::StyleManager >( "QuickQanava", 2, 0, "StyleManager");
-        qmlRegisterType< qan::ProgressNotifier >( "QuickQanava", 2, 0, "ProgressNotifier");
         qmlRegisterType< fql::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
     }
 };

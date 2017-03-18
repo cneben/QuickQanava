@@ -54,6 +54,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
              this, &qan::GroupItem::onWidthChanged );
     connect( this, &qan::GroupItem::heightChanged,
              this, &qan::GroupItem::onHeightChanged );
+
+    setObjectName( QStringLiteral("qan::GroupItem") );
 }
 
 GroupItem::~GroupItem() { /* Nil */ }

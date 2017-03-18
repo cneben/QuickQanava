@@ -47,8 +47,7 @@ namespace qan { // ::qan
 
 /* Graph Object Management *///------------------------------------------------
 Graph::Graph( QQuickItem* parent ) noexcept :
-    gtpo::GenGraph< qan::GraphConfig >( parent ),
-    _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
+    gtpo::GenGraph< qan::GraphConfig >( parent )
 {
     setContainerItem( this );
     setAntialiasing( true );
@@ -68,7 +67,8 @@ void    Graph::componentComplete()
         // Visual connector initialization
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
         if ( connectorComponent ) {
-            _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), nullptr)) );
+            qan::Style& style = _styleManager.getDefaultNodeStyle();
+            _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), style, nullptr)) );
             emit connectorChanged();
             if (_connector)
                 _connector->setGraph(this);
@@ -87,7 +87,7 @@ void    Graph::clear() noexcept
 {
     _selectedNodes.clear();
     gtpo::GenGraph< qan::GraphConfig >::clear();
-    _styleManager->clear();
+    _styleManager.clear();
 }
 
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
@@ -233,6 +233,7 @@ void    Graph::setGroupDelegate(std::unique_ptr<QQmlComponent> groupDelegate) no
 }
 
 QQuickItem* Graph::createFromComponent( QQmlComponent* component,
+                                        qan::Style& style,
                                         qan::Node* node,
                                         qan::Edge* edge,
                                         qan::Group* group )
@@ -256,6 +257,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 if ( nodeItem != nullptr ) {
                     nodeItem->setNode(node);
                     nodeItem->setGraph(this);
+                    nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 }
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
@@ -289,7 +291,14 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
     return item;
 }
 
-void Graph::setCppOwnership( QQuickItem* item )
+QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Style* style )
+{
+    return ( component != nullptr &&
+             style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) : nullptr;
+}
+
+
+void    Graph::setCppOwnership( QQuickItem* item )
 {
     if ( item == nullptr )
         return;
@@ -350,9 +359,12 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
 template < class Node_t >
 qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
 {
-    if ( nodeComponent == nullptr )
-        nodeComponent = _nodeDelegate.get();
     if ( nodeComponent == nullptr ) {
+        nodeComponent = Node_t::delegate(this);     // If no delegate component is specified, try the node type delegate() factory
+        if ( nodeComponent == nullptr )
+            nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
+    }
+    if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
         qWarning() << "qan::Graph::insertNode(): Error: Can't find a valid node delegate component.";
         return nullptr;
     }
@@ -360,9 +372,13 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
     try {
         if ( node ) {
             QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-            qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent, node.get() ) );
-            // FIXME QAN3
-            //const qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(Node_t::createDelegate());
+            qan::NodeStyle* nodeStyle = Node_t::style();
+            if ( nodeStyle == nullptr )
+                nodeStyle = &_styleManager.getDefaultNodeStyle();
+            _styleManager.setStyleComponent(nodeStyle, nodeComponent);
+            qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
+                                                                                        *nodeStyle,
+                                                                                        node.get() ) );
             if ( nodeItem  != nullptr ) {
                 nodeItem->setNode(node.get());
                 nodeItem->setGraph(this);
@@ -457,7 +473,9 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
     auto edge = std::make_shared<qan::Edge>();
     try {
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, nullptr, edge.get() ) );
+        qan::Style& style = _styleManager.getDefaultEdgeStyle();        // FIXME QAN3 styles
+        _styleManager.setStyleComponent(&style, edgeComponent);
+        auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, style, nullptr, edge.get() ) );
         if ( edgeItem != nullptr ) {
             edge->setItem(edgeItem);
             edgeItem->setSourceItem( src.getItem() );
@@ -474,9 +492,10 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
 
             GTpoGraph::insertEdge( edge );
 
-            qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( "qan::Edge" ) );
-            if ( defaultStyle != nullptr )
-                edge->setStyle( defaultStyle );
+            // FIXME QAN3 styles
+            //qan::EdgeStyle* defaultStyle = qobject_cast< qan::EdgeStyle* >( getStyleManager()->getDefaultEdgeStyle( edgeComponent ) );
+            //if ( defaultStyle != nullptr )
+            //    edge->setStyle( defaultStyle );
 
             auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
                             if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
@@ -551,7 +570,12 @@ qan::Group* Graph::insertGroup()
     auto group = std::make_shared<qan::Group>();
     if ( group ) {
         QQmlEngine::setObjectOwnership( group.get(), QQmlEngine::CppOwnership );
-        qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent, nullptr, nullptr, group.get() ) );
+        auto& style = _styleManager.getDefaultNodeStyle();
+        qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent,
+                                                                                       style,
+                                                                                       nullptr,
+                                                                                       nullptr,
+                                                                                       group.get() ) );
         if ( groupItem != nullptr ) {
             groupItem->setGroup(group.get());
             groupItem->setGraph(this);
