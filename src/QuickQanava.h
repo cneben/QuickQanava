@@ -67,7 +67,7 @@ struct QuickQanava {
         qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
         qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");
 
-        qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
+        qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "Graph");
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");

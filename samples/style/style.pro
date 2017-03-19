@@ -5,8 +5,13 @@ QT          += widgets core gui qml quick quickcontrols2
 
 include(../../src/quickqanava.pri)
 
-SOURCES     += ./style.cpp
+SOURCES     +=  ./style.cpp     \
+                ./custom.cpp
 
-OTHER_FILES += 	style.qml
+HEADERS     +=  ./custom.h
+
+OTHER_FILES += 	style.qml       \
+                RectNode.qml    \
+                RoundNode.qml
 
 RESOURCES   += style.qrc

@@ -18,35 +18,27 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library.
+// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	style.cpp
-// \author	benoit@qanava.org
-// \date	2016 02 09
+// \file	RectNode.qml
+// \author	benoit@destrat.io
+// \date	2017 03 17
 //-----------------------------------------------------------------------------
 
-// Qt headers
-#include <QApplication>
-#include <QQuickStyle>
+import QtQuick              2.8
+import QtQuick.Controls     2.1
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
 
-// QuickQanava headers
-#include "../../src/QuickQanava.h"
-#include "./custom.h"
+import QuickQanava 2.0 as Qan
 
-using namespace qan;
-
-int	main( int argc, char** argv )
-{
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle("Material");
-    QuickQanava::initialize();
-
-    qmlRegisterType< CustomRectNode >( "QuickQanava", 2, 0, "CustomRectNode");
-    qmlRegisterType< CustomRoundNode >( "QuickQanava", 2, 0, "CustomRoundNode");
-    qmlRegisterType< CustomGraph >( "QuickQanava", 2, 0, "CustomGraph");
-
-    QQmlApplicationEngine engine;
-    engine.load(QUrl("qrc:/style.qml"));
-    return app.exec();
+Qan.NodeItem {
+    id: rectNode
+    width: 160; height: 180
+    x: 150; y: 15
+    Rectangle {
+        anchors.fill: parent
+        radius: 10; color: "blue"
+        border.color: "violet"; border.width: 2
+    }
 }
-

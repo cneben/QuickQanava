@@ -470,20 +470,11 @@ private:
     qan::StyleManager   _styleManager;
     //@}
     //-------------------------------------------------------------------------
-
-    /*! \name Graph Initialization Management *///-----------------------------
-    //@{
-public:
-    Q_INVOKABLE void    initializeRandom( int   nodeCount,
-                                          int   minOutNodes, int maxOutNodes,
-                                          qreal minWidth, qreal maxWidth,
-                                          qreal minHeight, qreal maxHeight,
-                                          QRectF br );
-    //@}
-    //-------------------------------------------------------------------------
 };
 
 } // ::qan
+
+#include "./qanGraph.hpp"
 
 QML_DECLARE_TYPE( qan::Graph::WeakNode )
 

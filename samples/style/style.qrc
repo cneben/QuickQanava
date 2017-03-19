@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>style.qml</file>
+        <file>RectNode.qml</file>
+        <file>RoundNode.qml</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

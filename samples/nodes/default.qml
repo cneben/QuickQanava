@@ -30,9 +30,9 @@ Qan.GraphView {
     id: graphView
     anchors.fill: parent
     navigable   : true
+    resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
     graph: Qan.Graph {
         id: graph
-        resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
         Component.onCompleted: {
             var n1 = graph.insertNode()
             n1.label = "Node 1"; n1.item.x=15; n1.item.y= 25

@@ -14,7 +14,6 @@ HEADERS +=  $$PWD/gtpoUtils.h               \
             $$PWD/gtpoGenGroup.hpp          \
             $$PWD/gtpoGenGraph.h            \
             $$PWD/gtpoGenGraph.hpp          \
-            $$PWD/gtpoRandomGraph.h         \
             $$PWD/gtpoBehaviour.h           \
             $$PWD/gtpoBehaviour.hpp         \
             $$PWD/gtpoGraphBehaviour.h      \

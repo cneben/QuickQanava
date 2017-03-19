@@ -17,14 +17,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import QtQuick          2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts  1.3
-import QtQuick.Dialogs  1.2
+import QtQuick                   2.8
+import QtQuick.Controls          2.1
+import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts           1.3
 
 import QuickQanava          2.0 as Qan
-import "."                  as Qan
 import "qrc:/QuickQanava"   as Qan
+
+import "qrc:/./"              as Sample
 
 ApplicationWindow {
     id: window
@@ -32,85 +33,6 @@ ApplicationWindow {
     width: 1280; height: 720
     title: "Style sample"
     Pane { anchors.fill: parent }
-
-    Popup {
-        id: styleSelectionDialog
-        x: ( parent.width - width ) / 2.
-        y: ( parent.height - height) / 2.
-        width: 350; height: 300
-        visible: false
-        modal: true
-        property var targetNode: undefined
-        property var styleToApply: undefined
-        ColumnLayout {
-            anchors.fill: parent; anchors.margins: 4
-            /*Label {
-                text: "Select Node Style:"
-                font.bold: true
-            }
-            Qan.StyleListView {
-                Layout.fillWidth: true; Layout.fillHeight: true
-                id: nodeStyleList
-                graph: graph
-                model: graph.styleManager.styles
-                onStyleDoubleClicked: { styleSelectionDialog.styleToApply = style }
-                onStyleClicked: { styleSelectionDialog.styleToApply = style }
-            }
-            Button {
-                Layout.alignment: Qt.AlignRight
-                text: "Apply"
-                enabled: styleSelectionDialog.styleToApply !== undefined
-                onClicked: {
-                    if ( styleSelectionDialog.styleToApply &&
-                            styleSelectionDialog.targetNode )
-                        styleSelectionDialog.targetNode.style = styleSelectionDialog.styleToApply
-                    styleSelectionDialog.targetNode = undefined
-                    styleSelectionDialog.styleToApply = undefined
-                    styleSelectionDialog.close()
-                }
-            }*/
-        }
-    } // Popup: styleSelectionDialog
-    Menu {
-        id: menu
-        title: "Main Menu"
-        closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
-        property var targetNode: undefined
-        property var targetEdge: undefined
-        onClosed: { targetNode = undefined; targetEdge = undefined }
-        MenuItem {
-            text: "Clear all styles"
-            onTriggered: { graph.styleManager.clear(); }
-        }
-        MenuItem {
-            text: "Add new style"
-            onTriggered: {  }
-        }
-        MenuItem {
-            text: "Select node style"
-            enabled: menu.targetNode !== undefined &&
-                     menu.targetNode !== null
-            onTriggered: {
-                styleSelectionDialog.targetNode = menu.targetNode
-                styleSelectionDialog.open()
-            }
-        }
-        MenuItem {
-            text: "Reset node style"
-            enabled: menu.targetNode !== undefined && menu.targetNode !== null
-            onTriggered: { menu.targetNode.style = null }
-        }
-        MenuItem {
-            text: "Select edge style"
-            enabled: menu.targetEdge !== undefined && menu.targetEdge !== null
-            onTriggered: { styleSelectionDialog.open() }
-        }
-        MenuItem {
-            text: "Reset edge style"
-            enabled: menu.targetEdge !== undefined && menu.targetEdge !== null
-            onTriggered: {  }
-        }
-    }
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
@@ -118,13 +40,15 @@ ApplicationWindow {
         ToolTip { id: toolTip; timeout: 2500 }
         function notifyUser(message) { toolTip.text=message; toolTip.open() }
 
-        graph       : Qan.Graph {
+        property var rectNode: Component{ Sample.RectNode{} }
+        property var roundNode: Component{ Sample.RoundNode{} }
+
+        graph       : Qan.CustomGraph {
             id: graph
-            objectName: "graph"
             connectorEnabled: true
             Component.onCompleted: {
                 console.debug("graph.insertNode()")
-                var n1 = graph.insertNode()
+                var n1 = graph.insertNode(graphView.rectNode)
                 console.debug("n1=" + n1)
                 n1.label = "N1"
                 var n2 = graph.insertNode()
@@ -133,20 +57,13 @@ ApplicationWindow {
                 n3.label = "N3"
                 graph.insertEdge( n1, n2 )
                 graph.insertEdge( n2, n3 )
+
+                var n4 = graph.insertRectNode()
+                var n5 = graph.insertRoundNode()
             }
-            onNodeRightClicked: {
-                /*menu.targetNode = node; menu.targetEdge = undefined
-                var globalPos = node.mapToItem( graph, pos.x, pos.y )
-                menu.x = globalPos.x; menu.y = globalPos.y
-                menu.open()*/
-            }
+            onNodeRightClicked: { }
         } // Qan.Graph: graph
-        onRightClicked: {
-            /*menu.targetNode = undefined; menu.targetEdge = undefined
-            var globalPos = mapToItem( graph, pos.x, pos.y )
-            menu.x = globalPos.x; menu.y = globalPos.y
-            menu.open()*/
-        }
+        onRightClicked: { }
     }
     Frame {
         id: styleBrowser
@@ -165,30 +82,10 @@ ApplicationWindow {
             }
         }
     } // Frame: styleBrowser
-    Frame {
-        anchors.top: parent.top;     anchors.topMargin: 15
-        anchors.right: styleBrowser.left; anchors.rightMargin: 15
-        width: 280; height: 350
-        /*ColumnLayout {
-            id: layout
-            anchors.fill: parent
-            ComboBox {
-                id: styleCb
-                Layout.fillWidth: true
-                displayText: "Select a Style"
-                model: graph.styleManager.styles
-                textRole: "itemLabel"
-            }
-            Qan.StyleEditor {
-                id: styleEditor
-                Layout.fillWidth: true; Layout.fillHeight: true
-                style: graph.styleManager.getStyleAt( styleCb.currentIndex )
-                flickableDirection: Flickable.HorizontalAndVerticalFlick
-                function    hilightStyle( style ) { // Change selection to a given style and hilight it
-                    styleCb.currentIndex = -1
-                    styleCb.currentIndex = graph.styleManager.styles.listReference.itemIndex( style )
-                }
-            }
-        }*/
-    } // Frame: styleEditor
+    CheckBox {
+        anchors.bottom: parent.bottom;    anchors.right: parent.right
+        text: qsTr("Dark")
+        checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
+        onClicked: ApplicationWindow.contentItem.Material.theme = checked ? Material.Dark : Material.Light
+    }
 }

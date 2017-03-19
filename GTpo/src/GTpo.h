@@ -46,7 +46,6 @@
 #include "./gtpoGenGraph.hpp"
 
 #include "./gtpoSerializer.h"
-#include "./gtpoRandomGraph.h"
 #include "./gtpoProgressNotifier.h"
 #include "./gtpoContainerAdapter.h"
 

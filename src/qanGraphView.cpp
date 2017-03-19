@@ -49,9 +49,34 @@ void    GraphView::setGraph( qan::Graph* graph )
         qWarning() << "qan::GraphView::setGraph(): Error: Setting a nullptr graph in Qan.GraphView is not supported.";
         return;
     }
-    _graph = graph;
-    _graph->setContainerItem( getContainerItem() );
-    emit graphChanged();
+    if ( graph != _graph ) {
+        if ( _graph != nullptr )
+            disconnect(_graph, 0, this, 0 );
+        _graph = graph;
+        _graph->setContainerItem( getContainerItem() );
+        connect( _graph, &qan::Graph::nodeClicked,
+                 this,   &qan::GraphView::nodeClicked );
+
+        connect( _graph, &qan::Graph::connectorChanged,
+                 this,   &qan::GraphView::connectorChanged );
+        connect( _graph, &qan::Graph::nodeRightClicked,
+                 this,   &qan::GraphView::nodeRightClicked );
+        connect( _graph, &qan::Graph::nodeDoubleClicked,
+                 this,   &qan::GraphView::nodeDoubleClicked );
+        connect( _graph, &qan::Graph::edgeClicked,
+                 this,   &qan::GraphView::edgeClicked );
+        connect( _graph, &qan::Graph::edgeRightClicked,
+                 this,   &qan::GraphView::edgeRightClicked );
+        connect( _graph, &qan::Graph::edgeDoubleClicked,
+                 this,   &qan::GraphView::edgeDoubleClicked );
+        connect( _graph, &qan::Graph::groupClicked,
+                 this,   &qan::GraphView::groupClicked );
+        connect( _graph, &qan::Graph::groupRightClicked,
+                 this,   &qan::GraphView::groupRightClicked );
+        connect( _graph, &qan::Graph::groupDoubleClicked,
+                 this,   &qan::GraphView::groupDoubleClicked );
+        emit graphChanged();
+    }
 }
 
 void    GraphView::navigableClicked(QPointF pos)

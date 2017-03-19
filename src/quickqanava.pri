@@ -11,6 +11,7 @@ INCLUDEPATH     += $$PWD
 RESOURCES       +=  $$PWD/QuickQanava.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
+            $$PWD/qanUtils.h                \
             $$PWD/qanGraphConfig.h          \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
@@ -26,6 +27,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGroup.h                \
             $$PWD/qanGroupItem.h            \
             $$PWD/qanGraph.h                \
+            $$PWD/qanGraph.hpp              \
             $$PWD/qanStyle.h                \
             $$PWD/qanStyleManager.h         \
             $$PWD/qanNavigable.h            \
@@ -34,6 +36,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/fqlBottomRightResizer.h
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
+            $$PWD/qanUtils.cpp              \
             $$PWD/qanEdge.cpp               \
             $$PWD/qanEdgeItem.cpp           \
             $$PWD/qanNode.cpp               \

@@ -62,9 +62,6 @@ class Node : public gtpo::GenNode< qan::GraphConfig >
 public:
     //! Node constructor.
     explicit Node(QObject* parent=nullptr);
-    /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
-     *
-     */
     virtual ~Node();
     Node( const Node& ) = delete;
 

@@ -32,8 +32,8 @@ Qan.GraphView {
     anchors.fill: parent
     navigable   : true
     graph: Qan.Graph {
-        connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
         id: graph
+        connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
         Component.onCompleted: {
             var d1 = graph.insertNode()
             d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
@@ -75,13 +75,13 @@ Qan.GraphView {
 
     ColorDialog {
         id: connectorEdgeColorDialog
-        color: graph.connectorEdgeColor
-        onAccepted: graph.connectorEdgeColor = color
+        color: graphView.connectorEdgeColor
+        onAccepted: graphView.connectorEdgeColor = color
     }
     ColorDialog {
         id: connectorColorDialog
-        color: graph.connectorColor
-        onAccepted: graph.connectorColor = color
+        color: graphView.connectorColor
+        onAccepted: graphView.connectorColor = color
     }
     Frame {
         anchors.top: parent.top; anchors.right: parent.right; anchors.rightMargin: 10
@@ -93,11 +93,11 @@ Qan.GraphView {
             }
             CheckBox {
                 text: qsTr("hEdge Enabled")
-                checked: graph.connectorHEdgeEnabled
-                onClicked: graph.connectorHEdgeEnabled = checked
+                checked: graphView.connectorHEdgeEnabled
+                onClicked: graphView.connectorHEdgeEnabled = checked
             }
             RowLayout {
-                Rectangle { width:32; height: 32; color: graph.connectorEdgeColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
+                Rectangle { width:32; height: 32; color: graphView.connectorEdgeColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
                 Label { text: "Connector Edge Color:" }
                 Item { Layout.fillWidth: true }
                 ToolButton {
@@ -106,7 +106,7 @@ Qan.GraphView {
                 }
             }
             RowLayout {
-                Rectangle { width:32; height: 32; color: graph.connectorColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
+                Rectangle { width:32; height: 32; color: graphView.connectorColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
                 Label { text: "Connector Color:" }
                 Item { Layout.fillWidth: true }
                 ToolButton {

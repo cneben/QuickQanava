@@ -18,23 +18,25 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the GTpo software library.
+// This file is a part of the QuickQanava software library.
 //
-// \file	gtpoRandomGraph.h
+// \file	qanUtils.h
 // \author	benoit@destrat.io
-// \date	2016 02 10
+// \date	2017 03 17
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoRandomGraph_h
-#define gtpoRandomGraph_h
+#ifndef qanUtils_h
+#define qanUtils_h
 
-// STD headers
-#include <random>
-#include <cstdlib>
-#include <sstream>
+// GTpo headers
+#include <GTpo>
 
-// GTPO headers
-#include "./gtpoUtils.h"
+// QuickQanava headers
+#include "./qanGraphConfig.h"
+#include "./qanGraph.h"
+
+//! Main QuickQanava namespace
+namespace qan { // ::qan
 
 class RandomGraph
 {
@@ -107,4 +109,22 @@ public:
     }
 };
 
-#endif // gtpoRandomGraph_h
+/*! \name Graph Initialization Management *///-----------------------------
+//@{
+/*
+public:
+Q_INVOKABLE void    initializeRandom( int   nodeCount,
+                                      int   minOutNodes, int maxOutNodes,
+                                      qreal minWidth, qreal maxWidth,
+                                      qreal minHeight, qreal maxHeight,
+                                      QRectF br );
+*/
+//@}
+//-------------------------------------------------------------------------
+
+} // ::qan
+
+//QML_DECLARE_TYPE( qan::Graph::WeakNode )
+
+#endif // qanUtils_h
+
