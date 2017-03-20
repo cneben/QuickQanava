@@ -12,6 +12,7 @@ HEADERS     +=  ./custom.h
 
 OTHER_FILES += 	style.qml       \
                 RectNode.qml    \
-                RoundNode.qml
+                RoundNode.qml	\
+				CustomEdge.qml	
 
 RESOURCES   += style.qrc

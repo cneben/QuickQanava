@@ -27,6 +27,7 @@
 
 import QtQuick              2.8
 import QtQuick.Controls     2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -34,11 +35,45 @@ import QuickQanava 2.0 as Qan
 
 Qan.NodeItem {
     id: rectNode
-    width: 160; height: 180
-    x: 150; y: 15
+    width: 60; height: 60
+    minimumSize: Qt.size(60,60)
+    x: 15;      y: 15
     Rectangle {
+        id: background
+        z: 1
         anchors.fill: parent
-        radius: 10; color: "blue"
-        border.color: "violet"; border.width: 2
+        radius: 2; color: "white"
+        border.color: Material.accent; border.width: 2
     }
+    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color backColor: Material.background
+    LinearGradient {
+        anchors.fill: parent
+        z: 2
+        source: background
+        start: Qt.point(0.,0.)
+        end: Qt.point(background.width, background.height)
+        gradient: Gradient {
+            id: backGrad
+            GradientStop { position: 0.0; color: rectNode.nodeColor }
+            GradientStop {
+                position: 1.0;
+                color: Qt.tint( rectNode.nodeColor, rectNode.backColor )
+            }
+        }
+    }
+    Label {
+        text: node ? node.label : ""
+        z: 3
+        anchors.centerIn: parent
+    }
+    Glow {
+        z: 0
+        source: background
+        anchors.fill: parent
+        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
+        radius: 12;     samples: 15
+        spread: 0.25;   transparentBorder: true
+    }
+
 }

@@ -48,21 +48,40 @@ ApplicationWindow {
 
         graph       : Qan.CustomGraph {
             id: graph
+            selectionColor: Material.accent
             connectorEnabled: true
             Component.onCompleted: {
                 console.debug("graph.insertNode()")
-                var n1 = graph.insertNode(graphView.rectNode)
-                console.debug("n1=" + n1)
-                n1.label = "N1"
-                var n2 = graph.insertNode()
-                n2.label = "N2"
-                var n3 = graph.insertNode()
-                n3.label = "N3"
-                graph.insertEdge( n1, n2 )
-                graph.insertEdge( n2, n3 )
+                var n1 = graph.insertRoundNode()
+                n1.label = "n1"; n1.item.x = 10; n1.item.y = 95
+                var n2 = graph.insertRoundNode()
+                n2.label = "n2"; n2.item.x = 10; n2.item.y = 300
 
-                var n4 = graph.insertRectNode()
-                var n5 = graph.insertRoundNode()
+
+                var n11 = graph.insertRoundNode()
+                n11.label = "n11"; n11.item.x = 150; n11.item.y = 45
+                graph.insertCustomEdge(n1, n11)
+                var n12 = graph.insertRoundNode()
+                n12.label = "n12"; n12.item.x = 150; n12.item.y = 145
+                graph.insertCustomEdge(n1, n12)
+
+                var n111 = graph.insertRectNode()
+                n111.label = "n111"; n111.item.x = 300; n111.item.y = 45
+                graph.insertCustomEdge(n11, n111)
+                var n121 = graph.insertRectNode()
+                n121.label = "n121"; n121.item.x = 300; n121.item.y = 145
+                graph.insertCustomEdge(n12, n121)
+
+                var n21 = graph.insertRoundNode()
+                n21.label = "n21"; n21.item.x = 150; n21.item.y = 250
+                graph.insertCustomEdge(n2, n21)
+                var n22 = graph.insertRoundNode()
+                n22.label = "n22"; n22.item.x = 150; n22.item.y = 350
+                graph.insertCustomEdge(n2, n22)
+
+                var n211 = graph.insertRectNode()
+                n211.label = "n211"; n211.item.x = 300; n211.item.y = 250
+                graph.insertCustomEdge(n21, n211)
             }
             onNodeRightClicked: { }
         } // Qan.Graph: graph
@@ -72,7 +91,7 @@ ApplicationWindow {
         id: styleBrowser
         anchors.top: parent.top;     anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 15
-        width: 280; height: 350
+        width: 200; height: 350
         Qan.StyleListView {
             anchors.fill: parent
             anchors.margins: 4

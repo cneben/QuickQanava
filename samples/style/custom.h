@@ -60,6 +60,21 @@ public:
 QML_DECLARE_TYPE( CustomRectNode )
 QML_DECLARE_TYPE( CustomRoundNode )
 
+class CustomEdge : public qan::Edge
+{
+    Q_OBJECT
+public:
+    explicit CustomEdge() : qan::Edge{} { }
+    virtual ~CustomEdge() { /* Nil */ }
+    CustomEdge( const CustomEdge& ) = delete;
+
+public:
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  qan::EdgeStyle*     style() noexcept;
+};
+
+QML_DECLARE_TYPE( CustomEdge )
+
 class CustomGraph : public qan::Graph
 {
     Q_OBJECT
@@ -71,6 +86,7 @@ public:
 public:
     Q_INVOKABLE qan::Node*  insertRectNode();
     Q_INVOKABLE qan::Node*  insertRoundNode();
+    Q_INVOKABLE qan::Edge*  insertCustomEdge(qan::Node* source, qan::Node* destination);
 };
 
 QML_DECLARE_TYPE( CustomGraph )

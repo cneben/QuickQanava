@@ -51,8 +51,10 @@ QQmlComponent*  CustomRectNode::delegate(QObject* caller) noexcept
 
 qan::NodeStyle* CustomRectNode::style() noexcept
 {
-    if ( !CustomRectNode_style )
+    if ( !CustomRectNode_style ) {
         CustomRectNode_style = std::make_unique<qan::NodeStyle>();
+        CustomRectNode_style->setBackColor(QColor("#ff29fc"));
+    }
     return CustomRectNode_style.get();
 }
 
@@ -75,12 +77,33 @@ qan::NodeStyle* CustomRoundNode::style() noexcept
 {
     if ( !CustomRoundNode_style ) {
         CustomRoundNode_style = std::make_unique<qan::NodeStyle>();
-        qDebug() << "QColor(#00ff00)=" << QColor("#00ff00");
-        CustomRoundNode_style->setBackColor(QColor("#00ff00"));
+        CustomRoundNode_style->setBackColor(QColor("#0770ff"));
     }
     return CustomRoundNode_style.get();
 }
 
+static std::unique_ptr<QQmlComponent>   CustomEdge_delegate;
+static std::unique_ptr<qan::EdgeStyle>  CustomEdge_style;
+
+QQmlComponent*  CustomEdge::delegate(QObject* caller) noexcept
+{
+    if ( !CustomEdge_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            CustomEdge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/CustomEdge.qml");
+        else qWarning() << "[static]CustomEdge::delegate(): Error: QML engine is nullptr.";
+    }
+    return CustomEdge_delegate.get();
+}
+
+qan::EdgeStyle* CustomEdge::style() noexcept
+{
+    if ( !CustomEdge_style ) {
+        CustomEdge_style = std::make_unique<qan::EdgeStyle>();
+    }
+    return CustomEdge_style.get();
+}
 
 qan::Node*  CustomGraph::insertRectNode()
 {
@@ -92,3 +115,9 @@ qan::Node*  CustomGraph::insertRoundNode()
     return qan::Graph::insertNode<CustomRoundNode>();
 }
 
+qan::Edge*  CustomGraph::insertCustomEdge(qan::Node* source, qan::Node* destination)
+{
+    if ( source != nullptr && destination != nullptr )
+        return qan::Graph::insertEdge<CustomEdge>(*source, destination, nullptr, CustomEdge::delegate(this) );
+    return nullptr;
+}

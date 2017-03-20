@@ -6,7 +6,7 @@
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 
-**2017/03/21:** Warning: dev version has just been merged on master: please report any compilation problem by mail or support request.
+**2017/03/21:** Warning: dev version has just been merged on master: please report any compilation issue by mail.
 
 QuickQanava 
 ============================
@@ -22,7 +22,7 @@ QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quick
 
 QuickQanava is primarily developed with Qt >= 5.8 with MSVC2015U2 and g++5.4 (minimal required Qt version is 5.7, some sample requires Qt5.8)
 
-+ Project homepage: http://www.destrat.io/quickqanava (_outdated 20170321)
++ Project homepage: http://www.destrat.io/quickqanava (_outdated_ 20170321)
 + Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (_outdated_ 20170321)
 
 For any questions, please contact: benoit@destrat.io
@@ -84,6 +84,10 @@ Compilation errors with messages refering to 'google::' types are usually relate
 | Nodes       |   |
 | :---:                       | ---             |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |            |
+
+| Styles       |   |
+| :---:                       | ---             |
+| ![Custom styles](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-styles.gif) |            |
 
 License
 =======

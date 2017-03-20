@@ -41,21 +41,12 @@ Qan.NodeItem {
     Rectangle {
         id: background
         z: 1
-        Material.onThemeChanged: {
-            console.debug( "Material.theme=" + Material.theme )
-            console.debug( "Material.foreground=" + Material.foreground )
-            console.debug( "Material.background=" + Material.background )
-        }
         anchors.fill: parent
         radius: width / 2; color: "white"
         border.color: Material.accent; border.width: 2
     }
     property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
-    property color backColor: Material.background//Material.background
-    onBackColorChanged: {
-        console.debug( "backColor=" + backColor )
-        console.debug( "tinted=" + Qt.tint( roundNode.backColor, roundNode.nodeColor ) )
-    }
+    property color backColor: Material.background
     LinearGradient {
         anchors.fill: parent
         z: 2
@@ -67,14 +58,12 @@ Qan.NodeItem {
             GradientStop { position: 0.0; color: roundNode.nodeColor }
             GradientStop {
                 position: 1.0;
-                //color: Qt.tint( roundNode.backColor, roundNode.nodeColor )
                 color: Qt.tint( roundNode.nodeColor, roundNode.backColor )
             }
         }
     }
-
     Label {
-        text: "youpi"
+        text: node.label
         z: 3
         anchors.centerIn: parent
     }
