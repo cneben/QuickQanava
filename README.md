@@ -11,6 +11,8 @@
 QuickQanava 
 ============================
 
+![](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/home.png)
+
 `QuickQanava` is a C++14 library designed to display graphs in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
 
 `QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
