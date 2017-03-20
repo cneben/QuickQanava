@@ -795,9 +795,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ./ \
                          main.md \
-                         ../../src \
-                         ../../QuickGeoGL/src \
-                         ../../QuickContainers/src
+                         ../../src
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1196,13 +1194,10 @@ HTML_EXTRA_STYLESHEET  =
 
 HTML_EXTRA_FILES       = logo.png \
                          logo-footer.png \
-                         samples/custom.png \
-                         samples/navigable.png \
-                         samples/style.png \
-                         samples/topology.png \
-                         web/docs/images/ConnectorDropNode.png \
-                         samples/sample-resizer.gif \
-                         samples/sample-resizer.png
+                         images/sample-resizer.gif \
+                         images/sample-resizer.png \
+                         images/topology.png \
+                         images/VisualConnector.png
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

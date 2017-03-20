@@ -51,10 +51,10 @@ namespace qan { // ::qan
 class Graph;
 class Connector;
 
-/*! \brief FIXME.
+/*! \brief Main interface to manage graph topology.
  *
  * \nosubgrouping
-*/
+ */
 class Graph : public gtpo::GenGraph< qan::GraphConfig >
 {
     Q_OBJECT
@@ -325,16 +325,16 @@ public:
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
 
-    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    //! \copydoc gtpo::GenGraph::groupNode()
     auto            groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void;
 
-    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    //! \copydoc gtpo::GenGraph::groupNode()
     auto            groupNode( qan::Group* group, qan::Group* node ) noexcept(false) -> void;
 
-    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    //! \copydoc gtpo::GenGraph::ungroupNode()
     auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
 
-    /*! FIXME QAN3 copydoc gtpo::Graph     */
+    //! \copydoc gtpo::GenGraph::ungroupNode()
     auto            ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void;
 
 signals:

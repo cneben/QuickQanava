@@ -1,6 +1,7 @@
-site_name: 'QuickQanava C++11/Qt/QML graph drawing library'
+site_name: 'QuickQanava graph visualization library'
 site_url: 'http://www.destrat.io/quickqanava'
 site_author: 'cneben'
+use_directory_urls: false
 pages:
   - 'Home': 'index.md'
   - 'Installation': 'installation.md'
@@ -20,7 +21,7 @@ copyright: 'Copyright &copy; 2017 Delia Stratégie'
 #extra_css: ['extra.css']
  
 extra:
-  version: '0.6'
+  version: '0.8'
   logo: 'images/logo.png'
   palette:
     primary: 'indigo'

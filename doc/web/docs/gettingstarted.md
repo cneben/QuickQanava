@@ -52,11 +52,9 @@ Qan.GraphView {
   navigable   : true
   graph: Qan.Graph {
       id: topology
-      anchors.fill: parent
-      clip: true
       onNodeRightClicked: {
         /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
-        menu.x = globalPos.x; menu.y = globalPos.y						// For example to open a popup menu
+        menu.x = globalPos.x; menu.y = globalPos.y					// For example to open a popup menu
         menu.open()*/
       }
     } // Qan.Graph: topology
@@ -75,8 +73,8 @@ Navigation could be disabled by setting the `navigable` property to false (it de
 QuickQanava allow visual connection of node with the `Qan.ConnectorDropNode` component. Visual connection of nodes is configured in your main `Qan.Graph` component with the following properties:
 
 - `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
-- `enableConnectorDropNode` (bool): Set to true to enable visual connection of nodes (default to false).
-- `connectorDropNodeEdgeClassName` (string): String that could be modified by the user to specify a custom class name for the edges created by visual drop node connector (default to "qan::Edge", default edge delegate component).
+- `enableConnector` (bool): Set to true to enable visual connection of nodes (default to false).
+- **deprecated** `connectorDropNodeEdgeClassName` (string): String that could be modified by the user to specify a custom class name for the edges created by visual drop node connector (default to "qan::Edge", default edge delegate component).
 
 ![Groups](images/visual-node-connector.gif)
 
@@ -86,7 +84,7 @@ Qan.GraphView {
   anchors.fill: parent
   graph : Qan.Graph {
     anchors.fill: parent
-    enableConnectorDropNode: true
+    connectorEnabled: true
   } // Qan.Graph
 } // Qan.GraphView
 ```
@@ -195,67 +193,6 @@ Defining Styles
 ------------------
 
 
-Serializing Topology
--------------
-
-Preferred way for dealing with persistance in QuickQanava is writing to Protocol Buffer repository with the qan::ProtoSerializer class:
-
-1. Define a protobuf v3 message for your custom topology (usually a class inheriting from qan::Node)
-2. Compile your message.
-3. Register in/out functors in qan::ProtoSerializer to write your custom messages.
-4. Call qan::ProtoSerializer saveGraphTo() or loadGraphFrom().
-
-For example, if you have defined a custom "image node" called qan::ImageNode, write a protobuf3 message to store persistent data:
-``` cpp
-// File custom.proto
-syntax = "proto3"; 
-import "gtpo.proto";
-import "quickqanava.proto";
-package qan.pb;
-
-message QanImgNode {
-    .gtpo.pb.GTpoNode base=1;
-    int32   img_data_size=4;
-    bytes   img_data=5;
-}
-```
-
-Compile this Protobuf IDL file with the following command:
-``` bash
-#!/bin/bash
-$ protoc custom.proto --cpp_out=.
-```
-
-> Note: It might be necessary to manually copy "gtpo.proto" and "quickqanava.proto" in your .proto directory before calling `protoc`, theses files could be removed once custom.pb.cc and custom.pb.h have been generated.
-
-You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configuration file, and register custom in/out functors in a qan::ProtoSerializer. Mapping between functors and the target node is done via the first string parameter of registerNodeOutFunctor(), the value must correspond to qan::Node::getDynamicClassName().
-
-``` cpp
-#include <QuickQanava>
- // ...
-	QScopedPointer< qan::ProtoSerializer > _serializer{ new qan::ProtoSerializer() };
-    engine()->rootContext( )->setContextProperty( "qanSerializer", _serializer.data() );
-	
-    _serializer->registerNodeOutFunctor( "qan::ImgNode",
-                                         []( google::protobuf::Any* anyNodes,
-                                         const qan::ProtoSerializer::WeakNode& weakNode,
-                                         const qan::ProtoSerializer::NodeIdMap& nodeIdMap  ) {
-            std::shared_ptr< qan::ImgNode > imageNode = std::static_pointer_cast< qan::ImgNode >( weakNode.lock() );
-            if ( !imageNode )
-                return;
-	}
-    _serializer->registerNodeInFunctor( []( const google::protobuf::Any& anyNode,
-                                            qan::ProtoSerializer::Graph& graph,
-                                            qan::ProtoSerializer::IdNodeMap& idNodeMap  ) -> qan::ProtoSerializer::WeakNode {
-            if ( anyNode.Is< qan::pb::QanImgNode >() ) {
-                qan::pb::QanImgNode pbImgNode;
-                if ( anyNode.UnpackTo( &pbImgNode ) ) {
-				}
-			}
-	}
-```
-
-See the topology sample for a compilable example.
 
 
 

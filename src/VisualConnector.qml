@@ -28,8 +28,10 @@ import QuickQanava 2.0 as Qan
  *
  * Example use in QML:
  * \code
- * Qan.Graph {
- *   enableConnector: true
+ * Qan.GraphView {
+ *   graph: Qan.Graph {
+ *     connectorEnabled: true
+ *   }
  * }
  * \endcode
  *
