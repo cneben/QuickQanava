@@ -6,7 +6,7 @@
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 
-**2017/03/05:** See 'dev' for latest changes: [dev README and roadmap](https://github.com/cneben/QuickQanava/blob/dev/README.md)
+**2017/03/21:** Warning: dev version has just been merged on master: please report any compilation problem by mail or support request.
 
 QuickQanava 
 ============================
@@ -47,7 +47,7 @@ QuickQanava focus on writting content delegates in QML (even if they could be de
     - [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
 	- [ ] Add support for standard library containers.
 	- [ ] Increase test coverage.
-  - **v0.9.0: Advanced edge visualization**	 
+  - **v1.0.0: Advanced edge visualization**	 
     - [ ] Add full support for Bezier curve edge.
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
     - [ ] Use Qt 5.9 PathItem for lines, curves and poly rendering instead of QuickGeoGL (QuickGeoGl is probably faster for simple AA lines with its vertex shader, but QuickGeoGL is too complex to maintain).
@@ -78,6 +78,11 @@ Compilation errors with messages refering to 'google::' types are usually relate
 
 
 ## QuickQanava Samples:
+
+| Nodes       |
+| ---                       | :---:             |
+| ![Custom content](https://github.com/cneben/QuickQanava/blob/dec/doc/web/docs/images/sample-nodes.gif) |            |
+
 
 ![selection](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/Selection.gif)
 
