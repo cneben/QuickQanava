@@ -79,9 +79,9 @@ Compilation errors with messages refering to 'google::' types are usually relate
 
 ## QuickQanava Samples:
 
-| Nodes       |
-| ---                       | :---:             |
-| ![Custom content](https://github.com/cneben/QuickQanava/blob/dec/doc/web/docs/images/sample-nodes.gif) |            |
+| Nodes       |   |
+| :---:                       | ---             |
+| ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |            |
 
 License
 =======
