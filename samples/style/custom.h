@@ -48,7 +48,7 @@ class CustomRoundNode : public qan::Node
 {
     Q_OBJECT
 public:
-    explicit CustomRoundNode(QObject* parent=nullptr) : qan::Node{parent} { /* Nil */ }
+    explicit CustomRoundNode(QObject* parent=nullptr) : qan::Node{parent} { }
     virtual ~CustomRoundNode() { /* Nil */ }
     CustomRoundNode( const CustomRoundNode& ) = delete;
 

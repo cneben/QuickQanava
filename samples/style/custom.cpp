@@ -73,8 +73,11 @@ QQmlComponent*  CustomRoundNode::delegate(QObject* caller) noexcept
 
 qan::NodeStyle* CustomRoundNode::style() noexcept
 {
-    if ( !CustomRoundNode_style )
+    if ( !CustomRoundNode_style ) {
         CustomRoundNode_style = std::make_unique<qan::NodeStyle>();
+        qDebug() << "QColor(#00ff00)=" << QColor("#00ff00");
+        CustomRoundNode_style->setBackColor(QColor("#00ff00"));
+    }
     return CustomRoundNode_style.get();
 }
 

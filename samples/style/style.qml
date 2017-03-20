@@ -43,6 +43,9 @@ ApplicationWindow {
         property var rectNode: Component{ Sample.RectNode{} }
         property var roundNode: Component{ Sample.RoundNode{} }
 
+        resizeHandlerColor: Material.accent
+        connectorColor: Material.accent
+
         graph       : Qan.CustomGraph {
             id: graph
             connectorEnabled: true

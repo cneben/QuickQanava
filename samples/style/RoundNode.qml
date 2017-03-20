@@ -27,6 +27,7 @@
 
 import QtQuick              2.8
 import QtQuick.Controls     2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -34,12 +35,55 @@ import QuickQanava          2.0 as Qan
 
 Qan.NodeItem {
     id: roundNode
-    width: 110; height: 60
+    width: 60; height: 60
+    minimumSize: Qt.size(60,60)
     x: 15;      y: 15
     Rectangle {
         id: background
+        z: 1
+        Material.onThemeChanged: {
+            console.debug( "Material.theme=" + Material.theme )
+            console.debug( "Material.foreground=" + Material.foreground )
+            console.debug( "Material.background=" + Material.background )
+        }
         anchors.fill: parent
-        radius: width / 2; color: "lightblue"
-        border.color: "violet"; border.width: 2
+        radius: width / 2; color: "white"
+        border.color: Material.accent; border.width: 2
+    }
+    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color backColor: Material.background//Material.background
+    onBackColorChanged: {
+        console.debug( "backColor=" + backColor )
+        console.debug( "tinted=" + Qt.tint( roundNode.backColor, roundNode.nodeColor ) )
+    }
+    LinearGradient {
+        anchors.fill: parent
+        z: 2
+        source: background
+        start: Qt.point(0.,0.)
+        end: Qt.point(background.width, background.height)
+        gradient: Gradient {
+            id: backGrad
+            GradientStop { position: 0.0; color: roundNode.nodeColor }
+            GradientStop {
+                position: 1.0;
+                //color: Qt.tint( roundNode.backColor, roundNode.nodeColor )
+                color: Qt.tint( roundNode.nodeColor, roundNode.backColor )
+            }
+        }
+    }
+
+    Label {
+        text: "youpi"
+        z: 3
+        anchors.centerIn: parent
+    }
+    Glow {
+        z: 0
+        source: background
+        anchors.fill: parent
+        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
+        radius: 12;     samples: 15
+        spread: 0.25;   transparentBorder: true
     }
 }

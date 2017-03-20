@@ -259,9 +259,8 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 if ( nodeItem != nullptr ) {
                     nodeItem->setNode(node);
                     nodeItem->setGraph(this);
-                    //nodeItem->setStyle(&style);
-                    //_styleManager.setStyleComponent(nodeItem->getStyle(), component );
-                    //nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                    _styleManager.setStyleComponent(&style, component );
+                    nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 }
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);

@@ -141,6 +141,7 @@ ListView {
                                 delegateLabel.text = qsTr( "Node Style" )
                             primitive.nodeClicked.connect(onNodeClicked)
                             primitive.nodeDoubleClicked.connect(onNodeDoubleClicked)
+                            primitive.style = styleItem
                         } else if ( primitive.objectName === "qan::EdgeItem" ) {
                             primitive.setLine( Qt.point( 15, height / 1.5 ),
                                               Qt.point( width - 15, height / 1.5 ) );
