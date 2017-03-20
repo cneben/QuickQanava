@@ -1,5 +1,5 @@
 TEMPLATE    =   subdirs
-CONFIG      +=  ordered      # Well I know, but no choice...
+CONFIG      +=  ordered
 
 quickqanava.file    = src/quickqanava-build-lib.pro
 
