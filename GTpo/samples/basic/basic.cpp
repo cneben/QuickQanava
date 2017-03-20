@@ -34,16 +34,26 @@
 #include <random>
 
 // GTpo headers
+<<<<<<< HEAD
 #include "gtpoGmlSerializer.h"
+=======
+>>>>>>> dev
 #include "gtpoRandomGraph.h"
 #include "basic.h"
 
 int	main( int /*argc*/, char** /*argv*/ )
 {
+<<<<<<< HEAD
     stpo::Graph sg;
     auto n1 = sg.createNode();
 
     RandomGraph::RandomConfig rc;
+=======
+    stpo::Graph g;
+    auto n1 = g.createNode();
+
+    /*RandomGraph::RandomConfig rc;
+>>>>>>> dev
     rc.nodeCount = 10;
     rc.outNodeRng = std::make_pair( 1, 3 );
     RandomGraph::generate( sg, rc );
@@ -55,9 +65,15 @@ int	main( int /*argc*/, char** /*argv*/ )
         double nw = stpo::Config::getWidth( ownedN1.get() );
         double nh = stpo::Config::getHeight( ownedN1.get() );
         std::cout << "nx=" << nx << " ny=" << ny << " nw=" << nw << " nh=" << nh << std::endl;
+<<<<<<< HEAD
     }
     auto n2 = sg.createNode();
     std::cout << sg.getRootNodeCount() << std::endl;
+=======
+    }*/
+    auto n2 = g.createNode();
+    std::cout << g.getRootNodeCount() << std::endl;
+>>>>>>> dev
 
     return 0;
 }

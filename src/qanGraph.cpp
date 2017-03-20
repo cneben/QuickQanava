@@ -31,25 +31,41 @@
 #include <QQmlEngine>
 #include <QQmlComponent>
 
+<<<<<<< HEAD
 // GTpo headers
 #include "gtpoRandomGraph.h"
 
 // QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
+=======
+// QuickQanava headers
+#include "./qanGraph.h"
+#include "./qanNavigable.h"
+#include "./qanNodeItem.h"
+#include "./qanEdgeItem.h"
+#include "./qanGroup.h"
+#include "./qanGroupItem.h"
+#include "./qanConnector.h"
+>>>>>>> dev
 
 namespace qan { // ::qan
 
 /* Graph Object Management *///------------------------------------------------
 Graph::Graph( QQuickItem* parent ) noexcept :
+<<<<<<< HEAD
     gtpo::GenGraph< qan::Config >( parent ),
     _styleManager{ SharedStyleManager{ new qan::StyleManager( this ) } }
+=======
+    gtpo::GenGraph< qan::GraphConfig >( parent )
+>>>>>>> dev
 {
     setContainerItem( this );
     setAntialiasing( true );
     setSmooth( true );
 }
 
+<<<<<<< HEAD
 void    Graph::qmlClearGraph( ) noexcept
 {
     qan::Graph::clear();
@@ -73,6 +89,47 @@ void    Graph::removeControlNode( qan::Node* node )
     if ( node == nullptr )
         return;
     gtpo::GenGraph< qan::Config >::removeControlNode( node->shared_from_this( ) );
+=======
+Graph::~Graph() { /* Nil */ }
+
+void    Graph::componentComplete()
+{
+    const auto engine = qmlEngine(this);
+    if ( engine ) {
+        setNodeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Node.qml")));
+        setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
+        setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
+
+        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
+        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
+
+        // Visual connector initialization
+        auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
+        if ( connectorComponent ) {
+            qan::Style* style = qan::Connector::style();
+            if ( style != nullptr ) {
+                _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
+                emit connectorChanged();
+                if (_connector)
+                    _connector->setGraph(this);
+                _connector->setEnabled(getConnectorEnabled());
+                _connector->setVisible(getConnectorEnabled());
+            } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
+        }
+    } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
+}
+
+void    Graph::qmlClearGraph() noexcept
+{
+    qan::Graph::clear();
+}
+
+void    Graph::clear() noexcept
+{
+    _selectedNodes.clear();
+    gtpo::GenGraph< qan::GraphConfig >::clear();
+    _styleManager.clear();
+>>>>>>> dev
 }
 
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
@@ -94,7 +151,14 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
              child->height() > point.y() ) {
             if ( child->inherits( "qan::Group" ) ) {  // For group, look in group childs
                 qan::Group* group = qobject_cast<qan::Group*>( child );
+<<<<<<< HEAD
                 if ( group != nullptr && group->getContainer() != nullptr ) {
+=======
+                // FIXME QAN3
+                /*
+                if ( group != nullptr &&
+                     group->getContainer() != nullptr ) {
+>>>>>>> dev
                     const QList<QQuickItem *> groupChildren = group->getContainer()->childItems();
                     for (int gc = groupChildren.count()-1; gc >= 0; --gc) {
                         QQuickItem *groupChild = groupChildren.at(gc);
@@ -108,7 +172,11 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
                             return groupChild;
                         }
                     }
+<<<<<<< HEAD
                 }
+=======
+                }*/
+>>>>>>> dev
             }
             return child;
         }
@@ -118,12 +186,23 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 
 qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
 {
+<<<<<<< HEAD
     for ( const auto& g : getGroups() ) {
         if ( g == nullptr )
             continue;
         if ( QRectF{ g->position(), QSizeF{ g->width(), g->height() } }.contains( QRectF{ p, s } ) )
             return g.get();
     }
+=======
+    for ( const auto& group : getGroups() )
+        if ( group &&
+             group->getItem() != nullptr ) {
+            const auto groupItem = group->getItem();
+             if ( QRectF{ groupItem->position(),
+                  QSizeF{ groupItem->width(), groupItem->height() } }.contains( QRectF{ p, s } ) )
+                 return group.get();
+        }
+>>>>>>> dev
     return nullptr;
 }
 
@@ -137,6 +216,7 @@ void    Graph::setContainerItem( QQuickItem* containerItem )
 }
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 /* Selection Management *///---------------------------------------------------
 void    Graph::setSelectionPolicy( SelectionPolicy selectionPolicy )
 {
@@ -278,11 +358,146 @@ auto    Graph::createFromDelegate( QQmlComponent* component ) -> QQuickItem*
     } else {
         qDebug() << "qan::Graph::createFromDelegate(): QML component is not ready:";
         qDebug() << "\t" << component->errorString();
+=======
+
+/* Visual connection Management *///-------------------------------------------
+void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
+{
+    if ( _connector ) {
+        if ( sourceNode != nullptr )
+            _connector->setSourceNode(sourceNode);
+        _connector->setVisible(getConnectorEnabled());
+        _connector->setEnabled(getConnectorEnabled());
+    }
+}
+
+void    Graph::setConnectorEnabled( bool connectorEnabled ) noexcept
+{
+    if ( connectorEnabled != _connectorEnabled ) {
+        _connectorEnabled = connectorEnabled;
+        if ( _connector ) {
+            _connector->setVisible(connectorEnabled);
+            _connector->setEnabled(connectorEnabled);
+        }
+        emit connectorEnabledChanged();
+    }
+}
+qan::Connector* Graph::getConnector() noexcept  {  return _connector.data(); }
+//-----------------------------------------------------------------------------
+
+/* Delegates Management *///---------------------------------------------------
+void    Graph::setNodeDelegate(QQmlComponent* nodeDelegate) noexcept
+{
+    if ( nodeDelegate != nullptr ) {
+        if ( nodeDelegate != _nodeDelegate.get() ) {
+            _nodeDelegate.reset(nodeDelegate);
+            QQmlEngine::setObjectOwnership( nodeDelegate, QQmlEngine::CppOwnership );
+            emit nodeDelegateChanged();
+        }
+    }
+}
+
+void    Graph::setNodeDelegate(std::unique_ptr<QQmlComponent> nodeDelegate) noexcept
+{
+    setNodeDelegate(nodeDelegate.release());
+}
+
+void    Graph::setEdgeDelegate(QQmlComponent* edgeDelegate) noexcept
+{
+    if ( edgeDelegate != nullptr ) {
+        if ( edgeDelegate != _edgeDelegate.get() ) {
+            _edgeDelegate.reset(edgeDelegate);
+            QQmlEngine::setObjectOwnership( edgeDelegate, QQmlEngine::CppOwnership );
+            emit edgeDelegateChanged();
+        }
+    }
+}
+
+void    Graph::setEdgeDelegate(std::unique_ptr<QQmlComponent> edgeDelegate) noexcept
+{
+    setEdgeDelegate(edgeDelegate.release());
+}
+
+void    Graph::setGroupDelegate(QQmlComponent* groupDelegate) noexcept
+{
+    if ( groupDelegate != nullptr ) {
+        if ( groupDelegate != _groupDelegate.get() ) {
+            _groupDelegate.reset(groupDelegate);
+            QQmlEngine::setObjectOwnership( groupDelegate, QQmlEngine::CppOwnership );
+            emit groupDelegateChanged();
+        }
+    }
+}
+
+void    Graph::setGroupDelegate(std::unique_ptr<QQmlComponent> groupDelegate) noexcept
+{
+    setGroupDelegate(groupDelegate.release());
+}
+
+QQuickItem* Graph::createFromComponent( QQmlComponent* component,
+                                        qan::Style& style,
+                                        qan::Node* node,
+                                        qan::Edge* edge,
+                                        qan::Group* group )
+{
+    if ( component == nullptr ) {
+        qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
+        return nullptr;
+    }
+    QQuickItem* item = nullptr;
+    if ( component->isReady() ) {
+        const auto rootContext = qmlContext(this);
+        if ( rootContext == nullptr ) {
+            qWarning() << "qan::Graph::createFromComponent(): Error can't access to local QML context.";
+            return nullptr;
+        }
+        QObject* object = component->beginCreate(rootContext);
+        if ( object != nullptr &&
+             !component->isError() ) {
+            if ( node != nullptr ) {
+                const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
+                if ( nodeItem != nullptr ) {
+                    nodeItem->setNode(node);
+                    nodeItem->setGraph(this);
+                    _styleManager.setStyleComponent(&style, component );
+                    nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                }
+            } else if ( edge != nullptr ) {
+                const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
+                if ( edgeItem != nullptr ) {
+                    edgeItem->setEdge(edge);
+                    edgeItem->setGraph(this);
+                    _styleManager.setStyleComponent(edgeItem->getStyle(), component );
+                }
+            } else if ( group != nullptr ) {
+                const auto groupItem = qobject_cast<qan::GroupItem*>(object);
+                if ( groupItem != nullptr ) {
+                    groupItem->setGroup(group);
+                    groupItem->setGraph(this);
+                    _styleManager.setStyleComponent(groupItem->getStyle(), component );
+                }
+            }
+            component->completeCreate();
+            if ( !component->isError() ) {
+                QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+                item = qobject_cast< QQuickItem* >( object );
+                item->setVisible( true );
+                item->setParentItem( getContainerItem() );
+            } // Note QAN3: There is no leak until cpp ownership is set
+        } else {
+            qWarning() << "qan::Graph::createFromComponent(): Failed to create a concrete QQuickItem from QML component:";
+            qWarning() << "\t" << component->errorString();
+        }
+    } else {
+        qWarning() << "qan::Graph::createFromComponent(): QML component is not ready:";
+        qWarning() << "\t" << component->errorString();
+>>>>>>> dev
     }
 
     return item;
 }
 
+<<<<<<< HEAD
 void Graph::setCppOwnership( QQuickItem* item )
 {
     if ( item == nullptr )
@@ -331,6 +546,22 @@ QQuickItem* Graph::createEdgeItem( QString edgeClass )
     if ( _edgeClassComponents.contains( edgeClass ) )
         return createFromDelegate( _edgeClassComponents.value( edgeClass ) );
     return new QQuickItem();    // Is should never happen, otherwise it is leaked.
+=======
+QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Style* style )
+{
+    return ( component != nullptr &&
+             style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) : nullptr;
+}
+
+
+void    Graph::setCppOwnership( QQuickItem* item )
+{
+    if ( item == nullptr )
+        return;
+    QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
+    for ( auto childItem: item->childItems() )
+        qan::Graph::setCppOwnership( childItem );
+>>>>>>> dev
 }
 
 QQuickItem* Graph::createRectangle( QQuickItem* parent )
@@ -340,6 +571,7 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
         QQmlEngine* engine = qmlEngine( this );
         if ( engine != nullptr ) {
             _rectangleComponent = std::make_unique<QQmlComponent>(engine);
+<<<<<<< HEAD
             QString componentQml = "import QtQuick 2.6\n  Rectangle{ }";
             _rectangleComponent ->setData( componentQml.toUtf8(), QUrl() );
             if ( !_rectangleComponent->isReady() ) {
@@ -347,6 +579,15 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
                 qDebug() << componentQml;
                 qDebug() << "QML Component status=" << _rectangleComponent->status();
                 qDebug() << "QML Component errors=" << _rectangleComponent->errors();
+=======
+            QString componentQml = "import QtQuick 2.7\n  Rectangle{ }";
+            _rectangleComponent->setData( componentQml.toUtf8(), QUrl() );
+            if ( !_rectangleComponent->isReady() ) {
+                qWarning() << "qan::Graph::createRectangle(): Error: Can't create at Qt Quick Rectangle object:";
+                qWarning() << "\t" << componentQml;
+                qWarning() << "\tQML Component status=" << _rectangleComponent->status();
+                qWarning() << "\tQML Component errors=" << _rectangleComponent->errors();
+>>>>>>> dev
             }
         }
     }
@@ -358,18 +599,30 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
         QQuickItem* rectangle = qobject_cast< QQuickItem* >( object );
         if ( rectangle != nullptr ) {
             rectangle->setVisible( false );
+<<<<<<< HEAD
+=======
+            rectangle->setEnabled( false ); // Avoid node/edge/group selection problems
+>>>>>>> dev
             if ( parent != nullptr )
                 rectangle->setParentItem( parent );
             QQmlEngine::setObjectOwnership( rectangle, QQmlEngine::CppOwnership );
         }
         if ( rectangle == nullptr && object != nullptr ) {
+<<<<<<< HEAD
             qDebug() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+=======
+            qWarning() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+>>>>>>> dev
             delete object;      // Somtehing has been created, but it is not a rectangle !
             return nullptr;
         }
         return rectangle;
     } else {
+<<<<<<< HEAD
         qDebug() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
+=======
+        qWarning() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
+>>>>>>> dev
     }
     return nullptr;
 }
@@ -378,6 +631,7 @@ QQuickItem* Graph::createRectangle( QQuickItem* parent )
 /* Graph Factories *///--------------------------------------------------------
 qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
 {
+<<<<<<< HEAD
     if ( nodeComponent == nullptr ) {
         if ( _nodeClassComponents.contains( "qan::Node" ) )
             nodeComponent = _nodeClassComponents.value( "qan::Node", nullptr );
@@ -451,6 +705,9 @@ Graph::WeakNode    Graph::createNode( const std::string& className )
         return WeakNode{};
     qan::Node* node = insertNode( QString::fromStdString( className ) );
     return ( node != nullptr ? node->shared_from_this() : WeakNode{} ); // Note 20160213: shared_from_this() could be used since the node has already been added to graph, it
+=======
+    return insertNode<qan::Node>(nodeComponent);
+>>>>>>> dev
 }
 
 void    Graph::removeNode( qan::Node* node )
@@ -461,6 +718,7 @@ void    Graph::removeNode( qan::Node* node )
     try {
         weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return; }
+<<<<<<< HEAD
     GTpoGraph::removeNode( weakNode );
 }
 
@@ -495,6 +753,12 @@ bool    Graph::isHyperEdge( QQuickItem* item ) const
              ( !edge->getHDst().expired() &&
                edge->getHDst().lock() != nullptr ) );
 }
+=======
+    if ( _selectedNodes.contains(node) )
+        _selectedNodes.remove(node);
+    GTpoGraph::removeNode( weakNode );
+}
+>>>>>>> dev
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
@@ -504,15 +768,25 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
     if ( sourceNode != nullptr ) {
             if ( qobject_cast<qan::Node*>(destination) != nullptr )
                 return insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
+<<<<<<< HEAD
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
                 return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
     }
     qDebug() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+=======
+            else if ( qobject_cast<qan::Group*>(destination) != nullptr )
+                return insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
+            else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
+                return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+    }
+    qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+>>>>>>> dev
     return nullptr;
 }
 
 qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
+<<<<<<< HEAD
     Q_UNUSED( edgeComponent );
     return insertEdge( "qan::Edge", source, destination );
 }
@@ -578,10 +852,20 @@ qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::No
 }
 
 qan::Edge*  Graph::insertEdge( QString edgeClassName, qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
+=======
+    if ( source == nullptr ||
+         destination == nullptr )
+        return nullptr;
+    return insertEdge<qan::Edge>(*source, destination, nullptr, edgeComponent );
+}
+
+qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
+>>>>>>> dev
 {
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
+<<<<<<< HEAD
     if ( edgeComponent == nullptr &&
          _edgeClassComponents.contains( edgeClassName ) )
         edgeComponent = _edgeClassComponents.value( edgeClassName, nullptr );
@@ -645,6 +929,9 @@ Graph::WeakEdge    Graph::createEdge( const std::string& className, WeakNode sou
          dst != nullptr )
         edge = insertEdge( QString::fromStdString( className ), src, dst );
     return ( edge != nullptr ? edge->shared_from_this() : WeakEdge() );
+=======
+    return insertEdge<qan::Edge>(*source, nullptr, destination, edgeComponent );
+>>>>>>> dev
 }
 
 void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
@@ -662,8 +949,14 @@ void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
 
 void    Graph::removeEdge( qan::Edge* edge )
 {
+<<<<<<< HEAD
     if ( edge != nullptr )
         GTpoGraph::removeEdge( edge->shared_from_this() );
+=======
+    using WeakEdge = std::weak_ptr<qan::Edge>;
+    if ( edge != nullptr )
+        GTpoGraph::removeEdge( WeakEdge{edge->shared_from_this()} );
+>>>>>>> dev
 }
 
 bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
@@ -681,6 +974,7 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
+<<<<<<< HEAD
 Graph::WeakGroup   Graph::createGroup( const std::string& className )
 {
     if ( className.size() == 0 )
@@ -714,6 +1008,55 @@ qan::Group* Graph::insertGroup( QString className )
         qDebug() << "qan::Graph::insertGroup(): Warning: Group creation failed.";
 
     return group;
+=======
+qan::Group* Graph::insertGroup()
+{
+    QQmlComponent* groupComponent{ _groupDelegate.get() };
+    if ( groupComponent == nullptr ) {
+        qWarning() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
+        return nullptr;
+    }
+    auto group = std::make_shared<qan::Group>();
+    if ( group ) {
+        QQmlEngine::setObjectOwnership( group.get(), QQmlEngine::CppOwnership );
+        qan::Style* style = qan::Group::style();
+        if ( style != nullptr ) {
+            // Group styles are not well supported (for the moment 20170317)
+            //_styleManager.setStyleComponent(style, edgeComponent);
+            qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent,
+                                                                                           *style,
+                                                                                           nullptr,
+                                                                                           nullptr,                                                                                           group.get() ) );
+            if ( groupItem != nullptr ) {
+                groupItem->setGroup(group.get());
+                groupItem->setGraph(this);
+                group->setItem(groupItem);
+
+                GTpoGraph::insertGroup( group );
+
+                auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
+
+                auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupRightClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
+
+                auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                        emit this->groupDoubleClicked(groupItem->getGroup(), p);
+                };
+                connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+            } else
+                qWarning() << "qan::Graph::insertGroup(): Warning: Group delegate from QML component creation failed.";
+        } else qWarning() << "qan::Graph::insertGroup(): Error: style() factory has returned a nullptr style.";
+    }
+    return group.get();
+>>>>>>> dev
 }
 
 void    Graph::removeGroup( qan::Group* group )
@@ -722,23 +1065,41 @@ void    Graph::removeGroup( qan::Group* group )
         return;
     // Reparent all group childrens (ie node) to graph before destructing the group
     // otherwise all child iems get destructed too
+<<<<<<< HEAD
     auto& groupNodes{group->getNodes()};
     for ( auto& node : groupNodes ) {
         auto nodePtr{ node.lock() };
         if ( nodePtr != nullptr ) {
             nodePtr->ungroup();
             nodePtr->setParentItem( this );
+=======
+
+    // FIXME QAN3       (use std::copy() here...)
+    /*auto groupNodes{group->getNodes()};
+    for ( auto& node : groupNodes ) {
+        auto nodePtr{ node.lock() };
+        if ( nodePtr != nullptr ) {
+            // FIXME QAN3
+            //nodePtr->ungroup();
+            //nodePtr->setParentItem( this );
+>>>>>>> dev
         }
     }
     WeakGroup weakGroup = group->shared_from_this();
     if ( !weakGroup.expired() )
+<<<<<<< HEAD
         gtpo::GenGraph< Config >::removeGroup( weakGroup );
+=======
+        gtpo::GenGraph< qan::GraphConfig >::removeGroup( weakGroup );
+    */
+>>>>>>> dev
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
+<<<<<<< HEAD
     WeakGroup weakGroup;
     try {
         weakGroup = WeakGroup{ group->shared_from_this() };
@@ -771,6 +1132,228 @@ void    Graph::initializeRandom( int nodeCount,
         node->setZ(nz);   // Force valid z values
         nz += 1.0;
     }
+=======
+    return GTpoGraph::hasGroup( WeakGroup{group->shared_from_this()} );
+}
+
+auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        try {
+            GTpoGraph::groupNode( WeakGroup{group->shared_from_this()}, node->shared_from_this() );
+        } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
+        if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
+             group->getItem() != nullptr &&
+             node->getItem() != nullptr ) {
+            group->getItem()->groupNodeItem(node->getItem());
+        }
+    }
+}
+
+auto    qan::Graph::groupNode( Group* group, qan::Group* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        qDebug() << "qan::Graph::groupNode(qan::Group*, qan::Group*)";
+        try {
+            /*if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );*/
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+    }
+}
+
+auto    qan::Graph::ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        qDebug() << "qan::Graph::ungroupNode()";
+        try {
+            if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+    }
+}
+
+auto    qan::Graph::ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void
+{
+    if ( group != nullptr &&
+         node != nullptr ) {
+        try {
+            /*if ( group->getItem() )
+                group->getItem()->ungroupNodeItem(node->getItem());
+            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );*/
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+    }
+}
+//-----------------------------------------------------------------------------
+
+
+/* Selection Management *///---------------------------------------------------
+void    Graph::setSelectionPolicy( SelectionPolicy selectionPolicy ) noexcept
+{
+    if ( selectionPolicy == _selectionPolicy )  // Binding loop protection
+        return;
+    _selectionPolicy = selectionPolicy;
+    if ( selectionPolicy == SelectionPolicy::NoSelection )
+        clearSelection();
+    emit selectionPolicyChanged( );
+}
+
+void    Graph::setSelectionColor( QColor selectionColor ) noexcept
+{
+    _selectionColor = selectionColor;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr &&
+             node->getItem() != nullptr &&
+             node->getItem()->getSelectionItem() != nullptr ) {
+            QQuickItem* selectionItem = node->getItem()->getSelectionItem();
+            selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
+            QObject* rectangleBorder = selectionItem->property( "border" ).value<QObject*>();
+            if ( rectangleBorder != nullptr )
+                rectangleBorder->setProperty( "color", selectionColor );
+        }
+    }
+    emit selectionColorChanged();
+}
+
+void    Graph::setSelectionWeight( qreal selectionWeight ) noexcept
+{
+    if ( qFuzzyCompare( selectionWeight, _selectionWeight ) )   // Never 0
+        return;
+    _selectionWeight = selectionWeight;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->configureSelectionItem( selectionWeight, getSelectionMargin() );
+    }
+    emit selectionWeightChanged();
+}
+
+void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
+{
+    if ( qFuzzyCompare( selectionMargin, _selectionMargin ) )   // Never 0
+        return;
+    _selectionMargin = selectionMargin;
+    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->configureSelectionItem( getSelectionWeight(), selectionMargin );
+    }
+    emit selectionMarginChanged();
+}
+
+template < class Primitive_t >
+bool    selectPrimitiveImpl( Primitive_t& primitive,
+                         Qt::KeyboardModifiers modifiers,
+                         qan::Graph& graph )
+{
+    if ( graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection )
+        return false;
+
+    bool selectPrimitive{ false };
+    bool ctrlPressed = modifiers & Qt::ControlModifier;
+    if ( primitive.getItem() == nullptr )
+        return false;
+
+    if ( primitive.getItem()->getSelected() ) {
+        if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
+            graph.removeFromSelection( primitive );
+    } else {
+        switch ( graph.getSelectionPolicy() ) {
+        case qan::Graph::SelectionPolicy::SelectOnClick:
+            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
+            if ( !ctrlPressed )
+                graph.clearSelection();
+            break;
+        case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
+            selectPrimitive = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+            break;
+        case qan::Graph::SelectionPolicy::NoSelection: break;
+        }
+    }
+    if ( selectPrimitive ) {
+        graph.addToSelection( primitive );
+        return true;
+    }
+    return false;
+}
+
+bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Node>(node, modifiers, *this); }
+bool    Graph::selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Group>(group, modifiers, *this); }
+
+template < class Primitive_t >
+void    addToSelectionImpl( Primitive_t& primitive,
+                            qcm::ContainerModel< QVector, Primitive_t* >& selectedPrimitives,
+                            qan::Graph& graph )
+{
+    if ( !selectedPrimitives.contains( &primitive ) ) {
+        selectedPrimitives.append( &primitive );
+        if ( primitive.getItem() != nullptr ) {
+            // Eventually, create and configure node item selection item
+            if ( primitive.getItem()->getSelectionItem() == nullptr )
+                primitive.getItem()->setSelectionItem(graph.createRectangle(primitive.getItem()));
+            primitive.getItem()->configureSelectionItem( graph.getSelectionColor(),
+                                                         graph.getSelectionWeight(),
+                                                         graph.getSelectionMargin() );
+            primitive.getItem()->setSelected( true );
+        }
+    }
+}
+
+void    Graph::addToSelection( qan::Node& node ) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
+void    Graph::addToSelection( qan::Group& group ) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+
+template < class Primitive_t >
+void    removeFromSelectionImpl( Primitive_t& primitive,
+                             qcm::ContainerModel< QVector, Primitive_t* >& selectedPrimitives )
+{
+    if ( selectedPrimitives.contains( &primitive ) )
+        selectedPrimitives.remove( &primitive );
+    if ( primitive.getItem() != nullptr )
+        primitive.getItem()->setSelected( false );
+}
+
+void    Graph::removeFromSelection( qan::Node& node ) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
+void    Graph::removeFromSelection( qan::Group& group ) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
+void    Graph::removeFromSelection( QQuickItem* item ) {
+    const auto nodeItem = qobject_cast<qan::NodeItem*>(item);
+    if ( nodeItem != nullptr &&
+         nodeItem->getNode() != nullptr ) {
+        _selectedNodes.remove(nodeItem->getNode());
+    } else {
+        const auto groupItem = qobject_cast<qan::GroupItem*>(item);
+        if ( groupItem != nullptr &&
+             groupItem->getGroup() != nullptr )
+            _selectedGroups.remove(groupItem->getGroup());
+    }
+}
+
+void    Graph::clearSelection()
+{
+    for ( auto node : _selectedNodes )
+        if ( node != nullptr &&
+             node->getItem() != nullptr )
+            node->getItem()->setSelected( false );
+    _selectedNodes.clear();
+    for ( auto group : _selectedGroups )
+        if ( group != nullptr &&
+             group->getItem() != nullptr )
+            group->getItem()->setSelected( false );
+    _selectedGroups.clear();
+}
+
+void    Graph::mousePressEvent( QMouseEvent* event )
+{
+    if ( event->button() == Qt::LeftButton ) {
+        clearSelection();
+        forceActiveFocus();
+    }
+    event->ignore();
+    qan::GraphConfig::GraphBase::mousePressEvent( event );
+>>>>>>> dev
 }
 //-----------------------------------------------------------------------------
 

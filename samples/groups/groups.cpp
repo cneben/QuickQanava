@@ -25,15 +25,26 @@
 // \date	2016 03 23
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 // QuickQanava headers
 #include "./groups.h"
 
 // Qt headers
 #include <QGuiApplication>
+=======
+// Qt headers
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
+
+// QuickQanava headers
+#include <QuickQanava>
+>>>>>>> dev
 
 using namespace qan;
 
 //-----------------------------------------------------------------------------
+<<<<<<< HEAD
 MainView::MainView( ) : QQuickView{}
 {
     QuickQanava::initialize();
@@ -48,6 +59,16 @@ int	main( int argc, char** argv )
     mainView.resize( 1024, 700 );
     mainView.show( );
     return app.exec( );
+=======
+int	main( int argc, char** argv )
+{
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QuickQanava::initialize();
+    QQmlApplicationEngine engine;
+    engine.load(QUrl("qrc:/groups.qml"));
+    return app.exec();
+>>>>>>> dev
 }
 //-----------------------------------------------------------------------------
 

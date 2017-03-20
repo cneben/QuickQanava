@@ -32,6 +32,7 @@
 #include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>
+<<<<<<< HEAD
 #include <QDrag>
 
 // QuickQanava headers
@@ -50,17 +51,42 @@ class Group;
 /*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
  *
  * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or ConnectorDropNode are not used nor necessary), consider disabling
+=======
+
+// QuickQanava headers
+#include "./qanGraphConfig.h"
+#include "./qanEdge.h"
+#include "./qanStyle.h"
+#include "./qanBehaviour.h"
+#include "./qanNodeItem.h"
+
+namespace qan { // ::qan
+
+class NodeBehaviour;
+class Graph;
+class Group;
+class NodeItem;
+
+/*! \brief Base class for modelling nodes with attributes and an in/out edges list in a qan::Graph graph.
+ *
+ * \note If your application does not need drag'n'drop support (ie group insertion via dra'n'drop or VisualConnector are not used nor necessary), consider disabling
+>>>>>>> dev
  * drag'n'drop support by setting the \c acceptsDrops and \c droppable properties to false, it could improve performances significantly.
  *
  * \nosubgrouping
 */
+<<<<<<< HEAD
 class Node : public gtpo::GenNode< qan::Config >
+=======
+class Node : public gtpo::GenNode< qan::GraphConfig >
+>>>>>>> dev
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
     Q_OBJECT
 public:
     //! Node constructor.
+<<<<<<< HEAD
     explicit Node( QQuickItem* parent = nullptr );
     /*! \brief Remove any childs node who have no QQmlEngine::CppOwnership.
      *
@@ -73,11 +99,25 @@ public:
 public:
     //! Shortcut to gtpo::GenNode<>::getGraph().
     qan::Graph*     getGraph() noexcept;
+=======
+    explicit Node(QObject* parent=nullptr);
+    virtual ~Node();
+    Node( const Node& ) = delete;
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    //! Shortcut to gtpo::GenNode<>::getGraph().
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
+
+>>>>>>> dev
 public:
     /*!
      * \note only label is taken into account for equality comparison.
      */
     bool    operator==( const qan::Node& right ) const;
+<<<<<<< HEAD
 public:
     // Qt property for gtpo::Node serializable standard property.
     Q_PROPERTY( bool serializable READ getSerializable WRITE setSerializableObs NOTIFY serializableChanged FINAL )
@@ -101,6 +141,38 @@ private:
 signals:
     void            minimumSizeChanged();
 
+=======
+
+public:
+    Q_PROPERTY( qan::NodeItem* item READ getItem FINAL )
+    inline qan::NodeItem*   getItem() noexcept { return _item.data(); }
+    void                    setItem(qan::NodeItem* nodeItem) noexcept;
+private:
+    QPointer<qan::NodeItem> _item;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Node Static Factories *///---------------------------------------
+    //@{
+public:
+    /*! \brief Return the default delegate QML component that should be used to generate node \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Node component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Node.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default node style will be used).
+     */
+    static  qan::NodeStyle*     style() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Topology Interface *///------------------------------------------
+    //@{
+>>>>>>> dev
 public:
     //! Read-only abstract item model of this node in nodes.
     Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
@@ -118,6 +190,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Selection Management *///----------------------------------------
     //@{
 protected slots:
@@ -166,6 +239,8 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+=======
+>>>>>>> dev
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
@@ -173,6 +248,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Node DnD Management *///-----------------------------------------
     //@{
 public:
@@ -287,6 +363,10 @@ private slots:
     //! Called when the style associed to this node is destroyed.
     void            styleDestroyed( QObject* style );
 
+=======
+    /*! \name Appearance Management *///---------------------------------------
+    //@{
+>>>>>>> dev
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void            setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
@@ -298,6 +378,7 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Intersection Shape Management *///-------------------------------
     //@{
 signals:
@@ -386,6 +467,14 @@ public:
 
     //! Shortcut to gtpo::GenNode<>::getGroup().
     qan::Group*                 getQanGroup( );
+=======
+    /*! \name Node Group Management *///---------------------------------------
+    //@{
+public:
+    Q_PROPERTY( qan::Group* group READ qmlGetGroup FINAL )
+protected:
+    inline qan::Group*  qmlGetGroup() noexcept { return getGroup().lock().get(); }
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };
@@ -393,7 +482,10 @@ public:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Node )
+<<<<<<< HEAD
 Q_DECLARE_METATYPE( std::shared_ptr<qan::Node> )
 Q_DECLARE_METATYPE( std::weak_ptr<qan::Node> )
+=======
+>>>>>>> dev
 
 #endif // qanNode_h

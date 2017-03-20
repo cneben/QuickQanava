@@ -32,6 +32,7 @@
 #include <QLineF>
 
 // QuickQanava headers
+<<<<<<< HEAD
 #include "./qanConfig.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
@@ -39,18 +40,34 @@
 namespace qan { // ::qan
 
 class Node;
+=======
+#include "./qanGraphConfig.h"
+#include "./qanStyle.h"
+#include "./qanNode.h"
+#include "./qanEdgeItem.h"
+
+namespace qan { // ::qan
+
+class Graph;
+class EdgeItem;
+>>>>>>> dev
 
 //! Weighted directed edge linking two nodes in a graph.
 /*!
     \nosubgrouping
  */
+<<<<<<< HEAD
 class Edge : public gtpo::GenEdge< qan::Config >
+=======
+class Edge : public gtpo::GenEdge< qan::GraphConfig >
+>>>>>>> dev
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
 public:
     //! Edge constructor with source, destination and weight initialization.
+<<<<<<< HEAD
     explicit Edge( QQuickItem* parent = nullptr );
     Edge( const Edge& ) = delete;
 
@@ -181,6 +198,61 @@ private slots:
     //! Called when the style associed to this edge is destroyed.
     void            styleDestroyed( QObject* style );
 
+=======
+    explicit Edge();
+    Edge( const Edge& ) = delete;
+    virtual ~Edge() { /* Nil */ }
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    //! Shortcut to gtpo::GenEdge<>::getGraph().
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
+
+public:
+    friend class qan::EdgeItem;
+
+    Q_PROPERTY( qan::EdgeItem* item READ getItem FINAL )
+    inline qan::EdgeItem*   getItem() noexcept { return _item.data(); }
+    void                    setItem(qan::EdgeItem* edgeItem) noexcept;
+private:
+    QPointer<qan::EdgeItem> _item;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge Static Factories *///---------------------------------------
+    //@{
+public:
+    /*! \brief Return the default delegate QML component that should be used to generate edge \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Edge component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Edge.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default edge style will be used).
+     */
+    static  qan::EdgeStyle*     style() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge Topology Management *///------------------------------------
+    //@{
+public:
+    //! Read-only abstract item model of this edge in hyper nodes.
+//    Q_PROPERTY( QAbstractItemModel* inHNodes READ qmlGetInHNodes NOTIFY inHNodesChanged FINAL )
+//    QAbstractItemModel* qmlGetInHNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInHNodes() ) ); }
+//signals:
+//    void        inHNodesChanged( );
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge Properties Management *///----------------------------------
+    //@{
+>>>>>>> dev
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     //! Set this edge label.
@@ -204,6 +276,7 @@ signals:
     void            weightChanged( );
     //@}
     //-------------------------------------------------------------------------
+<<<<<<< HEAD
 
     /*! \name Drag'nDrop Management  *///--------------------------------------
     //@{
@@ -243,6 +316,8 @@ protected:
     virtual void    dropEvent( QDropEvent* event ) override;
     //@}
     //-------------------------------------------------------------------------
+=======
+>>>>>>> dev
 };
 
 } // ::qan

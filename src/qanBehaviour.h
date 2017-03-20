@@ -32,11 +32,19 @@
 #include <QObject>
 
 // GTpo headers
+<<<<<<< HEAD
 #include <memory>   // FIXME 20160404: remove that later, memory was missing from gtpoBehaviour.h
 #include "../GTpo/src/gtpoBehaviour.h"
 
 // QuickQanava headers
 #include "./qanConfig.h"
+=======
+#include "../GTpo/src/gtpoNodeBehaviour.h"
+
+// QuickQanava headers
+#include "./qanGraphConfig.h"
+#include "./qanEdge.h"
+>>>>>>> dev
 
 namespace qan { // ::qan
 
@@ -45,7 +53,11 @@ namespace qan { // ::qan
  *  \nosubgrouping
  */
 class NodeBehaviour : public QObject,
+<<<<<<< HEAD
                       public gtpo::NodeBehaviour< qan::Config >
+=======
+                      public gtpo::NodeBehaviour< qan::GraphConfig >
+>>>>>>> dev
 {
     Q_OBJECT
 public:
@@ -53,7 +65,12 @@ public:
     virtual ~NodeBehaviour() { }
     NodeBehaviour( const NodeBehaviour& ) = delete;
 
+<<<<<<< HEAD
     using WeakNode  = std::weak_ptr< qan::Config::Node >;
+=======
+    // FIXME QAN3
+/*    using WeakNode  = std::weak_ptr< qan::GraphConfig::Node >;
+>>>>>>> dev
 
     virtual void    inNodeInserted( WeakNode& weakInNode ) noexcept override;
     virtual void    inNodeAboutToBeRemoved( WeakNode& weakInNode ) noexcept override;
@@ -73,6 +90,10 @@ protected:
     virtual void    outNodeRemoved( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
 
     virtual void    nodeModified( qan::Node& node ) noexcept { Q_UNUSED( node ); }
+<<<<<<< HEAD
+=======
+    */
+>>>>>>> dev
 };
 
 } // ::qan

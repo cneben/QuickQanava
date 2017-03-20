@@ -40,6 +40,7 @@
 
 namespace qan { // ::qan
 
+<<<<<<< HEAD
 class IDInterface;
 class Graph;
 
@@ -97,6 +98,13 @@ public:
 };
 
 /*! Factory for Style objects in a Graph.
+=======
+class Graph;
+
+/*! \brief Manage node/edge/group styles in a qan::Graph.
+ *
+ * \nosubgrouping
+>>>>>>> dev
  */
 class StyleManager : public QObject
 {
@@ -117,6 +125,7 @@ public:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     /*! \brief Generate default styles for node and edge.
      *
      * Generate a "default node" qan::NodeStyle and a "default edge" qan::EdgeStyle registered
@@ -137,11 +146,14 @@ public:
      */
     Q_INVOKABLE qan::EdgeStyle* createEdgeStyle( QString styleName, QString targetName = QString( "" ) );
 
+=======
+>>>>>>> dev
     /*! \brief Create a copy of an existing style, return it and register it in this manager.
      *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails (either the requested style
      *          does not exists, or a style with the same name already exists.
      */
     Q_INVOKABLE qan::Style* duplicateStyle( QString styleName, QString duplicatedStyleName );
+<<<<<<< HEAD
     /*! \brief Remove an existing style from this manager and automatically delete it.
      *  \return true if the style was succesfully removed.
      */
@@ -222,6 +234,52 @@ public:
 public:
     Q_PROPERTY( QAbstractItemModel* hEdgesStylesModel READ getHEdgeStylesModel CONSTANT FINAL )
     QAbstractItemModel* getHEdgeStylesModel( ) { return getStylesModelForTarget( "qan::HEdge" ); }
+=======
+
+public:
+    using StyleComponentMap = QMap< qan::Style*, QPointer<QQmlComponent> >;
+
+    Q_INVOKABLE void            setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept;
+    Q_INVOKABLE QQmlComponent*  getStyleComponent(qan::Style* style)noexcept;
+private:
+    StyleComponentMap           _styleComponentMap;
+
+public:
+    //! Set style \c defaultNodeStyle a the default style for a specific class of nodes \c delegate.
+    void                            setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle );
+
+    //! Get the style for a specific node \c delegate, if no such style exist, return default node style.
+    qan::NodeStyle*                 getNodeStyle( QQmlComponent* delegate );
+
+    using DelegateNodeStyleMap = QMap< QQmlComponent*, qan::NodeStyle* >;
+    const DelegateNodeStyleMap&     getNodeStyles() const noexcept { return _nodeStyles; }
+private:
+    DelegateNodeStyleMap            _nodeStyles;
+
+public:
+    //! Set style \c defaultEdgeStyle a the default style for a specific class of edge \c delegate.
+    void                            setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle );
+
+    //! Get the default style for a specific edge \c delegate, if no such style exist, return default node style.
+    qan::EdgeStyle*                 getEdgeStyle( QQmlComponent* delegate );
+
+    using DelegateEdgeStyleMap = QMap< QQmlComponent*, qan::EdgeStyle* >;
+    const DelegateEdgeStyleMap&     getEdgeStyles() const noexcept { return  _edgeStyles; }
+private:
+    DelegateEdgeStyleMap            _edgeStyles;
+
+public:
+    using ObjectVectorModel = qcm::ContainerModel<QVector, QObject*>;
+
+    Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
+    inline QAbstractItemModel*      qmlGetStyles() noexcept { return &_styles; }
+    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }
+private:
+    //! Styles containers.
+    ObjectVectorModel               _styles;
+public:
+    Q_INVOKABLE qan::Style*         getStyleAt( int s );
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };

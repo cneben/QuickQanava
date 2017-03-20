@@ -1,7 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file alias="QuickQanava/Edge.qml">Edge.qml</file>
+<<<<<<< HEAD
         <file alias="QuickQanava/Graph.qml">Graph.qml</file>
+=======
+>>>>>>> dev
         <file alias="QuickQanava/GraphView.qml">GraphView.qml</file>
         <file alias="QuickQanava/Node.qml">Node.qml</file>
         <file alias="QuickQanava/Group.qml">Group.qml</file>
@@ -10,8 +13,13 @@
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
         <file alias="QuickQanava/StyleEditor.qml">StyleEditor.qml</file>
+<<<<<<< HEAD
         <file alias="QuickQanava/ConnectorDropNode.qml">ConnectorDropNode.qml</file>
         <file alias="QuickQanava/NodeLabelEditor.qml">NodeLabelEditor.qml</file>
+=======
+        <file alias="QuickQanava/VisualConnector.qml">VisualConnector.qml</file>
+        <file alias="QuickQanava/LabelEditor.qml">LabelEditor.qml</file>
+>>>>>>> dev
         <file alias="QuickQanava/qmldir">qmldir</file>
     </qresource>
 </RCC>

@@ -30,14 +30,23 @@
 #include <QPainter>
 
 // QuickQanava headers
+<<<<<<< HEAD
 #include "./qanEdge.h"
 #include "./qanGroup.h"
 #include "./qanNode.h"
 #include "./qanGraph.h"
+=======
+#include "./qanGraph.h"
+#include "./qanNode.h"
+#include "./qanGroup.h"
+#include "./qanEdge.h"
+#include "./qanEdgeItem.h"
+>>>>>>> dev
 
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
+<<<<<<< HEAD
 Edge::Edge( QQuickItem* parent ) :
     gtpo::GenEdge< qan::Config >{},
     _defaultStyle{ new qan::EdgeStyle{ "", "qan::Edge" } }
@@ -344,6 +353,52 @@ void    Edge::styleDestroyed( QObject* style )
     }
 }
 
+=======
+Edge::Edge() :
+    gtpo::GenEdge< qan::GraphConfig >{}
+{
+}
+
+qan::Graph* Edge::getGraph() noexcept {
+    return qobject_cast< qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
+}
+
+const qan::Graph* Edge::getGraph() const noexcept {
+    return qobject_cast< const qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
+}
+
+void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
+{
+    if ( edgeItem != nullptr )
+        _item = edgeItem;
+}
+//-----------------------------------------------------------------------------
+
+/* Node Static Factories *///--------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Edge_delegate;
+static std::unique_ptr<qan::EdgeStyle>  qan_Edge_style;
+
+QQmlComponent*  Edge::delegate(QObject* caller) noexcept
+{
+    if ( !qan_Edge_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Edge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Edge.qml");
+    }
+    return qan_Edge_delegate.get();
+}
+
+qan::EdgeStyle* Edge::style() noexcept
+{
+    if ( !qan_Edge_style )
+        qan_Edge_style = std::make_unique<qan::EdgeStyle>();
+    return qan_Edge_style.get();
+}
+//-----------------------------------------------------------------------------
+
+/* Edge Properties Management *///---------------------------------------------
+>>>>>>> dev
 void    Edge::setLabel( const QString& label )
 {
     if ( label != _label ) {
@@ -361,6 +416,7 @@ void     Edge::setWeight( qreal weight )
 }
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    Edge::contains( const QPointF& point ) const
 {
@@ -433,4 +489,6 @@ void    Edge::dropEvent( QDropEvent* event )
 }
 //-----------------------------------------------------------------------------
 
+=======
+>>>>>>> dev
 } // ::qan

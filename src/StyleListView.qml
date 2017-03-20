@@ -30,6 +30,10 @@ import QtQuick.Layouts  1.3
 import QtQuick.Controls 2.0
 
 import QuickQanava      2.0 as Qan
+<<<<<<< HEAD
+=======
+import "qrc:/QuickQanava"   as Qan
+>>>>>>> dev
 
 /*! \brief Show a selectable list of style with a live style preview.
  *
@@ -55,6 +59,7 @@ ListView {
     property real   previewHeight: 55
     property var    graph: undefined
 
+<<<<<<< HEAD
     /*onModelChanged: {
         if ( model &&               // Select the first "properties" when a new model is sets
              model.itemCount > 0 )
@@ -63,6 +68,18 @@ ListView {
     highlight: propertiesHighlightBar
     Component {
         id: propertiesHighlightBar
+=======
+    property var styleManager: undefined
+    onStyleManagerChanged: {
+        if ( styleManager ) {
+            model = styleManager.styles
+            if ( model &&               // Select the first "properties" when a new model is sets
+                 model.itemCount > 0 )
+                currentIndex = 0
+        } else model = null
+    }
+    highlight: Component {
+>>>>>>> dev
         Rectangle {
             x: styleListView.currentItem.x;         y: styleListView.currentItem.y
             width: styleListView.currentItem.width; height: styleListView.currentItem.height
@@ -77,9 +94,17 @@ ListView {
     function    hilightStyle( style ) {
         if ( model &&
              style ) {
+<<<<<<< HEAD
             var styleIndex = model.getStyleIndex( style ) // Note 20151028: See StylesFilterModel::getStyleIndex()
             if ( styleIndex !== -1 )
                 currentIndex = styleIndex
+=======
+            // FIXME QAN3
+            console.debug( "FIXME QAN3" )
+            //var styleIndex = model.getStyleIndex( style )
+            //if ( styleIndex !== -1 )
+            //    currentIndex = styleIndex
+>>>>>>> dev
         }
     }
 
@@ -90,6 +115,7 @@ ListView {
 
     // Private:
     delegate: Component {
+<<<<<<< HEAD
         Loader {
             property var    listView:           styleListView
             property var    styleIndex:         index
@@ -201,10 +227,78 @@ ListView {
                 }
                 property var draggedEdgeStyle: styleProperties      // Used from C++ for drop
                 Drag.active: mouseArea.drag.active
+=======
+        Item {
+            id: styleDelegate
+            width: styleListView.width;    height: previewHeight
+            property var    styleItem:      itemData
+            property var    styleComponent: styleManager.getStyleComponent(itemData)
+            visible: styleItem && styleComponent
+            property var primitive: undefined
+
+            Item {
+                id: delegateItem
+                anchors.fill: parent
+                anchors.leftMargin: 15; anchors.rightMargin: 15
+                anchors.topMargin: 5; anchors.bottomMargin: 5
+                z: 1
+                Component.onCompleted: {
+                    console.debug( "Qan.StyleListView.delegate.onCompleted():")
+                    console.debug( "\tstyleItem=" + styleItem )
+                    console.debug( "\tstyleComponent=" + styleComponent )
+                    console.debug( "styleManager.getStyleComponent(itemData)=" + styleManager.getStyleComponent(styleItem) );
+                    if ( !styleItem ||
+                            !styleComponent ||
+                            !styleListView.graph ) {
+                        console.debug( "can't create delegate for styleItem=" + styleItem )
+                        styleDelegate.visible = false
+                        return
+                    }
+                    primitive = graph.createFromComponent( styleComponent, styleItem );
+                    console.debug( "primitive=" + primitive )
+                    if ( primitive ) {
+                        primitive.parent = delegateItem
+                        primitive.anchors.fill = delegateItem;
+                        primitive.anchors.margins = 5
+                        console.debug( "primitive.style=" + primitive.style )
+                        if ( primitive.objectName === "qan::NodeItem" ) {
+                            primitive.resizable = false
+                            primitive.Layout.minimumWidth = width
+                            primitive.Layout.minimumHeight = height
+                            primitive.selectable = false
+                            primitive.acceptDrops = false    // Don't allow style DnD inside style browser
+                            primitive.droppable = false      // Concern only QuickQanava group drops, set to false
+                            primitive.draggable = false      // Concern only QuickQanava group drops, set to false
+                            var delegateLabel = Qt.createQmlObject( 'import QtQuick 2.7;import QtQuick.Controls 2.0; Label { anchors.centerIn: parent; text: "Node Style" }', primitive )
+                            if ( delegateLabel )
+                                delegateLabel.text = qsTr( "Node Style" )
+                            primitive.nodeClicked.connect(onNodeClicked)
+                            primitive.nodeDoubleClicked.connect(onNodeDoubleClicked)
+                            primitive.style = styleItem
+                        } else if ( primitive.objectName === "qan::EdgeItem" ) {
+                            primitive.setLine( Qt.point( 15, height / 1.5 ),
+                                              Qt.point( width - 15, height / 1.5 ) );
+                            primitive.acceptDrops = false
+                            var delegateLabel = Qt.createQmlObject( 'import QtQuick 2.7;import QtQuick.Controls 2.0; Label { anchors.centerIn: parent; text: "Edge Style" }', primitive )
+                            if ( delegateLabel )
+                                delegateLabel.text = qsTr( "Edge Style" )
+                        } else if ( primitive.objectName === "qan::GroupItem" ) {
+                            primitive.selectable = false
+                            primitive.draggable = false
+                            styleDelegate.visible = false  // Do not show group styles (for the moment 20170317)
+                        }
+                    }
+                    function onNodeClicked(node) { styleListView.currentIndex = index; styleListView.styleClicked( styleItem ) }
+                    function onNodeDoubleClicked(node) { styleListView.currentIndex = index; styleListView.styleDoubleClicked( styleItem ) }
+                } // Component.onCompleted()
+                property var draggedStyle: styleItem // Used from C++ for detecting style drop (see qan::DraggableCtrl<>::handleDropEvent())
+                Drag.active: delegateMouseArea.drag.active
+>>>>>>> dev
                 Drag.dragType: Drag.Automatic
                 Drag.hotSpot.x: 10; Drag.hotSpot.y: 10
             }
             MouseArea {
+<<<<<<< HEAD
                 id: mouseArea
                 anchors.fill: parent;
                 anchors.leftMargin: 15; anchors.rightMargin: 15
@@ -220,4 +314,16 @@ ListView {
             }
         }
     } // Component: edgeStyleDelegate
+=======
+                z: 2
+                id: delegateMouseArea
+                anchors.fill: parent
+                drag.target: delegateItem
+                //drag.target: primitive
+                onClicked:       { styleListView.currentIndex = index; styleListView.styleClicked( styleItem ) }
+                onDoubleClicked: { styleListView.currentIndex = index; styleListView.styleDoubleClicked( styleItem ) }
+            }
+        } // Item: delegate
+    } // Component: delegate
+>>>>>>> dev
 }

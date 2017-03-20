@@ -32,13 +32,19 @@
 
 // QuickQanava headers
 #include "./qanGroup.h"
+<<<<<<< HEAD
 #include "./qanGraph.h"
 #include "./qanLayout.h"
 #include "./qanLinear.h"
+=======
+#include "./qanGroupItem.h"
+#include "./qanGraph.h"
+>>>>>>> dev
 
 namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
+<<<<<<< HEAD
 Group::Group( QQuickItem* parent ) :
     gtpo::GenGroup< qan::Config >( parent )
 {
@@ -118,6 +124,58 @@ auto    Group::removeNode( const qan::Node* node ) -> void
     } catch ( std::bad_weak_ptr ) { return; }
 }
 
+=======
+Group::Group( QObject* parent ) :
+    gtpo::GenGroup< qan::GraphConfig >{}
+{
+    Q_UNUSED(parent);
+}
+
+Group::~Group() { /* Nil */ }
+
+qan::Graph*         Group::getGraph() noexcept {
+    return qobject_cast< qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+}
+
+const qan::Graph*   Group::getGraph() const noexcept {
+    return qobject_cast< const qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+}
+
+void    Group::setItem(qan::GroupItem* item) noexcept
+{
+    if ( item != nullptr ) {
+        _item = item;
+        if ( item->getGroup() != this )
+            item->setGroup(this);
+    }
+}
+//-----------------------------------------------------------------------------
+
+/* Group Static Factories *///-------------------------------------------------
+static std::unique_ptr<QQmlComponent>   qan_Group_delegate;
+static std::unique_ptr<qan::Style>      qan_Group_style;
+
+QQmlComponent*  Group::delegate(QObject* caller) noexcept
+{
+    if ( !qan_Group_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_Group_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Group.qml");
+    }
+    return qan_Group_delegate.get();
+}
+
+qan::Style*     Group::style() noexcept
+{
+    if ( !qan_Group_style )
+        qan_Group_style = std::make_unique<qan::Style>();
+    return qan_Group_style.get();
+}
+//-----------------------------------------------------------------------------
+
+/* Group Nodes Management *///-------------------------------------------------
+>>>>>>> dev
 bool    Group::hasNode( qan::Node* node ) const
 {
     if ( node == nullptr )
@@ -126,6 +184,7 @@ bool    Group::hasNode( qan::Node* node ) const
     try {
         weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return false; }
+<<<<<<< HEAD
     return gtpo::GenGroup< qan::Config >::hasNode( weakNode );
 }
 //-----------------------------------------------------------------------------
@@ -235,6 +294,9 @@ void    Group::endProposeNodeDrop()
         removeNode( _shadowDropNode );
         getGraph()->removeNode( _shadowDropNode );
     }
+=======
+    return gtpo::GenGroup< qan::GraphConfig >::hasNode( weakNode );
+>>>>>>> dev
 }
 //-----------------------------------------------------------------------------
 

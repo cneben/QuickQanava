@@ -1,5 +1,9 @@
 TEMPLATE    =   subdirs
+<<<<<<< HEAD
 CONFIG      +=  ordered      # Well I know, but no choice...
+=======
+CONFIG      +=  ordered
+>>>>>>> dev
 
 include (./gtpo-common.pri)
 
@@ -20,9 +24,16 @@ tests.depends   = gtpo
 benchmarks.subdir   = benchmarks
 benchmarks.depends  = gtpo
 
+<<<<<<< HEAD
 SUBDIRS +=  gtpo
 SUBDIRS +=  tests
 SUBDIRS +=  sample-basic
 SUBDIRS +=  sample-behaviour
+=======
+#SUBDIRS +=  gtpo
+SUBDIRS +=  tests
+#SUBDIRS +=  sample-basic
+#SUBDIRS +=  sample-behaviour
+>>>>>>> dev
 #SUBDIRS +=  sample-serializer
 #SUBDIRS +=  benchmarks

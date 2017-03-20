@@ -20,11 +20,16 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
+<<<<<<< HEAD
 // \file	qtpoTests.cpp
+=======
+// \file	gtpoTests.cpp
+>>>>>>> dev
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 // STD headers
 #include <list>
 #include <memory>
@@ -36,10 +41,13 @@
 #include <gtpoProtoSerializer.h>
 #include <gtpoProgressNotifier.h>
 
+=======
+>>>>>>> dev
 // Google Test
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+<<<<<<< HEAD
 int main(int argc, char **argv) {
     //::testing::InitGoogleMock(&argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
@@ -820,6 +828,24 @@ TEST(GTpo, stpoRemoveNodeNodesCount)
     EXPECT_TRUE( g.getNodeCount() == nc - 1 );
     EXPECT_TRUE( g.getRootNodeCount() == rnc - 1 );
     g.clear();
+=======
+// GTpo headers
+#include "../src/gtpoUtils.h"
+
+int main(int argc, char **argv) {
+    //::testing::InitGoogleMock(&argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+#ifdef GTPO_HAS_PROTOBUF
+    gtpo::ProtoSerializer<>::initProtocolBuffer();
+#endif
+    return RUN_ALL_TESTS();
+}
+
+TEST(GTpoUtils, assertThrow)
+{
+    EXPECT_THROW( gtpo::assert_throw(false, "" ), gtpo::bad_topology_error );
+    EXPECT_NO_THROW( gtpo::assert_throw(true, "" ) );
+>>>>>>> dev
 }
 
 

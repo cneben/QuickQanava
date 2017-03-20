@@ -38,16 +38,30 @@
 #include "../QuickContainers/src/QuickContainers.h"
 
 // QuickQanava headers
+<<<<<<< HEAD
 #include "./qanConfig.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
+=======
+#include "./qanGraphConfig.h"
+#include "./qanEdge.h"
+#include "./qanEdgeItem.h"
+#include "./qanNode.h"
+#include "./qanNodeItem.h"
+#include "./qanConnector.h"
+#include "./qanGroup.h"
+#include "./qanGroupItem.h"
+>>>>>>> dev
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanPointGrid.h"
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
+<<<<<<< HEAD
 #include "./qanProgressNotifier.h"
+=======
+>>>>>>> dev
 #include "./fqlBottomRightResizer.h"
 
 struct QuickQanava {
@@ -56,9 +70,20 @@ struct QuickQanava {
         QuickContainers::initialize();
 
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
+<<<<<<< HEAD
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "Edge");
         qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "AbstractGraph");
+=======
+        qmlRegisterType< qan::NodeItem >( "QuickQanava", 2, 0, "NodeItem");
+        qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");
+        qmlRegisterType< qan::EdgeItem >( "QuickQanava", 2, 0, "EdgeItem");
+        qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
+        qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
+        qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");
+
+        qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "Graph");
+>>>>>>> dev
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
@@ -67,7 +92,10 @@ struct QuickQanava {
         qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");
         qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");
         qmlRegisterType< qan::StyleManager >( "QuickQanava", 2, 0, "StyleManager");
+<<<<<<< HEAD
         qmlRegisterType< qan::ProgressNotifier >( "QuickQanava", 2, 0, "ProgressNotifier");
+=======
+>>>>>>> dev
         qmlRegisterType< fql::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
     }
 };

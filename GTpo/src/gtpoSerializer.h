@@ -35,7 +35,11 @@
 
 // GTpo headers
 #include "./gtpoUtils.h"
+<<<<<<< HEAD
 #include "./gtpoGraph.h"
+=======
+#include "./gtpoGenGraph.h"
+>>>>>>> dev
 #include "./gtpoProgressNotifier.h"
 
 // STD headers
@@ -54,8 +58,13 @@ public:
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
+<<<<<<< HEAD
     using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
     using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+=======
+    using WeakEdge      = typename GenEdge<GraphConfig>::Weak;
+    using SharedEdge    = typename GenEdge<GraphConfig>::Shared;
+>>>>>>> dev
 
     OutSerializer() = default;
     virtual ~OutSerializer() = default;
@@ -98,12 +107,21 @@ class Serializer :  public InSerializer< GraphConfig >,
 {
 public:
     using Graph         = GenGraph< GraphConfig >;
+<<<<<<< HEAD
     using SharedNode    = std::shared_ptr< typename GraphConfig::Node >;
     using Node          = typename GraphConfig::Node;
     using WeakNode      = std::weak_ptr< typename GraphConfig::Node >;
     using WeakEdge      = std::weak_ptr< typename GraphConfig::Edge >;
     using WeakGroup     = std::weak_ptr< typename GraphConfig::Group >;
     using SharedEdge    = std::shared_ptr< typename GraphConfig::Edge >;
+=======
+    using SharedNode    = typename GenNode<GraphConfig>::Shared;
+    using Node          = typename GraphConfig::Node;
+    using WeakNode      = typename GenNode<GraphConfig>::Weak;
+    using SharedEdge    = typename GenEdge<GraphConfig>::Shared;
+    using WeakEdge      = typename GenEdge<GraphConfig>::Weak;
+    using WeakGroup     = typename GenGroup<GraphConfig>::Weak;
+>>>>>>> dev
 
     Serializer() = default;
     virtual ~Serializer() = default;

@@ -36,6 +36,7 @@
 
 namespace qan { // ::qan
 
+<<<<<<< HEAD
 /* Interview Interface *///----------------------------------------------------
 bool    StylesFilterModel::filterAcceptsColumn( int sourceColumn, const QModelIndex& sourceParent) const
 {
@@ -116,10 +117,17 @@ StyleManager::StyleManager( QObject* parent ) :
     QObject( parent )
 {
     _styles.setItemDisplayRole( QStringLiteral("name") ); // Use 'name' property for abstract list model display role
+=======
+/* Style Object Management *///------------------------------------------------
+StyleManager::StyleManager( QObject* parent ) :
+    QObject{ parent }
+{
+>>>>>>> dev
 }
 
 StyleManager::~StyleManager( )
 {
+<<<<<<< HEAD
     // Styles destroyed in qvs::PropertiesList::~PropertiesList
     for ( const auto& model : _targetModelMap )
         delete model;
@@ -130,20 +138,33 @@ StyleManager::~StyleManager( )
     _defaultNodeStyles.clear();
     _defaultEdgeStyles.clear();
     _styles.clear();
+=======
+    clear();
+>>>>>>> dev
 }
 
 void    StyleManager::clear()
 {
+<<<<<<< HEAD
     _styles.clear( true );
     for ( const auto& model : _targetModelMap )
         delete model;
     _targetModelMap.clear();
     _defaultNodeStyles.clear();
     _defaultEdgeStyles.clear();
+=======
+    _styles.clear();
+/*    for ( const auto nodeStyle : _nodeStyles )
+        if ( nodeStyle != nullptr )
+            nodeStyle->deleteLater();*/
+    _nodeStyles.clear();
+    _edgeStyles.clear();
+>>>>>>> dev
 }
 //-----------------------------------------------------------------------------
 
 /* Style Management *///-------------------------------------------------------
+<<<<<<< HEAD
 void    StyleManager::generateDefaultStyles()
 {
     qan::NodeStyle* nodeStyle = createNodeStyle( QStringLiteral("default node") );
@@ -193,6 +214,11 @@ qan::EdgeStyle* StyleManager::createEdgeStyle( QString styleName, QString target
 Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyleName )
 {
     if ( styleName.isEmpty() )
+=======
+Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyleName )
+{
+/*    if ( styleName.isEmpty() )
+>>>>>>> dev
         return nullptr;
 
     // Find the existing style
@@ -208,6 +234,7 @@ Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyle
         _styles.append( duplicatedStyle );
         QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
     }
+<<<<<<< HEAD
     return duplicatedStyle;
 }
 
@@ -306,6 +333,72 @@ QAbstractItemModel*     StyleManager::getStylesModelForTarget( QString target )
 
     return targetModel;
 }
+=======
+    return duplicatedStyle;*/
+    return nullptr; // FIXME QAN3 styles
+}
+
+void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
+{
+    //qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;
+    if ( style != nullptr &&
+         component != nullptr ) {
+        _styleComponentMap.insert( style, component );
+        if ( !_styles.contains(style) )
+            _styles.append(style);
+    }
+}
+
+QQmlComponent*  StyleManager::getStyleComponent(qan::Style* style) noexcept
+{
+    if ( style == nullptr )
+        return nullptr;
+    auto component = _styleComponentMap.value(style, nullptr);
+    if ( component != nullptr )
+        QQmlEngine::setObjectOwnership(component, QQmlEngine::CppOwnership);
+    return component;
+}
+
+void    StyleManager::setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle )
+{
+    if ( delegate != nullptr &&
+         nodeStyle != nullptr )
+        _nodeStyles.insert( delegate, nodeStyle );
+}
+
+qan::NodeStyle* StyleManager::getNodeStyle( QQmlComponent* delegate )
+{
+    if ( delegate != nullptr &&
+         _nodeStyles.contains( delegate ) )
+        return _nodeStyles.value( delegate, nullptr );
+
+    return nullptr;
+}
+
+void    StyleManager::setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle )
+{
+    if ( delegate != nullptr &&
+         edgeStyle != nullptr )
+        _edgeStyles.insert( delegate, edgeStyle );
+}
+
+qan::EdgeStyle* StyleManager::getEdgeStyle( QQmlComponent* delegate )
+{
+    if ( delegate != nullptr &&
+         _edgeStyles.contains( delegate ) )
+        return _edgeStyles.value( delegate, nullptr );
+    return nullptr;
+}
+
+qan::Style*     StyleManager::getStyleAt( int s )
+{
+    const auto style = qobject_cast< qan::Style* >( _styles.at( s ) );
+    if ( style != nullptr )
+        QQmlEngine::setObjectOwnership(style, QQmlEngine::CppOwnership );
+    return style;
+}
+
+>>>>>>> dev
 //-----------------------------------------------------------------------------
 
 } // ::qan

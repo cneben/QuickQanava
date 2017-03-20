@@ -49,7 +49,10 @@ namespace qan { // ::qan
 class GraphView : public qan::Navigable
 {
     Q_OBJECT
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
     /*! \name GraphView Object Management *///---------------------------------
     //@{
 public:
@@ -61,16 +64,43 @@ public:
 public:
     //! Graph that should be displayed in this graph view.
     Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
+<<<<<<< HEAD
     void                setGraph( qan::Graph* graph );
     inline qan::Graph*  getGraph( ) const { return _graph.data(); }
 private:
     QPointer< qan::Graph >  _graph{ nullptr };
 signals:
     void            graphChanged( );
+=======
+    void                    setGraph( qan::Graph* graph );
+    inline qan::Graph*      getGraph( ) const noexcept { return _graph.data(); }
+private:
+    QPointer<qan::Graph>    _graph{ nullptr };
+signals:
+    void                    graphChanged( );
+>>>>>>> dev
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
     virtual void    navigableClicked(QPointF pos) override;
+<<<<<<< HEAD
+=======
+
+signals:
+    void            connectorChanged();
+
+    void            nodeClicked( qan::Node* node, QPointF pos );
+    void            nodeRightClicked( qan::Node* node, QPointF pos );
+    void            nodeDoubleClicked( qan::Node* node, QPointF pos );
+
+    void            edgeClicked( qan::Edge* edge, QPointF pos );
+    void            edgeRightClicked( qan::Edge* edge, QPointF pos );
+    void            edgeDoubleClicked( qan::Edge* edge, QPointF pos );
+
+    void            groupClicked( qan::Group* group, QPointF pos );
+    void            groupRightClicked( qan::Group* group, QPointF pos );
+    void            groupDoubleClicked( qan::Group* group, QPointF pos );
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };

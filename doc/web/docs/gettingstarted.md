@@ -52,11 +52,17 @@ Qan.GraphView {
   navigable   : true
   graph: Qan.Graph {
       id: topology
+<<<<<<< HEAD
       anchors.fill: parent
       clip: true
       onNodeRightClicked: {
         /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
         menu.x = globalPos.x; menu.y = globalPos.y						// For example to open a popup menu
+=======
+      onNodeRightClicked: {
+        /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
+        menu.x = globalPos.x; menu.y = globalPos.y					// For example to open a popup menu
+>>>>>>> dev
         menu.open()*/
       }
     } // Qan.Graph: topology
@@ -75,8 +81,13 @@ Navigation could be disabled by setting the `navigable` property to false (it de
 QuickQanava allow visual connection of node with the `Qan.ConnectorDropNode` component. Visual connection of nodes is configured in your main `Qan.Graph` component with the following properties:
 
 - `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
+<<<<<<< HEAD
 - `enableConnectorDropNode` (bool): Set to true to enable visual connection of nodes (default to false).
 - `connectorDropNodeEdgeClassName` (string): String that could be modified by the user to specify a custom class name for the edges created by visual drop node connector (default to "qan::Edge", default edge delegate component).
+=======
+- `enableConnector` (bool): Set to true to enable visual connection of nodes (default to false).
+- **deprecated** `connectorDropNodeEdgeClassName` (string): String that could be modified by the user to specify a custom class name for the edges created by visual drop node connector (default to "qan::Edge", default edge delegate component).
+>>>>>>> dev
 
 ![Groups](images/visual-node-connector.gif)
 
@@ -86,7 +97,11 @@ Qan.GraphView {
   anchors.fill: parent
   graph : Qan.Graph {
     anchors.fill: parent
+<<<<<<< HEAD
     enableConnectorDropNode: true
+=======
+    connectorEnabled: true
+>>>>>>> dev
   } // Qan.Graph
 } // Qan.GraphView
 ```
@@ -183,6 +198,7 @@ Qan.Graph {
 Displaying Custom Nodes
 ------------------
 
+<<<<<<< HEAD
 See the `custom` sample for more informations on specifying custom delegates for nodes and edges.
 
 Defining Styles
@@ -250,6 +266,20 @@ You can then add `custom.pb.cc` and `custom.pb.h` to your qmake project configur
 ```
 
 See the topology sample for a compilable example.
+=======
+See the `custom.qml` file in `nodes` sample for more informations on specifying custom delegates for nodes and edges.
+
+When defining custom nodes with complex geometry (ie. non rectangular), there is multiple ways to take bounding shape generation into account :
+  - Using the default behavior for rectangular node with complexBoundingShape set to false (default value), bounding shape is automatically generated on node width or height change in generateDefaultBoundingShape().
+  - Using dedicated code by setting complexBoundingShape to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.
+
+Note that signal requestUpdateBoundingShape won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override \c generateDefaultBoundingShape() method.
+
+Defining Styles
+------------------
+
+
+>>>>>>> dev
 
 
 

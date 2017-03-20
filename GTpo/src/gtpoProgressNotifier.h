@@ -35,7 +35,11 @@
 
 // GTpo headers
 #include "./gtpoUtils.h"
+<<<<<<< HEAD
 #include "./gtpoGraph.h"
+=======
+#include "./gtpoGenGraph.h"
+>>>>>>> dev
 
 // STD headers
 #include <deque>

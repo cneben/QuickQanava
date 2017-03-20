@@ -26,7 +26,11 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
+<<<<<<< HEAD
 import QtQuick.Controls     1.4
+=======
+import QtQuick.Controls     2.1
+>>>>>>> dev
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -39,10 +43,13 @@ Item {
     width: Math.max( content.width, 75 )
     height: Math.max( content.height, 40 )
 
+<<<<<<< HEAD
     property int    nameTextSize: 14
     property bool   nameTextBold: true
     property color  nameTextColor: "black"
 
+=======
+>>>>>>> dev
     property color  backColor: Qt.rgba( 0.97, 0.97, 0.97, 1.0 )
 
     default property alias children : content.children
@@ -51,6 +58,7 @@ Item {
     property alias  radius: groupBackground.radius
     property alias  border: groupBackground.border
 
+<<<<<<< HEAD
     property var    group
 
     signal  groupClicked( var group, var p )
@@ -126,10 +134,18 @@ Item {
             if ( mouse.button === Qt.LeftButton )
                 template.groupDoubleClicked( group, Qt.point( mouse.x, mouse.y ) )
         }
+=======
+    property var    groupItem: undefined
+    Item {
+        id: content
+        x: 0; y: 0; z: 3
+        visible: !groupItem.collapsed
+>>>>>>> dev
     }
     Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
         id: groupBackground
         anchors.fill: content
+<<<<<<< HEAD
         visible: !group.collapsed
         z: 1;
         color: backColor
@@ -137,6 +153,54 @@ Item {
         border.width: 2
         border.color: Qt.darker( backColor, 1.2 )
     }
+=======
+        visible: !groupItem.collapsed
+        z: 1;
+        color: backColor
+        radius: 6
+        border.width: 2; border.color: Qt.darker( backColor, 1.2 )
+    }
+    RowLayout {
+        id: headerLayout
+        x: 0;   y: -collapser.height; z:2
+        width: content.width; height: collapser.height
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+        spacing: 0
+        ToolButton {
+            id: collapser
+            padding: 0
+            Layout.preferredWidth: 32; Layout.preferredHeight: 32
+            text: groupItem ? ( groupItem.collapsed ? "+" : "-" ) : "-"
+            font.pointSize: 14; font.bold: true
+            onClicked: groupItem.collapsed = !groupItem.collapsed
+        }
+        Item {
+            clip: false
+            Layout.fillWidth: true; Layout.fillHeight: true
+            LabelEditor {
+                clip: false
+                id: labelEditor
+                anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+                target: groupItem && groupItem.group ? groupItem.group : undefined
+                visible: false
+            }
+            Label {
+                id: groupLabel
+                anchors.fill: parent
+                text: groupItem && groupItem.group ? groupItem.group.label : "              "
+                visible: !labelEditor.visible
+                verticalAlignment: Text.AlignVCenter
+                elide:  Text.ElideRight
+                MouseArea {
+                    anchors.fill: parent
+                    preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
+                    drag.target: groupItem.draggable ? groupItem : null
+                    onDoubleClicked: labelEditor.visible = true
+                }
+            }
+        }
+    } // RowLayout: collapser + label
+>>>>>>> dev
 
     // Emitted by qan::Group when node dragging start
     function onNodeDragEnter() { groupBackground.color = Qt.binding( function() { return Qt.darker( template.backColor, 1.05 ) } ) }

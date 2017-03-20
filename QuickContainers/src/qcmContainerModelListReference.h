@@ -201,14 +201,24 @@ private:
     }
     inline auto appendImpl( QObject*, ItemDispatcherBase::shared_ptr_type )                 const ->bool { return false; }
     inline auto appendImpl( QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> bool {
+<<<<<<< HEAD
         if ( _containerModel ) {
+=======
+        (void)object;
+        /*if ( _containerModel ) {
+>>>>>>> dev
             auto itemConcretePtr = qobject_cast<typename ContainerModel::ItemT::element_type*>(object);
             if ( itemConcretePtr ) {    // Do not try to build a new shared_ptr if conversion to concrete type fails
                 auto itemPtr = std::make_shared<typename ContainerModel::ItemT::element_type>(itemConcretePtr);
                 _containerModel->append(itemPtr); // Calling std::shared_ptr{} ctor with target qobject
             }
         }
+<<<<<<< HEAD
         return true;
+=======
+        return true;*/
+        return false;
+>>>>>>> dev
     }
     inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_type )                   const -> bool { return false; }
     inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_qobject_type )           const -> bool {

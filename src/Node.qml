@@ -29,12 +29,21 @@ import QtQuick      2.7
 import QuickQanava  2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
+<<<<<<< HEAD
 Qan.AbstractNode {
     id: rectNode
+=======
+Qan.NodeItem {
+    id: nodeItem
+>>>>>>> dev
     width: 110
     height: 50
     Qan.RectNodeTemplate {
         anchors.fill: parent
+<<<<<<< HEAD
         node : rectNode
+=======
+        nodeItem : parent
+>>>>>>> dev
     }
 }

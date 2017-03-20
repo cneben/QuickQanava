@@ -9,6 +9,10 @@ QT		+= core
 include (../gtpo-common.pri)
 
 HEADERS +=  ./gtpoUtils.h               \
+<<<<<<< HEAD
+=======
+            ./gtpoContainer.h           \
+>>>>>>> dev
             ./gtpoGraph.h               \
             ./gtpoGraph.hpp             \
             ./gtpoEdge.hpp              \

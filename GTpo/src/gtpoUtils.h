@@ -65,7 +65,11 @@ public:
 template < class E = gtpo::bad_topology_error >
 auto    assert_throw( bool expr, std::string message = std::string{ "" } ) noexcept( false ) -> void {
     if ( !expr )
+<<<<<<< HEAD
         throw E( message );
+=======
+        throw E{ message };
+>>>>>>> dev
 }
 
 //! Compare two std::weak_ptr that must have been checked for expired() and nullptr content (ie use_count()==0).
@@ -93,10 +97,13 @@ auto    find_weak_ptr( const C& container, const T& element ) -> bool {
  * GTpo GenGraph Config configuration struct should inherit from ContainerAccessors since
  * GenGraph access its nodes, edges and groups container trought the generic insert()/remove() interface.
  *
+<<<<<<< HEAD
  * For example, if you define class GenGraph< QtConfig >, your Qt config class could inherit
  * from qtpo::ContainerAccessors (include gtpoQtUtils.h), for the standard library, use
  * gtpo::StdContainerAccessors (DefaultConfig inherits gtpo::StdContainerAccessors to provide
  * default implementations for accessors working with most STL containers.
+=======
+>>>>>>> dev
  */
 struct ContainerAccessors {
     /*! \brief Generic "item inserter" for list/set/vector, specialize for your custom container types.

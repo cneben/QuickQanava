@@ -33,9 +33,15 @@ import QtGraphicalEffects   1.0
 import QuickQanava  2.0 as Qan
 import "."          as Qan
 
+<<<<<<< HEAD
 Qan.AbstractGroup {
     id: group
     x: 0;   y: 0
+=======
+Qan.GroupItem {
+    id: groupItem
+    x: 0;   y: 0; z:0
+>>>>>>> dev
     width: template.content.width;
     height: template.content.height
     Layout.preferredWidth: 150
@@ -47,6 +53,7 @@ Qan.AbstractGroup {
     Qan.RectGroupTemplate {
         id: template
         anchors.fill: parent
+<<<<<<< HEAD
         group: group
         onGroupClicked: group.groupClicked( group, p )
         onGroupDoubleClicked: group.groupDoubleClicked( group, p )
@@ -58,6 +65,16 @@ Qan.AbstractGroup {
             target: template.content
             minimumTargetSize: Qt.size( Math.max( group.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
                                         Math.max( group.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
+=======
+        groupItem: parent
+        Qan.BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+            id: groupResizer
+            x: 0; y: 0; z: 3
+            visible: groupItem.item ? !groupItem.item.collapsed : true
+            target: template.content
+            minimumTargetSize: Qt.size( Math.max( groupItem.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
+                                        Math.max( groupItem.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
+>>>>>>> dev
         }
     }
 

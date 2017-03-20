@@ -45,11 +45,16 @@ auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behavio
     // (*behaviour) == (*behaviour.get())
     // Equivalent to: ((*behaviour.get()).*method)(arg)
     for ( auto& behaviour : _behaviours )
+<<<<<<< HEAD
         if ( behaviour != nullptr )
+=======
+        if ( behaviour )
+>>>>>>> dev
             ((*behaviour).*method)(arg);
 }
 
 template < class Behaviour, class SBehaviours  >
+<<<<<<< HEAD
 auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours0( void (Behaviour::*method)() ) noexcept -> void
 {
     for ( auto& behaviour : _behaviours )
@@ -230,5 +235,29 @@ void    GraphGroupAjacentEdgesBehaviour< Config >::edgeRemoved( WeakEdge& weakEd
 //-----------------------------------------------------------------------------
 
 
+=======
+template < class T, class T2 >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&, T2&), T& arg, T2& arg2 ) noexcept -> void
+{
+    // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
+    // For calling pointer on template template parameter template keyword functions.
+    // std::unique_ptr has no overload for .* or ->* operator
+    // (*behaviour) == (*behaviour.get())
+    // Equivalent to: ((*behaviour.get()).*method)(arg)
+    for ( auto& behaviour : _behaviours )
+        if ( behaviour )
+            ((*behaviour).*method)(arg, arg2);
+}
+
+template < class Behaviour, class SBehaviours  >
+auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours0( void (Behaviour::*method)() ) noexcept -> void
+{
+    for ( auto& behaviour : _behaviours )
+        if ( behaviour != nullptr )
+            ((*behaviour).*method)();
+}
+//-----------------------------------------------------------------------------
+
+>>>>>>> dev
 } // ::gtpo
 

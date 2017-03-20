@@ -1,5 +1,6 @@
 module QuickQanava
 
+<<<<<<< HEAD
 Edge 2.0 Node.qml
 Node 2.0 Node.qml
 Graph 2.0 Graph.qml
@@ -12,3 +13,16 @@ CanvasNodeTemplate 2.0 CanvasNodeTemplate.qml
 StyleListView 2.0 StyleListView.qml
 StyleEditor 2.0 StyleEditor.qml
 ConnectorDropNode 2.0 ConnectorDropNode.qml
+=======
+Edge		2.0 Edge.qml
+Node 		2.0 Node.qml
+GraphView	2.0 GraphView.qml
+Group 		2.0 Group.qml
+RectNodeTemplate	2.0 RectNodeTemplate.qml
+RectGroupTemplate	2.0 RectGroupTemplate.qml
+CanvasNodeTemplate	2.0 CanvasNodeTemplate.qml
+VisualConnector 2.0 VisualConnector.qml
+LabelEditor	    2.0 LabelEditor.qml
+StyleListView	2.0 StyleListView.qml
+StyleEditor 	2.0 StyleEditor.qml
+>>>>>>> dev

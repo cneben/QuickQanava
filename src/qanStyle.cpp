@@ -35,10 +35,15 @@
 namespace qan { // ::qan
 
 /* Style Object Management *///------------------------------------------------
+<<<<<<< HEAD
 Style::Style( QString name, QString target, QString metaTarget, QObject* parent ) :
     QObject{ parent },
     _target{ target },
     _metaTarget{ metaTarget },
+=======
+Style::Style( QString name, QObject* parent ) :
+    QObject{ parent },
+>>>>>>> dev
     _name{ name }
 {
 
@@ -48,7 +53,11 @@ Style::Style( QString name, QString target, QString metaTarget, QObject* parent 
 /* Style Management *///-------------------------------------------------------
 Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
 {
+<<<<<<< HEAD
     Style* dst = nullptr;
+=======
+ /*   Style* dst = nullptr;
+>>>>>>> dev
     if ( getMetaTarget() == QStringLiteral("qan::Node") )
         dst = new qan::NodeStyle( duplicatedStyleName, getTarget(), dstParent  );
     else if ( getMetaTarget() == QStringLiteral("qan::Edge") )
@@ -61,22 +70,38 @@ Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
         dst->setName( duplicatedStyleName );    // Name has probably be set to this style name during copy, reset it...
         dst->setProperty( "name", duplicatedStyleName );
     }
+<<<<<<< HEAD
     return dst;
+=======
+    return dst;*/
+    // FIXME QAN3
+    return nullptr;
+>>>>>>> dev
 }
 //-----------------------------------------------------------------------------
 
 
 /* Node Style Object Management *///-------------------------------------------
+<<<<<<< HEAD
 NodeStyle::NodeStyle( QString name, QString target, QObject* parent ) :
     qan::Style( name, target, QStringLiteral("qan::Node"), parent )
+=======
+NodeStyle::NodeStyle( QString name, QObject* parent ) :
+    qan::Style( name, parent )
+>>>>>>> dev
 {
 }
 //-----------------------------------------------------------------------------
 
 
 /* Edge Style Object Management *///-------------------------------------------
+<<<<<<< HEAD
 EdgeStyle::EdgeStyle( QString name, QString target, QObject* parent ) :
     qan::Style( name, target, QStringLiteral("qan::Edge"), parent )
+=======
+EdgeStyle::EdgeStyle( QString name, QObject* parent ) :
+    qan::Style( name, parent )
+>>>>>>> dev
 {
 }
 //-----------------------------------------------------------------------------

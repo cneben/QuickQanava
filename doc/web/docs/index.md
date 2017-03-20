@@ -41,9 +41,16 @@ cd QuickQanava
 
 | Node Grouping                | Visual Connection of Nodes         | 
 | :---:                       | :---:             | 
+<<<<<<< HEAD
 | ![groups](images/groups-overview.gif) | ![connector](images/visual-node-connector.gif) | 
 
 ![styles](images/style.png)
+=======
+| ![groups](images/sample-groups.gif) | ![connector](images/sample-nodes.gif) | 
+| ![connector](images/sample-connector.gif) | ![styles](images/sample-styles.gif) | 
+
+![styles](images/topology.png)
+>>>>>>> dev
 
 
 

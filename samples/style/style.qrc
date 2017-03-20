@@ -1,6 +1,13 @@
 <RCC>
     <qresource prefix="/">
+<<<<<<< HEAD
         <file>main.qml</file>
+=======
+        <file>style.qml</file>
+        <file>RectNode.qml</file>
+        <file>RoundNode.qml</file>
+        <file>CustomEdge.qml</file>
+>>>>>>> dev
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

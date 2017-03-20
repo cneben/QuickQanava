@@ -32,7 +32,11 @@
 #include <GTpo>
 
 // QuickQanava headers
+<<<<<<< HEAD
 #include "./qanConfig.h"
+=======
+#include "./qanGraphConfig.h"
+>>>>>>> dev
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
@@ -41,6 +45,7 @@
 
 // Qt headers
 #include <QQuickItem>
+<<<<<<< HEAD
 #include <QSharedPointer>
 #include <QAbstractListModel>
 
@@ -54,6 +59,28 @@ class Graph : public gtpo::GenGraph< qan::Config >
 {
     Q_OBJECT
     using GTpoGraph = gtpo::GenGraph< qan::Config >;
+=======
+#include <QQmlParserStatus>
+#include <QSharedPointer>
+#include <QAbstractListModel>
+
+//! Main QuickQanava namespace
+namespace qan { // ::qan
+
+class Graph;
+class Connector;
+
+/*! \brief Main interface to manage graph topology.
+ *
+ * \nosubgrouping
+ */
+class Graph : public gtpo::GenGraph< qan::GraphConfig >
+{
+    Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+
+    using GTpoGraph = gtpo::GenGraph< qan::GraphConfig >;
+>>>>>>> dev
 
     /*! \name Graph Object Management *///-------------------------------------
     //@{
@@ -65,9 +92,19 @@ public:
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
+<<<<<<< HEAD
     virtual ~Graph( ) { clearDelegates(); }
     Graph( const Graph& ) = delete;
 public:
+=======
+    virtual ~Graph();
+    Graph( const Graph& ) = delete;
+public:
+    //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
+    void    componentComplete() override;
+
+public:
+>>>>>>> dev
     /*! \brief Clear this graph topology and styles.
      *
      * \note Registered  node and edge delegates are not cleared, you must manually call clearDelegate()
@@ -76,9 +113,12 @@ public:
     Q_INVOKABLE virtual void    qmlClearGraph() noexcept;
     void                        clear() noexcept;
 
+<<<<<<< HEAD
     Q_INVOKABLE void    addControlNode( qan::Node* node );
     Q_INVOKABLE void    removeControlNode( qan::Node* node );
 
+=======
+>>>>>>> dev
 public:
     /*! \brief Similar to QQuickItem::childAt() method, except that it take edge bounding shape into account.
      *
@@ -92,7 +132,11 @@ public:
     /*! \brief Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
      *
      */
+<<<<<<< HEAD
     Q_INVOKABLE qan::Group*  groupAt( const QPointF& p, const QSizeF& s ) const;
+=======
+    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s ) const;
+>>>>>>> dev
 
 public:
     /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
@@ -106,13 +150,18 @@ public:
     inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
     void                        setContainerItem( QQuickItem* containerItem );
 signals:
+<<<<<<< HEAD
     //! Used internally, never change containerItem.
     void                        containerItemChanged( ); // Never used, avoid a QML warning
+=======
+    void                        containerItemChanged();
+>>>>>>> dev
 private:
     QPointer< QQuickItem >      _containerItem{nullptr};
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
@@ -253,10 +302,98 @@ protected:
     //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
     static void setCppOwnership( QQuickItem* item );
 protected:
+=======
+    /*! \name Visual connection Management *///--------------------------------
+    //@{
+public:
+    /*! \brief Set the visual connector source node.
+     *
+     * \note If \c sourceNode is nullptr, visual connector is hidden.
+     */
+    Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
+signals:
+    //! Emitted when an edge has been inserted in graph by a visual connector.
+    void                connectorEdgeInserted( qan::Edge* edge );
+public:
+    //! Enable or disable visual connector of nodes in the graph (default to false).
+    Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
+    inline bool     getConnectorEnabled() const noexcept { return _connectorEnabled; }
+    void            setConnectorEnabled( bool connectorEnabled ) noexcept;
+signals:
+    void            connectorEnabledChanged();
+private:
+    bool            _connectorEnabled{false};
+
+public:
+    //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).
+    Q_PROPERTY( qan::Connector* connector READ getConnector NOTIFY connectorChanged FINAL )
+    qan::Connector*             getConnector() noexcept;
+private:
+    QScopedPointer<qan::Connector> _connector{};
+signals:
+    void                        connectorChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Delegates Management *///----------------------------------------
+    //@{
+public:
+    //! Default delegate for qan::Node and Qan.Node nodes.
+    Q_PROPERTY( QQmlComponent* nodeDelegate READ getNodeDelegate WRITE setNodeDelegate NOTIFY nodeDelegateChanged FINAL )
+    inline QQmlComponent*   getNodeDelegate() noexcept { return _nodeDelegate.get(); }
+protected:
+    void                    setNodeDelegate(QQmlComponent* nodeDelegate) noexcept;
+    void                    setNodeDelegate(std::unique_ptr<QQmlComponent> nodeDelegate) noexcept;
+signals:
+    void                    nodeDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _nodeDelegate;
+
+public:
+    //! Default delegate for qan::Edge and Qan.Edge edges.
+    Q_PROPERTY( QQmlComponent* edgeDelegate READ getEdgeDelegate WRITE setEdgeDelegate NOTIFY edgeDelegateChanged FINAL )
+    inline QQmlComponent*   getEdgeDelegate() noexcept { return _edgeDelegate.get(); }
+protected:
+    void                    setEdgeDelegate(QQmlComponent* edgeDelegate) noexcept;
+    void                    setEdgeDelegate(std::unique_ptr<QQmlComponent> edgeDelegate) noexcept;
+signals:
+    void                    edgeDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _edgeDelegate;
+
+public:
+    //! Default delegate for qan::Group and Qan.Group groups.
+    Q_PROPERTY( QQmlComponent* groupDelegate READ getGroupDelegate WRITE setGroupDelegate NOTIFY groupDelegateChanged FINAL )
+    inline QQmlComponent*   getGroupDelegate() noexcept { return _groupDelegate.get(); }
+protected:
+    void                    setGroupDelegate(QQmlComponent* groupDelegate) noexcept;
+    void                    setGroupDelegate(std::unique_ptr<QQmlComponent> groupDelegate) noexcept;
+signals:
+    void                    groupDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _groupDelegate;
+
+protected:
+    //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
+    QQuickItem*             createFromComponent( QQmlComponent* component,
+                                                 qan::Style& style,
+                                                 qan::Node* node = nullptr,
+                                                 qan::Edge* edge = nullptr,
+                                                 qan::Group* group = nullptr );
+
+    //! Shortcut to createComponent(), mainly used in Qan.StyleList View to generate item for style pre visualization.
+    Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
+
+    //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
+    static void             setCppOwnership( QQuickItem* item );
+
+public:
+>>>>>>> dev
     /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
      *
      * \note Internally used to generate selection rectangles around node, but part of the public API.
      */
+<<<<<<< HEAD
     QQuickItem*     createRectangle( QQuickItem* parent );
 private:
     std::unique_ptr< QQmlComponent >   _rectangleComponent{nullptr};
@@ -265,14 +402,24 @@ private:
     QMap< QString, QQmlComponent* > _nodeClassComponents;
     QMap< QString, QQmlComponent* > _edgeClassComponents;
     QMap< QString, QQmlComponent* > _groupClassComponents;
+=======
+    QQuickItem*                     createRectangle( QQuickItem* parent );
+private:
+    std::unique_ptr<QQmlComponent>  _rectangleComponent{nullptr};
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     using Node              = typename Config::Node;
     using WeakNode          = std::weak_ptr< typename Config::Node >;
+=======
+    using Node              = typename GraphConfig::FinalNode;
+    using WeakNode          = GTpoGraph::WeakNode;
+>>>>>>> dev
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -286,6 +433,7 @@ public:
      */
     Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
 
+<<<<<<< HEAD
     //! Shortcut to GTpoGraph::insertNode.
     WeakNode                insertNode( SharedNode node );
 
@@ -301,11 +449,16 @@ public:
 
     //! Defined for serialization support, do not use.
     virtual WeakNode        createNode( const std::string& className ) override;
+=======
+    template < class Node_t >
+    qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr );
+>>>>>>> dev
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
+<<<<<<< HEAD
     //! Test if a given \c item is a node registered in the graph.
     Q_INVOKABLE bool        isNode( QQuickItem* item ) const;
 
@@ -317,11 +470,19 @@ public:
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount( ) { return GTpoGraph::getNodeCount(); }
+=======
+    //! Shortcut to gtpo::GenGraph<>::getNodeCount().
+    Q_INVOKABLE int         getNodeCount() { return GTpoGraph::getNodeCount(); }
+>>>>>>> dev
 
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
+<<<<<<< HEAD
     QAbstractItemModel* getNodesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
+=======
+    QAbstractItemModel*     getNodesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
+>>>>>>> dev
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -338,6 +499,7 @@ signals:
     /*! \name Graph Edge Management *///---------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     Q_INVOKABLE qan::Edge*  insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
 
@@ -362,6 +524,22 @@ public:
     //! Defined for serialization support, do not use, not part of public API.
     virtual WeakEdge        createEdge( const std::string& className, WeakNode source, WeakEdge destination  ) override;
 
+=======
+    //! QML shortcut to insertEdge() method.
+    Q_INVOKABLE qan::Edge*  insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::insertEdge().
+    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
+
+    //! Shortcut to gtpo::GenGraph<>::insertEdge().
+    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
+
+protected:
+    template < class Edge_t >
+    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
+
+public:
+>>>>>>> dev
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
     Q_INVOKABLE void        removeEdge( qan::Node* source, qan::Node* destination );
 
@@ -374,35 +552,56 @@ public:
 public:
     //! Access the list of edges with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
+<<<<<<< HEAD
     QAbstractItemModel* getEdgesModel( ) const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
+=======
+    QAbstractItemModel* getEdgesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
+>>>>>>> dev
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
      *
      *  \sa nodeClicked()
      */
+<<<<<<< HEAD
     void            edgeClicked( QVariant edge, QVariant pos );
+=======
+    void            edgeClicked( qan::Edge* edge, QPointF pos );
+>>>>>>> dev
     /*! \brief Emitted whenever a node registered in this graph is right clicked.
      *
      *  \sa nodeRightClicked()
      */
+<<<<<<< HEAD
     void            edgeRightClicked( QVariant edge, QVariant pos );
+=======
+    void            edgeRightClicked( qan::Edge* edge, QPointF pos );
+>>>>>>> dev
     /*! \brief Emitted whenever a node registered in this graph is double clicked.
      *
      *  \sa nodeDoubleClicked()
      */
+<<<<<<< HEAD
     void            edgeDoubleClicked( QVariant edge, QVariant pos );
+=======
+    void            edgeDoubleClicked( qan::Edge* edge, QPointF pos );
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     //! Defined for serialization support, do not use.
     virtual WeakGroup       createGroup( const std::string& className ) override;
 
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE qan::Group* insertGroup( QString className = "qan::Group" );
+=======
+    //! Shortcut to gtpo::GenGraph<>::insertGroup().
+    Q_INVOKABLE qan::Group* insertGroup();
+>>>>>>> dev
 
     //! Shortcut to gtpo::GenGraph<>::removeGroup().
     Q_INVOKABLE void        removeGroup( qan::Group* group );
@@ -411,7 +610,23 @@ public:
     bool                    hasGroup( qan::Group* group ) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
+<<<<<<< HEAD
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::Config >::getGroupCount(); }
+=======
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
+
+    //! \copydoc gtpo::GenGraph::groupNode()
+    auto            groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void;
+
+    //! \copydoc gtpo::GenGraph::groupNode()
+    auto            groupNode( qan::Group* group, qan::Group* node ) noexcept(false) -> void;
+
+    //! \copydoc gtpo::GenGraph::ungroupNode()
+    auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
+
+    //! \copydoc gtpo::GenGraph::ungroupNode()
+    auto            ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void;
+>>>>>>> dev
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
@@ -426,6 +641,7 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
@@ -451,12 +667,137 @@ public:
                                           qreal minWidth, qreal maxWidth,
                                           qreal minHeight, qreal maxHeight,
                                           QRectF br );
+=======
+    /*! \name Selection Management *///----------------------------------------
+    //@{
+public:
+    /*! \brief Graph node selection policy (default to \c SelectOnClick);
+     * \li \c NoSelection: Selection of nodes is disabled.
+     * \li \c SelectOnClick (default): Node is selected when clicked, multiple selection is allowed with CTRL.
+     * \li \c SelectOnCtrlClick: Node is selected only when CTRL is pressed, multiple selection is allowed with CTRL.
+     */
+    enum SelectionPolicy { NoSelection, SelectOnClick, SelectOnCtrlClick };
+    Q_ENUM(SelectionPolicy)
+
+public:
+    /*! \brief Current graph selection policy.
+     *
+     * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
+     */
+    Q_PROPERTY( SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged FINAL )
+    void                    setSelectionPolicy( SelectionPolicy selectionPolicy ) noexcept;
+    inline SelectionPolicy  getSelectionPolicy() const noexcept { return _selectionPolicy; }
+private:
+    SelectionPolicy         _selectionPolicy{ SelectionPolicy::SelectOnClick };
+signals:
+    void                    selectionPolicyChanged();
+
+public:
+    //! Color for the node selection hilgither component (default to dark blue).
+    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
+    void            setSelectionColor( QColor selectionColor ) noexcept;
+    inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
+private:
+    QColor          _selectionColor{ Qt::darkBlue };
+signals:
+    void            selectionColorChanged();
+
+public:
+    //! Selection hilgither item stroke width (default to 3.0).
+    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
+    void            setSelectionWeight( qreal selectionWeight ) noexcept;
+    inline qreal    getSelectionWeight() const noexcept { return _selectionWeight; }
+private:
+    qreal           _selectionWeight{ 3. };
+signals:
+    void            selectionWeightChanged( );
+
+public:
+    //! Margin between the selection hilgither item and a selected item (default to 3.0).
+    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
+    void            setSelectionMargin( qreal selectionMargin ) noexcept;
+    inline qreal    getSelectionMargin() const noexcept { return _selectionMargin; }
+private:
+    qreal           _selectionMargin{ 3. };
+signals:
+    void            selectionMarginChanged();
+
+public:
+    /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
+     *
+     * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
+     * method will always return false.
+     */
+    bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
+
+    //! Similar to selectNode() for qan::Group (internally group is a node).
+    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers );
+
+    /*! \brief Add a node in the current selection.
+     */
+    void            addToSelection( qan::Node& node );
+    //! \copydoc addToSelection
+    void            addToSelection( qan::Group& node );
+
+    //! Remove a node from the selection.
+    void            removeFromSelection( qan::Node& node );
+    //! \copydoc removeFromSelection
+    void            removeFromSelection( qan::Group& node );
+    //! \copydoc removeFromSelection
+    void            removeFromSelection( QQuickItem* item );
+
+    //! Clear the current selection.
+    void            clearSelection();
+
+    //! Return true if multiple node are selected.
+    inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
+
+public:
+    using SelectedNodes = qcm::ContainerModel< QVector, qan::Node* > ;
+    using SelectedGroups = qcm::ContainerModel< QVector, qan::Group* > ;
+
+    //! Read-only list model of currently selected nodes.
+    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
+    QAbstractListModel* getSelectedNodesModel() { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
+
+    inline auto         getSelectedNodes() noexcept -> SelectedNodes& { return _selectedNodes; }
+    inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
+signals:
+    void                selectedNodesChanged();
+public:
+    inline auto         getSelectedGroups() noexcept -> SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() const noexcept -> const SelectedGroups& { return _selectedGroups; }
+private:
+    SelectedNodes       _selectedNodes;
+    SelectedGroups      _selectedGroups;
+
+protected:
+    virtual void        mousePressEvent(QMouseEvent* event ) override;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Style Management *///--------------------------------------------
+    //@{
+public:
+    /*! \brief Graph style manager (ie list of style applicable to graph primitive).
+     */
+    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager CONSTANT FINAL )
+    inline qan::StyleManager*       getStyleManager() noexcept { return &_styleManager; }
+    inline const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
+private:
+    qan::StyleManager   _styleManager;
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
+<<<<<<< HEAD
+=======
+#include "./qanGraph.hpp"
+
+>>>>>>> dev
 QML_DECLARE_TYPE( qan::Graph::WeakNode )
 
 #endif // qanGraph_h

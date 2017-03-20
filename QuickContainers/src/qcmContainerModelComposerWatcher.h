@@ -163,7 +163,11 @@ protected:
     }
 
     virtual void    onSourceModelAboutToBeReset() override {
+<<<<<<< HEAD
         qDebug() << "ContainerModelComposerImpl<>::onSourceModelAboutToBeReset()";
+=======
+        qWarning() << "ContainerModelComposerImpl<>::onSourceModelAboutToBeReset()";
+>>>>>>> dev
         auto sourceModel = qobject_cast<QAbstractListModel*>(sender());
         if ( sourceModel == nullptr )
             return;
@@ -185,8 +189,13 @@ protected:
     virtual void    onSourceRowsInserted(const QModelIndex &parent, int first, int last) override
     {
         Base::onSourceRowsInserted(parent, first, last);
+<<<<<<< HEAD
         qDebug() << "ContainerModelComposerImpl<>::onSourceRowsInserted()";
         qDebug() << "\t_implTarget->mapRowFromSource( _m2, first )";
+=======
+        qWarning() << "ContainerModelComposerImpl<>::onSourceRowsInserted()";
+        qWarning() << "\t_implTarget->mapRowFromSource( _m2, first )";
+>>>>>>> dev
         if ( _target == nullptr )
             return;
         auto sourceModel = qobject_cast<QAbstractListModel*>(sender());

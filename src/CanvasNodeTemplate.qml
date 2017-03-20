@@ -26,6 +26,10 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
+<<<<<<< HEAD
+=======
+import QtQuick.Controls     2.1
+>>>>>>> dev
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -38,6 +42,7 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
+<<<<<<< HEAD
 
     property         var    node     : undefined
     property         alias  symbol   : nodeSymbol.sourceComponent
@@ -50,6 +55,15 @@ Item {
     onNodeChanged: {
         if ( node )
             nodeUpdateBoundingShape.target = node
+=======
+    property         var    nodeItem : undefined
+    property         alias  symbol   : nodeSymbol.sourceComponent
+    default property alias  children : templateContentLayout.children
+
+    function requestPaint() {
+        if ( nodeSymbol.item )
+            nodeSymbol.item.requestPaint();
+>>>>>>> dev
     }
     Loader {    // Node symbol is node background
         id: nodeSymbol
@@ -62,6 +76,7 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
+<<<<<<< HEAD
         horizontalOffset: node.style.shadowOffset.width
         verticalOffset: node.style.shadowOffset.height
         radius: 8.0
@@ -69,6 +84,15 @@ Item {
         smooth: true
         color: node.style.shadowColor
         visible: node.style.hasShadow
+=======
+        horizontalOffset: nodeItem.style.shadowRadius
+        verticalOffset: nodeItem.style.shadowRadius
+        radius: 8.0
+        samples: 16
+        smooth: true
+        color: nodeItem.style.shadowColor
+        visible: nodeItem.style.hasShadow
+>>>>>>> dev
         transparentBorder: true
     }
 
@@ -77,15 +101,23 @@ Item {
         anchors.fill: parent
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         visible: !labelEditor.visible
+<<<<<<< HEAD
         Text {
+=======
+        Label {
+>>>>>>> dev
             id: nodeLabel
             Layout.fillWidth: true;
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.margins: 5
             width: parent.width
             verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
+<<<<<<< HEAD
             text: node.label
             font: node.style.labelFont
+=======
+            text: nodeItem.node.label
+>>>>>>> dev
             wrapMode: Text.Wrap;    elide: Text.ElideRight; maximumLineCount: 4
         }
         Item {
@@ -96,6 +128,7 @@ Item {
         }
     }
     Connections {
+<<<<<<< HEAD
         target: node
         onNodeDoubleClicked: labelEditor.visible = true
     }
@@ -116,5 +149,15 @@ Item {
     Component.onCompleted: {
         if ( nodeSymbol.item )
             nodeSymbol.item.updateSymbolPolygon()
+=======
+        target: nodeItem
+        onNodeDoubleClicked: labelEditor.visible = true
+    }
+    LabelEditor {
+        id: labelEditor
+        anchors.fill: parent
+        anchors.margins: 4
+        target: parent.nodeItem
+>>>>>>> dev
     }
 }

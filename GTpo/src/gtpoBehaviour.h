@@ -40,6 +40,7 @@
 #include <memory>
 
 // GTpo headers
+<<<<<<< HEAD
 // Nil
 
 namespace gtpo { // ::gtpo
@@ -131,6 +132,12 @@ public:
 };
 
 
+=======
+/* Nil */
+
+namespace gtpo { // ::gtpo
+
+>>>>>>> dev
 /*! \brief Base class for concrete behaviours.
  *
  * \image html behaviour-class.png
@@ -140,13 +147,27 @@ template <class Config >
 class Behaviour
 {
 public:
+<<<<<<< HEAD
     Behaviour() noexcept { }
+=======
+    Behaviour( const std::string& name = {} ) noexcept : _name{name} { }
+>>>>>>> dev
     virtual ~Behaviour() { }
 
     explicit Behaviour( const Behaviour& ) = delete;
     Behaviour& operator=( const Behaviour& ) = delete;
 
 public:
+<<<<<<< HEAD
+=======
+    inline auto getName() const noexcept -> const std::string& { return _name; }
+protected:
+    inline auto setName( const std::string& name )  noexcept -> void { _name = name; }
+private:
+    std::string _name = "";
+
+public:
+>>>>>>> dev
     /*! \brief Enable this behaviour until it is disabled again with a call to disable().
      *
      * \note enabling a disabled behaviour does not apply behaviour on changes made
@@ -176,6 +197,7 @@ protected:
     bool            _enabled = true;
 };
 
+<<<<<<< HEAD
 /*! \brief Define an observer interface to catch changes in a gtpo::GenGroup.
  *
  */
@@ -272,6 +294,8 @@ public:
 
 };
 
+=======
+>>>>>>> dev
 // C++14 O(N log(N)) copied from: http://stackoverflow.com/a/26902803
 // There is more complex O(N) solutions available on SO
 template< class F, class...Ts, std::size_t...Is >
@@ -312,7 +336,11 @@ public:
 
 public:
     //! Clear all actually regsitered behaviours (they are automatically deleted).
+<<<<<<< HEAD
     inline  auto    clear( ) -> void { _behaviours.clear(); }
+=======
+    inline  auto    clear() -> void { _behaviours.clear(); }
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 
@@ -324,7 +352,11 @@ public:
      * \note This is a sink method, Behaviourable get ownership for \c behaviour, since it is
      * difficult to "downcast" unique_ptr, use the following code for calling:
      * \code
+<<<<<<< HEAD
      *   stpo::Graph sg;
+=======
+     *   gtpo::GenGraph<> sg;
+>>>>>>> dev
      *   auto myBehaviour = std::make_unique< MyBehaviour >( );
      *   sg.addBehaviour( myBehaviour.release() );
      * \endcode
@@ -357,6 +389,12 @@ protected:
     template < class T >
     auto    notifyBehaviours( void (Behaviour::*method)(T&) noexcept, T& arg ) noexcept -> void;
 
+<<<<<<< HEAD
+=======
+    template < class T, class T2 >
+    auto    notifyBehaviours( void (Behaviour::*method)(T&, T2&) noexcept, T& arg, T2&) noexcept -> void;
+
+>>>>>>> dev
     //! Similar to notifyBahaviours() but without arguments.
     auto    notifyBehaviours0( void (Behaviour::*method)() noexcept ) noexcept -> void;
 
@@ -383,6 +421,7 @@ private:
     SBehaviours  _sBehaviours;
     //@}
     //-------------------------------------------------------------------------
+<<<<<<< HEAD
 
     /*! \name Notification Helper Methods *///---------------------------------
     //@{
@@ -477,6 +516,8 @@ public:
     virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept override;
     virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept override;
     //-------------------------------------------------------------------------
+=======
+>>>>>>> dev
 };
 
 } // ::gtpo

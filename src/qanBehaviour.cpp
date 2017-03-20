@@ -30,16 +30,30 @@
 
 // QuickQanava headers
 #include "./qanBehaviour.h"
+<<<<<<< HEAD
+=======
+#include "./qanNode.h"
+#include "./qanEdge.h"
+>>>>>>> dev
 
 namespace qan { // ::qan
 
 NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
     QObject( parent ),
+<<<<<<< HEAD
     gtpo::NodeBehaviour< qan::Config >::NodeBehaviour( name )
+=======
+    gtpo::NodeBehaviour< qan::GraphConfig >::NodeBehaviour( name )
+>>>>>>> dev
 {
 
 }
 
+<<<<<<< HEAD
+=======
+// FIXME QAN3
+/*
+>>>>>>> dev
 void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) noexcept
 {
     SharedNode inNode = weakInNode.lock();
@@ -74,5 +88,9 @@ void    NodeBehaviour::nodeModified( WeakNode& weakNode ) noexcept
     if ( node != nullptr )
         nodeModified( *node );
 }
+<<<<<<< HEAD
 
+=======
+*/
+>>>>>>> dev
 } // ::qan

@@ -34,6 +34,7 @@
 #include <QPolygonF>
 
 // QuickQanava headers
+<<<<<<< HEAD
 #include "./qanConfig.h"
 #include "./qanNode.h"
 
@@ -42,18 +43,33 @@ namespace qan { // ::qan
 class Group;
 class Graph;
 class Layout;
+=======
+#include "./qanGraphConfig.h"
+#include "./qanNode.h"
+#include "./qanGroupItem.h"
+
+namespace qan { // ::qan
+
+class Graph;
+class GroupItem;
+>>>>>>> dev
 
 /*! \brief Model a graphics group of nodes.
  *
  * \nosubgrouping
  */
+<<<<<<< HEAD
 class Group : public gtpo::GenGroup< qan::Config >
+=======
+class Group : public gtpo::GenGroup< qan::GraphConfig >
+>>>>>>> dev
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
 public:
     //! Group constructor.
+<<<<<<< HEAD
     explicit Group( QQuickItem* parent = nullptr );
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
@@ -88,6 +104,54 @@ public:
     //! Shortcut to gtpo::GenGroup<qan::Config>::removeNode().
     auto                removeNode( const qan::Node* node ) -> void;
 
+=======
+    explicit Group( QObject* parent = nullptr );
+    /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
+     *
+     */
+    virtual ~Group();
+    Group( const Group& ) = delete;
+
+public:
+    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    //! Shortcut to gtpo::GenGroup<>::getGraph().
+    qan::Graph*         getGraph() noexcept;
+    //! \copydoc getGraph()
+    const qan::Graph*   getGraph() const noexcept;
+
+public:
+    friend class qan::GroupItem;
+
+    Q_PROPERTY( qan::GroupItem* item READ getItem FINAL )
+    inline qan::GroupItem*  getItem() noexcept { return _item.data(); }
+    void                    setItem(qan::GroupItem* item) noexcept;
+private:
+    QPointer<qan::GroupItem> _item;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group Static Factories *///---------------------------------------
+    //@{
+public:
+    /*! \brief Return the default delegate QML component that should be used to generate group \c item.
+     *
+     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
+     */
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+
+    /*! \brief Return the default style that should be used with qan::Group.
+     *
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
+     */
+    static  qan::Style*         style() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group Nodes Management *///--------------------------------------
+    //@{
+public:
+>>>>>>> dev
     //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
     //@}
@@ -96,6 +160,7 @@ public:
     /*! \name Appearance Management *///---------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
     void        setCollapsed( bool collapsed );
     bool        getCollapsed( ) const { return _collapsed; }
@@ -105,6 +170,8 @@ signals:
     void        collapsedChanged( );
 
 public:
+=======
+>>>>>>> dev
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
     void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
     QString     getLabel( ) const { return _label; }
@@ -115,6 +182,7 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
+<<<<<<< HEAD
     /*! \name Group Behaviour/Layout Management *///---------------------------
     //@{
 public:
@@ -135,6 +203,8 @@ protected slots:
     //@}
     //-------------------------------------------------------------------------
 
+=======
+>>>>>>> dev
     /*! \name Group DnD Management *///----------------------------------------
     //@{
 public:
@@ -145,12 +215,18 @@ public:
      * Default to true.
      */
     Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
+<<<<<<< HEAD
     void             setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
     bool             getDraggable( ) { return _draggable; }
+=======
+    void            setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
+    bool            getDraggable( ) { return _draggable; }
+>>>>>>> dev
 private:
     bool            _draggable = true;
 signals:
     void            draggableChanged( );
+<<<<<<< HEAD
 
 public:
     /*! \brief Define if the group actually accept insertion of nodes via drag'n drop (default to true).
@@ -248,6 +324,8 @@ signals:
     void    groupDoubleClicked( qan::Group* group, QPointF p );
     //! Emmited whenever the group is right clicked.
     void    groupRightClicked( qan::Group* group, QPointF p );
+=======
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };
@@ -255,7 +333,10 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Group )
+<<<<<<< HEAD
 Q_DECLARE_METATYPE( std::shared_ptr<qan::Group> )
 Q_DECLARE_METATYPE( std::weak_ptr<qan::Group> )
+=======
+>>>>>>> dev
 
 #endif // qanGroup_h

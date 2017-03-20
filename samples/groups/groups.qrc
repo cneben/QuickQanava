@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
+<<<<<<< HEAD
         <file>main.qml</file>
+=======
+        <file>groups.qml</file>
+        <file>qtquickcontrols2.conf</file>
+>>>>>>> dev
     </qresource>
 </RCC>

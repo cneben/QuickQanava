@@ -48,12 +48,18 @@ namespace qan { // ::qan
  *
  *  Main qan::Style properties are:
  * \li \b name: Style name as it will appears in style edition dialogs.
+<<<<<<< HEAD
  * \li \b target: The concrete style target, for example a style dedicated to a qan::CustomNode will have "qan::CustomNode" as its target.
  * \li \b metaTarget: "qan::Node" for a node style, "qan::Edge" for an edge style and so on. This property is used for
  *      accessing list models of styles for different categories of graph primitive, see method qan::Style::Manager::getStylesModelForTarget()
  *      for more documentation.
  * \sa qan::Node::setStyle()
  * \sa qan::Edge::setStyle()
+=======
+ *
+ * \sa qan::NodeItem::setStyle()
+ * \sa qan::EdgeItem::setStyle()
+>>>>>>> dev
  */
 class Style : public QObject
 {
@@ -62,11 +68,16 @@ class Style : public QObject
     //@{
 public:
     /*! \brief Style constructor with style name initialisation.
+<<<<<<< HEAD
      * \param target  class name for this style default target (ex: with target
      * set to qan::Node, style will be applied by default to every qan::Node
      * created in the graph).
      */
     explicit Style( QString name = "", QString target = "", QString metaTarget = "", QObject* parent = nullptr );
+=======
+     */
+    explicit Style( QString name = "", QObject* parent = nullptr );
+>>>>>>> dev
     virtual ~Style( ) { }
     Style( const Style& ) = delete;
     //@}
@@ -75,6 +86,7 @@ public:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
+<<<<<<< HEAD
     //! Style target (class name of the target primitive for example "qan::Node" or "qan::Edge").
     Q_PROPERTY( QString target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL )
     //! Get this style default target class name (eg qan::Node for a style that apply to node).
@@ -106,6 +118,11 @@ public:
     Q_PROPERTY( QString name READ getName WRITE setName NOTIFY nameChanged FINAL )
     inline  void        setName( QString name ) noexcept { if ( name != _name ) { _name = name; emit nameChanged( ); } }
     inline  QString     getName( ) noexcept { return _name; }
+=======
+    Q_PROPERTY( QString name READ getName WRITE setName NOTIFY nameChanged FINAL )
+    inline  void        setName( QString name ) noexcept { if ( name != _name ) { _name = name; emit nameChanged( ); } }
+    inline  QString     getName() noexcept { return _name; }
+>>>>>>> dev
     inline  QString     getName() const noexcept { return _name; }
 signals:
     void        nameChanged( );
@@ -132,17 +149,27 @@ public:
 
 class NodeStyle : public qan::Style
 {
+<<<<<<< HEAD
     Q_OBJECT
 
     /*! \name NodeStyle Object Management *///---------------------------------
     //@{
+=======
+    /*! \name NodeStyle Object Management *///---------------------------------
+    //@{
+    Q_OBJECT
+>>>>>>> dev
 public:
     /*! \brief Style constructor with style \c name and \c target initialisation.
      *
      * Style \c metaTarget is "qan::Node". NodeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
+<<<<<<< HEAD
     explicit NodeStyle( QString name = "", QString target = "", QObject* parent = nullptr );
+=======
+    explicit NodeStyle( QString name = "", QObject* parent = nullptr );
+>>>>>>> dev
     virtual ~NodeStyle( ) { }
     NodeStyle( const NodeStyle& ) = delete;
     //@}
@@ -152,6 +179,7 @@ public:
     //@{
 public:
     Q_PROPERTY( QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged FINAL )
+<<<<<<< HEAD
     void            setBackColor( const QColor& backColor ) { _backColor = backColor; emit backColorChanged( ); }
     const QColor&   getBackColor( ) const { return _backColor; }
 protected:
@@ -212,6 +240,59 @@ protected:
     QSizeF          _shadowOffset = QSizeF{ 3., 3. };
 signals:
     void            shadowOffsetChanged( );
+=======
+    void            setBackColor( const QColor& backColor ) noexcept { _backColor = backColor; emit backColorChanged( ); }
+    const QColor&   getBackColor() const noexcept { return _backColor; }
+protected:
+    QColor          _backColor{Qt::white};
+signals:
+    void            backColorChanged();
+
+public:
+    Q_PROPERTY( QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL )
+    void            setBorderColor( const QColor& borderColor ) noexcept { _borderColor = borderColor; emit borderColorChanged( ); }
+    const QColor&   getBorderColor() const noexcept { return _borderColor; }
+protected:
+    QColor          _borderColor = QColor( Qt::black );
+signals:
+    void            borderColorChanged();
+
+public:
+    Q_PROPERTY( qreal borderWidth READ getBorderWidth WRITE setBorderWidth NOTIFY borderWidthChanged FINAL )
+    void            setBorderWidth( qreal borderWidth ) noexcept { _borderWidth = borderWidth; emit borderWidthChanged( ); }
+    inline qreal    getBorderWidth() const noexcept { return _borderWidth; }
+protected:
+    qreal           _borderWidth = 1.0;
+signals:
+    void            borderWidthChanged();
+
+public:
+    Q_PROPERTY( bool hasShadow READ getHasShadow WRITE setHasShadow NOTIFY hasShadowChanged FINAL )
+    void            setHasShadow( bool hasShadow ) noexcept { _hasShadow = hasShadow; emit hasShadowChanged( ); }
+    inline bool     getHasShadow() const noexcept { return _hasShadow; }
+protected:
+    bool            _hasShadow = true;
+signals:
+    void            hasShadowChanged();
+
+public:
+    Q_PROPERTY( QColor shadowColor READ getShadowColor WRITE setShadowColor NOTIFY shadowColorChanged FINAL )
+    void            setShadowColor( QColor shadowColor ) noexcept { _shadowColor = shadowColor; emit shadowColorChanged( ); }
+    inline QColor   getShadowColor() const noexcept { return _shadowColor; }
+protected:
+    QColor          _shadowColor = QColor{ 0, 0, 0, 127 };
+signals:
+    void            shadowColorChanged();
+
+public:
+    Q_PROPERTY( qreal shadowRadius READ getShadowRadius WRITE setShadowRadius NOTIFY shadowRadiusChanged FINAL )
+    void            setShadowRadius( qreal shadowRadius ) noexcept { _shadowRadius = shadowRadius; emit shadowRadiusChanged( ); }
+    inline qreal    getShadowRadius() const noexcept { return _shadowRadius; }
+protected:
+    qreal           _shadowRadius{3.};
+signals:
+    void            shadowRadiusChanged();
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };
@@ -219,16 +300,24 @@ signals:
 class EdgeStyle : public qan::Style
 {
     Q_OBJECT
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
     /*! \name EdgeStyle Object Management *///---------------------------------
     //@{
 public:
     /*! \brief Edge style constructor with style \c name and \c target initialisation.
      *
+<<<<<<< HEAD
      * Style \c metaTarget is "qan::Edge". EdgeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
     explicit EdgeStyle( QString name = "", QString target = "", QObject* parent = nullptr );
+=======
+     */
+    explicit EdgeStyle( QString name = "", QObject* parent = nullptr );
+>>>>>>> dev
     virtual ~EdgeStyle( ) { }
     EdgeStyle( const EdgeStyle& ) = delete;
     //@}
@@ -241,6 +330,7 @@ signals:
 
 public:
     Q_PROPERTY( QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged FINAL )
+<<<<<<< HEAD
     void            setLineColor( const QColor& lineColor ) { _lineColor = lineColor; emit lineColorChanged( ); emit styleModified(); }
     const QColor&   getLineColor( ) const { return _lineColor; }
 protected:
@@ -265,6 +355,32 @@ protected:
     qreal       _arrowSize = 4.0;
 signals:
     void        arrowSizeChanged( );
+=======
+    void            setLineColor( const QColor& lineColor ) noexcept { _lineColor = lineColor; emit lineColorChanged( ); emit styleModified(); }
+    const QColor&   getLineColor() const noexcept { return _lineColor; }
+protected:
+    QColor          _lineColor = QColor( 0, 0, 0, 255 );
+signals:
+    void            lineColorChanged();
+
+public:
+    Q_PROPERTY( qreal lineWidth READ getLineWidth WRITE setLineWidth NOTIFY lineWidthChanged FINAL )
+    void            setLineWidth( qreal lineWidth ) noexcept { _lineWidth = lineWidth; emit lineWidthChanged( ); emit styleModified();  }
+    qreal           getLineWidth() const noexcept { return _lineWidth; }
+protected:
+    qreal           _lineWidth = 2.0;
+signals:
+    void            lineWidthChanged();
+
+public:
+    Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL )
+    void            setArrowSize( qreal arrowSize ) noexcept { _arrowSize = arrowSize; emit arrowSizeChanged( ); emit styleModified();  }
+    qreal           getArrowSize() const noexcept { return _arrowSize; }
+protected:
+    qreal           _arrowSize = 4.0;
+signals:
+    void            arrowSizeChanged();
+>>>>>>> dev
     //@}
     //-------------------------------------------------------------------------
 };

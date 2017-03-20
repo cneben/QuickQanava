@@ -2,6 +2,7 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
+<<<<<<< HEAD
 # If QuickQanava is configured with Protocol Buffer, add it to QuickProperties
 # and GTpo too
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
@@ -18,6 +19,8 @@ contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34100  # Remove C4100 unreferenced formal parameter
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267  # Remove C4267 conversion from size_t to int (protobuf)
 }
+=======
+>>>>>>> dev
 include(../GTpo/src/gtpo.pri)
 include(../QuickContainers/src/quickcontainers.pri)
 include(../QuickGeoGL/src/quickgeogl.pri)
@@ -26,6 +29,7 @@ DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
 RESOURCES       +=  $$PWD/QuickQanava.qrc
 
+<<<<<<< HEAD
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {
 CONFIG(release, debug|release) {
     win32-msvc*: QMAKE_CXXFLAGS_WARN_ON -= -w34267 -w34100  # Remove C4100 unreferenced formal parameter
@@ -54,10 +58,31 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanLayout.h               \
             $$PWD/qanLinear.h               \
             $$PWD/qanProgressNotifier.h     \
+=======
+HEADERS +=  $$PWD/QuickQanava.h             \
+            $$PWD/qanUtils.h                \
+            $$PWD/qanGraphConfig.h          \
+            $$PWD/qanGraphView.h            \
+            $$PWD/qanEdge.h                 \
+            $$PWD/qanEdgeItem.h             \
+            $$PWD/qanNode.h                 \
+            $$PWD/qanNodeItem.h             \
+            $$PWD/qanSelectable.h           \
+            $$PWD/qanDraggable.h            \
+            $$PWD/qanDraggableCtrl.h        \
+            $$PWD/qanDraggableCtrl.hpp      \
+            $$PWD/qanConnector.h            \
+            $$PWD/qanBehaviour.h            \
+            $$PWD/qanGroup.h                \
+            $$PWD/qanGroupItem.h            \
+            $$PWD/qanGraph.h                \
+            $$PWD/qanGraph.hpp              \
+>>>>>>> dev
             $$PWD/qanStyle.h                \
             $$PWD/qanStyleManager.h         \
             $$PWD/qanNavigable.h            \
             $$PWD/qanPointGrid.h            \
+<<<<<<< HEAD
             $$PWD/fqlBottomRightResizer.h
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
@@ -69,6 +94,24 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanLayout.cpp             \
             $$PWD/qanLinear.cpp             \
             $$PWD/qanProgressNotifier.cpp   \
+=======
+            $$PWD/qanContainerAdapter.h     \
+            $$PWD/fqlBottomRightResizer.h
+
+SOURCES +=  $$PWD/qanGraphView.cpp          \
+            $$PWD/qanUtils.cpp              \
+            $$PWD/qanEdge.cpp               \
+            $$PWD/qanEdgeItem.cpp           \
+            $$PWD/qanNode.cpp               \
+            $$PWD/qanNodeItem.cpp           \
+            $$PWD/qanSelectable.cpp         \
+            $$PWD/qanDraggable.cpp          \
+            $$PWD/qanConnector.cpp          \
+            $$PWD/qanBehaviour.cpp          \
+            $$PWD/qanGraph.cpp              \
+            $$PWD/qanGroup.cpp              \
+            $$PWD/qanGroupItem.cpp          \
+>>>>>>> dev
             $$PWD/qanStyle.cpp              \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
@@ -87,5 +130,10 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/Edge.qml                  \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \
+<<<<<<< HEAD
                 $$PWD/ConnectorDropNode.qml     \
                 $$PWD/NodeLabelEditor.qml
+=======
+                $$PWD/VisualConnector.qml       \
+                $$PWD/LabelEditor.qml
+>>>>>>> dev

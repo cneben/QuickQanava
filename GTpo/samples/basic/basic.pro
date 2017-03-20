@@ -12,6 +12,10 @@ HEADERS	+=  basic.h
 
 include (../../gtpo-common.pri)
 DEFINES     -= "GTPO_HAS_PROTOBUF"
+<<<<<<< HEAD
+=======
+include (../../src/gtpo.pri)
+>>>>>>> dev
 
 CONFIG(release, debug|release) {
     linux-g++*:     LIBS	+= -L../../build/ -lgtpo -lprotobuf
