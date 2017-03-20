@@ -187,6 +187,7 @@ void    EdgeItem::updateItem()
 {
     qan::NodeItem*  srcItem = _sourceItem.data();
     qan::GroupItem* srcGroupItem = nullptr;
+    qan::GroupItem* dstGroupItem = nullptr;
 
     qan::NodeItem*  dstNodeItem = _destinationItem.data();
     qan::EdgeItem*  dstEdgeItem = _destinationEdge.data();
@@ -207,6 +208,12 @@ void    EdgeItem::updateItem()
         if ( dstNode != nullptr )
             dstNodeItem = dstNode->getItem();
     }
+    if ( dstNodeItem != nullptr &&
+         dstNodeItem->getNode() != nullptr ) {
+        auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->getGroup().lock().get() );
+        if ( dstNodeGroup )
+            dstGroupItem = dstNodeGroup->getItem();
+    }
     if ( dstEdgeItem == nullptr &&
          _edge ) {
         qan::Edge*  dstEdge = static_cast< qan::Edge* >( _edge->getHDst().lock().get() );
@@ -221,7 +228,7 @@ void    EdgeItem::updateItem()
          dstItem == nullptr )
         return;
 
-    qreal sourceZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
+    qreal srcZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
     QPointF srcPos = srcItem->mapToItem( graphContainerItem, QPointF{ 0, 0 } );
     QRectF srcBr{ srcPos, QSizeF{ srcItem->width(), srcItem->height() } };
 
@@ -239,8 +246,8 @@ void    EdgeItem::updateItem()
 
     if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
         // Update edge z to source or destination maximum x
-        qreal dstZ = srcGroupItem != nullptr ? srcGroupItem->z() + dstNodeItem->z() : dstNodeItem->z();
-        setZ( qMax( sourceZ, dstZ ) );
+        qreal dstZ = dstGroupItem != nullptr ? dstGroupItem->z() + dstNodeItem->z() : dstNodeItem->z();
+        setZ( qMax( srcZ, qMax( srcZ, dstZ ) ) );
         p = 0;
         QPolygonF dstBoundingShape{dstNodeItem->getBoundingShape().size()};
         for ( const auto& point: dstNodeItem->getBoundingShape() )
@@ -260,7 +267,7 @@ void    EdgeItem::updateItem()
         setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
     }
     else if ( dstEdgeItem != nullptr ) {            // Node -> Edge restricted hyper edge
-        setZ( qMax( sourceZ, dstEdgeItem->z() ) );  // Update edge z to source or destination maximum x
+        setZ( qMax( srcZ, dstEdgeItem->z() ) );  // Update edge z to source or destination maximum x
         QLineF destinationEdgeLine{ dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP1() ),
                                     dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP2() ) };
         if ( destinationEdgeLine.length() > 0.001 ) {

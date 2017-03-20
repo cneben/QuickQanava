@@ -72,11 +72,9 @@ git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
 ```
 2. Open quickqanava.pro in QtCreator
-  4. Building 'tests': Tests will not compile without a working Protocol Buffer v3 installation: for Windows, modify `quickqanava-common.pri` `win32-msvc*:PROTOCOL_BUFFER3_DIR`, win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR with path containing a valid build directory for Protocol Buffer, Google Test and Google Mock. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
+  4. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
 
 3. Select a kit, build and launch samples.
-
-Compilation errors with messages refering to 'google::' types are usually related to the Protocol Buffer of your local platform being incompatible with the code generated for protocol buffer shipped with QuickQanava, run `run_protoc.sh` script to update `quickqanava.pb.h` and `quickqanava.pb.cc` files.
 
 
 ## QuickQanava Samples:
@@ -84,6 +82,14 @@ Compilation errors with messages refering to 'google::' types are usually relate
 | Nodes       |   |
 | :---:                       | ---             |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |            |
+
+| Visual Connector       |   |
+| :---:                       | ---             |
+| ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) |            |
+
+| Groups       |   |
+| :---:                       | ---             |
+| ![Groups](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-groups.gif) |            |
 
 | Styles       |   |
 | :---:                       | ---             |

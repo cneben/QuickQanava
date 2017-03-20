@@ -95,5 +95,20 @@ Qan.GraphView {
                 customConnector.visible = false
         }
     }
+    Frame {
+        anchors.top: parent.top; anchors.right: parent.right; anchors.rightMargin: 10
+        ColumnLayout {
+            CheckBox {
+                text: qsTr("Enabled Visual Connector")
+                checked: graph.connectorEnabled
+                onClicked: graph.connectorEnabled = checked
+            }
+            CheckBox {
+                text: qsTr("hEdge Enabled")
+                checked: graphView.connectorHEdgeEnabled
+                onClicked: graphView.connectorHEdgeEnabled = checked
+            }
+        }
+    }
 }  // Qan.GraphView
 

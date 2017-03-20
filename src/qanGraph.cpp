@@ -566,7 +566,6 @@ auto    qan::Graph::ungroupNode( Group* group, qan::Group* node ) noexcept(false
 {
     if ( group != nullptr &&
          node != nullptr ) {
-        qDebug() << "qan::Graph::ungroupNode(qan::Group*, qan::Group*)";
         try {
             /*if ( group->getItem() )
                 group->getItem()->ungroupNodeItem(node->getItem());

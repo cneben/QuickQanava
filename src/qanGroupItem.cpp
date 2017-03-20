@@ -49,6 +49,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
              this, &qan::GroupItem::groupMoved );
     connect( this, &qan::GroupItem::yChanged,
              this, &qan::GroupItem::groupMoved );
+    // Update adjacent edges z when group item z is modified.
+    connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
 
     connect( this, &qan::GroupItem::widthChanged,
              this, &qan::GroupItem::onWidthChanged );
@@ -103,17 +105,11 @@ void    GroupItem::styleDestroyed( QObject* style )
 void    GroupItem::onWidthChanged()
 {
     qan::Selectable::updateSelectionWidth();
-    /*if ( _complexBoundingShape )            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();*/
 }
 
 void    GroupItem::onHeightChanged()
 {
     qan::Selectable::updateSelectionHeight();
-    /*if ( _complexBoundingShape )            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();*/
 }
 //-----------------------------------------------------------------------------
 
@@ -142,9 +138,11 @@ void    GroupItem::groupMoved()
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
+        qDebug() << "qan::GroupItem::groupMoved(): getAdjacentEdges.size()=" << _group->getAdjacentEdges().size();
         for ( auto weakEdge : _group->getAdjacentEdges() ) {
             qan::Edge* edge = weakEdge.lock().get();
-            if ( edge != nullptr && edge->getItem() != nullptr )
+            if ( edge != nullptr &&
+                 edge->getItem() != nullptr )
                 edge->getItem()->updateItem();
         }
     }
@@ -219,7 +217,6 @@ void    GroupItem::mousePressEvent( QMouseEvent* event )
     forceActiveFocus();
 
     // Selection management
-    qDebug() << "group isSelectable=" << isSelectable();
     if ( event->button() == Qt::LeftButton &&
          getGroup() &&
          isSelectable() ) {
