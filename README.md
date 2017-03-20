@@ -83,21 +83,6 @@ Compilation errors with messages refering to 'google::' types are usually relate
 | ---                       | :---:             |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/dec/doc/web/docs/images/sample-nodes.gif) |            |
 
-
-![selection](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/Selection.gif)
-
-![resizing and groups sample](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/groups-overview.gif)
-
-![visual node connection](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/visual-node-connector.gif)
-
-![custom node sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/custom.png)
-
-![navigable sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/navigable.png)
-
-![style sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/style.png)
-
-![topology sample](https://github.com/cneben/QuickQanava/blob/master/doc/samples/topology.png)
-
 License
 =======
 
