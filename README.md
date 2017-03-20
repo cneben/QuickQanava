@@ -1,10 +1,10 @@
 [Overview](#QuickQanava) |
+[Roadmap](#Roadmap) |
 [Dependencies](#Dependencies) |
 [Building](#building) |
 [License](#license)
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
-[![GitHub license]](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
 
 **2017/03/05:** See 'dev' for latest changes: [dev README and roadmap](https://github.com/cneben/QuickQanava/blob/dev/README.md)
 
@@ -29,8 +29,8 @@ QuickQanava focus on writting content delegates in QML (even if they could be de
 
 ## Roadmap:
 
-  - **v0.8.0: Complexe topologies***
-	- GTpo (Configurable topology library):
+  - **v0.8.0: Complex topologies**
+    - GTpo (Configurable topology library):
       - [X] Redesign and optimize GTpo generic containers accessors.
       - [X] Add complex topologies support: full restricted hyper edge, group -> node and group -> group topologies.
 	  - [X] Remove any virtual overhead from GTpo.
@@ -43,12 +43,12 @@ QuickQanava focus on writting content delegates in QML (even if they could be de
     - [ ] Update samples for full QQC2 controls support.
     - [X] Redesign visual connection of nodes (add support for custom visual component, invisible edge creation, etc.).
     - [ ] Add full support for groups inside group (ie subgraphs).
-  - **v0.9.0: QuickContainers** (QT/QML observable adapter for STL or Qt containers):	 
+  - **v0.9.0: QuickContainers** (Qt/QML observable adapter for STL or Qt containers):	 
     - [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
 	- [ ] Add support for standard library containers.
 	- [ ] Increase test coverage.
   - **v0.9.0: Advanced edge visualization**	 
-  - [ ] Add full support for Bezier curve edge.
+    - [ ] Add full support for Bezier curve edge.
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
     - [ ] Use Qt 5.9 PathItem for lines, curves and poly rendering instead of QuickGeoGL (QuickGeoGl is probably faster for simple AA lines with its vertex shader, but QuickGeoGL is too complex to maintain).
     - [ ] Add support for multiple "docks" per node (ie. to connect in edges on multiple node side, not only at node center).
@@ -58,11 +58,10 @@ QuickQanava focus on writting content delegates in QML (even if they could be de
 
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
 | ---                       | :---:             | :---:                           | :---:           |
-| GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |   !(https://img.shields.io/badge/license-MIT-blue.svg) MIT|
+| GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |   ![](https://img.shields.io/badge/license-MIT-blue.svg) MIT|
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-- **Google Test** is a *GTpo* dependency, it optionnal for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers:
-  - Google Test GitHub: https://github.com/google/googletest/
+- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
 
 ## Building:
 
@@ -98,6 +97,8 @@ License
 =======
 
 [LGPLv3](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
+
+GTpo (depency) MIT ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Copyright (c) 2017 Delia Stratégie
 
