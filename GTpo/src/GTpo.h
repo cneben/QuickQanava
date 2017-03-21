@@ -45,8 +45,6 @@
 #include "./gtpoGenEdge.hpp"
 #include "./gtpoGenGraph.hpp"
 
-#include "./gtpoSerializer.h"
-#include "./gtpoProgressNotifier.h"
 #include "./gtpoContainerAdapter.h"
 
 #endif // GTpo_h

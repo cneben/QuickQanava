@@ -100,7 +100,7 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::Config>::hasNode().
+    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::GraphConfig>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
     //@}
     //-------------------------------------------------------------------------

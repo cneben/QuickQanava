@@ -40,7 +40,9 @@
 
 namespace qan { // ::qan
 
-/*! \brief Define node behaviours reacting to change in node (QuickQanava adapter for gtpo::NodeBehaviour<>).
+class qan::Node;
+
+/*! \brief Define node behaviour interface to react to node topology events (QuickQanava adapter for gtpo::NodeBehaviour<>).
  *
  *  \nosubgrouping
  */
@@ -53,28 +55,29 @@ public:
     virtual ~NodeBehaviour() { }
     NodeBehaviour( const NodeBehaviour& ) = delete;
 
-    // FIXME QAN3
-/*    using WeakNode  = std::weak_ptr< qan::GraphConfig::Node >;
+    using WeakNode  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakNode;
+    using WeakEdge  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakEdge;
 
-    virtual void    inNodeInserted( WeakNode& weakInNode ) noexcept override;
-    virtual void    inNodeAboutToBeRemoved( WeakNode& weakInNode ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::inNodeInserted()
+    virtual void    inNodeInserted( WeakNode& weakInNode, const WeakEdge& edge ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::inNodeRemoved()
+    virtual void    inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::inNodeRemoved()
     virtual void    inNodeRemoved() noexcept override { }
 
-    virtual void    outNodeInserted( WeakNode& weakOutNode ) noexcept override;
-    virtual void    outNodeRemoved( WeakNode& weakOutNode ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::outNodeInserted()
+    virtual void    outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge  ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::outNodeRemoved()
+    virtual void    outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge  ) noexcept override;
+    //! \copydoc gtpo::NodeBehaviour::outNodeRemoved()
     virtual void    outNodeRemoved() noexcept override { }
 
-    virtual void    nodeModified( WeakNode& weakNode ) noexcept override;
-
 protected:
-    virtual void    inNodeInserted( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
-    virtual void    inNodeAboutToBeRemoved( qan::Node& inNode ) noexcept { Q_UNUSED( inNode ); }
+    virtual void    inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept { Q_UNUSED( inNode ); }
+    virtual void    inNodeRemoved( qan::Node& inNode, qan::Edge& edge  ) noexcept { Q_UNUSED( inNode ); }
 
-    virtual void    outNodeInserted( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
-    virtual void    outNodeRemoved( qan::Node& outNode ) noexcept { Q_UNUSED( outNode ); }
-
-    virtual void    nodeModified( qan::Node& node ) noexcept { Q_UNUSED( node ); }
-    */
+    virtual void    outNodeInserted( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); }
+    virtual void    outNodeRemoved( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); }
 };
 
 } // ::qan

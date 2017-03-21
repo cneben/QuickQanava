@@ -4,9 +4,6 @@ QT += qml quick quickcontrols2
 
 CONFIG += c++14
 
-#include(../../quickqanava-common.pri)
-#include(../../src/quickqanava.pri)
-
 SOURCES +=  ./navigable.cpp             \
             ../../src/qanNavigable.cpp  \
             ../../src/qanPointGrid.cpp

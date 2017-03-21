@@ -42,41 +42,36 @@ NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
 
 }
 
-// FIXME QAN3
-/*
-void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode ) noexcept
+void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
+{
+    auto inNode = weakInNode.lock();
+    auto inEdge = edge.lock();
+    if ( inNode && inEdge )
+        inNodeInserted( *inNode, *inEdge );
+}
+
+void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
 {
     SharedNode inNode = weakInNode.lock();
-    if ( inNode != nullptr )
-        inNodeInserted( *inNode );
+    auto inEdge = edge.lock();
+    if ( inNode && inEdge )
+        inNodeRemoved( *inNode, *inEdge );
 }
 
-void    NodeBehaviour::inNodeAboutToBeRemoved( WeakNode& weakInNode ) noexcept
+void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
 {
-    SharedNode inNode = weakInNode.lock();
-    if ( inNode != nullptr )
-        inNodeAboutToBeRemoved( *inNode );
+    auto outNode = weakOutNode.lock();
+    auto outEdge = edge.lock();
+    if ( outNode && outEdge )
+        outNodeInserted( *outNode, *outEdge );
 }
 
-void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode ) noexcept
+void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
 {
-    SharedNode outNode = weakOutNode.lock();
-    if ( outNode != nullptr )
-        outNodeInserted( *outNode );
+    auto outNode = weakOutNode.lock();
+    auto outEdge = edge.lock();
+    if ( outNode && outEdge )
+        outNodeRemoved( *outNode, *outEdge );
 }
 
-void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode ) noexcept
-{
-    SharedNode outNode = weakOutNode.lock();
-    if ( outNode != nullptr )
-        outNodeRemoved( *outNode );
-}
-
-void    NodeBehaviour::nodeModified( WeakNode& weakNode ) noexcept
-{
-    SharedNode node = weakNode.lock();
-    if ( node != nullptr )
-        nodeModified( *node );
-}
-*/
 } // ::qan
