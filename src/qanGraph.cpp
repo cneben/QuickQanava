@@ -257,6 +257,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             if ( node != nullptr ) {
                 const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
                 if ( nodeItem != nullptr ) {
+                    node->setItem(nodeItem);
                     nodeItem->setNode(node);
                     nodeItem->setGraph(this);
                     _styleManager.setStyleComponent(&style, component );
@@ -265,6 +266,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
                 if ( edgeItem != nullptr ) {
+                    edge->setItem(edgeItem);
                     edgeItem->setEdge(edge);
                     edgeItem->setGraph(this);
                     _styleManager.setStyleComponent(edgeItem->getStyle(), component );
@@ -272,6 +274,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             } else if ( group != nullptr ) {
                 const auto groupItem = qobject_cast<qan::GroupItem*>(object);
                 if ( groupItem != nullptr ) {
+                    group->setItem(groupItem);
                     groupItem->setGroup(group);
                     groupItem->setGraph(this);
                     _styleManager.setStyleComponent(groupItem->getStyle(), component );

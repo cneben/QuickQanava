@@ -95,7 +95,7 @@ private:
     QPointer<qan::Node> _node{nullptr};
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph )
+    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     //! Secure shortcut to getNode().getGraph().
