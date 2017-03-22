@@ -75,6 +75,14 @@ void    Graph::componentComplete()
                     _connector->setGraph(this);
                 _connector->setEnabled(getConnectorEnabled());
                 _connector->setVisible(getConnectorEnabled());
+                _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
+                _connector->setProperty( "connectorColor", getConnectorColor() );
+                _connector->setProperty( "hEdgeEnabled", getConnectorHEdgeEnabled() );
+                _connector->setProperty( "createDefaultEdge", getConnectorCreateDefaultEdge() );
+                connect( _connector.data(), &qan::Connector::requestEdgeCreation,
+                         this,              &qan::Graph::connectorRequestEdgeCreation);
+                connect( _connector.data(), &qan::Connector::edgeInserted,
+                         this,              &qan::Graph::connectorEdgeInserted);
             } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
         }
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
@@ -168,6 +176,46 @@ void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
             _connector->setSourceNode(sourceNode);
         _connector->setVisible(getConnectorEnabled());
         _connector->setEnabled(getConnectorEnabled());
+    }
+}
+
+void    Graph::setConnectorEdgeColor( QColor connectorEdgeColor ) noexcept
+{
+    if ( connectorEdgeColor != _connectorEdgeColor ) {
+        _connectorEdgeColor = connectorEdgeColor;
+        if ( _connector )
+            _connector->setProperty( "edgeColor", connectorEdgeColor );
+        emit connectorEdgeColorChanged();
+    }
+}
+
+void    Graph::setConnectorColor( QColor connectorColor ) noexcept
+{
+    if ( connectorColor != _connectorColor ) {
+        _connectorColor = connectorColor;
+        if ( _connector )
+            _connector->setProperty( "connectorColor", connectorColor );
+        emit connectorColorChanged();
+    }
+}
+
+void    Graph::setConnectorHEdgeEnabled( bool connectorHEdgeEnabled ) noexcept
+{
+    if ( connectorHEdgeEnabled != _connectorHEdgeEnabled ) {
+        _connectorHEdgeEnabled = connectorHEdgeEnabled;
+        if ( _connector )
+            _connector->setProperty( "hEdgeEnabled", connectorHEdgeEnabled );
+        emit connectorColorChanged();
+    }
+}
+
+void    Graph::setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) noexcept
+{
+    if ( connectorCreateDefaultEdge != _connectorCreateDefaultEdge ) {
+        _connectorCreateDefaultEdge = connectorCreateDefaultEdge;
+        if ( _connector )
+            _connector->setProperty( "createDefaultEdge", connectorCreateDefaultEdge );
+        emit connectorCreateDefaultEdgeChanged();
     }
 }
 

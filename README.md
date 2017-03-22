@@ -13,7 +13,7 @@ QuickQanava
 
 ![](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/home.png)
 
-`QuickQanava` is a C++14 library designed to display graphs in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
+`QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
 
 `QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
 
@@ -42,7 +42,7 @@ QuickQanava focus on writting content delegates in QML (even if they could be de
       - [ ] Add a 100% C++ interface (currently QML delegate components definition still are necessary).
         - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
     - [50%] Add _efficient_ support for non visual nodes and edges, non visual edges should have a very small footprint (ie non QQuickItem...).
-    - [ ] Update samples for full QQC2 controls support.
+    - [X] Update samples for full QQC2 controls support.
     - [X] Redesign visual connection of nodes (add support for custom visual component, invisible edge creation, etc.).
     - [ ] Add full support for groups inside group (ie subgraphs).
   - **v0.9.0: QuickContainers** (Qt/QML observable adapter for STL or Qt containers):	 

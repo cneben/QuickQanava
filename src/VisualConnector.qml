@@ -81,12 +81,9 @@ Qan.Connector {
 
     edgeComponent: Component{ Qan.Edge{} }
 
-    signal requestEdgeCreation(var src, var dst)
-    signal connectorEdgeInserted()
-
-    onEdgeItemChanged: {
+    onEdgeColorChanged: {
         if (edgeItem)
-            edgeItem.color = Qt.binding( function() { return visualConnector.edgeColor; } )
+            edgeItem.color = edgeColor
     }
 
     // Private properties
@@ -201,16 +198,17 @@ Qan.Connector {
             }
             if ( createdEdge ) {    // Notify graph user of the edge creation
                 createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
-                connectorEdgeInserted( createdEdge );
-                if ( visualConnector.graph )
-                    visualConnector.graph.connectorEdgeInserted( createdEdge )
+                edgeInserted( createdEdge );
+                //if ( visualConnector.graph )
+                //    visualConnector.graph.connectorEdgeInserted( createdEdge )
             }
         }
         onPressed : {
             mouse.accepted = true
-            if ( sourceNode &&
-                 sourceNode.item &&
-                 graph ) {
+            if ( graph &&
+                 edgeItem &&
+                 sourceNode &&
+                 sourceNode.item ) {
                 parent: graph.containerItem;
                 edgeItem.graph = graph
                 edgeItem.sourceItem = sourceNode.item

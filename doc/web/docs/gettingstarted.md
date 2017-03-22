@@ -4,9 +4,9 @@ QuickQanava Quick Start
 Simple Directed Graph
 ------------------
 
-Both QuickQanava and QuickProperties should be initialized in your c++ main function:
+QuickQanava should be initialized in your c++ main function:
 
-``` cpp
+``` cpp hl_lines="9"
 #include <QuickQanava>
 
 int main(int argc, char *argv[])
@@ -42,52 +42,86 @@ Qan.Graph {
 Topology
 ------------------
 
+### Adding content
+
+![Default Node](images/topology-default-node.png)
+
 ### Navigation
 
 A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, `Qan.Graph` component must be defined in the `graph` property of a `Qan.GraphView` component:
-``` cpp
+
+``` cpp hl_lines="5"
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
   navigable   : true
   graph: Qan.Graph {
       id: topology
-      onNodeRightClicked: {
-        /*var globalPos = node.mapToItem( topology, pos.x, pos.y )	// Conversion from a node coordinate system to user view coordinate system
-        menu.x = globalPos.x; menu.y = globalPos.y					// For example to open a popup menu
-        menu.open()*/
-      }
     } // Qan.Graph: topology
-  onRightClicked: {
-    /*var globalPos = graphView.mapToItem( topology, pos.x, pos.y ) // Conversion from graph view coordinate system to user view coordinate system
-    menu.x = globalPos.x; menu.y = globalPos.y							// For example to open a popup menu
-	menu.open()*/
-  }
 } // Qan.GraphView
 ```
 
 Navigation could be disabled by setting the `navigable` property to false (it default to true).
 
-### Using visual node connector
+### Visual connection of nodes
 
-QuickQanava allow visual connection of node with the `Qan.ConnectorDropNode` component. Visual connection of nodes is configured in your main `Qan.Graph` component with the following properties:
+QuickQanava allow visual connection of node with the `Qan.VisualConnector` component. Default visual connector is configured in `Qan.Graph` component using the following properties:
 
-- `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
-- `enableConnector` (bool): Set to true to enable visual connection of nodes (default to false).
-- **deprecated** `connectorDropNodeEdgeClassName` (string): String that could be modified by the user to specify a custom class name for the edges created by visual drop node connector (default to "qan::Edge", default edge delegate component).
+- `Qan.Graph.connectorEnabled` (bool): Set to true to enable visual connection of nodes (default to false).
 
-![Groups](images/visual-node-connector.gif)
+- `Qan.Graph.connectorEdgeColor` (color): Set the visual connector preview edge color (useful to have Light/Dark theme support, default to black).
 
-``` cpp
+- `Qan.Graph.connectorCreateDefaultEdge` (bool, default to true): When set to false, default visual connector does not use Qan.Graph.insertEdge() to create edge, but instead emit `connectorRequestEdgeCreation()` signal to allow user to create custom edge be calling a user defined method on graph (`connectorEdgeInserted()` is not emitted).
+
+``` cpp hl_lines="5"
 Qan.GraphView {
   id: graphView
   anchors.fill: parent
   graph : Qan.Graph {
-    anchors.fill: parent
     connectorEnabled: true
+	connectorEdgeInserted: console.debug( "Edge inserted between " + src.label + " and  " + dst.label)
+	connectorEdgeColor: "violet"
+	connectorColor: "lightblue"
   } // Qan.Graph
 } // Qan.GraphView
 ```
+
+![Visual connector configuration](images/visual-connector-configuration.png)
+
+The following notifications callbacks are available:
+
+- Signal `Qan.Graph.connectorEdgeInserted(edge)`: Emitted when the visual connector has been dragged on a destination node or edge to allow specific user configuration on created edge.
+
+- Signal `Qan.Graph.connectorRequestEdgeCreation(src, dst)`: Emitted when the visual connector is dragged on a target with `createDefaultEdge` set to false: allow creation of custom edge (or any other action) by the user. Example:
+
+``` cpp hl_lines="8"
+Qan.GraphView {
+  id: graphView
+  anchors.fill: parent
+  graph : Qan.Graph {
+    id: graph
+    connectorEnabled: true
+	connectorCreateDefaultEdge: false
+	onConnectorRequestEdgeCreation: { 
+	  // Do whatever you want here, for example: graph.insertEdge(src, dst)
+	}
+  } // Qan.Graph
+} // Qan.GraphView
+```
+
+Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html). See also [qan::Graph](http://www.destrat.io/quickqanava/doc/classqan_1_1_graph.html) "Visual Connection Management" section.
+
+Default connector component `Qan.Graph.connector` could be replaced by a user defined `Qan.VisualConnector` to customize connector behavior in more depth. It is possible to add multiple visuals connectors on the same node, using a connector to generate specific topologies (create edges with different concrete types) or select targets visually. Such an advanced use of custom connectors is demonstrated in 'connector' sample: [https://github.com/cneben/QuickQanava/tree/master/samples/connector](https://github.com/cneben/QuickQanava/tree/master/samples/connector)
+
+![Visual connectors](images/sample-connector.gif)
+
+### Resizing
+
+Default resizing behaviour could be configured in `Qan.GraphView` using the following properties:
+
+- `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
+
+Node could be resized using the `Qan.BottomRightResizer` component. 
 
 Selection
 ------------------
@@ -108,9 +142,9 @@ All theses properties could be changed dynamically.
 
 Selection could also be disabled at node level by setting `Qan.Node.selectable` to false, node become unselectable even if global graph selection policy is not set to `NoSelection`.
 
-Current multiple selection (or single selection) is available trought Qan.Graph `selectedNodes` property. `selectedNodes` is a list model, it can be used in any QML view, or iterated from C++ to read the current selection:
-``` cpp
-// Viewing the actual selected nodes with a QML ListView:
+Current multiple selection (or single selection) is available through Qan.Graph `selectedNodes` property. `selectedNodes` is a list model, it can be used in any QML view, or iterated from C++ to read the current selection:
+``` cpp hl_lines="6"
+// Viewing the currently selected nodes with a QML ListView:
 ListView {
 	id: selectionListView
 	Layout.fillWidth: true; Layout.fillHeight: true
@@ -136,24 +170,29 @@ ListView {
 }
 ```
 
-In C++, `selectedNodes` could be iterated directly, the current node should be tested to ensure it is non nullptr, since the underlining model is thread-safe and could have
-been modified from another thread:
+In C++, `selectedNodes` could be iterated directly, the current node should be tested to ensure it is non nullptr, since the underlining model is thread-safe and could have been modified from another thread:
 ``` cpp
 	auto graph = std::make_unique<qan::Graph>();
     for ( auto& node : graph->getSelectNodes() ) {
         if ( node != nullptr )
             node->doWhateverYouWant();
     }
+	// Or better:
+    for ( const auto& node : qAsConst(graph->getSelectNodes()) ) {
+        if ( node != nullptr )
+            node->doWhateverYouWantConst();
+    }
 ```
 
 Example of `Qan.AbstractGraph.SelectOnClick` selection policy with multiple selection dragging inside a group:
+
 ![selection](images/Selection.gif)
 
 
 Using Groups
 ------------------
 
-![Groups](images/groups-overview.gif)
+![Groups](images/sample-groups.gif)
 
 ``` cpp
 Qan.Graph {
@@ -184,10 +223,12 @@ Displaying Custom Nodes
 See the `custom.qml` file in `nodes` sample for more informations on specifying custom delegates for nodes and edges.
 
 When defining custom nodes with complex geometry (ie. non rectangular), there is multiple ways to take bounding shape generation into account :
-  - Using the default behavior for rectangular node with complexBoundingShape set to false (default value), bounding shape is automatically generated on node width or height change in generateDefaultBoundingShape().
-  - Using dedicated code by setting complexBoundingShape to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.
+  
+  - Using the default behavior for rectangular node with `complexBoundingShape` set to false (default value), bounding shape is automatically generated on node width or height change in `generateDefaultBoundingShape()`.
+  
+  - Using dedicated code by setting `complexBoundingShape` to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.
 
-Note that signal requestUpdateBoundingShape won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override \c generateDefaultBoundingShape() method.
+Note that signal `requestUpdateBoundingShape` won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override `generateDefaultBoundingShape()` method.
 
 Defining Styles
 ------------------

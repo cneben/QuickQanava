@@ -43,8 +43,8 @@ Qan.GraphView {
             var s1 = graph.insertNode()
             s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
 
-            graph.insertEdge(s1, d1)
-            graph.insertEdge(s1, d2)
+            //graph.insertEdge(s1, d1)
+            //graph.insertEdge(s1, d2)
 
             var d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
@@ -66,6 +66,7 @@ Qan.GraphView {
         }
 
         onConnectorEdgeInserted: { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
+        onConnectorRequestEdgeCreation: { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
         onEdgeClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
         onEdgeDoubleClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
         onEdgeRightClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
@@ -75,13 +76,13 @@ Qan.GraphView {
 
     ColorDialog {
         id: connectorEdgeColorDialog
-        color: graphView.connectorEdgeColor
-        onAccepted: graphView.connectorEdgeColor = color
+        color: graph.connectorEdgeColor
+        onAccepted: graph.connectorEdgeColor = color
     }
     ColorDialog {
         id: connectorColorDialog
-        color: graphView.connectorColor
-        onAccepted: graphView.connectorColor = color
+        color: graph.connectorColor
+        onAccepted: graph.connectorColor = color
     }
     Frame {
         anchors.top: parent.top; anchors.right: parent.right; anchors.rightMargin: 10
@@ -93,11 +94,16 @@ Qan.GraphView {
             }
             CheckBox {
                 text: qsTr("hEdge Enabled")
-                checked: graphView.connectorHEdgeEnabled
-                onClicked: graphView.connectorHEdgeEnabled = checked
+                checked: graph.connectorHEdgeEnabled
+                onClicked: graph.connectorHEdgeEnabled = checked
+            }
+            CheckBox {
+                text: qsTr("Create Default Edge")
+                checked: graph.connectorCreateDefaultEdge
+                onClicked: graph.connectorCreateDefaultEdge = checked
             }
             RowLayout {
-                Rectangle { width:32; height: 32; color: graphView.connectorEdgeColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
+                Rectangle { width:32; height: 32; color: graph.connectorEdgeColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
                 Label { text: "Connector Edge Color:" }
                 Item { Layout.fillWidth: true }
                 ToolButton {
@@ -106,7 +112,7 @@ Qan.GraphView {
                 }
             }
             RowLayout {
-                Rectangle { width:32; height: 32; color: graphView.connectorColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
+                Rectangle { width:32; height: 32; color: graph.connectorColor; radius: 5; border.width:1; border.color: Qt.darker(color) }
                 Label { text: "Connector Color:" }
                 Item { Layout.fillWidth: true }
                 ToolButton {

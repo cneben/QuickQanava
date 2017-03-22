@@ -129,8 +129,51 @@ public:
      */
     Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
 signals:
-    //! Emitted when an edge has been inserted in graph by a visual connector.
+    //! \copydoc hlg::Connector::requestEdgeCreation
+    void                connectorRequestEdgeCreation(qan::Node* src, QObject* dst);
+    //! \copydoc hlg::Connector::edgeInserted
     void                connectorEdgeInserted( qan::Edge* edge );
+
+public:
+    //! Alias to VisualConnector::edgeColor property (default to Black).
+    Q_PROPERTY( QColor connectorEdgeColor READ getConnectorEdgeColor WRITE setConnectorEdgeColor NOTIFY connectorEdgeColorChanged FINAL )
+    inline QColor   getConnectorEdgeColor() const noexcept { return _connectorEdgeColor; }
+    void            setConnectorEdgeColor( QColor connectorEdgeColor ) noexcept;
+signals:
+    void            connectorEdgeColorChanged();
+private:
+    QColor          _connectorEdgeColor{Qt::black};
+
+public:
+    //! Alias to VisualConnector::connectorColor property (default to DarkBlue).
+    Q_PROPERTY( QColor connectorColor READ getConnectorColor WRITE setConnectorColor NOTIFY connectorColorChanged FINAL )
+    inline QColor   getConnectorColor() const noexcept { return _connectorColor; }
+    void            setConnectorColor( QColor connectorColor ) noexcept;
+signals:
+    void            connectorColorChanged();
+private:
+    QColor          _connectorColor{Qt::darkBlue};   // #00008B = DarkBlue
+
+public:
+    //! Alias to VisualConnector::hEdgeEnabled (default to false).
+    Q_PROPERTY( bool connectorHEdgeEnabled READ getConnectorHEdgeEnabled WRITE setConnectorHEdgeEnabled NOTIFY connectorHEdgeEnabledChanged FINAL )
+    inline bool     getConnectorHEdgeEnabled() const noexcept { return _connectorHEdgeEnabled; }
+    void            setConnectorHEdgeEnabled( bool connectorHEdgeEnabled ) noexcept;
+signals:
+    void            connectorHEdgeEnabledChanged();
+private:
+    bool            _connectorHEdgeEnabled{false};
+
+public:
+    //! Alias to VisualConnector::createDefaultEdge (default to true).
+    Q_PROPERTY( bool connectorCreateDefaultEdge READ getConnectorCreateDefaultEdge WRITE setConnectorCreateDefaultEdge NOTIFY connectorCreateDefaultEdgeChanged FINAL )
+    inline bool     getConnectorCreateDefaultEdge() const noexcept { return _connectorCreateDefaultEdge; }
+    void            setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) noexcept;
+signals:
+    void            connectorCreateDefaultEdgeChanged();
+private:
+    bool            _connectorCreateDefaultEdge{true};
+
 public:
     //! Enable or disable visual connector of nodes in the graph (default to false).
     Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )

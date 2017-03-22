@@ -105,8 +105,8 @@ Qan.GraphView {
             }
             CheckBox {
                 text: qsTr("hEdge Enabled")
-                checked: graphView.connectorHEdgeEnabled
-                onClicked: graphView.connectorHEdgeEnabled = checked
+                checked: graph.connectorHEdgeEnabled
+                onClicked: graph.connectorHEdgeEnabled = checked
             }
         }
     }

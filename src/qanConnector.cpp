@@ -40,6 +40,7 @@ Connector::Connector(QQuickItem* parent) :
     qan::NodeItem( parent )
 {
     setAcceptDrops(false);
+    setVisible(false);
 }
 
 Connector::~Connector() { /* Nil */ }
@@ -51,7 +52,7 @@ auto    Connector::setGraph(qan::Graph* graph) noexcept -> void
         if ( _edgeItem ) {
             _edgeItem->setParentItem(graph->getContainerItem());
             _edgeItem->setGraph(graph);
-            _edgeItem->setVisible(true);
+            _edgeItem->setVisible(false);
         }
         emit graphChanged();
     }
@@ -66,7 +67,6 @@ static std::unique_ptr<qan::NodeStyle>  qan_Connector_style;
 
 QQmlComponent*  Connector::delegate(QObject* caller) noexcept
 {
-    qDebug() << "qan::Connector::delegate()";
     if ( !qan_Connector_delegate &&
          caller != nullptr ) {
         const auto engine = qmlEngine(caller);
@@ -150,7 +150,7 @@ void    Connector::setSourceNode( qan::Node* sourceNode )
             setVisible(false);
         else {
             connect( sourceNode, &QObject::destroyed,
-                     this,      &Connector::sourceNodeDestroyed );
+                     this,       &Connector::sourceNodeDestroyed );
             setVisible(true);
         }
         emit sourceNodeChanged();

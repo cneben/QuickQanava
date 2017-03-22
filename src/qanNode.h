@@ -79,10 +79,10 @@ public:
     bool    operator==( const qan::Node& right ) const;
 
 public:
-    Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT FINAL )
+    Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
     inline qan::NodeItem*   getItem() noexcept { return _item.data(); }
     void                    setItem(qan::NodeItem* nodeItem) noexcept;
-private:
+protected:
     QPointer<qan::NodeItem> _item;
     //@}
     //-------------------------------------------------------------------------

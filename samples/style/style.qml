@@ -44,12 +44,12 @@ ApplicationWindow {
         property var roundNode: Component{ Sample.RoundNode{} }
 
         resizeHandlerColor: Material.accent
-        connectorColor: Material.accent
 
         graph       : Qan.CustomGraph {
             id: graph
             selectionColor: Material.accent
             connectorEnabled: true
+            connectorColor: Material.accent
             Component.onCompleted: {
                 console.debug("graph.insertNode()")
                 var n1 = graph.insertRoundNode()

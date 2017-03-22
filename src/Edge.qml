@@ -34,7 +34,7 @@ import "qrc:/QuickGeoGL"    1.0 as Qgl
 
 Qan.EdgeItem {
     id: edgeItem
-    property color  color: Qt.rgba(0,0,0,1)
+    property color  color: style ? style.lineColor : Qt.black
     Qgl.Arrow {
         anchors.fill: parent
         id: arrow
@@ -42,10 +42,6 @@ Qan.EdgeItem {
         p2: edgeItem.p2
         p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
         lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+        color: edgeItem.color
     }
-    /*Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.color: "violet"; border.width: 1
-    }*/
 }

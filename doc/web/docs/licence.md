@@ -1,5 +1,5 @@
 
-!!! warning "QuickQanava is alpha"
+!!! note "QuickQanava is licensed under LGPL (GTpo sub library is MIT), low-cost commercial license with more sample code, Protocol Buffer and No-SQL persistence support is available on demand: contact@destrat.io"
 
 Copyright (c) 2008-2017 Delia Stratégie
 

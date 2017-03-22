@@ -42,6 +42,9 @@ QuickQanava use _qmake_ as its main build configuration system, dependencies are
 win32-msvc*:PROTOCOL_BUFFER3_DIR=C:/protobuf-3.0.2
 ```
 
+Configuring
+------------------
+
 The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:
 
 ```sh

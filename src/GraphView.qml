@@ -47,33 +47,6 @@ Qan.AbstractGraphView {
     onRightClicked: graphView.focus = true
 
     property alias  resizeHandlerColor: nodeResizer.handlerColor
-
-    //! Color of the visual connector edge line.
-    property color  connectorEdgeColor: Qt.rgba(0,0,0,1)
-    //! Color of the visual connector draggable item.
-    property color  connectorColor: "darkblue"
-    //! Turn visual creation of hyper edges on or off (default to off).
-    property bool   connectorHEdgeEnabled: false
-    onConnectorChanged: {
-        if ( graph && graph.connector ) {
-            connectorEdgeColor = graph.connector.edgeColor
-            connectorColor = graph.connector.connectorColor
-            connectorHEdgeEnabled = graph.connector.hEdgeEnabled
-        }
-    }
-    onConnectorEdgeColorChanged: {
-        if ( graph && graph.connector )
-            graph.connector.edgeColor = connectorEdgeColor
-    }
-    onConnectorColorChanged: {
-        if ( graph && graph.connector )
-            graph.connector.connectorColor = connectorColor
-    }
-    onConnectorHEdgeEnabledChanged: {
-        if ( graph && graph.connector )
-            graph.connector.hEdgeEnabled = connectorHEdgeEnabled
-    }
-
     Qan.BottomRightResizer {
         id: nodeResizer
         parent: graph.containerItem
@@ -81,7 +54,8 @@ Qan.AbstractGraphView {
     }
     property real maxZ: -1.
     onNodeClicked: {
-        if ( graph && node && node.item ) {
+        if ( graph &&
+             node && node.item ) {
             maxZ = Math.max( node.item.z + 1, maxZ + 1 )
             node.item.z = maxZ + 1;
             if ( node.group )

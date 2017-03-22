@@ -58,7 +58,7 @@ public:
     virtual ~Edge() { /* Nil */ }
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
+    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
     //! Shortcut to gtpo::GenEdge<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
@@ -67,7 +67,7 @@ public:
 public:
     friend class qan::EdgeItem;
 
-    Q_PROPERTY( qan::EdgeItem* item READ getItem FINAL )
+    Q_PROPERTY( qan::EdgeItem* item READ getItem CONSTANT )
     inline qan::EdgeItem*   getItem() noexcept { return _item.data(); }
     void                    setItem(qan::EdgeItem* edgeItem) noexcept;
 private:

@@ -75,6 +75,12 @@ public:
 
     /*! \name Connector Configuration *///-------------------------------------
     //@{
+signals:
+    //! Emitted when \c createDefaultEdge is set to false to request creation of an edge after the visual connector has been dragged on a destination node or edge.
+    void    requestEdgeCreation(qan::Node* src, QObject* dst);
+    //! Emmited after an edge has been created to allow user configuration (not emmited when \c createDefaultEdge is set to false).
+    void    edgeInserted(qan::Edge* edge);
+
 public:
     //! Graphical item used as a draggable destination node selector (initialized and owned from QML).
     Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
