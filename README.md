@@ -84,9 +84,7 @@ cd QuickQanava
 
 | Visual Connector       |   |
 | :---:                       | ---             |
-| ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) | [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology)
-Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
-            |
+| ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) | [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology). Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html) |
 
 | Groups       |   |
 | :---:                       | ---             |
