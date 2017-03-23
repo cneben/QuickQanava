@@ -50,6 +50,8 @@ Content could initialized in graph `onCompleted()` function:
 - `Qan.Edge Qan.Graph.insertEdge(Qan.Node, Qan.Node)`:
 - `Qan.Group Qan.Graph.insertGroup()`:
 
+All primitives (nodes, edges, groups) have both a topological and data "side" (Qan.Node, Qan.Edge, Qan.Group) and a visual counter part accessible trough their `item` property (usually a Qan.NodeItem, Qan.EdgeItem, Qan.GroupItem).
+
 ``` cpp hl_lines="5"
 Qan.Graph {
     id: graph
@@ -251,7 +253,8 @@ Note that signal `requestUpdateBoundingShape` won't be emitted for non complex b
 Defining Styles
 ------------------
 
+![Style Sample](samples/quickqanava3-sample-style.png)
 
-
+QuickQanava provide a ready to use visual `Qan.StyleListView` component for visualizing, editing styles and dragging them visually on existing graph content. 
 
 
