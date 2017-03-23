@@ -15,19 +15,18 @@ QuickQanava
 
 `QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graph in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into an advanced dynamic user interface (with DnD support, resizable content, visual connection of content).
 
-`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence) and  *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
-
+`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence), *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
 QuickQanava is primarily developed with Qt >= 5.8 with MSVC2015U2 and g++5.4 (minimal required Qt version is 5.7, some sample requires Qt5.8)
 
-+ Project homepage: http://www.destrat.io/quickqanava (_outdated_ 20170321)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (_outdated_ 20170321)
++ Project homepage: http://www.destrat.io/quickqanava (updated 20170323)
++ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (updated 20170323)
 
 For any questions, please contact: benoit@destrat.io
 
-QuickQanava focus on writting content delegates in QML (even if they could be defined 100% in C++, a QML engine is necessary), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
+QuickQanava focus on writting content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
 ## Roadmap:
 
@@ -85,7 +84,9 @@ cd QuickQanava
 
 | Visual Connector       |   |
 | :---:                       | ---             |
-| ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) |            |
+| ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) | [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology)
+Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
+            |
 
 | Groups       |   |
 | :---:                       | ---             |
