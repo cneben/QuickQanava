@@ -30,6 +30,7 @@
 
 // Std headers
 #include <sstream>
+#include <random>
 
 // GTpo headers
 #include <GTpo>
