@@ -4,6 +4,8 @@
 [Building](#building) |
 [License](#license)
 
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)
+
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 
 **2017/03/21:** Warning: dev version has just been merged on master: please report any compilation issue by mail.
