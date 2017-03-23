@@ -36,10 +36,10 @@
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanStyle.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
 
-class Node;
 class Graph;
 class GroupItem;
 
