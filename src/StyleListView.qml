@@ -110,10 +110,6 @@ ListView {
                 anchors.topMargin: 5; anchors.bottomMargin: 5
                 z: 1
                 Component.onCompleted: {
-                    console.debug( "Qan.StyleListView.delegate.onCompleted():")
-                    console.debug( "\tstyleItem=" + styleItem )
-                    console.debug( "\tstyleComponent=" + styleComponent )
-                    console.debug( "styleManager.getStyleComponent(itemData)=" + styleManager.getStyleComponent(styleItem) );
                     if ( !styleItem ||
                             !styleComponent ||
                             !styleListView.graph ) {
@@ -122,12 +118,10 @@ ListView {
                         return
                     }
                     primitive = graph.createFromComponent( styleComponent, styleItem );
-                    console.debug( "primitive=" + primitive )
                     if ( primitive ) {
                         primitive.parent = delegateItem
                         primitive.anchors.fill = delegateItem;
                         primitive.anchors.margins = 5
-                        console.debug( "primitive.style=" + primitive.style )
                         if ( primitive.objectName === "qan::NodeItem" ) {
                             primitive.resizable = false
                             primitive.Layout.minimumWidth = width

@@ -50,10 +50,11 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorEnabled: true
             connectorColor: Material.accent
+            connectorEdgeColor: Material.accent
             Component.onCompleted: {
-                console.debug("graph.insertNode()")
                 var n1 = graph.insertRoundNode()
                 n1.label = "n1"; n1.item.x = 10; n1.item.y = 95
+                connector.setHostNode(n1.item)
                 var n2 = graph.insertRoundNode()
                 n2.label = "n2"; n2.item.x = 10; n2.item.y = 300
 

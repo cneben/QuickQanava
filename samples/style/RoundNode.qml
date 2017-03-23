@@ -63,7 +63,7 @@ Qan.NodeItem {
         }
     }
     Label {
-        text: node.label
+        text: roundNode.node ? roundNode.node.label : ""
         z: 3
         anchors.centerIn: parent
     }
