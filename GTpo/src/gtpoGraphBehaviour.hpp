@@ -39,49 +39,48 @@ template < class Behaviour, class SBehaviours  >
 template < class Node >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::nodeInserted, node );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
+    this->notifyBehaviours( &Behaviour::nodeInserted, node );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::nodeRemoved, node );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
+    this->notifyBehaviours( &Behaviour::nodeRemoved, node );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Edge >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyEdgeInserted( Edge& edge ) noexcept -> void
 {
-    // FIXME: could be implicit probably...
-    notifyBehaviours< Edge >( &Behaviour::edgeInserted, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeInserted( edge ); } );
+    this->notifyBehaviours( &Behaviour::edgeInserted, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeInserted( edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Edge >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyEdgeRemoved( Edge& edge ) noexcept -> void
 {
-    notifyBehaviours< Edge >( &Behaviour::edgeRemoved, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeRemoved( edge ); } );
+    this->notifyBehaviours( &Behaviour::edgeRemoved, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.edgeRemoved( edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Group >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) noexcept -> void
 {
-    notifyBehaviours< Group >( &Behaviour::groupInserted, group );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
+    this->notifyBehaviours( &Behaviour::groupInserted, group );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Group >
 auto    BehaviourableGraph< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) noexcept -> void
 {
-    notifyBehaviours< Group >( &Behaviour::groupRemoved, group );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
+    this->notifyBehaviours( &Behaviour::groupRemoved, group );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
 }
 //-----------------------------------------------------------------------------
 

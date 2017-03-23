@@ -39,46 +39,46 @@ template < class Behaviour, class SBehaviours  >
 template < class Node, class Edge >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyInNodeInserted( Node& node, const Edge& edge ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::inNodeInserted, node, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeInserted( node, edge ); } );
+    this->notifyBehaviours( &Behaviour::inNodeInserted, node, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeInserted( node, edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node, class Edge >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyInNodeRemoved( Node& node, const Edge& edge ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::inNodeRemoved, node, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeRemoved( node, edge ); } );
+    this->notifyBehaviours( &Behaviour::inNodeRemoved, node, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeRemoved( node, edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyInNodeRemoved() noexcept -> void
 {
-    notifyBehaviours0( &Behaviour::inNodeRemoved );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeRemoved(); } );
+    this->notifyBehaviours0( &Behaviour::inNodeRemoved );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.inNodeRemoved(); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node, class Edge >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyOutNodeInserted( Node& node, const Edge& edge ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::outNodeInserted, node, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeInserted( node, edge ); } );
+    this->notifyBehaviours( &Behaviour::outNodeInserted, node, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeInserted( node, edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 template < class Node, class Edge >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyOutNodeRemoved( Node& node, const Edge& edge ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::outNodeRemoved, node, edge );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeRemoved( node, edge ); } );
+    this->notifyBehaviours( &Behaviour::outNodeRemoved, node, edge );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeRemoved( node, edge ); } );
 }
 
 template < class Behaviour, class SBehaviours  >
 auto    BehaviourableNode< Behaviour, SBehaviours >::notifyOutNodeRemoved() noexcept -> void
 {
-    notifyBehaviours0( &Behaviour::outNodeRemoved );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeRemoved(); } );
+    this->notifyBehaviours0( &Behaviour::outNodeRemoved );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.outNodeRemoved(); } );
 }
 //-----------------------------------------------------------------------------
 

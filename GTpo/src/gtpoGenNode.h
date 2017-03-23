@@ -106,8 +106,10 @@ public: // FIXME
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using WeakEdge      = typename GenEdge<Config>::Weak;
-    using SharedEdge    = typename GenEdge<Config>::Shared;
+    //using WeakEdge      = typename GenEdge<Config>::Weak;
+    using WeakEdge = std::weak_ptr<typename Config::FinalEdge>;
+    //using SharedEdge    = typename GenEdge<Config>::Shared;
+    using SharedEdge = std::shared_ptr<typename Config::FinalEdge>;
     using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
 
     /*! \brief Insert edge \c outEdge as an out edge for this node.
@@ -150,7 +152,7 @@ private:
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    inline auto setGroup( std::weak_ptr<typename Config::FinalGroup>& group ) noexcept -> void { _group = group; }
+    inline auto setGroup( const std::weak_ptr<typename Config::FinalGroup>& group ) noexcept -> void { _group = group; }
     inline auto getGroup( ) noexcept -> std::weak_ptr<typename Config::FinalGroup>& { return _group; }
     inline auto getGroup( ) const noexcept -> const std::weak_ptr<typename Config::FinalGroup>& { return _group; }
 private:

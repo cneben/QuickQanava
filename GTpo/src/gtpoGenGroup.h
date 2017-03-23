@@ -82,11 +82,7 @@ public:
     using SharedGroup   = Shared;
 
     GenGroup() noexcept : gtpo::GenNode<Config, typename Config::FinalGroup>() { }
-    ~GenGroup() {
-        if ( _graph != nullptr )
-            std::cerr << "gtpo::GenGroup<>::~GenGroup(): Warning: Group has been destroyed before beeing removed from the graph." << std::endl;
-        _graph = nullptr;
-    }
+    ~GenGroup() { /* Nil */ }
     GenGroup( const GenGroup& ) = delete;
     GenGroup& operator=( GenGroup const& ) = delete;
     //@}

@@ -32,6 +32,7 @@
 #include <QQuickItem>
 
 // QuickQanava headers
+#include "./qanGroupItem.h"
 #include "./qanNodeItem.h"
 
 namespace qan { // ::qan
@@ -53,7 +54,6 @@ public:
     explicit Connector( QQuickItem* parent = nullptr );
     virtual ~Connector();
     Connector(const Connector&) = delete;
-
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
     auto    setGraph(qan::Graph* graph) noexcept -> void;

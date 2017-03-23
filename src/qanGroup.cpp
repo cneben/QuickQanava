@@ -31,6 +31,7 @@
 #include <QPainterPath>
 
 // QuickQanava headers
+#include "./qanNode.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
@@ -54,6 +55,8 @@ const qan::Graph*   Group::getGraph() const noexcept {
     return qobject_cast< const qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
 }
 
+qan::GroupItem*  Group::getItem() noexcept { return _item.data(); }
+
 void    Group::setItem(qan::GroupItem* item) noexcept
 {
     if ( item != nullptr ) {
@@ -61,6 +64,18 @@ void    Group::setItem(qan::GroupItem* item) noexcept
         if ( item->getGroup() != this )
             item->setGroup(this);
     }
+}
+
+void    Group::itemProposeNodeDrop()
+{
+    if ( _item )
+        _item->proposeNodeDrop();
+}
+
+void    Group::itemEndProposeNodeDrop()
+{
+    if ( _item )
+        _item->endProposeNodeDrop();
 }
 //-----------------------------------------------------------------------------
 

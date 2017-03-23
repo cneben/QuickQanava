@@ -29,13 +29,11 @@
 #define qanEdge_h
 
 // Qt headers
-#include <QLineF>
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
-#include "./qanEdgeItem.h"
 
 namespace qan { // ::qan
 
@@ -68,8 +66,8 @@ public:
     friend class qan::EdgeItem;
 
     Q_PROPERTY( qan::EdgeItem* item READ getItem CONSTANT )
-    inline qan::EdgeItem*   getItem() noexcept { return _item.data(); }
-    void                    setItem(qan::EdgeItem* edgeItem) noexcept;
+    qan::EdgeItem*   getItem() noexcept;
+    void             setItem(qan::EdgeItem* edgeItem) noexcept;
 private:
     QPointer<qan::EdgeItem> _item;
     //@}

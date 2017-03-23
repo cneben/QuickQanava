@@ -38,6 +38,7 @@
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanStyle.h"         // Used in handleDropEvent()
+#include "./qanGroup.h"
 
 namespace qan { // ::qan
 

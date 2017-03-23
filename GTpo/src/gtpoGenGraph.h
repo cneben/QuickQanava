@@ -247,7 +247,7 @@ public:
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
-    template < class Edge_t = typename GenEdge<Config> >
+    template < class Edge_t = GenEdge<Config> >
     auto        createEdge( WeakNode source, WeakNode destination ) noexcept(false) -> WeakEdge;
 
     /*! \brief Create a directed hyper edge between \c source node and \c destination edge, then insert it into the graph.
@@ -398,8 +398,7 @@ public:
         auto node{ weakNode.lock() };
         gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::groupNode(): Error: trying to insert an expired node in group." );
 
-        using Node = gtpo::GenNode<Config>;
-        node->setGroup( WeakGroup{weakGroup.lock()} );
+        node->setGroup( weakGroup );
         Config::template container_adapter<WeakNodes>::insert( weakNode, group->_nodes );
         group->notifyNodeInserted( weakNode );
     }

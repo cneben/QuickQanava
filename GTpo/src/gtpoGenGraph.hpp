@@ -174,7 +174,7 @@ auto    GenGraph< Config >::createEdge( WeakNode source, WeakNode destination ) 
          !destinationPtr )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(Node,Node): Insertion of edge failed, either source or destination nodes are expired." );
 
-    auto edge = std::make_shared< typename Edge_t >();
+    auto edge = std::make_shared<Edge_t>();
     edge->setGraph( this );
     Config::template container_adapter< SharedEdges >::insert( edge, _edges );
     Config::template container_adapter< WeakEdgesSearch >::insert( edge, _edgesSearch );

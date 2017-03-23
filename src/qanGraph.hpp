@@ -110,44 +110,11 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
         qan::Style* style = Edge_t::style();
         if ( style != nullptr ) {
-            _styleManager.setStyleComponent(style, edgeComponent);
-            auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, *style, nullptr, edge.get() ) );
-            if ( edgeItem != nullptr ) {
-                edge->setItem(edgeItem);
-                edgeItem->setSourceItem( src.getItem() );
-                if ( dstNode != nullptr )
-                    edgeItem->setDestinationItem( dstNode->getItem() );
-                else if ( dstEdge != nullptr )
-                    edgeItem->setDestinationEdge( dstEdge->getItem() );
-
-                edge->setSrc( src.shared_from_this() );
-                if ( dstNode != nullptr )
-                    edge->setDst( dstNode->shared_from_this() );
-                else if ( dstEdge != nullptr)
-                    edge->setHDst( dstEdge->shared_from_this() );
-
+            if ( insertEdgeImpl( edge.get(), edgeComponent, qobject_cast<qan::EdgeStyle*>(style),
+                                 src, dstNode, dstEdge ) )
                 GTpoGraph::insertEdge( edge );
-
-                auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                        emit this->edgeClicked(edgeItem->getEdge(), p);
-                };
-                connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
-
-                auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                        emit this->edgeRightClicked(edgeItem->getEdge(), p);
-                };
-                connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
-
-                auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                    if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                        emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
-                };
-                connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
-            } else
-                qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
-        } else qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
+        }
+        else qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
     }

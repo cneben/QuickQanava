@@ -63,6 +63,8 @@ bool    Node::operator==( const qan::Node& right ) const
     return getLabel() == right.getLabel();
 }
 
+qan::NodeItem*  Node::getItem() noexcept { return _item.data(); }
+
 void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 {
     if ( nodeItem != nullptr ) {

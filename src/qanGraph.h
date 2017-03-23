@@ -38,6 +38,7 @@
 #include "./qanNode.h"
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
+#include "./qanConnector.h"
 
 // Qt headers
 #include <QQuickItem>
@@ -49,7 +50,6 @@
 namespace qan { // ::qan
 
 class Graph;
-class Connector;
 
 /*! \brief Main interface to manage graph topology.
  *
@@ -76,7 +76,7 @@ public:
     Graph( const Graph& ) = delete;
 public:
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
-    void    componentComplete() override;
+    virtual void    componentComplete() override;
 
 public:
     /*! \brief Clear this graph topology and styles.
@@ -328,6 +328,9 @@ public:
 protected:
     template < class Edge_t >
     qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
+private:
+    bool                    insertEdgeImpl( qan::Edge* source, QQmlComponent* edgeComponent, qan::EdgeStyle* style,
+                                            qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().

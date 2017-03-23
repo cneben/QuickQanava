@@ -28,6 +28,9 @@
 #ifndef qanUtils_h
 #define qanUtils_h
 
+// Std headers
+#include <sstream>
+
 // GTpo headers
 #include <GTpo>
 

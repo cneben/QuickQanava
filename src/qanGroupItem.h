@@ -35,11 +35,10 @@
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
-#include "./qanGroup.h"
-#include "./qanNodeItem.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
 #include "./qanDraggableCtrl.h"
+#include "./qanNode.h"
 
 namespace qan { // ::qan
 

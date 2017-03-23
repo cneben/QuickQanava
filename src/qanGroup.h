@@ -35,11 +35,11 @@
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
-#include "./qanNode.h"
-#include "./qanGroupItem.h"
+#include "./qanStyle.h"
 
 namespace qan { // ::qan
 
+class Node;
 class Graph;
 class GroupItem;
 
@@ -60,7 +60,6 @@ public:
      */
     virtual ~Group();
     Group( const Group& ) = delete;
-
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
     //! Shortcut to gtpo::GenGroup<>::getGraph().
@@ -72,10 +71,16 @@ public:
     friend class qan::GroupItem;
 
     Q_PROPERTY( qan::GroupItem* item READ getItem FINAL )
-    inline qan::GroupItem*  getItem() noexcept { return _item.data(); }
+    qan::GroupItem*         getItem() noexcept;
     void                    setItem(qan::GroupItem* item) noexcept;
 private:
     QPointer<qan::GroupItem> _item;
+
+public:
+    //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
+    void    itemProposeNodeDrop();
+    //! Shortcut to getItem()->endProposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
+    void    itemEndProposeNodeDrop();
     //@}
     //-------------------------------------------------------------------------
 

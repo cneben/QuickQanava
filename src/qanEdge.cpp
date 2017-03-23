@@ -30,11 +30,10 @@
 #include <QPainter>
 
 // QuickQanava headers
-#include "./qanGraph.h"
 #include "./qanNode.h"
-#include "./qanGroup.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
+#include "./qanGraph.h"
 
 namespace qan { // ::qan
 
@@ -51,6 +50,8 @@ qan::Graph* Edge::getGraph() noexcept {
 const qan::Graph* Edge::getGraph() const noexcept {
     return qobject_cast< const qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
 }
+
+qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
 
 void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 {

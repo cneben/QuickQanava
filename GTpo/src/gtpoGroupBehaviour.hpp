@@ -39,32 +39,32 @@ template < class Behaviour, class SBehaviours >
 template < class Group >
 auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) noexcept -> void
 {
-    notifyBehaviours< Group >( &Behaviour::groupInserted, group );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
+    this->notifyBehaviours( &Behaviour::groupInserted, group );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
 }
 
 template < class Behaviour, class SBehaviours >
 template < class Group >
 auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) noexcept -> void
 {
-    notifyBehaviours< Group >( &Behaviour::groupRemoved, group );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
+    this->notifyBehaviours( &Behaviour::groupRemoved, group );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
 }
 
 template < class Behaviour, class SBehaviours >
 template < class Node >
 auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::nodeInserted, node );
-    sNotifyBehaviours( [&node](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
+    this->notifyBehaviours( &Behaviour::nodeInserted, node );
+    this->sNotifyBehaviours( [&node](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
 }
 
 template < class Behaviour, class SBehaviours >
 template < class Node >
 auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) noexcept -> void
 {
-    notifyBehaviours< Node >( &Behaviour::nodeRemoved, node );
-    sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
+    this->notifyBehaviours( &Behaviour::nodeRemoved, node );
+    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
 }
 //-----------------------------------------------------------------------------
 

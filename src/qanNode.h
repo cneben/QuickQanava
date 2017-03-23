@@ -38,7 +38,7 @@
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
-#include "./qanNodeItem.h"
+//#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -80,7 +80,7 @@ public:
 
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
-    inline qan::NodeItem*   getItem() noexcept { return _item.data(); }
+    qan::NodeItem*          getItem() noexcept;
     void                    setItem(qan::NodeItem* nodeItem) noexcept;
 protected:
     QPointer<qan::NodeItem> _item;
@@ -120,7 +120,7 @@ public:
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &getOutEdges() ) ); }
+    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( &gtpo::GenNode< qan::GraphConfig >::getOutEdges() ) ); }
     //@}
     //-------------------------------------------------------------------------
 

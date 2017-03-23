@@ -30,6 +30,7 @@
 // QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanGroupItem.h"
+#include "./qanEdgeItem.h"
 #include "./qanGroup.h"
 
 namespace qan { // ::qan
@@ -138,7 +139,6 @@ void    GroupItem::groupMoved()
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
-        qDebug() << "qan::GroupItem::groupMoved(): getAdjacentEdges.size()=" << _group->getAdjacentEdges().size();
         for ( auto weakEdge : _group->getAdjacentEdges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&

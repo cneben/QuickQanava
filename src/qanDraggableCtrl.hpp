@@ -105,7 +105,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::handleDropEvent( QDropEvent* event )
 template <class Node_t, class NodeItem_t>
 void    DraggableCtrl<Node_t, NodeItem_t>::handleMouseDoubleClickEvent(QMouseEvent* event )
 {
-
+    Q_UNUSED(event);
 }
 
 template <class Node_t, class NodeItem_t>
@@ -142,7 +142,7 @@ bool    DraggableCtrl<Node_t, NodeItem_t>::handleMouseMoveEvent(QMouseEvent* eve
 template <class Node_t, class NodeItem_t>
 void    DraggableCtrl<Node_t, NodeItem_t>::handleMousePressEvent( QMouseEvent* event )
 {
-
+    Q_UNUSED(event);
 }
 
 template <class Node_t, class NodeItem_t>
@@ -203,7 +203,7 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
         _targetItem->setX( startPos.x() + delta.x() );
         _targetItem->setY( startPos.y() + delta.y() );
 
-        if ( dragSelection ) {            
+        if ( dragSelection ) {
             auto dragMoveSelected = [this, &dragInitialMousePos, &delta] (auto primitive) { // Call dragMove() on a given node or group
                 if ( primitive != nullptr &&
                      primitive->getItem() != nullptr &&
@@ -221,12 +221,12 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
             if ( group != nullptr &&
                  group->getItem() != nullptr &&
                  static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  { // Do not drop a group in itself
-                group->getItem()->proposeNodeDrop();
+                 group->itemProposeNodeDrop();
                 _lastProposedGroup = group;
             } else if ( group == nullptr &&
                         _lastProposedGroup != nullptr &&
                         _lastProposedGroup->getItem() != nullptr ) {
-                _lastProposedGroup->getItem()->endProposeNodeDrop();
+                _lastProposedGroup->itemEndProposeNodeDrop();
                 _lastProposedGroup = nullptr;
             }
         }
