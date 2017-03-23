@@ -52,7 +52,7 @@ Qan.Connector {
     property color  edgeColor: Qt.rgba(0,0,0,1)
 
     //! Connector control radius (final diameter will be radius x 2).
-    property real   radius: 7
+    property real   radius: 8
 
     //! Connector color (default to Qt.DarkBlue).
     property color  connectorColor: "darkblue"

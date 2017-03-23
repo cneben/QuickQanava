@@ -4,6 +4,7 @@
         <file>default.qml</file>
         <file>custom.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>fa_flag.png</file>
         <file>fa_link.png</file>
     </qresource>
 </RCC>

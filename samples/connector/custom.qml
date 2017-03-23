@@ -34,7 +34,6 @@ Qan.GraphView {
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
 
     graph: Qan.Graph {
-        connectorEnabled: true
         id: graph
         Qan.VisualConnector {
             id: customConnector
@@ -69,6 +68,32 @@ Qan.GraphView {
                                         // edge (either specifying a custom edge component, or calling a user defined method on graph).
             onRequestEdgeCreation: {
                 notifyUser("Edge creation requested between " + src.label + " and " + dst.label )
+            }
+        }
+        connectorEnabled: true
+        connectorColor: Material.accent
+        connectorEdgeColor: Material.accent
+        connectorItem : Control {
+            anchors.fill: parent
+            hoverEnabled: true
+            ToolTip.visible: hovered &&
+                             ( !parent.connectorDragged || state === "HILIGHT" )
+            onStateChanged: {
+                ToolTip.text = ( state === "HILIGHT" ? "Drop to connect" : "Drag on a target node" )
+            }
+            states: [
+                State { name: "NORMAL"; PropertyChanges { target: flag; scale: 1.0 } },
+                State { name: "HILIGHT"; PropertyChanges { target: flag; scale: 1.7 } }
+            ]
+            transitions: [
+                Transition { from: "NORMAL"; to: "HILIGHT"; PropertyAnimation { target: flag; properties: "borderWidth, scale"; duration: 100 } },
+                Transition { from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: flag; properties: "borderWidth, scale"; duration: 150 } }
+            ]
+            Image {
+                anchors.fill: parent
+                id: flag
+                source: "qrc:/fa_flag.png"
+                state: "NORMAL"; smooth: true;   antialiasing: true
             }
         }
         Component.onCompleted: {

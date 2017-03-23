@@ -175,6 +175,16 @@ private:
     bool            _connectorCreateDefaultEdge{true};
 
 public:
+    //! Alias to qan::Connector::connectorItem property (default to nullptr, ie default connector item).
+    Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
+    inline QQuickItem*      getConnectorItem() const noexcept { return _connectorItem; }
+    void                    setConnectorItem( QQuickItem* connectorItem ) noexcept;
+signals:
+    void                    connectorItemChanged();
+private:
+    QPointer<QQuickItem>    _connectorItem{nullptr};
+
+public:
     //! Enable or disable visual connector of nodes in the graph (default to false).
     Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
     inline bool     getConnectorEnabled() const noexcept { return _connectorEnabled; }

@@ -112,5 +112,5 @@ GTpo (depency) MIT ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Copyright (c) 2017 Delia Stratégie
 
-
+  QuickQanava is licensed under LGPL (GTpo sub library is MIT), symbolic-cost commercial license with more sample code, Protocol Buffer and No-SQL persistence support is available on demand: contact@destrat.io
 

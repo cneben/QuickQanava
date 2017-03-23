@@ -71,18 +71,21 @@ void    Graph::componentComplete()
             if ( style != nullptr ) {
                 _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
                 emit connectorChanged();
-                if (_connector)
+                if (_connector) {
                     _connector->setGraph(this);
-                _connector->setEnabled(getConnectorEnabled());
-                _connector->setVisible(getConnectorEnabled());
-                _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
-                _connector->setProperty( "connectorColor", getConnectorColor() );
-                _connector->setProperty( "hEdgeEnabled", getConnectorHEdgeEnabled() );
-                _connector->setProperty( "createDefaultEdge", getConnectorCreateDefaultEdge() );
-                connect( _connector.data(), &qan::Connector::requestEdgeCreation,
-                         this,              &qan::Graph::connectorRequestEdgeCreation);
-                connect( _connector.data(), &qan::Connector::edgeInserted,
-                         this,              &qan::Graph::connectorEdgeInserted);
+                    _connector->setEnabled(getConnectorEnabled());
+                    _connector->setVisible(getConnectorEnabled());
+                    _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
+                    _connector->setProperty( "connectorColor", getConnectorColor() );
+                    _connector->setProperty( "hEdgeEnabled", getConnectorHEdgeEnabled() );
+                    _connector->setProperty( "createDefaultEdge", getConnectorCreateDefaultEdge() );
+                    if ( getConnectorItem() != nullptr )
+                        _connector->setConnectorItem( getConnectorItem() );
+                    connect( _connector.data(), &qan::Connector::requestEdgeCreation,
+                             this,              &qan::Graph::connectorRequestEdgeCreation);
+                    connect( _connector.data(), &qan::Connector::edgeInserted,
+                             this,              &qan::Graph::connectorEdgeInserted);
+                }
             } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
         }
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
@@ -216,6 +219,17 @@ void    Graph::setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) 
         if ( _connector )
             _connector->setProperty( "createDefaultEdge", connectorCreateDefaultEdge );
         emit connectorCreateDefaultEdgeChanged();
+    }
+}
+
+void    Graph::setConnectorItem( QQuickItem* connectorItem ) noexcept
+{
+    if ( connectorItem != _connectorItem ) {
+        _connectorItem = connectorItem;
+        if ( _connectorItem &&
+             _connector )
+            _connector->setConnectorItem( _connectorItem.data() );
+        emit connectorItemChanged();
     }
 }
 

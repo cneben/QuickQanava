@@ -44,6 +44,24 @@ Topology
 
 ### Adding content
 
+Content could initialized in graph `onCompleted()` function:
+
+- `Qan.Node Qan.Graph.insertNode()`: 
+- `Qan.Edge Qan.Graph.insertEdge(Qan.Node, Qan.Node)`:
+- `Qan.Group Qan.Graph.insertGroup()`:
+
+``` cpp hl_lines="5"
+Qan.Graph {
+    id: graph
+    anchors.fill: parent
+    Component.onCompleted: {
+        var n1 = graph.insertNode()
+        n1.label = "Default Node"
+		n1.item.x = 50; n1.item.y = 50
+    }
+}
+```
+
 ![Default Node](images/topology-default-node.png)
 
 ### Navigation
