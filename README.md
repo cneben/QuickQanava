@@ -78,25 +78,30 @@ cd QuickQanava
 
 ## QuickQanava Samples:
 
-| Nodes       |   |
-| :---:                       | ---             |
-| ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |            |
+| Nodes       | 
+| :---:       |
+| ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |
+
+  - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/gettingstarted/index.html#displaying-custom-nodes)
 
 | Visual Connector       |   
 | :---:                  | 
 ![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) |
 
-  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology). 
-  
+  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology)
   - Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
 
-| Groups       |   |
-| :---:                       | ---             |
-| ![Groups](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-groups.gif) |            |
+| Groups       | 
+| :---:        | 
+| ![Groups](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-groups.gif) |
 
-| Styles       |   |
-| :---:                       | ---             |
-| ![Custom styles](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-styles.gif) |            |
+  - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/gettingstarted/index.html#using-groups)
+
+| Styles       |
+| :---:        | 
+| ![Custom styles](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-styles.gif) |
+
+  - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
 
 License
 =======
