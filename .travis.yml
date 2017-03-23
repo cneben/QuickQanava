@@ -22,7 +22,7 @@ install:
   - sudo apt-get install -qq cmake qt58base qt58declarative qt58graphicaleffects qt58quickcontrols2
   - sudo source /opt/qt58/bin/qt58-env.sh
 
- before_script:
+before_script:
   - export PATH=$PATH:/opt/qt58/bin
 
 script:
