@@ -8,7 +8,7 @@
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 
-**2017/03/21:** Warning: dev version has just been merged on master: please report any compilation issue by mail.
+**2017/03/23:** Warning: dev version has just been merged on master, it now compiles well on g++5 and MSVC 2015 U2 with Travis support on.
 
 QuickQanava 
 ============================
