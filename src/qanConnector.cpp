@@ -94,8 +94,10 @@ auto    Connector::setConnectorItem(QQuickItem* connectorItem) noexcept -> void
         if ( _connectorItem )
             _connectorItem->deleteLater();
         _connectorItem = connectorItem;
-        if ( _connectorItem )
+        if ( _connectorItem ) {
             _connectorItem->setParentItem(this);
+            _connectorItem->setVisible( isVisible() );
+        }
         emit connectorItemChanged();
     }
 }

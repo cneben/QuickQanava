@@ -103,6 +103,11 @@ Qan.Connector {
             visible = false
     }
 
+    onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
+        if ( connectorItem )
+            connectorItem.visible = visible
+    }
+
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
@@ -196,12 +201,9 @@ Qan.Connector {
                     else requestEdgeCreation(src, dst.node)
                 }
             }
-            if ( createdEdge ) {    // Notify graph user of the edge creation
+            if ( createdEdge ) // Notify user of the edge creation
                 createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } )
                 edgeInserted( createdEdge );
-                //if ( visualConnector.graph )
-                //    visualConnector.graph.connectorEdgeInserted( createdEdge )
-            }
         }
         onPressed : {
             mouse.accepted = true
