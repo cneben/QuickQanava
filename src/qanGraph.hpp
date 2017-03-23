@@ -39,7 +39,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
             nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
     }
     if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
-        qWarning() << "qan::Graph::insertNode(): Error: Can't find a valid node delegate component.";
+        qWarning() << "qan::Graph::insertNode<>(): Error: Can't find a valid node delegate component.";
         return nullptr;
     }
     const auto node = std::make_shared<Node_t>();
@@ -96,11 +96,16 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
     if ( dstNode == nullptr &&
          dstEdge == nullptr )
         return nullptr;
-    if ( edgeComponent == nullptr )
-        edgeComponent = _edgeDelegate.get();
-    if ( edgeComponent == nullptr )
+    if ( edgeComponent == nullptr ) {
+        edgeComponent = Edge_t::delegate(this);     // If no delegate component is specified, try the edge type delegate() factory
+        if ( edgeComponent == nullptr )
+            edgeComponent = _edgeDelegate.get();    // Otherwise, use default edge delegate component
+    }
+    if ( edgeComponent == nullptr ) {               // Otherwise, throw an error, a visual edge must have a delegate
+        qWarning() << "qan::Graph::insertEdge<>(): Error: Can't find a valid edge delegate component.";
         return nullptr;
-    auto edge = std::make_shared<qan::Edge>();
+    }
+    auto edge = std::make_shared<Edge_t>();
     try {
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
         qan::Style* style = Edge_t::style();
