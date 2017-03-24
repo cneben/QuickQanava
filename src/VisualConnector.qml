@@ -36,7 +36,7 @@ import QuickQanava 2.0 as Qan
  * \endcode
  *
  * \note VisualConnector visible property is automatically set to false until it has been associed to an existing "host" node
- *       with setHostNode().
+ *       with setSource() (or Qan.Graph.setConnectorSource() for default connector).
  */
 Qan.Connector {
     id: visualConnector
@@ -80,32 +80,44 @@ Qan.Connector {
     property bool   createDefaultEdge: true
 
     edgeComponent: Component{ Qan.Edge{} }
-
     onEdgeColorChanged: {
         if (edgeItem)
             edgeItem.color = edgeColor
     }
 
     // Private properties
-    /*! \brief Set the connector target (is the node that will display the control and that will be used as 'source' for edge creation).
+    /*! \brief Set the connector source node (ie the node that will display the control and that will be used as 'source' for edge creation).
      *
      * \note this item will automatically be reparented to host node, and displayed in host node top right.
      */
-    function setHostNode( hostNode ) {
-        if ( hostNode ) {
-            parent = hostNode
-            if ( hostNode )  // Force drop node position updates
-                x = Qt.binding( function(){ return hostNode.width + leftMargin } )
-            else x = 0
-            if ( connectorItem )
+    function setSource( sourceNode ) {
+        if ( sourceNode &&
+             sourceNode.item ) {
+            visualConnector.sourceNode = sourceNode
+            visualConnector.parent = sourceNode.item
+            visualConnector.x = Qt.binding( function(){ return sourceNode.item.width + leftMargin } )
+            if ( edgeItem )
+                edgeItem.sourceItem = sourceNode.item
+            if ( connectorItem ) {
+                connectorItem.parent = visualConnector
                 connectorItem.state = "NORMAL"
-        } else
-            visible = false
+                connectorItem.visible = true
+            }
+            visualConnector.visible = true
+        } else {
+            visualConnector.visible = false
+            if( visualConnector.edgeItem )
+                visualConnector.edgeItem.visible = false
+            if( visualConnector.connectorItem )
+                visualConnector.connectorItem.visible = false
+        }
     }
+    onSourceNodeChanged: setSource(sourceNode)
 
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
+        console.debug( "VisualConnector.onVisibleChanged(): visible=" + visible )
         if ( connectorItem )
-            connectorItem.visible = visible
+            connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
     }
 
     Drag.active: dropDestArea.drag.active
@@ -137,6 +149,7 @@ Qan.Connector {
         id: defaultConnectorItem
         parent: visualConnector
         anchors.fill: parent
+        visible: false
         z: 15
         state: "NORMAL"
         color: Qt.rgba(0, 0, 0, 0)
@@ -160,10 +173,6 @@ Qan.Connector {
             Transition {
                 from: "HILIGHT"; to: "NORMAL"; PropertyAnimation { target: defaultConnectorItem; properties: "borderWidth, scale"; duration: 150 }
             } ]
-    }
-    onSourceNodeChanged: {
-        if ( sourceNode.item )
-            setHostNode(sourceNode.item)
     }
     MouseArea {
         id: dropDestArea

@@ -43,6 +43,7 @@ Qan.GraphView {
                 parent: customConnector
                 anchors.fill: parent
                 hoverEnabled: true
+                visible: false                      // SAMPLE: Do not forget to hide the custom connector item by default, visual connector will set visible to true on demand
                 ToolTip.visible: hovered &&
                                  ( !customConnector.connectorDragged || state === "HILIGHT" )
                 onStateChanged: {
@@ -76,6 +77,7 @@ Qan.GraphView {
         connectorItem : Control {
             anchors.fill: parent
             hoverEnabled: true
+            visible: false              // SAMPLE: Do not forget to hide the custom connector item by default, visual connector will set visible to true on demand
             ToolTip.visible: hovered &&
                              ( !parent.connectorDragged || state === "HILIGHT" )
             onStateChanged: {
@@ -111,11 +113,11 @@ Qan.GraphView {
             var d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
             graph.setConnectorSource(s1)
-            customConnector.sourceNode = s1
+            customConnector.setSource(s1)
         }
         onNodeClicked: {
             if ( node && node.item ) {
-                customConnector.sourceNode = node
+                customConnector.setSource(node)
             } else
                 customConnector.visible = false
         }

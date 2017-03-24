@@ -74,7 +74,7 @@ void    Graph::componentComplete()
                 if (_connector) {
                     _connector->setGraph(this);
                     _connector->setEnabled(getConnectorEnabled());
-                    _connector->setVisible(getConnectorEnabled());
+                    _connector->setVisible(false);
                     _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
                     _connector->setProperty( "connectorColor", getConnectorColor() );
                     _connector->setProperty( "hEdgeEnabled", getConnectorHEdgeEnabled() );

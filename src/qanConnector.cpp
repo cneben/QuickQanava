@@ -55,6 +55,8 @@ auto    Connector::setGraph(qan::Graph* graph) noexcept -> void
             _edgeItem->setGraph(graph);
             _edgeItem->setVisible(false);
         }
+        if ( _graph == nullptr )
+            setVisible( false );
         emit graphChanged();
     }
 }
@@ -97,7 +99,9 @@ auto    Connector::setConnectorItem(QQuickItem* connectorItem) noexcept -> void
         _connectorItem = connectorItem;
         if ( _connectorItem ) {
             _connectorItem->setParentItem(this);
-            _connectorItem->setVisible( isVisible() );
+            _connectorItem->setVisible( isVisible() &&
+                                        _sourceNode != nullptr );
+            qDebug() << "_connectorItem->visible=" << _connectorItem->isVisible();
         }
         emit connectorItemChanged();
     }

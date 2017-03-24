@@ -62,7 +62,7 @@ Qan.AbstractGraphView {
                 node.group.z = maxZ
             if ( graph.connector &&
                  graph.connectorEnabled )
-                graph.connector.sourceNode = node;
+                graph.connector.setSource(node);
             if ( nodeResizer &&
                  node.item.resizable ) {
                 nodeResizer.parent = node.item
@@ -70,7 +70,6 @@ Qan.AbstractGraphView {
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
                 nodeResizer.z = node.item.z + 1.
-                //nodeResizer.z = maxZ + 1000.
             } else {
                 nodeResizer.target = null
                 nodeResizer.visible = false
