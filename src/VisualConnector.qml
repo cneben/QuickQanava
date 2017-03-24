@@ -115,7 +115,6 @@ Qan.Connector {
     onSourceNodeChanged: setSource(sourceNode)
 
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
-        console.debug( "VisualConnector.onVisibleChanged(): visible=" + visible )
         if ( connectorItem )
             connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
     }

@@ -1,19 +1,38 @@
+/*
+    This file is part of QuickQanava library.
+
+    Copyright (C) 2008-2017 Benoit AUTHEMAN
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 //-----------------------------------------------------------------------------
-// This file is a part of the FastQMLlibrary. Copyright 2016 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
-// \file	fqlBottomRightResizer.h
+// \file	qanBottomRightResizer.h
 // \author	benoit@destrat.io
 // \date	2016 07 08
 //-----------------------------------------------------------------------------
 
-#ifndef fqlBottomRightResizer_h
-#define fqlBottomRightResizer_h
+#ifndef qanBottomRightResizer_h
+#define qanBottomRightResizer_h
 
 // Qt headers
 #include <QtQml>
 #include <QQuickItem>
 
-namespace fql {  // ::fql
+namespace qan {  // ::qan
 
 /*! \brief Add a resize handler ont the bottom right of a target QML Item.
  *
@@ -24,15 +43,15 @@ namespace fql {  // ::fql
  * Don't forget to register the component during application initialization:
  * \code
  *   // From c++:
- *   qmlRegisterType< fql::BottomRightResizer >( "FastQml", 1, 0, "BottomRightResizer" );
+ *   qmlRegisterType< qan::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
  *
  *   // From QML:
- *   import FastQml 1.0 as Fql
- *   import "qrc:/FastQml" 2.0 as Fql
+ *   import QuickQanava 2.0 as Qan
+ *   import "qrc:/QuickQanava" 2.0 as Qan
  *
  *   Item {
  *     id: targetItem
- *     Fql.BottomRightResizer { target: targetItem }
+ *     Qan.BottomRightResizer { target: targetItem }
  *   }
  * \endcode
  *
@@ -194,10 +213,10 @@ private:
     //-------------------------------------------------------------------------
 };
 
-}  // ::fql
+}  // ::qan
 
-QML_DECLARE_TYPE( fql::BottomRightResizer );
+QML_DECLARE_TYPE( qan::BottomRightResizer );
 
-#endif // fqlBottomRightResizer_h
+#endif // qanBottomRightResizer_h
 
 

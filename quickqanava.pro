@@ -3,6 +3,9 @@ CONFIG      +=  ordered
 
 quickqanava.file    = src/quickqanava-build-lib.pro
 
+test-resizer.subdir   = samples/resizer
+test-resizer.depends  = quickqanava
+
 test-navigable.subdir   = samples/navigable
 test-navigable.depends  = quickqanava
 
@@ -25,6 +28,7 @@ test-40k.subdir     = samples/40k
 test-40k.depends    = quickqanava
 
 #SUBDIRS +=  quickqanava
+#SUBDIRS +=  test-resizer
 SUBDIRS +=  test-navigable
 SUBDIRS +=  test-nodes
 SUBDIRS +=  test-connector
