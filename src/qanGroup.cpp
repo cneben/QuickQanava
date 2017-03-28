@@ -45,7 +45,10 @@ Group::Group( QObject* parent ) :
     Q_UNUSED(parent);
 }
 
-Group::~Group() { /* Nil */ }
+Group::~Group() {
+    if ( _item )
+        _item->deleteLater();
+}
 
 qan::Graph*         Group::getGraph() noexcept {
     return qobject_cast< qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );

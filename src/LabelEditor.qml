@@ -64,6 +64,9 @@ Loader {
     //! Editor target node or group (or any Qan primitive with a \c label property).
     property var    target: undefined
 
+    property bool   bold: false
+    property real   pointSize: 11
+
     onVisibleChanged: {
         if ( visible && !item )
             sourceComponent = labelEditorComponent
@@ -89,6 +92,8 @@ Loader {
             id: labelTextField
             anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
             text: target ? target.label : ""
+            font.bold: labelEditorLoader.bold
+            font.pointSize: labelEditorLoader.pointSize
             onAccepted: {
                 if ( target &&
                      text.length !== 0 )

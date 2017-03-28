@@ -558,51 +558,7 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 /* Graph Group Management *///-------------------------------------------------
 qan::Group* Graph::insertGroup()
 {
-    QQmlComponent* groupComponent{ _groupDelegate.get() };
-    if ( groupComponent == nullptr ) {
-        qWarning() << "qan::Graph::insertGroup(): Error: Can't find a valid group delegate component.";
-        return nullptr;
-    }
-    auto group = std::make_shared<qan::Group>();
-    if ( group ) {
-        QQmlEngine::setObjectOwnership( group.get(), QQmlEngine::CppOwnership );
-        qan::Style* style = qan::Group::style();
-        if ( style != nullptr ) {
-            // Group styles are not well supported (for the moment 20170317)
-            //_styleManager.setStyleComponent(style, edgeComponent);
-            qan::GroupItem* groupItem = static_cast<qan::GroupItem*>( createFromComponent( groupComponent,
-                                                                                           *style,
-                                                                                           nullptr,
-                                                                                           nullptr,                                                                                           group.get() ) );
-            if ( groupItem != nullptr ) {
-                groupItem->setGroup(group.get());
-                groupItem->setGraph(this);
-                group->setItem(groupItem);
-
-                GTpoGraph::insertGroup( group );
-
-                auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                        emit this->groupClicked(groupItem->getGroup(), p);
-                };
-                connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
-
-                auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                        emit this->groupRightClicked(groupItem->getGroup(), p);
-                };
-                connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
-
-                auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-                    if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-                        emit this->groupDoubleClicked(groupItem->getGroup(), p);
-                };
-                connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
-            } else
-                qWarning() << "qan::Graph::insertGroup(): Warning: Group delegate from QML component creation failed.";
-        } else qWarning() << "qan::Graph::insertGroup(): Error: style() factory has returned a nullptr style.";
-    }
-    return group.get();
+    return insertGroup<qan::Group>();
 }
 
 void    Graph::removeGroup( qan::Group* group )

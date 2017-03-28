@@ -46,6 +46,8 @@ Item {
 
     property alias  radius: groupBackground.radius
     property alias  border: groupBackground.border
+    property real   labelPointSize: 11
+    property bool   labelBold: false
 
     property var    groupItem: undefined
     Item {
@@ -85,6 +87,8 @@ Item {
                 anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
                 target: groupItem && groupItem.group ? groupItem.group : undefined
                 visible: false
+                pointSize: template.labelPointSize
+                bold: template.labelBold
             }
             Label {
                 id: groupLabel
@@ -92,6 +96,8 @@ Item {
                 text: groupItem && groupItem.group ? groupItem.group.label : "              "
                 visible: !labelEditor.visible
                 verticalAlignment: Text.AlignVCenter
+                font.pointSize: template.labelPointSize
+                font.bold: template.labelBold
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent

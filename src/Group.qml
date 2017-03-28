@@ -26,7 +26,6 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtQuick.Controls     1.4
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
@@ -48,10 +47,10 @@ Qan.GroupItem {
         id: template
         anchors.fill: parent
         groupItem: parent
-        Qan.BottomRightResizer { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+        Qan.BottomRightResizer {
             id: groupResizer
             x: 0; y: 0; z: 3
-            visible: groupItem.item ? !groupItem.item.collapsed : true
+            visible: !groupItem.collapsed
             target: template.content
             minimumTargetSize: Qt.size( Math.max( groupItem.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
                                         Math.max( groupItem.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )

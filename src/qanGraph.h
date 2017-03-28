@@ -380,6 +380,10 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE qan::Group* insertGroup();
 
+    //! Insert a group using its static delegate() and style() factories.
+    template < class Group_t >
+    qan::Group*             insertGroup();
+
     //! Shortcut to gtpo::GenGraph<>::removeGroup().
     Q_INVOKABLE void        removeGroup( qan::Group* group );
 
