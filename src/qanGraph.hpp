@@ -29,7 +29,6 @@
 namespace qan { // ::qan
 
 /* Graph Factories *///--------------------------------------------------------
-
 template < class Node_t >
 qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
 {
@@ -84,6 +83,24 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
     }
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error.";
+    }
+    return node.get();
+}
+
+template < class Node_t >
+qan::Node*  Graph::insertNonVisualNode()
+{
+    const auto node = std::make_shared<Node_t>();
+    try {
+        if ( node ) {
+            QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
+            GTpoGraph::insertNode( node );
+        }
+    } catch ( gtpo::bad_topology_error e ) {
+        qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
+    }
+    catch ( ... ) {
+        qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error.";
     }
     return node.get();
 }

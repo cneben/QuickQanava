@@ -160,18 +160,6 @@ public:
      */
     auto    createNode() noexcept( false ) -> WeakNode;
 
-    /*! \brief Create a node with the given \c className and insert it into the graph.
-     *
-     * Default implementation only create node and edges corresponding to gtpo::GenNode::getClassName().
-     * This method is mainly usefull when a hierarchy of virtual node should be serialized.
-     * Always prefere createNode() and insertNode( SharedNode ) to add content in the graph until you
-     * are writing custom in/out serialization functors for a serializer dealing with specialized version
-     * of GenNode (see gtpo::ProtoSerializer documentation for more informations).
-     *
-     * \throw gtpo::bad_topology_error with an error description if insertion fails.
-     */
-    virtual WeakNode    createNode( const std::string& className ) noexcept( false );
-
     /*! \brief Insert a node created outside of GTpo into the graph.
      *
      * If your nodes must be created outside of GTpo (ie not with the createNode() method),

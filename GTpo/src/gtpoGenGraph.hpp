@@ -75,14 +75,6 @@ auto GenGraph< Config >::createNode( ) -> WeakNode
 }
 
 template < class Config >
-auto    GenGraph< Config >::createNode( const std::string& className ) noexcept( false ) -> WeakNode
-{
-    if ( className == "gtpo::Node" )
-        return createNode();
-    return WeakNode{};
-}
-
-template < class Config >
 auto    GenGraph< Config >::insertNode( SharedNode node ) -> WeakNode
 {
     assert_throw( node != nullptr, "gtpo::GenGraph<>::insertNode(): Error: Trying to insert a nullptr node in graph." );

@@ -40,9 +40,9 @@ QuickQanava focus on writting content delegates in QML (even if they could be 10
 	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
 	  - [X] Remove protocolbuffer and properties management support (it has nothing to do in the visualization package).
     - [X] Redesign qan::Graph interface for creating content.
-      - [ ] Add a 100% C++ interface (currently QML delegate components definition still are necessary).
+      - [X] Add a 100% C++ interface (currently QML delegate components definition still are necessary).
         - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
-    - [50%] Add _efficient_ support for non visual nodes and edges, non visual edges should have a very small footprint (ie non QQuickItem...).
+    - [X] Add _efficient_ support for non visual nodes and edges, non visual edges should have a very small footprint (ie non QQuickItem...).
     - [X] Update samples for full QQC2 controls support.
     - [X] Redesign visual connection of nodes (add support for custom visual component, invisible edge creation, etc.).
     - [ ] Add full support for groups inside group (ie subgraphs).

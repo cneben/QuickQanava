@@ -58,6 +58,15 @@ qan::NodeStyle* MyNode::style() noexcept
 
 !!! note "Selection, visual connection and navigation will works out of the box for custom primitives (either nodes, edges or groups)."
 
+Insertion of non Visual Content
+------------------
+
+Non visual edge or node could be used in graph to model complex topologies or add internal non-visual logic with:
+
+- `qan::Graph::insertNonVisualNode<>()`: default graph `nodeDelegate` will no be used, custom node `delegate()` may be oeither undefined or return nullptr.
+- `qan::Graph::insertNonVisualEdge<>(source, destination)`: Edge could be a regular node -> node edge or an oriented hyper edge node -> edge.
+
+
 Observation of Topological Modifications
 ------------------
 

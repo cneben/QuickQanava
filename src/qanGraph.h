@@ -286,8 +286,13 @@ public:
      */
     Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
 
+    //! Insert a node using Node_t::delegate() and Node_t::style(), it no delegate is defined, default on graph \c nodeDelegate.
     template < class Node_t >
     qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr );
+
+    //! Same semantic than insertNode<>() but for non visual nodes.
+    template < class Node_t >
+    qan::Node*              insertNonVisualNode();
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
