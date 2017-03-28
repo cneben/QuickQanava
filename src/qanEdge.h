@@ -53,7 +53,7 @@ public:
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge();
     Edge( const Edge& ) = delete;
-    virtual ~Edge() { /* Nil */ }
+    virtual ~Edge();
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )

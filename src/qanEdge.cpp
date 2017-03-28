@@ -43,6 +43,12 @@ Edge::Edge() :
 {
 }
 
+Edge::~Edge()
+{
+    if ( _item )
+        _item->deleteLater();
+}
+
 qan::Graph* Edge::getGraph() noexcept {
     return qobject_cast< qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
 }

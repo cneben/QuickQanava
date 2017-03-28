@@ -245,8 +245,7 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection ) -> 
         if ( _targetItem->getDroppable() &&
              graph != nullptr &&
              _target ) {
-            // FIXME QAN3: map to global graph container
-            const auto pos = _targetItem->position(); //parentItem() != nullptr ? parentItem()->mapToScene( position() ) : position();
+            const auto pos = _targetItem->position();
             qan::Group* group = graph->groupAt( pos, { _targetItem->width(), _targetItem->height() } );
             if ( group != nullptr &&
                  static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  // Do not drop a group in itself

@@ -206,7 +206,7 @@ Qan.Connector {
                           !dst.isHyperEdge() ) {            // Do not create an hyper edge on an hyper edge
                     if ( createDefaultEdge )
                         createdEdge = graph.insertEdge( src, dst.edge )
-                    else requestEdgeCreation(src, dst.node)
+                    else requestEdgeCreation(src, dst.edge)
                 }
             }
             if ( createdEdge ) // Notify user of the edge creation

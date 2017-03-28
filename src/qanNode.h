@@ -81,6 +81,7 @@ public:
 public:
     Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
     qan::NodeItem*          getItem() noexcept;
+    const qan::NodeItem*    getItem() const noexcept;
     void                    setItem(qan::NodeItem* nodeItem) noexcept;
 protected:
     QPointer<qan::NodeItem> _item;

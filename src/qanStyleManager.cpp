@@ -50,9 +50,6 @@ StyleManager::~StyleManager( )
 void    StyleManager::clear()
 {
     _styles.clear();
-/*    for ( const auto nodeStyle : _nodeStyles )
-        if ( nodeStyle != nullptr )
-            nodeStyle->deleteLater();*/
     _nodeStyles.clear();
     _edgeStyles.clear();
 }

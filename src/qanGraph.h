@@ -325,12 +325,15 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
-protected:
+public:
     template < class Edge_t >
     qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
 private:
     bool                    insertEdgeImpl( qan::Edge* source, QQmlComponent* edgeComponent, qan::EdgeStyle* style,
                                             qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+public:
+    template < class Edge_t >
+    qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().

@@ -322,8 +322,8 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                     node->setItem(nodeItem);
                     nodeItem->setNode(node);
                     nodeItem->setGraph(this);
-                    _styleManager.setStyleComponent(&style, component );
                     nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                    _styleManager.setStyleComponent(&style, component );
                 }
             } else if ( edge != nullptr ) {
                 const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
@@ -341,6 +341,10 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                     groupItem->setGraph(this);
                     _styleManager.setStyleComponent(groupItem->getStyle(), component );
                 }
+            } else {
+                const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
+                if ( nodeItem != nullptr )                                  // is a preview item, but now actual underlining node.
+                    nodeItem->setItemStyle(&style);
             }
             component->completeCreate();
             if ( !component->isError() ) {

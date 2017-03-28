@@ -123,6 +123,30 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
     }
     return edge.get();
 }
+
+template < class Edge_t >
+qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge )
+{
+    if ( dstNode == nullptr &&
+         dstEdge == nullptr )
+        return nullptr;
+    auto edge = std::make_shared<Edge_t>();
+    try {
+        QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
+        edge->setSrc( src.shared_from_this() );
+        if ( dstNode != nullptr )
+            edge->setDst( dstNode->shared_from_this() );
+        else if ( dstEdge != nullptr)
+            edge->setHDst( dstEdge->shared_from_this() );
+        GTpoGraph::insertEdge( edge );
+    } catch ( gtpo::bad_topology_error e ) {
+        qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
+    }
+    catch ( ... ) {
+        qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
+    }
+    return edge.get();
+}
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
