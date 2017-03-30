@@ -42,7 +42,7 @@
 
 namespace qan { // ::qan
 
-/*! \brief FIXME
+/*! \brief Generic logic for dragging either qan::Node or qan::Group visual items.
  *
  * \nosubgrouping
  */

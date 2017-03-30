@@ -59,6 +59,7 @@ const qan::Graph*   Group::getGraph() const noexcept {
 }
 
 qan::GroupItem*  Group::getItem() noexcept { return _item.data(); }
+const qan::GroupItem*   Group::getItem() const noexcept { return _item.data(); }
 
 void    Group::setItem(qan::GroupItem* item) noexcept
 {

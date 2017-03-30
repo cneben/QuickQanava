@@ -591,7 +591,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
     return GTpoGraph::hasGroup( WeakGroup{group->shared_from_this()} );
 }
 
-auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void
+auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transformPosition ) noexcept(false) -> void
 {
     if ( group != nullptr &&
          node != nullptr ) {
@@ -601,7 +601,7 @@ auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node ) noexcept(fal
         if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
              node->getItem() != nullptr ) {
-            group->getItem()->groupNodeItem(node->getItem());
+            group->getItem()->groupNodeItem(node->getItem(), transformPosition);
         }
     }
 }

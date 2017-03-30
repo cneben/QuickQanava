@@ -171,8 +171,10 @@ protected slots:
     void            groupMoved();
 
 public:
-    //! Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem);
+    /*! Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
+     * \param transformPosition set to false to avoid mapping of item position to group coordinate system (usefull for serialization).
+     */
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);

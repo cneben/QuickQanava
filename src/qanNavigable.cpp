@@ -211,6 +211,14 @@ void    Navigable::setZoomMin( qreal zoomMin )
     emit zoomMinChanged();
 }
 
+void    Navigable::setDragActive( bool dragActive ) noexcept
+{
+    if ( dragActive != _dragActive ) {
+        _dragActive = dragActive;
+        emit dragActiveChanged();
+    }
+}
+
 void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
@@ -291,6 +299,7 @@ void    Navigable::mouseMoveEvent( QMouseEvent* event )
             navigableContainerItemModified();
             _panModified = true;
             _lastPan = event->localPos();
+            setDragActive(true);
 
             updateGrid();
         }
@@ -318,13 +327,15 @@ void    Navigable::mousePressEvent( QMouseEvent* event )
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
     if ( getNavigable() ) {
-        if ( event->button() == Qt::LeftButton ) {
+        if ( event->button() == Qt::LeftButton &&
+             !_dragActive ) {       // Do not emit clicked when dragging occurs
             emit clicked( event->localPos() );
             navigableClicked( event->localPos() );
         } else if ( event->button() == Qt::RightButton ) {
             emit rightClicked( event->localPos() );
             navigableRightClicked(event->localPos() );
         }
+        setDragActive(false);
         _leftButtonPressed = false;
     }
     QQuickItem::mouseReleaseEvent( event );

@@ -394,7 +394,7 @@ public:
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
-    auto            groupNode( qan::Group* group, qan::Node* node ) noexcept(false) -> void;
+    auto            groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false) -> void;
 
     //! \copydoc gtpo::GenGraph::groupNode()
     auto            groupNode( qan::Group* group, qan::Group* node ) noexcept(false) -> void;

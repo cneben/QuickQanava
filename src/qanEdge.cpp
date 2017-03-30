@@ -89,6 +89,25 @@ qan::EdgeStyle* Edge::style() noexcept
 }
 //-----------------------------------------------------------------------------
 
+/*! \name Edge Topology Management *///------------------------------------
+qan::Node*  Edge::getSource() noexcept
+{
+    return qobject_cast<qan::Node*>(getSrc().lock().get());
+}
+
+qan::Node*  Edge::getDestination() noexcept
+{
+    return qobject_cast<qan::Node*>(getDst().lock().get());
+}
+
+qan::Edge*  Edge::getHDestination() noexcept
+{
+    return qobject_cast<qan::Edge*>(getHDst().lock().get());
+}
+
+QAbstractItemModel* Edge::getInHNodesModel() const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInHNodes() ) ); }
+//-----------------------------------------------------------------------------
+
 /* Edge Properties Management *///---------------------------------------------
 void    Edge::setLabel( const QString& label )
 {

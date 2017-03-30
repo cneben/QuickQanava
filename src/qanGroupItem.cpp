@@ -148,12 +148,13 @@ void    GroupItem::groupMoved()
     }
 }
 
-void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem)
+void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition )
 {
     if ( nodeItem == nullptr ||
          getContainer() == nullptr )   // A container must have configured in concrete QML group component
         return;
-    nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
+    if ( transformPosition )
+        nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
     nodeItem->setParentItem( getContainer() );
     groupMoved(); // Force call to groupMoved() to update group adjacent edges
     endProposeNodeDrop();

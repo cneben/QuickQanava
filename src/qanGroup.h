@@ -72,6 +72,7 @@ public:
 
     Q_PROPERTY( qan::GroupItem* item READ getItem FINAL )
     qan::GroupItem*         getItem() noexcept;
+    const qan::GroupItem*   getItem() const noexcept;
     void                    setItem(qan::GroupItem* item) noexcept;
 private:
     QPointer<qan::GroupItem> _item;

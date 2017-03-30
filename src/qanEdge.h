@@ -94,11 +94,13 @@ public:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
+    Q_INVOKABLE qan::Node* getSource() noexcept;
+    Q_INVOKABLE qan::Node* getDestination() noexcept;
+    Q_INVOKABLE qan::Edge* getHDestination() noexcept;
+
     //! Read-only abstract item model of this edge in hyper nodes.
-//    Q_PROPERTY( QAbstractItemModel* inHNodes READ qmlGetInHNodes NOTIFY inHNodesChanged FINAL )
-//    QAbstractItemModel* qmlGetInHNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInHNodes() ) ); }
-//signals:
-//    void        inHNodesChanged( );
+    Q_PROPERTY( QAbstractItemModel* inHNodes READ getInHNodesModel CONSTANT FINAL )
+    QAbstractItemModel* getInHNodesModel() const;
     //@}
     //-------------------------------------------------------------------------
 

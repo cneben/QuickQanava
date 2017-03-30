@@ -300,6 +300,20 @@ protected:
     //! Called when the container item is scaled (zoomed) or panned (base implementation empty).
     virtual void    navigableContainerItemModified() { }
 
+public:
+    //! True when the navigable conctent area is actually dragged.
+    Q_PROPERTY( bool dragActive READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL )
+    //! \copydoc dragActive
+    inline bool getDragActive() const noexcept { return _dragActive; }
+    //! \copydoc dragActive
+    void        setDragActive( bool dragActive ) noexcept;
+private:
+    //! \copydoc dragActive
+    bool        _dragActive{ false };
+signals:
+    //! \copydoc dragActive
+    void        dragActiveChanged( );
+
 protected:
     virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
     virtual void    mouseMoveEvent( QMouseEvent* event ) override;

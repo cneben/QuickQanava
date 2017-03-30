@@ -61,8 +61,10 @@ Qan.AbstractGraphView {
             if ( node.group )
                 node.group.z = maxZ
             if ( graph.connector &&
-                 graph.connectorEnabled )
+                 graph.connectorEnabled ) {
                 graph.connector.setSource(node);
+                graph.connector.y = -graph.connector.height / 2
+            }
             if ( nodeResizer &&
                  node.item.resizable ) {
                 nodeResizer.parent = node.item
