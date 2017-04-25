@@ -90,7 +90,7 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
                         QStringLiteral("height:")   + QString::number(_handlerSize.height()) + QStringLiteral(";") +
                         QStringLiteral("border.width:4;radius:3;") +
                         QStringLiteral("border.color:\"") + _handlerColor.name() + QStringLiteral("\";") +
-                        QStringLiteral("color:Qt.rgba(0.,0.,0.,0.); }") };
+                        QStringLiteral("color:Qt.lighter(border.color); }") };
             defaultHandlerComponent.setData( handlerQml.toUtf8(), QUrl{} );
             if ( defaultHandlerComponent.isReady() ) {
                 _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());

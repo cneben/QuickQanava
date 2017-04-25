@@ -21,7 +21,7 @@
 // This file is a part of the QuickGeoGL software. Copyright (C) 2016 Benoit Autheman.
 //
 // \file	qglSGPolyCanvasNode.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2015 11 11
 //-----------------------------------------------------------------------------
 

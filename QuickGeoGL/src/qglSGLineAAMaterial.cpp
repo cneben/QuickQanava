@@ -21,7 +21,7 @@
 // This file is a part of the QuickGeoGL software. Copyright (C) 2016 Benoit Autheman.
 //
 // \file	qglSGLineAAMaterial.cpp
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2016 10 01
 //-----------------------------------------------------------------------------
 

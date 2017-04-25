@@ -26,7 +26,7 @@
 // This file is a part of the GTpo software library.
 //
 // \file	gtpoGenGroup.h
-// \author	benoit@qanava.org
+// \author	benoit@destrat.io
 // \date	2017 03 04
 //-----------------------------------------------------------------------------
 
