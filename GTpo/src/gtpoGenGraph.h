@@ -219,6 +219,9 @@ public:
     //! Return a const end iterator over graph SharedNode nodes.
     inline auto     cend() const -> typename SharedNodes::const_iterator { return _nodes.cend(); }
 
+    //! Graph root nodes container.
+    inline auto     getRootNodes() const -> const WeakNodes& { return _rootNodes; }
+
 private:
     SharedNodes         _nodes;
     WeakNodes           _rootNodes;
