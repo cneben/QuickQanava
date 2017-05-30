@@ -121,6 +121,20 @@ protected:
 
     /*! \name Edge Drawing Management *///-------------------------------------
     //@{
+public:
+    /*! Hidden is set to true when the edge \i should not be shown, it is up to the user to use thie property to eventually hide the item.
+     *
+     *  \c hidden property is automatically set to true when either the edge is inside source or destination bounding box or the line is
+     *  too short to be drawn.
+     */
+    Q_PROPERTY( bool hidden READ getHidden() NOTIFY hiddenChanged FINAL )
+    inline bool getHidden() const noexcept { return _hidden; }
+    void        setHidden(bool hidden) noexcept;
+signals:
+    void        hiddenChanged( );
+private:
+    bool        _hidden{false};
+
 public slots:
     //! Call updateItem() (override updateItem() to an empty method for invisible edges).
     virtual void        updateItemSlot( ) { updateItem(); }

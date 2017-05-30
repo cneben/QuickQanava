@@ -172,7 +172,7 @@ auto    Arrow::updateGeometry() noexcept -> void
     { // Eventually, hide caps if line length is not wide enought to show both caps
         qreal effectiveP1CapSize = ( getP1CapStyle() != NoCap ? getP1CapSize() : 0. );
         qreal effectiveP2CapSize = ( getP2CapStyle() != NoCap ? getP2CapSize() : 0. );
-        bool capVisible = lineLength > effectiveP1CapSize + effectiveP2CapSize;
+        bool capVisible = isVisible() && lineLength > effectiveP1CapSize + effectiveP2CapSize;
         if ( _p1Arrow != nullptr )
             _p1Arrow->setVisible(capVisible);
         if ( _p2Arrow != nullptr )

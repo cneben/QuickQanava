@@ -138,7 +138,7 @@ Qan.Connector {
                 parent.z = Drag.target.z + 1
                 connectorItem.state = "HILIGHT"
                 if ( edgeItem ) {
-                    edgeItem.visible = true
+                    //edgeItem.visible = true
                     edgeItem.z = parent.z  // Edge should be always on top
                 }
             }

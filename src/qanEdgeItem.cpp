@@ -183,6 +183,14 @@ void    EdgeItem::configureDestinationItem( QQuickItem* item )
 //-----------------------------------------------------------------------------
 
 /* Edge Drawing Management *///------------------------------------------------
+void    EdgeItem::setHidden(bool hidden) noexcept
+{
+    if ( hidden != _hidden ) {
+        _hidden = hidden;
+        emit hiddenChanged();
+    }
+}
+
 void    EdgeItem::updateItem()
 {
     qan::NodeItem*  srcItem = _sourceItem.data();
@@ -255,19 +263,28 @@ void    EdgeItem::updateItem()
         QLineF line = getLineIntersection( sourceBrCenter,
                                            dstBoundingShape.boundingRect().center( ),
                                            srcBoundingShape, dstBoundingShape );
-
         QRectF br = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
-        setPosition( br.topLeft() );
-        setSize( br.size() );
-
-        _p1 = mapFromItem(graphContainerItem, line.p1());
-        _p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
-        emit p1Changed();
-        emit p2Changed();
-        setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
+        const bool edgeHidden = ( srcBoundingShape.boundingRect().contains(br) ||
+                                  dstBoundingShape.boundingRect().contains(br) );
+        if (!edgeHidden) {
+            setPosition( br.topLeft() );    // Warning: it should be done before mapFromItem...
+            setSize( br.size() );
+            const auto p1 = mapFromItem(graphContainerItem, line.p1());
+            const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
+            if ( QLineF{p1, p2}.length() > 2.0 ) {    // FIXME: arrow size has to be taken into account here...
+                setHidden(false);
+                _p1 = p1;
+                _p2 = p2;
+                emit p1Changed();
+                emit p2Changed();
+                setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
+            } else
+                setHidden(true);
+        } else
+            setHidden(true);
     }
     else if ( dstEdgeItem != nullptr ) {            // Node -> Edge restricted hyper edge
-        setZ( qMax( srcZ, dstEdgeItem->z() ) );  // Update edge z to source or destination maximum x
+        setZ( qMax( srcZ, dstEdgeItem->z() ) );     // Update edge z to source or destination maximum x
         QLineF destinationEdgeLine{ dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP1() ),
                                     dstEdgeItem->mapToItem(graphContainerItem, dstEdgeItem->getP2() ) };
         if ( destinationEdgeLine.length() > 0.001 ) {

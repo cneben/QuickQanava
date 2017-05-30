@@ -38,6 +38,7 @@ Qan.EdgeItem {
     Qgl.Arrow {
         anchors.fill: parent
         id: arrow
+        visible: edgeItem.visible && !edgeItem.hidden
         p1: edgeItem.p1
         p2: edgeItem.p2
         p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
