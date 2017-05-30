@@ -68,6 +68,9 @@ auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
 auto    GroupItem::setGroup(qan::Group* group) noexcept -> void {
     _group = group;
+    if ( group != nullptr &&            // Warning: Do that after having set _group
+         group->getItem() != this )
+        group->setItem(this);
     _draggableCtrl.setTarget(group);
 }
 
@@ -169,6 +172,7 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
         QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
         nodeItem->setParentItem( getGraph()->getContainerItem() );
         nodeItem->setPosition( nodeGlobalPos );
+        nodeItem->setZ(z()+1.);
         nodeItem->setDraggable( true );
         nodeItem->setDroppable( true );
     }

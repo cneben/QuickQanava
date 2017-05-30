@@ -61,8 +61,11 @@ qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
 
 void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 {
-    if ( edgeItem != nullptr )
+    if ( edgeItem != nullptr ) {
         _item = edgeItem;
+        if ( edgeItem->getEdge() != this )
+            edgeItem->setEdge(this);
+    }
 }
 //-----------------------------------------------------------------------------
 

@@ -65,7 +65,7 @@ public:
     Q_PROPERTY( qan::Edge* edge READ getEdge CONSTANT FINAL )
     auto        getEdge() noexcept -> qan::Edge*;
     auto        getEdge() const noexcept -> const qan::Edge*;
-    inline auto setEdge(qan::Edge* edge) noexcept { _edge = edge; }
+    auto        setEdge(qan::Edge* edge) noexcept -> void;
 private:
     QPointer<qan::Edge>    _edge;
 

@@ -59,7 +59,7 @@ Qan.AbstractGraphView {
             maxZ = Math.max( node.item.z + 1, maxZ + 1 )
             node.item.z = maxZ + 1;
             if ( node.group )
-                node.group.z = maxZ
+                updateGroupZ(node.group)
             if ( graph.connector &&
                  graph.connectorEnabled ) {
                 graph.connector.setSource(node);

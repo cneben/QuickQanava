@@ -56,6 +56,13 @@ EdgeItem::~EdgeItem() { /* Nil */ }
 
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
 auto    EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.data(); }
+auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
+{
+    _edge = edge;
+    if ( edge != nullptr&&
+         edge->getItem() != this )
+        edge->setItem(this);
+}
 
 auto    EdgeItem::getGraph() const noexcept -> const qan::Graph* {
     if ( _graph )
@@ -203,12 +210,14 @@ void    EdgeItem::updateItem()
     qan::Graph*     graph = getGraph();
     QQuickItem*     graphContainerItem = ( graph != nullptr ? graph->getContainerItem() : this );
 
-    if ( srcItem == nullptr &&
-         _edge ) {
-        qan::Node*  srcNode = static_cast< qan::Node* >( _edge->getSrc().lock().get() );
-        auto srcNodeGroup = qobject_cast<qan::Group*>( srcNode != nullptr ? srcNode->getGroup().lock().get() : nullptr );
-        if ( srcNodeGroup )
-            srcGroupItem = srcNodeGroup->getItem();
+    if ( srcGroupItem == nullptr &&
+         _sourceItem ) {
+        qan::Node*  srcNode = static_cast< qan::Node* >( _sourceItem->getNode() );
+        if ( srcNode != nullptr ) {
+            auto srcNodeGroup = qobject_cast<qan::Group*>( srcNode != nullptr ? srcNode->getGroup().lock().get() : nullptr );
+            if ( srcNodeGroup != nullptr )
+                srcGroupItem = srcNodeGroup->getItem();
+        }
     }
     if ( dstNodeItem == nullptr &&
          _edge ) {
@@ -216,7 +225,8 @@ void    EdgeItem::updateItem()
         if ( dstNode != nullptr )
             dstNodeItem = dstNode->getItem();
     }
-    if ( dstNodeItem != nullptr &&
+    if ( dstGroupItem == nullptr &&
+         dstNodeItem != nullptr &&
          dstNodeItem->getNode() != nullptr ) {
         auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->getGroup().lock().get() );
         if ( dstNodeGroup )
@@ -255,7 +265,7 @@ void    EdgeItem::updateItem()
     if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
         // Update edge z to source or destination maximum x
         qreal dstZ = dstGroupItem != nullptr ? dstGroupItem->z() + dstNodeItem->z() : dstNodeItem->z();
-        setZ( qMax( srcZ, qMax( srcZ, dstZ ) ) );
+        setZ( qMax( srcZ, qMax( srcZ, dstZ ) ) + 0.1 );
         p = 0;
         QPolygonF dstBoundingShape{dstNodeItem->getBoundingShape().size()};
         for ( const auto& point: dstNodeItem->getBoundingShape() )

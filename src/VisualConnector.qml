@@ -96,6 +96,7 @@ Qan.Connector {
             visualConnector.sourceNode = sourceNode
             visualConnector.parent = sourceNode.item
             visualConnector.x = Qt.binding( function(){ return sourceNode.item.width + leftMargin } )
+            visualConnector.z = Qt.binding( function(){ return sourceNode.item.z + 1. } )
             if ( edgeItem )
                 edgeItem.sourceItem = sourceNode.item
             if ( connectorItem ) {
@@ -135,12 +136,7 @@ Qan.Connector {
             } else if ( Drag.target.node ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
                         ( hEdgeEnabled && Drag.target.edge ) )
             {
-                parent.z = Drag.target.z + 1
                 connectorItem.state = "HILIGHT"
-                if ( edgeItem ) {
-                    //edgeItem.visible = true
-                    edgeItem.z = parent.z  // Edge should be always on top
-                }
             }
         }
     }

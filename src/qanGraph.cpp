@@ -596,7 +596,7 @@ auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
     if ( group != nullptr &&
          node != nullptr ) {
         try {
-            GTpoGraph::groupNode( WeakGroup{group->shared_from_this()}, node->shared_from_this() );
+            GTpoGraph::groupNode( group->shared_from_this(), node->shared_from_this() );
         } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
         if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
@@ -623,7 +623,6 @@ auto    qan::Graph::ungroupNode( Group* group, qan::Node* node ) noexcept(false)
 {
     if ( group != nullptr &&
          node != nullptr ) {
-        qDebug() << "qan::Graph::ungroupNode()";
         try {
             if ( group->getItem() )
                 group->getItem()->ungroupNodeItem(node->getItem());
