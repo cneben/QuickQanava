@@ -34,5 +34,5 @@ SUBDIRS +=  test-nodes
 SUBDIRS +=  test-connector
 SUBDIRS +=  test-groups
 SUBDIRS +=  test-style
-SUBDIRS +=  test-topology
+#SUBDIRS +=  test-topology
 #SUBDIRS +=  test-40k
