@@ -31,6 +31,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanStyle.h                \
             $$PWD/qanStyleManager.h         \
             $$PWD/qanNavigable.h            \
+            $$PWD/qanNavigablePreview.h     \
             $$PWD/qanPointGrid.h            \
             $$PWD/qanContainerAdapter.h     \
             $$PWD/qanBottomRightResizer.h
@@ -51,9 +52,10 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanStyle.cpp              \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
+            $$PWD/qanNavigablePreview.cpp   \
             $$PWD/qanPointGrid.cpp          \
             $$PWD/qanBottomRightResizer.cpp
-			
+
 OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/GraphView.qml             \
                 $$PWD/Graph.qml                 \

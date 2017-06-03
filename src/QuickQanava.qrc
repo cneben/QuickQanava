@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file alias="QuickQanava/NavigablePreview.qml">NavigablePreview.qml</file>
         <file alias="QuickQanava/Edge.qml">Edge.qml</file>
         <file alias="QuickQanava/GraphView.qml">GraphView.qml</file>
         <file alias="QuickQanava/Node.qml">Node.qml</file>

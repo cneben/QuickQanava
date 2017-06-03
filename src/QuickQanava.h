@@ -53,6 +53,7 @@
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
 #include "./qanBottomRightResizer.h"
+#include "./qanNavigablePreview.h"
 
 struct QuickQanava {
     static void initialize() {
@@ -70,6 +71,7 @@ struct QuickQanava {
         qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "Graph");
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
+        qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
         qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
         qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
         qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");

@@ -90,7 +90,7 @@ class Navigable : public QQuickItem
 Q_OBJECT
 public:
     explicit Navigable( QQuickItem* parent = nullptr );
-    virtual ~Navigable( ) { }
+    virtual ~Navigable() { }
     Navigable( const Navigable& ) = delete;
     //@}
     //-------------------------------------------------------------------------
@@ -102,15 +102,15 @@ public:
      */
     Q_PROPERTY( bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL )
     //! \sa navigable
-    inline bool     getNavigable( ) const { return _navigable; }
+    inline bool     getNavigable() const noexcept { return _navigable; }
     //! \sa navigable
-    void            setNavigable( bool navigable ) { _navigable = navigable; emit navigableChanged(); }
+    void            setNavigable( bool navigable ) noexcept;
 private:
     //! \copydoc navigable
-    bool            _navigable{ true };
+    bool            _navigable{true};
 signals:
     //! \sa navigable
-    void            navigableChanged( );
+    void            navigableChanged();
 
 public:
     /*! \brief Parent container for area child items.
@@ -137,12 +137,11 @@ public:
      * \endcode
      *
      */
-    Q_PROPERTY( QQuickItem* containerItem READ getContainerItem NOTIFY containerItemChanged FINAL )
+    Q_PROPERTY( QQuickItem* containerItem READ getContainerItem CONSTANT FINAL )
     //! \sa containerItem
-    QQuickItem*     getContainerItem( ) { return _containerItem; }
-signals:
-    //! Used internally, never change containerItem.
-    void    containerItemChanged( ); // Never used, avoid a QML warning
+    inline QQuickItem*  getContainerItem() noexcept { return _containerItem; }
+private:
+    QQuickItem*         _containerItem{nullptr};
 
 public:
     //! Center the view on a given child item (zoom level is not modified).
@@ -322,7 +321,6 @@ protected:
     virtual void    wheelEvent( QWheelEvent* event ) override;
 
 protected:
-    QQuickItem* _containerItem{ nullptr };
     bool        _leftButtonPressed{ false };
     QPointF     _lastPan{};
     //@}

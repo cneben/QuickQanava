@@ -35,15 +35,31 @@ namespace qan { // ::qan
 
 /* Navigable Object Management *///--------------------------------------------
 Navigable::Navigable( QQuickItem* parent ) :
-    QQuickItem( parent )
+    QQuickItem{parent}
 {
-    _containerItem = new QQuickItem( this );
+    _containerItem = new QQuickItem{this};
+    connect( _containerItem, &QQuickItem::childrenRectChanged,  // Listenning to children rect changes to update containerItem size.
+             [this]() {
+        if ( this->_containerItem ) {
+            const auto cr = this->_containerItem->childrenRect();
+            this->_containerItem->setWidth(cr.width());
+            this->_containerItem->setHeight(cr.height());
+        }
+    });
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
 }
 //-----------------------------------------------------------------------------
 
 /* Navigation Management *///--------------------------------------------------
+void    Navigable::setNavigable( bool navigable ) noexcept
+{
+    if ( navigable != _navigable ) {
+        _navigable = navigable;
+        emit navigableChanged();
+    }
+}
+
 void    Navigable::centerOn( QQuickItem* item )
 {
     // Algorithm:

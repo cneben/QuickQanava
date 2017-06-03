@@ -18,31 +18,37 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software.
+// This file is a part of the QuickQanava software library.
 //
-// \file	navigable.cpp
-// \author	benoit@qanava.org
-// \date	2016 01 14
+// \file	qanNavigablePreview.cpp
+// \author	benoit@destrat.io
+// \date	2017 06 02
 //-----------------------------------------------------------------------------
 
 // Qt headers
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickStyle>
+// Nil
 
 // QuickQanava headers
-#include "../../src/qanNavigable.h"
-#include "../../src/qanNavigablePreview.h"
+#include "./qanNavigablePreview.h"
 
-int main(int argc, char *argv[])
+namespace qan { // ::qan
+
+/* NavigablePreview Object Management *///-------------------------------------
+NavigablePreview::NavigablePreview( QQuickItem* parent ) :
+    QQuickItem{parent}
 {
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle("Material");
-    qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-    qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
-    QQmlApplicationEngine engine;
-    engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
-    return app.exec();
+    setFlag(QQuickItem::ItemHasContents);
 }
+//-----------------------------------------------------------------------------
+
+/* Navigable Management *///---------------------------------------------------
+void    NavigablePreview::setSource( qan::Navigable* source ) noexcept
+{
+    if ( source != _source ) {
+        _source = source;
+        emit sourceChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
+} // ::qan
