@@ -48,6 +48,7 @@ Qan.AbstractNavigablePreview {
         target: voidItem
         onXChanged: updateVisibleArea()
         onYChanged: updateVisibleArea()
+        onScaleChanged: updateVisibleArea()
         onWidthChanged: updateVisibleArea()
         onHeightChanged: updateVisibleArea()
     }
@@ -84,14 +85,14 @@ Qan.AbstractNavigablePreview {
         var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
         var previewXRatio = preview.width / containerItemCr.width
         var previewYRatio = preview.height / containerItemCr.height
-        visibleArea.x = windowTopLeft.x * previewXRatio;
-        visibleArea.y = windowTopLeft.y * previewYRatio;
-        visibleArea.width = ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio
-        visibleArea.height = ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio
+        var borderHalf = visibleArea.border.width / 2.
+        visibleArea.x = ( windowTopLeft.x * previewXRatio ) + borderHalf
+        visibleArea.y = ( windowTopLeft.y * previewYRatio ) + borderHalf
+        visibleArea.width = ( ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio ) - visibleArea.border.width
+        visibleArea.height = ( ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio ) - visibleArea.border.width
     }
     Rectangle {
         id: visibleArea
-        //x: 0; y: 0; width: 0; height: 0
         color: Qt.rgba(0, 0, 0, 0)
         smooth: true;   antialiasing: true
         border.color: "red"; border.width: 2

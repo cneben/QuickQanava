@@ -50,7 +50,7 @@ Qan.Navigable {
         border.width: 2
         border.color: Material.accent
         Qan.NavigablePreview {
-            anchors.fill: parent; anchors.margins: 0
+            anchors.fill: parent; anchors.margins: 1
             source: navigable
             visible: true
         }

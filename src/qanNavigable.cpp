@@ -38,6 +38,7 @@ Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
+    _containerItem->setTransformOrigin( TransformOrigin::TopLeft );
     connect( _containerItem, &QQuickItem::childrenRectChanged,  // Listenning to children rect changes to update containerItem size.
              [this]() {
         if ( this->_containerItem ) {
@@ -82,14 +83,12 @@ void    Navigable::centerOn( QQuickItem* item )
 
 void    Navigable::fitInView( )
 {
-    //qDebug( ) << "qan::Navigable::fitInView():";
     //qDebug( ) << "\tcontainer pos=" << _containerItem->x( ) << " " << _containerItem->y();
     //qDebug( ) << "\tcontainer br=" << _containerItem->childrenRect( );
-
     QRectF content = _containerItem->childrenRect();
     if ( !content.isEmpty() ) { // Protect against div/0, can't fit if there is no content...
-        qreal viewWidth = width( );
-        qreal viewHeight = height( );
+        qreal viewWidth = width();
+        qreal viewHeight = height();
 
         qreal fitWidthZoom = 1.0;
         qreal fitHeightZoom = 1.0;
@@ -103,7 +102,7 @@ void    Navigable::fitInView( )
             fitZoom = fitHeightZoom;
         //qDebug( ) << "\tfitZoom=" << fitZoom;
 
-        QPointF contentPos( 0., 0. );
+        QPointF contentPos{0., 0.};
         if ( content.width() * fitZoom < viewWidth ) {  // Center zoomed content horizontally
             contentPos.rx() = ( viewWidth - ( content.width() * fitZoom ) ) / 2.;
         }
@@ -162,7 +161,6 @@ void    Navigable::zoomOn( QPointF center, qreal zoom )
     // zoom application point
     qreal containerCenterX = center.x() - _containerItem->x();
     qreal containerCenterY = center.y() - _containerItem->y();
-
     qreal lastZoom = _zoom;
 
     // Don't apply modification if new zoom is not valid (probably because it is not in zoomMin, zoomMax range)
@@ -238,7 +236,6 @@ void    Navigable::setDragActive( bool dragActive ) noexcept
 void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
-
     if ( getNavigable() ) {
         // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
         if ( _autoFitMode == AutoFit &&
@@ -252,11 +249,13 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
             bool centerHeight = false;
             // Container item children Br mapped in root CS.
             QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
+            qDebug() << "\tcontentBr=" << contentBr;
             if ( newGeometry.contains( contentBr ) ) {
                 centerWidth = true;
                 centerHeight = true;
             } else {
-                if ( contentBr.top( ) >= newGeometry.top( ) &&
+                // FIXME: FUCkoff >= with flots...
+                if ( contentBr.top() >= newGeometry.top() &&
                      contentBr.bottom() <= newGeometry.bottom( ) )
                     centerHeight = true;
                 if ( contentBr.left( ) >= newGeometry.left( ) &&
@@ -281,21 +280,21 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
             bool anchorLeft = false;
 
             // Container item children Br mapped in root CS.
-            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
-            if ( contentBr.width( ) > newGeometry.width( ) &&
-                 contentBr.right( ) < newGeometry.right( ) ) {
+            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect() );
+            if ( contentBr.width() > newGeometry.width() &&
+                 contentBr.right() < newGeometry.right() ) {
                 anchorRight = true;
             }
-            if ( contentBr.width( ) > newGeometry.width( ) &&
-                 contentBr.left( ) > newGeometry.left( ) ) {
+            if ( contentBr.width() > newGeometry.width() &&
+                 contentBr.left() > newGeometry.left() ) {
                 anchorLeft = true;
             }
             if ( anchorRight ) {
-                qreal xd = newGeometry.right( ) - contentBr.right( );
-                _containerItem->setX( _containerItem->x( ) + xd );
+                qreal xd = newGeometry.right() - contentBr.right();
+                _containerItem->setX( _containerItem->x() + xd );
             } else if ( anchorLeft ) {  // Right anchoring has priority over left anchoring...
                 qreal xd = newGeometry.left( ) - contentBr.left( );
-                _containerItem->setX( _containerItem->x( ) + xd );
+                _containerItem->setX( _containerItem->x() + xd );
             }
         }
 
