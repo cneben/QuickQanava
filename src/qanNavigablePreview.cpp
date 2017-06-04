@@ -41,7 +41,7 @@ NavigablePreview::NavigablePreview( QQuickItem* parent ) :
 }
 //-----------------------------------------------------------------------------
 
-/* Navigable Management *///---------------------------------------------------
+/* Preview Management *///-----------------------------------------------------
 void    NavigablePreview::setSource( qan::Navigable* source ) noexcept
 {
     if ( source != _source ) {

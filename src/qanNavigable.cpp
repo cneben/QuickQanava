@@ -83,6 +83,7 @@ void    Navigable::centerOn( QQuickItem* item )
 
 void    Navigable::fitInView( )
 {
+    //qDebug() << "qan::Navigable::fitInView()...";
     //qDebug( ) << "\tcontainer pos=" << _containerItem->x( ) << " " << _containerItem->y();
     //qDebug( ) << "\tcontainer br=" << _containerItem->childrenRect( );
     QRectF content = _containerItem->childrenRect();
@@ -235,7 +236,7 @@ void    Navigable::setDragActive( bool dragActive ) noexcept
 
 void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
-    QQuickItem::geometryChanged( newGeometry, oldGeometry );
+    //qDebug() << "qan::Navigable::geometryChanged(): newGeometry=" << newGeometry << "\toldGeometry=" << oldGeometry;
     if ( getNavigable() ) {
         // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
         if ( _autoFitMode == AutoFit &&
@@ -249,17 +250,15 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
             bool centerHeight = false;
             // Container item children Br mapped in root CS.
             QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
-            qDebug() << "\tcontentBr=" << contentBr;
             if ( newGeometry.contains( contentBr ) ) {
                 centerWidth = true;
                 centerHeight = true;
             } else {
-                // FIXME: FUCkoff >= with flots...
-                if ( contentBr.top() >= newGeometry.top() &&
-                     contentBr.bottom() <= newGeometry.bottom( ) )
+                if ( contentBr.top() > newGeometry.top() &&
+                     contentBr.bottom() < newGeometry.bottom() )
                     centerHeight = true;
-                if ( contentBr.left( ) >= newGeometry.left( ) &&
-                     contentBr.right() <= newGeometry.right( ) )
+                if ( contentBr.left() > newGeometry.left() &&
+                     contentBr.right() < newGeometry.right() )
                     centerWidth = true;
             }
             if ( centerWidth ) {
@@ -300,6 +299,7 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
 
         updateGrid();
     }
+    QQuickItem::geometryChanged( newGeometry, oldGeometry );
 }
 
 void    Navigable::mouseMoveEvent( QMouseEvent* event )

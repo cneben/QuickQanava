@@ -36,9 +36,9 @@
 
 namespace qan { // ::qan
 
-/*! \brief Reduced preview and navigation for qan::Navigable.
+/*! \brief Bastract interface for reduced preview and navigation for qan::Navigable.
  *
- *
+ * See Qan.NavigablePreview component for more documention.
  */
 class NavigablePreview : public QQuickItem
 {
@@ -52,7 +52,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Navigable Management *///----------------------------------------
+    /*! \name Preview Management *///------------------------------------------
     //@{
 public:
     /*! \brief Source qan::Navigable.
@@ -60,16 +60,26 @@ public:
      * \warning Can be nullptr.
      */
     Q_PROPERTY( qan::Navigable* source READ getSource WRITE setSource NOTIFY sourceChanged FINAL )
-    //! \sa source
+    //! \copydoc source
     inline qan::Navigable*      getSource() const noexcept { return _source.data(); }
-    //! \sa source
+    //! \copydoc source
     void                        setSource(qan::Navigable* source) noexcept;
 private:
     //! \copydoc source
     QPointer<qan::Navigable>    _source;
 signals:
-    //! \sa source
+    //! \copydoc source
     void                        sourceChanged();
+
+signals:
+    /*! \brief Emmited whenever the preview visible window position or size change.
+     *
+     * \arg visibleWindowRect visible window rectangle in navigable \c containerItem CS.
+     * \arg navigableZoom zoom in the underling navigable when change occurs.
+     */
+    void        visibleWindowChanged(QRectF visibleWindowRect, qreal navigableZoom);
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan

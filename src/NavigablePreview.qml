@@ -22,17 +22,31 @@ import QtQuick 2.7
 import "qrc:/QuickQanava" as Qan
 import QuickQanava 2.0 as Qan
 
+/*! \brief Concrete component for qan::NavigablePreview interface.
+ *
+ */
 Qan.AbstractNavigablePreview {
     id: preview
     clip: true
+
+    //! Overlay item could be used to display a user defined item (for example an heat map image) between the background and the current visible window rectangle.
+    property var    overlay : overlayItem
+
+    //! Color for the visible window rect border (default to red).
+    property var    visibleWindowColor: Qt.rgba(1, 0, 0, 1)
+
+    //! Show or hide the target navigable content as a background image (default to true).
+    property alias  backgroundPreviewVisible: sourcePreview.visible
+
     Item {
         id: voidItem
         visible: false
     }
     Connections {
         id: sourceMonitor
-        onWidthChanged: updateVisibleArea()
-        onHeightChanged: updateVisibleArea()
+        onWidthChanged: updatevisibleWindow()
+        onHeightChanged: updatevisibleWindow()
+        onZoomChanged: updatevisibleWindow()
         onChildrenRectChanged: {
             if ( preview.source &&     // Manually update shader effect source source rect
                  preview.source.containerItem &&
@@ -46,11 +60,11 @@ Qan.AbstractNavigablePreview {
     Connections {
         id: containerItemMonitor
         target: voidItem
-        onXChanged: updateVisibleArea()
-        onYChanged: updateVisibleArea()
-        onScaleChanged: updateVisibleArea()
-        onWidthChanged: updateVisibleArea()
-        onHeightChanged: updateVisibleArea()
+        onXChanged: updatevisibleWindow()
+        onYChanged: updatevisibleWindow()
+        onScaleChanged: updatevisibleWindow()
+        onWidthChanged: updatevisibleWindow()
+        onHeightChanged: updatevisibleWindow()
     }
     onSourceChanged: {
         if ( source &&
@@ -62,7 +76,7 @@ Qan.AbstractNavigablePreview {
             if ( cr.width > 0 && cr.height > 0 )
                 sourcePreview.sourceRect = cr
         } else sourcePreview.sourceItem = undefined
-        updateVisibleArea()
+        updatevisibleWindow()
     }
     ShaderEffectSource {
         id: sourcePreview
@@ -71,7 +85,7 @@ Qan.AbstractNavigablePreview {
         sourceItem: source.containerItem
         textureSize: Qt.size(width, height)
     }
-    function updateVisibleArea() {
+    function updatevisibleWindow() {
         if ( !source )
             return
         var containerItem = source.containerItem
@@ -85,31 +99,37 @@ Qan.AbstractNavigablePreview {
         var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
         var previewXRatio = preview.width / containerItemCr.width
         var previewYRatio = preview.height / containerItemCr.height
-        var borderHalf = visibleArea.border.width / 2.
-        visibleArea.x = ( windowTopLeft.x * previewXRatio ) + borderHalf
-        visibleArea.y = ( windowTopLeft.y * previewYRatio ) + borderHalf
-        visibleArea.width = ( ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio ) - visibleArea.border.width
-        visibleArea.height = ( ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio ) - visibleArea.border.width
+        var borderHalf = visibleWindow.border.width / 2.
+        visibleWindow.x = ( windowTopLeft.x * previewXRatio ) + borderHalf
+        visibleWindow.y = ( windowTopLeft.y * previewYRatio ) + borderHalf
+        visibleWindow.width = ( ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio ) - visibleWindow.border.width
+        visibleWindow.height = ( ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio ) - visibleWindow.border.width
+        visibleWindowChanged(Qt.rect(visibleWindow.x, visibleWindow.y, visibleWindow.width, visibleWindow.height),
+                             source.zoom);
+    }
+    Item {
+        id: overlayItem
+        anchors.fill: parent; anchors.margins: 0
     }
     Rectangle {
-        id: visibleArea
+        id: visibleWindow
         color: Qt.rgba(0, 0, 0, 0)
         smooth: true;   antialiasing: true
-        border.color: "red"; border.width: 2
+        border.color: visibleWindowColor; border.width: 2
     }
     MouseArea {
-        id: visibleAreaDragger
+        id: visibleWindowDragger
         anchors.fill: parent
         drag.onActiveChanged: {
-            console.debug("dragging to:" + visibleArea.x + ":" + visibleArea.y );
+            console.debug("dragging to:" + visibleWindow.x + ":" + visibleWindow.y );
             if ( source ) {
             }
         }
-        drag.target: visibleArea
+        drag.target: visibleWindow
         drag.threshold: 1.      // Note 20170311: Avoid a nasty delay between mouse position and dragged item position
         // Do not allow dragging outside preview area
-        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - visibleArea.width)
-        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - visibleArea.height)
+        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - visibleWindow.width)
+        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - visibleWindow.height)
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         enabled: true
