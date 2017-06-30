@@ -1,31 +1,31 @@
 TEMPLATE    =   subdirs
 CONFIG      +=  ordered qt warn_on thread c++14
 
-quickqanava.file    = src/quickqanava-build-lib.pro
+#quickqanava.file    = src/quickqanava-build-lib.pro
 
 test-resizer.subdir   = samples/resizer
-test-resizer.depends  = quickqanava
+#test-resizer.depends  = quickqanava
 
-test-navigable.subdir   = samples/navigable
-test-navigable.depends  = quickqanava
+#test-navigable.subdir   = samples/navigable
+#test-navigable.depends  = quickqanava
 
-test-nodes.subdir   = samples/nodes
-test-nodes.depends  = quickqanava
+#test-nodes.subdir   = samples/nodes
+#test-nodes.depends  = quickqanava
 
-test-connector.subdir   = samples/connector
-test-connector.depends  = quickqanava
+#test-connector.subdir   = samples/connector
+#test-connector.depends  = quickqanava
 
-test-groups.subdir   = samples/groups
-test-groups.depends  = quickqanava
+#test-groups.subdir   = samples/groups
+#test-groups.depends  = quickqanava
 
-test-style.subdir   = samples/style
-test-style.depends  = quickqanava
+#test-style.subdir   = samples/style
+#test-style.depends  = quickqanava
 
-test-topology.subdir   = samples/topology
-test-topology.depends  = quickqanava
+#test-topology.subdir   = samples/topology
+#test-topology.depends  = quickqanava
 
-test-40k.subdir     = samples/40k
-test-40k.depends    = quickqanava
+#test-40k.subdir     = samples/40k
+#test-40k.depends    = quickqanava
 
 #SUBDIRS +=  quickqanava
 SUBDIRS +=  test-resizer
