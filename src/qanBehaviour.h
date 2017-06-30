@@ -30,6 +30,7 @@
 
 // Qt headers
 #include <QObject>
+#include <QQuickItem>
 
 // GTpo headers
 #include "../GTpo/src/gtpoNodeBehaviour.h"
