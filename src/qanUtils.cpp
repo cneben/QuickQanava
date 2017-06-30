@@ -32,34 +32,5 @@
 
 namespace qan { // ::qan
 
-/* Graph Initialization Management *///----------------------------------------
-/*void    Graph::initializeRandom( int nodeCount,
-                                 int   minOutNodes, int maxOutNodes,
-                                 qreal minWidth, qreal maxWidth,
-                                 qreal minHeight, qreal maxHeight,
-                                 QRectF br )
-{
-    if ( !br.isValid() || br.isEmpty() )
-        return;
-    RandomGraph::RandomConfig rc;
-    rc.nodeClassName = "qan::Node";
-    rc.edgeClassName = "qan::Edge";
-    rc.nodeCount = nodeCount;
-    rc.outNodeRng = std::make_pair( minOutNodes, maxOutNodes );
-    rc.widthRng = std::make_pair( minWidth, maxWidth );
-    rc.heightRng = std::make_pair( minHeight, maxHeight );
-    rc.xRng = std::make_pair( 0, br.width() - maxWidth );
-    rc.yRng = std::make_pair( 0, br.height() - maxHeight );
-    RandomGraph::generate< qan::Graph >( *this, rc );
-    qreal nz{0.};
-    for ( auto& node : getNodes() ) {
-        // FIXME QAN3
-        //if ( node->item() )
-        //    node->item()->setZ(nz);   // Force valid z values
-        nz += 1.0;
-    }
-}*/
-//-----------------------------------------------------------------------------
-
 } // ::qan
 

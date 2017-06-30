@@ -194,11 +194,11 @@ public:
     Q_INVOKABLE int     count( ) { return rowCount( QModelIndex( ) ); }
     Q_INVOKABLE void    resetPropertiesModel( ) { beginResetModel( ); endResetModel( ); }
 
-    virtual int         rowCount( const QModelIndex & parent = QModelIndex( ) ) const;
-    virtual QVariant    data( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+    virtual int         rowCount( const QModelIndex & parent = QModelIndex( ) ) const override;
+    virtual QVariant    data( const QModelIndex & index, int role = Qt::DisplayRole ) const override;
     void                updateProperty( QString propertyName );
 protected:
-    virtual QHash< int, QByteArray >    roleNames( ) const;
+    virtual QHash< int, QByteArray >    roleNames( ) const override;
     //@}
     //-------------------------------------------------------------------------
 

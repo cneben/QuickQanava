@@ -75,7 +75,7 @@ struct container< QVector, T > {
 template < typename T >
 struct container< QSet, T > {
     static void  insert( T t, QVector<T>& c ) { c.append( t ); }
-    static void  insert( T t, QVector<T>& c, int i ) { c.insert( t ); }
+    static void  insert( T t, QVector<T>& c, int i ) { c.insert( t ); Q_UNUSED(i); }
     static void  remove( const T& t, QVector<T>& c ) { c.remove( t ); }
 };
 

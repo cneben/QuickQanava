@@ -475,7 +475,7 @@ protected:
         return ( qItem != nullptr ? qItem->property( getItemDisplayRole().toLatin1() ) :
                                     QVariant{} );
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_type )           const -> QVariant { return QVariant{}; }
+    inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_type )           const -> QVariant { Q_UNUSED(row); return QVariant{}; }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_qobject_type )   const -> QVariant {
         T item = at( row );
         monitorItem( item.lock().get() );

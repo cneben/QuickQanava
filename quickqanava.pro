@@ -13,8 +13,8 @@ test-style.subdir   = samples/style
 #test-40k.subdir     = samples/40k
 #test-40k.depends    = quickqanava
 
-SUBDIRS +=  test-resizer
-SUBDIRS +=  test-navigable
+#SUBDIRS +=  test-resizer
+#SUBDIRS +=  test-navigable
 SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups

@@ -68,7 +68,7 @@ struct ContainerAdapter< QSet<T> > {
 template < template<typename...CArgs> class Container, typename T >
 struct ContainerAdapter< qcm::ContainerModel<Container, T> > {
     inline static void  insert( T t, qcm::ContainerModel<Container, T>& c ) { c.append( t ); }
-    inline static void  insert( T t, qcm::ContainerModel<Container, T>& c, int i ) { c.insert( t ); }
+    inline static void  insert( T t, qcm::ContainerModel<Container, T>& c, int i ) { Q_UNUSED(i); c.insert( t ); }
     inline static void  remove( const T& t, qcm::ContainerModel<Container, T>& c ) { c.remove(t); }
     inline static   std::size_t size( qcm::ContainerModel<Container, T>& c ) { return c.size(); }
     inline static   bool        contains( const qcm::ContainerModel<Container, T>& c, const T& t ) { return c.contains(t); }

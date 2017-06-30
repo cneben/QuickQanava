@@ -117,9 +117,9 @@ public:
     //! \brief Item used to hilight selection (usually a Rectangle quick item).
     Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
 protected:
-    virtual void    emitSelectableChanged() { emit selectableChanged(); }
-    virtual void    emitSelectedChanged() { emit selectedChanged(); }
-    virtual void    emitSelectionItemChanged() { emit selectionItemChanged(); }
+    virtual void    emitSelectableChanged() override { emit selectableChanged(); }
+    virtual void    emitSelectedChanged() override { emit selectedChanged(); }
+    virtual void    emitSelectionItemChanged() override { emit selectionItemChanged(); }
 signals:
     void            selectableChanged();
     void            selectedChanged();
