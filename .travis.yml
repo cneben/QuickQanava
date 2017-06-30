@@ -1,33 +1,54 @@
 sudo: required
 language: cpp
-compiler: gcc
 dist: trusty
 
-branches:
-  only:
-    - master
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+    - os: osx
+      compiler: clang
+
+addons:
+  apt:
+    packages:
+      - cmake
+      - g++-5
+      - qt58base
+      - qt58declarative
+      - qt58graphicaleffects
+      - qt58quickcontrols2
+    sources:
+      - ubuntu-toolchain-r-test
+      - sourceline: "ppa:beineri/opt-qt58-trusty"
 
 before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
-  
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake;
+    fi
+
 install:
-  - sudo apt-get install -qq g++-5 # C++14
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90
-  - sudo add-apt-repository -y ppa:beineri/opt-qt58-trusty
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq cmake qt58base qt58declarative qt58graphicaleffects qt58quickcontrols2
-  - source /opt/qt58/bin/qt58-env.sh
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
+      source /opt/qt58/bin/qt58-env.sh;
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install qt5;
+    fi
 
 before_script:
-  - export PATH=$PATH:/opt/qt58/bin
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      export PATH=$PATH:/opt/qt58/bin;
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      export PATH=$PATH:/usr/local/opt/qt5/bin;
+    fi
 
 script:
- - qmake --version
- - qmake -project
- - qmake quickqanava.pro
- - make
+  - qmake --version
+  - qmake -project
+  - qmake quickqanava.pro
+  - make -j 2
 
 notifications:
   email: false
