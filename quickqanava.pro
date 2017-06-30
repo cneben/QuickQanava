@@ -1,5 +1,5 @@
 TEMPLATE    =   subdirs
-CONFIG      +=  ordered qt warn_on thread c++14
+CONFIG      +=  ordered
 
 #quickqanava.file    = src/quickqanava-build-lib.pro
 

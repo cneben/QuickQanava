@@ -35,6 +35,7 @@ install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew install qt5;
       brew link --force qt5;
+	  brew --prefix;
     fi
 
 before_script:
@@ -43,12 +44,13 @@ before_script:
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       export PATH=/usr/local/opt/qt5/bin:$PATH;
+      export PATH=$(brew --prefix)/opt/qt5/bin:$PATH
     fi
 
 script:
   - qmake --version
   - qmake -project
-  - qmake quickqanava.pro
+  - qmake quickqanava.pro -r
   - make VERBOSE=1
 
 notifications:
