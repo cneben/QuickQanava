@@ -8,7 +8,7 @@ include(../QuickGeoGL/src/quickgeogl.pri)
 
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
-RESOURCES       +=  $$PWD/QuickQanava.qrc
+RESOURCES       += $$PWD/QuickQanava.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanUtils.h                \

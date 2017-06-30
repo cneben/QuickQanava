@@ -1,5 +1,5 @@
 TEMPLATE    =   subdirs
-CONFIG      +=  ordered c++14
+CONFIG      +=  ordered qt warn_on thread c++14
 
 quickqanava.file    = src/quickqanava-build-lib.pro
 
@@ -30,9 +30,9 @@ test-40k.depends    = quickqanava
 #SUBDIRS +=  quickqanava
 SUBDIRS +=  test-resizer
 SUBDIRS +=  test-navigable
-SUBDIRS +=  test-nodes
-SUBDIRS +=  test-connector
-SUBDIRS +=  test-groups
-SUBDIRS +=  test-style
+#SUBDIRS +=  test-nodes
+#SUBDIRS +=  test-connector
+#SUBDIRS +=  test-groups
+#SUBDIRS +=  test-style
 #SUBDIRS +=  test-topology
 #SUBDIRS +=  test-40k
