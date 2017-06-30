@@ -4,9 +4,11 @@
 [Building](#building) |
 [License](#license)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8)
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9)
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
+
+Note 20170630: QuickQanava is now compiling and working with both Qt 5.8 and Qt 5.9.1 (with OpenGL shader caching enabled) on Windows MSVC2015 U3, Linux g++5.4+ and OSX Clang.
 
 QuickQanava 
 ============================
@@ -19,7 +21,7 @@ QuickQanava
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt >= 5.8 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some sample requires Qt5.8)
+QuickQanava is primarily developed with Qt >= 5.8 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some samples requires Qt5.8)
 
 + Project homepage: http://www.destrat.io/quickqanava (**updated 20170323**)
 + Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20170323**)

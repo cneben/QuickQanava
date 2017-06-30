@@ -65,13 +65,6 @@ public:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
-    /*! \brief Create a copy of an existing style, return it and register it in this manager.
-     *  \return a pointer on the new style owned by this manager, or \c nullptr if creation fails (either the requested style
-     *          does not exists, or a style with the same name already exists.
-     */
-    Q_INVOKABLE qan::Style* duplicateStyle( QString styleName, QString duplicatedStyleName );
-
-public:
     using StyleComponentMap = QMap< qan::Style*, QPointer<QQmlComponent> >;
 
     Q_INVOKABLE void            setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept;

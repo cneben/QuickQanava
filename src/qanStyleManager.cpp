@@ -56,28 +56,6 @@ void    StyleManager::clear()
 //-----------------------------------------------------------------------------
 
 /* Style Management *///-------------------------------------------------------
-Style*  StyleManager::duplicateStyle( QString styleName, QString duplicatedStyleName )
-{
-/*    if ( styleName.isEmpty() )
-        return nullptr;
-
-    // Find the existing style
-    qan::Style* style = findStyleByName( styleName );
-    qan::Style* duplicatedStyle = nullptr;
-
-    if ( style != nullptr ) {
-        if ( duplicatedStyleName.isEmpty() )
-            duplicatedStyleName = styleName + QString( " 2" );
-        duplicatedStyle = style->duplicate( duplicatedStyleName, this );
-    }
-    if ( duplicatedStyle != nullptr ) {
-        _styles.append( duplicatedStyle );
-        QQmlEngine::setObjectOwnership( style, QQmlEngine::CppOwnership );
-    }
-    return duplicatedStyle;*/
-    return nullptr; // FIXME QAN3 styles
-}
-
 void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
 {
     //qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;

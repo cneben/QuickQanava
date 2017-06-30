@@ -43,29 +43,6 @@ Style::Style( QString name, QObject* parent ) :
 }
 //-----------------------------------------------------------------------------
 
-/* Style Management *///-------------------------------------------------------
-Style* Style::duplicate( QString duplicatedStyleName, QObject* dstParent )
-{
- /*   Style* dst = nullptr;
-    if ( getMetaTarget() == QStringLiteral("qan::Node") )
-        dst = new qan::NodeStyle( duplicatedStyleName, getTarget(), dstParent  );
-    else if ( getMetaTarget() == QStringLiteral("qan::Edge") )
-        dst = new qan::EdgeStyle( duplicatedStyleName, getTarget(), dstParent  );
-    else
-        dst = new Style( duplicatedStyleName, getTarget(), getMetaTarget( ), dstParent );
-    if ( dst != nullptr ) {
-        // FIXME QPS
-        //duplicateTo( dst );
-        dst->setName( duplicatedStyleName );    // Name has probably be set to this style name during copy, reset it...
-        dst->setProperty( "name", duplicatedStyleName );
-    }
-    return dst;*/
-    // FIXME QAN3
-    return nullptr;
-}
-//-----------------------------------------------------------------------------
-
-
 /* Node Style Object Management *///-------------------------------------------
 NodeStyle::NodeStyle( QString name, QObject* parent ) :
     qan::Style( name, parent )

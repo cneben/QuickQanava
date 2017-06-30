@@ -44,7 +44,6 @@
 namespace qan { // ::qan
 
 class Graph;
-//class Group;
 
 /*! \brief Model a graphics group of nodes.
  *

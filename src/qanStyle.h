@@ -77,21 +77,6 @@ signals:
     void        nameChanged( );
 private:
     QString     _name{ QStringLiteral("") };
-
-public:
-    /*! \brief Generate a deep copy of this Style object, ownsership return to the caller.
-     *
-     * Static properties of this source object may be converted in dynamic properties in
-     * destination object as their is no way to dynamically generate static properties with
-     * QObject outside QML.
-     *
-     * Existing properties (either static or dynamic) in duplicated object will be set to
-     * this style value (for exemple objectName, target, etc.).
-     *
-     * \note 20150630: deep copy of time values is currently not supported.
-     * \param   dstParent optionnal parent for the duplicated style object.
-     */
-    qan::Style*     duplicate( QString duplicatedStyleName, QObject* dstParent = nullptr );
     //@}
     //-------------------------------------------------------------------------
 };
