@@ -29,7 +29,7 @@ test-40k.depends    = quickqanava
 
 #SUBDIRS +=  quickqanava
 SUBDIRS +=  test-resizer
-SUBDIRS +=  test-navigable
+#SUBDIRS +=  test-navigable
 #SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups
