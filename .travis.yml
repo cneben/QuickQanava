@@ -48,6 +48,7 @@ before_script:
     fi
 
 script:
+  - which qmake
   - qmake --version
   - qmake -project
   - qmake quickqanava.pro -r
