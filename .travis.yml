@@ -43,8 +43,7 @@ before_script:
       export PATH=$PATH:/opt/qt58/bin;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      export PATH=/usr/local/opt/qt5/bin:$PATH;
-      export PATH=$(brew --prefix)/opt/qt5/bin:$PATH
+      export PATH=/usr/local/opt/qt/bin:$PATH; 
     fi
 
 script:
