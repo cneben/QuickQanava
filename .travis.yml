@@ -53,10 +53,8 @@ before_script:
 script:
   - which qmake
   - qmake --version
-  - qmake samples/resizer/resizer.pro
-  - make -C samples/resizer
   - qmake quickqanava.pro -r
-  - make VERBOSE=1
+  - make -j 2
 
 notifications:
   email: false
