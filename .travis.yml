@@ -41,7 +41,7 @@ before_script:
       export PATH=$PATH:/opt/qt58/bin;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      export PATH=$PATH:/usr/local/opt/qt5/bin;
+	  export PATH=$PATH:$(dirname $(find /usr/local/Cellar/qt5 -name qmake) )
     fi
 
 script:
