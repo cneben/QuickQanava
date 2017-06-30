@@ -39,7 +39,7 @@ install:
       brew link qt5 --force;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      linkapps qt5;
+      brew linkapps qt5;
     fi
 
 before_script:
@@ -54,6 +54,7 @@ script:
   - which qmake
   - qmake --version
   - qmake -project
+  - qmake resizer/resizer.pro
   - qmake quickqanava.pro -r
   - make VERBOSE=1
 
