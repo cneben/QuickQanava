@@ -36,23 +36,17 @@
 
 namespace qgl { // ::qgl
 
-QOpenGLShader* SGPolyLineAAShader::_gsh = nullptr;
 QSGMaterialType SGPolyLineAAMaterial::_type;
 
 SGPolyLineAAShader::SGPolyLineAAShader( ) :
     QSGMaterialShader{ }
 {
     setShaderSourceFile( QOpenGLShader::Vertex, ":/QuickGeoGL/qglPolyLineAAVsh.glsl");
-
-    if ( _gsh == nullptr ) {
-        _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
-        if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglPolyLineAAGsh.glsl" ) )
-            qWarning() << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader compilation fails: " << _gsh->log( );
-    }
-    if ( _gsh != nullptr &&
-         !program()->addShader( _gsh ) )
-        qWarning() << "qgl::SGPolyLineAAShader::SGPolyLineAAShader(): Error: Geometry shader could not be added to OGL program.";
-
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+    program()->addCacheableShaderFromSourceFile(QOpenGLShader::Geometry, ":/QuickGeoGL/qglPolyLineAAGsh.glsl");
+#else
+    program()->addShaderFromSourceFile(QOpenGLShader::Geometry, ":/QuickGeoGL/qglPolyLineAAGsh.glsl");
+#endif
     setShaderSourceFile( QOpenGLShader::Fragment, ":/QuickGeoGL/qglPolyLineAAFsh.glsl");
 }
 

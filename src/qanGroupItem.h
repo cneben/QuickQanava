@@ -39,11 +39,12 @@
 #include "./qanDraggable.h"
 #include "./qanAbstractDraggableCtrl.h"
 #include "./qanNode.h"
+#include "./qanGroup.h"
 
 namespace qan { // ::qan
 
 class Graph;
-class Group;
+//class Group;
 
 /*! \brief Model a graphics group of nodes.
  *

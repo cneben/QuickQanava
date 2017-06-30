@@ -1,4 +1,4 @@
-#version 150
+#version 150 core
 
 uniform highp mat4 combmatrix;
 uniform highp mat4 mvmatrix;

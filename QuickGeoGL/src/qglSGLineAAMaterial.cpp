@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QtGlobal>
 #include <QOpenGLFunctions>
 #include <QSGEngine>
 #include <QOpenGLShaderProgram>
@@ -36,23 +37,17 @@
 
 namespace qgl { // ::qgl
 
-QOpenGLShader* SGLineAAShader::_gsh = nullptr;
 QSGMaterialType SGLineAAMaterial::_type;
 
 SGLineAAShader::SGLineAAShader( ) :
     QSGMaterialShader{}
 {
-    setShaderSourceFile( QOpenGLShader::Vertex, ":/QuickGeoGL/qglLineAAVsh.glsl");
-
-    if ( _gsh == nullptr ) {
-        _gsh = new QOpenGLShader( QOpenGLShader::Geometry );
-        if ( !_gsh->compileSourceFile( ":/QuickGeoGL/qglLineAAGsh.glsl" ) )
-            qWarning() << "SGLineAAShader::SGLineAAShader(): geometry shader compilation fails: " << _gsh->log( );
-    }
-    if ( _gsh != nullptr &&
-         !program()->addShader( _gsh ) )
-        qWarning() << "SGLineAAShader::SGLineAAShader(): shader could not be added to OGL program.";
-
+    setShaderSourceFile( QOpenGLShader::Vertex, ":/QuickGeoGL/qglLineAAVsh.glsl" );
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+    program()->addCacheableShaderFromSourceFile(QOpenGLShader::Geometry, ":/QuickGeoGL/qglLineAAGsh.glsl");
+#else
+    program()->addShaderFromSourceFile(QOpenGLShader::Geometry, ":/QuickGeoGL/qglLineAAGsh.glsl");
+#endif
     setShaderSourceFile( QOpenGLShader::Fragment, ":/QuickGeoGL/qglLineAAFsh.glsl");
 }
 
