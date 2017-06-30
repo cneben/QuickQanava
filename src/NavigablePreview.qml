@@ -104,7 +104,8 @@ Qan.AbstractNavigablePreview {
         visibleWindow.y = ( windowTopLeft.y * previewYRatio ) + borderHalf
         visibleWindow.width = ( ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio ) - visibleWindow.border.width
         visibleWindow.height = ( ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio ) - visibleWindow.border.width
-        visibleWindowChanged(Qt.rect(visibleWindow.x, visibleWindow.y, visibleWindow.width, visibleWindow.height),
+        visibleWindowChanged(Qt.rect(visibleWindow.x / preview.width,     visibleWindow.y / preview.height,
+                                     visibleWindow.width / preview.width, visibleWindow.height / preview.height),
                              source.zoom);
     }
     Item {

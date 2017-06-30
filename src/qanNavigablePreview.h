@@ -74,6 +74,8 @@ signals:
 signals:
     /*! \brief Emmited whenever the preview visible window position or size change.
      *
+     * \warning \c visibleWindowRect is scaled to (0,1) according to original navigable
+     * \c contentRect.
      * \arg visibleWindowRect visible window rectangle in navigable \c containerItem CS.
      * \arg navigableZoom zoom in the underling navigable when change occurs.
      */
