@@ -4,7 +4,7 @@ DEFINES		+= QANAVA
 TARGET		= quickqanava
 DESTDIR		= ../build
 CONFIG		+= warn_on qt thread staticlib c++14
-QT		+= core widgets gui xml qml quick
+QT		+= core widgets gui qml quick
 
 include(../quickqanava-common.pri)
 contains(DEFINES, QUICKQANAVA_HAS_PROTOBUF) {

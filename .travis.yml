@@ -49,7 +49,7 @@ script:
   - qmake --version
   - qmake -project
   - qmake quickqanava.pro
-  - make -j 2
+  - make VERBOSE=1
 
 notifications:
   email: false
