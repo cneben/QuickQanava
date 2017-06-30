@@ -53,8 +53,8 @@ before_script:
 script:
   - which qmake
   - qmake --version
-  - qmake -project
-  - qmake resizer/resizer.pro
+  - qmake samples/resizer/resizer.pro
+  - make -C samples/resizer
   - qmake quickqanava.pro -r
   - make VERBOSE=1
 
