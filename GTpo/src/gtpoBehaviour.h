@@ -38,6 +38,7 @@
 #include <functional>       // std::function
 #include <vector>
 #include <memory>
+#include <utility>          // c++14 std::index_sequence
 
 // GTpo headers
 /* Nil */
