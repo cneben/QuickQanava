@@ -37,7 +37,7 @@
 #include "./qanGraphConfig.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
-#include "./qanDraggableCtrl.h"
+#include "./qanAbstractDraggableCtrl.h"
 #include "./qanNode.h"
 
 namespace qan { // ::qan
@@ -64,10 +64,12 @@ public:
     explicit GroupItem( QQuickItem* parent = nullptr );
     virtual ~GroupItem();
     GroupItem( const GroupItem& ) = delete;
+
 public:
-    qan::DraggableCtrl<qan::Group, qan::GroupItem>& draggableCtrl() { return _draggableCtrl; }
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
 private:
-    qan::DraggableCtrl<qan::Group, qan::GroupItem> _draggableCtrl;
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+
 public:
     Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
     auto        getGroup() noexcept -> qan::Group*;

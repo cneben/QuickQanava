@@ -37,6 +37,7 @@
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
+#include "./qanAbstractDraggableCtrl.h"
 #include "./qanStyle.h"         // Used in handleDropEvent()
 #include "./qanGroup.h"
 
@@ -47,7 +48,7 @@ namespace qan { // ::qan
  * \nosubgrouping
  */
 template < class Node_t, class NodeItem_t >
-class DraggableCtrl
+class DraggableCtrl : public qan::AbstractDraggableCtrl
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
@@ -91,10 +92,10 @@ public:
 
 public:
     //! \c dragInitialMousePos in window coordinate system.
-    auto    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) -> void;
+    virtual void    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) override;
     //! \c delta in scene coordinate system.
-    auto    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) -> void;
-    auto    endDragMove( bool dragSelection = true ) -> void;
+    virtual void    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) override;
+    virtual void    endDragMove( bool dragSelection = true ) override;
 
 private:
     //! Initial global mouse position at the beginning of a node drag operation.

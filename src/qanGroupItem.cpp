@@ -32,8 +32,11 @@
 #include "./qanGroupItem.h"
 #include "./qanEdgeItem.h"
 #include "./qanGroup.h"
+#include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
+
+using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
 
 /* Group Object Management *///------------------------------------------------
 GroupItem::GroupItem( QQuickItem* parent ) :
@@ -41,7 +44,9 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
-    _draggableCtrl.setTargetItem(this);
+    _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<GroupDraggableCtrl>()};
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->setTargetItem(this);
 
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
@@ -64,6 +69,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 
 GroupItem::~GroupItem() { /* Nil */ }
 
+qan::AbstractDraggableCtrl& GroupItem::draggableCtrl() { Q_ASSERT(_draggableCtrl != nullptr); return *_draggableCtrl; }
+
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
 auto    GroupItem::setGroup(qan::Group* group) noexcept -> void {
@@ -71,7 +78,8 @@ auto    GroupItem::setGroup(qan::Group* group) noexcept -> void {
     if ( group != nullptr &&            // Warning: Do that after having set _group
          group->getItem() != this )
         group->setItem(this);
-    _draggableCtrl.setTarget(group);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->setTarget(group);
 }
 
 auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
@@ -180,32 +188,37 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
 
 void    GroupItem::dragEnterEvent( QDragEnterEvent* event )
 {
-    if ( ! _draggableCtrl.handleDragEnterEvent(event) )
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    if ( ! groupDraggableCtrl->handleDragEnterEvent(event) )
         event->ignore();
     QQuickItem::dragEnterEvent( event );
 }
 
 void	GroupItem::dragMoveEvent( QDragMoveEvent* event )
 {
-    _draggableCtrl.handleDragMoveEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleDragMoveEvent(event);
     QQuickItem::dragMoveEvent( event );
 }
 
 void	GroupItem::dragLeaveEvent( QDragLeaveEvent* event )
 {
-    _draggableCtrl.handleDragLeaveEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleDragLeaveEvent(event);
     QQuickItem::dragLeaveEvent( event );
 }
 
 void    GroupItem::dropEvent( QDropEvent* event )
 {
-    _draggableCtrl.handleDropEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleDropEvent(event);
     QQuickItem::dropEvent( event );
 }
 
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseDoubleClickEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleMouseDoubleClickEvent(event);
 
     if ( event->button() == Qt::LeftButton )
         emit groupDoubleClicked( this, event->localPos() );
@@ -213,7 +226,8 @@ void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 
 void    GroupItem::mouseMoveEvent(QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseMoveEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleMouseMoveEvent(event);
     QQuickItem::mouseMoveEvent(event);
 }
 
@@ -228,8 +242,8 @@ void    GroupItem::mousePressEvent( QMouseEvent* event )
         if ( _graph )
             _graph->selectGroup( *getGroup(), event->modifiers() );
     }
-
-    _draggableCtrl.handleMousePressEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleMousePressEvent(event);
 
     if ( event->button() == Qt::LeftButton )
         emit groupClicked( this, event->localPos() );
@@ -239,7 +253,8 @@ void    GroupItem::mousePressEvent( QMouseEvent* event )
 
 void    GroupItem::mouseReleaseEvent( QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseReleaseEvent(event);
+    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
+    groupDraggableCtrl->handleMouseReleaseEvent(event);
 }
 //-----------------------------------------------------------------------------
 

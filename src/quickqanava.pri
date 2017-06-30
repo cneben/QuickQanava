@@ -20,6 +20,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanNodeItem.h             \
             $$PWD/qanSelectable.h           \
             $$PWD/qanDraggable.h            \
+            $$PWD/qanAbstractDraggableCtrl.h\
             $$PWD/qanDraggableCtrl.h        \
             $$PWD/qanDraggableCtrl.hpp      \
             $$PWD/qanConnector.h            \

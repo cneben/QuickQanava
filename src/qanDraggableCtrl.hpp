@@ -155,7 +155,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::handleMouseReleaseEvent( QMouseEvent*
 }
 
 template <class Node_t, class NodeItem_t>
-auto    DraggableCtrl<Node_t, NodeItem_t>::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection ) -> void
+void    DraggableCtrl<Node_t, NodeItem_t>::beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection )
 {
     if ( _targetItem == nullptr )
         return;
@@ -184,7 +184,7 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::beginDragMove( const QPointF& dragIni
 }
 
 template <class Node_t, class NodeItem_t>
-auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection ) -> void
+void    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection )
 {
     const auto graph = getGraph();
     if ( _target &&
@@ -234,7 +234,7 @@ auto    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
 }
 
 template <class Node_t, class NodeItem_t>
-auto    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection ) -> void
+void    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection )
 {
     _dragInitialMousePos = { 0., 0. };  // Invalid all cached coordinates when drag ends
     _dragInitialPos = { 0., 0. };

@@ -33,8 +33,11 @@
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanGraph.h"
+#include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
+
+using NodeDraggableCtrl = qan::DraggableCtrl<qan::Node, qan::NodeItem>;
 
 /* Node Object Management *///-------------------------------------------------
 NodeItem::NodeItem(QQuickItem* parent) :
@@ -44,7 +47,9 @@ NodeItem::NodeItem(QQuickItem* parent) :
     setObjectName( QStringLiteral("qan::NodeItem") );
 
     qan::Draggable::configure(this);
-    _draggableCtrl.setTargetItem(this);
+    _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<NodeDraggableCtrl>()};
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->setTargetItem(this);
 
     setFlag( QQuickItem::ItemAcceptsDrops, true );
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
@@ -57,11 +62,14 @@ NodeItem::NodeItem(QQuickItem* parent) :
 
 NodeItem::~NodeItem() { /* Nil */ }
 
+qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!=nullptr); return *_draggableCtrl; }
+
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
 auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
     _node = node;
-    _draggableCtrl.setTarget(node);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->setTarget(node);
 }
 
 auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
@@ -101,40 +109,45 @@ void    NodeItem::setResizable( bool resizable ) noexcept
 
 void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
 {
-    if ( !_draggableCtrl.handleDragEnterEvent(event) )
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    if ( !nodeDraggableCtrl->handleDragEnterEvent(event) )
         event->ignore();
     QQuickItem::dragEnterEvent( event );
 }
 
 void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
 {
-    _draggableCtrl.handleDragMoveEvent(event);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleDragMoveEvent(event);
     QQuickItem::dragMoveEvent( event );
 }
 
 void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
 {
-    _draggableCtrl.handleDragLeaveEvent(event);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleDragLeaveEvent(event);
     QQuickItem::dragLeaveEvent( event );
 }
 
 void    NodeItem::dropEvent( QDropEvent* event )
 {
-    _draggableCtrl.handleDropEvent(event);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleDropEvent(event);
     QQuickItem::dropEvent( event );
 }
 
 void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseDoubleClickEvent(event);
-
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleMouseDoubleClickEvent(event);
     if ( event->button() == Qt::LeftButton )
         emit nodeDoubleClicked( this, event->localPos() );
 }
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseMoveEvent(event);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleMouseMoveEvent(event);
     QQuickItem::mouseMoveEvent(event);
 }
 
@@ -165,7 +178,8 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
 
 void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 {
-    _draggableCtrl.handleMouseReleaseEvent(event);
+    const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
+    nodeDraggableCtrl->handleMouseReleaseEvent(event);
 }
 //-----------------------------------------------------------------------------
 

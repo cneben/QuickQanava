@@ -42,7 +42,7 @@
 #include "./qanNode.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
-#include "./qanDraggableCtrl.h"
+#include "./qanAbstractDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -82,10 +82,12 @@ public:
     explicit NodeItem( QQuickItem* parent = nullptr );
     virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
+
 public:
-    qan::DraggableCtrl<qan::Node, qan::NodeItem>& draggableCtrl() { return _draggableCtrl; }
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
 private:
-    qan::DraggableCtrl<qan::Node, qan::NodeItem> _draggableCtrl;
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+
 public:
     Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
     auto        getNode() noexcept -> qan::Node*;

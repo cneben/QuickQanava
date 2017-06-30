@@ -122,6 +122,7 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
              child->height() > point.y() ) {
             if ( child->inherits( "qan::Group" ) ) {  // For group, look in group childs
                 qan::Group* group = qobject_cast<qan::Group*>( child );
+                Q_UNUSED(group);
                 // FIXME QAN3
                 /*
                 if ( group != nullptr &&
