@@ -85,6 +85,8 @@ void    GraphView::navigableClicked(QPointF pos)
     if ( _graph )
         _graph->clearSelection();
 }
+
+void    GraphView::navigableRightClicked(QPointF pos) { emit    rightClicked(pos); }
 //-----------------------------------------------------------------------------
 
 } // ::qan

@@ -523,6 +523,9 @@ private:
 
 protected:
     virtual void        mousePressEvent(QMouseEvent* event ) override;
+
+signals:
+    void                rightClicked(QPointF pos);
     //@}
     //-------------------------------------------------------------------------
 

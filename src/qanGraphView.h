@@ -70,9 +70,12 @@ signals:
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
     virtual void    navigableClicked(QPointF pos) override;
+    virtual void    navigableRightClicked(QPointF pos) override;
 
 signals:
     void            connectorChanged();
+
+    void            rightClicked(QPointF pos);
 
     void            nodeClicked( qan::Node* node, QPointF pos );
     void            nodeRightClicked( qan::Node* node, QPointF pos );

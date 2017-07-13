@@ -107,40 +107,34 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
     if ( getContainerItem() == nullptr )
         return nullptr;
-
-    const QList<QQuickItem *> children = getContainerItem()->childItems();
-    //qDebug() << "graphChildAt(): x=" << x << " y=" << y;
-    //qDebug() << " \tchildren=" << children;
+    const QList<QQuickItem*> children = getContainerItem()->childItems();
     for (int i = children.count()-1; i >= 0; --i) {
         QQuickItem *child = children.at(i);
         QPointF point = mapToItem( child, QPointF(x, y) );  // Map coordinates to the child element's coordinate space
         if ( child->isVisible() &&
              child->contains( point ) &&    // Note 20160508: childAt do not call contains()
-             point.x() >= 0 &&
+             point.x() > -0.0001 &&
              child->width() > point.x() &&
-             point.y() >= 0 &&
+             point.y() > -0.0001 &&
              child->height() > point.y() ) {
-            if ( child->inherits( "qan::Group" ) ) {  // For group, look in group childs
-                qan::Group* group = qobject_cast<qan::Group*>( child );
-                Q_UNUSED(group);
-                // FIXME QAN3
-                /*
-                if ( group != nullptr &&
-                     group->getContainer() != nullptr ) {
-                    const QList<QQuickItem *> groupChildren = group->getContainer()->childItems();
+            if ( child->inherits( "qan::GroupItem" ) ) {  // For group, look in group childs
+                const auto groupItem = qobject_cast<qan::GroupItem*>( child );
+                if ( groupItem != nullptr &&
+                     groupItem->getContainer() != nullptr ) {
+                    const QList<QQuickItem *> groupChildren = groupItem->getContainer()->childItems();
                     for (int gc = groupChildren.count()-1; gc >= 0; --gc) {
                         QQuickItem *groupChild = groupChildren.at(gc);
                         point = mapToItem( groupChild, QPointF(x, y) ); // Map coordinates to group child element's coordinate space
                         if ( groupChild->isVisible() &&
                              groupChild->contains( point ) &&
-                             point.x() >= 0 &&
+                             point.x() > -0.0001 &&
                              groupChild->width() > point.x() &&
-                             point.y() >= 0 &&
+                             point.y() > -0.0001 &&
                              groupChild->height() > point.y() ) {
                             return groupChild;
                         }
                     }
-                }*/
+                }
             }
             return child;
         }
@@ -805,6 +799,9 @@ void    Graph::mousePressEvent( QMouseEvent* event )
     if ( event->button() == Qt::LeftButton ) {
         clearSelection();
         forceActiveFocus();
+    } else if ( event->button() == Qt::RightButton ) {
+        qDebug() << "qan::Graph::rightClicked()";
+        emit rightClicked(event->pos());
     }
     event->ignore();
     qan::GraphConfig::GraphBase::mousePressEvent( event );

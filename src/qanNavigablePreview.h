@@ -72,7 +72,7 @@ signals:
     void                        sourceChanged();
 
 signals:
-    /*! \brief Emmited whenever the preview visible window position or size change.
+    /*! \brief Emitted whenever the preview visible window position or size change.
      *
      * \warning \c visibleWindowRect is scaled to (0,1) according to original navigable
      * \c contentRect.

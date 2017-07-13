@@ -41,7 +41,7 @@ Qan.GroupItem {
     Layout.preferredHeight:  80
 
     default property alias children : template
-    container: template.content   // See qan::Group::container property documentation
+    container: template.content   // See qan::GroupItem::container property documentation
 
     Qan.RectGroupTemplate {
         id: template
