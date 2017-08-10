@@ -17,7 +17,7 @@ QuickQanava
 
 `QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graphs in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
 
-`QuickQanava` is released under LGPL v3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (MIT licence), *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (LGPL) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
+`QuickQanava` is released under BSD-3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (BSD-3 licence), *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (BSD-3) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
@@ -108,11 +108,7 @@ cd QuickQanava
 License
 =======
 
-[LGPLv3](https://github.com/cneben/QuickQanava/blob/master/licence.txt)
-
-GTpo (depency) MIT ![](https://img.shields.io/badge/license-MIT-blue.svg)
+[![PyPI](https://img.shields.io/pypi/l/Django.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Copyright (c) 2017 Delia Stratégie
-
-  QuickQanava is licensed under LGPL (GTpo sub library is MIT), symbolic-cost commercial license with more sample code, Protocol Buffer and No-SQL persistence support is available on demand: contact@destrat.io
 
