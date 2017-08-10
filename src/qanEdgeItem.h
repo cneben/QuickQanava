@@ -93,7 +93,7 @@ private:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_INVOKABLE             bool isHyperEdge() const;
+    Q_INVOKABLE bool        isHyperEdge() const noexcept;
 public:
     Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }

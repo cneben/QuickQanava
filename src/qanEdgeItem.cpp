@@ -87,12 +87,7 @@ auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void {
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
-bool    EdgeItem::isHyperEdge() const
-{
-    if ( _edge )
-        return _edge->getHDst().lock() != nullptr;
-    return false;
-}
+bool    EdgeItem::isHyperEdge() const noexcept { return ( _edge ? _edge->getHDst().lock() != nullptr : false ); }
 
 auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
 {

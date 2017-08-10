@@ -114,4 +114,14 @@ void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
 }
 //-----------------------------------------------------------------------------
 
+/* Appearance Management *///--------------------------------------------------
+void    Node::setLabel( const QString& label ) noexcept
+{
+    if ( label != _label ) {
+        _label = label;
+        emit labelChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 } // ::qan
