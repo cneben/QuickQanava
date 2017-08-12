@@ -500,11 +500,20 @@ void    Graph::bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noe
 
 void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcept
 {
+    // PRECONDITION:
+        // outPort must be an Out port
+        // edge must have an associed item
+
     // FIXME...
 }
 
 void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
 {
+    // PRECONDITION:
+        // inPort must be an In port
+        // edge must have an associed item
+    if ( inPort.getType() != qan::PortItem::Type::In )
+        return;
     auto edgeItem = edge.getItem();
     if ( edgeItem != nullptr )
         edgeItem->setDestinationItem(&inPort);

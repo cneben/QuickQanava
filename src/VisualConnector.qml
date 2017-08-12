@@ -199,16 +199,25 @@ Qan.Connector {
             if ( graph && src && dst ) {
                 if ( dst.node &&
                      !graph.hasEdge( src, dst.node ) ) {     // Do not insert parrallel edgse
-                    if ( createDefaultEdge )
+                    if ( createDefaultEdge ) {
                         createdEdge = graph.insertEdge( src, dst.node )
-                    else requestEdgeCreation(src, dst.node)
+                        // Auto detect if target is actually a port item or a node item (they have the same node
+                        // but different visual items)
+                        if ( createdEdge &&
+                             dst.node.item !== visualConnector.Drag.target ) {
+                            // Drag.target is a port, bind the edge to a port
+                            graph.bindEdgeDestination(createdEdge, visualConnector.Drag.target )
+                        }
+
+                    } else requestEdgeCreation(src, dst.node)
                 }
                 else if ( hEdgeEnabled &&
                          dst.edge &&
                           !graph.hasEdge( src, dst.edge ) &&
                           !dst.isHyperEdge() ) {            // Do not create an hyper edge on an hyper edge
-                    if ( createDefaultEdge )
-                        createdEdge = graph.insertEdge( src, dst.edge )
+                    if ( createDefaultEdge ) {
+                        createdEdge = graph.insertEdge( src, dst.edge )                        
+                    }
                     else requestEdgeCreation(src, dst.edge)
                 }
             }

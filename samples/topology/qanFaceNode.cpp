@@ -24,48 +24,20 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
-import Qt.labs.platform          1.0    // ColorDialog
+//-----------------------------------------------------------------------------
+// This file is a part of the QuickQanava software library.
+//
+// \file	qanFaceNode.cpp
+// \author	benoit@destrat.io
+// \date	2017 08 12
+//-----------------------------------------------------------------------------
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "." as Qan
+// QuickQanava headers
+#include "../../src/QuickQanava.h"
+#include "./qanFaceNode.h"
 
-Qan.GraphView {
-    id: graphView
-    anchors.fill: parent
-    navigable   : true
-    graph: Qan.Graph {
-        id: graph
-        connectorEnabled: true
-        Component.onCompleted: {
-            var n11 = graph.insertNode()
-            n11.label = "N11"; n11.item.x = 50; n11.item.y = 50
-            var n12 = graph.insertNode()
-            n12.label = "N12"; n12.item.x = 50; n12.item.y = 150
+namespace qan { // ::qan
 
-            var n13 = graph.insertNode()
-            n13.label = "N13"; n13.item.x = 50; n13.item.y = 250
+FaceNode::~FaceNode() { /* Nil */ }
 
-            var n2 = graph.insertNode()
-            n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
-
-            var p1 = graph.insertInPort(n2);
-            p1.label = "IN #1"
-            var p2 = graph.insertInPort(n2);
-            p2.label = "IN #2"
-
-            var e1 = graph.insertEdge(n11, n2);
-            var e2 = graph.insertEdge(n12, n2);
-            graph.bindEdgeDestination(e1, p1)
-            graph.bindEdgeDestination(e2, p2)
-
-
-            graph.setConnectorSource(n2)
-        }
-    }
-}  // Qan.GraphView
-
+} // ::qan

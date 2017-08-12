@@ -26,56 +26,29 @@ import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "qrc:/QuickContainers" as Qps
 
-Item {
+ApplicationWindow {
     id: window
-    anchors.fill: parent
-    FileDialog {
-        id: openImageDialog
-        property var targetGraph: undefined
-        title: "Select an image file"
-        selectMultiple: false; selectExisting: true
-        onAccepted: {
-            if ( targetGraph !== undefined ) {
-                var imgNode = topology.insertNode( "qan::ImgNode" )
-                if ( imgNode ) {
-                    imgNode.loadImageFromFile( fileUrls );
-                    centerItem( imgNode );
-                }
-            }
-        }
-    }
-    FileDialog {
-        id: openGraphDialog
-        title: "Load a graph from a QuickQanava GTpo file"
-        selectMultiple: false; selectExisting: true
-        onAccepted: { qanSerializer.loadGraphFrom( openGraphDialog.fileUrls, graph, progressNotifier ) }
-    }
-    FileDialog {
-        id: saveGraphAsDialog
-        title: "Save graph to a QuickQanava GTpo file"
-        selectMultiple: false; selectExisting: false
-        onAccepted: { qanSerializer.saveGraphTo( graph, saveGraphAsDialog.fileUrls, progressNotifier ) }
-    }
-
+    visible: true
+    width: 1280; height: 720    // MPEG - 2 HD 720p - 1280 x 720 16:9
+    title: "Topology test"
     Menu {
         id: menu
         title: "Main Menu"
         property var targetNode: undefined
         property var targetEdge: undefined
         MenuItem { text: "Clear Graph"; onTriggered: topology.clear() }
-        MenuItem { text: "Load"; onTriggered: openGraphDialog.open() }
-        MenuItem { text: "Save As"; onTriggered: saveGraphAsDialog.open() }
         MenuItem {
             text: "Insert Node"
             onTriggered: {
                 var n = topology.insertNode()
-                centerItem( n );
+                centerItem( n.item );
                 n.label = "Node #" + topology.getNodeCount()
             }
         }
         MenuItem {
-            text: "Insert Image Node"
-            onTriggered: { openImageDialog.targetGraph = topology; openImageDialog.open() }
+            text: "Insert Face Node"
+            // FIXME
+            //onTriggered: { openImageDialog.targetGraph = topology; openImageDialog.open() }
         }
         MenuItem {
             text: "Remove node"
@@ -99,7 +72,7 @@ Item {
             text: "Insert Group"
             onTriggered: {
                 var n = topology.insertGroup()
-                centerItem( n );
+                centerItem( n.item );
                 n.label = "Group #" + topology.getGroupCount()
             }
         }
@@ -107,23 +80,22 @@ Item {
 
     Label {
         text: "Right click for main menu:
-               \t-Add content with Add Node or Add Image Node entries.
-               \t-Use the DnD connector to add edges between nodes.
-               \t-Save current topology to Protocol Buffer v3 with Save As command.
-               \t-Use Clear Graph command before openning an existing topology file.
-               \t-Load existing binary content with Load."
+               \t-Add content with Add Node or Add Face Node entries.
+               \t-Use the DnD connector to add edges between nodes."
     }
 
-    //! Move a generic item in view current center.
     function centerItem( item ) {
-        if ( item ) {
-            var windowCenter = Qt.point( ( window.width - item.width ) / 2.,
-                                        ( window.height - item.height ) / 2. )
-            var containerNodeCenter = window.mapToItem( topology.containerItem, windowCenter.x, windowCenter.y )
-            item.x = containerNodeCenter.x
-            item.y = containerNodeCenter.y
-        }
+        if ( !item ||
+             !window.contentItem )
+            return
+        var windowCenter = Qt.point( ( window.contentItem.width - item.width ) / 2.,
+                                    ( window.contentItem.height - item.height ) / 2. )
+        var graphNodeCenter = window.contentItem.mapToItem( graphView.containerItem,
+                                                            windowCenter.x, windowCenter.y )
+        item.x = graphNodeCenter.x
+        item.y = graphNodeCenter.y
     }
+
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
@@ -134,12 +106,9 @@ Item {
             objectName: "graph"
             anchors.fill: parent
             clip: true
-            enableConnectorDropNode: true
+            connectorEnabled: true
 
-            property Component imgNodeComponent: Qt.createComponent( "qrc:/ImgNode.qml" )
-            Component.onCompleted: {
-                topology.registerNodeDelegate( "qan::ImgNode", topology.imgNodeComponent )
-            }
+            property Component faceNodeComponent: Qt.createComponent( "qrc:/FaceNode.qml" )
             onNodeRightClicked: {
                 var globalPos = node.mapToItem( topology, pos.x, pos.y )
                 menu.x = globalPos.x
@@ -161,51 +130,6 @@ Item {
             menu.targetNode = undefined; menu.targetEdge = undefined; menu.open()
         }
     }
-
-    Item {
-        anchors.bottom: parent.bottom; anchors.right: parent.right; anchors.left: parent.left
-        height: 130
-        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
-        RowLayout {
-            anchors.fill: parent; anchors.margins: 10
-            spacing: 25
-            ColumnLayout {
-                RowLayout {
-                    Label { text: "Node cout:" }
-                    SpinBox { id: nodeCount; from: 1; to: 250; value: 25 }
-                }
-                RowLayout {
-                    Label { text: "OutNodes range:" }
-                    SpinBox { id: minOutNodes; from: 1; to: 4; value: 1 }
-                    SpinBox { id: maxOutNodes; from: minOutNodes.value + 1; to: minOutNodes.value + 5; value: 2 }
-                }
-            }
-            ColumnLayout {
-                RowLayout {
-                    Label { text: "Width range:" }
-                    SpinBox { id: minWidth; from: 50; to: 150; value: 75 }
-                    SpinBox { id: maxWidth; from: minWidth.value + 50; to: minWidth.value + 150; value: 100 }
-                }
-                RowLayout {
-                    Label { text: "Height range:" }
-                    SpinBox { id: minHeight; from: 20; to: 750; value: 50 }
-                    SpinBox { id: maxHeight; from: minHeight.value + 25; to: minHeight.value + 50; value: 60 }
-                }
-            }
-            Button {
-                Layout.alignment: Qt.AlignRight | Qt.AlignBottom
-                text: "Generate"
-                onClicked: {
-                    var rect = Qt.rect( 0, 0, window.width, window.height )
-                    topology.initializeRandom( nodeCount.value,
-                                              minOutNodes.value, maxOutNodes.value,
-                                              minWidth.value, maxWidth.value,
-                                              minHeight.value, maxHeight.value,
-                                              rect )
-                }
-            }
-        } // RowLayout: random generator options
-    } // Item: graph generator
 
     Item {
         id: edgeList
@@ -237,9 +161,28 @@ Item {
                     ColumnLayout {
                         anchors.fill: parent
                         id: edgeLayout
+                        property string srcLabel: ""
+                        property string dstLabel: ""
+                        property var edgeItemData: itemData
+                        onEdgeItemDataChanged: {
+                            if ( itemData && itemData.item ) {
+                                if ( itemData.item.sourceItem &&
+                                     itemData.item.sourceItem.node )
+                                    srcLabel = itemData.item.sourceItem.node.label
+                                if ( itemData.item.destinationItem &&
+                                     itemData.item.destinationItem.node )
+                                    dstLabel = itemData.item.destinationItem.node.label
+                                else if ( itemData.item.destinationItem &&
+                                         itemData.item.destinationItem.node )
+                                    dstLabel = itemData.item.destinationEdge.edge.label
+                            } else {
+                                srcLabel = "";
+                                dstLabel = "";
+                            }
+                        }
                         Label { text: "Label: " + itemData.label }
-                        Label { text: "  Src: " + itemData.sourceItem.label }
-                        Label { text: "  Dst: " + itemData.destinationItem.label }
+                        Label { text: "  Src: " + parent.srcLabel }
+                        Label { text: "  Dst: " + parent.dstLabel }
                     }
                     MouseArea { anchors.fill: parent; onClicked: { edgeDelegate.ListView.view.currentIndex = index } }
                 }
@@ -265,14 +208,15 @@ Item {
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
             ListView {
+                id: nodesListView
                 Layout.fillWidth: true; Layout.fillHeight: true
                 clip: true
                 model: topology.nodes
                 spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
-                    x: 0; y: ListView.view.currentItem.y;
-                    width: ListView.view.width; height: ListView.view.currentItem.height
+                    x: 0; y: nodesListView.currentItem.y;
+                    width: nodesListView.width; height: nodesListView.currentItem.height
                     color: "lightsteelblue"; opacity: 0.7; radius: 5
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }
@@ -282,7 +226,7 @@ Item {
                     Label { id: nodeLabel; text: "Label: " + itemData.label }
                     MouseArea {
                         anchors.fill: nodeDelegate
-                        onClicked: { nodeDelegate.ListView.view.currentIndex = index }
+                        onClicked: { nodesListView.currentIndex = index }
                     }
                 }
             }
@@ -344,10 +288,10 @@ Item {
                         height: 15
                         autoExclusive: true
                         text: "NoSelection"
-                        checked: topology.selectionPolicy === Qan.AbstractGraph.NoSelection
+                        checked: topology.selectionPolicy === Qan.Graph.NoSelection
                         onCheckedChanged: {
                             if ( checked )
-                                topology.selectionPolicy = Qan.AbstractGraph.NoSelection;
+                                topology.selectionPolicy = Qan.Graph.NoSelection;
                         }
                     }
                     CheckBox {
@@ -355,10 +299,10 @@ Item {
                         height: 15
                         autoExclusive: true
                         text: "SelectOnClick"
-                        checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnClick
+                        checked: topology.selectionPolicy === Qan.Graph.SelectOnClick
                         onCheckedChanged: {
                             if ( checked )
-                                topology.selectionPolicy = Qan.AbstractGraph.SelectOnClick;
+                                topology.selectionPolicy = Qan.Graph.SelectOnClick;
                         }
                     }
                     CheckBox {
@@ -366,10 +310,10 @@ Item {
                         height: 15
                         autoExclusive: true
                         text: "SelectOnCtrlClick"
-                        checked: topology.selectionPolicy === Qan.AbstractGraph.SelectOnCtrlClick
+                        checked: topology.selectionPolicy === Qan.Graph.SelectOnCtrlClick
                         onCheckedChanged: {
                             if ( checked )
-                                topology.selectionPolicy = Qan.AbstractGraph.SelectOnCtrlClick;
+                                topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick;
                         }
                     }
                 }
@@ -413,43 +357,6 @@ Item {
                     value: topology.selectionMargin
                     onValueChanged: { topology.selectionMargin = value  }
                 }
-            }
-        }
-    }
-
-    Qan.ProgressNotifier {
-        id: progressNotifier
-        onShowProgress: { progressDialog.visible = true; }
-        onHideProgress: { progressDialog.visible = false; }
-    }
-    Item {
-        id: progressDialog
-        anchors.fill: parent
-        visible: false
-        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
-        ColumnLayout {
-            anchors.horizontalCenter: parent.horizontalCenter; anchors.verticalCenter: parent.verticalCenter
-            width: 220
-            ProgressBar {
-                Layout.fillWidth: true; Layout.fillHeight: false
-                value: progressNotifier.progress
-                Label {
-                    anchors.centerIn: parent
-                    text: Math.round( progressNotifier.progress * 100. ) + " %"
-                }
-            }
-            ProgressBar {
-                Layout.fillWidth: true; Layout.fillHeight: false
-                value: progressNotifier.phaseProgress
-                onValueChanged: { indeterminate = value < 0. }
-                Label {
-                    anchors.centerIn: parent
-                    text: Math.round( progressNotifier.phaseProgress * 100. ) + " %"
-                }
-            }
-            Label {
-                Layout.alignment: Layout.Center
-                text: progressNotifier.phaseLabel
             }
         }
     }

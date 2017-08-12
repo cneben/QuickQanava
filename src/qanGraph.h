@@ -91,8 +91,6 @@ public:
 public:
     /*! \brief Clear this graph topology and styles.
      *
-     * \note Registered  node and edge delegates are not cleared, you must manually call clearDelegate()
-     * to clear the delegates registered with registerNodeDelegate() and registerEdgeDelegate().
      */
     Q_INVOKABLE virtual void    qmlClearGraph() noexcept;
     void                        clear() noexcept;

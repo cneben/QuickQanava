@@ -8,8 +8,7 @@ test-connector.subdir   = samples/connector
 test-groups.subdir   = samples/groups
 test-style.subdir   = samples/style
 
-#test-topology.subdir   = samples/topology
-#test-topology.depends  = quickqanava
+test-topology.subdir   = samples/topology
 #test-40k.subdir     = samples/40k
 #test-40k.depends    = quickqanava
 
@@ -19,6 +18,6 @@ test-style.subdir   = samples/style
 SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups
 #SUBDIRS +=  test-style
+SUBDIRS +=  test-topology
 
-#SUBDIRS +=  test-topology
 #SUBDIRS +=  test-40k

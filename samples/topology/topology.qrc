@@ -1,8 +1,18 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>ImgNode.qml</file>
-        <file>images/showfoto.png</file>
+        <file>FaceNode.qml</file>
+        <file>faces/BW1.jpg</file>
+        <file>faces/BW2.jpg</file>
+        <file>faces/BW3.jpg</file>
+        <file>faces/DD1.jpg</file>
+        <file>faces/DD2.jpg</file>
+        <file>faces/DD3.jpg</file>
+        <file>faces/JS1.jpg</file>
+        <file>faces/JS2.jpg</file>
+        <file>faces/VD1.jpg</file>
+        <file>faces/VD2.jpg</file>
+        <file>faces/VD3.jpg</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>
