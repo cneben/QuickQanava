@@ -45,51 +45,54 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
             nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
     }
     if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
-        qWarning() << "qan::Graph::insertNode<>(): Error: Can't find a valid node delegate component.";
+        qWarning() << "Can't find a valid node delegate component.";
         return nullptr;
     }
     const auto node = std::make_shared<Node_t>();
     try {
-        if ( node ) {
-            QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-            qan::NodeStyle* nodeStyle = Node_t::style();
-            if ( nodeStyle != nullptr ) {
-                _styleManager.setStyleComponent(nodeStyle, nodeComponent);
-                qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
-                                                                                            *nodeStyle,
-                                                                                            node.get() ) );
-                if ( nodeItem  != nullptr ) {
-                    nodeItem->setNode(node.get());
-                    nodeItem->setGraph(this);
-                    node->setItem(nodeItem);
-                    auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                            emit this->nodeClicked(nodeItem->getNode(), p);
-                    };
-                    connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
+        QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
+        qan::NodeStyle* nodeStyle = Node_t::style();
+        if ( nodeStyle == nullptr )
+            throw qan::Error{"style() factory has returned a nullptr style."};
+        _styleManager.setStyleComponent(nodeStyle, nodeComponent);
+        qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
+                                                                                    *nodeStyle,
+                                                                                    node.get() ) );
+        if ( nodeItem  == nullptr )
+            throw qan::Error{"Node item creation failed."};
+        nodeItem->setNode(node.get());
+        nodeItem->setGraph(this);
+        node->setItem(nodeItem);
+        auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
 
-                    auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                            emit this->nodeRightClicked(nodeItem->getNode(), p);
-                    };
-                    connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeRightClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
 
-                    auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                        if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                            emit this->nodeDoubleClicked(nodeItem->getNode(), p);
-                    };
-                    connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
-                    node->setItem(nodeItem);
-                    GTpoGraph::insertNode( node );
-                } else
-                    qWarning() << "qan::Graph::insertNode(): Warning: Node creation failed with the corresponding delegate";
-            } else qWarning() << "qan::Graph::insertNode(): Error: style() factory has returned a nullptr style.";
-        }
-    } catch ( gtpo::bad_topology_error e ) {
-        qWarning() << "qan::Graph::insertNode(): Error: Topology error:" << e.what();
+        auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
+        node->setItem(nodeItem);
+        GTpoGraph::insertNode( node );
+    } catch ( const gtpo::bad_topology_error& e ) {
+        qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
+        return nullptr; // node eventually destroyed by shared_ptr
+    }
+    catch ( const qan::Error& e ) {
+        qWarning() << "qan::Graph::insertNode(): Error: " << e.getMsg();
+        return nullptr; // node eventually destroyed by shared_ptr
     }
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error.";
+        return nullptr; // node eventually destroyed by shared_ptr
     }
     return node.get();
 }
@@ -99,15 +102,15 @@ qan::Node*  Graph::insertNonVisualNode()
 {
     const auto node = std::make_shared<Node_t>();
     try {
-        if ( node ) {
-            QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-            GTpoGraph::insertNode( node );
-        }
-    } catch ( gtpo::bad_topology_error e ) {
+        QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
+        GTpoGraph::insertNode( node );
+    } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
+        return nullptr; // node eventually destroyed by shared_ptr
     }
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error.";
+        return nullptr; // node eventually destroyed by share_ptr
     }
     return node.get();
 }
@@ -129,23 +132,28 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
         qWarning() << "qan::Graph::insertEdge<>(): Error: Can't find a valid edge delegate component.";
         return nullptr;
     }
-    auto edge = std::make_shared<Edge_t>();
+    const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style());
+    if ( style == nullptr ) {
+        qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
+        return nullptr;
+    }
+    qan::Edge* configuredEdge = nullptr;
     try {
+        auto edge = std::make_shared<Edge_t>();
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        qan::Style* style = Edge_t::style();
-        if ( style != nullptr ) {
-            if ( insertEdgeImpl( edge.get(), edgeComponent, qobject_cast<qan::EdgeStyle*>(style),
-                                 src, dstNode, dstEdge ) )
-                GTpoGraph::insertEdge( edge );
+        if ( configureEdge( *edge,  *edgeComponent, *style,
+                            src,    dstNode,        dstEdge ) ) {
+            GTpoGraph::insertEdge( edge );
+            configuredEdge = edge.get();
         }
-        else qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
-    }
-    catch ( ... ) {
+        // Note: edge is cleaned automatically if it has still not been inserted to graph
+    } catch ( ... ) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error.";
+        // Note: edge is cleaned automatically if it has still not been inserted to graph
     }
-    return edge.get();
+    return configuredEdge;
 }
 
 template < class Edge_t >
@@ -165,9 +173,11 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan:
         GTpoGraph::insertEdge( edge );
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
+        // FIXME
     }
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
+        // FIXME
     }
     return edge.get();
 }

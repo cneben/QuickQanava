@@ -25,32 +25,47 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
-// \file	Node.qml
+// \file	qanPortItem.cpp
 // \author	benoit@destrat.io
-// \date	2015 06 16
+// \date	2017 08 10
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+// Qt headers
+#include <QPainter>
+#include <QPainterPath>
 
-Qan.NodeItem {
-    id: nodeItem
-    width: 110
-    height: 50
-    Qan.RectNodeTemplate {
-        anchors.fill: parent
-        nodeItem : parent
-    }
-    ColumnLayout {
-        id: leftDockLayout
-        anchors.right: nodeItem.left
-        anchors.rightMargin: 7
-        anchors.verticalCenter: nodeItem.verticalVenter
-        spacing: 15
-    }
-    leftDock: leftDockLayout
+// QuickQanava headers
+#include "./qanPortItem.h"
+
+namespace qan { // ::qan
+
+/* Dock Object Management *///-------------------------------------------------
+PortItem::PortItem(QQuickItem* parent) :
+    qan::NodeItem{parent}
+{
+    setResizable(false);
+    setDraggable(false);
+    setSelectable(false);
+
+    /*connect( this, &qan::PortItem::widthChanged,
+             this, &qan::PortItem::onWidthChanged );
+    connect( this, &qan::PortItem::heightChanged,
+             this, &qan::PortItem::onHeightChanged );*/
 }
+
+PortItem::~PortItem() { /* Nil */ }
+//-----------------------------------------------------------------------------
+
+/* Port Properties Management *///---------------------------------------------
+void    PortItem::setLabel( const QString& label ) noexcept
+{
+    if ( _label != label ) {
+        _label = label;
+        emit labelChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
+} // ::qan

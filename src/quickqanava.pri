@@ -18,6 +18,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanEdgeItem.h             \
             $$PWD/qanNode.h                 \
             $$PWD/qanNodeItem.h             \
+            $$PWD/qanPortItem.h             \
             $$PWD/qanSelectable.h           \
             $$PWD/qanDraggable.h            \
             $$PWD/qanAbstractDraggableCtrl.h\
@@ -43,6 +44,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanEdgeItem.cpp           \
             $$PWD/qanNode.cpp               \
             $$PWD/qanNodeItem.cpp           \
+            $$PWD/qanPortItem.cpp           \
             $$PWD/qanSelectable.cpp         \
             $$PWD/qanDraggable.cpp          \
             $$PWD/qanConnector.cpp          \
@@ -66,6 +68,7 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/RectGroupTemplate.qml     \
                 $$PWD/BottomRightResizer.qml    \
                 $$PWD/Node.qml                  \
+                $$PWD/Port.qml                  \
                 $$PWD/Edge.qml                  \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \

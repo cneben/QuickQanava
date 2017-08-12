@@ -271,4 +271,14 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
 }
 //-----------------------------------------------------------------------------
 
+/* Port Layout Management *///-------------------------------------------------
+void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
+{
+    if ( leftDock != _leftDock ) {
+        _leftDock = leftDock;
+        emit leftDockChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 } // ::qan

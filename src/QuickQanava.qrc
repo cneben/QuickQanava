@@ -4,6 +4,7 @@
         <file alias="QuickQanava/Edge.qml">Edge.qml</file>
         <file alias="QuickQanava/GraphView.qml">GraphView.qml</file>
         <file alias="QuickQanava/Node.qml">Node.qml</file>
+        <file alias="QuickQanava/Port.qml">Port.qml</file>
         <file alias="QuickQanava/Group.qml">Group.qml</file>
         <file alias="QuickQanava/RectGroupTemplate.qml">RectGroupTemplate.qml</file>
         <file alias="QuickQanava/CanvasNodeTemplate.qml">CanvasNodeTemplate.qml</file>

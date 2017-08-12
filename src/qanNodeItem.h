@@ -89,6 +89,9 @@ public:
     explicit NodeItem( QQuickItem* parent = nullptr );
     virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
+    NodeItem& operator=( const NodeItem& ) = delete;
+    NodeItem( NodeItem&& ) = delete;
+    NodeItem& operator=( NodeItem&& ) = delete;
 
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
@@ -149,7 +152,7 @@ protected slots:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Node DnD Management *///-----------------------------------------
+    /*! \name Resizing Management *///-----------------------------------------
     //@{
 public:
     // Enable or disable node item resizing (default to true, ie node is resizable).
@@ -160,6 +163,9 @@ protected:
     bool            _resizable{true};
 signals:
     void            resizableChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Draggable Management *///----------------------------------------
     //@{
 public:
@@ -294,6 +300,20 @@ protected:
      *  \sa setBoundShapeFrom()
      */
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Port Layout Management *///--------------------------------------
+    //@{
+public:
+    //! FIXME.
+    Q_PROPERTY( QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL )
+    void                    setLeftDock( QQuickItem* leftDock ) noexcept;
+    inline QQuickItem*      getLeftDock() const noexcept { return _leftDock.data(); }
+private:
+    QPointer<QQuickItem>    _leftDock{nullptr};
+signals:
+    void                    leftDockChanged();
     //@}
     //-------------------------------------------------------------------------
 };

@@ -27,47 +27,80 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanUtils.h
+// \file	qanPortItem.h
 // \author	benoit@destrat.io
-// \date	2017 03 17
+// \date	2017 08 10
 //-----------------------------------------------------------------------------
 
-#ifndef qanUtils_h
-#define qanUtils_h
+#ifndef qanPortItem_h
+#define qanPortItem_h
 
-// Std headers
-#include <sstream>
-#include <random>
-#include <random>
-#include <exception>
-
-// GTpo headers
-#include <GTpo>
+// Qt headers
+#include <QQuickItem>
+#include <QPointF>
+#include <QPolygonF>
+#include <QDrag>
+#include <QPointer>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
-#include "./qanGraph.h"
+#include "./qanNodeItem.h"
 
-//! Main QuickQanava namespace
 namespace qan { // ::qan
 
-/*! \brief Default QuickQanava exception, use what() and msg().
+/*! \brief FIXME.
  *
+ *  FIXME.
+ * \nosubgrouping
  */
-class Error : public std::runtime_error {
+class PortItem : public qan::NodeItem
+{
+    /*! \name Dock Object Management *///--------------------------------------
+    //@{
+    Q_OBJECT
 public:
-    explicit Error( const std::string& what_arg ) :
-        std::runtime_error{what_arg} { }
-    explicit Error( const char* what_arg ) :
-        std::runtime_error{what_arg} { }
-    explicit Error( const QString& msg_arg ) : std::runtime_error{ "" }, _msg{msg_arg} { }
+    //! Node constructor.
+    explicit PortItem( QQuickItem* parent = nullptr );
+    virtual ~PortItem();
+    PortItem( const PortItem& ) = delete;
+    PortItem& operator=(const PortItem&) = delete;
+    PortItem( PortItem&& ) = delete;
+    PortItem& operator=(PortItem&&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
 
-    const QString&  getMsg() const noexcept { return _msg; }
+    /*! \name Port Properties Management *///----------------------------------
+    //@{
+public:
+    //! Port type, either IN or OUT port.
+    enum class Type {
+        //! In port.
+        In,
+        //! Out port.
+        Out
+    };
+    Q_ENUM(Type)
+
+public:
+    Q_PROPERTY( Type type READ getType FINAL )
+    inline Type      getType() const noexcept { return _type; }
+    auto             setType(Type type) noexcept -> void { _type = type; }
 private:
-    QString _msg{""};
+    Type            _type{Type::In};
+
+public:
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
+    void            setLabel( const QString& label ) noexcept;
+    inline QString  getLabel() const noexcept { return _label; }
+private:
+    QString         _label{ QStringLiteral("") };
+signals:
+    void            labelChanged();
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-#endif // qanUtils_h
+QML_DECLARE_TYPE( qan::PortItem )
 
+#endif // qanPortItem_h

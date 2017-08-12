@@ -27,30 +27,29 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	Node.qml
+// \file	Port.qml
 // \author	benoit@destrat.io
-// \date	2015 06 16
+// \date	2017 08 12
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtQuick.Layouts      1.3
+import QtQuick.Controls     2.1
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
-Qan.NodeItem {
-    id: nodeItem
-    width: 110
-    height: 50
-    Qan.RectNodeTemplate {
+Qan.PortItem {
+    id: portItem
+    width: 16;  height: 16
+    Rectangle {
         anchors.fill: parent
-        nodeItem : parent
+        radius: width / 2
+        color: "transparent"
+        border.color: "lightblue"
+        border.width: 3
+        Label {
+            anchors.bottom: parent.top
+            anchors.right: parent.right
+            text: portItem.label
+        }
     }
-    ColumnLayout {
-        id: leftDockLayout
-        anchors.right: nodeItem.left
-        anchors.rightMargin: 7
-        anchors.verticalCenter: nodeItem.verticalVenter
-        spacing: 15
-    }
-    leftDock: leftDockLayout
 }

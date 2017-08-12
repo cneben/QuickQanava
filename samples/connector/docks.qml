@@ -24,33 +24,45 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-//-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
-//
-// \file	Node.qml
-// \author	benoit@destrat.io
-// \date	2015 06 16
-//-----------------------------------------------------------------------------
+import QtQuick                   2.8
+import QtQuick.Controls          2.1
+import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts           1.3
+import Qt.labs.platform          1.0    // ColorDialog
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
+import "." as Qan
 
-Qan.NodeItem {
-    id: nodeItem
-    width: 110
-    height: 50
-    Qan.RectNodeTemplate {
-        anchors.fill: parent
-        nodeItem : parent
+Qan.GraphView {
+    id: graphView
+    anchors.fill: parent
+    navigable   : true
+    graph: Qan.Graph {
+        id: graph
+        connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...
+        Component.onCompleted: {
+            var n11 = graph.insertNode()
+            n11.label = "N11"; n11.item.x = 50; n11.item.y = 50
+            var n12 = graph.insertNode()
+            n12.label = "N12"; n12.item.x = 50; n12.item.y = 150
+
+            var n2 = graph.insertNode()
+            n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
+
+            var p1 = graph.insertInPort(n2);
+            p1.label = "IN #1"
+            var p2 = graph.insertInPort(n2);
+            p2.label = "IN #2"
+
+            var e1 = graph.insertEdge(n11, n2);
+            var e2 = graph.insertEdge(n12, n2);
+            graph.bindEdgeDestination(e1, p1)
+            graph.bindEdgeDestination(e2, p2)
+
+
+            graph.setConnectorSource(n2)
+        }
     }
-    ColumnLayout {
-        id: leftDockLayout
-        anchors.right: nodeItem.left
-        anchors.rightMargin: 7
-        anchors.verticalCenter: nodeItem.verticalVenter
-        spacing: 15
-    }
-    leftDock: leftDockLayout
-}
+}  // Qan.GraphView
+

@@ -81,6 +81,9 @@ public:
      */
     virtual ~Graph();
     Graph( const Graph& ) = delete;
+    Graph& operator=( const Graph& ) = delete;
+    Graph( Graph&& ) = delete;
+    Graph& operator=( Graph&& ) = delete;
 public:
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
     virtual void    componentComplete() override;
@@ -256,13 +259,10 @@ protected:
                                                  qan::Style& style,
                                                  qan::Node* node = nullptr,
                                                  qan::Edge* edge = nullptr,
-                                                 qan::Group* group = nullptr );
+                                                 qan::Group* group = nullptr ) noexcept;
 
     //! Shortcut to createComponent(), mainly used in Qan.StyleList View to generate item for style pre visualization.
     Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
-
-    //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
-    static void             setCppOwnership( QQuickItem* item );
 
 public:
     /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
@@ -337,12 +337,28 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
+    //! Bind an existing edge source to a visual out port from QML.
+    Q_INVOKABLE void        bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort ) noexcept;
+
+    //! Bind an existing edge destination to a visual in port from QML.
+    Q_INVOKABLE void        bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept;
+
+    //! Bind an existing edge source to a visual out port.
+    virtual void            bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort) noexcept;
+
+    //! Bind an existing edge destination to a visual in port.
+    virtual void            bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept;
+
 public:
     template < class Edge_t >
     qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
 private:
-    bool                    insertEdgeImpl( qan::Edge* source, QQmlComponent* edgeComponent, qan::EdgeStyle* style,
-                                            qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+    /*! \brief Internal utility used to insert an existing edge \c edge to either a destination \c dstNode node OR edge \c dstEdge.
+     *
+     * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
+     */
+    bool                    configureEdge( qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
+                                           qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
 public:
     template < class Edge_t >
     qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
@@ -546,6 +562,35 @@ public:
     inline const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
 private:
     qan::StyleManager   _styleManager;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Port/Dock Management *///----------------------------------------
+    //@{
+public:
+    /*! QML interface for adding an in port to a node using default port delegate.
+     *
+     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     */
+    Q_INVOKABLE qan::PortItem*  insertInPort(qan::Node* node) noexcept;
+
+    /*! QML interface for adding an out port to a node using default port delegate.
+     *
+     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     */
+    Q_INVOKABLE qan::PortItem*  insertOutPort(qan::Node* node) noexcept;
+
+public:
+    //! Default delegate for node in/out port.
+    Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE setPortDelegate NOTIFY portDelegateChanged FINAL )
+    inline QQmlComponent*   getPortDelegate() noexcept { return _portDelegate.get(); }
+protected:
+    void                    setPortDelegate(QQmlComponent* portDelegate) noexcept;
+    void                    setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept;
+signals:
+    void                    portDelegateChanged();
+private:
+    std::unique_ptr<QQmlComponent> _portDelegate;
     //@}
     //-------------------------------------------------------------------------
 };
