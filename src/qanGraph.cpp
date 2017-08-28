@@ -70,6 +70,8 @@ void    Graph::componentComplete()
         setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
         setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
         setPortDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Port.qml")));
+        setHorizontalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
+        setVerticalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
 
         _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
         _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
@@ -857,7 +859,7 @@ void    Graph::mousePressEvent( QMouseEvent* event )
 
 
 /* Port/Dock Management *///---------------------------------------------------
-qan::PortItem*  Graph::insertInPort(qan::Node* node) noexcept
+qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockType, QString label) noexcept
 {
     // PRECONDITIONS:
         // node can't be nullptr
@@ -871,20 +873,33 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node) noexcept
         return nullptr;
     }
 
-    // Use node style for dock item
     qan::PortItem* portItem{nullptr};
-    const auto nodeStyle = node->getItem()->getStyle();
+    const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
     if ( nodeStyle ) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
         if ( portItem != nullptr ) {
             portItem->setType(qan::PortItem::Type::In);
-            node->addInPort(portItem);
+            portItem->setLabel(label);
+            if ( node->getItem() != nullptr ) {
+                portItem->setNode(node); // inPort item in fact map to this concrete node.
+                auto dockItem = node->getItem()->getDock(dockType);
+                if ( dockItem == nullptr ) {
+                    // Create a dock item from the default dock delegate
+                    dockItem = createDockFromDelegate(dockType, *node).release();
+                    if ( dockItem != nullptr )
+                        node->getItem()->setDock(dockType, dockItem);
+                }
+                if ( dockItem != nullptr )
+                    portItem->setParentItem(dockItem);
+                else
+                    portItem->setParentItem(node->getItem());
+            }
         }
     }
     return portItem;
 }
 
-qan::PortItem*  Graph::insertOutPort(qan::Node* node) noexcept
+qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, QString label) noexcept
 {
     if ( node == nullptr )
         return nullptr;
@@ -902,10 +917,96 @@ void    Graph::setPortDelegate(QQmlComponent* portDelegate) noexcept
         }
     }
 }
+void    Graph::setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept { setPortDelegate(portDelegate.release()); }
 
-void    Graph::setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept
+void    Graph::setHorizontalDockDelegate(QQmlComponent* horizontalDockDelegate) noexcept
 {
-    setPortDelegate(portDelegate.release());
+    if ( horizontalDockDelegate != nullptr ) {
+        if ( horizontalDockDelegate != _horizontalDockDelegate.get() ) {
+            _horizontalDockDelegate.reset(horizontalDockDelegate);
+            QQmlEngine::setObjectOwnership( horizontalDockDelegate, QQmlEngine::CppOwnership );
+            emit horizontalDockDelegateChanged();
+        }
+    }
+}
+void    Graph::setHorizontalDockDelegate(std::unique_ptr<QQmlComponent> horizontalDockDelegate) noexcept { setHorizontalDockDelegate(horizontalDockDelegate.release()); }
+
+void    Graph::setVerticalDockDelegate(QQmlComponent* verticalDockDelegate) noexcept
+{
+    if ( verticalDockDelegate != nullptr ) {
+        if ( verticalDockDelegate != _verticalDockDelegate.get() ) {
+            _verticalDockDelegate.reset(verticalDockDelegate);
+            QQmlEngine::setObjectOwnership( verticalDockDelegate, QQmlEngine::CppOwnership );
+            emit verticalDockDelegateChanged();
+        }
+    }
+}
+void    Graph::setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDockDelegate) noexcept { setVerticalDockDelegate(verticalDockDelegate.release()); }
+
+std::unique_ptr<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
+{
+    using Dock = qan::NodeItem::Dock;
+    if ( dock == Dock::Left ||
+         dock == Dock::Right ) {
+        if ( _verticalDockDelegate ) {
+            auto verticalDock = createDockFromComponent(_verticalDockDelegate.get());;
+            verticalDock->setParentItem(node.getItem());
+            verticalDock->setProperty("hostNodeItem",
+                                      QVariant::fromValue(node.getItem()));
+            verticalDock->setProperty("dockType",
+                                      QVariant::fromValue(dock));
+            return verticalDock;
+        }
+    } else if ( dock == Dock::Top ||
+                dock == Dock::Bottom ) {
+        if ( _horizontalDockDelegate ) {
+            auto horizontalDock = createDockFromComponent(_horizontalDockDelegate.get());
+            horizontalDock->setParentItem(node.getItem());
+            horizontalDock->setProperty("hostNodeItem",
+                                        QVariant::fromValue(node.getItem()));
+            horizontalDock->setProperty("dockType",
+                                        QVariant::fromValue(dock));
+            return horizontalDock;
+        }
+    }
+    return std::unique_ptr<QQuickItem>{nullptr};
+}
+
+std::unique_ptr<QQuickItem> Graph::createDockFromComponent(QQmlComponent* dockComponent) noexcept
+{
+    if ( dockComponent == nullptr ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): Error called with a nullptr delegate component.";
+        return nullptr;
+    }
+    QQuickItem* item = nullptr;
+    try {
+        if ( !dockComponent->isReady() )
+            throw qan::Error{ "Error delegate component is not ready." };
+
+        const auto rootContext = qmlContext(this);
+        if ( rootContext == nullptr )
+            throw qan::Error{ "Error can't access to local QML context." };
+        QObject* object = dockComponent->beginCreate(rootContext);
+        if ( object == nullptr ||
+             dockComponent->isError() ) {
+            if ( object != nullptr )
+                object->deleteLater();
+            throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
+                              dockComponent->errorString() };
+        }
+        dockComponent->completeCreate();
+        if ( !dockComponent->isError() ) {
+            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+            item = qobject_cast< QQuickItem* >( object );
+            item->setVisible( true );
+            item->setParentItem( getContainerItem() );
+        } // Note QAN3: There is no leak until cpp ownership is set
+    } catch ( const qan::Error& e ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): " << e.getMsg();
+    } catch ( const std::exception& e ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): " << e.what();
+    }
+    return std::unique_ptr<QQuickItem>{item};
 }
 //-----------------------------------------------------------------------------
 

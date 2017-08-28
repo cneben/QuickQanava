@@ -35,6 +35,10 @@
 #ifndef qanNodeItem_h
 #define qanNodeItem_h
 
+// Std headers
+#include <cstddef>  // std::size_t
+#include <array>
+
 // Qt headers
 #include <QQuickItem>
 #include <QPointF>
@@ -306,20 +310,76 @@ protected:
     /*! \name Port Layout Management *///--------------------------------------
     //@{
 public:
-    //! FIXME.
+    //! Define port dock type/index/position.
+    enum class Dock {
+        Top     = 0,
+        Bottom  = 1,
+        Left    = 2,
+        Right   = 3
+    };
+    Q_ENUM(Dock)
+
+public:
+    //! Item left dock (usually build from qan::Graph::verticalDockDelegate).
     Q_PROPERTY( QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL )
+    //! \copydoc leftDock
     void                    setLeftDock( QQuickItem* leftDock ) noexcept;
-    inline QQuickItem*      getLeftDock() const noexcept { return _leftDock.data(); }
-private:
-    QPointer<QQuickItem>    _leftDock{nullptr};
+    //! \copydoc leftDock
+    inline QQuickItem*      getLeftDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Left)].data(); }
 signals:
+    //! \copydoc leftDock
     void                    leftDockChanged();
+
+public:
+    //! Item top dock (usually build from qan::Graph::horizontalDockDelegate).
+    Q_PROPERTY( QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL )
+    //! \copydoc topDock
+    void                    setTopDock( QQuickItem* topDock ) noexcept;
+    //! \copydoc topDock
+    inline QQuickItem*      getTopDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Top)].data(); }
+signals:
+    //! \copydoc topDock
+    void                    topDockChanged();
+
+public:
+    //! Item right dock (usually build from qan::Graph::verticalDockDelegate).
+    Q_PROPERTY( QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL )
+    //! \copydoc rightDock
+    void                    setRightDock( QQuickItem* rightDock ) noexcept;
+    //! \copydoc rightDock
+    inline QQuickItem*      getRightDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Right)].data(); }
+signals:
+    //! \copydoc rightDock
+    void                    rightDockChanged();
+
+public:
+    //! Item bottom dock (usually build from qan::Graph::horizontalDockDelegate).
+    Q_PROPERTY( QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL )
+    //! \copydoc bottomDock
+    void                    setBottomDock( QQuickItem* bottomDock ) noexcept;
+    //! \copydoc bottomDock
+    inline QQuickItem*      getBottomDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Bottom)].data(); }
+signals:
+    //! \copydoc bottomDock
+    void                    bottomDockChanged();
+
+public:
+    //! Get \c dock dock item (warning: no bound checking, might return nullptr).
+    QQuickItem*             getDock(Dock dock) noexcept { return _dockItems[static_cast<std::size_t>(dock)].data(); }
+
+    //! Set \c dock dock item to \c dockItem.
+    void                    setDock(Dock dock, QQuickItem* dockItem) noexcept;
+
+private:
+    static constexpr unsigned int dockCount = 4;
+    std::array<QPointer<QQuickItem>, dockCount> _dockItems;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::NodeItem )
+QML_DECLARE_TYPE(qan::NodeItem)
+Q_DECLARE_METATYPE(qan::NodeItem::Dock)
 
 #endif // qanNodeItem_h

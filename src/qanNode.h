@@ -167,9 +167,6 @@ protected:
 public:
     using WeakPortItem  = std::weak_ptr<qan::PortItem>;
     using DockItemPtr   = std::shared_ptr<qan::PortItem>;
-
-    void        addInPort(qan::PortItem*) noexcept;
-    void        addOutPort(qan::PortItem*) noexcept;
 protected:
     std::vector<std::shared_ptr<qan::PortItem>> _inPorts;
     std::vector<std::shared_ptr<qan::PortItem>> _outPorts;

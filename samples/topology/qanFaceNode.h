@@ -60,11 +60,31 @@ private:
     QUrl        _image;
 signals:
     void        imageChanged();
+
+    /*! \name Node Static Factories *///---------------------------------------
+    //@{
+public:
+    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+class FaceGraph : public qan::Graph
+{
+    Q_OBJECT
+public:
+    explicit FaceGraph( QQuickItem* parent = nullptr ) noexcept : qan::Graph(parent) { }
+
+public:
+    Q_INVOKABLE qan::Node* insertFaceNode() {
+        return insertNode<FaceNode>(nullptr);
+    }
 };
 
 } // ::qan
 
 QML_DECLARE_TYPE( qan::FaceNode )
+QML_DECLARE_TYPE( qan::FaceGraph )
 
 #endif // qanFaceNode_h
 

@@ -40,4 +40,18 @@ namespace qan { // ::qan
 
 FaceNode::~FaceNode() { /* Nil */ }
 
+static std::unique_ptr<QQmlComponent>   qan_FaceNode_delegate;
+
+QQmlComponent*  FaceNode::delegate(QObject* caller) noexcept
+{
+    if ( !qan_FaceNode_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_FaceNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/FaceNode.qml");
+        else qWarning() << "[static]qan::Node::delegate(): Error: QML engine is nullptr.";
+    }
+    return qan_FaceNode_delegate.get();
+}
+
 } // ::qan

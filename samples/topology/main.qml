@@ -1,36 +1,48 @@
 /*
-    This file is part of QuickQanava library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 import QtQuick              2.7
 import QtQuick.Controls     2.0
 import QtQuick.Layouts      1.3
 import QtQuick.Dialogs      1.2
+import QtQuick.Controls.Material 2.1
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "qrc:/QuickContainers" as Qps
+import QuickQanava              2.0 as Qan
+import "qrc:/QuickQanava"       as Qan
+import "qrc:/QuickContainers"   as Qps
 
 ApplicationWindow {
     id: window
     visible: true
     width: 1280; height: 720    // MPEG - 2 HD 720p - 1280 x 720 16:9
     title: "Topology test"
+    Pane {
+        anchors.fill: parent
+        padding: 0
+    }
     Menu {
         id: menu
         title: "Main Menu"
@@ -76,6 +88,29 @@ ApplicationWindow {
                 n.label = "Group #" + topology.getGroupCount()
             }
         }
+        MenuItem {
+            text: "Add Left In port"
+            enabled: menu.targetNode !== undefined
+            onTriggered: {
+                var inPort = topology.insertInPort(menu.targetNode, Qan.NodeItem.Left)
+                inPort.label = "INL"
+            }
+        }
+        MenuItem {
+            text: "Add Top In port"
+            enabled: menu.targetNode !== undefined
+            onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Top, "IN")
+        }
+        MenuItem {
+            text: "Add Right In port"
+            enabled: menu.targetNode !== undefined
+            onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Right, "IN")
+        }
+        MenuItem {
+            text: "Add Bottom In port"
+            enabled: menu.targetNode !== undefined
+            onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Bottom, "IN")
+        }
     }
 
     Label {
@@ -101,7 +136,7 @@ ApplicationWindow {
         anchors.fill: parent
         graph       : topology
         navigable   : true
-        Qan.Graph {
+        Qan.FaceGraph {
             id: topology
             objectName: "graph"
             anchors.fill: parent
@@ -110,7 +145,7 @@ ApplicationWindow {
 
             property Component faceNodeComponent: Qt.createComponent( "qrc:/FaceNode.qml" )
             onNodeRightClicked: {
-                var globalPos = node.mapToItem( topology, pos.x, pos.y )
+                var globalPos = node.item.mapToItem( topology, pos.x, pos.y )
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetNode = node;
@@ -121,6 +156,19 @@ ApplicationWindow {
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetEdge = edge; menu.open()
+            }
+            Component.onCompleted: {
+                var faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/BW1.jpg"
+                faceNode.item.x = 45; faceNode.item.y = 40
+
+                faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/BW2.jpg"
+                faceNode.item.x = 200; faceNode.item.y = 40
+
+                faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/BW3.jpg"
+                faceNode.item.x = 375; faceNode.item.y = 40
             }
         } // Qan.Graph: graph
         onRightClicked: {
@@ -193,7 +241,7 @@ ApplicationWindow {
                 textRole: "itemLabel"
             }
         }
-    }
+    } // edgeList
 
     Item {
         id: nodeList
@@ -236,7 +284,7 @@ ApplicationWindow {
                 textRole: "itemLabel"
             }
         }
-    }
+    } // nodeList
 
     ColorDialog {
         id: selectionColorDialog
@@ -358,6 +406,14 @@ ApplicationWindow {
                     onValueChanged: { topology.selectionMargin = value  }
                 }
             }
+        }
+    } // selectionView
+    RowLayout {
+        anchors.bottom: parent.bottom;    anchors.left: parent.left
+        CheckBox {
+            text: qsTr("Dark")
+            checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
+            onClicked: ApplicationWindow.contentItem.Material.theme = checked ? Material.Dark : Material.Light
         }
     }
 }

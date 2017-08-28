@@ -53,9 +53,9 @@ Qan.GraphView {
             var n2 = graph.insertNode()
             n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
 
-            var p1 = graph.insertInPort(n2);
+            var p1 = graph.insertInPort(n2, Qan.NodeItem.Left);
             p1.label = "IN #1"
-            var p2 = graph.insertInPort(n2);
+            var p2 = graph.insertInPort(n2, Qan.NodeItem.Left);
             p2.label = "IN #2"
 
             var e1 = graph.insertEdge(n11, n2);

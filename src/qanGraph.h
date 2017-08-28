@@ -39,6 +39,7 @@
 #include <GTpo>
 
 // QuickQanava headers
+#include "./qanUtils.h"
 #include "./qanGraphConfig.h"
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
@@ -57,6 +58,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class PortItem;
 
 /*! \brief Main interface to manage graph topology.
  *
@@ -566,29 +568,83 @@ private:
     /*! \name Port/Dock Management *///----------------------------------------
     //@{
 public:
-    /*! QML interface for adding an in port to a node using default port delegate.
-     *
-     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
-     */
-    Q_INVOKABLE qan::PortItem*  insertInPort(qan::Node* node) noexcept;
 
-    /*! QML interface for adding an out port to a node using default port delegate.
+    /*! QML interface for adding an in port to node \c node using default port delegate.
      *
      * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     *
+     * \param node  port host node.
+     * \param label port visible label.
+     * \param dock  port dock, default to left for in port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
      */
-    Q_INVOKABLE qan::PortItem*  insertOutPort(qan::Node* node) noexcept;
+    Q_INVOKABLE qan::PortItem*  insertInPort(qan::Node* node, qan::NodeItem::Dock dock, QString label = "" ) noexcept;
+
+    /*! QML interface for adding an out port to node \c node using default port delegate.
+     *
+     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     *
+     * \param node  port host node.
+     * \param label port visible label.
+     * \param dock  port dock, default to right for out port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
+     */
+    Q_INVOKABLE qan::PortItem*  insertOutPort(qan::Node* node, qan::NodeItem::Dock dock = NodeItem::Dock::Right, QString label = "") noexcept;
 
 public:
     //! Default delegate for node in/out port.
     Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE setPortDelegate NOTIFY portDelegateChanged FINAL )
+    //! \copydoc portDelegate
     inline QQmlComponent*   getPortDelegate() noexcept { return _portDelegate.get(); }
 protected:
+    //! \copydoc portDelegate
     void                    setPortDelegate(QQmlComponent* portDelegate) noexcept;
+    //! \copydoc portDelegate
     void                    setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept;
 signals:
+    //! \copydoc portDelegate
     void                    portDelegateChanged();
 private:
+    //! \copydoc portDelegate
     std::unique_ptr<QQmlComponent> _portDelegate;
+
+public:
+    //! Default delegate for horizontal (either NodeItem::Dock::Top or NodeItem::Dock::Bottom) docks.
+    Q_PROPERTY( QQmlComponent* horizontalDockDelegate READ getHorizontalDockDelegate WRITE setHorizontalDockDelegate NOTIFY horizontalDockDelegateChanged FINAL )
+    //! \copydoc horizontalDockDelegate
+    inline QQmlComponent*   getHorizontalDockDelegate() noexcept { return _horizontalDockDelegate.get(); }
+protected:
+    //! \copydoc horizontalDockDelegate
+    void                    setHorizontalDockDelegate(QQmlComponent* horizontalDockDelegate) noexcept;
+    //! \copydoc horizontalDockDelegate
+    void                    setHorizontalDockDelegate(std::unique_ptr<QQmlComponent> horizontalDockDelegate) noexcept;
+signals:
+    //! \copydoc horizontalDockDelegate
+    void                    horizontalDockDelegateChanged();
+private:
+    //! \copydoc horizontalDockDelegate
+    std::unique_ptr<QQmlComponent> _horizontalDockDelegate;
+
+public:
+    //! Default delegate for vertical (either NodeItem::Dock::Left or NodeItem::Dock::Right) docks.
+    Q_PROPERTY( QQmlComponent* verticalDockDelegate READ getVerticalDockDelegate WRITE setVerticalDockDelegate NOTIFY verticalDockDelegateChanged FINAL )
+    //! \copydoc horizontalDockDelegate
+    inline QQmlComponent*   getVerticalDockDelegate() noexcept { return _verticalDockDelegate.get(); }
+protected:
+    //! \copydoc horizontalDockDelegate
+    void                    setVerticalDockDelegate(QQmlComponent* verticalDockDelegate) noexcept;
+    //! \copydoc horizontalDockDelegate
+    void                    setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDockDelegate) noexcept;
+signals:
+    //! \copydoc horizontalDockDelegate
+    void                    verticalDockDelegateChanged();
+private:
+    //! \copydoc verticalDockDelegate
+    std::unique_ptr<QQmlComponent> _verticalDockDelegate;
+
+protected:
+    //! Create a dock item from an existing dock item delegate.
+    std::unique_ptr<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
+
+    std::unique_ptr<QQuickItem>     createDockFromComponent(QQmlComponent* dockComponent) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

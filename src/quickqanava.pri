@@ -69,6 +69,8 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/BottomRightResizer.qml    \
                 $$PWD/Node.qml                  \
                 $$PWD/Port.qml                  \
+                $$PWD/HorizontalDock.qml        \
+                $$PWD/VerticalDock.qml          \
                 $$PWD/Edge.qml                  \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \

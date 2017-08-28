@@ -32,6 +32,9 @@
 // \date	2016 03 04
 //-----------------------------------------------------------------------------
 
+// Std headers
+#include <algorithm>    // std::for_each
+
 // Qt headers
 #include <QPainter>
 #include <QPainterPath>
@@ -67,7 +70,15 @@ NodeItem::NodeItem(QQuickItem* parent) :
              this, &qan::NodeItem::onHeightChanged );
 }
 
-NodeItem::~NodeItem() { /* Nil */ }
+NodeItem::~NodeItem()
+{
+    // Delete all dock items
+    for ( auto& dockItem : _dockItems ) {
+        // FIXME: check CPP OWNERSIP BORDEL
+        if ( dockItem )
+            dockItem->deleteLater();
+    }
+}
 
 qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!=nullptr); return *_draggableCtrl; }
 
@@ -274,10 +285,46 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
 /* Port Layout Management *///-------------------------------------------------
 void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
 {
-    if ( leftDock != _leftDock ) {
-        _leftDock = leftDock;
+    if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
+        _dockItems[static_cast<std::size_t>(Dock::Left)] = leftDock;
         emit leftDockChanged();
     }
+}
+
+void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
+{
+    if ( topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data() ) {
+        _dockItems[static_cast<std::size_t>(Dock::Top)] = topDock;
+        emit topDockChanged();
+    }
+}
+
+void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
+{
+    if ( rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data() ) {
+        _dockItems[static_cast<std::size_t>(Dock::Right)] = rightDock;
+        emit rightDockChanged();
+    }
+}
+
+void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
+{
+    if ( bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data() ) {
+        _dockItems[static_cast<std::size_t>(Dock::Bottom)] = bottomDock;
+        emit bottomDockChanged();
+    }
+}
+
+void    NodeItem::setDock(Dock dock, QQuickItem* dockItem) noexcept
+{
+    if ( dockItem != nullptr )
+        dockItem->setParentItem(this);
+    switch ( dock ) {
+        case Dock::Left: setLeftDock(dockItem); break;
+        case Dock::Top: setTopDock(dockItem); break;
+        case Dock::Right: setRightDock(dockItem); break;
+        case Dock::Bottom: setBottomDock(dockItem); break;
+    };
 }
 //-----------------------------------------------------------------------------
 

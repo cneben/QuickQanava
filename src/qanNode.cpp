@@ -126,35 +126,6 @@ void    Node::setLabel( const QString& label ) noexcept
 //-----------------------------------------------------------------------------
 
 /* Dock Management *///--------------------------------------------------------
-void    Node::addInPort(qan::PortItem* inPort) noexcept
-{
-    // PRECONDITIONS:
-        // inPort can't be nullptr
-    if ( inPort == nullptr )
-        return;
-
-    if ( getItem() != nullptr ) {
-        inPort->setNode(this); // inPort item in fact map to this concrete node.
-        auto leftDock = getItem()->getLeftDock();
-        if ( leftDock != nullptr )
-            inPort->setParentItem(leftDock);
-        else
-            inPort->setParentItem(getItem());
-    }
-}
-
-void    Node::addOutPort(qan::PortItem* outPort) noexcept
-{
-    // PRECONDITIONS:
-        // outPort can't be nullptr
-    if ( outPort == nullptr )
-        return;
-
-    if ( getItem() != nullptr ) {
-        outPort->setNode(this); // inPort item in fact map to this concrete node.
-        outPort->setParentItem(getItem());
-    }
-}
 //-----------------------------------------------------------------------------
 
 } // ::qan
