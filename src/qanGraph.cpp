@@ -880,6 +880,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
         if ( portItem != nullptr ) {
             portItem->setType(qan::PortItem::Type::In);
             portItem->setLabel(label);
+            portItem->setDockType(dockType);
             if ( node->getItem() != nullptr ) {
                 portItem->setNode(node); // inPort item in fact map to this concrete node.
                 auto dockItem = node->getItem()->getDock(dockType);

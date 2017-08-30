@@ -73,9 +73,11 @@ public:
 public:
     //! Port type, either IN or OUT port.
     enum class Type {
-        //! In port.
+        //! Port accept in and out connections.
+        InOut,
+        //! Port accept only in connections (default).
         In,
-        //! Out port.
+        //! Port accept only out connections.
         Out
     };
     Q_ENUM(Type)
@@ -86,6 +88,16 @@ public:
     auto             setType(Type type) noexcept -> void { _type = type; }
 private:
     Type            _type{Type::In};
+
+public:
+    //!
+    Q_PROPERTY( qan::NodeItem::Dock dockType READ getDockType NOTIFY dockTypeChanged FINAL )
+    inline NodeItem::Dock   getDockType() const noexcept { return _dockType; }
+    void                    setDockType(NodeItem::Dock dockType) noexcept;
+private:
+    qan::NodeItem::Dock     _dockType{NodeItem::Dock::Left};
+signals:
+    void                    dockTypeChanged();
 
 public:
     Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )

@@ -49,6 +49,7 @@ PortItem::PortItem(QQuickItem* parent) :
     setDraggable(false);
     setSelectable(false);
 
+    // FIXME...
     /*connect( this, &qan::PortItem::widthChanged,
              this, &qan::PortItem::onWidthChanged );
     connect( this, &qan::PortItem::heightChanged,
@@ -59,6 +60,14 @@ PortItem::~PortItem() { /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Port Properties Management *///---------------------------------------------
+void    PortItem::setDockType(NodeItem::Dock dockType) noexcept
+{
+    if ( dockType != _dockType ) {
+        _dockType = dockType;
+        emit dockTypeChanged();
+    }
+}
+
 void    PortItem::setLabel( const QString& label ) noexcept
 {
     if ( _label != label ) {

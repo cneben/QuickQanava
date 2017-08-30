@@ -40,13 +40,41 @@ import "qrc:/QuickQanava"   as Qan
 Qan.PortItem {
     id: portItem
     width: 16;  height: 16
+
+    // Configure label position when dock type change
+    onDockTypeChanged: {
+        if ( dockType >= 0 ) {
+            switch ( dockType ) {
+            case Qan.NodeItem.Left:
+                label.anchors.bottom = contentItem.top
+                label.anchors.right = contentItem.right
+                break;
+            case Qan.NodeItem.Top:
+                label.anchors.bottom = contentItem.top
+                label.anchors.horizontalCenter = contentItem.horizontalCenter
+                break;
+            case Qan.NodeItem.Right:
+                label.anchors.bottom = contentItem.top
+                label.anchors.left = contentItem.left
+                break;
+            case Qan.NodeItem.Bottom:
+                label.anchors.top = contentItem.bottom
+                label.anchors.horizontalCenter = contentItem.horizontalCenter
+                break;
+            default: break;
+            }
+        }
+    }
+
     Rectangle {
+        id: contentItem
         anchors.fill: parent
         radius: width / 2
         color: "transparent"
         border.color: "lightblue"
         border.width: 3
         Label {
+            id: label
             anchors.bottom: parent.top
             anchors.right: parent.right
             text: portItem.label

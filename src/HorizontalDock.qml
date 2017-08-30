@@ -40,7 +40,6 @@ RowLayout {
     property int  dockType: -1
     onDockTypeChanged: configureDock()
     function configureDock() {
-        console.debug("HorizontalDock.configureDock(): hostNodeItem=" + hostNodeItem + "\tdockType=" + dockType)
         if ( hostNodeItem &&
                 dockType >= 0 ) {
             switch ( dockType ) {
