@@ -66,16 +66,24 @@ void    GraphView::setGraph( qan::Graph* graph )
 
         connect( _graph, &qan::Graph::connectorChanged,
                  this,   &qan::GraphView::connectorChanged );
+
         connect( _graph, &qan::Graph::nodeRightClicked,
                  this,   &qan::GraphView::nodeRightClicked );
         connect( _graph, &qan::Graph::nodeDoubleClicked,
                  this,   &qan::GraphView::nodeDoubleClicked );
+
+        connect( _graph, &qan::Graph::portClicked,
+                 this,   &qan::GraphView::portClicked );
+        connect( _graph, &qan::Graph::portRightClicked,
+                 this,   &qan::GraphView::portRightClicked );
+
         connect( _graph, &qan::Graph::edgeClicked,
                  this,   &qan::GraphView::edgeClicked );
         connect( _graph, &qan::Graph::edgeRightClicked,
                  this,   &qan::GraphView::edgeRightClicked );
         connect( _graph, &qan::Graph::edgeDoubleClicked,
                  this,   &qan::GraphView::edgeDoubleClicked );
+
         connect( _graph, &qan::Graph::groupClicked,
                  this,   &qan::GraphView::groupClicked );
         connect( _graph, &qan::Graph::groupRightClicked,

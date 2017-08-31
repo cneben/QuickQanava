@@ -39,6 +39,7 @@
 #include "./qanGraph.h"
 #include "./qanNode.h"
 #include "./qanEdgeItem.h"
+#include "./qanPortItem.h"
 #include "./qanConnector.h"
 
 namespace qan { // ::qan
@@ -96,8 +97,90 @@ qan::NodeStyle* Connector::style() noexcept
 //-----------------------------------------------------------------------------
 
 /* Connector Configuration *///------------------------------------------------
-auto    Connector::getConnectorItem() noexcept -> QQuickItem* { return _connectorItem.data(); }
+void    Connector::connectorReleased(QQuickItem* target) noexcept
+{
+    // Restore original position
+    if ( _connectorItem )
+        _connectorItem->setState("NORMAL");
 
+    if ( _edgeItem )    // Hide connector "transcient" edge item
+        _edgeItem->setVisible(false);
+    if ( !_graph )
+        return;
+
+    const auto dstNodeItem = qobject_cast<qan::NodeItem*>(target);
+    const auto dstPortItem = qobject_cast<qan::PortItem*>(target);
+    const auto dstEdgeItem = qobject_cast<qan::EdgeItem*>(target);
+
+    const auto srcPortItem = _sourcePort;
+    const auto srcNode = _sourceNode ? _sourceNode :
+                                       _sourcePort ? _sourcePort->getNode() : nullptr;
+    const auto dstNode = dstNodeItem ? dstNodeItem->getNode() :
+                                       dstPortItem ? dstPortItem->getNode() : nullptr;
+    const auto dstEdge = dstEdgeItem ? dstEdgeItem->getEdge() : nullptr;
+
+    qan::Edge* createdEdge = nullptr;   // Result created edge
+    if ( srcNode != nullptr &&          //// Regular edge node to node connection //////////
+         dstNode != nullptr ) {
+        if ( getCreateDefaultEdge() ) {
+            createdEdge = _graph->insertEdge( srcNode, dstNode );
+            if ( createdEdge != nullptr ) {     // Special handling for src or dst port item
+                if ( dstPortItem != nullptr )
+                    _graph->bindEdgeDestination(*createdEdge, *dstPortItem );   // Bind created edge to a destination port
+                if ( srcPortItem != nullptr )
+                    _graph->bindEdgeSource(*createdEdge, *srcPortItem);
+            }
+        } else
+            emit requestEdgeCreation(srcNode, dstNode);
+    } else if ( srcNode != nullptr &&   //// Hyper edge node to edge connection ///////////
+                dstEdge != nullptr &&
+                getHEdgeEnabled() ) {
+        if ( !dstEdgeItem->isHyperEdge() ) {            // Do not create an hyper edge on an hyper edge
+            if ( getCreateDefaultEdge() )
+                createdEdge = _graph->insertEdge( srcNode, dstEdge );
+            else emit requestEdgeCreation(srcNode, dstEdge);
+        }
+    }
+
+    // FIXME: it sucks
+    //if ( createdEdge ) // Notify user of the edge creation
+    //    createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } );
+   if ( createdEdge ) // Notify user of the edge creation
+        emit edgeInserted( createdEdge );
+}
+
+void    Connector::connectorPressed() noexcept
+{
+    if ( _graph != nullptr &&
+         _edgeItem != nullptr ) {
+        _edgeItem->setGraph(_graph);    // Eventually, configure edge item
+        const auto srcItem = _sourcePort ? _sourcePort :
+                                           _sourceNode ? _sourceNode->getItem() : nullptr;
+        _edgeItem->setSourceItem(srcItem);
+        _edgeItem->setDestinationItem(this);
+        _edgeItem->setVisible(true);
+    }
+}
+
+auto    Connector::getCreateDefaultEdge() const noexcept -> bool { return _createDefaultEdge; }
+auto    Connector::setCreateDefaultEdge(bool createDefaultEdge) noexcept -> void
+{
+    if ( createDefaultEdge != _createDefaultEdge ) {
+        _createDefaultEdge = createDefaultEdge;
+        emit createDefaultEdgeChanged();
+    }
+}
+
+auto    Connector::getHEdgeEnabled() const noexcept -> bool { return _hEdgeEnabled; }
+auto    Connector::setHEdgeEnabled(bool hEdgeEnabled) noexcept -> void
+{
+    if ( hEdgeEnabled != _hEdgeEnabled ) {
+        _hEdgeEnabled = hEdgeEnabled;
+        emit hEdgeEnabledChanged();
+    }
+}
+
+auto    Connector::getConnectorItem() noexcept -> QQuickItem* { return _connectorItem.data(); }
 auto    Connector::setConnectorItem(QQuickItem* connectorItem) noexcept -> void
 {
     if ( _connectorItem != connectorItem ) {
@@ -155,13 +238,93 @@ auto    Connector::getEdgeItem() noexcept -> qan::EdgeItem*
     return _edgeItem.data();
 }
 
-void    Connector::setSourceNode( qan::Node* sourceNode )
+void    Connector::setSourcePort( qan::PortItem* sourcePort ) noexcept
+{
+    if ( sourcePort != _sourcePort.data() ) {
+        if ( _sourcePort )  // Disconnect destroyed() signal connection with old  source node
+            _sourcePort->disconnect(this);
+        _sourcePort = sourcePort;
+
+        if ( sourcePort != nullptr ) {      //// Connector configuration with port host /////
+            if ( _sourceNode ) {    // Erase source node, we can't have both a source port and node
+                _sourceNode->disconnect(this);
+                _sourceNode = nullptr;
+            }
+
+            connect( sourcePort, &QObject::destroyed,
+                     this,       &Connector::sourcePortDestroyed );
+            setVisible(true);
+            if ( sourcePort->getNode() != nullptr ) {
+                setParentItem(sourcePort);
+                // Configure connector position according to port item dock type
+                if ( _edgeItem )
+                    _edgeItem->setSourceItem(sourcePort);
+                if ( _connectorItem ) {
+                    _connectorItem->setParentItem(this);
+                    _connectorItem->setState("NORMAL");
+                    _connectorItem->setVisible(true);
+                }
+                setVisible(true);
+            } else {    // Error: hide everything
+                setVisible(false);
+                if( _edgeItem )
+                    _edgeItem->setVisible(false);
+                if( _connectorItem )
+                    _connectorItem->setVisible(false);
+            }
+        }
+
+        if ( sourcePort == nullptr &&
+             _sourceNode == nullptr )
+            setVisible(false);
+
+        emit sourcePortChanged();
+    }
+}
+
+void    Connector::sourcePortDestroyed()
+{
+    if ( sender() == _sourcePort.data() ) {
+        if ( _sourcePort != nullptr &&
+             _sourcePort->getNode() != nullptr )       // Fall back on port node when port is destroyed
+            setSourceNode(_sourcePort->getNode());
+        setSourcePort(nullptr);
+    }
+}
+
+void    Connector::setSourceNode( qan::Node* sourceNode ) noexcept
 {
     if ( sourceNode != _sourceNode.data() ) {
         if ( _sourceNode )  // Disconnect destroyed() signal connection with old  source node
             _sourceNode->disconnect(this);
         _sourceNode = sourceNode;
-        if ( sourceNode == nullptr )
+
+        if ( _sourceNode ) {    //// Connector configuration with port host /////
+            if ( _sourcePort ) { // Erase source port, we can't have both a source port and node
+                _sourcePort->disconnect(this);
+                _sourcePort = nullptr;
+            }
+            if ( _sourceNode->getItem() != nullptr ) {
+                setParentItem(_sourceNode->getItem());
+                if ( _edgeItem )
+                    _edgeItem->setSourceItem(_sourceNode->getItem());
+                if ( _connectorItem ) {
+                    _connectorItem->setParentItem(this);
+                    _connectorItem->setState("NORMAL");
+                    _connectorItem->setVisible(true);
+                }
+                setVisible(true);
+            } else {    // Error: hide everything
+                setVisible(false);
+                if ( _edgeItem )
+                    _edgeItem->setVisible(false);
+                if( _connectorItem )
+                    _connectorItem->setVisible(false);
+            }
+        }
+
+        if ( sourceNode == nullptr &&
+             _sourcePort == nullptr )
             setVisible(false);
         else {
             connect( sourceNode, &QObject::destroyed,

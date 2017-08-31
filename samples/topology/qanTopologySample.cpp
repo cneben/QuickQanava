@@ -52,8 +52,7 @@ int	main( int argc, char** argv )
     QQuickStyle::setStyle("Material");
 
     QQmlApplicationEngine engine;
-    QuickContainers::initialize();
-    QuickQanava::initialize();
+    QuickQanava::initialize(&engine);
     qmlRegisterType< qan::FaceNode >( "QuickQanava", 2, 0, "AbstractFaceNode");
     qmlRegisterType< qan::FaceGraph >( "QuickQanava", 2, 0, "FaceGraph");
     engine.load(QUrl("qrc:/main.qml"));

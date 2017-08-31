@@ -60,6 +60,25 @@ Qan.AbstractGraphView {
         visible: false
     }
     property real maxZ: -1.
+    onPortClicked: {
+        if ( graph &&
+             port ) {
+            // FIXME: force node z max update
+                //maxZ = Math.max( node.item.z + 1, maxZ + 1 )
+                //node.item.z = maxZ + 1;
+            // FIXME: force node resizer update
+            // FIXME: factor that code with node clicked
+            if ( graph.connector &&
+                 graph.connectorEnabled )
+                graph.connector.sourcePort = port
+        } else if ( graph ) {
+            graph.connector.visible = false
+        }
+    }
+    onPortRightClicked: {
+        console.debug("onPortRightClicked(): port=" + port)
+    }
+
     onNodeClicked: {
         if ( graph &&
              node && node.item ) {
@@ -69,7 +88,9 @@ Qan.AbstractGraphView {
                 updateGroupZ(node.group)
             if ( graph.connector &&
                  graph.connectorEnabled ) {
-                graph.connector.setSource(node);
+                graph.connector.sourceNode = node;
+
+                // FIXME: connector remove that....
                 graph.connector.y = -graph.connector.height / 2
             }
             if ( nodeResizer &&

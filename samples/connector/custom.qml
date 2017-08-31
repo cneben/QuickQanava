@@ -120,11 +120,11 @@ Qan.GraphView {
             var d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
             graph.setConnectorSource(s1)
-            customConnector.setSource(s1)
+            customConnector.sourceNode = s1
         }
         onNodeClicked: {
             if ( node && node.item ) {
-                customConnector.setSource(node)
+                customConnector.sourceNode = node
             } else
                 customConnector.visible = false
         }

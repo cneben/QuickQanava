@@ -41,6 +41,7 @@
 // QuickQanava headers
 #include "./qanGroupItem.h"
 #include "./qanNodeItem.h"
+#include "./qanPortItem.h"
 
 namespace qan { // ::qan
 
@@ -49,7 +50,14 @@ class Node;
 
 /*! \brief Base class for modelling the connector draggable visual node.
  *
- * \note While qan::Connector is not a qan::Node, it also have a default factory interface component() and style().
+ * \note Connector source could be either a port \c sourcePort or a regular node \c sourceNode, these two properties
+ * are exclusive: setting a host port will erase the currently set host node. Since port could be dynamically destroyed (see
+ * port management section in qan::Graph documentation), connector host will fall back automatically on port host node when
+ * a port is destroyed.
+ *
+ * \note While qan::Connector is not a qan::Node, it also have a default factory interface component() and style() to
+ * allow user setting a custom delegate and style for the visual connector.
+ *
  * \nosubgrouping
  */
 class Connector : public qan::NodeItem
@@ -61,6 +69,9 @@ public:
     explicit Connector( QQuickItem* parent = nullptr );
     virtual ~Connector();
     Connector(const Connector&) = delete;
+    Connector& operator=(const Connector&) = delete;
+    Connector(Connector&&) = delete;
+    Connector& operator=(Connector&&) = delete;
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
     auto    setGraph(qan::Graph* graph) noexcept -> void;
@@ -83,10 +94,46 @@ public:
     /*! \name Connector Configuration *///-------------------------------------
     //@{
 signals:
-    //! Emitted when \c createDefaultEdge is set to false to request creation of an edge after the visual connector has been dragged on a destination node or edge.
+    //! Emitted when \c createDefaultEdge is set to false to request creation of an edge after the visual connector has been dropped on a destination node or edge.
     void    requestEdgeCreation(qan::Node* src, QObject* dst);
     //! Emmited after an edge has been created to allow user configuration (not emmited when \c createDefaultEdge is set to false).
     void    edgeInserted(qan::Edge* edge);
+
+protected:
+    //! Should be called from QML when connector draggable item is released other a target.
+    Q_INVOKABLE void    connectorReleased(QQuickItem* target) noexcept;
+    //! Should be called from QML when connector draggable item is pressed.
+    Q_INVOKABLE void    connectorPressed() noexcept;
+
+public:
+    /*! \brief When set to true, connector use qan::Graph::createEdge() to generate edges, when set to false, signal
+        requestEdgeCreation() is emmited instead to allow user to create custom edges (default to \c true).
+    */
+    Q_PROPERTY( bool createDefaultEdge READ getCreateDefaultEdge WRITE setCreateDefaultEdge NOTIFY createDefaultEdgeChanged FINAL )
+    //! \copydoc createDefaultEdge
+    auto        getCreateDefaultEdge() const noexcept -> bool;
+    //! \copydoc createDefaultEdge
+    auto        setCreateDefaultEdge(bool createDefaultEdge) noexcept -> void;
+protected:
+    //! \copydoc createDefaultEdge
+    bool        _createDefaultEdge{true};
+signals:
+    //! \copydoc createDefaultEdge
+    void        createDefaultEdgeChanged();
+
+public:
+    //! Enable or disable visual creation of hyper edges (default to \c false).
+    Q_PROPERTY( bool hEdgeEnabled READ getHEdgeEnabled WRITE setHEdgeEnabled NOTIFY hEdgeEnabledChanged FINAL )
+    //! \copydoc hEdgeEnabled
+    auto        getHEdgeEnabled() const noexcept -> bool;
+    //! \copydoc hEdgeEnabled
+    auto        setHEdgeEnabled(bool hEdgeEnabled) noexcept -> void;
+protected:
+    //! \copydoc hEdgeEnabled
+    bool        _hEdgeEnabled{false};
+signals:
+    //! \copydoc hEdgeEnabled
+    void        hEdgeEnabledChanged();
 
 public:
     //! Graphical item used as a draggable destination node selector (initialized and owned from QML).
@@ -116,13 +163,30 @@ protected:
     QPointer<qan::EdgeItem>  _edgeItem;
 
 public:
+    /*! \brief Connector source port item (ie host node port item for the visual draggable connector item).
+     *
+     * \note Connector item is automatically hidden if \c sourcePort is nullptr or \c sourcePort is
+     * destroyed.
+     */
+    Q_PROPERTY( qan::PortItem* sourcePort READ getSourcePort WRITE setSourcePort NOTIFY sourcePortChanged FINAL )
+    void                    setSourcePort( qan::PortItem* sourcePort ) noexcept;
+    inline qan::PortItem*   getSourcePort() const noexcept { return _sourcePort.data(); }
+private:
+    QPointer<qan::PortItem> _sourcePort;
+signals:
+    void                    sourcePortChanged();
+private slots:
+    //! Called when the current source port is destroyed.
+    void                    sourcePortDestroyed();
+
+public:
     /*! \brief Connector source node (ie host node for the visual draggable connector item).
      *
      * \note Connector item is automatically hidden if \c sourceNode is nullptr or \c sourceNode is
      * destroyed.
      */
     Q_PROPERTY( qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL )
-    void                setSourceNode( qan::Node* sourceNode );
+    void                setSourceNode( qan::Node* sourceNode ) noexcept;
     inline qan::Node*   getSourceNode() const noexcept { return _sourceNode.data(); }
 private:
     QPointer<qan::Node> _sourceNode;

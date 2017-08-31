@@ -44,6 +44,9 @@
 // QuickContainers headers
 #include "../QuickContainers/src/QuickContainers.h"
 
+// Qt header
+#include <QQmlEngine>
+
 // QuickQanava headers
 #include "./qanGraphConfig.h"
 #include "./qanEdge.h"
@@ -64,11 +67,13 @@
 #include "./qanNavigablePreview.h"
 
 struct QuickQanava {
-    static void initialize() {
+    static void initialize(QQmlEngine* engine) {
         QuickGeoGL::initialize();
         QuickContainers::initialize();
 
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
+        if ( engine )
+            engine->rootContext()->setContextProperty( "defaultNodeStyle", QVariant::fromValue(qan::Node::style()) );
         qmlRegisterType< qan::NodeItem >( "QuickQanava", 2, 0, "NodeItem");
         qmlRegisterType< qan::PortItem >( "QuickQanava", 2, 0, "PortItem");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");

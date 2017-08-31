@@ -42,24 +42,42 @@ Qan.PortItem {
     width: 16;  height: 16
 
     // Configure label position when dock type change
-    onDockTypeChanged: {
+    onDockTypeChanged: updateLabelAnchors()
+
+    function updateLabelAnchors() {
         if ( dockType >= 0 ) {
             switch ( dockType ) {
             case Qan.NodeItem.Left:
-                label.anchors.bottom = contentItem.top
-                label.anchors.right = contentItem.right
+                labelPane.anchors.left = undefined
+                labelPane.anchors.top = undefined
+                labelPane.anchors.right = contentItem.right
+                labelPane.anchors.bottom = contentItem.top
+                labelPane.anchors.horizontalCenter = undefined
                 break;
             case Qan.NodeItem.Top:
-                label.anchors.bottom = contentItem.top
-                label.anchors.horizontalCenter = contentItem.horizontalCenter
+                labelPane.anchors.left = undefined
+                labelPane.anchors.top = undefined
+                labelPane.anchors.right = undefined
+
+                labelPane.anchors.bottom = contentItem.top
+                labelPane.anchors.horizontalCenter = contentItem.horizontalCenter
                 break;
             case Qan.NodeItem.Right:
-                label.anchors.bottom = contentItem.top
-                label.anchors.left = contentItem.left
+                labelPane.anchors.left = contentItem.left
+                labelPane.anchors.top = undefined
+                labelPane.anchors.right = undefined
+                labelPane.anchors.bottom = contentItem.top
+                labelPane.anchors.horizontalCenter = undefined
                 break;
             case Qan.NodeItem.Bottom:
-                label.anchors.top = contentItem.bottom
-                label.anchors.horizontalCenter = contentItem.horizontalCenter
+                console.debug("configure bottom: label.width=" + label.width + "  label.ix=" + label.implicitWidth)
+                labelPane.anchors.left = undefined
+                labelPane.anchors.top = portItem.bottom
+                labelPane.anchors.right = undefined
+                labelPane.anchors.bottom = undefined
+                labelPane.anchors.horizontalCenter = portItem.horizontalCenter
+                labelPane.width = label.implicitWidth
+                labelPane.height = label.implicitHeight
                 break;
             default: break;
             }
@@ -73,11 +91,18 @@ Qan.PortItem {
         color: "transparent"
         border.color: "lightblue"
         border.width: 3
+    }
+    Pane {
+        id: labelPane
+        opacity: 0.80
+        padding: 0
+        z: 2
+        width: label.implicitWidth
+        height: label.implicitHeight
         Label {
-            id: label
-            anchors.bottom: parent.top
-            anchors.right: parent.right
-            text: portItem.label
+            id: label; z: 3; text: portItem.label
+            visible: true
         }
+        Component.onCompleted: updateLabelAnchors()
     }
 }

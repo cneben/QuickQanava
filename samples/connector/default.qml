@@ -71,7 +71,6 @@ Qan.GraphView {
             }
             return edgeSrcDst
         }
-
         onConnectorEdgeInserted: { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
         onConnectorRequestEdgeCreation: { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
         onEdgeClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }

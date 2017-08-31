@@ -54,4 +54,12 @@ QQmlComponent*  FaceNode::delegate(QObject* caller) noexcept
     return qan_FaceNode_delegate.get();
 }
 
+void    FaceNode::setImage(QUrl image) noexcept
+{
+    if ( image != _image ) {
+        _image = image;
+        setLabel(image.toString());
+        emit imageChanged();
+    }
+}
 } // ::qan

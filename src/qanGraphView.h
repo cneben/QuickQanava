@@ -42,6 +42,7 @@
 #include "./qanGraph.h"
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
+#include "./qanPortItem.h"
 
 // Qt headers
 #include <QQuickItem>
@@ -87,6 +88,9 @@ signals:
     void            nodeClicked( qan::Node* node, QPointF pos );
     void            nodeRightClicked( qan::Node* node, QPointF pos );
     void            nodeDoubleClicked( qan::Node* node, QPointF pos );
+
+    void            portClicked( qan::PortItem* port, QPointF pos );
+    void            portRightClicked( qan::PortItem* port, QPointF pos );
 
     void            edgeClicked( qan::Edge* edge, QPointF pos );
     void            edgeRightClicked( qan::Edge* edge, QPointF pos );

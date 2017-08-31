@@ -48,12 +48,7 @@ PortItem::PortItem(QQuickItem* parent) :
     setResizable(false);
     setDraggable(false);
     setSelectable(false);
-
-    // FIXME...
-    /*connect( this, &qan::PortItem::widthChanged,
-             this, &qan::PortItem::onWidthChanged );
-    connect( this, &qan::PortItem::heightChanged,
-             this, &qan::PortItem::onHeightChanged );*/
+    setObjectName( QStringLiteral("qan::PortItem") );
 }
 
 PortItem::~PortItem() { /* Nil */ }

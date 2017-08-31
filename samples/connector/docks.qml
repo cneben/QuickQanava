@@ -47,21 +47,31 @@ Qan.GraphView {
             var n12 = graph.insertNode()
             n12.label = "N12"; n12.item.x = 50; n12.item.y = 150
 
-            var n13 = graph.insertNode()
-            n13.label = "N13"; n13.item.x = 50; n13.item.y = 250
-
             var n2 = graph.insertNode()
             n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
 
-            var p1 = graph.insertInPort(n2, Qan.NodeItem.Left);
-            p1.label = "IN #1"
-            var p2 = graph.insertInPort(n2, Qan.NodeItem.Left);
-            p2.label = "IN #2"
+            var n2p1 = graph.insertInPort(n2, Qan.NodeItem.Left);
+            n2p1.label = "IN #1"
+            var n2p2 = graph.insertInPort(n2, Qan.NodeItem.Left);
+            n2p2.label = "IN #2"
+
+            var n2p3 = graph.insertInPort(n2, Qan.NodeItem.Right);
+            n2p3.label = "OUT #1"
+
+            var n3 = graph.insertNode()
+            n3.label = "N3"; n3.item.x = 500; n3.item.y = 100
+            var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Left);
+            n3p1.label = "IN #1"
+
+            var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Top);
+            n3p1.label = "OUT #1"
+            var n3p2 = graph.insertInPort(n3, Qan.NodeItem.Bottom);
+            n3p2.label = "OUT #2"
 
             var e1 = graph.insertEdge(n11, n2);
             var e2 = graph.insertEdge(n12, n2);
-            graph.bindEdgeDestination(e1, p1)
-            graph.bindEdgeDestination(e2, p2)
+            graph.bindEdgeDestination(e1, n2p1)
+            graph.bindEdgeDestination(e2, n2p2)
 
 
             graph.setConnectorSource(n2)

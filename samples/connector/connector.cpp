@@ -49,8 +49,8 @@ int	main( int argc, char** argv )
     QApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
-    QuickQanava::initialize();
     QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/connector.qml"));
     return app.exec();
 }

@@ -606,6 +606,14 @@ private:
     //! \copydoc portDelegate
     std::unique_ptr<QQmlComponent> _portDelegate;
 
+signals:
+    /*! \brief Emitted whenever a port node registered in this graph is clicked.
+     */
+    void            portClicked( qan::PortItem* port, QPointF pos );
+    /*! \brief Emitted whenever a port node registered in this graph is right clicked.
+     */
+    void            portRightClicked( qan::PortItem* port, QPointF pos );
+
 public:
     //! Default delegate for horizontal (either NodeItem::Dock::Top or NodeItem::Dock::Bottom) docks.
     Q_PROPERTY( QQmlComponent* horizontalDockDelegate READ getHorizontalDockDelegate WRITE setHorizontalDockDelegate NOTIFY horizontalDockDelegateChanged FINAL )

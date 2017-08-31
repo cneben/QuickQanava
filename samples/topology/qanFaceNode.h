@@ -54,8 +54,8 @@ private:
     Q_DISABLE_COPY( FaceNode )
 public:
     Q_PROPERTY( QUrl image READ getImage WRITE setImage NOTIFY imageChanged )
-    const QUrl&         getImage( ) const { return _image; }
-    void                setImage( QUrl image ) { _image = image; emit imageChanged(); }
+    const QUrl&         getImage() const noexcept { return _image; }
+    void                setImage(QUrl image) noexcept;
 private:
     QUrl        _image;
 signals:

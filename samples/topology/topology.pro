@@ -12,8 +12,7 @@ SOURCES     +=  ./qanTopologySample.cpp \
 
 HEADERS     +=  ./qanTopologySample.h   \
                 ./qanFaceNode.h         \
-                ./main.qml              \
-                ./ImgNode.qml
+                ./main.qml
 
 OTHER_FILES +=  main.qml        \
                 FaceNode.qml

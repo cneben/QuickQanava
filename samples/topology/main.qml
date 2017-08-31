@@ -89,25 +89,25 @@ ApplicationWindow {
             }
         }
         MenuItem {
-            text: "Add Left In port"
+            text: "Add Left port"
             enabled: menu.targetNode !== undefined
             onTriggered: {
                 var inPort = topology.insertInPort(menu.targetNode, Qan.NodeItem.Left)
-                inPort.label = "INL"
+                inPort.label = "LPORT"
             }
         }
         MenuItem {
-            text: "Add Top In port"
+            text: "Add Top port"
             enabled: menu.targetNode !== undefined
             onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Top, "IN")
         }
         MenuItem {
-            text: "Add Right In port"
+            text: "Add Right port"
             enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Right, "IN")
+            onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Right, "RPORT")
         }
         MenuItem {
-            text: "Add Bottom In port"
+            text: "Add Bottom port"
             enabled: menu.targetNode !== undefined
             onTriggered: topology.insertInPort(menu.targetNode, Qan.NodeItem.Bottom, "IN")
         }
@@ -136,12 +136,16 @@ ApplicationWindow {
         anchors.fill: parent
         graph       : topology
         navigable   : true
+        resizeHandlerColor: Material.accent
         Qan.FaceGraph {
             id: topology
             objectName: "graph"
             anchors.fill: parent
             clip: true
             connectorEnabled: true
+            selectionColor: Material.accent
+            connectorColor: Material.accent
+
 
             property Component faceNodeComponent: Qt.createComponent( "qrc:/FaceNode.qml" )
             onNodeRightClicked: {
@@ -158,17 +162,30 @@ ApplicationWindow {
                 menu.targetEdge = edge; menu.open()
             }
             Component.onCompleted: {
+                defaultNodeStyle.shadowColor = Qt.binding(function() { return Material.theme === Material.Dark ? Qt.darker(Material.foreground) : Qt.darker(Material.foreground) } )
                 var faceNode = topology.insertFaceNode()
                 faceNode.image = "qrc:/faces/BW1.jpg"
-                faceNode.item.x = 45; faceNode.item.y = 40
+                faceNode.item.x = 150; faceNode.item.y = 55
 
                 faceNode = topology.insertFaceNode()
                 faceNode.image = "qrc:/faces/BW2.jpg"
-                faceNode.item.x = 200; faceNode.item.y = 40
+                faceNode.item.x = 45; faceNode.item.y = 250
 
                 faceNode = topology.insertFaceNode()
                 faceNode.image = "qrc:/faces/BW3.jpg"
-                faceNode.item.x = 375; faceNode.item.y = 40
+                faceNode.item.x = 250; faceNode.item.y = 250
+
+                faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/JS1.jpg"
+                faceNode.item.x = 500; faceNode.item.y = 55
+
+                faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/VD1.jpg"
+                faceNode.item.x = 400; faceNode.item.y = 350
+
+                faceNode = topology.insertFaceNode()
+                faceNode.image = "qrc:/faces/DD1.jpg"
+                faceNode.item.x = 650; faceNode.item.y = 350
             }
         } // Qan.Graph: graph
         onRightClicked: {
@@ -200,7 +217,7 @@ ApplicationWindow {
                 highlight: Rectangle {
                     x: 0; y: ( edgesList.currentItem != null ? edgesList.currentItem.y : 0 )
                     width: edgesList.width; height: ( edgesList.currentItem != null ? edgesList.currentItem.height : 100 )
-                    color: "lightsteelblue"; opacity: 0.7; radius: 5
+                    color: Material.accent; opacity: 0.7; radius: 3
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }
                 delegate: Item {
@@ -265,7 +282,7 @@ ApplicationWindow {
                 highlight: Rectangle {
                     x: 0; y: nodesListView.currentItem.y;
                     width: nodesListView.width; height: nodesListView.currentItem.height
-                    color: "lightsteelblue"; opacity: 0.7; radius: 5
+                    color: Material.accent; opacity: 0.7; radius: 3
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }
                 delegate: Item {
@@ -313,7 +330,7 @@ ApplicationWindow {
                 highlight: Rectangle {
                     x: 0; y: ( selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0 );
                     width: selectionListView.width; height: selectionListView.currentItem.height
-                    color: "lightsteelblue"; opacity: 0.7; radius: 5
+                    color: Material.accent; opacity: 0.7; radius: 3
                     Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                 }
                 delegate: Item {

@@ -505,8 +505,11 @@ void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcep
     // PRECONDITION:
         // outPort must be an Out port
         // edge must have an associed item
+    auto edgeItem = edge.getItem();
+    if ( edgeItem != nullptr )
+        edgeItem->setSourceItem(&outPort);
 
-    // FIXME...
+    // FIXME: Remember mapping...
 }
 
 void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
@@ -519,7 +522,8 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
     auto edgeItem = edge.getItem();
     if ( edgeItem != nullptr )
         edgeItem->setDestinationItem(&inPort);
-    // Remember mapping...
+
+    // FIXME: Remember mapping...
 }
 
 bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
@@ -881,6 +885,25 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
             portItem->setType(qan::PortItem::Type::In);
             portItem->setLabel(label);
             portItem->setDockType(dockType);
+
+            // Configure port mouse events forwarding to qan::Graph
+            auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
+                if ( portItem != nullptr &&
+                     portItem->getNode() != nullptr )
+                    emit this->portClicked(portItem, p);
+            };
+            connect( portItem, &qan::NodeItem::nodeClicked, notifyPortClicked );
+
+            auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
+                if ( portItem != nullptr &&
+                     portItem->getNode() != nullptr )
+                    emit this->portRightClicked(portItem, p);
+            };
+            connect( portItem, &qan::NodeItem::nodeRightClicked, notifyPortRightClicked );
+
+
             if ( node->getItem() != nullptr ) {
                 portItem->setNode(node); // inPort item in fact map to this concrete node.
                 auto dockItem = node->getItem()->getDock(dockType);

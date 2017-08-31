@@ -58,10 +58,27 @@ Qan.NodeItem {
         visible: faceNodeItem.style.hasShadow
         transparentBorder: true
     }
-    ColumnLayout {
+    Pane {
         z: 2
-        Label { text: "w=" + image.sourceSize.width }
-        Label { text: "h=" + image.sourceSize.height }
+        anchors.horizontalCenter: parent.horizontalCenter
+        padding: 1
+        opacity: 0.9
+        RowLayout {
+            Label {
+                Layout.maximumWidth: faceNodeItem.width - 10
+                z: 3
+                text: faceNodeItem.node.label
+                horizontalAlignment: Text.AlignHCenter
+                maximumLineCount: 2; elide: Text.ElideLeft
+            }
+        }
+    }
+    Pane {
+        z: 2
+        padding: 1
+        anchors.left: parent.left; anchors.bottom: parent.bottom;
+        opacity: 0.9
+        Label { text: image.sourceSize.width + "x" + image.sourceSize.height + "px" }
     }
     Image {
         id: image

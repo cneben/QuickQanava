@@ -33,7 +33,7 @@ import "qrc:/QuickQanava"   as Qan
 
 ColumnLayout {
     id: verticalDock
-    spacing: 15
+    spacing: 20
 
     property var hostNodeItem: undefined
     onHostNodeItemChanged: configureDock()

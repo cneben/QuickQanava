@@ -307,7 +307,7 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Port Layout Management *///--------------------------------------
+    /*! \name Dock Layout Management *///--------------------------------------
     //@{
 public:
     //! Define port dock type/index/position.
