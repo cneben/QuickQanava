@@ -41,12 +41,7 @@
 #include <random>
 #include <exception>
 
-// GTpo headers
-#include <GTpo>
-
-// QuickQanava headers
-#include "./qanGraphConfig.h"
-#include "./qanGraph.h"
+#include <QString>
 
 //! Main QuickQanava namespace
 namespace qan { // ::qan

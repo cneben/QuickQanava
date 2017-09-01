@@ -113,7 +113,7 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
     const auto dstEdgeItem = qobject_cast<qan::EdgeItem*>(target);
 
     const auto srcPortItem = _sourcePort;
-    const auto srcNode = _sourceNode ? _sourceNode :
+    const auto srcNode = _sourceNode ? _sourceNode.data() :
                                        _sourcePort ? _sourcePort->getNode() : nullptr;
     const auto dstNode = dstNodeItem ? dstNodeItem->getNode() :
                                        dstPortItem ? dstPortItem->getNode() : nullptr;
