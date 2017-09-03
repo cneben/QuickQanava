@@ -115,8 +115,8 @@ ApplicationWindow {
 
     Label {
         text: "Right click for main menu:
-               \t-Add content with Add Node or Add Face Node entries.
-               \t-Use the DnD connector to add edges between nodes."
+               \t- Add content with Add Node or Add Face Node entries.
+               \t- Use the DnD connector to add edges between nodes."
     }
 
     function centerItem( item ) {
