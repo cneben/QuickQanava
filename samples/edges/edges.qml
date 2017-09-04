@@ -47,39 +47,61 @@ ApplicationWindow {
             id: graph
             connectorEnabled: true
             Component.onCompleted: {
-                var n11 = graph.insertNode()
-                n11.label = "N11"; n11.item.x = 50; n11.item.y = 50
-                var n12 = graph.insertNode()
-                n12.label = "N12"; n12.item.x = 50; n12.item.y = 150
-
-                var n2 = graph.insertNode()
-                n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
-
-                var n2p1 = graph.insertInPort(n2, Qan.NodeItem.Left);
-                n2p1.label = "IN #1"
-                var n2p2 = graph.insertInPort(n2, Qan.NodeItem.Left);
-                n2p2.label = "IN #2"
-
-                var n2p3 = graph.insertInPort(n2, Qan.NodeItem.Right);
-                n2p3.label = "OUT #1"
-
-                var n3 = graph.insertNode()
-                n3.label = "N3"; n3.item.x = 500; n3.item.y = 100
-                var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Left);
-                n3p1.label = "IN #1"
-
-                var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Top);
-                n3p1.label = "OUT #1"
-                var n3p2 = graph.insertInPort(n3, Qan.NodeItem.Bottom);
-                n3p2.label = "OUT #2"
-
-                var e1 = graph.insertEdge(n11, n2);
-                var e2 = graph.insertEdge(n12, n2);
-                graph.bindEdgeDestination(e1, n2p1)
-                graph.bindEdgeDestination(e2, n2p2)
+                var c = graph.insertNode()
+                c.label = "C"; c.item.x = 350; c.item.y = 200
 
 
-                graph.setConnectorSource(n2)
+                var tl = graph.insertNode()
+                tl.label = "TL"; tl.item.x = 50; tl.item.y = 50
+                graph.insertEdge(c, tl);
+
+                var tml = graph.insertNode()
+                tml.label = "TML"; tml.item.x = 200; tml.item.y = 50
+                graph.insertEdge(c, tml);
+
+                var t = graph.insertNode()
+                t.label = "T"; t.item.x = 350; t.item.y = 50
+                graph.insertEdge(c, t);
+
+                var tmr = graph.insertNode()
+                tmr.label = "TML"; tmr.item.x = 500; tmr.item.y = 50
+                graph.insertEdge(c, tmr);
+
+                var tr = graph.insertNode()
+                tr.label = "TR"; tr.item.x = 650; tr.item.y = 50
+                graph.insertEdge(c, tr);
+
+
+                var bl = graph.insertNode()
+                bl.label = "BL"; bl.item.x = 50; bl.item.y = 350
+                graph.insertEdge(c, bl);
+
+                var bml = graph.insertNode()
+                bml.label = "BML"; bml.item.x = 200; bml.item.y = 350
+                graph.insertEdge(c, bml);
+
+                var b = graph.insertNode()
+                b.label = "B"; b.item.x = 350; b.item.y = 350
+                graph.insertEdge(c, b);
+
+                var bmr = graph.insertNode()
+                bmr.label = "BML"; bmr.item.x = 500; bmr.item.y = 350
+                graph.insertEdge(c, bmr);
+
+                var br = graph.insertNode()
+                br.label = "BR"; br.item.x = 650; br.item.y = 350
+                graph.insertEdge(c, br);
+
+
+                var l = graph.insertNode()
+                l.label = "L"; l.item.x = 50; l.item.y = 200
+                graph.insertEdge(c, l);
+
+                var r = graph.insertNode()
+                r.label = "R"; r.item.x = 650; r.item.y = 200
+                graph.insertEdge(c, r);
+
+                graph.setConnectorSource(c)
             }
         }
     }  // Qan.GraphView
