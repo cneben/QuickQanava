@@ -25,32 +25,35 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
-// \file	Edge.qml
+// \file	connector.cpp
 // \author	benoit@destrat.io
-// \date	2015 06 20
+// \date	2017 03 06
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Layouts  1.3
+// Qt headers
+#include <QApplication>
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
-import QuickQanava          2.0 as Qan
-import QuickGeoGL           1.0 as Qgl
-import "qrc:/QuickGeoGL"    1.0 as Qgl
+// QuickQanava headers
+#include <QuickQanava>
 
-Qan.EdgeItem {
-    id: edgeItem
-    property color  color: style ? style.lineColor : Qt.black
-    Qgl.Arrow {
-        anchors.fill: parent
-        id: arrow
-        visible: edgeItem.visible && !edgeItem.hidden
-        p1: edgeItem.p1
-        p2: edgeItem.p2
-        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-        color: edgeItem.color
-    }
+using namespace qan;
+
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
+{
+    QApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/edges.qml"));
+    return app.exec();
 }
+//-----------------------------------------------------------------------------
+
 

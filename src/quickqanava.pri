@@ -72,6 +72,7 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/HorizontalDock.qml        \
                 $$PWD/VerticalDock.qml          \
                 $$PWD/Edge.qml                  \
+                $$PWD/CurvedEdge.qml            \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \
                 $$PWD/VisualConnector.qml       \

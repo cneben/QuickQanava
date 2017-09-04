@@ -27,30 +27,59 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	Edge.qml
+// \file	CurvedEdge.qml
 // \author	benoit@destrat.io
-// \date	2015 06 20
+// \date	2018 09 04
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
 import QtQuick.Layouts  1.3
+import QtQuick.Shapes   1.0
 
-import QuickQanava          2.0 as Qan
-import QuickGeoGL           1.0 as Qgl
-import "qrc:/QuickGeoGL"    1.0 as Qgl
+import QuickQanava      2.0 as Qan
 
 Qan.EdgeItem {
     id: edgeItem
-    property color  color: style ? style.lineColor : Qt.black
-    Qgl.Arrow {
-        anchors.fill: parent
-        id: arrow
+
+    property color color: style ? style.lineColor : Qt.black
+
+    Shape {
+        //anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
-        p1: edgeItem.p1
-        p2: edgeItem.p2
-        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-        color: edgeItem.color
+        asynchronous: true
+
+        ShapePath {
+            id: arrow
+            startX: edgeItem.p1.x
+            startY: edgeItem.p1.y
+            capStyle: ShapePath.FlatCap //edgeItem.style ? edgeItem.style.arrowSize : 4
+            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+            strokeColor: edgeItem.color
+            strokeStyle: ShapePath.SolidLine
+            fillColor: "transparent"
+
+            property real defaultOffset: 200
+            property real xDistance: edgeItem.p2.x - (edgeItem.p1.x + 20)
+            property real minimum: Math.min(defaultOffset, Math.abs(xDistance))
+            property real verticalOffset: xDistance <= 0 ? -minimum : 0
+            property real ratio: xDistance <= 0 ? 1 : 0.5
+            property real cp1_x: edgeItem.p1.x + minimum * ratio
+            property real cp1_y: edgeItem.p1.y + verticalOffset
+            property real cp2_x: edgeItem.p2.x - minimum * ratio
+            property real cp2_y: edgeItem.p2.y + verticalOffset
+
+            PathCubic {
+                x: edgeItem.p2.x
+                y: edgeItem.p2.y
+                /*relativeControl1X: arrow.cp1_x
+                relativeControl1Y: arrow.cp1_y
+                relativeControl2X: arrow.cp2_x
+                relativeControl2Y: arrow.cp2_y*/
+                control1X: arrow.cp1_x
+                control1Y: arrow.cp1_y
+                control2X: arrow.cp2_x
+                control2Y: arrow.cp2_y
+            }
+        }
     }
 }
-

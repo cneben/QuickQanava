@@ -85,8 +85,13 @@ QQmlComponent*  Edge::delegate(QObject* caller) noexcept
     if ( !qan_Edge_delegate &&
          caller != nullptr ) {
         const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
+        if ( engine != nullptr ) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+            qan_Edge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/CurvedEdge.qml");
+#else       // Default to linear edge when Qt 5.10 is not available
             qan_Edge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Edge.qml");
+#endif
+        }
     }
     return qan_Edge_delegate.get();
 }
