@@ -63,7 +63,6 @@ class EdgeItem : public QQuickItem
     //@{
     Q_OBJECT
 public:
-    //! Edge constructor with source, destination and weight initialization.
     explicit EdgeItem(QQuickItem* parent = nullptr);
     virtual ~EdgeItem();
     EdgeItem( const EdgeItem& ) = delete;
@@ -151,7 +150,7 @@ public:
      * \note When overriding, call base implementation at the beginning of user implementation.
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
      */
-    virtual void        updateItem( );
+    virtual void        updateItem() noexcept;
 public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );

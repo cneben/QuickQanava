@@ -51,6 +51,7 @@
 #include "./qanGraphConfig.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
+#include "./qanCurveEdgeItem.h"
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
@@ -78,6 +79,7 @@ struct QuickQanava {
         qmlRegisterType< qan::PortItem >( "QuickQanava", 2, 0, "PortItem");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");
         qmlRegisterType< qan::EdgeItem >( "QuickQanava", 2, 0, "EdgeItem");
+        qmlRegisterType< qan::CurveEdgeItem >( "QuickQanava", 2, 0, "CurveEdgeItem");
         qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
         qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");

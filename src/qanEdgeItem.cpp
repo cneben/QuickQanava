@@ -38,7 +38,7 @@
 
 // QuickQanava headers
 #include "./qanEdgeItem.h"
-#include "./qanNodeItem.h"
+#include "./qanNodeItem.h"      // Resolve forward declaration
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
 
@@ -200,7 +200,7 @@ void    EdgeItem::setHidden(bool hidden) noexcept
     }
 }
 
-void    EdgeItem::updateItem()
+void    EdgeItem::updateItem() noexcept
 {
     qan::NodeItem*  srcItem = _sourceItem.data();
     qan::GroupItem* srcGroupItem = nullptr;

@@ -16,6 +16,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
             $$PWD/qanEdgeItem.h             \
+            $$PWD/qanCurveEdgeItem.h        \
             $$PWD/qanNode.h                 \
             $$PWD/qanNodeItem.h             \
             $$PWD/qanPortItem.h             \
@@ -42,6 +43,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \
             $$PWD/qanEdge.cpp               \
             $$PWD/qanEdgeItem.cpp           \
+            $$PWD/qanCurveEdgeItem.cpp      \
             $$PWD/qanNode.cpp               \
             $$PWD/qanNodeItem.cpp           \
             $$PWD/qanPortItem.cpp           \

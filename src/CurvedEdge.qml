@@ -38,7 +38,7 @@ import QtQuick.Shapes   1.0
 
 import QuickQanava      2.0 as Qan
 
-Qan.EdgeItem {
+Qan.CurveEdgeItem {
     id: edgeItem
 
     property color color: style ? style.lineColor : Qt.black
@@ -48,6 +48,15 @@ Qan.EdgeItem {
         visible: edgeItem.visible && !edgeItem.hidden
         asynchronous: true
 
+        Path {
+            id: myPath
+            startX: 0; startY: 100
+
+            PathCurve { x: 75; y: 75 }
+            PathCurve { x: 200; y: 150 }
+            PathCurve { x: 325; y: 25 }
+            PathCurve { x: 400; y: 100 }
+        }
         ShapePath {
             id: arrow
             startX: edgeItem.p1.x
@@ -59,22 +68,27 @@ Qan.EdgeItem {
             fillColor: "transparent"
 
             property real defaultOffset: 200
-            property real xDistance: edgeItem.p2.x - (edgeItem.p1.x + 20)
             property real minimum: Math.min(defaultOffset, Math.abs(xDistance))
             property real verticalOffset: xDistance <= 0 ? -minimum : 0
+
+            /*property real xDistance: edgeItem.p2.x - (edgeItem.p1.x + 20)
             property real ratio: xDistance <= 0 ? 1 : 0.5
             property real cp1_x: edgeItem.p1.x + minimum * ratio
             property real cp1_y: edgeItem.p1.y + verticalOffset
             property real cp2_x: edgeItem.p2.x - minimum * ratio
             property real cp2_y: edgeItem.p2.y + verticalOffset
+            */
+
+            property real xDistance: edgeItem.p2.x - edgeItem.p1.x
+            property real ratio: Math.abs(xDistance) <= 0 ? 1 : 0.5
+            property real cp1_x: edgeItem.p1.x + xDistance * ratio
+            property real cp1_y: edgeItem.p1.y
+            property real cp2_x: edgeItem.p2.x - xDistance * ratio
+            property real cp2_y: edgeItem.p2.y
 
             PathCubic {
                 x: edgeItem.p2.x
                 y: edgeItem.p2.y
-                /*relativeControl1X: arrow.cp1_x
-                relativeControl1Y: arrow.cp1_y
-                relativeControl2X: arrow.cp2_x
-                relativeControl2Y: arrow.cp2_y*/
                 control1X: arrow.cp1_x
                 control1Y: arrow.cp1_y
                 control2X: arrow.cp2_x
