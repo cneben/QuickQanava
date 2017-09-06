@@ -77,16 +77,25 @@ public:
 public:    
     //! Edge source point in item CS (with accurate source bounding shape intersection).
     Q_PROPERTY( QPointF c1 READ getC1() NOTIFY c1Changed FINAL )
-    inline  auto    getC1() const -> const QPointF& { return _c1; }
+    inline  auto    getC1() const noexcept -> const QPointF& { return _c1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
     Q_PROPERTY( QPointF c2 READ getC2() NOTIFY c2Changed FINAL )
-    inline  auto    getC2() const -> const QPointF& { return _c2; }
+    inline  auto    getC2() const noexcept -> const QPointF& { return _c2; }
 signals:
     void            c1Changed();
     void            c2Changed();
 private:
     QPointF         _c1;
     QPointF         _c2;
+
+public:
+    //! Edge arrow angle.
+    Q_PROPERTY( qreal angle READ getAngle() NOTIFY angleChanged FINAL )
+    inline  auto    getAngle() const noexcept -> qreal { return _angle; }
+private:
+    qreal           _angle{0.};
+signals:
+    void            angleChanged();
     //@}
     //-------------------------------------------------------------------------
 };

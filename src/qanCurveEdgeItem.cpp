@@ -61,6 +61,25 @@ void    CurveEdgeItem::updateItem() noexcept
 
     // FIXME generate c1/c2
 
+    static constexpr    qreal MinLength = 0.00001;
+    static constexpr    qreal Pi = 3.141592653;
+    static constexpr    qreal TwoPi = 2. * Pi;
+
+    // FIXME: add curve angle "manual" generation
+
+    // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
+    // https://www.codeproject.com/Articles/199645/Bezier-curve-angle-calculation-in-Silverlight
+
+    // Generate arrow angle
+    QLineF line{getP1(), getP2()};
+    const qreal lineLength = line.length();
+    // FIXME: secure lineLength....
+    double angle = std::acos( line.dx( ) / lineLength );
+    if ( line.dy( ) <= 0 )
+        angle = 2.0 * Pi - angle;
+    _angle = angle * ( 360. / TwoPi ) ; emit angleChanged();
+
+
     emit c1Changed();
     emit c2Changed();
 }

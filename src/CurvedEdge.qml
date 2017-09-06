@@ -44,19 +44,39 @@ Qan.CurveEdgeItem {
     property color color: style ? style.lineColor : Qt.black
 
     Shape {
-        //anchors.fill: parent
-        visible: edgeItem.visible && !edgeItem.hidden
-        asynchronous: true
+        id: edgeCap
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.angle
+        x: edgeItem.p2.x
+        y: edgeItem.p2.y
+        ShapePath {
+            id: cap
+            strokeColor: "black"
+            fillColor: edgeItem.color
+            strokeWidth: 2
 
-        Path {
-            id: myPath
-            startX: 0; startY: 100
+            // FIXME: move everything to qan::CurveEdgeItem
+            property real   arrowLength: 9
+            property real   capSize: 7
+            property point  base : Qt.point( -arrowLength, 0. )
 
-            PathCurve { x: 75; y: 75 }
-            PathCurve { x: 200; y: 150 }
-            PathCurve { x: 325; y: 25 }
-            PathCurve { x: 400; y: 100 }
+            property point  a1: Qt.point(base.x, base.y - capSize)
+            property point  a2: Qt.point(base.x + arrowLength, base.y)
+            property point  a3: Qt.point(base.x, base.y + capSize)
+
+            startX: a1.x;   startY: a1.y
+            PathLine { x: cap.a3.x; y: cap.a3.y }
+            PathLine { x: cap.a2.x; y: cap.a2.y }
+            PathLine { x: cap.a1.x; y: cap.a1.y }
         }
+    }
+
+    Shape {
+        id: edgeShape
+        anchors.fill: parent
+        visible: edgeItem.visible && !edgeItem.hidden
+        //asynchronous: true
+
         ShapePath {
             id: arrow
             startX: edgeItem.p1.x

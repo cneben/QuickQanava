@@ -156,10 +156,10 @@ public:
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );
     //! Edge source point in item CS (with accurate source bounding shape intersection).
     Q_PROPERTY( QPointF p1 READ getP1() NOTIFY p1Changed FINAL )
-    inline  auto    getP1() const -> const QPointF& { return _p1; }
+    inline  auto    getP1() const noexcept -> const QPointF& { return _p1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
     Q_PROPERTY( QPointF p2 READ getP2() NOTIFY p2Changed FINAL )
-    inline  auto    getP2() const -> const QPointF& { return _p2; }
+    inline  auto    getP2() const noexcept -> const QPointF& { return _p2; }
 signals:
     void            p1Changed();
     void            p2Changed();
