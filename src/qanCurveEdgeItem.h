@@ -77,25 +77,81 @@ public:
 public:    
     //! Edge source point in item CS (with accurate source bounding shape intersection).
     Q_PROPERTY( QPointF c1 READ getC1() NOTIFY c1Changed FINAL )
+    //! \copydoc c1
     inline  auto    getC1() const noexcept -> const QPointF& { return _c1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
     Q_PROPERTY( QPointF c2 READ getC2() NOTIFY c2Changed FINAL )
+    //! \copydoc c2
     inline  auto    getC2() const noexcept -> const QPointF& { return _c2; }
 signals:
+    //! \copydoc c1
     void            c1Changed();
+    //! \copydoc c2
     void            c2Changed();
 private:
+    //! \copydoc c1
     QPointF         _c1;
+    //! \copydoc c2
     QPointF         _c2;
 
+protected:
+    /*! Return cubic curve angle at position \c pos between [0.; 1.] on curve defined by \c start, \c end and controls points \c c1 and \c c2.
+     *
+     * \param  pos  linear position on curve, between [0.; 1.0].
+     * \return angle in degree or a value < 0.0 if an error occurs.
+     */
+    qreal           cubicCurveAngleAt(qreal pos, const QPointF& start, const QPointF& end, const QPointF& c1, const QPointF& c2) const noexcept;
+
+    /*! Return line angle on line \c line.
+     *
+     * \return angle in degree or a value < 0.0 if an error occurs.
+     */
+    qreal           lineAngle(const QLineF& line) const noexcept;
+
 public:
-    //! Edge arrow angle.
-    Q_PROPERTY( qreal angle READ getAngle() NOTIFY angleChanged FINAL )
-    inline  auto    getAngle() const noexcept -> qreal { return _angle; }
+    //! Destination edge arrow angle.
+    Q_PROPERTY( qreal dstAngle READ getDstAngle() NOTIFY dstAngleChanged FINAL )
+    //! \copydoc dstAngle
+    inline  auto    getDstAngle() const noexcept -> qreal { return _dstAngle; }
 private:
-    qreal           _angle{0.};
+    //! \copydoc dstAngle
+    qreal           _dstAngle{0.};
 signals:
-    void            angleChanged();
+    //! \copydoc dstAngle
+    void            dstAngleChanged();
+
+public:
+    //! Source edge arrow angle.
+    Q_PROPERTY( qreal srcAngle READ getSrcAngle() NOTIFY srcAngleChanged FINAL )
+    //! \copydoc srcAngle
+    inline  auto    getSrcAngle() const noexcept -> qreal { return _srcAngle; }
+private:
+    //! \copydoc srcAngle
+    qreal           _srcAngle{0.};
+signals:
+    //! \copydoc srcAngle
+    void            srcAngleChanged();
+
+public:
+    //! Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
+    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY dstA1Changed FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA1() const noexcept -> const QPointF& { return _dstA1; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY dstA2Changed FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA2() const noexcept -> const QPointF& { return _dstA2; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY dstA3Changed FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA3() const noexcept -> const QPointF& { return _dstA3; }
+private:
+    //! \copydoc dstA1
+    QPointF         _dstA1, _dstA2, _dstA3;
+signals:
+    void            dstA1Changed();
+    void            dstA2Changed();
+    void            dstA3Changed();
     //@}
     //-------------------------------------------------------------------------
 };

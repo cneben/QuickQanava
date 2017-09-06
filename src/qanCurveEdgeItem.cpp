@@ -32,6 +32,10 @@
 // \date	2017 09 05
 //-----------------------------------------------------------------------------
 
+// Std headers
+#include <cmath>    // std::abs (c++11)
+#include <cstdlib>  // std::abs (c++17)
+
 // Qt headers
 #include <QBrush>
 #include <QPainter>
@@ -59,29 +63,60 @@ void    CurveEdgeItem::updateItem() noexcept
 {
     qan::EdgeItem::updateItem();
 
-    // FIXME generate c1/c2
+    { // Generate cubic curve control points
+        const auto xDistance = _p2.x() - _p1.x();
+        const auto defaultOffset = 200.0;
+        const auto minimum = std::min(defaultOffset, std::abs(xDistance));
+        // FIXME: floating point =, horrible....
+        const auto ratio = std::abs(xDistance) <= 0 ? 1.0 : 0.5;
 
-    static constexpr    qreal MinLength = 0.00001;
-    static constexpr    qreal Pi = 3.141592653;
-    static constexpr    qreal TwoPi = 2. * Pi;
-
-    // FIXME: add curve angle "manual" generation
-
-    // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
-    // https://www.codeproject.com/Articles/199645/Bezier-curve-angle-calculation-in-Silverlight
+        _c1.rx() = _p1.x() + (xDistance * ratio);
+        _c1.ry() = _p1.y();
+        _c2.rx() = _p2.x() - (xDistance * ratio);
+        _c2.ry() = _p2.y();
+    }
 
     // Generate arrow angle
     QLineF line{getP1(), getP2()};
-    const qreal lineLength = line.length();
-    // FIXME: secure lineLength....
-    double angle = std::acos( line.dx( ) / lineLength );
-    if ( line.dy( ) <= 0 )
-        angle = 2.0 * Pi - angle;
-    _angle = angle * ( 360. / TwoPi ) ; emit angleChanged();
 
+    { // Generate arrow geometry
+        const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
+        const auto arrowLength = arrowSize * 2.;
+        const auto base = QPointF{-arrowLength, 0. };
+
+        _dstA1 = QPointF{ base.x(),                 -arrowSize  };
+        _dstA2 = QPointF{ base.x() + arrowLength,   base.y()    };
+        _dstA3 = QPointF{ base.x(),                 arrowSize   };
+        emit dstA1Changed(); emit dstA2Changed(); emit dstA3Changed();
+    }
+
+    _dstAngle = lineAngle(line); emit dstAngleChanged();
 
     emit c1Changed();
     emit c2Changed();
+}
+
+qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPointF& end, const QPointF& c1, const QPointF& c2 ) const noexcept
+{
+    // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
+    // https://www.codeproject.com/Articles/199645/Bezier-curve-angle-calculation-in-Silverlight
+
+    return -1;
+}
+
+qreal   CurveEdgeItem::lineAngle(const QLineF& line) const noexcept
+{
+    static constexpr    qreal Pi = 3.141592653;
+    static constexpr    qreal TwoPi = 2. * Pi;
+    static constexpr    qreal MinLength = 0.00001;
+
+    const qreal lineLength = line.length();
+    if ( lineLength < MinLength )
+        return -1.;
+    double angle = std::acos( line.dx( ) / lineLength );
+    if ( line.dy( ) <= 0 )
+        angle = 2.0 * Pi - angle;
+    return angle * ( 360. / TwoPi );
 }
 //-----------------------------------------------------------------------------
 

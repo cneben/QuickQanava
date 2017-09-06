@@ -163,7 +163,7 @@ public:
 signals:
     void            p1Changed();
     void            p2Changed();
-private:
+protected:
     QPointF         _p1;
     QPointF         _p2;
 protected:

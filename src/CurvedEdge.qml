@@ -46,7 +46,7 @@ Qan.CurveEdgeItem {
     Shape {
         id: edgeCap
         transformOrigin: Item.TopLeft
-        rotation: edgeItem.angle
+        rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
         ShapePath {
@@ -54,20 +54,10 @@ Qan.CurveEdgeItem {
             strokeColor: "black"
             fillColor: edgeItem.color
             strokeWidth: 2
-
-            // FIXME: move everything to qan::CurveEdgeItem
-            property real   arrowLength: 9
-            property real   capSize: 7
-            property point  base : Qt.point( -arrowLength, 0. )
-
-            property point  a1: Qt.point(base.x, base.y - capSize)
-            property point  a2: Qt.point(base.x + arrowLength, base.y)
-            property point  a3: Qt.point(base.x, base.y + capSize)
-
-            startX: a1.x;   startY: a1.y
-            PathLine { x: cap.a3.x; y: cap.a3.y }
-            PathLine { x: cap.a2.x; y: cap.a2.y }
-            PathLine { x: cap.a1.x; y: cap.a1.y }
+            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
+            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
+            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
+            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
         }
     }
 
@@ -76,7 +66,6 @@ Qan.CurveEdgeItem {
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
         //asynchronous: true
-
         ShapePath {
             id: arrow
             startX: edgeItem.p1.x
@@ -86,33 +75,13 @@ Qan.CurveEdgeItem {
             strokeColor: edgeItem.color
             strokeStyle: ShapePath.SolidLine
             fillColor: "transparent"
-
-            property real defaultOffset: 200
-            property real minimum: Math.min(defaultOffset, Math.abs(xDistance))
-            property real verticalOffset: xDistance <= 0 ? -minimum : 0
-
-            /*property real xDistance: edgeItem.p2.x - (edgeItem.p1.x + 20)
-            property real ratio: xDistance <= 0 ? 1 : 0.5
-            property real cp1_x: edgeItem.p1.x + minimum * ratio
-            property real cp1_y: edgeItem.p1.y + verticalOffset
-            property real cp2_x: edgeItem.p2.x - minimum * ratio
-            property real cp2_y: edgeItem.p2.y + verticalOffset
-            */
-
-            property real xDistance: edgeItem.p2.x - edgeItem.p1.x
-            property real ratio: Math.abs(xDistance) <= 0 ? 1 : 0.5
-            property real cp1_x: edgeItem.p1.x + xDistance * ratio
-            property real cp1_y: edgeItem.p1.y
-            property real cp2_x: edgeItem.p2.x - xDistance * ratio
-            property real cp2_y: edgeItem.p2.y
-
             PathCubic {
                 x: edgeItem.p2.x
                 y: edgeItem.p2.y
-                control1X: arrow.cp1_x
-                control1Y: arrow.cp1_y
-                control2X: arrow.cp2_x
-                control2Y: arrow.cp2_y
+                control1X: edgeItem.c1.x
+                control1Y: edgeItem.c1.y
+                control2X: edgeItem.c2.x
+                control2Y: edgeItem.c2.y
             }
         }
     }
