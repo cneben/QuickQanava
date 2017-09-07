@@ -84,7 +84,6 @@ void    CurveEdgeItem::updateItem() noexcept
 
         const QPointF center{ ( _p1.x() + _p2.x() ) / 2.,           // (P1,P2) Line center
                               ( _p1.y() + _p2.y() ) / 2. };
-        //const auto invert = xDelta < 0 && yDelta > 0 ? -1 : 1.0;
         // Invert if:
             // Top left quarter:     do not invert (xDelta < 0 && yDelta < 0)
             // Top right quarter:    xDelta > 0 && yDelta < 0
@@ -105,26 +104,11 @@ void    CurveEdgeItem::updateItem() noexcept
         qDebug() << "normal * cpd=" << ( normal * controlPointDistance );
         qDebug() << "_c1=" << _c1;
         qDebug() << "_c2=" << _c2;*/
-
-        /*_c1.rx() = _p1.x() + (xDelta / 2.);
-        _c1.ry() = _p1.y();
-        _c2.rx() = _p2.x() - (xDistance / 2. );
-        _c2.ry() = _p2.y();*/
-
-        /*const auto defaultOffset = 200.0;
-        const auto xDistance = _p2.x() - _p1.x();
-        const auto minimum = std::min(defaultOffset, std::abs(xDistance));
-        // FIXME: floating point =, horrible....
-        const auto ratio = std::abs(xDistance) <= 0 ? 1.0 : 0.5;
-        _c1.rx() = _p1.x() + (xDelta / 2.);
-        _c1.ry() = _p1.y();
-        _c2.rx() = _p2.x() - (xDistance / 2. );
-        _c2.ry() = _p2.y();*/
     }
 
     { // Generate arrow geometry
         const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
-        const auto arrowLength = arrowSize * 2.;
+        const auto arrowLength = arrowSize * 3.;
         const auto base = QPointF{-arrowLength, 0. };
 
         _dstA1 = QPointF{ base.x(),                 -arrowSize  };
@@ -133,15 +117,44 @@ void    CurveEdgeItem::updateItem() noexcept
         emit dstA1Changed(); emit dstA2Changed(); emit dstA3Changed();
     }
 
-    _dstAngle = lineAngle(line); emit dstAngleChanged();
+    //_dstAngle = lineAngle(line);
+    _dstAngle = cubicCurveAngleAt(0.99, _p1, _p2, _c1, _c2);
+    emit dstAngleChanged();
 }
 
 qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPointF& end, const QPointF& c1, const QPointF& c2 ) const noexcept
 {
-    // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
-    // https://www.codeproject.com/Articles/199645/Bezier-curve-angle-calculation-in-Silverlight
+    // Preconditions:
+        // pos in [0., 1.0]
+    if ( pos < 0. || pos > 1. )
+        return -1;
 
-    return -1;
+    // This code is (C) 2014 Paul W.
+    // Description:
+        // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
+
+    // Compute cubic polynomial coefficients
+    QPointF coeff3{end.x() - (3. * c2.x()) + (3. * c1.x()) - start.x(),
+                   end.y() - (3. * c2.y()) + (3. * c1.y()) - start.y()};
+
+    QPointF coeff2{(3. * c2.x()) - (6. * c1.x()) + (3. * start.x()),
+                   (3. * c2.y()) - (6. * c1.y()) + (3. * start.y())};
+
+    QPointF coeff1{(3. * c1.x()) - (3. * start.x()),
+                   (3. * c1.y()) - (3. * start.y())};
+
+    const auto pos2 = pos * pos;
+    const auto dxdt = (3.0*coeff3.x()*pos2) + (2.0*coeff2.x()*pos) + coeff1.x();
+    const auto dydt = (3.0*coeff3.y()*pos2) + (2.0*coeff2.y()*pos) + coeff1.y();
+
+    static constexpr    qreal Pi = 3.141592653;
+    static constexpr    qreal TwoPi = 2. * Pi;
+    auto angle = std::atan2(dxdt, dydt);
+
+    angle = (2. * Pi) - angle;
+    angle = angle * ( 360. / TwoPi );
+    angle += 90.;
+    return angle;
 }
 
 qreal   CurveEdgeItem::lineAngle(const QLineF& line) const noexcept
@@ -154,8 +167,8 @@ qreal   CurveEdgeItem::lineAngle(const QLineF& line) const noexcept
     if ( lineLength < MinLength )
         return -1.;
     double angle = std::acos( line.dx( ) / lineLength );
-    if ( line.dy( ) <= 0 )
-        angle = 2.0 * Pi - angle;
+    if ( line.dy( ) < 0. )
+        angle = (2.0 * Pi) - angle;
     return angle * ( 360. / TwoPi );
 }
 //-----------------------------------------------------------------------------
