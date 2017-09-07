@@ -61,23 +61,66 @@ CurveEdgeItem::~CurveEdgeItem() { /* Nil */ }
 /* Curve Control Points Management *///----------------------------------------
 void    CurveEdgeItem::updateItem() noexcept
 {
-    qan::EdgeItem::updateItem();
+    qan::EdgeItem::updateItem();    // Generate _p1 and _p2
+
+    QLineF line{getP1(), getP2()};
+    const auto lineLength = line.length();
+    if ( lineLength < 0.0001 ) {    // Protected against 0 length edges
+        setHidden( false );
+        return;
+    }
 
     { // Generate cubic curve control points
+        const auto xDelta = _p2.x() - _p1.x();
+        const auto xDeltaAbs = std::abs(xDelta);
+        const auto yDelta = _p2.y() - _p1.y();
+        const auto yDeltaAbs = std::abs(yDelta);
+
+        const auto controlPointDistance = std::max( 0.001, std::min( xDeltaAbs / 2.,      // Control point should be on a line for horizontal/vertical line orientation
+                                                                     yDeltaAbs / 2. ) );
+        // FIXME: control point distance should also take line length into account...
+            // Smaller when distance is low
+            // Larger wehn distance is large   (with log(distance)???)
+
+        const QPointF center{ ( _p1.x() + _p2.x() ) / 2.,           // (P1,P2) Line center
+                              ( _p1.y() + _p2.y() ) / 2. };
+        //const auto invert = xDelta < 0 && yDelta > 0 ? -1 : 1.0;
+        // Invert if:
+            // Top left quarter:     do not invert (xDelta < 0 && yDelta < 0)
+            // Top right quarter:    xDelta > 0 && yDelta < 0
+            // Bottom rigth quarter: do not invert (xDelta > 0 && yDelta >0)
+            // Bottom left quarter:  xDelta < 0 && yDelta > 0
+        const auto invert =  ( xDelta > 0 && yDelta < 0 ) ||
+                             ( xDelta < 0 && yDelta > 0 ) ? -1. : 1.;
+        const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
+
+        _c1 = center + ( normal * controlPointDistance );
+        _c2 = center - ( normal * controlPointDistance );
+        emit c1Changed();
+        emit c2Changed();
+
+        /*qDebug() << "_p1=" << _p1 << "\t_p2=" << _p2;
+        qDebug() << "center=" << center << "\tnormal=" << normal;
+        qDebug() << "controlPointDistance=" << controlPointDistance;
+        qDebug() << "normal * cpd=" << ( normal * controlPointDistance );
+        qDebug() << "_c1=" << _c1;
+        qDebug() << "_c2=" << _c2;*/
+
+        /*_c1.rx() = _p1.x() + (xDelta / 2.);
+        _c1.ry() = _p1.y();
+        _c2.rx() = _p2.x() - (xDistance / 2. );
+        _c2.ry() = _p2.y();*/
+
+        /*const auto defaultOffset = 200.0;
         const auto xDistance = _p2.x() - _p1.x();
-        const auto defaultOffset = 200.0;
         const auto minimum = std::min(defaultOffset, std::abs(xDistance));
         // FIXME: floating point =, horrible....
         const auto ratio = std::abs(xDistance) <= 0 ? 1.0 : 0.5;
-
-        _c1.rx() = _p1.x() + (xDistance * ratio);
+        _c1.rx() = _p1.x() + (xDelta / 2.);
         _c1.ry() = _p1.y();
-        _c2.rx() = _p2.x() - (xDistance * ratio);
-        _c2.ry() = _p2.y();
+        _c2.rx() = _p2.x() - (xDistance / 2. );
+        _c2.ry() = _p2.y();*/
     }
-
-    // Generate arrow angle
-    QLineF line{getP1(), getP2()};
 
     { // Generate arrow geometry
         const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
@@ -91,9 +134,6 @@ void    CurveEdgeItem::updateItem() noexcept
     }
 
     _dstAngle = lineAngle(line); emit dstAngleChanged();
-
-    emit c1Changed();
-    emit c2Changed();
 }
 
 qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPointF& end, const QPointF& c1, const QPointF& c2 ) const noexcept

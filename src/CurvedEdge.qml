@@ -84,5 +84,19 @@ Qan.CurveEdgeItem {
                 control2Y: edgeItem.c2.y
             }
         }
+        Rectangle {
+            width: 8; height: width
+            x: edgeItem.c1.x - ( radius / 2 )
+            y: edgeItem.c1.y - ( radius / 2 )
+            radius: width / 2
+            color: "red"
+        }
+        Rectangle {
+            width: 8; height: width
+            x: edgeItem.c2.x - ( radius / 2 )
+            y: edgeItem.c2.y - ( radius / 2 )
+            radius: width / 2
+            color: "green"
+        }
     }
 }
