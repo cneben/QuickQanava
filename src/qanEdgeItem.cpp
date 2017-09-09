@@ -423,8 +423,13 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
         if ( _style ) {
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
                      this,      &EdgeItem::styleDestroyed );
-            //connect( _style,    &qan::EdgeStyle::styleModified,
-            //         this,      &EdgeItem::updateItem );
+            // Note 20170909: _style.styleModified() signal is _not_ binded to updateItem() slot, since
+            // it would be very unefficient to update edge for properties change affecting only
+            // edge visual item (for example, _stye.lineWidth modification is watched directly
+            // from edge delegate). Since arrowSize affect concrete edge geometry, bind it manually to
+            // updateItem().
+            connect( _style,    &qan::EdgeStyle::arrowSizeChanged,
+                     this,      &EdgeItem::updateItem );
         }
         emit styleChanged( );
     }

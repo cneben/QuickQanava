@@ -28,10 +28,10 @@ import QtQuick                   2.8
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
+import QtQuick.Dialogs           1.2
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "." as Qan
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
 ApplicationWindow {
     id: window
@@ -105,5 +105,61 @@ ApplicationWindow {
             }
         }
     }  // Qan.GraphView
+
+    ColorDialog {
+        id: edgeStyleColorDialog
+        title: "Edge color"
+        onAccepted: { defaultEdgeStyle.lineColor = color; }
+    }
+    Item {
+        id: edgeStyleEditor
+        anchors.top: parent.top;   anchors.topMargin: 15
+        anchors.right: parent.right;    anchors.rightMargin: 15
+        width: 200; height: 250
+        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
+        ColumnLayout {
+            anchors.fill: parent; anchors.margins: 10
+            Label {
+                Layout.margins: 3; text: "Edge Style:"
+                font.bold: true; horizontalAlignment: Text.AlignLeft
+            }
+            RowLayout {
+                Layout.margins: 2
+                Label { text:"Line color:" }
+                Item { Layout.fillWidth: true }
+                Rectangle {
+                    Layout.preferredWidth: 25; Layout.preferredHeight: 25;
+                    color: defaultEdgeStyle.lineColor; radius: 5;
+                    border.width: 1; border.color: Qt.lighter(defaultEdgeStyle.lineColor)
+                }
+                ToolButton {
+                    Layout.preferredHeight: 30; Layout.preferredWidth: 30
+                    text: "..."
+                    onClicked: {
+                        edgeStyleColorDialog.color = defaultEdgeStyle.lineColor
+                        edgeStyleColorDialog.open();
+                    }
+                }
+            } // RowLayout: lineColor
+            ColumnLayout {
+                Layout.margins: 2
+                Label { text:"Line width:" }
+                SpinBox {
+                    value: defaultEdgeStyle.lineWidth
+                    from: 1; to: 7
+                    onValueModified: defaultEdgeStyle.lineWidth = value
+                }
+            } // RowLayout: lineWidth
+            ColumnLayout {
+                Layout.margins: 2
+                Label { text:"Arrow size:" }
+                SpinBox {
+                    value: defaultEdgeStyle.arrowSize
+                    from: 1; to: 15
+                    onValueModified: defaultEdgeStyle.arrowSize = value
+                }
+            } // RowLayout: arrowSize
+        } // ColumnLayout
+    } // edgeStyleEditor
 }
 

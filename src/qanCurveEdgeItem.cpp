@@ -134,23 +134,22 @@ qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const 
         // http://www.paulwrightapps.com/blog/2014/9/4/finding-the-position-and-angle-of-points-along-a-bezier-curve-on-ios
 
     // Compute cubic polynomial coefficients
-    QPointF coeff3{end.x() - (3. * c2.x()) + (3. * c1.x()) - start.x(),
-                   end.y() - (3. * c2.y()) + (3. * c1.y()) - start.y()};
+    const QPointF coeff3{end.x() - (3. * c2.x()) + (3. * c1.x()) - start.x(),
+                         end.y() - (3. * c2.y()) + (3. * c1.y()) - start.y()};
 
-    QPointF coeff2{(3. * c2.x()) - (6. * c1.x()) + (3. * start.x()),
-                   (3. * c2.y()) - (6. * c1.y()) + (3. * start.y())};
+    const QPointF coeff2{(3. * c2.x()) - (6. * c1.x()) + (3. * start.x()),
+                         (3. * c2.y()) - (6. * c1.y()) + (3. * start.y())};
 
-    QPointF coeff1{(3. * c1.x()) - (3. * start.x()),
-                   (3. * c1.y()) - (3. * start.y())};
+    const QPointF coeff1{(3. * c1.x()) - (3. * start.x()),
+                         (3. * c1.y()) - (3. * start.y())};
 
     const auto pos2 = pos * pos;
-    const auto dxdt = (3.0*coeff3.x()*pos2) + (2.0*coeff2.x()*pos) + coeff1.x();
-    const auto dydt = (3.0*coeff3.y()*pos2) + (2.0*coeff2.y()*pos) + coeff1.y();
+    const auto dxdt = (3. * coeff3.x()*pos2) + (2. * coeff2.x()*pos) + coeff1.x();
+    const auto dydt = (3. * coeff3.y()*pos2) + (2. * coeff2.y()*pos) + coeff1.y();
 
     static constexpr    qreal Pi = 3.141592653;
     static constexpr    qreal TwoPi = 2. * Pi;
     auto angle = std::atan2(dxdt, dydt);
-
     angle = (2. * Pi) - angle;
     angle = angle * ( 360. / TwoPi );
     angle += 90.;

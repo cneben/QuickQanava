@@ -186,7 +186,6 @@ Qan.Connector {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            console.debug("VisualConnector.onReleased(): target=" + visualConnector.Drag.target)
             connectorReleased(visualConnector.Drag.target)
             configureConnectorPosition()
         }

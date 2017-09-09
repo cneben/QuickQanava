@@ -80,7 +80,7 @@ private:
     StyleComponentMap           _styleComponentMap;
 
 public:
-    //! Set style \c defaultNodeStyle a the default style for a specific class of nodes \c delegate.
+    //! Set style \c nodeStyle a the default style for a specific class of nodes \c delegate.
     void                            setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle );
 
     //! Get the style for a specific node \c delegate, if no such style exist, return default node style.

@@ -51,7 +51,7 @@ Qan.CurveEdgeItem {
         y: edgeItem.p2.y
         ShapePath {
             id: cap
-            strokeColor: "black"
+            strokeColor: edgeItem.color
             fillColor: edgeItem.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
@@ -65,16 +65,16 @@ Qan.CurveEdgeItem {
         id: edgeShape
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
-        //asynchronous: true
+        //asynchronous: true    // FIXME: Benchmark that
         ShapePath {
             id: arrow
             startX: edgeItem.p1.x
             startY: edgeItem.p1.y
-            capStyle: ShapePath.FlatCap //edgeItem.style ? edgeItem.style.arrowSize : 4
+            capStyle: ShapePath.FlatCap
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeItem.color
             strokeStyle: ShapePath.SolidLine
-            fillColor: "transparent"
+            fillColor: Qt.rgba(0,0,0,0)
             PathCubic {
                 x: edgeItem.p2.x
                 y: edgeItem.p2.y
@@ -84,6 +84,8 @@ Qan.CurveEdgeItem {
                 control2Y: edgeItem.c2.y
             }
         }
+        /*
+        // Debug control points display code. FIXME: remove that for final release
         Rectangle {
             width: 8; height: width
             x: edgeItem.c1.x - ( radius / 2 )
@@ -97,6 +99,6 @@ Qan.CurveEdgeItem {
             y: edgeItem.c2.y - ( radius / 2 )
             radius: width / 2
             color: "green"
-        }
+        }*/
     }
 }
