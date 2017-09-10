@@ -84,7 +84,7 @@ Qan.CurveEdgeItem {
                 control2Y: edgeItem.c2.y
             }
         }
-        /*
+        ///*
         // Debug control points display code. FIXME: remove that for final release
         Rectangle {
             width: 8; height: width
@@ -99,6 +99,7 @@ Qan.CurveEdgeItem {
             y: edgeItem.c2.y - ( radius / 2 )
             radius: width / 2
             color: "green"
-        }*/
+        }
+        //*/
     }
 }

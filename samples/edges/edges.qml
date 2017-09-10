@@ -64,7 +64,7 @@ ApplicationWindow {
                 graph.insertEdge(c, t);
 
                 var tmr = graph.insertNode()
-                tmr.label = "TML"; tmr.item.x = 500; tmr.item.y = 50
+                tmr.label = "TMR"; tmr.item.x = 500; tmr.item.y = 50
                 graph.insertEdge(c, tmr);
 
                 var tr = graph.insertNode()
@@ -85,7 +85,7 @@ ApplicationWindow {
                 graph.insertEdge(c, b);
 
                 var bmr = graph.insertNode()
-                bmr.label = "BML"; bmr.item.x = 500; bmr.item.y = 350
+                bmr.label = "BMR"; bmr.item.x = 500; bmr.item.y = 350
                 graph.insertEdge(c, bmr);
 
                 var br = graph.insertNode()
@@ -102,6 +102,96 @@ ApplicationWindow {
                 graph.insertEdge(c, r);
 
                 graph.setConnectorSource(c)
+
+                var x = 850; var y = 80
+                generateTestPortLayout(x, y,             Qan.NodeItem.Left, Qan.NodeItem.Left);
+                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Left, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Left, Qan.NodeItem.Bottom);
+
+                x = 2400; y = 80
+                generateTestPortLayout(x, y,             Qan.NodeItem.Top, Qan.NodeItem.Left);
+                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Top, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Top, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Top, Qan.NodeItem.Bottom);
+
+                x = 850; y = 1400
+                generateTestPortLayout(x, y,             Qan.NodeItem.Right, Qan.NodeItem.Left);
+                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Right, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Right, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Right, Qan.NodeItem.Bottom);
+
+                x = 2400; y = 1400
+                generateTestPortLayout(x, y,             Qan.NodeItem.Bottom, Qan.NodeItem.Left);
+                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
+            }
+
+            function generateTestPortLayout(x, y, srcPortType, dstPortType) {
+                // SRC/DST horizontally aligned
+                var s = graph.insertNode()
+                s.label = "S1"; s.item.x = x; s.item.y = y
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x + 200; d.item.y = y
+                var dp1 = graph.insertInPort(d, dstPortType);
+                dp1.label = "IN#1"
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
+                graph.bindEdgeDestination(e, sp1)
+                graph.bindEdgeDestination(e, dp1)
+
+                // SRC/DST vertically aligned
+                var s = graph.insertNode()
+                s.label = "S1"; s.item.x = x + 450; s.item.y = y
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x + 450; d.item.y = y + 200
+                var dp1 = graph.insertInPort(d, dstPortType);
+                dp1.label = "IN#1"
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
+                graph.bindEdgeDestination(e, sp1)
+                graph.bindEdgeDestination(e, dp1)
+
+                // SRC bottom left / DST top right
+                var s = graph.insertNode()
+                s.label = "S"; s.item.x = x; s.item.y = y + 150
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x + 300; d.item.y = y + 300
+                var dp1 = graph.insertInPort(d, dstPortType);
+                dp1.label = "IN#1"
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
+                graph.bindEdgeDestination(e, sp1)
+                graph.bindEdgeDestination(e, dp1)
+
+                // SRC top left / DST bottom right
+                var s = graph.insertNode()
+                s.label = "S"; s.item.x = x + 300; s.item.y = y + 400
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x; d.item.y = y + 550
+                var dp1 = graph.insertInPort(d, dstPortType);
+                dp1.label = "IN#1"
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
+                graph.bindEdgeDestination(e, sp1)
+                graph.bindEdgeDestination(e, dp1)
             }
         }
     }  // Qan.GraphView

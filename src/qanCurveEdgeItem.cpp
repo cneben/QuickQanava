@@ -70,12 +70,112 @@ void    CurveEdgeItem::updateItem() noexcept
         return;
     }
 
-    { // Generate cubic curve control points
-        const auto xDelta = _p2.x() - _p1.x();
-        const auto xDeltaAbs = std::abs(xDelta);
-        const auto yDelta = _p2.y() - _p1.y();
-        const auto yDeltaAbs = std::abs(yDelta);
+    //
+    const auto sourcePort = qobject_cast<qan::PortItem*>(getSourceItem());
+    const auto destinationPort = qobject_cast<qan::PortItem*>(getDestinationItem());
+    qDebug() << "sourcePort=" << sourcePort << "\tdestinationPort=" << destinationPort;
+    qDebug() << "sourcePort.br=" << getSourceItem()->boundingRect();
+    qDebug() << "destinationPort.br=" << getDestinationItem()->boundingRect();
 
+    const auto xDelta = _p2.x() - _p1.x();
+    const auto xDeltaAbs = std::abs(xDelta);
+    const auto yDelta = _p2.y() - _p1.y();
+    const auto yDeltaAbs = std::abs(yDelta);
+
+    if ( sourcePort != nullptr &&
+         destinationPort != nullptr ) {
+
+        const auto baseFactor = 50.;
+        auto getFactor = [baseFactor](auto deltaAbs) -> auto {
+              return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
+        };
+        const auto xOffset = getFactor(xDeltaAbs);
+        const auto yOffset = getFactor(yDeltaAbs);
+
+        const auto srcDock = sourcePort->getDockType();
+        const auto dstDock = destinationPort->getDockType();
+        using Dock = qan::NodeItem::Dock;
+
+
+        // FIXME: secure that
+        const auto srcCenter = getSourceItem()->boundingRect().center();
+        const auto dstCenter = getDestinationItem()->boundingRect().center();
+
+        /*
+                                            // Left   Top     Right   Bottom
+        qreal xCorrectionDirection[4][4] = { { 1,     -1,     -1,     1},      // Dock:Left
+                                             { -1,    -1,     -1,     -1},      // Dock::Top
+                                             { 1,     -1,     -1,     -1},       // Dock::Right
+                                             { -1,    -1,     -1,     -1} };     // Dock::Bottom
+
+
+        auto getXCorrectionDirection = [&xCorrectionDirection](const auto srcDock, const auto dstDock) {
+            // FIXME: add bound checking for srcDock/dstDock...
+            return xCorrectionDirection[static_cast<unsigned int>(srcDock)][static_cast<unsigned int>(dstDock)];
+        };
+
+        // FIXME: secure that...
+        const auto srcItem = getEdge()->getSource()->getItem();
+        const auto dstItem = getEdge()->getDestination()->getItem();
+        const auto maxItemWidth = std::max(srcItem->width(), dstItem->width() );
+
+        //qDebug() << "xDelta=" << xDelta << "xDeltaAbs=" << xDeltaAbs << "\tmaxItemWidth=" << maxItemWidth;
+        const auto xM = -1. / ( maxItemWidth * 2);
+        auto xCorrectionFactor = qBound(0., xM * xDeltaAbs + 1., 1.1);
+        if ( xCorrectionFactor > 1.0 )
+            xCorrectionFactor = 0.;
+        qreal xCorrection = xCorrectionFactor * 100.;
+
+        if ( xDelta < 0 &&
+             srcDock == Dock::Left && dstDock == Dock::Right)
+            xCorrection = 0;
+
+        const auto maxItemHeight = std::max(srcItem->height(), dstItem->height() );
+        const auto yM = -1. / (maxItemHeight * 2);
+        //qDebug() << "yDelta=" << yDelta << "yDeltaAbs=" << yDeltaAbs << "\tmaxItemHeight=" << maxItemHeight;
+        auto yCorrectionFactor = qBound(0., yM * yDeltaAbs + 1., 1.1);
+        if ( yCorrectionFactor > 1.0 )
+             yCorrectionFactor = 0.;
+        qreal yCorrection = yCorrectionFactor * 100.;
+        */
+
+        qreal xCorrection = 0;
+        qreal yCorrection = 0;
+        if ( xDelta > 0. &&
+             srcDock == Dock::Left && dstDock == Dock::Left )
+            yCorrection = ( yDelta > 0 ? 1 : -1 ) * 80.;
+        else if ( xDelta > 0. &&
+                  srcDock == Dock::Left && dstDock == Dock::Right )
+            yCorrection = ( yDelta > 0 ? 1 : -1 ) * 80;
+        else if ( xDelta > 0. &&
+                  srcDock == Dock::Right && dstDock == Dock::Right )
+            yCorrection = ( yDelta > 0 ? 1 : -1 ) * 80;
+        else if ( yDelta > 0. &&
+                  srcDock == Dock::Top && dstDock == Dock::Bottom )
+            xCorrection = ( xDelta > 0 ? -1 : 1 ) * 80;
+        else if ( yDelta > 0. &&
+                  srcDock == Dock::Top && dstDock == Dock::Top )
+            xCorrection = ( xDelta > 0 ? -1 : 1 ) * 80;
+        else if ( yDelta > 0. &&
+                  srcDock == Dock::Bottom && dstDock == Dock::Bottom )
+            xCorrection = ( xDelta > 0 ? -1 : 1 ) * 80;
+
+        switch ( sourcePort->getDockType() ) {
+        case qan::NodeItem::Dock::Left:     _c1 = mapFromItem(getSourceItem(), srcCenter + QPointF{ -xOffset,    yCorrection} );    break;
+        case qan::NodeItem::Dock::Top:      _c1 = mapFromItem(getSourceItem(), srcCenter + QPointF{ xCorrection, -yOffset } );      break;
+        case qan::NodeItem::Dock::Right:    _c1 = mapFromItem(getSourceItem(), srcCenter + QPointF{ xOffset,     yCorrection } );   break;
+        case qan::NodeItem::Dock::Bottom:   _c1 = mapFromItem(getSourceItem(), srcCenter + QPointF{ xCorrection, yOffset } );       break;
+        }
+        switch ( destinationPort->getDockType() ) {
+        case qan::NodeItem::Dock::Left:     _c2 = mapFromItem(getDestinationItem(), dstCenter + QPointF{ -xOffset,    yCorrection} );   break;
+        case qan::NodeItem::Dock::Top:      _c2 = mapFromItem(getDestinationItem(), dstCenter + QPointF{ xCorrection, -yOffset } );     break;
+        case qan::NodeItem::Dock::Right:    _c2 = mapFromItem(getDestinationItem(), dstCenter + QPointF{ xOffset,     yCorrection } );  break;
+        case qan::NodeItem::Dock::Bottom:   _c2 = mapFromItem(getDestinationItem(), dstCenter + QPointF{ xCorrection, yOffset } );      break;
+        }
+        emit c1Changed();
+        emit c2Changed();
+    } else
+    { // Generate cubic curve control points
         const auto controlPointDistance = std::max( 0.001, std::min( xDeltaAbs / 2.,      // Control point should be on a line for horizontal/vertical line orientation
                                                                      yDeltaAbs / 2. ) );
         // FIXME: control point distance should also take line length into account...
@@ -97,13 +197,6 @@ void    CurveEdgeItem::updateItem() noexcept
         _c2 = center - ( normal * controlPointDistance );
         emit c1Changed();
         emit c2Changed();
-
-        /*qDebug() << "_p1=" << _p1 << "\t_p2=" << _p2;
-        qDebug() << "center=" << center << "\tnormal=" << normal;
-        qDebug() << "controlPointDistance=" << controlPointDistance;
-        qDebug() << "normal * cpd=" << ( normal * controlPointDistance );
-        qDebug() << "_c1=" << _c1;
-        qDebug() << "_c2=" << _c2;*/
     }
 
     { // Generate arrow geometry

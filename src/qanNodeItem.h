@@ -311,11 +311,11 @@ protected:
     //@{
 public:
     //! Define port dock type/index/position.
-    enum class Dock {
-        Top     = 0,
-        Bottom  = 1,
-        Left    = 2,
-        Right   = 3
+    enum class Dock : unsigned int {
+        Left    = 0,
+        Top     = 1,
+        Right   = 2,
+        Bottom  = 3
     };
     Q_ENUM(Dock)
 
