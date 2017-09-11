@@ -70,12 +70,18 @@ void    CurveEdgeItem::updateItem() noexcept
         return;
     }
 
-    //
+    // PRECONDITIONS:
+        // getSourceItem() != nullptr
+        // getDestinationItem() != nullptr
+    if ( getSourceItem() == nullptr ||
+         getDestinationItem() == nullptr )
+        return;
+
     const auto sourcePort = qobject_cast<qan::PortItem*>(getSourceItem());
     const auto destinationPort = qobject_cast<qan::PortItem*>(getDestinationItem());
-    qDebug() << "sourcePort=" << sourcePort << "\tdestinationPort=" << destinationPort;
-    qDebug() << "sourcePort.br=" << getSourceItem()->boundingRect();
-    qDebug() << "destinationPort.br=" << getDestinationItem()->boundingRect();
+    //qDebug() << "sourcePort=" << sourcePort << "\tdestinationPort=" << destinationPort;
+    //qDebug() << "sourcePort.br=" << getSourceItem()->boundingRect();
+    //qDebug() << "destinationPort.br=" << getDestinationItem()->boundingRect();
 
     const auto xDelta = _p2.x() - _p1.x();
     const auto xDeltaAbs = std::abs(xDelta);
@@ -84,7 +90,6 @@ void    CurveEdgeItem::updateItem() noexcept
 
     if ( sourcePort != nullptr &&
          destinationPort != nullptr ) {
-
         const auto baseFactor = 50.;
         auto getFactor = [baseFactor](auto deltaAbs) -> auto {
               return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
@@ -96,9 +101,7 @@ void    CurveEdgeItem::updateItem() noexcept
         const auto dstDock = destinationPort->getDockType();
         using Dock = qan::NodeItem::Dock;
 
-
-        // FIXME: secure that
-        const auto srcCenter = getSourceItem()->boundingRect().center();
+        const auto srcCenter = getSourceItem()->boundingRect().center();        // getSourceItem() and getDestinationITem() secured in preconditions
         const auto dstCenter = getDestinationItem()->boundingRect().center();
 
         /*

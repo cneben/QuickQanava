@@ -46,7 +46,6 @@ int	main( int argc, char** argv )
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
-    QuickQanava::initialize();
 
     qmlRegisterType< CustomRectNode >( "QuickQanava", 2, 0, "CustomRectNode");
     qmlRegisterType< CustomRoundNode >( "QuickQanava", 2, 0, "CustomRoundNode");
@@ -54,6 +53,7 @@ int	main( int argc, char** argv )
     qmlRegisterType< CustomEdge >( "QuickQanava", 2, 0, "AbstractCustomEdge");
 
     QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/style.qml"));
     return app.exec();
 }

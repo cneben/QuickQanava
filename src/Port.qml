@@ -70,7 +70,6 @@ Qan.PortItem {
                 labelPane.anchors.horizontalCenter = undefined
                 break;
             case Qan.NodeItem.Bottom:
-                console.debug("configure bottom: label.width=" + label.width + "  label.ix=" + label.implicitWidth)
                 labelPane.anchors.left = undefined
                 labelPane.anchors.top = portItem.bottom
                 labelPane.anchors.right = undefined

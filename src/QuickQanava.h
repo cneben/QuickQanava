@@ -75,9 +75,6 @@ struct QuickQanava {
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
         if ( engine ) {
             engine->rootContext()->setContextProperty( "defaultNodeStyle", QVariant::fromValue(qan::Node::style()) );
-            qDebug() << "edgeStyle" << qan::Edge::style();
-            qDebug() << "edgeStyle variant" << QVariant::fromValue(qan::Edge::style());
-
             engine->rootContext()->setContextProperty( "defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()) );
             engine->rootContext()->setContextProperty( "defaultGroupStyle", QVariant::fromValue(qan::Group::style()) );
         }
