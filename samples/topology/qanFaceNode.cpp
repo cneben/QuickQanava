@@ -38,6 +38,12 @@
 
 namespace qan { // ::qan
 
+FaceNode::FaceNode( QQuickItem* parent ) :
+    qan::Node( parent )
+{
+
+}
+
 FaceNode::~FaceNode() { /* Nil */ }
 
 static std::unique_ptr<QQmlComponent>   qan_FaceNode_delegate;

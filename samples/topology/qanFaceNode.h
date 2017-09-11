@@ -47,8 +47,7 @@ class FaceNode : public qan::Node
 {
     Q_OBJECT
 public:
-    explicit FaceNode( QQuickItem* parent = nullptr ) :
-        qan::Node( parent ) { }
+    explicit FaceNode( QQuickItem* parent = nullptr );
     virtual ~FaceNode();
 private:
     Q_DISABLE_COPY( FaceNode )

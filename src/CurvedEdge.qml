@@ -66,6 +66,7 @@ Qan.CurveEdgeItem {
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
         //asynchronous: true    // FIXME: Benchmark that
+        smooth: true
         ShapePath {
             id: arrow
             startX: edgeItem.p1.x
@@ -84,7 +85,7 @@ Qan.CurveEdgeItem {
                 control2Y: edgeItem.c2.y
             }
         }
-        ///*
+        /*
         // Debug control points display code. FIXME: remove that for final release
         Rectangle {
             width: 8; height: width
@@ -100,6 +101,6 @@ Qan.CurveEdgeItem {
             radius: width / 2
             color: "green"
         }
-        //*/
+        */
     }
 }

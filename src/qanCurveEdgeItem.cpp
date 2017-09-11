@@ -150,6 +150,9 @@ void    CurveEdgeItem::updateItem() noexcept
         else if ( xDelta > 0. &&
                   srcDock == Dock::Right && dstDock == Dock::Right )
             yCorrection = ( yDelta > 0 ? 1 : -1 ) * 80;
+        else if ( xDelta < 0. &&
+                  srcDock == Dock::Right && dstDock == Dock::Left )
+            yCorrection = ( yDelta > 0 ? 1 : -1 ) * 80;
         else if ( yDelta > 0. &&
                   srcDock == Dock::Top && dstDock == Dock::Bottom )
             xCorrection = ( xDelta > 0 ? -1 : 1 ) * 80;
