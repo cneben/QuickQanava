@@ -1,5 +1,5 @@
 
- BSD
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
  Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 

@@ -33,6 +33,8 @@ extra:
   author:
     github: 'cneben'
   social:
+    - type: 'twitter'
+      link: 'https://twitter.com/QuickQanava'
     - type: 'github'
       link: 'https://github.com/cneben'
     - type: 'linkedin'

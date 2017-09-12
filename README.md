@@ -1,33 +1,35 @@
+QuickQanava 
+============================
+
 [Overview](#QuickQanava) |
 [Dependencies](#Dependencies) |
 [Building](#building) |
 [Roadmap](#Roadmap) |
 [License](#license)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9) |
-[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows MSVC 2015 x64/Qt5.9) |
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9)
 
-QuickQanava 
-============================
+[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows MSVC 2015 x64/Qt5.9)
+
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
+
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
 `QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graphs in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
 
-`QuickQanava` is released under BSD-3, and is shipped with *[GTpo](https://github.com/cneben/GTpo)* library (BSD-3 licence), *[QuickContainers](https://github.com/cneben/QuickQanava/tree/master/QuickContainers)* (BSD-3) and *[QuickGeoGL](https://github.com/cneben/QuickQanava/tree/master/QuickGeoGL)*.
-
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some samples requires Qt5.8)
 
-+ Project homepage: http://www.destrat.io/quickqanava (**updated 20170323**)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20170323**)
++ Project homepage: http://www.destrat.io/quickqanava (**updated 20170912**)
++ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20170912**)
 
 For any questions, please contact: benoit@destrat.io
 
-QuickQanava focus on writting content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
+QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
 ## Dependencies:
 
@@ -76,7 +78,7 @@ cd QuickQanava
 ## Roadmap:
 
   - **v0.9.1:**:	 
-    - [ ] Add better heuristic for Bezier curve edge control points generation.
+    - [ ] Add smarter heuristics for edges's Bezier curve control points generation.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
 	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
