@@ -1,20 +1,27 @@
 /*
-    This file is part of QuickQanava library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -32,6 +39,7 @@
 #include <GTpo>
 
 // QuickQanava headers
+#include "./qanUtils.h"
 #include "./qanGraphConfig.h"
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
@@ -50,6 +58,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class PortItem;
 
 /*! \brief Main interface to manage graph topology.
  *
@@ -74,6 +83,9 @@ public:
      */
     virtual ~Graph();
     Graph( const Graph& ) = delete;
+    Graph& operator=( const Graph& ) = delete;
+    Graph( Graph&& ) = delete;
+    Graph& operator=( Graph&& ) = delete;
 public:
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
     virtual void    componentComplete() override;
@@ -81,8 +93,6 @@ public:
 public:
     /*! \brief Clear this graph topology and styles.
      *
-     * \note Registered  node and edge delegates are not cleared, you must manually call clearDelegate()
-     * to clear the delegates registered with registerNodeDelegate() and registerEdgeDelegate().
      */
     Q_INVOKABLE virtual void    qmlClearGraph() noexcept;
     void                        clear() noexcept;
@@ -249,13 +259,10 @@ protected:
                                                  qan::Style& style,
                                                  qan::Node* node = nullptr,
                                                  qan::Edge* edge = nullptr,
-                                                 qan::Group* group = nullptr );
+                                                 qan::Group* group = nullptr ) noexcept;
 
     //! Shortcut to createComponent(), mainly used in Qan.StyleList View to generate item for style pre visualization.
     Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
-
-    //! Secure utility to set QQmlEngine::CppOwnership flag on a given Qt quick item.
-    static void             setCppOwnership( QQuickItem* item );
 
 public:
     /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
@@ -330,12 +337,28 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
+    //! Bind an existing edge source to a visual out port from QML.
+    Q_INVOKABLE void        bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort ) noexcept;
+
+    //! Bind an existing edge destination to a visual in port from QML.
+    Q_INVOKABLE void        bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept;
+
+    //! Bind an existing edge source to a visual out port.
+    virtual void            bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort) noexcept;
+
+    //! Bind an existing edge destination to a visual in port.
+    virtual void            bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept;
+
 public:
     template < class Edge_t >
     qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
 private:
-    bool                    insertEdgeImpl( qan::Edge* source, QQmlComponent* edgeComponent, qan::EdgeStyle* style,
-                                            qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+    /*! \brief Internal utility used to insert an existing edge \c edge to either a destination \c dstNode node OR edge \c dstEdge.
+     *
+     * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
+     */
+    bool                    configureEdge( qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
+                                           qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
 public:
     template < class Edge_t >
     qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
@@ -539,6 +562,97 @@ public:
     inline const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
 private:
     qan::StyleManager   _styleManager;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Port/Dock Management *///----------------------------------------
+    //@{
+public:
+
+    /*! QML interface for adding an in port to node \c node using default port delegate.
+     *
+     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     *
+     * \param node  port host node.
+     * \param label port visible label.
+     * \param dock  port dock, default to left for in port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
+     */
+    Q_INVOKABLE qan::PortItem*  insertInPort(qan::Node* node, qan::NodeItem::Dock dock, QString label = "" ) noexcept;
+
+    /*! QML interface for adding an out port to node \c node using default port delegate.
+     *
+     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     *
+     * \param node  port host node.
+     * \param label port visible label.
+     * \param dock  port dock, default to right for out port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
+     */
+    Q_INVOKABLE qan::PortItem*  insertOutPort(qan::Node* node, qan::NodeItem::Dock dock = NodeItem::Dock::Right, QString label = "") noexcept;
+
+public:
+    //! Default delegate for node in/out port.
+    Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE setPortDelegate NOTIFY portDelegateChanged FINAL )
+    //! \copydoc portDelegate
+    inline QQmlComponent*   getPortDelegate() noexcept { return _portDelegate.get(); }
+protected:
+    //! \copydoc portDelegate
+    void                    setPortDelegate(QQmlComponent* portDelegate) noexcept;
+    //! \copydoc portDelegate
+    void                    setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept;
+signals:
+    //! \copydoc portDelegate
+    void                    portDelegateChanged();
+private:
+    //! \copydoc portDelegate
+    std::unique_ptr<QQmlComponent> _portDelegate;
+
+signals:
+    /*! \brief Emitted whenever a port node registered in this graph is clicked.
+     */
+    void            portClicked( qan::PortItem* port, QPointF pos );
+    /*! \brief Emitted whenever a port node registered in this graph is right clicked.
+     */
+    void            portRightClicked( qan::PortItem* port, QPointF pos );
+
+public:
+    //! Default delegate for horizontal (either NodeItem::Dock::Top or NodeItem::Dock::Bottom) docks.
+    Q_PROPERTY( QQmlComponent* horizontalDockDelegate READ getHorizontalDockDelegate WRITE setHorizontalDockDelegate NOTIFY horizontalDockDelegateChanged FINAL )
+    //! \copydoc horizontalDockDelegate
+    inline QQmlComponent*   getHorizontalDockDelegate() noexcept { return _horizontalDockDelegate.get(); }
+protected:
+    //! \copydoc horizontalDockDelegate
+    void                    setHorizontalDockDelegate(QQmlComponent* horizontalDockDelegate) noexcept;
+    //! \copydoc horizontalDockDelegate
+    void                    setHorizontalDockDelegate(std::unique_ptr<QQmlComponent> horizontalDockDelegate) noexcept;
+signals:
+    //! \copydoc horizontalDockDelegate
+    void                    horizontalDockDelegateChanged();
+private:
+    //! \copydoc horizontalDockDelegate
+    std::unique_ptr<QQmlComponent> _horizontalDockDelegate;
+
+public:
+    //! Default delegate for vertical (either NodeItem::Dock::Left or NodeItem::Dock::Right) docks.
+    Q_PROPERTY( QQmlComponent* verticalDockDelegate READ getVerticalDockDelegate WRITE setVerticalDockDelegate NOTIFY verticalDockDelegateChanged FINAL )
+    //! \copydoc horizontalDockDelegate
+    inline QQmlComponent*   getVerticalDockDelegate() noexcept { return _verticalDockDelegate.get(); }
+protected:
+    //! \copydoc horizontalDockDelegate
+    void                    setVerticalDockDelegate(QQmlComponent* verticalDockDelegate) noexcept;
+    //! \copydoc horizontalDockDelegate
+    void                    setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDockDelegate) noexcept;
+signals:
+    //! \copydoc horizontalDockDelegate
+    void                    verticalDockDelegateChanged();
+private:
+    //! \copydoc verticalDockDelegate
+    std::unique_ptr<QQmlComponent> _verticalDockDelegate;
+
+protected:
+    //! Create a dock item from an existing dock item delegate.
+    std::unique_ptr<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
+
+    std::unique_ptr<QQuickItem>     createDockFromComponent(QQmlComponent* dockComponent) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

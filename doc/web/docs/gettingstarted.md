@@ -141,7 +141,7 @@ Default resizing behaviour could be configured in `Qan.GraphView` using the foll
 
 - `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
 
-Node could be resized using the `Qan.BottomRightResizer` component. 
+Node with custom delegate could be resized using the `Qan.BottomRightResizer` component. 
 
 Selection
 ------------------
@@ -254,6 +254,8 @@ Defining Styles
 ------------------
 
 ![Style Sample](samples/quickqanava3-sample-style.png)
+
+Three shortcut context variables are available from QML to access default styles: `defaultNodeStyle`, `defaultEdgeStyle`, `defaultGroupStyle`.
 
 QuickQanava provide a ready to use visual `Qan.StyleListView` component for visualizing, editing styles and dragging them visually on existing graph content. 
 

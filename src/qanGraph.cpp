@@ -1,20 +1,27 @@
 /*
-    This file is part of QuickQanava library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -32,9 +39,11 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
+#include "./qanUtils.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanNodeItem.h"
+#include "./qanPortItem.h"
 #include "./qanEdgeItem.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
@@ -60,6 +69,9 @@ void    Graph::componentComplete()
         setNodeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Node.qml")));
         setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
         setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
+        setPortDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Port.qml")));
+        setHorizontalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
+        setVerticalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
 
         _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
         _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
@@ -295,68 +307,71 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                                         qan::Style& style,
                                         qan::Node* node,
                                         qan::Edge* edge,
-                                        qan::Group* group )
+                                        qan::Group* group ) noexcept
 {
     if ( component == nullptr ) {
         qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
-    if ( component->isReady() ) {
-        const auto rootContext = qmlContext(this);
-        if ( rootContext == nullptr ) {
-            qWarning() << "qan::Graph::createFromComponent(): Error can't access to local QML context.";
-            return nullptr;
-        }
-        QObject* object = component->beginCreate(rootContext);
-        if ( object != nullptr &&
-             !component->isError() ) {
-            if ( node != nullptr ) {
-                const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
-                if ( nodeItem != nullptr ) {
-                    node->setItem(nodeItem);
-                    nodeItem->setNode(node);
-                    nodeItem->setGraph(this);
-                    nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
-                    _styleManager.setStyleComponent(&style, component );
-                }
-            } else if ( edge != nullptr ) {
-                const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
-                if ( edgeItem != nullptr ) {
-                    edge->setItem(edgeItem);
-                    edgeItem->setEdge(edge);
-                    edgeItem->setGraph(this);
-                    _styleManager.setStyleComponent(edgeItem->getStyle(), component );
-                }
-            } else if ( group != nullptr ) {
-                const auto groupItem = qobject_cast<qan::GroupItem*>(object);
-                if ( groupItem != nullptr ) {
-                    group->setItem(groupItem);
-                    groupItem->setGroup(group);
-                    groupItem->setGraph(this);
-                    _styleManager.setStyleComponent(groupItem->getStyle(), component );
-                }
-            } else {
-                const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
-                if ( nodeItem != nullptr )                                  // is a preview item, but now actual underlining node.
-                    nodeItem->setItemStyle(&style);
-            }
-            component->completeCreate();
-            if ( !component->isError() ) {
-                QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
-                item = qobject_cast< QQuickItem* >( object );
-                item->setVisible( true );
-                item->setParentItem( getContainerItem() );
-            } // Note QAN3: There is no leak until cpp ownership is set
-        } else {
-            qWarning() << "qan::Graph::createFromComponent(): Failed to create a concrete QQuickItem from QML component:";
-            qWarning() << "\t" << component->errorString();
-        }
-    } else {
-        qWarning() << "qan::Graph::createFromComponent(): QML component is not ready:";
-        qWarning() << "\t" << component->errorString();
-    }
+    try {
+        if ( !component->isReady() )
+            throw qan::Error{ "Error delegate component is not ready." };
 
+        const auto rootContext = qmlContext(this);
+        if ( rootContext == nullptr )
+            throw qan::Error{ "Error can't access to local QML context." };
+        QObject* object = component->beginCreate(rootContext);
+        if ( object == nullptr ||
+             component->isError() ) {
+            if ( object != nullptr )
+                object->deleteLater();
+            throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
+                              component->errorString() };
+        }
+        // No error occurs
+        if ( node != nullptr ) {
+            const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
+            if ( nodeItem != nullptr ) {
+                node->setItem(nodeItem);
+                nodeItem->setNode(node);
+                nodeItem->setGraph(this);
+                nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                _styleManager.setStyleComponent(&style, component );
+            }
+        } else if ( edge != nullptr ) {
+            const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
+            if ( edgeItem != nullptr ) {
+                edge->setItem(edgeItem);
+                edgeItem->setEdge(edge);
+                edgeItem->setGraph(this);
+                _styleManager.setStyleComponent(edgeItem->getStyle(), component );
+            }
+        } else if ( group != nullptr ) {
+            const auto groupItem = qobject_cast<qan::GroupItem*>(object);
+            if ( groupItem != nullptr ) {
+                group->setItem(groupItem);
+                groupItem->setGroup(group);
+                groupItem->setGraph(this);
+                _styleManager.setStyleComponent(groupItem->getStyle(), component );
+            }
+        } else {
+            const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
+            if ( nodeItem != nullptr )                                  // is a preview item, but now actual underlining node.
+                nodeItem->setItemStyle(&style);
+        }
+        component->completeCreate();
+        if ( !component->isError() ) {
+            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+            item = qobject_cast< QQuickItem* >( object );
+            item->setVisible( true );
+            item->setParentItem( getContainerItem() );
+        } // Note QAN3: There is no leak until cpp ownership is set
+    } catch ( const qan::Error& e ) {
+        qWarning() << "qan::Graph::createFromComponent(): " << e.getMsg();
+    } catch ( const std::exception& e ) {
+        qWarning() << "qan::Graph::createFromComponent(): " << e.what();
+    }
     return item;
 }
 
@@ -364,16 +379,6 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Style* st
 {
     return ( component != nullptr &&
              style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) : nullptr;
-}
-
-
-void    Graph::setCppOwnership( QQuickItem* item )
-{
-    if ( item == nullptr )
-        return;
-    QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
-    for ( auto childItem: item->childItems() )
-        qan::Graph::setCppOwnership( childItem );
 }
 
 QQuickItem* Graph::createRectangle( QQuickItem* parent )
@@ -457,6 +462,8 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
 
 qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
 {
+    // PRECONDITION;
+        // source and destination can't be nullptr
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
@@ -465,55 +472,101 @@ qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCo
 
 qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
 {
+    // PRECONDITIONS:
+        // source and destination can't be nullptr
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
     return insertEdge<qan::Edge>(*source, nullptr, destination, edgeComponent );
 }
 
-bool    Graph::insertEdgeImpl( qan::Edge* edge, QQmlComponent* edgeComponent, qan::EdgeStyle* style,
-                               qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge )
+void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
 {
-    if ( edgeComponent !=nullptr &&
-         style != nullptr ) {
-        _styleManager.setStyleComponent(style, edgeComponent);
-        auto edgeItem = static_cast< qan::EdgeItem* >( createFromComponent( edgeComponent, *style, nullptr, edge ) );
-        if ( edgeItem != nullptr ) {
-            edge->setItem(edgeItem);
-            edgeItem->setSourceItem( src.getItem() );
-            if ( dstNode != nullptr )
-                edgeItem->setDestinationItem( dstNode->getItem() );
-            else if ( dstEdge != nullptr )
-                edgeItem->setDestinationEdge( dstEdge->getItem() );
+    // PRECONDITIONS:
+        // edge and outport must be non nullptr
+    if ( edge == nullptr ||
+         outPort == nullptr )
+        return;
+    bindEdgeSource(*edge, *outPort);
+}
 
-            edge->setSrc( src.shared_from_this() );
-            if ( dstNode != nullptr )
-                edge->setDst( dstNode->shared_from_this() );
-            else if ( dstEdge != nullptr)
-                edge->setHDst( dstEdge->shared_from_this() );
+void    Graph::bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept
+{
+    // PRECONDITIONS:
+        // edge and outport must be non nullptr
+    if ( edge == nullptr ||
+         inPort == nullptr )
+        return;
+    bindEdgeDestination(*edge, *inPort);
+}
 
-            auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                    emit this->edgeClicked(edgeItem->getEdge(), p);
-            };
-            connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
+void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcept
+{
+    // PRECONDITION:
+        // outPort must be an Out port
+        // edge must have an associed item
+    auto edgeItem = edge.getItem();
+    if ( edgeItem != nullptr )
+        edgeItem->setSourceItem(&outPort);
 
-            auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                    emit this->edgeRightClicked(edgeItem->getEdge(), p);
-            };
-            connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
+    // FIXME: Remember mapping...
+}
 
-            auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-                if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
-                    emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
-            };
-            connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
-            return true;
-        } else
-            qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
+void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
+{
+    // PRECONDITION:
+        // inPort must be an In port
+        // edge must have an associed item
+    if ( inPort.getType() != qan::PortItem::Type::In )
+        return;
+    auto edgeItem = edge.getItem();
+    if ( edgeItem != nullptr )
+        edgeItem->setDestinationItem(&inPort);
+
+    // FIXME: Remember mapping...
+}
+
+bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
+                              qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge )
+{
+    _styleManager.setStyleComponent(&style, &edgeComponent);
+    auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
+    // FIXME: a leak miht occurs if qobject_cast fails, but createFromComponent() return a non nullptr object...
+    if ( edgeItem == nullptr ) {
+        qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
+        return false;
     }
-    return false;
+    edge.setItem(edgeItem);
+    edgeItem->setSourceItem( src.getItem() );
+    if ( dstNode != nullptr )
+        edgeItem->setDestinationItem( dstNode->getItem() );
+    else if ( dstEdge != nullptr )
+        edgeItem->setDestinationEdge( dstEdge->getItem() );
+
+    edge.setSrc( src.shared_from_this() );
+    if ( dstNode != nullptr )
+        edge.setDst( dstNode->shared_from_this() );
+    else if ( dstEdge != nullptr)
+        edge.setHDst( dstEdge->shared_from_this() );
+
+    auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+            emit this->edgeClicked(edgeItem->getEdge(), p);
+    };
+    connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
+
+    auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+            emit this->edgeRightClicked(edgeItem->getEdge(), p);
+    };
+    connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
+
+    auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
+        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+            emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
+    };
+    connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
+    return true;
 }
 
 void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
@@ -805,6 +858,179 @@ void    Graph::mousePressEvent( QMouseEvent* event )
     }
     event->ignore();
     qan::GraphConfig::GraphBase::mousePressEvent( event );
+}
+//-----------------------------------------------------------------------------
+
+
+/* Port/Dock Management *///---------------------------------------------------
+qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockType, QString label) noexcept
+{
+    // PRECONDITIONS:
+        // node can't be nullptr
+        // node must have an item (to access node style)
+        // default _portDelegate must be valid
+    if ( node == nullptr ||
+         node->getItem() == nullptr )
+        return nullptr;
+    if ( !_portDelegate ) {
+        qWarning() << "qan::Graph::insertInPort(): no default port delegate available.";
+        return nullptr;
+    }
+
+    qan::PortItem* portItem{nullptr};
+    const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
+    if ( nodeStyle ) {
+        portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
+        if ( portItem != nullptr ) {
+            portItem->setType(qan::PortItem::Type::In);
+            portItem->setLabel(label);
+            portItem->setDockType(dockType);
+
+            // Configure port mouse events forwarding to qan::Graph
+            auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
+                if ( portItem != nullptr &&
+                     portItem->getNode() != nullptr )
+                    emit this->portClicked(portItem, p);
+            };
+            connect( portItem, &qan::NodeItem::nodeClicked, notifyPortClicked );
+
+            auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
+                if ( portItem != nullptr &&
+                     portItem->getNode() != nullptr )
+                    emit this->portRightClicked(portItem, p);
+            };
+            connect( portItem, &qan::NodeItem::nodeRightClicked, notifyPortRightClicked );
+
+
+            if ( node->getItem() != nullptr ) {
+                portItem->setNode(node); // inPort item in fact map to this concrete node.
+                auto dockItem = node->getItem()->getDock(dockType);
+                if ( dockItem == nullptr ) {
+                    // Create a dock item from the default dock delegate
+                    dockItem = createDockFromDelegate(dockType, *node).release();
+                    if ( dockItem != nullptr )
+                        node->getItem()->setDock(dockType, dockItem);
+                }
+                if ( dockItem != nullptr )
+                    portItem->setParentItem(dockItem);
+                else
+                    portItem->setParentItem(node->getItem());
+            }
+        }
+    }
+    return portItem;
+}
+
+qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, QString label) noexcept
+{
+    if ( node == nullptr )
+        return nullptr;
+    // FIXME add out port support
+    return nullptr;
+}
+
+void    Graph::setPortDelegate(QQmlComponent* portDelegate) noexcept
+{
+    if ( portDelegate != nullptr ) {
+        if ( portDelegate != _portDelegate.get() ) {
+            _portDelegate.reset(portDelegate);
+            QQmlEngine::setObjectOwnership( portDelegate, QQmlEngine::CppOwnership );
+            emit portDelegateChanged();
+        }
+    }
+}
+void    Graph::setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept { setPortDelegate(portDelegate.release()); }
+
+void    Graph::setHorizontalDockDelegate(QQmlComponent* horizontalDockDelegate) noexcept
+{
+    if ( horizontalDockDelegate != nullptr ) {
+        if ( horizontalDockDelegate != _horizontalDockDelegate.get() ) {
+            _horizontalDockDelegate.reset(horizontalDockDelegate);
+            QQmlEngine::setObjectOwnership( horizontalDockDelegate, QQmlEngine::CppOwnership );
+            emit horizontalDockDelegateChanged();
+        }
+    }
+}
+void    Graph::setHorizontalDockDelegate(std::unique_ptr<QQmlComponent> horizontalDockDelegate) noexcept { setHorizontalDockDelegate(horizontalDockDelegate.release()); }
+
+void    Graph::setVerticalDockDelegate(QQmlComponent* verticalDockDelegate) noexcept
+{
+    if ( verticalDockDelegate != nullptr ) {
+        if ( verticalDockDelegate != _verticalDockDelegate.get() ) {
+            _verticalDockDelegate.reset(verticalDockDelegate);
+            QQmlEngine::setObjectOwnership( verticalDockDelegate, QQmlEngine::CppOwnership );
+            emit verticalDockDelegateChanged();
+        }
+    }
+}
+void    Graph::setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDockDelegate) noexcept { setVerticalDockDelegate(verticalDockDelegate.release()); }
+
+std::unique_ptr<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
+{
+    using Dock = qan::NodeItem::Dock;
+    if ( dock == Dock::Left ||
+         dock == Dock::Right ) {
+        if ( _verticalDockDelegate ) {
+            auto verticalDock = createDockFromComponent(_verticalDockDelegate.get());;
+            verticalDock->setParentItem(node.getItem());
+            verticalDock->setProperty("hostNodeItem",
+                                      QVariant::fromValue(node.getItem()));
+            verticalDock->setProperty("dockType",
+                                      QVariant::fromValue(dock));
+            return verticalDock;
+        }
+    } else if ( dock == Dock::Top ||
+                dock == Dock::Bottom ) {
+        if ( _horizontalDockDelegate ) {
+            auto horizontalDock = createDockFromComponent(_horizontalDockDelegate.get());
+            horizontalDock->setParentItem(node.getItem());
+            horizontalDock->setProperty("hostNodeItem",
+                                        QVariant::fromValue(node.getItem()));
+            horizontalDock->setProperty("dockType",
+                                        QVariant::fromValue(dock));
+            return horizontalDock;
+        }
+    }
+    return std::unique_ptr<QQuickItem>{nullptr};
+}
+
+std::unique_ptr<QQuickItem> Graph::createDockFromComponent(QQmlComponent* dockComponent) noexcept
+{
+    if ( dockComponent == nullptr ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): Error called with a nullptr delegate component.";
+        return nullptr;
+    }
+    QQuickItem* item = nullptr;
+    try {
+        if ( !dockComponent->isReady() )
+            throw qan::Error{ "Error delegate component is not ready." };
+
+        const auto rootContext = qmlContext(this);
+        if ( rootContext == nullptr )
+            throw qan::Error{ "Error can't access to local QML context." };
+        QObject* object = dockComponent->beginCreate(rootContext);
+        if ( object == nullptr ||
+             dockComponent->isError() ) {
+            if ( object != nullptr )
+                object->deleteLater();
+            throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
+                              dockComponent->errorString() };
+        }
+        dockComponent->completeCreate();
+        if ( !dockComponent->isError() ) {
+            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
+            item = qobject_cast< QQuickItem* >( object );
+            item->setVisible( true );
+            item->setParentItem( getContainerItem() );
+        } // Note QAN3: There is no leak until cpp ownership is set
+    } catch ( const qan::Error& e ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): " << e.getMsg();
+    } catch ( const std::exception& e ) {
+        qWarning() << "qan::Graph::createDockFromComponent(): " << e.what();
+    }
+    return std::unique_ptr<QQuickItem>{item};
 }
 //-----------------------------------------------------------------------------
 

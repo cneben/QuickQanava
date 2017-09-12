@@ -1,20 +1,27 @@
 /*
-    This file is part of QuickQanava library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -56,7 +63,6 @@ class EdgeItem : public QQuickItem
     //@{
     Q_OBJECT
 public:
-    //! Edge constructor with source, destination and weight initialization.
     explicit EdgeItem(QQuickItem* parent = nullptr);
     virtual ~EdgeItem();
     EdgeItem( const EdgeItem& ) = delete;
@@ -86,7 +92,7 @@ private:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_INVOKABLE             bool isHyperEdge() const;
+    Q_INVOKABLE bool        isHyperEdge() const noexcept;
 public:
     Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }
@@ -144,20 +150,20 @@ public:
      * \note When overriding, call base implementation at the beginning of user implementation.
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
      */
-    virtual void        updateItem( );
+    virtual void        updateItem() noexcept;
 public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );
     //! Edge source point in item CS (with accurate source bounding shape intersection).
     Q_PROPERTY( QPointF p1 READ getP1() NOTIFY p1Changed FINAL )
-    inline  auto    getP1() const -> const QPointF& { return _p1; }
+    inline  auto    getP1() const noexcept -> const QPointF& { return _p1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
     Q_PROPERTY( QPointF p2 READ getP2() NOTIFY p2Changed FINAL )
-    inline  auto    getP2() const -> const QPointF& { return _p2; }
+    inline  auto    getP2() const noexcept -> const QPointF& { return _p2; }
 signals:
     void            p1Changed();
     void            p2Changed();
-private:
+protected:
     QPointF         _p1;
     QPointF         _p2;
 protected:

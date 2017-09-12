@@ -20,36 +20,41 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	ImgNode.qml
+// \file	VerticalDock.qml
 // \author	benoit@destrat.io
-// \date	2016 02 11
+// \date	2017 08 28
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.3
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QtQuick                  2.2
+import QtQuick.Layouts          1.1
 
-Qan.AbstractImgNode {
-    id: imgNode
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
-    Layout.preferredWidth: 110
-    Layout.preferredHeight: 50
+ColumnLayout {
+    id: verticalDock
+    spacing: 20
 
-    width: Layout.preferredWidth
-    height: Layout.preferredHeight
-
-    label: "qan::ImgNode"
-    Qan.RectNodeTemplate {
-        anchors.fill: parent
-        node : imgNode
-        Qan.ImageItem {
-            anchors.fill: parent
-            smooth: true
-            image: imgNode.image
+    property var hostNodeItem: undefined
+    onHostNodeItemChanged: configureDock()
+    property int  dockType: -1
+    onDockTypeChanged: configureDock()
+    function configureDock() {
+        if ( hostNodeItem &&
+                dockType >= 0 ) {
+            switch ( dockType ) {
+            case Qan.NodeItem.Left:
+                anchors.right = hostNodeItem.left
+                anchors.rightMargin = 7
+                anchors.verticalCenter = hostNodeItem.verticalCenter
+                break;
+            case Qan.NodeItem.Right:
+                anchors.left = hostNodeItem.right
+                anchors.leftMargin = 7
+                anchors.verticalCenter = hostNodeItem.verticalCenter
+                break;
+            default: break;
+            }
         }
     }
 }

@@ -1,20 +1,27 @@
 /*
-    This file is part of QuickQanava library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -27,6 +34,10 @@
 
 #ifndef qanNodeItem_h
 #define qanNodeItem_h
+
+// Std headers
+#include <cstddef>  // std::size_t
+#include <array>
 
 // Qt headers
 #include <QQuickItem>
@@ -82,6 +93,9 @@ public:
     explicit NodeItem( QQuickItem* parent = nullptr );
     virtual ~NodeItem();
     NodeItem( const NodeItem& ) = delete;
+    NodeItem& operator=( const NodeItem& ) = delete;
+    NodeItem( NodeItem&& ) = delete;
+    NodeItem& operator=( NodeItem&& ) = delete;
 
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
@@ -142,7 +156,7 @@ protected slots:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Node DnD Management *///-----------------------------------------
+    /*! \name Resizing Management *///-----------------------------------------
     //@{
 public:
     // Enable or disable node item resizing (default to true, ie node is resizable).
@@ -153,6 +167,9 @@ protected:
     bool            _resizable{true};
 signals:
     void            resizableChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Draggable Management *///----------------------------------------
     //@{
 public:
@@ -289,10 +306,80 @@ protected:
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
     //@}
     //-------------------------------------------------------------------------
+
+    /*! \name Dock Layout Management *///--------------------------------------
+    //@{
+public:
+    //! Define port dock type/index/position.
+    enum class Dock : unsigned int {
+        Left    = 0,
+        Top     = 1,
+        Right   = 2,
+        Bottom  = 3
+    };
+    Q_ENUM(Dock)
+
+public:
+    //! Item left dock (usually build from qan::Graph::verticalDockDelegate).
+    Q_PROPERTY( QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL )
+    //! \copydoc leftDock
+    void                    setLeftDock( QQuickItem* leftDock ) noexcept;
+    //! \copydoc leftDock
+    inline QQuickItem*      getLeftDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Left)].data(); }
+signals:
+    //! \copydoc leftDock
+    void                    leftDockChanged();
+
+public:
+    //! Item top dock (usually build from qan::Graph::horizontalDockDelegate).
+    Q_PROPERTY( QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL )
+    //! \copydoc topDock
+    void                    setTopDock( QQuickItem* topDock ) noexcept;
+    //! \copydoc topDock
+    inline QQuickItem*      getTopDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Top)].data(); }
+signals:
+    //! \copydoc topDock
+    void                    topDockChanged();
+
+public:
+    //! Item right dock (usually build from qan::Graph::verticalDockDelegate).
+    Q_PROPERTY( QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL )
+    //! \copydoc rightDock
+    void                    setRightDock( QQuickItem* rightDock ) noexcept;
+    //! \copydoc rightDock
+    inline QQuickItem*      getRightDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Right)].data(); }
+signals:
+    //! \copydoc rightDock
+    void                    rightDockChanged();
+
+public:
+    //! Item bottom dock (usually build from qan::Graph::horizontalDockDelegate).
+    Q_PROPERTY( QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL )
+    //! \copydoc bottomDock
+    void                    setBottomDock( QQuickItem* bottomDock ) noexcept;
+    //! \copydoc bottomDock
+    inline QQuickItem*      getBottomDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Bottom)].data(); }
+signals:
+    //! \copydoc bottomDock
+    void                    bottomDockChanged();
+
+public:
+    //! Get \c dock dock item (warning: no bound checking, might return nullptr).
+    QQuickItem*             getDock(Dock dock) noexcept { return _dockItems[static_cast<std::size_t>(dock)].data(); }
+
+    //! Set \c dock dock item to \c dockItem.
+    void                    setDock(Dock dock, QQuickItem* dockItem) noexcept;
+
+private:
+    static constexpr unsigned int dockCount = 4;
+    std::array<QPointer<QQuickItem>, dockCount> _dockItems;
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::NodeItem )
+QML_DECLARE_TYPE(qan::NodeItem)
+Q_DECLARE_METATYPE(qan::NodeItem::Dock)
 
 #endif // qanNodeItem_h
