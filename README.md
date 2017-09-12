@@ -1,14 +1,13 @@
 [Overview](#QuickQanava) |
-[Roadmap](#Roadmap) |
 [Dependencies](#Dependencies) |
 [Building](#building) |
+[Roadmap](#Roadmap) |
 [License](#license)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9)
-
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
-
-Note 20170630: QuickQanava is now compiling and working with both Qt 5.8 and Qt 5.9.1 (with OpenGL shader caching enabled) on Windows MSVC2015 U3, Linux g++5.4+ and OSX Clang.
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9) |
+[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows MSVC 2015 x64/Qt5.9) |
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 QuickQanava 
 ============================
@@ -21,7 +20,7 @@ QuickQanava
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt >= 5.8 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some samples requires Qt5.8)
+QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some samples requires Qt5.8)
 
 + Project homepage: http://www.destrat.io/quickqanava (**updated 20170323**)
 + Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20170323**)
@@ -30,40 +29,9 @@ For any questions, please contact: benoit@destrat.io
 
 QuickQanava focus on writting content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
-## Roadmap:
-
-  - **v0.8.0: Complex topologies**
-    - GTpo (Configurable topology library):
-      - [X] Redesign and optimize GTpo generic containers accessors.
-      - [X] Add complex topologies support: full restricted hyper edge, group -> node and group -> group topologies.
-	  - [X] Remove any virtual overhead from GTpo.
-	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
-	  - [X] Remove protocolbuffer and properties management support (it has nothing to do in the visualization package).
-    - [X] Redesign qan::Graph interface for creating content.
-      - [X] Add a 100% C++ interface (currently QML delegate components definition still are necessary).
-        - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
-    - [X] Add _efficient_ support for non visual nodes and edges, non visual edges should have a very small footprint (ie non QQuickItem...).
-    - [X] Update samples for full QQC2 controls support.
-    - [X] Redesign visual connection of nodes (add support for custom visual component, invisible edge creation, etc.).
-    - [ ] Add full support for groups inside group (ie subgraphs).
-  - **v0.9.0: QuickContainers** (Qt/QML observable adapter for STL or Qt containers):	 
-    - [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-	- [ ] Add support for standard library containers.
-	- [ ] Increase test coverage.
-  - **v1.0.0: Advanced edge visualization**	 
-    - [ ] Add full support for Bezier curve edge.
-    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-    - [ ] Use Qt 5.9 PathItem for lines, curves and poly rendering instead of QuickGeoGL (QuickGeoGl is probably faster for simple AA lines with its vertex shader, but QuickGeoGL is too complex to maintain).
-    - [ ] Add support for multiple "docks" per node (ie. to connect in edges on multiple node side, not only at node center).
-    - Qt 5.10 is targeted for the 1.0 release with full PathItem support.
-
 ## Dependencies:
 
-| Dependency                | Mandatory         |   Included in source tree       |   Licence       |
-| ---                       | :---:             | :---:                           | :---:           |
-| GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |   ![](https://img.shields.io/badge/license-MIT-blue.svg) MIT|
-| Google Test/Mock          | No                |       No                        |    Permissive   |
-
+- Qt5.10 for full curved edge support (Qt 5.8 will works, but rendering will be done using QuickGeoGL).
 - **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
 
 ## Building:
@@ -76,7 +44,6 @@ cd QuickQanava
   4. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
 
 3. Select a kit, build and launch samples.
-
 
 ## QuickQanava Samples:
 
@@ -105,10 +72,27 @@ cd QuickQanava
 
   - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
 
+  
+## Roadmap:
+
+  - **v0.9.1:**:	 
+    - [ ] Add better heuristic for Bezier curve edge control points generation.
+    - [ ] Add full support for groups inside group (ie subgraphs).
+    - [ ] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
+	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
+		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
+		- [ ] Add support for standard library containers.
+		- [ ] Increase test coverage.
+  - **v1.0.0: Advanced edge visualization**	 
+    - GTpo (Configurable topology library):
+	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
+    - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
+    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+
 License
 =======
 
-[![PyPI](https://img.shields.io/pypi/l/Django.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Copyright (c) 2017 Delia Stratégie
 

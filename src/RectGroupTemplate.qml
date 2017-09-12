@@ -46,8 +46,6 @@ Item {
     width: Math.max( content.width, 75 )
     height: Math.max( content.height, 40 )
 
-    property color  backColor: Qt.rgba( 0.97, 0.97, 0.97, 1.0 )
-
     default property alias children : content.children
     property alias  content: content
 
@@ -57,6 +55,8 @@ Item {
     property bool   labelBold: false
 
     property var    groupItem: undefined
+    property color  backColor: groupItem !== undefined &&
+                               groupItem.style ? groupItem.style.backColor : Qt.rgba( 0.97, 0.97, 0.97, 1.0 )
     Item {
         id: content
         x: 0; y: 0; z: 3

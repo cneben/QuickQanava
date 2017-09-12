@@ -92,7 +92,7 @@ void    Group::itemEndProposeNodeDrop()
 
 /* Group Static Factories *///-------------------------------------------------
 static std::unique_ptr<QQmlComponent>   qan_Group_delegate;
-static std::unique_ptr<qan::Style>      qan_Group_style;
+static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
 
 QQmlComponent*  Group::delegate(QObject* caller) noexcept
 {
@@ -108,7 +108,7 @@ QQmlComponent*  Group::delegate(QObject* caller) noexcept
 qan::Style*     Group::style() noexcept
 {
     if ( !qan_Group_style )
-        qan_Group_style = std::make_unique<qan::Style>();
+        qan_Group_style = std::make_unique<qan::NodeStyle>();
     return qan_Group_style.get();
 }
 //-----------------------------------------------------------------------------

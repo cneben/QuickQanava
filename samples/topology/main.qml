@@ -165,6 +165,8 @@ ApplicationWindow {
                 defaultEdgeStyle.lineWidth = 3
                 defaultEdgeStyle.lineColor = Qt.binding(function() { return Material.foreground } )
                 defaultNodeStyle.shadowColor = Qt.binding(function() { return Material.theme === Material.Dark ? Qt.darker(Material.foreground) : Qt.darker(Material.foreground) } )
+                defaultNodeStyle.backColor = Qt.binding(function() { return Material.theme === Material.Dark ? Qt.lighter(Material.background) : Qt.lighter(Material.background) } )
+                defaultGroupStyle.backColor = Qt.binding(function() { return Material.theme === Material.Dark ? Qt.lighter(Material.background,1.3) : Qt.darker(Material.background,1.1) } )
                 var bw1 = topology.insertFaceNode()
                 bw1.image = "qrc:/faces/BW1.jpg"
                 bw1.item.x = 150; bw1.item.y = 55

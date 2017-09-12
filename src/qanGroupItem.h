@@ -52,9 +52,11 @@ namespace qan { // ::qan
 
 class Graph;
 
-/*! \brief Model a graphics group of nodes.
+/*! \brief Model a visual group of nodes.
  *
+ * \note Groups are styled with qan::NodeStyle.
  * \warning \c objectName property is set to "qan::GroupItem" and should not be changed in subclasses.
+ *
  * \nosubgrouping
  */
 class GroupItem : public QQuickItem,
