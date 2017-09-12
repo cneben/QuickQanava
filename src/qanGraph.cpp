@@ -58,24 +58,31 @@ Graph::Graph( QQuickItem* parent ) noexcept :
     setContainerItem( this );
     setAntialiasing( true );
     setSmooth( true );
+
 }
 
 Graph::~Graph() { /* Nil */ }
+
+void    Graph::classBegin()
+{
+    const auto engine = qmlEngine(this);
+    if ( engine ) {
+        setPortDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Port.qml")));
+        setHorizontalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
+        setVerticalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
+        setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
+        setNodeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Node.qml")));
+        setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
+
+        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
+        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
+    }
+}
 
 void    Graph::componentComplete()
 {
     const auto engine = qmlEngine(this);
     if ( engine ) {
-        setNodeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Node.qml")));
-        setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
-        setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
-        setPortDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Port.qml")));
-        setHorizontalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
-        setVerticalDockDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
-
-        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
-        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
-
         // Visual connector initialization
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
         if ( connectorComponent ) {
@@ -931,17 +938,16 @@ qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, 
     return nullptr;
 }
 
-void    Graph::setPortDelegate(QQmlComponent* portDelegate) noexcept
+void    Graph::qmlSetPortDelegate(QQmlComponent* portDelegate) noexcept
 {
-    if ( portDelegate != nullptr ) {
-        if ( portDelegate != _portDelegate.get() ) {
-            _portDelegate.reset(portDelegate);
+    if ( portDelegate != _portDelegate.get() ) {
+        if ( portDelegate != nullptr )
             QQmlEngine::setObjectOwnership( portDelegate, QQmlEngine::CppOwnership );
-            emit portDelegateChanged();
-        }
+        _portDelegate.reset(portDelegate);
+        emit portDelegateChanged();
     }
 }
-void    Graph::setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept { setPortDelegate(portDelegate.release()); }
+void    Graph::setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept { qmlSetPortDelegate(portDelegate.release()); }
 
 void    Graph::setHorizontalDockDelegate(QQmlComponent* horizontalDockDelegate) noexcept
 {

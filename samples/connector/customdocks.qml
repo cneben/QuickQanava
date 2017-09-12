@@ -28,45 +28,61 @@ import QtQuick                   2.8
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
+import Qt.labs.platform          1.0    // ColorDialog
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 import "." as Qan
 
-ApplicationWindow {
-    id: window
-    visible: true
-    width: 1280; height: 720
-    title: "Edge/Visual connector sample"
 
-    Pane { anchors.fill: parent }
-    ColumnLayout {
+Qan.GraphView {
+    id: graphView
+    z: -1
+    anchors.fill: parent
+    navigable: true
+
+    graph: Qan.Graph {
+        id: topology
         anchors.fill: parent
-        TabBar {
-            id: tabBar
-            Layout.preferredWidth: 450; Layout.fillHeight: false
-            TabButton { text: qsTr("Docking") }
-            TabButton { text: qsTr("Custom Docks") }
-            TabButton { text: qsTr("Default Connector") }
-            TabButton { text: qsTr("Custom Connector") }
+        objectName: "graph"
+        clip: true
+        connectorEnabled: false
+
+        nodeDelegate: Component {
+            Qan.NodeItem {
+                width: 150
+                height: 80
+                Rectangle {
+                    anchors.fill: parent
+                    color: "blue"
+                    border.color: "green"
+                }
+            }
         }
-        StackLayout {
-            clip: true
-            Layout.fillWidth: true; Layout.fillHeight: true
-            currentIndex: tabBar.currentIndex
-            Item { Loader { anchors.fill: parent; source: "qrc:/docks.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/customdocks.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
+
+        portDelegate: Component {
+            id: youpi
+            Qan.PortItem {
+                width: 16; height: 16
+                Rectangle {
+                    anchors.fill: parent
+                    color: "black"
+                    border.color: "yellow"
+                }
+            }
         }
-    }
-    RowLayout {
-        anchors.top: parent.top;    anchors.right: parent.right
-        CheckBox {
-            text: qsTr("Dark")
-            checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
-            onClicked: ApplicationWindow.contentItem.Material.theme = checked ? Material.Dark : Material.Light
+
+        Component.onCompleted: {
+            var n1 = topology.insertNode(nodeDelegate)
+            n1.label = "Default.Node"
+            n1.item.x = 30
+            n1.item.y = 30
+            topology.insertInPort(n1, Qan.NodeItem.Left)
+            topology.insertInPort(n1, Qan.NodeItem.Left)
+            topology.insertInPort(n1, Qan.NodeItem.Right)
+            topology.insertInPort(n1, Qan.NodeItem.Right)
         }
     }
 }
+
 

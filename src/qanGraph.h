@@ -90,6 +90,8 @@ public:
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
     virtual void    componentComplete() override;
 
+    virtual void    classBegin() override;
+
 public:
     /*! \brief Clear this graph topology and styles.
      *
@@ -591,12 +593,12 @@ public:
 
 public:
     //! Default delegate for node in/out port.
-    Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE setPortDelegate NOTIFY portDelegateChanged FINAL )
+    Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE qmlSetPortDelegate NOTIFY portDelegateChanged FINAL )
     //! \copydoc portDelegate
     inline QQmlComponent*   getPortDelegate() noexcept { return _portDelegate.get(); }
 protected:
     //! \copydoc portDelegate
-    void                    setPortDelegate(QQmlComponent* portDelegate) noexcept;
+    void                    qmlSetPortDelegate(QQmlComponent* portDelegate) noexcept;
     //! \copydoc portDelegate
     void                    setPortDelegate(std::unique_ptr<QQmlComponent> portDelegate) noexcept;
 signals:

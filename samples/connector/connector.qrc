@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>connector.qml</file>
         <file>docks.qml</file>
+        <file>customdocks.qml</file>
         <file>default.qml</file>
         <file>custom.qml</file>
         <file>qtquickcontrols2.conf</file>

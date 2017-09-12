@@ -145,7 +145,7 @@ ApplicationWindow {
             connectorEnabled: true
             selectionColor: Material.accent
             connectorColor: Material.accent
-
+            connectorEdgeColor: Material.accent
 
             property Component faceNodeComponent: Qt.createComponent( "qrc:/FaceNode.qml" )
             onNodeRightClicked: {

@@ -45,8 +45,6 @@ namespace qan {  // ::qan
  *
  * A grid could be disabled by setting it's \c visible property to false.
  *
- * // FIXME: code sample.
- *
  * \nosubgrouping
  */
 class Grid : public QQuickItem

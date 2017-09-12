@@ -141,11 +141,7 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
             else emit requestEdgeCreation(srcNode, dstEdge);
         }
     }
-
-    // FIXME: it sucks
-    //if ( createdEdge ) // Notify user of the edge creation
-    //    createdEdge.color = Qt.binding( function() { return visualConnector.edgeColor; } );
-   if ( createdEdge ) // Notify user of the edge creation
+    if ( createdEdge ) // Notify user of the edge creation
         emit edgeInserted( createdEdge );
 }
 

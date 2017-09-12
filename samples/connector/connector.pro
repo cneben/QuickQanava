@@ -10,7 +10,8 @@ SOURCES     +=  connector.cpp
 OTHER_FILES +=  connector.qml   \
                 default.qml     \
                 custom.qml      \
-                docks.qml
+                docks.qml       \
+                customdocks.qml
 
 RESOURCES   +=  connector.qrc
 
