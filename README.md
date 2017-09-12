@@ -49,7 +49,7 @@ cd QuickQanava
 
 ## QuickQanava Samples:
 
-![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
+![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)(https://www.youtube.com/watch?v=bUTO_PeegP4)
 
 | Nodes       | 
 | :---:       |
