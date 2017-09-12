@@ -4,6 +4,8 @@ environment:
       QTDIR: C:\Qt\5.7\msvc2015_64
       PLATFORM: x64
 
+clone_depth: 1
+
 configuration:
   - Release
 
@@ -13,6 +15,7 @@ branches:
 
 before_build:
   - set PATH=%QTDIR%\bin;%PATH%
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %PLATFORM%
   - qmake
   
 build_script:
