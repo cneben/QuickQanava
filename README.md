@@ -12,7 +12,7 @@
 QuickQanava 
 ============================
 
-![](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/home.png)
+![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
 `QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graphs in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
 
@@ -49,26 +49,26 @@ cd QuickQanava
 
 | Nodes       | 
 | :---:       |
-| ![Custom content](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-nodes.gif) |
+| ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif) |
 
   - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/gettingstarted/index.html#displaying-custom-nodes)
 
 | Visual Connector       |   
 | :---:                  | 
-![Visual Connector](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-connector.gif) |
+![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-connector.gif) |
 
   - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology)
   - Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
 
 | Groups       | 
 | :---:        | 
-| ![Groups](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-groups.gif) |
+| ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-groups.gif) |
 
   - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/gettingstarted/index.html#using-groups)
 
 | Styles       |
 | :---:        | 
-| ![Custom styles](https://github.com/cneben/QuickQanava/blob/dev/doc/web/docs/images/sample-styles.gif) |
+| ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
 
   - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
 
