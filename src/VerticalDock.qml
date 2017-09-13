@@ -19,42 +19,50 @@
 
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
-//
 // \file	VerticalDock.qml
 // \author	benoit@destrat.io
 // \date	2017 08 28
 //-----------------------------------------------------------------------------
+import QtQuick 2.2
+import QtQuick.Layouts 1.1
 
-import QtQuick                  2.2
-import QtQuick.Layouts          1.1
-
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 ColumnLayout {
-    id: verticalDock
+    id: root
     spacing: 20
+    states: [
+        State {
+            name: "left"
+            when: hostNodeItem && dockType === Qan.NodeItem.Left
 
-    property var hostNodeItem: undefined
-    onHostNodeItemChanged: configureDock()
-    property int  dockType: -1
-    onDockTypeChanged: configureDock()
-    function configureDock() {
-        if ( hostNodeItem &&
-                dockType >= 0 ) {
-            switch ( dockType ) {
-            case Qan.NodeItem.Left:
-                anchors.right = hostNodeItem.left
-                anchors.rightMargin = 7
-                anchors.verticalCenter = hostNodeItem.verticalCenter
-                break;
-            case Qan.NodeItem.Right:
-                anchors.left = hostNodeItem.right
-                anchors.leftMargin = 7
-                anchors.verticalCenter = hostNodeItem.verticalCenter
-                break;
-            default: break;
+            PropertyChanges {
+                target: root
+                anchors {
+                    right: hostNodeItem.left
+                    rightMargin: root.rightMargin
+                    verticalCenter: hostNodeItem.verticalCenter
+                }
+            }
+        },
+        State {
+            name: "right"
+            when: hostNodeItem && dockType === Qan.NodeItem.Right
+
+            PropertyChanges {
+                target: root
+                anchors {
+                    left: hostNodeItem.right
+                    leftMargin: root.leftMargin
+                    verticalCenter: hostNodeItem.verticalCenter
+                }
             }
         }
-    }
+    ]
+
+    property var hostNodeItem
+    property int dockType: -1
+    property int leftMargin: 7
+    property int rightMargin: 7
 }
