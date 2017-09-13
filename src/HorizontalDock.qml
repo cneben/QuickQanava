@@ -19,42 +19,50 @@
 
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
-//
 // \file	HorizontalDock.qml
 // \author	benoit@destrat.io
 // \date	2017 08 28
 //-----------------------------------------------------------------------------
+import QtQuick 2.2
+import QtQuick.Layouts 1.1
 
-import QtQuick                  2.2
-import QtQuick.Layouts          1.1
-
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 RowLayout {
-    id: horizontalDock
+    id: root
     spacing: 15
+    states: [
+        State {
+            name: "top"
+            when: hostNodeItem && dockType === Qan.NodeItem.Top
 
-    property var hostNodeItem: undefined
-    onHostNodeItemChanged: configureDock()
-    property int  dockType: -1
-    onDockTypeChanged: configureDock()
-    function configureDock() {
-        if ( hostNodeItem &&
-                dockType >= 0 ) {
-            switch ( dockType ) {
-            case Qan.NodeItem.Top:
-                horizontalDock.anchors.bottom = hostNodeItem.top
-                horizontalDock.anchors.bottomMargin = 7
-                horizontalDock.anchors.horizontalCenter = hostNodeItem.horizontalCenter
-                break;
-            case Qan.NodeItem.Bottom:
-                horizontalDock.anchors.top = hostNodeItem.bottom
-                horizontalDock.anchors.topMargin = 7
-                horizontalDock.anchors.horizontalCenter = hostNodeItem.horizontalCenter
-                break;
-            default: break;
+            PropertyChanges {
+                target: root
+                anchors {
+                    bottom: hostNodeItem.top
+                    bottomMargin: root.bottomMargin
+                    horizontalCenter: hostNodeItem.horizontalCenter
+                }
+            }
+        },
+        State {
+            name: "bottom"
+            when: hostNodeItem && dockType === Qan.NodeItem.Bottom
+
+            PropertyChanges {
+                target: root
+                anchors {
+                    top: hostNodeItem.bottom
+                    topMargin: root.topMargin
+                    horizontalCenter: hostNodeItem.horizontalCenter
+                }
             }
         }
-    }
+    ]
+
+    property var hostNodeItem
+    property int dockType: -1
+    property int topMargin: 7
+    property int bottomMargin: 7
 }
