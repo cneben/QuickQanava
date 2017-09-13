@@ -284,7 +284,6 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
 /* Dock Layout Management *///-------------------------------------------------
 void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
 {
-    qDebug() << "setLeftDock(): leftDock=" << leftDock;
     if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
         if ( leftDock != nullptr ) {
             configureDock(*leftDock, Dock::Left);

@@ -52,7 +52,7 @@ Qan.GraphView {
             Qan.NodeItem {
                 width: 150
                 height: 80
-                leftDock: Qan.VerticalDock { // if you comment this out, it appears.
+                leftDock: Qan.VerticalDock {
                     Label {
                         Layout.preferredWidth: height
                         text: "Custom Dock"
