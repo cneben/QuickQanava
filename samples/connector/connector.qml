@@ -45,19 +45,19 @@ ApplicationWindow {
         TabBar {
             id: tabBar
             Layout.preferredWidth: 450; Layout.fillHeight: false
-            //TabButton { text: qsTr("Docking") }
+            TabButton { text: qsTr("Docking") }
             TabButton { text: qsTr("Custom Docks") }
-            //TabButton { text: qsTr("Default Connector") }
-            //TabButton { text: qsTr("Custom Connector") }
+            TabButton { text: qsTr("Default Connector") }
+            TabButton { text: qsTr("Custom Connector") }
         }
         StackLayout {
             clip: true
             Layout.fillWidth: true; Layout.fillHeight: true
             currentIndex: tabBar.currentIndex
-            //Item { Loader { anchors.fill: parent; source: "qrc:/docks.qml"} }
+            Item { Loader { anchors.fill: parent; source: "qrc:/docks.qml"} }
             Item { Loader { anchors.fill: parent; source: "qrc:/customdocks.qml"} }
-            //Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
-            //Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
+            Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
+            Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
         }
     }
     RowLayout {
