@@ -369,7 +369,9 @@ public:
 
     //! Set \c dock dock item to \c dockItem.
     void                    setDock(Dock dock, QQuickItem* dockItem) noexcept;
-
+protected:
+    //! Set dock parent item, "hostNodeItem" and "dockType" properties.
+    void                    configureDock(QQuickItem& dockItem, const Dock) noexcept;
 private:
     static constexpr unsigned int dockCount = 4;
     std::array<QPointer<QQuickItem>, dockCount> _dockItems;

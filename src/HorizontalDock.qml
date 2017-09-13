@@ -61,7 +61,7 @@ RowLayout {
         }
     ]
 
-    property var hostNodeItem
+    property var hostNodeItem: undefined
     property int dockType: -1
     property int topMargin: 7
     property int bottomMargin: 7

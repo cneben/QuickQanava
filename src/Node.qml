@@ -45,12 +45,13 @@ Qan.NodeItem {
         anchors.fill: parent
         nodeItem : parent
     }
-    ColumnLayout {
+    // FIXME: remove that
+/*    ColumnLayout {
         id: leftDockLayout
         anchors.right: nodeItem.left
         anchors.rightMargin: 7
         anchors.verticalCenter: nodeItem.verticalVenter
         spacing: 15
     }
-    leftDock: leftDockLayout
+    leftDock: leftDockLayout*/
 }

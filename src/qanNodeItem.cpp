@@ -74,7 +74,6 @@ NodeItem::~NodeItem()
 {
     // Delete all dock items
     for ( auto& dockItem : _dockItems ) {
-        // FIXME: check CPP OWNERSIP BORDEL
         if ( dockItem )
             dockItem->deleteLater();
     }
@@ -285,7 +284,12 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
 /* Dock Layout Management *///-------------------------------------------------
 void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
 {
+    qDebug() << "setLeftDock(): leftDock=" << leftDock;
     if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
+        if ( leftDock != nullptr ) {
+            configureDock(*leftDock, Dock::Left);
+            QQmlEngine::setObjectOwnership(leftDock, QQmlEngine::CppOwnership);
+        }
         _dockItems[static_cast<std::size_t>(Dock::Left)] = leftDock;
         emit leftDockChanged();
     }
@@ -294,6 +298,10 @@ void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
 void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
 {
     if ( topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data() ) {
+        if ( topDock != nullptr ) {
+            configureDock(*topDock, Dock::Top);
+            QQmlEngine::setObjectOwnership(topDock, QQmlEngine::CppOwnership);
+        }
         _dockItems[static_cast<std::size_t>(Dock::Top)] = topDock;
         emit topDockChanged();
     }
@@ -302,6 +310,10 @@ void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
 void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
 {
     if ( rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data() ) {
+        if ( rightDock != nullptr ) {
+            configureDock(*rightDock, Dock::Right);
+            QQmlEngine::setObjectOwnership(rightDock, QQmlEngine::CppOwnership);
+        }
         _dockItems[static_cast<std::size_t>(Dock::Right)] = rightDock;
         emit rightDockChanged();
     }
@@ -310,6 +322,10 @@ void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
 void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 {
     if ( bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data() ) {
+        if ( bottomDock != nullptr ) {
+            configureDock(*bottomDock, Dock::Bottom);
+            QQmlEngine::setObjectOwnership(bottomDock, QQmlEngine::CppOwnership);
+        }
         _dockItems[static_cast<std::size_t>(Dock::Bottom)] = bottomDock;
         emit bottomDockChanged();
     }
@@ -318,13 +334,22 @@ void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 void    NodeItem::setDock(Dock dock, QQuickItem* dockItem) noexcept
 {
     if ( dockItem != nullptr )
-        dockItem->setParentItem(this);
+        configureDock(*dockItem, dock);
     switch ( dock ) {
         case Dock::Left: setLeftDock(dockItem); break;
         case Dock::Top: setTopDock(dockItem); break;
         case Dock::Right: setRightDock(dockItem); break;
         case Dock::Bottom: setBottomDock(dockItem); break;
     };
+}
+
+void    NodeItem::configureDock(QQuickItem& dockItem, const Dock dock) noexcept
+{
+    dockItem.setParentItem(this);
+    dockItem.setProperty("hostNodeItem",
+                         QVariant::fromValue(this));
+    dockItem.setProperty("dockType",
+                         QVariant::fromValue(dock));
 }
 //-----------------------------------------------------------------------------
 

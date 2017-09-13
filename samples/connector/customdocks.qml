@@ -52,10 +52,20 @@ Qan.GraphView {
             Qan.NodeItem {
                 width: 150
                 height: 80
+                leftDock: Qan.VerticalDock { // if you comment this out, it appears.
+                    Label {
+                        Layout.preferredWidth: height
+                        text: "Custom Dock"
+                        font.bold: true
+                        rotation: -90
+                    }
+                }
                 Rectangle {
                     anchors.fill: parent
-                    color: "blue"
-                    border.color: "green"
+                    color: "lightblue"
+                    radius: 5
+                    border.color: "green"; border.width: 4
+                    Label { anchors.centerIn: parent; text: "CUSTOM" }
                 }
             }
         }
@@ -66,8 +76,8 @@ Qan.GraphView {
                 width: 16; height: 16
                 Rectangle {
                     anchors.fill: parent
-                    color: "black"
-                    border.color: "yellow"
+                    color: "grey"
+                    border.color: "yellow"; border.width: 2
                 }
             }
         }
