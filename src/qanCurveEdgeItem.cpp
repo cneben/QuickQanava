@@ -142,6 +142,8 @@ void    CurveEdgeItem::updateItem() noexcept
         qreal yCorrection = yCorrectionFactor * 100.;
         */
 
+        // FIXME 20170914: That code is horrible and should be removed for something
+        // more general, taking src/dst position into account...
         qreal xCorrection = 0;
         qreal yCorrection = 0;
         if ( xDelta > 0. &&
@@ -205,9 +207,10 @@ void    CurveEdgeItem::updateItem() noexcept
         emit c2Changed();
     }
 
-    { // Generate arrow geometry
-        const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
-        const auto arrowLength = arrowSize * 3.;
+    // Generate arrow geometry
+    const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
+    const auto arrowLength = arrowSize * 3.;
+    {
         const auto base = QPointF{-arrowLength, 0. };
 
         _dstA1 = QPointF{ base.x(),                 -arrowSize  };
@@ -216,8 +219,18 @@ void    CurveEdgeItem::updateItem() noexcept
         emit dstA1Changed(); emit dstA2Changed(); emit dstA3Changed();
     }
 
-    //_dstAngle = lineAngle(line);
-    _dstAngle = cubicCurveAngleAt(0.99, _p1, _p2, _c1, _c2);
+    // Generate arrow orientation:
+        // General case: get cubic tangent at line end.
+        // Special case: when line length is small (ie less than 4 time arrow length), curve might
+        //               have very sharp orientation, average tangent at curve end AND line angle to avoid
+        //               arrow orientation that does not fit the average curve angle.
+    static constexpr auto averageDstAngleFactor = 4.0;
+    if ( lineLength > averageDstAngleFactor * arrowLength )         // General case
+        _dstAngle = cubicCurveAngleAt(0.99, _p1, _p2, _c1, _c2);
+    else {                                                          // Special case
+        _dstAngle = ( 0.4 * cubicCurveAngleAt(0.99, _p1, _p2, _c1, _c2) +
+                      0.6 * lineAngle(line) );
+    }
     emit dstAngleChanged();
 }
 
@@ -227,6 +240,9 @@ qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const 
         // pos in [0., 1.0]
     if ( pos < 0. || pos > 1. )
         return -1;
+
+    // FIXME 20170914: That code need more testing, std::atan2 return value should be handled with
+    // more care: https://stackoverflow.com/questions/1311049/how-to-map-atan2-to-degrees-0-360
 
     // This code is (C) 2014 Paul W.
     // Description:
@@ -247,12 +263,18 @@ qreal   CurveEdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const 
     const auto dydt = (3. * coeff3.y()*pos2) + (2. * coeff2.y()*pos) + coeff1.y();
 
     static constexpr    qreal Pi = 3.141592653;
-    static constexpr    qreal TwoPi = 2. * Pi;
+    /*static constexpr    qreal TwoPi = 2. * Pi;
     auto angle = std::atan2(dxdt, dydt);
-    angle = (2. * Pi) - angle;
+    angle = (2. * Pi) + angle;
     angle = angle * ( 360. / TwoPi );
-    angle += 90.;
-    return angle;
+    angle += 90.;*/
+
+    auto degrees = std::atan2(dxdt, dydt) * 180. / Pi;
+    if (degrees > 90)
+        degrees = 450 - degrees;
+    else
+        degrees = 90 - degrees;
+    return degrees;
 }
 
 qreal   CurveEdgeItem::lineAngle(const QLineF& line) const noexcept
