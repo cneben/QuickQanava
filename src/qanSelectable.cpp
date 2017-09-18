@@ -69,20 +69,17 @@ void    Selectable::setSelectable( bool selectable ) noexcept
 
 void    Selectable::setSelected( bool selected ) noexcept
 {
-    if ( getSelectionItem() != nullptr &&
-         isSelectable() )
+    if ( getSelectionItem() != nullptr && isSelectable() )
         getSelectionItem()->setVisible( selected );
 
-    if ( _target &&
-         _graph ) {
-        if ( selected &&                // Eventually create selection item
-             getSelectionItem() == nullptr )
-            setSelectionItem( _graph->createRectangle( _target.data() ) );
+    if ( _target && _graph ) {  // Eventually create selection item
+        if ( selected && getSelectionItem() == nullptr )
+            setSelectionItem( _graph->createSelectionItemFromDelegate( _target.data() ).data() );
         else if ( !selected )
             _graph->removeFromSelection(_target.data());
     }
 
-    if ( _selected != selected ) {      // Binding loop protection
+    if ( _selected != selected ) {  // Binding loop protection
         _selected = selected;
         emitSelectedChanged();
     }
@@ -94,66 +91,35 @@ void    Selectable::setSelectionItem( QQuickItem* selectionItem )
         qWarning() << "qan::Selectable::setSelectionItem(): Error: Can't set a nullptr selection hilight item.";
         return;
     }
-    _selectionItem.reset( selectionItem );
+    _selectionItem = QPointer<QQuickItem>(selectionItem);
     if ( _target )
         _selectionItem->setParentItem( _target.data() );  // Configure Quick item
     if ( _graph )
-        configureSelectionItem( _graph->getSelectionColor(), _graph->getSelectionWeight(), _graph->getSelectionMargin() );
+        configureSelectionItem();
     _selectionItem->setVisible( isSelectable() && getSelected() );
     emitSelectionItemChanged();
 }
 
-void    Selectable::configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin )
+void    Selectable::configureSelectionItem()
 {
-    if ( _selectionItem != nullptr ) {
-        _selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
-        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
-        if ( rectangleBorder != nullptr )
-            rectangleBorder->setProperty( "color", QVariant::fromValue<QColor>(selectionColor) );
-    }
-    configureSelectionItem( selectionWeight, selectionMargin );
-}
+    if ( _target && _selectionItem ) {
+        QObject* anchors = _selectionItem->property( "anchors" ).value<QObject*>();
+        QObject* border = _selectionItem->property( "border" ).value<QObject*>();
 
-void    Selectable::configureSelectionItem( qreal selectionWeight, qreal selectionMargin )
-{
-    if ( _selectionItem != nullptr &&
-         _target ) {
-        _selectionItem->setX( -( selectionWeight / 2. + selectionMargin ) );
-        _selectionItem->setY( -( selectionWeight / 2. + selectionMargin ) );
+        qreal selectionMargin = anchors ? anchors->property("margins").toReal() : 3;
+        qreal selectionWeight = border ? border->property("width").toReal() : 3;
+        qreal x = -( selectionWeight / 2. + selectionMargin );
+        qreal y = -( selectionWeight / 2. + selectionMargin );
+        qreal width = _target->width() + selectionWeight + ( selectionMargin * 2 );
+        qreal height = _target->height() + selectionWeight + ( selectionMargin * 2 );
 
-        _selectionItem->setWidth( _target->width() + selectionWeight + ( selectionMargin * 2 ));
-        _selectionItem->setHeight( _target->height() + selectionWeight + ( selectionMargin * 2 ));
-        _selectionItem->setOpacity( 0.80 );
-        _selectionItem->setProperty( "radius", 4. );
-        QObject* rectangleBorder = _selectionItem->property( "border" ).value<QObject*>();
-        if ( rectangleBorder != nullptr )
-            rectangleBorder->setProperty( "width", selectionWeight );
+        _selectionItem->setX( x );
+        _selectionItem->setY( y );
+        _selectionItem->setWidth( width );
+        _selectionItem->setHeight( height );
     }
 }
 
-void    Selectable::updateSelectionWidth()
-{
-    if ( getSelectionItem() != nullptr &&
-         _target &&
-         _graph ) {  // Update selection item
-        qreal selectionWeight{ 3. }, selectionMargin{ 3. };
-        selectionWeight = _graph->getSelectionWeight();
-        selectionMargin = _graph->getSelectionMargin();
-        getSelectionItem()->setWidth( _target->width() + selectionWeight + ( selectionMargin * 2 ));
-    }
-}
-
-void    Selectable::updateSelectionHeight()
-{
-    if ( getSelectionItem() != nullptr &&
-        _target &&
-        _graph ) {  // Update selection item
-        qreal selectionWeight{3.}, selectionMargin{3.};
-        selectionWeight = _graph->getSelectionWeight();
-        selectionMargin = _graph->getSelectionMargin();
-        getSelectionItem()->setHeight( _target->height() + selectionWeight + ( selectionMargin * 2 ));
-    }
-}
 //-----------------------------------------------------------------------------
 
 } // ::qan

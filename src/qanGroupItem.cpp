@@ -123,12 +123,12 @@ void    GroupItem::styleDestroyed( QObject* style )
 /* Selection Management *///---------------------------------------------------
 void    GroupItem::onWidthChanged()
 {
-    qan::Selectable::updateSelectionWidth();
+    configureSelectionItem();
 }
 
 void    GroupItem::onHeightChanged()
 {
-    qan::Selectable::updateSelectionHeight();
+    configureSelectionItem();
 }
 //-----------------------------------------------------------------------------
 

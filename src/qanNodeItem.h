@@ -91,7 +91,7 @@ class NodeItem : public QQuickItem,
 public:
     //! Node constructor.
     explicit NodeItem( QQuickItem* parent = nullptr );
-    virtual ~NodeItem();
+    virtual ~NodeItem() override;
     NodeItem( const NodeItem& ) = delete;
     NodeItem& operator=( const NodeItem& ) = delete;
     NodeItem( NodeItem&& ) = delete;

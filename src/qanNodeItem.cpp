@@ -100,7 +100,7 @@ auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
 /* Selection Management *///---------------------------------------------------
 void    NodeItem::onWidthChanged()
 {
-    qan::Selectable::updateSelectionWidth();
+    configureSelectionItem();
     if ( _complexBoundingShape )            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
@@ -108,7 +108,7 @@ void    NodeItem::onWidthChanged()
 
 void    NodeItem::onHeightChanged()
 {
-    qan::Selectable::updateSelectionHeight();
+    configureSelectionItem();
     if ( _complexBoundingShape )            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
@@ -178,7 +178,7 @@ void    NodeItem::mousePressEvent( QMouseEvent* event )
         if ( event->button() == Qt::LeftButton &&
              getNode() &&
              isSelectable() ) {
-            if ( _graph != nullptr )
+            if ( _graph )
                 _graph->selectNode( *getNode(), event->modifiers() );
         }
 
@@ -204,8 +204,8 @@ void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 void    NodeItem::setStyle( qan::NodeStyle* style ) noexcept
 {
     if ( style != _style ) {
-        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, 0, this, 0 );
+        if ( _style )  // Every style that is non default is disconnect from this node
+            QObject::disconnect( _style, Q_NULLPTR, this, Q_NULLPTR );
         _style = style;
         if ( _style )
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction

@@ -58,7 +58,6 @@ Graph::Graph( QQuickItem* parent ) noexcept :
     setContainerItem( this );
     setAntialiasing( true );
     setSmooth( true );
-
 }
 
 Graph::~Graph() { /* Nil */ }
@@ -73,6 +72,7 @@ void    Graph::classBegin()
         setGroupDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Group.qml")));
         setNodeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Node.qml")));
         setEdgeDelegate(std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/Edge.qml")));
+        setSelectionItemDelegate(new QQmlComponent(engine, QStringLiteral("qrc:/QuickQanava/SelectionItem.qml")));
 
         _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
         _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
@@ -388,46 +388,71 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Style* st
              style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) : nullptr;
 }
 
-QQuickItem* Graph::createRectangle( QQuickItem* parent )
+void Graph::setSelectionItemDelegate(QQmlComponent* selectionItemDelegate) noexcept
 {
+    if ( selectionItemDelegate != nullptr ) {
+        if ( selectionItemDelegate != _selectionItemDelegate.data() ) {
+            _selectionItemDelegate = QPointer<QQmlComponent>(selectionItemDelegate);
+            QQmlEngine::setObjectOwnership( selectionItemDelegate, QQmlEngine::CppOwnership );
+            emit selectionItemDelegateChanged();
+        }
+    }
+}
+
+void Graph::setSelectionItemDelegate(QPointer<QQmlComponent> selectionItemDelegate) noexcept
+{
+       setSelectionItemDelegate(selectionItemDelegate.data());
+}
+
+QPointer<QQuickItem> Graph::createSelectionItemFromDelegate( QQuickItem* parent ) noexcept
+{
+    if ( _selectionItemDelegate && parent ) {
+        auto selectionItem = createItemFromComponent(_selectionItemDelegate.data());
+        selectionItem->setVisible(false);  // Avoid node/edge/group selection problems
+        selectionItem->setEnabled(false);
+        if (parent)
+            selectionItem->setParentItem(parent);
+        return selectionItem;
+    }
+
     // Initialize rectangle component for the first factory call.
-    if ( _rectangleComponent == nullptr ) {
+    /*if ( _selectionItemDelegate == nullptr ) {
         QQmlEngine* engine = qmlEngine( this );
         if ( engine != nullptr ) {
-            _rectangleComponent = std::make_unique<QQmlComponent>(engine);
-            QString componentQml = "import QtQuick 2.7\n  Rectangle{ }";
-            _rectangleComponent->setData( componentQml.toUtf8(), QUrl() );
-            if ( !_rectangleComponent->isReady() ) {
-                qWarning() << "qan::Graph::createRectangle(): Error: Can't create at Qt Quick Rectangle object:";
-                qWarning() << "\t" << componentQml;
-                qWarning() << "\tQML Component status=" << _rectangleComponent->status();
-                qWarning() << "\tQML Component errors=" << _rectangleComponent->errors();
+            _selectionItemDelegate = std::make_unique<QQmlComponent>(engine);
+            _selectionItemDelegate->loadUrl(QUrl("qrc:/QuickQanava/SelectionItem.qml"));
+            if ( !_selectionItemDelegate->isReady() ) {
+                qWarning() << "qan::Graph::createSelectionItemFromDelegate(): Error: Can't create at Qt Quick SelectionItem object:";
+                qWarning() << "\t" << _selectionItemDelegate->url();
+                qWarning() << "\tQML Component status=" << _selectionItemDelegate->status();
+                qWarning() << "\tQML Component errors=" << _selectionItemDelegate->errors();
             }
         }
     }
 
     // Create a Qt Quick Rectangle object
-    if ( _rectangleComponent != nullptr &&
-         _rectangleComponent->isReady() ) {
-        QObject* object = _rectangleComponent->create();
-        QQuickItem* rectangle = qobject_cast< QQuickItem* >( object );
-        if ( rectangle != nullptr ) {
-            rectangle->setVisible( false );
-            rectangle->setEnabled( false ); // Avoid node/edge/group selection problems
+    if ( _selectionItemDelegate != nullptr &&
+         _selectionItemDelegate->isReady() ) {
+        QObject* object = _selectionItemDelegate->create();
+        QQuickItem* selectionItem = qobject_cast< QQuickItem* >( object );
+        if ( selectionItem != nullptr ) {
+            selectionItem->setVisible( false );
+            selectionItem->setEnabled( false ); // Avoid node/edge/group selection problems
             if ( parent != nullptr )
-                rectangle->setParentItem( parent );
-            QQmlEngine::setObjectOwnership( rectangle, QQmlEngine::CppOwnership );
+                selectionItem->setParentItem( parent );
+            QQmlEngine::setObjectOwnership( selectionItem, QQmlEngine::CppOwnership );
         }
-        if ( rectangle == nullptr && object != nullptr ) {
-            qWarning() << "qan::Graph::createRectangle(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
+        if ( selectionItem == nullptr && object != nullptr ) {
+            qWarning() << "qan::Graph::createSelectionItemFromDelegate(): Error: A Qt Quick Object has been created, but it is not a Quick Canvas.";
             delete object;      // Somtehing has been created, but it is not a rectangle !
             return nullptr;
         }
-        return rectangle;
+        return std::unique_ptr<QQuickItem>{selectionItem};
     } else {
-        qWarning() << "qan::Graph::createRectangle(): Error: Can't create a Qt Quick Rectangle Object.";
-    }
-    return nullptr;
+        qWarning() << "qan::Graph::createSelectionItemFromDelegate(): Error: Can't create a Qt Quick SelectionItem Object.";
+    }*/
+
+    return QPointer<QQuickItem>{nullptr};
 }
 //-----------------------------------------------------------------------------
 
@@ -711,49 +736,6 @@ void    Graph::setSelectionPolicy( SelectionPolicy selectionPolicy ) noexcept
     emit selectionPolicyChanged( );
 }
 
-void    Graph::setSelectionColor( QColor selectionColor ) noexcept
-{
-    _selectionColor = selectionColor;
-    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-        if ( node != nullptr &&
-             node->getItem() != nullptr &&
-             node->getItem()->getSelectionItem() != nullptr ) {
-            QQuickItem* selectionItem = node->getItem()->getSelectionItem();
-            selectionItem->setProperty( "color", QVariant::fromValue( QColor(0,0,0,0) ) );
-            QObject* rectangleBorder = selectionItem->property( "border" ).value<QObject*>();
-            if ( rectangleBorder != nullptr )
-                rectangleBorder->setProperty( "color", selectionColor );
-        }
-    }
-    emit selectionColorChanged();
-}
-
-void    Graph::setSelectionWeight( qreal selectionWeight ) noexcept
-{
-    if ( qFuzzyCompare( selectionWeight, _selectionWeight ) )   // Never 0
-        return;
-    _selectionWeight = selectionWeight;
-    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-        if ( node != nullptr &&
-             node->getItem() != nullptr )
-            node->getItem()->configureSelectionItem( selectionWeight, getSelectionMargin() );
-    }
-    emit selectionWeightChanged();
-}
-
-void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
-{
-    if ( qFuzzyCompare( selectionMargin, _selectionMargin ) )   // Never 0
-        return;
-    _selectionMargin = selectionMargin;
-    for ( auto& node : _selectedNodes ) {   // Update visible selection hilight item
-        if ( node != nullptr &&
-             node->getItem() != nullptr )
-            node->getItem()->configureSelectionItem( getSelectionWeight(), selectionMargin );
-    }
-    emit selectionMarginChanged();
-}
-
 template < class Primitive_t >
 bool    selectPrimitiveImpl( Primitive_t& primitive,
                          Qt::KeyboardModifiers modifiers,
@@ -803,10 +785,8 @@ void    addToSelectionImpl( Primitive_t& primitive,
         if ( primitive.getItem() != nullptr ) {
             // Eventually, create and configure node item selection item
             if ( primitive.getItem()->getSelectionItem() == nullptr )
-                primitive.getItem()->setSelectionItem(graph.createRectangle(primitive.getItem()));
-            primitive.getItem()->configureSelectionItem( graph.getSelectionColor(),
-                                                         graph.getSelectionWeight(),
-                                                         graph.getSelectionMargin() );
+                primitive.getItem()->setSelectionItem(graph.createSelectionItemFromDelegate(primitive.getItem()).data());
+            primitive.getItem()->configureSelectionItem();
             primitive.getItem()->setSelected( true );
         }
     }
@@ -916,7 +896,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
                 auto dockItem = node->getItem()->getDock(dockType);
                 if ( dockItem == nullptr ) {
                     // Create a dock item from the default dock delegate
-                    dockItem = createDockFromDelegate(dockType, *node).release();
+                    dockItem = createDockFromDelegate(dockType, *node);
                     if ( dockItem != nullptr )
                         node->getItem()->setDock(dockType, dockItem);
                 }
@@ -973,13 +953,13 @@ void    Graph::setVerticalDockDelegate(QQmlComponent* verticalDockDelegate) noex
 }
 void    Graph::setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDockDelegate) noexcept { setVerticalDockDelegate(verticalDockDelegate.release()); }
 
-std::unique_ptr<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
+QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
 {
     using Dock = qan::NodeItem::Dock;
     if ( dock == Dock::Left ||
          dock == Dock::Right ) {
         if ( _verticalDockDelegate ) {
-            auto verticalDock = createDockFromComponent(_verticalDockDelegate.get());;
+            auto verticalDock = createItemFromComponent(_verticalDockDelegate.get());;
             verticalDock->setParentItem(node.getItem());
             verticalDock->setProperty("hostNodeItem",
                                       QVariant::fromValue(node.getItem()));
@@ -990,7 +970,7 @@ std::unique_ptr<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock do
     } else if ( dock == Dock::Top ||
                 dock == Dock::Bottom ) {
         if ( _horizontalDockDelegate ) {
-            auto horizontalDock = createDockFromComponent(_horizontalDockDelegate.get());
+            auto horizontalDock = createItemFromComponent(_horizontalDockDelegate.get());
             horizontalDock->setParentItem(node.getItem());
             horizontalDock->setProperty("hostNodeItem",
                                         QVariant::fromValue(node.getItem()));
@@ -999,44 +979,44 @@ std::unique_ptr<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock do
             return horizontalDock;
         }
     }
-    return std::unique_ptr<QQuickItem>{nullptr};
+    return QPointer<QQuickItem>{nullptr};
 }
 
-std::unique_ptr<QQuickItem> Graph::createDockFromComponent(QQmlComponent* dockComponent) noexcept
+QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) noexcept
 {
-    if ( dockComponent == nullptr ) {
-        qWarning() << "qan::Graph::createDockFromComponent(): Error called with a nullptr delegate component.";
+    if ( component == nullptr ) {
+        qWarning() << "qan::Graph::createItemFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
     try {
-        if ( !dockComponent->isReady() )
+        if ( !component->isReady() )
             throw qan::Error{ "Error delegate component is not ready." };
 
         const auto rootContext = qmlContext(this);
         if ( rootContext == nullptr )
             throw qan::Error{ "Error can't access to local QML context." };
-        QObject* object = dockComponent->beginCreate(rootContext);
+        QObject* object = component->beginCreate(rootContext);
         if ( object == nullptr ||
-             dockComponent->isError() ) {
+             component->isError() ) {
             if ( object != nullptr )
                 object->deleteLater();
             throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
-                              dockComponent->errorString() };
+                              component->errorString() };
         }
-        dockComponent->completeCreate();
-        if ( !dockComponent->isError() ) {
+        component->completeCreate();
+        if ( !component->isError() ) {
             QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
             item = qobject_cast< QQuickItem* >( object );
             item->setVisible( true );
             item->setParentItem( getContainerItem() );
         } // Note QAN3: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
-        qWarning() << "qan::Graph::createDockFromComponent(): " << e.getMsg();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errorString();
     } catch ( const std::exception& e ) {
-        qWarning() << "qan::Graph::createDockFromComponent(): " << e.what();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errorString();
     }
-    return std::unique_ptr<QQuickItem>{item};
+    return QPointer<QQuickItem>{item};
 }
 //-----------------------------------------------------------------------------
 
