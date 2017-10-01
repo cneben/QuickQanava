@@ -73,9 +73,7 @@ void    Selectable::setSelectable( bool selectable ) noexcept
 
 void    Selectable::setSelected( bool selected ) noexcept
 {
-    const auto node = qobject_cast<qan::NodeItem*>(_target);
-    qDebug() << "Selectable::setSelected(): " << " (" << ( node && node->getNode() ?
-                                                               node->getNode()->getLabel() : "" ) << ") "<< "\tselected=" << selected;
+    const auto node = qobject_cast<qan::NodeItem*>(_target);                                                               node->getNode()->getLabel() : "" ) << ") "<< "\tselected=" << selected;
     if ( _target &&
          _graph ) {  // Eventually create selection item
         if ( selected &&
