@@ -26,71 +26,96 @@
 
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
-//
 // \file	Port.qml
 // \author	benoit@destrat.io
 // \date	2017 08 12
 //-----------------------------------------------------------------------------
+import QtQuick 2.7
+import QtQuick.Controls 2.1
 
-import QtQuick              2.7
-import QtQuick.Controls     2.1
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 Qan.PortItem {
     id: portItem
-    width: 16;  height: 16
+    width: 16
+    height: 16
+    states: [
+        State {
+            name: "left"
+            when: dockType === Qan.NodeItem.Left
 
-    // Configure label position when dock type change
-    onDockTypeChanged: updateLabelAnchors()
+            PropertyChanges {
+                target: labelPane
+                anchors {
+                    left: undefined
+                    top: undefined
+                    right: contentItem.right
+                    bottom: contentItem.top
+                    horizontalCenter: undefined
+                }
+            }
+        },
+        State {
+            name: "top"
+            when: dockType === Qan.NodeItem.Top
 
-    function updateLabelAnchors() {
-        if ( dockType >= 0 ) {
-            switch ( dockType ) {
-            case Qan.NodeItem.Left:
-                labelPane.anchors.left = undefined
-                labelPane.anchors.top = undefined
-                labelPane.anchors.right = contentItem.right
-                labelPane.anchors.bottom = contentItem.top
-                labelPane.anchors.horizontalCenter = undefined
-                break;
-            case Qan.NodeItem.Top:
-                labelPane.anchors.left = undefined
-                labelPane.anchors.top = undefined
-                labelPane.anchors.right = undefined
+            PropertyChanges {
+                target: labelPane
+                anchors {
+                    left: undefined
+                    top: undefined
+                    right: undefined
+                    bottom: contentItem.top
+                    horizontalCenter: contentItem.horizontalCenter
+                }
+            }
+        },
+        State {
+            name: "right"
+            when: dockType === Qan.NodeItem.Right
 
-                labelPane.anchors.bottom = contentItem.top
-                labelPane.anchors.horizontalCenter = contentItem.horizontalCenter
-                break;
-            case Qan.NodeItem.Right:
-                labelPane.anchors.left = contentItem.left
-                labelPane.anchors.top = undefined
-                labelPane.anchors.right = undefined
-                labelPane.anchors.bottom = contentItem.top
-                labelPane.anchors.horizontalCenter = undefined
-                break;
-            case Qan.NodeItem.Bottom:
-                labelPane.anchors.left = undefined
-                labelPane.anchors.top = portItem.bottom
-                labelPane.anchors.right = undefined
-                labelPane.anchors.bottom = undefined
-                labelPane.anchors.horizontalCenter = portItem.horizontalCenter
-                labelPane.width = label.implicitWidth
-                labelPane.height = label.implicitHeight
-                break;
-            default: break;
+            PropertyChanges {
+                target: labelPane
+                anchors {
+                    left: contentItem.left
+                    top: undefined
+                    right: undefined
+                    bottom: contentItem.top
+                    horizontalCenter: undefined
+                }
+            }
+        },
+        State {
+            name: "bottom"
+            when: dockType === Qan.NodeItem.Bottom
+
+            PropertyChanges {
+                target: labelPane
+                anchors {
+                    left: undefined
+                    top: portItem.bottom
+                    right: undefined
+                    bottom: undefind
+                    horizontalCenter: portItem.horizontalCenter
+                }
+                width: label.implicitWidth
+                height: label.implicitHeight
             }
         }
-    }
+    ]
 
     Rectangle {
         id: contentItem
         anchors.fill: parent
         radius: width / 2
         color: "transparent"
-        border.color: "lightblue"
-        border.width: 3
+        border {
+            color: "lightblue"
+            width: 3
+        }
     }
+
     Pane {
         id: labelPane
         opacity: 0.80
@@ -98,10 +123,12 @@ Qan.PortItem {
         z: 2
         width: label.implicitWidth
         height: label.implicitHeight
+
         Label {
-            id: label; z: 3; text: portItem.label
+            id: label
+            z: 3
+            text: portItem.label
             visible: true
         }
-        Component.onCompleted: updateLabelAnchors()
     }
 }

@@ -81,7 +81,7 @@ public:
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
-    virtual ~Graph();
+    virtual ~Graph() override;
     Graph( const Graph& ) = delete;
     Graph& operator=( const Graph& ) = delete;
     Graph( Graph&& ) = delete;
@@ -267,13 +267,21 @@ protected:
     Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
 
 public:
+    Q_PROPERTY( QQmlComponent* selectionItemDelegate READ getSelectionItemDelegate WRITE setSelectionItemDelegate NOTIFY selectionItemDelegateChanged FINAL )
+    inline QQmlComponent*   getSelectionItemDelegate() noexcept { return _selectionItemDelegate.data(); }
+protected:
+    void                    setSelectionItemDelegate(QQmlComponent* selectionItemDelegate) noexcept;
+    void                    setSelectionItemDelegate(QPointer<QQmlComponent> selectionItemDelegate) noexcept;
+signals:
+    void                    selectionItemDelegateChanged();
+public:
     /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
      *
      * \note Internally used to generate selection rectangles around node, but part of the public API.
      */
-    QQuickItem*                     createRectangle( QQuickItem* parent );
+    QPointer<QQuickItem> createSelectionItemFromDelegate( QQuickItem* parent ) noexcept;
 private:
-    std::unique_ptr<QQmlComponent>  _rectangleComponent{nullptr};
+    QPointer<QQmlComponent>  _selectionItemDelegate{nullptr};
     //@}
     //-------------------------------------------------------------------------
 
@@ -468,36 +476,6 @@ signals:
     void                    selectionPolicyChanged();
 
 public:
-    //! Color for the node selection hilgither component (default to dark blue).
-    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
-    void            setSelectionColor( QColor selectionColor ) noexcept;
-    inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
-private:
-    QColor          _selectionColor{ Qt::darkBlue };
-signals:
-    void            selectionColorChanged();
-
-public:
-    //! Selection hilgither item stroke width (default to 3.0).
-    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
-    void            setSelectionWeight( qreal selectionWeight ) noexcept;
-    inline qreal    getSelectionWeight() const noexcept { return _selectionWeight; }
-private:
-    qreal           _selectionWeight{ 3. };
-signals:
-    void            selectionWeightChanged( );
-
-public:
-    //! Margin between the selection hilgither item and a selected item (default to 3.0).
-    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
-    void            setSelectionMargin( qreal selectionMargin ) noexcept;
-    inline qreal    getSelectionMargin() const noexcept { return _selectionMargin; }
-private:
-    qreal           _selectionMargin{ 3. };
-signals:
-    void            selectionMarginChanged();
-
-public:
     /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
      *
      * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
@@ -652,9 +630,9 @@ private:
 
 protected:
     //! Create a dock item from an existing dock item delegate.
-    std::unique_ptr<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
+    QPointer<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
 
-    std::unique_ptr<QQuickItem>     createDockFromComponent(QQmlComponent* dockComponent) noexcept;
+    QPointer<QQuickItem>     createItemFromComponent(QQmlComponent* component) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

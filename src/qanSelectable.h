@@ -93,27 +93,16 @@ private:
 
 public:
     /*! \brief Item used to hilight selection (usually a Rectangle quick item). */
-    inline QQuickItem*  getSelectionItem() { return _selectionItem.get(); }
+    inline QQuickItem*  getSelectionItem() { return _selectionItem.data(); }
     void                setSelectionItem( QQuickItem* selectionItem );
 protected:
     virtual void        emitSelectionItemChanged() = 0;
 private:
-    std::unique_ptr< QQuickItem >  _selectionItem{ nullptr };
+    QPointer<QQuickItem>  _selectionItem{ nullptr };
 
 public:
-    //! Update selection hilight item with new color, border weight and margin.
-    void            configureSelectionItem( QColor selectionColor, qreal selectionWeight, qreal selectionMargin );
-
-    //! Update selection hilight item with new border weight and margin.
-    void            configureSelectionItem( qreal selectionWeight, qreal selectionMargin );
-
-protected:
-    //! Should be called when target item width is modified.
-    void            updateSelectionWidth();
-    //! Should be called when target item width is modified.
-    void            updateSelectionHeight();
-    //@}
-    //-------------------------------------------------------------------------
+    /*! \brief Configure the minimum needed properties of selectionItem to show it properly. */
+    void            configureSelectionItem();
 };
 
 } // ::qan

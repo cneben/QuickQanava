@@ -9,6 +9,7 @@ RectGroupTemplate	2.0 RectGroupTemplate.qml
 CanvasNodeTemplate	2.0 CanvasNodeTemplate.qml
 VisualConnector 2.0 VisualConnector.qml
 LabelEditor	    2.0 LabelEditor.qml
+SelectionItem   2.0 SelectionItem.qml
 StyleListView	2.0 StyleListView.qml
 StyleEditor 	2.0 StyleEditor.qml
 HorizontalDock	2.0	HorizontalDock.qml
