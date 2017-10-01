@@ -92,16 +92,30 @@ private:
     bool            _selected{false};
 
 public:
-    /*! \brief Item used to hilight selection (usually a Rectangle quick item). */
-    inline QQuickItem*  getSelectionItem() { return _selectionItem.data(); }
-    void                setSelectionItem( QQuickItem* selectionItem );
+    /*! \brief Item used to hilight selection.
+     *
+     * \note Selection items are ususally created in qan::Graph::createSelectionItem() using
+     * the currently registered \c selectionDelegate set in qan::Graph.
+    */
+    inline QQuickItem*  getSelectionItem() noexcept { return _selectionItem.data(); }
+    //! \copydoc getSelectionItem()
+    void                setSelectionItem(QQuickItem* selectionItem) noexcept;
 protected:
+    //! \copydoc getSelectionItem()
     virtual void        emitSelectionItemChanged() = 0;
 private:
-    QPointer<QQuickItem>  _selectionItem{ nullptr };
+    //! \copydoc getSelectionItem()
+    QPointer<QQuickItem>  _selectionItem{nullptr};
 
 public:
-    /*! \brief Configure the minimum needed properties of selectionItem to show it properly. */
+    /*! \brief Configure the minimum needed properties of selectionItem to show it properly.
+     *
+     * \note Selection items are usually created using createSelectionItem(). A custom
+     * QML delegate should support QuickQanava selection item properties otherwise setting selection
+     * properties (such as color, weight or margin) at graph level won't work. No warnings or errors are
+     * generated when a custom delegate does not support this interface and it is totally valid to use
+     * a custom delegate with no global selection properties support.
+     */
     void            configureSelectionItem();
 };
 

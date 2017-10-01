@@ -46,7 +46,7 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 EdgeItem::EdgeItem( QQuickItem* parent ) :
-    QQuickItem{}
+    QQuickItem{parent}
 {
     setParentItem( parent );
     setAntialiasing( true );

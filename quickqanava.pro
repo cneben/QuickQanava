@@ -7,6 +7,7 @@ test-nodes.subdir       = samples/nodes
 test-edges.subdir       = samples/edges
 test-connector.subdir   = samples/connector
 test-groups.subdir      = samples/groups
+test-selection.subdir   = samples/selection
 test-style.subdir       = samples/style
 
 test-topology.subdir   = samples/topology
@@ -19,6 +20,7 @@ SUBDIRS +=  test-nodes
 SUBDIRS +=  test-edges
 SUBDIRS +=  test-connector
 SUBDIRS +=  test-groups
+SUBDIRS +=  test-selection
 SUBDIRS +=  test-style
 SUBDIRS +=  test-topology
 

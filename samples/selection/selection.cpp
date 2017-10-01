@@ -27,61 +27,30 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanUtils.h
-// \author	benoit@destrat.io
-// \date	2017 03 17
+// \file	groups.cpp
+// \author	benoit@qanava.org
+// \date	2016 03 23
 //-----------------------------------------------------------------------------
 
-#ifndef qanUtils_h
-#define qanUtils_h
-
-// Std headers
-#include <memory>       // std::default_delete
-#include <sstream>
-#include <random>
-#include <exception>
-
 // Qt headers
-#include <QString>
-#include <QQmlComponent>
-#include <QQmlEngine>
+#include <QApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
-namespace std
+// QuickQanava headers
+#include <QuickQanava>
+
+using namespace qan;
+
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
 {
-// QQmlComponent are often used in std::unique_ptr in QuickQanava, often theses objects
-// are owned by another thread despite their QQmlEngine::CppOwnership, using delete operator
-// directly generate crashes, specify a default_delete specifically for QQmlComponent to
-// use a deleteLater() call over a raw delete
-template<>
-struct default_delete<QQmlComponent> {
-    void operator()(QQmlComponent* ptr) {
-        if ( ptr &&
-             QQmlEngine::objectOwnership(ptr) == QQmlEngine::CppOwnership )
-            ptr->deleteLater();
-    }
-};
+    QApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/selection.qml"));
+    return app.exec();
 }
-
-//! Main QuickQanava namespace
-namespace qan { // ::qan
-
-/*! \brief Default QuickQanava exception, use what() and msg().
- *
- */
-class Error : public std::runtime_error {
-public:
-    explicit Error( const std::string& what_arg ) :
-        std::runtime_error{what_arg}, _msg{ QString::fromStdString(what_arg) } { }
-    explicit Error( const char* what_arg ) :
-        std::runtime_error{what_arg}, _msg{ QString(what_arg) } { }
-    explicit Error( const QString& msg_arg ) : std::runtime_error{ "" }, _msg{msg_arg} { }
-
-    const QString&  getMsg() const noexcept { return _msg; }
-private:
-    QString _msg{""};
-};
-
-} // ::qan
-
-#endif // qanUtils_h
+//-----------------------------------------------------------------------------
 

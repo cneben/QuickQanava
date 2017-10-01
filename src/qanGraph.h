@@ -46,6 +46,7 @@
 #include "./qanNode.h"
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
+#include "./qanSelectable.h"
 #include "./qanConnector.h"
 
 // Qt headers
@@ -70,6 +71,8 @@ class Graph : public gtpo::GenGraph< qan::GraphConfig >
     Q_INTERFACES(QQmlParserStatus)
 
     using GTpoGraph = gtpo::GenGraph< qan::GraphConfig >;
+
+    friend class qan::Selectable;
 
     /*! \name Graph Object Management *///-------------------------------------
     //@{
@@ -256,7 +259,7 @@ private:
     std::unique_ptr<QQmlComponent> _groupDelegate;
 
 protected:
-    //! Create a graph primitive using the given delegate \c component with either a source \c node or \c edge.
+    //! Create a _styleable_ graph primitive using the given delegate \c component with either a source \c node or \c edge.
     QQuickItem*             createFromComponent( QQmlComponent* component,
                                                  qan::Style& style,
                                                  qan::Node* node = nullptr,
@@ -267,21 +270,45 @@ protected:
     Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
 
 public:
-    Q_PROPERTY( QQmlComponent* selectionItemDelegate READ getSelectionItemDelegate WRITE setSelectionItemDelegate NOTIFY selectionItemDelegateChanged FINAL )
-    inline QQmlComponent*   getSelectionItemDelegate() noexcept { return _selectionItemDelegate.data(); }
-protected:
-    void                    setSelectionItemDelegate(QQmlComponent* selectionItemDelegate) noexcept;
-    void                    setSelectionItemDelegate(QPointer<QQmlComponent> selectionItemDelegate) noexcept;
-signals:
-    void                    selectionItemDelegateChanged();
-public:
-    /*! \brief Create a Qt Quick Rectangle object (caller get ownership for the object flagged with CppOwnership).
+    /*! \brief QML component used to create qan::NodeItem or qan::GroupItem \c selectionItem, could be dynamically changed from either c++ or QML.
      *
-     * \note Internally used to generate selection rectangles around node, but part of the public API.
+     *  \note Using setSelectionDelegate(nullptr) from c++ or Qan.Graph.selectionDelegate=null from QML is valid, QuickQanava will
+     *  default to a basic selection item delegate.
      */
-    QPointer<QQuickItem> createSelectionItemFromDelegate( QQuickItem* parent ) noexcept;
+    Q_PROPERTY( QQmlComponent* selectionDelegate READ getSelectionDelegate WRITE setSelectionDelegate NOTIFY selectionDelegateChanged FINAL )
+    //! \copydoc selectionDelegate
+    inline QQmlComponent*   getSelectionDelegate() noexcept { return _selectionDelegate.get(); }
+protected:
+    //! \copydoc selectionDelegate
+    void                    setSelectionDelegate(QQmlComponent* selectionDelegate) noexcept;
+    //! \copydoc selectionDelegate
+    void                    setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegate) noexcept;
+signals:
+    //! \copydoc selectionDelegate
+    void                    selectionDelegateChanged();
+public: // should be considered private
+    /*! \brief Create a concrete QQuickItem using the current \c selectionDelegate (private API).
+     *
+     * \arg parent Returned selection item is automatically reparented to \c parent (could be nullptr).
+     * \return A selection item or nullptr if graph \c selectionDelegate is invalid, ownershipd goes to the caller with QmlEngine::CppOwnership, might be nullptr.
+     */
+    QPointer<QQuickItem>            createSelectionItem(QQuickItem* parent) noexcept;
+protected:
+
+    struct QObjectDeleteLater {
+        void operator()(QObject *o) {
+            o->deleteLater();
+        }
+    };
+    template<typename T>
+    using unique_qptr = std::unique_ptr<T, QObjectDeleteLater>;
+
+    std::unique_ptr<QQmlComponent>  _selectionDelegate{nullptr};
 private:
-    QPointer<QQmlComponent>  _selectionItemDelegate{nullptr};
+    //! Secure factory for QML components, errors are reported on stderr.
+    std::unique_ptr<QQmlComponent>  createComponent(const QString& url) noexcept;
+    //! Secure utility to create a QQuickItem from a given QML component \c component (might issue warning if component is nullptr or not successfully loaded).
+    QPointer<QQuickItem>            createItemFromComponent(QQmlComponent* component) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -475,6 +502,42 @@ private:
 signals:
     void                    selectionPolicyChanged();
 
+
+public:
+    //! Color for the node selection hilgither component (default to dark blue).
+    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
+    void            setSelectionColor( QColor selectionColor ) noexcept;
+    inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
+private:
+    QColor          _selectionColor{ Qt::darkBlue };
+signals:
+    void            selectionColorChanged();
+
+public:
+    //! Selection hilgither item stroke width (default to 3.0).
+    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
+    void            setSelectionWeight( qreal selectionWeight ) noexcept;
+    inline qreal    getSelectionWeight() const noexcept { return _selectionWeight; }
+private:
+    qreal           _selectionWeight{ 3. };
+signals:
+    void            selectionWeightChanged( );
+
+public:
+    //! Margin between the selection hilgither item and a selected item (default to 3.0).
+    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
+    void            setSelectionMargin( qreal selectionMargin ) noexcept;
+    inline qreal    getSelectionMargin() const noexcept { return _selectionMargin; }
+private:
+    qreal           _selectionMargin{ 3. };
+signals:
+    void            selectionMarginChanged();
+
+protected:
+    /*! \brief Force a call to qan::Selectable::configureSelectionItem() call on all currently selected primitives (either nodes or group).
+     */
+    void            configureSelectionItems() noexcept;
+
 public:
     /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
      *
@@ -631,8 +694,6 @@ private:
 protected:
     //! Create a dock item from an existing dock item delegate.
     QPointer<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
-
-    QPointer<QQuickItem>     createItemFromComponent(QQmlComponent* component) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };
