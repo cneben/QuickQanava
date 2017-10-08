@@ -4,7 +4,8 @@ QT          += core widgets gui qml quick
 
 include(../GTpo/src/gtpo.pri)
 include(../QuickContainers/src/quickcontainers.pri)
-include(../QuickGeoGL/src/quickgeogl.pri)
+# No longuer included by default since 0.9.2
+#include(../QuickGeoGL/src/quickgeogl.pri)
 
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
@@ -16,7 +17,6 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
             $$PWD/qanEdgeItem.h             \
-            $$PWD/qanCurveEdgeItem.h        \
             $$PWD/qanNode.h                 \
             $$PWD/qanNodeItem.h             \
             $$PWD/qanPortItem.h             \
@@ -43,7 +43,6 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \
             $$PWD/qanEdge.cpp               \
             $$PWD/qanEdgeItem.cpp           \
-            $$PWD/qanCurveEdgeItem.cpp      \
             $$PWD/qanNode.cpp               \
             $$PWD/qanNodeItem.cpp           \
             $$PWD/qanPortItem.cpp           \
@@ -74,7 +73,6 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/HorizontalDock.qml        \
                 $$PWD/VerticalDock.qml          \
                 $$PWD/Edge.qml                  \
-                $$PWD/CurvedEdge.qml            \
                 $$PWD/SelectionItem.qml         \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \

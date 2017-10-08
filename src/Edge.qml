@@ -27,30 +27,97 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	Edge.qml
+// \file	CurvedEdge.qml
 // \author	benoit@destrat.io
-// \date	2015 06 20
+// \date	2018 09 04
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
 import QtQuick.Layouts  1.3
+import QtQuick.Shapes   1.0
 
-import QuickQanava          2.0 as Qan
-import QuickGeoGL           1.0 as Qgl
-import "qrc:/QuickGeoGL"    1.0 as Qgl
+import QuickQanava      2.0 as Qan
 
 Qan.EdgeItem {
     id: edgeItem
-    property color  color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
-    Qgl.Arrow {
+
+    property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
+
+    Shape {
+        id: edgeCap
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.dstAngle
+        x: edgeItem.p2.x
+        y: edgeItem.p2.y
+        ShapePath {
+            id: cap
+            strokeColor: edgeItem.color
+            fillColor: edgeItem.color
+            strokeWidth: 2
+            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
+            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
+            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
+            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
+        }
+    }
+
+    Shape {
+        id: edgeShape
         anchors.fill: parent
-        id: arrow
         visible: edgeItem.visible && !edgeItem.hidden
-        p1: edgeItem.p1
-        p2: edgeItem.p2
-        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-        color: edgeItem.color
+        //asynchronous: true    // FIXME: Benchmark that
+        smooth: true
+        ShapePath {
+            id: arrow
+            startX: edgeItem.p1.x
+            startY: edgeItem.p1.y
+            capStyle: ShapePath.FlatCap
+            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+            strokeColor: edgeItem.color
+            strokeStyle: ShapePath.SolidLine
+            fillColor: Qt.rgba(0,0,0,0)
+
+            PathLine {
+                x: edgeItem.p2.x
+                y: edgeItem.p2.y
+            }
+
+            /*Qgl.Arrow {
+                anchors.fill: parent
+                id: arrow
+                visible: edgeItem.visible && !edgeItem.hidden
+                p1: edgeItem.p1
+                p2: edgeItem.p2
+                p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
+                lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+                color: edgeItem.color
+            }*/
+
+            /*PathCubic {
+                x: edgeItem.p2.x
+                y: edgeItem.p2.y
+                control1X: edgeItem.c1.x
+                control1Y: edgeItem.c1.y
+                control2X: edgeItem.c2.x
+                control2Y: edgeItem.c2.y
+            }*/
+        }
+        /*
+        // Debug control points display code. FIXME: remove that for final release
+        Rectangle {
+            width: 8; height: width
+            x: edgeItem.c1.x - ( radius / 2 )
+            y: edgeItem.c1.y - ( radius / 2 )
+            radius: width / 2
+            color: "red"
+        }
+        Rectangle {
+            width: 8; height: width
+            x: edgeItem.c2.x - ( radius / 2 )
+            y: edgeItem.c2.y - ( radius / 2 )
+            radius: width / 2
+            color: "green"
+        }
+        */
     }
 }
-
