@@ -63,6 +63,42 @@ EdgeStyle::EdgeStyle( QString name, QObject* parent ) :
     qan::Style( name, parent )
 {
 }
+
+void            EdgeStyle::setLineType( LineType lineType ) noexcept
+{
+    if ( lineType != _lineType ) {
+        _lineType = lineType;
+        emit lineTypeChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setLineColor( const QColor& lineColor ) noexcept
+{
+    if ( lineColor != _lineColor ) {
+        _lineColor = lineColor;
+        emit lineColorChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setLineWidth( qreal lineWidth ) noexcept
+{
+    if ( !qFuzzyCompare( 1.0 + lineWidth, 1.0 + _lineWidth ) ) {
+        _lineWidth = lineWidth;
+        emit lineWidthChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setArrowSize( qreal arrowSize ) noexcept
+{
+    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+        _arrowSize = arrowSize;
+        emit arrowSizeChanged();
+        emit styleModified();
+    }
+}
 //-----------------------------------------------------------------------------
 
 } // ::qan

@@ -185,18 +185,36 @@ signals:
     void            styleModified();
 
 public:
-    Q_PROPERTY( QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged FINAL )
-    void            setLineColor( const QColor& lineColor ) noexcept { _lineColor = lineColor; emit lineColorChanged( ); emit styleModified(); }
-    const QColor&   getLineColor() const noexcept { return _lineColor; }
+    //! Define edge style: either straight (drawn with a line) or curved (drawn with a cubic path).
+    enum class LineType : unsigned int {
+        Straight    = 0,
+        Curved      = 1
+    };
+    Q_ENUM(LineType)
+
+public:
+    //! Define edge line type: either plain line (Straight) or curved cubic path (Curved), default to Straight.
+    Q_PROPERTY( LineType lineType READ getLineType WRITE setLineType NOTIFY lineTypeChanged FINAL )
+    void            setLineType( LineType lineType ) noexcept;
+    inline LineType getLineType() const noexcept { return _lineType; }
 protected:
-    QColor          _lineColor = QColor( 0, 0, 0, 255 );
+    LineType        _lineType{LineType::Straight};
 signals:
-    void            lineColorChanged();
+    void            lineTypeChanged();
+
+public:
+    Q_PROPERTY( QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged FINAL )
+    void                    setLineColor( const QColor& lineColor ) noexcept;
+    inline const QColor&    getLineColor() const noexcept { return _lineColor; }
+protected:
+    QColor                  _lineColor = QColor( 0, 0, 0, 255 );
+signals:
+    void                    lineColorChanged();
 
 public:
     Q_PROPERTY( qreal lineWidth READ getLineWidth WRITE setLineWidth NOTIFY lineWidthChanged FINAL )
-    void            setLineWidth( qreal lineWidth ) noexcept { _lineWidth = lineWidth; emit lineWidthChanged( ); emit styleModified();  }
-    qreal           getLineWidth() const noexcept { return _lineWidth; }
+    void            setLineWidth( qreal lineWidth ) noexcept;
+    inline qreal    getLineWidth() const noexcept { return _lineWidth; }
 protected:
     qreal           _lineWidth = 2.0;
 signals:
@@ -204,8 +222,8 @@ signals:
 
 public:
     Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL )
-    void            setArrowSize( qreal arrowSize ) noexcept { _arrowSize = arrowSize; emit arrowSizeChanged( ); emit styleModified();  }
-    qreal           getArrowSize() const noexcept { return _arrowSize; }
+    void            setArrowSize( qreal arrowSize ) noexcept;
+    inline qreal    getArrowSize() const noexcept { return _arrowSize; }
 protected:
     qreal           _arrowSize = 4.0;
 signals:

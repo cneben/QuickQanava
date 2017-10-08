@@ -41,7 +41,7 @@ import QuickQanava      2.0 as Qan
 Qan.CurveEdgeItem {
     id: edgeItem
 
-    property color color: style ? style.lineColor : Qt.black
+    property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
 
     Shape {
         id: edgeCap

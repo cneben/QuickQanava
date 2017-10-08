@@ -41,7 +41,7 @@ import "qrc:/QuickGeoGL"    1.0 as Qgl
 
 Qan.EdgeItem {
     id: edgeItem
-    property color  color: style ? style.lineColor : Qt.black
+    property color  color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
     Qgl.Arrow {
         anchors.fill: parent
         id: arrow
