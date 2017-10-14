@@ -103,7 +103,7 @@ ApplicationWindow {
 
                 graph.setConnectorSource(c)
 
-                var x = 850; var y = 80
+                /*var x = 850; var y = 80
                 generateTestPortLayout(x, y,             Qan.NodeItem.Left, Qan.NodeItem.Left);
                 generateTestPortLayout(x + 700, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
                 generateTestPortLayout(x, y + 650,       Qan.NodeItem.Left, Qan.NodeItem.Right);
@@ -126,6 +126,7 @@ ApplicationWindow {
                 generateTestPortLayout(x + 700, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
                 generateTestPortLayout(x, y + 650,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
                 generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
+                */
             }
 
             function generateTestPortLayout(x, y, srcPortType, dstPortType) {
@@ -201,18 +202,38 @@ ApplicationWindow {
         title: "Edge color"
         onAccepted: { defaultEdgeStyle.lineColor = color; }
     }
-    Item {
+    Control {
         id: edgeStyleEditor
-        anchors.top: parent.top;   anchors.topMargin: 15
+        anchors.top: parent.top;        anchors.topMargin: 15
         anchors.right: parent.right;    anchors.rightMargin: 15
-        width: 200; height: 250
-        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
+        width: 220; height: 280; padding: 0
+        Frame { anchors.fill: parent; opacity: 0.5; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.fill: parent; anchors.margins: 10
+            //anchors.fill: parent; anchors.margins: 10
             Label {
                 Layout.margins: 3; text: "Edge Style:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
+            RowLayout {
+                Layout.margins: 2
+                Label { text:"Edge type:" }
+                Item { Layout.fillWidth: true }
+                ComboBox {
+                    model: ListModel {
+                        id: model
+                        ListElement { text: "Straight" }
+                        ListElement { text: "Curved" }
+                    }
+                    enabled: defaultEdgeStyle !== undefined
+                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        if (index == 0 )
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+                        else if ( index == 1 )
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+                    }
+                }
+            } // RowLayout: edgeType
             RowLayout {
                 Layout.margins: 2
                 Label { text:"Line color:" }

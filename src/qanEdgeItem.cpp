@@ -202,6 +202,7 @@ void    EdgeItem::setHidden(bool hidden) noexcept
 
 void    EdgeItem::updateItem() noexcept
 {
+    //qDebug() << "qan::EdgeItem::updateItem(): lineType=" << _style->getLineType();
     updateStraightItem();   // Always update straight line
     if ( _style &&
          _style->getLineType() == EdgeStyle::LineType::Curved )
@@ -683,6 +684,8 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
             // from edge delegate). Since arrowSize affect concrete edge geometry, bind it manually to
             // updateItem().
             connect( _style,    &qan::EdgeStyle::arrowSizeChanged,
+                     this,      &EdgeItem::updateItem );
+            connect( _style,    &qan::EdgeStyle::lineTypeChanged,
                      this,      &EdgeItem::updateItem );
         }
         emit styleChanged( );

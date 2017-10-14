@@ -59,6 +59,44 @@ Qan.EdgeItem {
             PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
             PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
         }
+    } // edgeCap
+    Component {
+        id: straightShapePath
+        ShapePath {
+            id: edgeShapePath
+            startX: edgeItem.p1.x
+            startY: edgeItem.p1.y
+            capStyle: ShapePath.FlatCap
+            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+            strokeColor: edgeItem.color
+            strokeStyle: ShapePath.SolidLine
+            fillColor: Qt.rgba(0,0,0,0)
+            PathLine {
+                x: edgeItem.p2.x
+                y: edgeItem.p2.y
+            }
+        }
+    }
+    Component {
+        id: curvedShapePath
+        ShapePath {
+            id: edgeShapePath
+            startX: edgeItem.p1.x
+            startY: edgeItem.p1.y
+            capStyle: ShapePath.FlatCap
+            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+            strokeColor: edgeItem.color
+            strokeStyle: ShapePath.SolidLine
+            fillColor: Qt.rgba(0,0,0,0)
+            PathCubic {
+                x: edgeItem.p2.x
+                y: edgeItem.p2.y
+                control1X: edgeItem.c1.x
+                control1Y: edgeItem.c1.y
+                control2X: edgeItem.c2.x
+                control2Y: edgeItem.c2.y
+            }
+        }
     }
 
     Shape {
@@ -67,40 +105,21 @@ Qan.EdgeItem {
         visible: edgeItem.visible && !edgeItem.hidden
         //asynchronous: true    // FIXME: Benchmark that
         smooth: true
-        ShapePath {
-            id: arrow
-            startX: edgeItem.p1.x
-            startY: edgeItem.p1.y
-            capStyle: ShapePath.FlatCap
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            strokeColor: edgeItem.color
-            strokeStyle: ShapePath.SolidLine
-            fillColor: Qt.rgba(0,0,0,0)
-
-            PathLine {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
+        property var lineType : style.lineType
+        property var curvedLine : undefined
+        property var straightLine : undefined
+        onLineTypeChanged: {
+            if ( lineType === Qan.EdgeStyle.Straight ) {
+                if ( curvedLine )
+                    curvedLine.destroy()
+                straightLine = straightShapePath.createObject(edgeShape)
+                edgeShape.data = straightLine
+            } else if ( lineType === Qan.EdgeStyle.Curved ) {
+                if ( straightLine )
+                    straightLine.destroy()
+                curvedLine = curvedShapePath.createObject(edgeShape)
+                edgeShape.data = curvedLine
             }
-
-            /*Qgl.Arrow {
-                anchors.fill: parent
-                id: arrow
-                visible: edgeItem.visible && !edgeItem.hidden
-                p1: edgeItem.p1
-                p2: edgeItem.p2
-                p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-                lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-                color: edgeItem.color
-            }*/
-
-            /*PathCubic {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
-                control1X: edgeItem.c1.x
-                control1Y: edgeItem.c1.y
-                control2X: edgeItem.c2.x
-                control2Y: edgeItem.c2.y
-            }*/
         }
         /*
         // Debug control points display code. FIXME: remove that for final release

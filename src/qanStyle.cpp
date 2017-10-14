@@ -64,7 +64,7 @@ EdgeStyle::EdgeStyle( QString name, QObject* parent ) :
 {
 }
 
-void            EdgeStyle::setLineType( LineType lineType ) noexcept
+void    EdgeStyle::setLineType( LineType lineType ) noexcept
 {
     if ( lineType != _lineType ) {
         _lineType = lineType;
