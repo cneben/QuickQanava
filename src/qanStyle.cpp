@@ -99,6 +99,22 @@ void    EdgeStyle::setArrowSize( qreal arrowSize ) noexcept
         emit styleModified();
     }
 }
+
+void    EdgeStyle::setDashed( bool dashed ) noexcept
+{
+    if ( dashed != _dashed ) {
+        _dashed = dashed;
+        emit dashedChanged();
+    }
+}
+
+void    EdgeStyle::setDashPattern( const QVector<qreal>& dashPattern ) noexcept
+{
+    _dashPattern = dashPattern;
+    emit dashPatternChanged();
+}
+
+const QVector<qreal>& EdgeStyle::getDashPattern() const noexcept { return _dashPattern; }
 //-----------------------------------------------------------------------------
 
 } // ::qan

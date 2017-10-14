@@ -324,7 +324,9 @@ void    EdgeItem::updateStraightItem() noexcept
         }
     }
 
-    updateArrowGeometry();
+    if ( !_style ||
+         _style->getLineType() == EdgeStyle::LineType::Straight )
+        updateArrowGeometry();
     _dstAngle = lineAngle(QLineF{_p1, _p2});
     emit dstAngleChanged();
 } // updateStraightItem()
@@ -687,6 +689,9 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
                      this,      &EdgeItem::updateItem );
             connect( _style,    &qan::EdgeStyle::lineTypeChanged,
                      this,      &EdgeItem::updateItem );
+            // FIXME: what about dashed and dashPattern ???? just update....
+            //connect( _style,    &qan::EdgeStyle::dashedChanged,
+            //         this,      &EdgeItem::updateItem );
         }
         emit styleChanged( );
     }

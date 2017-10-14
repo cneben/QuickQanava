@@ -49,6 +49,7 @@ Qan.EdgeItem {
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
+        visible: edgeItem.visible && !edgeItem.hidden
         ShapePath {
             id: cap
             strokeColor: edgeItem.color
@@ -69,7 +70,8 @@ Qan.EdgeItem {
             capStyle: ShapePath.FlatCap
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeItem.color
-            strokeStyle: ShapePath.SolidLine
+            strokeStyle: style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+            dashPattern: style ? style.dashPattern : [4, 2]
             fillColor: Qt.rgba(0,0,0,0)
             PathLine {
                 x: edgeItem.p2.x
@@ -86,7 +88,8 @@ Qan.EdgeItem {
             capStyle: ShapePath.FlatCap
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeItem.color
-            strokeStyle: ShapePath.SolidLine
+            strokeStyle: style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+            dashPattern: style ? style.dashPattern : [4, 2]
             fillColor: Qt.rgba(0,0,0,0)
             PathCubic {
                 x: edgeItem.p2.x

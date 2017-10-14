@@ -206,7 +206,7 @@ ApplicationWindow {
         id: edgeStyleEditor
         anchors.top: parent.top;        anchors.topMargin: 15
         anchors.right: parent.right;    anchors.rightMargin: 15
-        width: 220; height: 280; padding: 0
+        width: 220; height: 395; padding: 0
         Frame { anchors.fill: parent; opacity: 0.5; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
             //anchors.fill: parent; anchors.margins: 10
@@ -219,11 +219,7 @@ ApplicationWindow {
                 Label { text:"Edge type:" }
                 Item { Layout.fillWidth: true }
                 ComboBox {
-                    model: ListModel {
-                        id: model
-                        ListElement { text: "Straight" }
-                        ListElement { text: "Curved" }
-                    }
+                    model: ["Straight", "Curved"]
                     enabled: defaultEdgeStyle !== undefined
                     currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
                     onActivated: {
@@ -261,6 +257,33 @@ ApplicationWindow {
                     onValueModified: defaultEdgeStyle.lineWidth = value
                 }
             } // RowLayout: lineWidth
+
+            ColumnLayout {
+                Layout.margins: 2
+                CheckBox {
+                    id: dashed
+                    text: "Dashed"
+                    checked: defaultEdgeStyle.dashed
+                    onClicked: {
+                        if (defaultEdgeStyle)
+                            defaultEdgeStyle.dashed = checked
+                    }
+                }
+                ComboBox {
+                    enabled: dashed.checked
+                    model: ["Dash", "Dot", "Dash Dot"]
+                    //currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        if (index == 0 )
+                            defaultEdgeStyle.dashPattern = [2,2]
+                        else if ( index == 1 )
+                            defaultEdgeStyle.dashPattern = [1,1]
+                        else if ( index == 2 )
+                            defaultEdgeStyle.dashPattern = [2,2,4,2]
+                    }
+                }
+            } // ColumneLayout: dashed
+
             ColumnLayout {
                 Layout.margins: 2
                 Label { text:"Arrow size:" }

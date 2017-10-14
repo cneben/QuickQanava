@@ -228,6 +228,34 @@ protected:
     qreal           _arrowSize = 4.0;
 signals:
     void            arrowSizeChanged();
+
+public:
+    //! Draw edge with dashed line (default to false), when set to true \c dashPattern is active.
+    Q_PROPERTY( bool dashed READ getDashed WRITE setDashed NOTIFY dashedChanged FINAL )
+    //! \copydoc dashed
+    void            setDashed( bool dashed ) noexcept;
+    //! \copydoc dashed
+    inline bool     getDashed() const noexcept { return _dashed; }
+protected:
+    //! \copydoc dashed
+    bool            _dashed{false};
+signals:
+    //! \copydoc dashed
+    void            dashedChanged();
+
+public:
+    //! See QtQuick.Shape ShapePath.dashPattern property documentation, default to [2,2] ie regular dash line, used when dashed property is set to true.
+    Q_PROPERTY( QVector<qreal> dashPattern READ getDashPattern WRITE setDashPattern NOTIFY dashPatternChanged FINAL )
+    //! \copydoc dashPattern
+    void            setDashPattern( const QVector<qreal>& dashPattern ) noexcept;
+    //! \copydoc dashPattern
+    const QVector<qreal>&   getDashPattern() const noexcept;
+protected:
+    //! \copydoc dashPattern
+    QVector<qreal>  _dashPattern{ 2, 2 };
+signals:
+    //! \copydoc dashPattern
+    void            dashPatternChanged();
     //@}
     //-------------------------------------------------------------------------
 };
