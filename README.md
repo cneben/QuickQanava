@@ -13,8 +13,9 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
+![](https://img.shields.io/badge/version-0.9.2-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
-![](https://img.shields.io/badge/version-0.9.2-blue.svg)
+
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
