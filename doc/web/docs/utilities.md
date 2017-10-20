@@ -32,19 +32,3 @@ Navigable:
 [`qan::Navigable`](http://www.destrat.io/quickqanava/doc/classqan_1_1_navigable.html)
 
 
-QuickGeoGL:
-------------------
-
-`QuickGeoGL` is used in QuickQanava to draw lines/polylines and convex polygon using Qt Quick items with fast OpenGL shaders. 
-
-`QuickGeoGL` has support for:
-
-- Lines antialiased rendered using a geometry and fragment OpenGL shader.
-- Convex polygons with antialiased border and background.
-- Polylines both open and closed with antialiasing using a geometry and fragment OpenGL shader.
-
-![QuickGeoGL convex polygons](utilities/quickgeogl-convex-polygons.png)
-
-![QuickGeoGL lines](utilities/quickgeogl-lines.png)
-
-![QuickGeoGL arrows](utilities/quickgeogl-arrows.png)

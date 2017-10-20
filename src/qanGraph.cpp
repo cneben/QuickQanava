@@ -371,7 +371,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             item->setParentItem( getContainerItem() );
         } // Note: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
-        qWarning() << "qan::Graph::createFromComponent(): " << e.getMsg();
+        qWarning() << "qan::Graph::createFromComponent(): " << component->errors();
     } catch ( const std::exception& e ) {
         qWarning() << "qan::Graph::createFromComponent(): " << e.what();
     }
@@ -493,9 +493,9 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
             item->setParentItem( getContainerItem() );
         } // Note QAN3: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
-        qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errorString();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errors();
     } catch ( const std::exception& e ) {
-        qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errorString();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errors();
     }
     return QPointer<QQuickItem>{item};
 }

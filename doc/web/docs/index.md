@@ -55,10 +55,10 @@ cd QuickQanava
 
 ## Roadmap:
 
-  - **v0.9.1:**:	 
+  - **v0.9.2:**:	 
     - [ ] Add smarter heuristics for edges's Bezier curve control points generation.
     - [ ] Add full support for groups inside group (ie subgraphs).
-    - [ ] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
+    - [X] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
 	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
 		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
 		- [ ] Add support for standard library containers.
