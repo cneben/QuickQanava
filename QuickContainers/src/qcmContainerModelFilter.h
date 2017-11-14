@@ -35,10 +35,42 @@
 #ifndef qcmContainerModelFilter_h
 #define qcmContainerModelFilter_h
 
+// Qt headers
+#include <QSortFilterProxyModel>
+
 // QuickContainers headers
 #include "./qcmContainerModel.h"
 
 namespace qcm { // ::qcm
+
+class AbstractContainerModelFilter : public QSortFilterProxyModel
+{
+    Q_OBJECT
+public:
+    AbstractContainerModelFilter(QObject* parent = nullptr);
+    virtual ~AbstractContainerModelFilter() { /* Nil */ }
+    AbstractContainerModelFilter(const AbstractContainerModelFilter&) = delete;
+    AbstractContainerModelFilter(AbstractContainerModelFilter&&) = delete;
+
+protected:
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+};
+
+template < class ContainerModel, typename FilterFunctor >
+class ContainerModelFilter : AbstractContainerModelFilter
+{
+public:
+    explicit ContainerModelFilter(QObject* parent = nullptr) : AbstractContainerModelFilter(parent) { }
+    virtual ~ContainerModelFilter() { /* Nil */ }
+    ContainerModelFilter(const ContainerModelFilter&) = delete;
+    ContainerModelFilter(ContainerModelFilter&&) = delete;
+
+protected:
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override
+    {
+        return FilterFunctor(sourceRow, sourceParent);
+    }
+};
 
 } // ::qcm
 

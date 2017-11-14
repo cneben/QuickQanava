@@ -295,8 +295,8 @@ void    EdgeItem::updateStraightItem() noexcept
             const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
             const auto arrowLength = arrowSize * 3.;
 
-            //const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
-            const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (0.2) ) );    // Note 20161001: Hack to take into account arrow border of 2px
+            const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
+            //const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (0.2) ) );
 
             if ( QLineF{p1, p2}.length() > 2.0 ) {    // FIXME: arrow size has to be taken into account here...
                 setHidden(false);

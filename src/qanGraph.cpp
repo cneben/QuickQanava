@@ -371,6 +371,7 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             item->setParentItem( getContainerItem() );
         } // Note: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
+        Q_UNUSED(e);
         qWarning() << "qan::Graph::createFromComponent(): " << component->errors();
     } catch ( const std::exception& e ) {
         qWarning() << "qan::Graph::createFromComponent(): " << e.what();
