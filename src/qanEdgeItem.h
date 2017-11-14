@@ -163,20 +163,19 @@ public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );
     //! Edge source point in item CS (with accurate source bounding shape intersection).
-    Q_PROPERTY( QPointF p1 READ getP1() NOTIFY p1Changed FINAL )
+    Q_PROPERTY( QPointF p1 READ getP1() NOTIFY lineGeometryChanged FINAL )
     inline  auto    getP1() const noexcept -> const QPointF& { return _p1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
-    Q_PROPERTY( QPointF p2 READ getP2() NOTIFY p2Changed FINAL )
+    Q_PROPERTY( QPointF p2 READ getP2() NOTIFY lineGeometryChanged FINAL )
     inline  auto    getP2() const noexcept -> const QPointF& { return _p2; }
 signals:
-    void            p1Changed();
-    void            p2Changed();
+    void            lineGeometryChanged();
 protected:
     QPointF         _p1;
     QPointF         _p2;
 protected:
-    QPointF         getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const;
-    QLineF          getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const;
+    QPointF         getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const noexcept;
+    QLineF          getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -241,25 +240,27 @@ signals:
     void            srcAngleChanged();
 
 public:
-    //! Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
-    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY dstA1Changed FINAL )
+    /*! \brief Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
+     *
+     * \note Arrow geometry is updated with a single arrowGeometryChanged() to avoid unecessary binding: all points
+     * geometry must be changed at the same time.
+     */
+    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY arrowGeometryChanged FINAL )
     //! \copydoc dstA1
     inline  auto    getDstA1() const noexcept -> const QPointF& { return _dstA1; }
     //! \copydoc dstA1
-    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY dstA2Changed FINAL )
+    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY arrowGeometryChanged FINAL )
     //! \copydoc dstA1
     inline  auto    getDstA2() const noexcept -> const QPointF& { return _dstA2; }
     //! \copydoc dstA1
-    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY dstA3Changed FINAL )
+    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY arrowGeometryChanged FINAL )
     //! \copydoc dstA1
     inline  auto    getDstA3() const noexcept -> const QPointF& { return _dstA3; }
 private:
     //! \copydoc dstA1
     QPointF         _dstA1, _dstA2, _dstA3;
 signals:
-    void            dstA1Changed();
-    void            dstA2Changed();
-    void            dstA3Changed();
+    void            arrowGeometryChanged();
     //@}
     //-------------------------------------------------------------------------
 

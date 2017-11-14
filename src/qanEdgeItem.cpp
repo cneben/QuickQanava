@@ -288,22 +288,17 @@ void    EdgeItem::updateStraightItem() noexcept
         const bool edgeHidden = ( srcBoundingShape.boundingRect().contains(br) ||
                                   dstBoundingShape.boundingRect().contains(br) );
         if (!edgeHidden) {
-            setPosition( br.topLeft() );    // Warning: it should be done before mapFromItem...
+            setPosition( br.topLeft() );    // Note: setPosition() call must occurs before mapFromItem()
             setSize( br.size() );
             const auto p1 = mapFromItem(graphContainerItem, line.p1());
-
             const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
             const auto arrowLength = arrowSize * 3.;
-
-            const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (2/line.length()) ) );    // Note 20161001: Hack to take into account arrow border of 2px
-            //const auto p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - (0.2) ) );
-
-            if ( QLineF{p1, p2}.length() > 2.0 ) {    // FIXME: arrow size has to be taken into account here...
+            const auto p2 = mapFromItem(graphContainerItem, line.p2() );
+            if ( QLineF{p1, p2}.length() > 2.0 + arrowLength ) {
                 setHidden(false);
                 _p1 = p1;
                 _p2 = p2;
-                emit p1Changed();
-                emit p2Changed();
+                emit lineGeometryChanged();
                 setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );
             } else
                 setHidden(true);
@@ -324,30 +319,36 @@ void    EdgeItem::updateStraightItem() noexcept
 
             _p1 = mapFromItem(graphContainerItem, line.p1() );
             _p2 = mapFromItem(graphContainerItem, line.pointAt( 1 - 2/line.length()) );
-            emit p1Changed();
-            emit p2Changed();
+            emit lineGeometryChanged();
             setLabelPos( line.pointAt( 0.5 ) + QPointF{10., 10.} );            
         }
     }
 
+    _dstAngle = lineAngle(QLineF{_p1, _p2});
+    emit dstAngleChanged(); // Note: Update dstAngle before arrow geometry.
     if ( !_style ||
          _style->getLineType() == EdgeStyle::LineType::Straight )
         updateArrowGeometry();
-    _dstAngle = lineAngle(QLineF{_p1, _p2});
-    emit dstAngleChanged();
 } // updateStraightItem()
 
 void    EdgeItem::updateArrowGeometry() noexcept
-{
+{    
     const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
     const auto arrowLength = arrowSize * 3.;
     {
-        const auto base = QPointF{-arrowLength, 0. };
-
+        const auto base = QPointF{0., 0. };
         _dstA1 = QPointF{ base.x(),                 -arrowSize  };
         _dstA2 = QPointF{ base.x() + arrowLength,   base.y()    };
         _dstA3 = QPointF{ base.x(),                 arrowSize   };
-        emit dstA1Changed(); emit dstA2Changed(); emit dstA3Changed();
+        emit arrowGeometryChanged();
+    }
+
+    // Correcting line dst point to take into account the arrow geometry
+    const QLineF line{_p1, _p2};
+    static constexpr    qreal MinLength = 0.00001;
+    if ( line.length() > MinLength ) {      // Protect line.length() DIV0
+        _p2 = line.pointAt( 1.0 - (arrowLength/line.length()) );
+        emit lineGeometryChanged();
     }
 }
 
@@ -356,30 +357,30 @@ qreal   EdgeItem::lineAngle(const QLineF& line) const noexcept
     static constexpr    qreal Pi = 3.141592653;
     static constexpr    qreal TwoPi = 2. * Pi;
     static constexpr    qreal MinLength = 0.00001;
-
     const qreal lineLength = line.length();
     if ( lineLength < MinLength )
         return -1.;
-    double angle = std::acos( line.dx( ) / lineLength );
-    if ( line.dy( ) < 0. )
-        angle = (2.0 * Pi) - angle;
+    double angle = std::acos( line.dx() / lineLength );
+    if ( line.dy() < 0. )
+        angle = TwoPi - angle;
     return angle * ( 360. / TwoPi );
 }
 
 void    EdgeItem::setLine( QPoint src, QPoint dst )
 {
-    _p1 = src; emit p1Changed();
-    _p2 = dst; emit p2Changed();
+    _p1 = src;
+    _p2 = dst;
+    emit lineGeometryChanged();
 }
 
 QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
-                                        const QPolygonF& polygon ) const
+                                        const QPolygonF& polygon ) const noexcept
 {
-    QLineF line{p1, p2};
+    const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-    for ( int p = 0; p < polygon.length( ) - 1 ; p++ ) {
-        QLineF polyLine( polygon[ p ], polygon[ p + 1 ] );
+    for ( auto p = 0; p < polygon.length() - 1 ; ++p ) {
+        const QLineF polyLine( polygon[p], polygon[p + 1] );
         if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
             source = intersection;
             break;
@@ -389,21 +390,21 @@ QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
 }
 
 QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
-                                       const QPolygonF& srcBp, const QPolygonF& dstBp ) const
+                                       const QPolygonF& srcBp, const QPolygonF& dstBp ) const noexcept
 {
-    QLineF line{p1, p2};
+    const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-    for ( int p = 0; p < srcBp.length( ) - 1 ; p++ ) {
-        QLineF polyLine( srcBp[ p ], srcBp[ p + 1 ] );
+    for ( auto p = 0; p < srcBp.length() - 1 ; ++p ) {
+        const QLineF polyLine( srcBp[p], srcBp[p + 1] );
         if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
             source = intersection;
             break;
         }
     }
     QPointF destination{p2};
-    for ( int p = 0; p < dstBp.length( ) - 1 ; p++ ) {
-        QLineF polyLine( dstBp[ p ], dstBp[ p + 1 ] );
+    for ( auto p = 0; p < dstBp.length() - 1 ; ++p ) {
+        const QLineF polyLine( dstBp[p], dstBp[p + 1] );
         if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
             destination = intersection;
             break;
