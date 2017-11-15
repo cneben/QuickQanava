@@ -308,7 +308,6 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         } else if ( dstEdgeItem != nullptr ) {
             // FIXME: generate a dump polygon around destination edge center
             qWarning() << "FIXME: edge does not support destination edge";
-            //cache.dstBs = dstEdgeItem->mapToItem( )
         }
     }
 
@@ -391,85 +390,55 @@ void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
         //                  ---O---      With x beeing culled to either br.left or br.right
         //               invalid position (since node usually lay here for top docks)
 
-        // FIXME: factor that fucking code in a lambda...
-        const auto srcPort = qobject_cast<const qan::PortItem*>(cache.srcItem);
-        if ( srcPort != nullptr ) {
+        auto correctPortPoint = [](const auto& cache, auto dockType, const auto& p,
+                                   const auto& brCenter, const auto& br) -> QPointF {
+            QPointF c{p}; // c corrected point
             if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
-                switch ( srcPort->getDockType() ) {
+                switch ( dockType ) {
                 case qan::NodeItem::Dock::Left:
-                    if ( p1.x() > srcBrCenter.x() )
-                        cache.p1 = QPointF{srcBrCenter.x(), p1.y() > srcBrCenter.y() ? srcBr.bottom() : srcBr.top()};
+                    if ( p.x() > brCenter.x() )
+                        c = QPointF{brCenter.x(), p.y() > brCenter.y() ? br.bottom() : br.top()};
                     break;
-                    case qan::NodeItem::Dock::Top:
-                        if ( p1.y() > srcBrCenter.y() )
-                            cache.p1 = QPointF{p1.x() > srcBrCenter.x() ? srcBr.right() : srcBr.left(), srcBrCenter.y()};
-                        break;
-                    case qan::NodeItem::Dock::Right:
-                        if ( p1.x() < srcBrCenter.x() )
-                            cache.p1 = QPointF{srcBrCenter.x(), p1.y() > srcBrCenter.y() ? srcBr.bottom() : srcBr.top()};
-                        break;
-                    case qan::NodeItem::Dock::Bottom:
-                        if ( p1.y() < srcBrCenter.y() )
-                            cache.p1 = QPointF{p1.x() > srcBrCenter.x() ? srcBr.right() : srcBr.left(), srcBrCenter.y()};
-                        break;
-                    }
-                } else {    // qan::EdgeStyle::LineType::Curved, for curved line, do not intersection, generate point according to port type.
-                    switch ( srcPort->getDockType() ) {
-                        case qan::NodeItem::Dock::Left:
-                            cache.p1 = QPointF{srcBr.left(), srcBrCenter.y() };
-                            break;
-                        case qan::NodeItem::Dock::Top:
-                            cache.p1 = QPointF{srcBrCenter.x(), srcBr.top()};
-                            break;
-                        case qan::NodeItem::Dock::Right:
-                            cache.p1 = QPointF{srcBr.right(), srcBrCenter.y()};
-                            break;
-                        case qan::NodeItem::Dock::Bottom:
-                            cache.p1 = QPointF{srcBrCenter.x(), srcBr.bottom() };
-                            break;
-                    }
+                case qan::NodeItem::Dock::Top:
+                    if ( p.y() > brCenter.y() )
+                        c = QPointF{p.x() > brCenter.x() ? br.right() : br.left(), brCenter.y()};
+                    break;
+                case qan::NodeItem::Dock::Right:
+                    if ( p.x() < brCenter.x() )
+                        c = QPointF{brCenter.x(), p.y() > brCenter.y() ? br.bottom() : br.top()};
+                    break;
+                case qan::NodeItem::Dock::Bottom:
+                    if ( p.y() < brCenter.y() )
+                        c = QPointF{p.x() > brCenter.x() ? br.right() : br.left(), brCenter.y()};
+                    break;
                 }
-            } // if srcPort != nullptr
-
-            const auto dstPort = qobject_cast<const qan::PortItem*>(cache.dstItem);
-            if ( dstPort != nullptr ) {
-                if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
-                    switch ( dstPort->getDockType() ) {
+             } else {    // qan::EdgeStyle::LineType::Curved, for curved line, do not intersection, generate point according to port type.
+                switch ( dockType ) {
                     case qan::NodeItem::Dock::Left:
-                        if ( p2.x() > dstBrCenter.x() )
-                            cache.p2 = QPointF{dstBrCenter.x(),     p2.y() > dstBrCenter.y() ? dstBr.bottom() : dstBr.top() };
+                        c = QPointF{br.left(), brCenter.y() };
                         break;
                     case qan::NodeItem::Dock::Top:
-                         if ( p2.y() > dstBrCenter.y() )
-                            cache.p2 = QPointF{p2.x() > dstBrCenter.x() ? dstBr.right() : dstBr.left(),     dstBrCenter.y()};
+                        c = QPointF{brCenter.x(), br.top()};
                         break;
                     case qan::NodeItem::Dock::Right:
-                        if ( p2.x() < dstBrCenter.x() )
-                            cache.p2 = QPointF{dstBrCenter.x(),     p2.y() > dstBrCenter.y() ? dstBr.bottom() : dstBr.top()};
+                        c = QPointF{br.right(), brCenter.y()};
                         break;
                     case qan::NodeItem::Dock::Bottom:
-                        if ( p2.y() < dstBrCenter.y() )
-                            cache.p2 = QPointF{p2.x() > dstBrCenter.x() ? dstBr.right() : dstBr.left(),     dstBrCenter.y()};
+                        c = QPointF{brCenter.x(), br.bottom() };
                         break;
-                    }
-                } else {    // qan::EdgeStyle::LineType::Curved
-                    switch ( dstPort->getDockType() ) {
-                        case qan::NodeItem::Dock::Left:
-                            cache.p2 = QPointF{dstBr.left(), dstBrCenter.y() };
-                            break;
-                        case qan::NodeItem::Dock::Top:
-                            cache.p2 = QPointF{dstBrCenter.x(), dstBr.top()};
-                            break;
-                        case qan::NodeItem::Dock::Right:
-                            cache.p2 = QPointF{dstBr.right(), dstBrCenter.y()};
-                            break;
-                        case qan::NodeItem::Dock::Bottom:
-                            cache.p2 = QPointF{dstBrCenter.x(), dstBr.bottom() };
-                            break;
-                    }
                 }
-            } // if dstPort != nullptr
-        } // dock configuration block
+            }
+            return c; // Expect RVO
+        }; // correctPortPoint()
+
+        const auto srcPort = qobject_cast<const qan::PortItem*>(cache.srcItem);
+        if ( srcPort != nullptr )
+            cache.p1 = correctPortPoint(cache, srcPort->getDockType(), p1, srcBrCenter, srcBr );
+
+        const auto dstPort = qobject_cast<const qan::PortItem*>(cache.dstItem);
+            if ( dstPort != nullptr )
+                cache.p2 = correctPortPoint(cache, dstPort->getDockType(), p2, dstBrCenter, dstBr );
+     } // dock configuration block
 }
 
 void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
@@ -566,8 +535,9 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
          dstPort != nullptr ) {
         static constexpr auto maxOffset = 100.;
         auto offset = [](auto deltaAbs) -> auto {
-              //return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
-                return maxOffset / 3;
+            Q_UNUSED(deltaAbs);
+            //return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
+            return maxOffset / 3;
         };
 
         // Offset / Correction:
@@ -595,6 +565,7 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
 
 
         static constexpr auto maxCorrection = 100.;
+        Q_UNUSED(maxCorrection);
         auto correction = [](auto deltaAbs, auto maxSize) -> auto {
             //           c = correction
             //           ^

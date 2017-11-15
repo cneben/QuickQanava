@@ -125,7 +125,7 @@ Qan.EdgeItem {
         }
     }
     // Debug control points display code. FIXME: remove that for final release
-    /*Rectangle {
+    Rectangle {
         width: 8; height: 8
         x: edgeItem.c1.x - 4
         y: edgeItem.c1.y - 4
@@ -151,5 +151,5 @@ Qan.EdgeItem {
     Rectangle {
         x: edgeItem.p2.x - 2; y: edgeItem.p2.y - 2
         width: 4; height: 4; radius: 2; color: "blue"
-    }*/
+    }
 }
