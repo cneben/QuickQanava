@@ -509,11 +509,10 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
     if ( srcPort == nullptr ||      // If there is a connection to a non-port item, generate a control point for it
          dstPort == nullptr ) {
         // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
-        const auto controlPointDistance = std::max( 0.001, std::min( xDeltaAbs / 2.,      // Control point should be on a line for horizontal/vertical line orientation
-                                                                     yDeltaAbs / 2. ) );
-        // FIXME: control point distance should also take line length into account...
-            // Smaller when distance is low
-            // Larger wehn distance is large   (with log(distance)???)
+        // Heuristic: bounded to ]0;40.], larger when line length is large (line.length()), small when
+        //            line is either vertical or horizontal (xDelta/yDelta near 0)
+        const auto distance = std::min( line.length(), std::min(xDeltaAbs / 2., yDeltaAbs / 2.) );
+        const auto controlPointDistance = qBound( 0.001, distance, 40. );
 
         const QPointF center{ ( cache.p1.x() + cache.p2.x() ) / 2.,           // (P1,P2) Line center
                               ( cache.p1.y() + cache.p2.y() ) / 2. };
@@ -533,11 +532,11 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
     }
     if ( srcPort != nullptr ||      // If there is a connection to a port item, generate a control point for it
          dstPort != nullptr ) {
-        static constexpr auto maxOffset = 100.;
+        static constexpr qreal maxOffset = 40.;
         auto offset = [](auto deltaAbs) -> auto {
-            Q_UNUSED(deltaAbs);
-            //return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
-            return maxOffset / 3;
+            // Heuristic: for [0, maxOffset] delta, return a percentage of maxOffset, return value
+            //             is between [4.;maxOffset]
+            return std::max(10., std::min(deltaAbs, 100.) / 100. * maxOffset);
         };
 
         // Offset / Correction:
@@ -560,8 +559,8 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
             // 2. yCorrection should be really small when yDeltaAbs is small (small == < average bounding rect height)
                 // otherwise, it should be proportionnal to one fitfh of yDeltaAbs and always less than maxOffset.
             // 3. Do not apply correction on out port
-        const auto xOffset = 40.; offset(xDeltaAbs);
-        const auto yOffset = 40.; offset(yDeltaAbs);
+        const auto xOffset = offset(xDeltaAbs);
+        const auto yOffset = offset(yDeltaAbs);
 
 
         static constexpr auto maxCorrection = 100.;
