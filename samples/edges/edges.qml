@@ -127,6 +127,25 @@ ApplicationWindow {
                 generateTestPortLayout(x, y + 200,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
                 generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
 
+                x = 80; y = 600
+                generateTestPortNodeLayout(x, y,             Qan.NodeItem.Left );
+                generateTestPortNodeLayout(x + 420, y,       Qan.NodeItem.Top );
+                generateTestPortNodeLayout(x, y + 200,       Qan.NodeItem.Right );
+                generateTestPortNodeLayout(x + 420, y + 200, Qan.NodeItem.Bottom );
+            }
+
+            function generateTestPortNodeLayout(x, y, srcPortType ) {
+                // SRC/DST horizontally aligned
+                var s = graph.insertNode()
+                s.label = "S1"; s.item.x = x; s.item.y = y
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x + 200; d.item.y = y
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
             }
 
             function generateTestPortLayout(x, y, srcPortType, dstPortType) {
@@ -143,7 +162,7 @@ ApplicationWindow {
 
                 var e = graph.insertEdge(s, d);
                 graph.bindEdgeSource(e, sp1)
-                graph.bindEdgeDestination(e, sp1)
+                //graph.bindEdgeDestination(e, sp1)
                 graph.bindEdgeDestination(e, dp1)
 
                 // SRC/DST vertically aligned

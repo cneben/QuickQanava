@@ -212,6 +212,7 @@ void    EdgeItem::updateItem() noexcept
                 generateLineControlPoints(cache);
                 generateArrowGeometry(cache);
             }
+            generateLabelPosition(cache);
         }
     }
 
@@ -354,52 +355,51 @@ void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
     cache.srcBrCenter = srcBr.center();
     cache.dstBrCenter = dstBr.center();
 
-        const QLineF line = getLineIntersection( srcBrCenter, dstBrCenter,
-                                                 cache.srcBs, cache.dstBs );
+    const QLineF line = getLineIntersection( srcBrCenter, dstBrCenter, cache.srcBs, cache.dstBs );
 
-        // Update hidden
+    // Update hidden
+    {
         {
-            {
-                const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
-                const auto arrowLength = arrowSize * 3.;
-                if ( line.length() < 2.0 + arrowLength )
-                    cache.hidden = true;
-                if ( cache.hidden )  // Fast exit if edge is hidden
-                    return;
-            }
-            const QRectF lineBr = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
-            cache.hidden = ( srcBr.contains(lineBr) ||    // Hide edge if the whole line is contained in either src or dst BR
-                             dstBr.contains(lineBr) );
+            const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
+            const auto arrowLength = arrowSize * 3.;
+            if ( line.length() < 2.0 + arrowLength )
+                cache.hidden = true;
             if ( cache.hidden )  // Fast exit if edge is hidden
                 return;
         }
+        const QRectF lineBr = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
+        cache.hidden = ( srcBr.contains(lineBr) ||    // Hide edge if the whole line is contained in either src or dst BR
+                         dstBr.contains(lineBr) );
+        if ( cache.hidden )  // Fast exit if edge is hidden
+            return;
+    }
 
-        // Save generated p1 and p2 to gometry cache
-        const auto p1 = line.p1();  // Keep a fast cache access to theses coordinates
-        const auto p2 = line.p2();
-        cache.p1 = p1;
-        cache.p2 = p2;
+    // Save generated p1 and p2 to gometry cache
+    const auto p1 = line.p1();  // Keep a fast cache access to theses coordinates
+    const auto p2 = line.p2();
+    cache.p1 = p1;
+    cache.p2 = p2;
 
-        {   // Take dock configuraiton into account to correct p1 and p2 when connected to/from a dock.
+    {   // Take dock configuraiton into account to correct p1 and p2 when connected to/from a dock.
 
-            // Correction is in fact a "point culling":
-            // *Left dock*:    |
-            // valid position  O invalid position (since node usually lay here for left docks)
-            //                 |             With y beeing culled to either br.top or br.bottom
-            //
-            // *Top dock*:   valid position
-            //                  ---O---      With x beeing culled to either br.left or br.right
-            //               invalid position (since node usually lay here for top docks)
+        // Correction is in fact a "point culling":
+        // *Left dock*:    |
+        // valid position  O invalid position (since node usually lay here for left docks)
+        //                 |             With y beeing culled to either br.top or br.bottom
+        //
+        // *Top dock*:   valid position
+        //                  ---O---      With x beeing culled to either br.left or br.right
+        //               invalid position (since node usually lay here for top docks)
 
-            // FIXME: factor that fucking code in a lambda...
-            const auto srcPort = qobject_cast<const qan::PortItem*>(cache.srcItem);
-            if ( srcPort != nullptr ) {
-                if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
-                    switch ( srcPort->getDockType() ) {
-                    case qan::NodeItem::Dock::Left:
-                        if ( p1.x() > srcBrCenter.x() )
-                            cache.p1 = QPointF{srcBrCenter.x(), p1.y() > srcBrCenter.y() ? srcBr.bottom() : srcBr.top()};
-                        break;
+        // FIXME: factor that fucking code in a lambda...
+        const auto srcPort = qobject_cast<const qan::PortItem*>(cache.srcItem);
+        if ( srcPort != nullptr ) {
+            if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
+                switch ( srcPort->getDockType() ) {
+                case qan::NodeItem::Dock::Left:
+                    if ( p1.x() > srcBrCenter.x() )
+                        cache.p1 = QPointF{srcBrCenter.x(), p1.y() > srcBrCenter.y() ? srcBr.bottom() : srcBr.top()};
+                    break;
                     case qan::NodeItem::Dock::Top:
                         if ( p1.y() > srcBrCenter.y() )
                             cache.p1 = QPointF{p1.x() > srcBrCenter.x() ? srcBr.right() : srcBr.left(), srcBrCenter.y()};
@@ -537,8 +537,8 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
     const QLineF line{cache.p1, cache.p2};
     const auto lineLength = line.length();
 
-    if ( srcPort == nullptr &&
-         dstPort == nullptr )  {
+    if ( srcPort == nullptr ||      // If there is a connection to a non-port item, generate a control point for it
+         dstPort == nullptr ) {
         // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
         const auto controlPointDistance = std::max( 0.001, std::min( xDeltaAbs / 2.,      // Control point should be on a line for horizontal/vertical line orientation
                                                                      yDeltaAbs / 2. ) );
@@ -557,10 +557,13 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
                              ( xDelta < 0 && yDelta > 0 ) ? -1. : 1.;
         const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
 
-        cache.c1 = center + ( normal * controlPointDistance );
-        cache.c2 = center - ( normal * controlPointDistance );
+        if ( srcPort == nullptr )
+            cache.c1 = center + ( normal * controlPointDistance );
+        if ( dstPort == nullptr )
+            cache.c2 = center - ( normal * controlPointDistance );
     }
-    else {
+    if ( srcPort != nullptr ||      // If there is a connection to a port item, generate a control point for it
+         dstPort != nullptr ) {
         static constexpr auto maxOffset = 100.;
         auto offset = [](auto deltaAbs) -> auto {
               //return baseFactor + qBound(0., (deltaAbs * (baseFactor * 3. ) / 500.), 500.);
@@ -678,6 +681,24 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
     cache.p2 = getLineIntersection( cache.c2, cache.dstBrCenter, cache.dstBs);
 }
 
+void    EdgeItem::generateLabelPosition(GeometryCache& cache) const noexcept
+{
+    // PRECONDITIONS:
+        // cache should be valid
+    if ( !cache.isValid() )
+        return;
+
+    const QLineF line{cache.p1, cache.p2};
+    if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
+        cache.labelPosition = line.pointAt(0.5) + QPointF{10., 10.};
+    } else if ( cache.lineType == qan::EdgeStyle::LineType::Curved ) {
+        // Get the barycenter of polygon p1/p2/c1/c2
+        QPolygonF p{ {cache.p1, cache.p2, cache.c1, cache.c2 } };
+        if (!p.isEmpty())
+            cache.labelPosition = p.boundingRect().center();
+    }
+}
+
 void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
 {
     // PRECONDITIONS:
@@ -715,12 +736,11 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
         if ( cache.lineType == qan::EdgeStyle::LineType::Curved ) { // Apply control point geometry
             _c1 = mapFromItem(graphContainerItem, cache.c1);
             _c2 = mapFromItem(graphContainerItem, cache.c2);
-            emit c1Changed();
-            emit c2Changed();   // FIXME: factor that !
+            emit controlPointsChanged();
         }
-    }
 
-    //setLabelPos( line.pointAt(0.5) + QPointF{10., 10.} );
+        setLabelPos( mapFromItem(graphContainerItem, cache.labelPosition) );
+    }
 
     // Edge item geometry is now valid, set the item visibility to true and "unhide" it
     setVisible(true);

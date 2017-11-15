@@ -188,6 +188,8 @@ protected:
 
         QPointF c1;
         QPointF c2;
+
+        QPointF labelPosition;
     };
     inline GeometryCache    generateGeometryCache() const noexcept;
 
@@ -202,6 +204,9 @@ protected:
 
     //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
     inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
+
+    //! Generate edge line label position.
+    inline void             generateLabelPosition(GeometryCache& cache) const noexcept;
 
     //! Apply a final valid geometry cache to this.
     inline void             applyGeometry(const GeometryCache& cache) noexcept;
@@ -235,18 +240,16 @@ protected:
     //@{
 public:
     //! Edge source point in item CS (with accurate source bounding shape intersection).
-    Q_PROPERTY( QPointF c1 READ getC1() NOTIFY c1Changed FINAL )
+    Q_PROPERTY( QPointF c1 READ getC1() NOTIFY controlPointsChanged FINAL )
     //! \copydoc c1
     inline  auto    getC1() const noexcept -> const QPointF& { return _c1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
-    Q_PROPERTY( QPointF c2 READ getC2() NOTIFY c2Changed FINAL )
+    Q_PROPERTY( QPointF c2 READ getC2() NOTIFY controlPointsChanged FINAL )
     //! \copydoc c2
     inline  auto    getC2() const noexcept -> const QPointF& { return _c2; }
 signals:
     //! \copydoc c1
-    void            c1Changed();
-    //! \copydoc c2
-    void            c2Changed();
+    void            controlPointsChanged();
 private:
     //! \copydoc c1
     QPointF         _c1;
