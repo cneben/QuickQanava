@@ -42,7 +42,6 @@ Qan.EdgeItem {
     id: edgeItem
 
     property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
-
     Shape {
         id: edgeCap
         transformOrigin: Item.TopLeft
@@ -124,22 +123,33 @@ Qan.EdgeItem {
                 edgeShape.data = curvedLine
             }
         }
-        /*
-        // Debug control points display code. FIXME: remove that for final release
-        Rectangle {
-            width: 8; height: width
-            x: edgeItem.c1.x - ( radius / 2 )
-            y: edgeItem.c1.y - ( radius / 2 )
-            radius: width / 2
-            color: "red"
-        }
-        Rectangle {
-            width: 8; height: width
-            x: edgeItem.c2.x - ( radius / 2 )
-            y: edgeItem.c2.y - ( radius / 2 )
-            radius: width / 2
-            color: "green"
-        }
-        */
     }
+    // Debug control points display code. FIXME: remove that for final release
+    /*Rectangle {
+        width: 8; height: 8
+        x: edgeItem.c1.x - 4
+        y: edgeItem.c1.y - 4
+        radius: 4
+        color: "red"
+    }
+    Rectangle {
+        width: 8; height: 8
+        x: edgeItem.c2.x - 4
+        y: edgeItem.c2.y - 4
+        radius: 4
+        color: "green"
+    }
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        border.width: 1; border.color: "violet"
+    }
+    Rectangle {
+        x: p1.x - 2; y: p1.y - 2
+        width: 4; height: 4; radius: 4; color: "red"
+    }
+    Rectangle {
+        x: edgeItem.p2.x - 2; y: edgeItem.p2.y - 2
+        width: 4; height: 4; radius: 2; color: "blue"
+    }*/
 }

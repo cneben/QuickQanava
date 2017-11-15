@@ -137,7 +137,7 @@ public:
     inline bool getHidden() const noexcept { return _hidden; }
     void        setHidden(bool hidden) noexcept;
 signals:
-    void        hiddenChanged( );
+    void        hiddenChanged();
 private:
     bool        _hidden{false};
 
@@ -152,8 +152,60 @@ public:
      */
     virtual void        updateItem() noexcept;
 protected:
-    void                updateStraightItem() noexcept;
-    void                updateArrowGeometry() noexcept;
+
+     /*! FIXME document that
+      *
+      * \note Edge geometry cache is expressed in _graph global coordinate system_. Projection into
+      * a local CS occurs only in projectGeometry(), until this method is called all internal qan::EdgeItem
+      * geometry (p1, p2, etc.) size and position should be considered invalid.
+      */
+    struct GeometryCache {
+        // FIXME add a move ctor here
+
+        inline auto isValid() const noexcept -> bool { return valid && srcItem && dstItem; }
+        bool    valid{false};
+        QPointer<const QQuickItem>  srcItem{nullptr};
+        QPointer<const QQuickItem>  dstItem{nullptr};
+        qan::EdgeStyle::LineType    lineType{qan::EdgeStyle::LineType::Straight};
+
+        qreal   z{0.};
+
+        bool hidden{false};
+        QPolygonF   srcBs;
+        QPolygonF   dstBs;
+        QRectF      srcBr;
+        QRectF      dstBr;
+        QPointF     srcBrCenter;
+        QPointF     dstBrCenter;
+
+        QPointF p1;
+        QPointF p2;
+
+        QPointF dstA1;
+        QPointF dstA2;
+        QPointF dstA3;
+        qreal   dstAngle{0.};
+
+        QPointF c1;
+        QPointF c2;
+    };
+    inline GeometryCache    generateGeometryCache() const noexcept;
+
+    /*! \brief Generate edge line source and destination points (GeometryCache::p1 and GeometryCache::p2). */
+    inline void             generateLineGeometry(GeometryCache& cache) const noexcept;
+
+    /*! \brief FIXME
+     *
+     * \note Line geometry may (cache.p1 and cache.p2) could be modified to fit arrow geometry.
+     */
+    inline void             generateArrowGeometry(GeometryCache& cache) const noexcept;
+
+    //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
+    inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
+
+    //! Apply a final valid geometry cache to this.
+    inline void             applyGeometry(const GeometryCache& cache) noexcept;
+
     /*! Return line angle on line \c line.
      *
      * \return angle in degree or a value < 0.0 if an error occurs.
@@ -181,12 +233,6 @@ protected:
 
     /*! \name Curve Control Points Management *///-----------------------------
     //@{
-protected:
-    /*! \brief Call qan::EdgeItem::updateItem(), then generate control points specific for curve edge.
-     *
-     * \copydoc qan::EdgeITem::updateItem()
-     */
-    void            updateCurvedItem() noexcept;
 public:
     //! Edge source point in item CS (with accurate source bounding shape intersection).
     Q_PROPERTY( QPointF c1 READ getC1() NOTIFY c1Changed FINAL )
@@ -274,7 +320,8 @@ signals:
     void            edgeRightClicked( qan::EdgeItem* edge, QPointF pos );
     void            edgeDoubleClicked( qan::EdgeItem* edge, QPointF pos );
 private:
-    inline qreal    distanceFromLine( const QPointF& p, const QLineF& line ) const;
+    //! Return orthogonal distance between point \c p and \c line, or -1 on error.
+    inline qreal    distanceFromLine( const QPointF& p, const QLineF& line ) const noexcept;
 
 public:
     //! Edge label position.

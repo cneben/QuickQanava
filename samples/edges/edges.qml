@@ -103,30 +103,30 @@ ApplicationWindow {
 
                 graph.setConnectorSource(c)
 
-                /*var x = 850; var y = 80
+                var x = 850; var y = 80
                 generateTestPortLayout(x, y,             Qan.NodeItem.Left, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Left, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Left, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Left, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Left, Qan.NodeItem.Bottom);
 
-                x = 2400; y = 80
+                x = 1700; y = 80
                 generateTestPortLayout(x, y,             Qan.NodeItem.Top, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Top, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Top, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Top, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Top, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Top, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Top, Qan.NodeItem.Bottom);
 
-                x = 850; y = 1400
+                x = 850; y = 400
                 generateTestPortLayout(x, y,             Qan.NodeItem.Right, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Right, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Right, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Right, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Right, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Right, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Right, Qan.NodeItem.Bottom);
 
-                x = 2400; y = 1400
+                x = 1700; y = 400
                 generateTestPortLayout(x, y,             Qan.NodeItem.Bottom, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
-                */
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
+
             }
 
             function generateTestPortLayout(x, y, srcPortType, dstPortType) {
@@ -147,7 +147,7 @@ ApplicationWindow {
                 graph.bindEdgeDestination(e, dp1)
 
                 // SRC/DST vertically aligned
-                var s = graph.insertNode()
+                /*var s = graph.insertNode()
                 s.label = "S1"; s.item.x = x + 450; s.item.y = y
                 var sp1 = graph.insertInPort(s, srcPortType);
                 sp1.label = "OUT#1"
@@ -192,7 +192,7 @@ ApplicationWindow {
                 var e = graph.insertEdge(s, d);
                 graph.bindEdgeSource(e, sp1)
                 graph.bindEdgeDestination(e, sp1)
-                graph.bindEdgeDestination(e, dp1)
+                graph.bindEdgeDestination(e, dp1)*/
             }
         }
     }  // Qan.GraphView
