@@ -202,28 +202,31 @@ protected:
     //! Internally used to accept style drops.
     virtual void    dropEvent( QDropEvent* event ) override;
 
-    virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
-    virtual void    mouseMoveEvent(QMouseEvent* event ) override;
-    virtual void    mousePressEvent(QMouseEvent* event ) override;
-    virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
+    virtual void    mouseDoubleClickEvent(QMouseEvent* event) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual void    mousePressEvent(QMouseEvent* event) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
-    //! Node current style object (this property is never null, a default style is returned when no style has been manually set).
+    //! Node current style (this property is never null, a default style is returned when no style has been manually set).
     Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
     void                        setStyle( qan::NodeStyle* style ) noexcept;
     //! Generic interface for qan::DraggableCtrl<>::handleDropEvent().
     void                        setItemStyle( qan::Style* style ) noexcept;
+    //! \copydoc style
     inline qan::NodeStyle*      getStyle() const noexcept { return _style.data(); }
 private:
+    //! \copydoc style
     QPointer<qan::NodeStyle>    _style;
 signals:
+    //! \copydoc style
     void                        styleChanged();
 private slots:
-    //! Called when the style associed to this node is destroyed.
+    //! Called when this node style is destroyed, remove any existing binding.
     void                        styleDestroyed( QObject* style );
     //@}
     //-------------------------------------------------------------------------

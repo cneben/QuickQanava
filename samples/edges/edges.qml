@@ -227,9 +227,8 @@ ApplicationWindow {
         anchors.top: parent.top;        anchors.topMargin: 15
         anchors.right: parent.right;    anchors.rightMargin: 15
         width: 220; height: 395; padding: 0
-        Frame { anchors.fill: parent; opacity: 0.5; padding: 0; Pane { anchors.fill: parent } } // Background
+        Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            //anchors.fill: parent; anchors.margins: 10
             Label {
                 Layout.margins: 3; text: "Edge Style:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft

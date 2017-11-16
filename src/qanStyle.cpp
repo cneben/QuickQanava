@@ -57,6 +57,64 @@ NodeStyle::NodeStyle( QString name, QObject* parent ) :
 }
 //-----------------------------------------------------------------------------
 
+/* Node Style Properties *///--------------------------------------------------
+void    NodeStyle::setBackOpacity( qreal backOpacity ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _backOpacity, 1. + backOpacity ) ) {
+        _backOpacity = backOpacity;
+        emit backOpacityChanged();
+    }
+}
+
+void    NodeStyle::setBackColor( const QColor& backColor ) noexcept
+{
+    if ( _backColor != backColor ) {
+        _backColor = backColor;
+        emit backColorChanged();
+    }
+}
+
+void    NodeStyle::setBorderColor( const QColor& borderColor ) noexcept
+{
+    if ( _borderColor != borderColor ) {
+        _borderColor = borderColor;
+        emit borderColorChanged();
+    }
+}
+
+void    NodeStyle::setBorderWidth( qreal borderWidth ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _borderWidth, 1. + borderWidth ) ) {
+        _borderWidth = borderWidth;
+        emit borderWidthChanged();
+    }
+}
+
+void    NodeStyle::setHasShadow( bool hasShadow ) noexcept
+{
+    if ( _hasShadow != hasShadow ) {
+        _hasShadow = hasShadow;
+        emit hasShadowChanged();
+    }
+}
+
+void    NodeStyle::setShadowColor( QColor shadowColor ) noexcept
+{
+    if ( _shadowColor != shadowColor ) {
+        _shadowColor = shadowColor;
+        emit shadowColorChanged();
+    }
+}
+
+void    NodeStyle::setShadowRadius( qreal shadowRadius ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _shadowRadius, 1. + shadowRadius ) ) {
+        _shadowRadius = shadowRadius;
+        emit shadowRadiusChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 /* Edge Style Object Management *///-------------------------------------------
 EdgeStyle::EdgeStyle( QString name, QObject* parent ) :

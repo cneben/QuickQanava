@@ -105,11 +105,20 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Properties Management *///---------------------------------------
+    /*! \name Node Style Properties *///---------------------------------------
     //@{
 public:
+    Q_PROPERTY( qreal backOpacity READ getBackOpacity WRITE setBackOpacity NOTIFY backOpacityChanged FINAL )
+    void            setBackOpacity( qreal backOpacity ) noexcept;
+    inline qreal    getBackOpacity() const noexcept { return _backOpacity; }
+protected:
+    qreal           _backOpacity{0.85};
+signals:
+    void            backOpacityChanged();
+
+public:
     Q_PROPERTY( QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged FINAL )
-    void            setBackColor( const QColor& backColor ) noexcept { _backColor = backColor; emit backColorChanged( ); }
+    void            setBackColor( const QColor& backColor ) noexcept;
     const QColor&   getBackColor() const noexcept { return _backColor; }
 protected:
     QColor          _backColor{Qt::white};
@@ -118,16 +127,16 @@ signals:
 
 public:
     Q_PROPERTY( QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL )
-    void            setBorderColor( const QColor& borderColor ) noexcept { _borderColor = borderColor; emit borderColorChanged( ); }
+    void            setBorderColor( const QColor& borderColor ) noexcept;
     const QColor&   getBorderColor() const noexcept { return _borderColor; }
 protected:
-    QColor          _borderColor = QColor( Qt::black );
+    QColor          _borderColor = QColor(Qt::black);
 signals:
     void            borderColorChanged();
 
 public:
     Q_PROPERTY( qreal borderWidth READ getBorderWidth WRITE setBorderWidth NOTIFY borderWidthChanged FINAL )
-    void            setBorderWidth( qreal borderWidth ) noexcept { _borderWidth = borderWidth; emit borderWidthChanged( ); }
+    void            setBorderWidth( qreal borderWidth ) noexcept;
     inline qreal    getBorderWidth() const noexcept { return _borderWidth; }
 protected:
     qreal           _borderWidth = 1.0;
@@ -136,7 +145,7 @@ signals:
 
 public:
     Q_PROPERTY( bool hasShadow READ getHasShadow WRITE setHasShadow NOTIFY hasShadowChanged FINAL )
-    void            setHasShadow( bool hasShadow ) noexcept { _hasShadow = hasShadow; emit hasShadowChanged( ); }
+    void            setHasShadow( bool hasShadow ) noexcept;
     inline bool     getHasShadow() const noexcept { return _hasShadow; }
 protected:
     bool            _hasShadow = true;
@@ -145,7 +154,7 @@ signals:
 
 public:
     Q_PROPERTY( QColor shadowColor READ getShadowColor WRITE setShadowColor NOTIFY shadowColorChanged FINAL )
-    void            setShadowColor( QColor shadowColor ) noexcept { _shadowColor = shadowColor; emit shadowColorChanged( ); }
+    void            setShadowColor( QColor shadowColor ) noexcept;
     inline QColor   getShadowColor() const noexcept { return _shadowColor; }
 protected:
     QColor          _shadowColor = QColor{ 0, 0, 0, 127 };
@@ -154,7 +163,7 @@ signals:
 
 public:
     Q_PROPERTY( qreal shadowRadius READ getShadowRadius WRITE setShadowRadius NOTIFY shadowRadiusChanged FINAL )
-    void            setShadowRadius( qreal shadowRadius ) noexcept { _shadowRadius = shadowRadius; emit shadowRadiusChanged( ); }
+    void            setShadowRadius( qreal shadowRadius ) noexcept;
     inline qreal    getShadowRadius() const noexcept { return _shadowRadius; }
 protected:
     qreal           _shadowRadius{3.};

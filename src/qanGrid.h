@@ -75,14 +75,14 @@ protected:
     virtual bool    updateGrid() noexcept = 0;
 
 public:
-    //! Color for major thicks (usually a point with qan::PointGrid), default to \c darkgrey.
+    //! Color for major thicks (usually a point with qan::PointGrid), default to \c lightgrey.
     Q_PROPERTY( QColor thickColor READ getThickColor WRITE setThickColor NOTIFY thickColorChanged FINAL )
     void            setThickColor( QColor thickColor ) noexcept;
     inline QColor   getThickColor() const noexcept { return _thickColor; }
 signals:
     void            thickColorChanged();
 private:
-    QColor          _thickColor{ 169,169,169 };     // darkgray/darkgrey: #A9A9A9 rgb(169,169,169)
+    QColor          _thickColor{211,211,211};    // lightgrey #D3D3D3 / rgb(211,211,211)
 
 public:
     //! Grid thicks width (width for lines, diameter for points), default to 3.0.
@@ -178,16 +178,8 @@ private:
  * \code
  *  Qan.Navigable {
  *    navigable: true
- *    grid: Qan.PointGrid {
- *      id: pointGrid
- *      pointComponent: Component {
- *        Rectangle {
- *          smooth: true
- *          width: pointGrid.gridWidth; height: width   // Binding to pointGrid could be removed for maximum efficiency if no runtime changes are needed
- *          radius: width/2.
- *          color: pointGrid.thickColor
- *        }
- *    }
+ *    Qan.PointGrid { id: pointGrid }
+ *    grid: pointGrid
  *  }
  * \endcode
  *
@@ -220,7 +212,15 @@ private:
 
 /*! * \brief Draw an orthogonal grid with lines.
  *
- * \nosubgroupin
+ * \code
+ *  Qan.Navigable {
+ *    navigable: true
+ *    Qan.LineGrid { id: lineGrid }
+ *    grid: lineGrid
+ *  }
+ * \endcode
+ *
+ * \nosubgrouping
  */
 class LineGrid : public OrthoGrid
 {

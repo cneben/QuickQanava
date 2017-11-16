@@ -38,6 +38,7 @@ import QtQuick.Shapes   1.0
 import QuickQanava      2.0 as Qan
 
 Qan.AbstractLineGrid {
+    opacity: 0.9
     gridShape : lineGridShape
     Shape {
         id: lineGridShape
@@ -45,8 +46,6 @@ Qan.AbstractLineGrid {
         smooth: false
     }
     gridScale: 25
-    // FIXME....
-    //opacity: 0.75
     geometryComponent: Component {
         ShapePath {
             property alias endX: line.x

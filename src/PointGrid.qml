@@ -39,6 +39,7 @@ import QuickQanava      2.0 as Qan
 
 Qan.AbstractPointGrid {
     gridScale: 100
+    opacity: 0.9
     geometryComponent: Component {
         Rectangle {
             smooth: true
@@ -46,7 +47,6 @@ Qan.AbstractPointGrid {
             height: width
             radius: width/2.
             color: pointGrid.thickColor
-            //width: 2; height: 2; radius: 1; color: pointGrid.thickColor //"darkgrey"
         }
     }
 }
