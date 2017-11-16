@@ -18,7 +18,7 @@ QuickQanava
 ![](https://img.shields.io/badge/version-0.9.2-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-`QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graphs in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
+`QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide QML components and classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
@@ -31,23 +31,11 @@ For any questions, please contact: benoit@destrat.io
 
 QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
-## Dependencies:
+## QuickQanava Showcase:
 
-- **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
-
-## Building:
-
-```sh
-git clone https://github.com/cneben/QuickQanava
-cd QuickQanava
-```
-2. Open quickqanava.pro in QtCreator
-  4. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
-
-3. Select a kit, build and launch samples.
-
-## QuickQanava Samples:
+| Nodes       | 
+| :---:       |
+| ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/edges-curved-straight.gif) |
 
 [![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
 
@@ -76,13 +64,33 @@ cd QuickQanava
 
   - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
 
+## Dependencies:
+
+- **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
+- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
+
+## Building:
+
+```sh
+git clone https://github.com/cneben/QuickQanava
+cd QuickQanava
+```
+1. Open quickqanava.pro in QtCreator
+
+2. Select a kit, build and launch samples.
+
+3. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
   
 ## Roadmap:
 
-  - **v0.9.2:**:	 
-    - [ ] Add smarter heuristics for edges's Bezier curve control points generation.
-    - [ ] Add full support for groups inside group (ie subgraphs).
+  - **v0.9.2:**	 
+    - [X] Add smarter heuristics for edges's Bezier curve control points generation.
+    - [X] Integrate Qt Quick Shapes 1.0.
     - [X] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
+  - **v0.9.3:**
+    - [ ] Add full support for groups inside group (ie subgraphs).
+    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+  - **v0.9.4:**	 
 	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
 		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
 		- [ ] Add support for standard library containers.
@@ -91,7 +99,6 @@ cd QuickQanava
     - GTpo (Configurable topology library):
 	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
-    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
 
 License
 =======
