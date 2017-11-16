@@ -1,6 +1,8 @@
 QuickQanava 
 ============================
 
+![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
+
 [Overview](#QuickQanava) |
 [Dependencies](#Dependencies) |
 [Building](#building) |
@@ -16,17 +18,14 @@ QuickQanava
 ![](https://img.shields.io/badge/version-0.9.2-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-
-![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
-
 `QuickQanava` is a C++14 library designed to display graphs an relational content in a QtQuick application. QuickQanava provide components and classes to visualize medium-sized directed graphs in a QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content into a dynamic user interface (with DnD support, resizable content, visual creation of topology).
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is 5.7, some samples requires Qt5.8)
+QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://www.destrat.io/quickqanava (**updated 20170912**)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20170912**)
++ Project homepage: http://www.destrat.io/quickqanava (**updated 20171116**)
++ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20171116**)
 
 For any questions, please contact: benoit@destrat.io
 
