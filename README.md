@@ -33,11 +33,11 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 ## QuickQanava Showcase:
 
-| Nodes       | 
-| :---:       |
-| ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/edges-curved-straight.gif) |
-
 [![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
+
+| Edges       | 
+| :---:       |
+| ![Curved-Straight Edges](https://github.com/cneben/QuickQanava/blob/0.9.2/doc/web/docs/images/edges-curved-straight.gif) |
 
 | Nodes       | 
 | :---:       |
