@@ -1,30 +1,21 @@
 import QtQuick          2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
+import QtQuick.Shapes   1.0
 
-import QuickQanava 2.0 as Qan
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
 Item {
+    Qan.LineGrid { id: lineGrid }
+    Qan.PointGrid { id: pointGrid }
+
     Qan.Navigable {
         id: navigable
         anchors.fill: parent
         clip: true
         navigable: true
-
-        grid: Qan.PointGrid {
-            id: pointGrid
-            pointComponent: Component {
-                Rectangle {
-                    smooth: true
-                    width: pointGrid.gridWidth
-                    height: width
-                    radius: width/2.
-                    color: pointGrid.thickColor
-                    //width: 2; height: 2; radius: 1; color: pointGrid.thickColor //"darkgrey"
-                }
-            }
-
-        }
+        grid: lineGrid
         Rectangle {
             parent: navigable.containerItem
             x: 100; y: 100
@@ -54,13 +45,27 @@ Item {
     RowLayout {
         CheckBox {
             text: "Grid Visible"
-            checked: pointGrid.visible
-            onCheckedChanged: pointGrid.visible = checked
+            checked: navigable.grid.visible
+            onCheckedChanged: navigable.grid.visible = checked
+        }
+        Label { text: "Grid Type:" }
+        ComboBox {
+            id: gridType
+            textRole: "key"
+            model: ListModel {
+                ListElement { key: "Lines";  value: 25 }
+                ListElement { key: "Points"; value: 50 }
+            }
+            currentIndex: 0 // Default to "Lines"
+            onActivated: {
+                navigable.grid = currentIndex == 0 ? lineGrid : pointGrid
+            }
         }
         Label { text: "Grid Scale:" }
         ComboBox {
             textRole: "key"
             model: ListModel {
+                ListElement { key: "25";    value: 25 }
                 ListElement { key: "50";    value: 50 }
                 ListElement { key: "100";   value: 100 }
                 ListElement { key: "150";   value: 150 }
@@ -69,20 +74,20 @@ Item {
             onActivated: {
                 var gridScale = model.get(currentIndex).value
                 if ( gridScale )
-                    pointGrid.gridScale = gridScale
+                    navigable.grid.gridScale = gridScale
             }
         }
         Label { Layout.leftMargin: 25; text: "Grid Major:" }
         SpinBox {
             from: 1;    to: 10
-            value: pointGrid.gridMajor
-            onValueChanged: pointGrid.gridMajor = value
+            value: navigable.grid.gridMajor
+            onValueChanged: navigable.grid.gridMajor = value
         }
         Label { Layout.leftMargin: 25; text: "Point size:" }
         SpinBox {
             from: 1;    to: 10
-            value: pointGrid.gridWidth
-            onValueChanged: pointGrid.gridWidth = value
+            value: navigable.grid.gridWidth
+            onValueChanged: navigable.grid.gridWidth = value
         }
     }
 }

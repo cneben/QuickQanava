@@ -25,32 +25,41 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software.
+// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	navigable.cpp
-// \author	benoit@qanava.org
-// \date	2016 01 14
+// \file	PointGrid.qml
+// \author	benoit@destrat.io
+// \date	2017 11 16
 //-----------------------------------------------------------------------------
 
-// Qt headers
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickStyle>
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-// QuickQanava headers
-#include "../../src/qanNavigable.h"
-#include "../../src/qanNavigablePreview.h"
+import QuickQanava      2.0 as Qan
 
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle("Material");
-    qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-    qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
-    qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");
-    QQmlApplicationEngine engine;
-    engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
-    return app.exec();
+Qan.AbstractLineGrid {
+    gridShape : lineGridShape
+    Shape {
+        id: lineGridShape
+        anchors.fill: parent
+        smooth: false
+    }
+    gridScale: 25
+    // FIXME....
+    //opacity: 0.75
+    geometryComponent: Component {
+        ShapePath {
+            property alias endX: line.x
+            property alias endY: line.y
+            property bool visible: false
+            startX: 0; startY: 0
+            capStyle: ShapePath.FlatCap
+            strokeWidth: 1
+            strokeColor: visible ? lineGrid.thickColor : Qt.rgba(0,0,0,0)
+            strokeStyle: ShapePath.SolidLine
+            fillColor: Qt.rgba(0,0,0,0)
+            PathLine { id: line; x: 0; y: 0 }
+        }
+    }
+    onAddLine: lineGridShape.data.push(line);
 }

@@ -39,7 +39,7 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanPointGrid.h"
+#include "./qanGrid.h"
 
 namespace qan { // ::qan
 
@@ -344,16 +344,16 @@ public:
      */
     Q_PROPERTY( qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL )
     //! \copydoc grid
-    qan::Grid*  getGrid() { return _grid.data(); }
-    void        setGrid( qan::Grid* grid );
+    inline qan::Grid*   getGrid() noexcept { return _grid.data(); }
+    void                setGrid(qan::Grid* grid) noexcept;
 private:
     //! Force update of grid.
-    void        updateGrid() noexcept;
+    void                updateGrid() noexcept;
     //! \copydoc grid
     QPointer<qan::Grid> _grid;
 signals:
     //! \copydoc grid
-    void        gridChanged( );
+    void                gridChanged( );
     //@}
     //-------------------------------------------------------------------------
 };

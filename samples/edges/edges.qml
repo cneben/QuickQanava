@@ -43,6 +43,7 @@ ApplicationWindow {
         id: graphView
         anchors.fill: parent
         navigable   : true
+        //grid: Qan.LineGrid { }
         graph: Qan.Graph {
             id: graph
             connectorEnabled: true

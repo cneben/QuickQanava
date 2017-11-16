@@ -379,15 +379,21 @@ void    Navigable::wheelEvent( QWheelEvent* event )
 //-----------------------------------------------------------------------------
 
 /* Grid Management *///--------------------------------------------------------
-void    Navigable::setGrid( qan::Grid* grid )
+void    Navigable::setGrid( qan::Grid* grid ) noexcept
 {
     if ( grid != _grid ) {
-        _grid = grid;
+        if ( _grid ) {                      // Hide previous grid
+            _grid->setVisible(false);
+            disconnect(_grid, 0, this, 0);  // Disconnect every update signals from grid to this navigable
+        }
+
+        _grid = grid;                       // Configure new grid
         if ( _grid ) {
             _grid->setParentItem( this );
             _grid->setZ( -1.0 );
             connect( grid, &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
                      this, &Navigable::updateGrid );    // take into account any grid property change while grid was hidden.
+            _grid->setVisible(true);
         }
         updateGrid();
         emit gridChanged();

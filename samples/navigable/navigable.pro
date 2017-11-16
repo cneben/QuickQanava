@@ -7,16 +7,18 @@ CONFIG += c++14
 SOURCES +=  ./navigable.cpp                     \
             ../../src/qanNavigable.cpp          \
             ../../src/qanNavigablePreview.cpp   \
-            ../../src/qanPointGrid.cpp
+            ../../src/qanGrid.cpp
 
 HEADERS += ../../src/qanNavigable.h             \
             ../../src/qanNavigablePreview.h     \
-           ../../src/qanPointGrid.h
+           ../../src/qanGrid.h
 
-OTHER_FILES += ./navigable.qml      \
-               ./image.qml          \
-               ./grid.qml           \
-               ../../src/NavigablePreview.qml
+OTHER_FILES += ./navigable.qml                  \
+               ./image.qml                      \
+               ./grid.qml                       \
+               ../../src/NavigablePreview.qml   \
+               ../../src/PointGrid.qml          \
+               ../../src/LineGrid.qml
 
 RESOURCES += navigable.qrc
 

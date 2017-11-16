@@ -25,32 +25,28 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software.
+// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	navigable.cpp
-// \author	benoit@qanava.org
-// \date	2016 01 14
+// \file	LineGrid.qml
+// \author	benoit@destrat.io
+// \date	2017 11 15
 //-----------------------------------------------------------------------------
 
-// Qt headers
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickStyle>
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-// QuickQanava headers
-#include "../../src/qanNavigable.h"
-#include "../../src/qanNavigablePreview.h"
+import QuickQanava      2.0 as Qan
 
-int main(int argc, char *argv[])
-{
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle("Material");
-    qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-    qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
-    qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");
-    QQmlApplicationEngine engine;
-    engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
-    return app.exec();
+Qan.AbstractPointGrid {
+    gridScale: 100
+    geometryComponent: Component {
+        Rectangle {
+            smooth: true
+            width: pointGrid.gridWidth
+            height: width
+            radius: width/2.
+            color: pointGrid.thickColor
+            //width: 2; height: 2; radius: 1; color: pointGrid.thickColor //"darkgrey"
+        }
+    }
 }

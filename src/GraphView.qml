@@ -32,7 +32,8 @@
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -49,6 +50,8 @@ import "qrc:/QuickQanava"   as Qan
  */
 Qan.AbstractGraphView {
     id: graphView
+    Qan.LineGrid { id: lineGrid }
+    grid: lineGrid
 
     onClicked: graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
     onRightClicked: graphView.focus = true
