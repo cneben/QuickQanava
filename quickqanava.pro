@@ -16,9 +16,9 @@ test-topology.subdir   = samples/topology
 
 #SUBDIRS +=  test-resizer
 SUBDIRS +=  test-navigable
-#SUBDIRS +=  test-nodes
+SUBDIRS +=  test-nodes
 SUBDIRS +=  test-edges
-#SUBDIRS +=  test-connector
+SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups
 #SUBDIRS +=  test-selection
 #SUBDIRS +=  test-style
