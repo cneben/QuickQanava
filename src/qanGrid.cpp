@@ -104,7 +104,7 @@ OrthoGrid::OrthoGrid( QQuickItem* parent ) :
     Grid( parent )
 { /* Nil */ }
 
-OrthoGrid::~OrthoGrid( )
+OrthoGrid::~OrthoGrid()
 {
     // Delete the geometry component if it is not owned by QML
     if ( _geometryComponent != nullptr &&
@@ -220,8 +220,7 @@ bool    PointGrid::updateGrid(const QRectF& viewRect,
     const unsigned int pointsCount = static_cast<unsigned int>(numPointsX * numPointsY);
     if ( getGeometryComponent() &&
          _points.size() < pointsCount ) {
-        unsigned int cachedPointsCount = _points.size() > 0 ? static_cast<unsigned int>(_points.size() - 1) :
-                                                              0;
+        unsigned int cachedPointsCount = static_cast<unsigned int>(_points.size());
         try {
             if ( _points.size() < pointsCount )     // Optimize append of new cached points items
                 _points.resize(pointsCount);
@@ -332,11 +331,10 @@ bool    LineGrid::updateGrid( const QRectF& viewRect,
     const unsigned int linesCount = numLinesX + numLinesY;
     if ( getGeometryComponent() &&
          _lines.size() < linesCount ) {
-        unsigned int cachedLinesCount = _lines.size() > 0 ? static_cast<unsigned int>(_lines.size() - 1) :
-                                                              0;
+        unsigned int cachedLinesCount = static_cast<unsigned int>(_lines.size());
         try {
             if ( _lines.size() < linesCount )     // Optimize append of new cached points items
-                _lines.resize( linesCount );
+                _lines.resize(linesCount);
         } catch (...) { return false; } // Might be std::bad_alloc or std::length_error
 
         auto gridContext = QQmlEngine::contextForObject(getGridShape());
@@ -355,6 +353,10 @@ bool    LineGrid::updateGrid( const QRectF& viewRect,
     }
     if ( _lines.size() < linesCount )
         return false;
+
+    //for (auto& line : _lines)
+    //    if ( line != nullptr )
+    //        line->setProperty("visible", QVariant{false});
 
     const auto navigableRectified = container.mapRectToItem(&navigable, rectified);
     unsigned int p = 0; // Generate HORIZONTAL lines
