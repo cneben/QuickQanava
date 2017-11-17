@@ -18,12 +18,10 @@ HEADERS +=  $$PWD/qcmObjectModel.h               \
             $$PWD/qcmContainerModelComposer.h               \
             $$PWD/qcmContainerModelComposerWatcher.h        \
             $$PWD/qcmContainerModelComposerListReference.h  \
-            $$PWD/qcmContainerModelFilter.h                 \
             $$PWD/QuickContainers.h
 
 SOURCES +=  $$PWD/qcmObjectModel.cpp             \
-            $$PWD/qcmContainerModelComposerWatcher.cpp  \
-            $$PWD/qcmContainerModelFilter.cpp
+            $$PWD/qcmContainerModelComposerWatcher.cpp
 
 OTHER_FILES +=  $$PWD/QuickContainers
 
