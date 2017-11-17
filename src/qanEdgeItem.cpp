@@ -685,9 +685,14 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
 
     const QQuickItem*   graphContainerItem = getGraph() != nullptr ? getGraph()->getContainerItem() : nullptr;
     if ( graphContainerItem != nullptr ) {
-        QRectF lineBr = QRectF{cache.p1, cache.p2}.normalized();  // Generate a Br with intersection points
-        setPosition( lineBr.topLeft() );    // Note: setPosition() call must occurs before mapFromItem()
-        setSize( lineBr.size() );
+        QPolygonF edgeBrPolygon;
+        edgeBrPolygon << cache.p1 << cache.p2;
+        if ( cache.lineType == qan::EdgeStyle::LineType::Curved )
+            edgeBrPolygon << cache.c1 << cache.c2;
+        //QRectF lineBr = QRectF{cache.p1, cache.p2}.normalized();  // Generate a Br with intersection points
+        const QRectF edgeBr = edgeBrPolygon.boundingRect();
+        setPosition( edgeBr.topLeft() );    // Note: setPosition() call must occurs before mapFromItem()
+        setSize( edgeBr.size() );
 
         _p1 = mapFromItem(graphContainerItem, cache.p1);
         _p2 = mapFromItem(graphContainerItem, cache.p2);
