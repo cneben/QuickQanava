@@ -9,7 +9,7 @@ Dependencies
 | GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |   ![](https://img.shields.io/badge/license-MIT-blue.svg) MIT|
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
+- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until your intention is to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
 
 Building from sources
 ------------------
@@ -23,7 +23,11 @@ cd QuickQanava
 
 QuickQanava use _qmake_ as its main build configuration system.
 
-Configuring
+1. Open _quickqanava.pro_ in QtCreator
+
+2. Select a kit, build and launch samples.
+
+Using from external projects
 ------------------
 
 The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:

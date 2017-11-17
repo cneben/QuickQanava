@@ -57,12 +57,152 @@ NodeStyle::NodeStyle( QString name, QObject* parent ) :
 }
 //-----------------------------------------------------------------------------
 
+/* Node Style Properties *///--------------------------------------------------
+void    NodeStyle::setBackRadius( qreal backRadius ) noexcept
+{
+    // PRECONDITIONS:
+        // backRadius must be >= 0.
+    if ( backRadius < -0.00001 ) {
+        qWarning() << "qan::NodeStyle::setBackRadius(): Node background radius can't be < 0.";
+        return;
+    }
+    if ( !qFuzzyCompare( 1. + _backRadius, 1. + backRadius ) ) {
+        _backRadius = backRadius;
+        emit backRadiusChanged();
+    }
+}
+
+void    NodeStyle::setBackOpacity( qreal backOpacity ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _backOpacity, 1. + backOpacity ) ) {
+        _backOpacity = backOpacity;
+        emit backOpacityChanged();
+    }
+}
+
+void    NodeStyle::setBackColor( const QColor& backColor ) noexcept
+{
+    if ( _backColor != backColor ) {
+        _backColor = backColor;
+        emit backColorChanged();
+    }
+}
+
+void    NodeStyle::setBorderColor( const QColor& borderColor ) noexcept
+{
+    if ( _borderColor != borderColor ) {
+        _borderColor = borderColor;
+        emit borderColorChanged();
+    }
+}
+
+void    NodeStyle::setBorderWidth( qreal borderWidth ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _borderWidth, 1. + borderWidth ) ) {
+        _borderWidth = borderWidth;
+        emit borderWidthChanged();
+    }
+}
+
+void    NodeStyle::setHasShadow( bool hasShadow ) noexcept
+{
+    if ( _hasShadow != hasShadow ) {
+        _hasShadow = hasShadow;
+        emit hasShadowChanged();
+    }
+}
+
+void    NodeStyle::setShadowColor( QColor shadowColor ) noexcept
+{
+    if ( _shadowColor != shadowColor ) {
+        _shadowColor = shadowColor;
+        emit shadowColorChanged();
+    }
+}
+
+void    NodeStyle::setShadowRadius( qreal shadowRadius ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _shadowRadius, 1. + shadowRadius ) ) {
+        _shadowRadius = shadowRadius;
+        emit shadowRadiusChanged();
+    }
+}
+
+void    NodeStyle::setFontPointSize( int fontPointSize ) noexcept
+{
+    if ( _fontPointSize != fontPointSize ) {
+        _fontPointSize = fontPointSize;
+        emit fontPointSizeChanged();
+    }
+}
+
+void    NodeStyle::setFontBold( bool fontBold ) noexcept
+{
+    if ( _fontBold != fontBold ) {
+        _fontBold = fontBold;
+        emit fontBoldChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 /* Edge Style Object Management *///-------------------------------------------
 EdgeStyle::EdgeStyle( QString name, QObject* parent ) :
     qan::Style( name, parent )
 {
 }
+
+void    EdgeStyle::setLineType( LineType lineType ) noexcept
+{
+    if ( lineType != _lineType ) {
+        _lineType = lineType;
+        emit lineTypeChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setLineColor( const QColor& lineColor ) noexcept
+{
+    if ( lineColor != _lineColor ) {
+        _lineColor = lineColor;
+        emit lineColorChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setLineWidth( qreal lineWidth ) noexcept
+{
+    if ( !qFuzzyCompare( 1.0 + lineWidth, 1.0 + _lineWidth ) ) {
+        _lineWidth = lineWidth;
+        emit lineWidthChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setArrowSize( qreal arrowSize ) noexcept
+{
+    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+        _arrowSize = arrowSize;
+        emit arrowSizeChanged();
+        emit styleModified();
+    }
+}
+
+void    EdgeStyle::setDashed( bool dashed ) noexcept
+{
+    if ( dashed != _dashed ) {
+        _dashed = dashed;
+        emit dashedChanged();
+    }
+}
+
+void    EdgeStyle::setDashPattern( const QVector<qreal>& dashPattern ) noexcept
+{
+    _dashPattern = dashPattern;
+    emit dashPatternChanged();
+}
+
+const QVector<qreal>& EdgeStyle::getDashPattern() const noexcept { return _dashPattern; }
 //-----------------------------------------------------------------------------
 
 } // ::qan

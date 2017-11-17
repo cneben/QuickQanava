@@ -105,7 +105,7 @@ public:
     Q_INVOKABLE qan::Node* getDestination() noexcept;
     Q_INVOKABLE qan::Edge* getHDestination() noexcept;
 
-    //! Read-only abstract item model of this edge in hyper nodes.
+    //! Read-only abstract item model for this edge "in hyper nodes".
     Q_PROPERTY( QAbstractItemModel* inHNodes READ getInHNodesModel CONSTANT FINAL )
     QAbstractItemModel* getInHNodesModel() const;
     //@}

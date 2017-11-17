@@ -38,9 +38,6 @@
 // GTpo headers
 #include "GTpo.h"
 
-// QuickGeoGL headers
-#include "../QuickGeoGL/src/QuickGeoGL.h"
-
 // QuickContainers headers
 #include "../QuickContainers/src/QuickContainers.h"
 
@@ -51,7 +48,6 @@
 #include "./qanGraphConfig.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
-#include "./qanCurveEdgeItem.h"
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
@@ -60,7 +56,7 @@
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
-#include "./qanPointGrid.h"
+#include "./qanGrid.h"
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
@@ -69,7 +65,10 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-        QuickGeoGL::initialize();
+#ifndef QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+
+        qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
+#endif
         QuickContainers::initialize();
 
         qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
@@ -82,7 +81,6 @@ struct QuickQanava {
         qmlRegisterType< qan::PortItem >( "QuickQanava", 2, 0, "PortItem");
         qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");
         qmlRegisterType< qan::EdgeItem >( "QuickQanava", 2, 0, "EdgeItem");
-        qmlRegisterType< qan::CurveEdgeItem >( "QuickQanava", 2, 0, "CurveEdgeItem");
         qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
         qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");
@@ -91,8 +89,9 @@ struct QuickQanava {
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-        qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
-        qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
+        qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
+        qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
+        qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");
         qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");
         qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");
         qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");

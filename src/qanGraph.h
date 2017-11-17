@@ -317,6 +317,10 @@ private:
 public:
     using Node              = typename GraphConfig::FinalNode;
     using WeakNode          = GTpoGraph::WeakNode;
+    using SharedNode        = GTpoGraph::SharedNode;
+
+    //! Proxy for GTpo graph insertNode().s
+    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return GTpoGraph::insertNode(node); }
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *

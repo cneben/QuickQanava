@@ -48,6 +48,10 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
         qWarning() << "Can't find a valid node delegate component.";
         return nullptr;
     }
+    if ( nodeComponent->isError() ) {
+        qWarning() << "Component error: " << nodeComponent->errors();
+        return nullptr;
+    }
     const auto node = std::make_shared<Node_t>();
     try {
         QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );

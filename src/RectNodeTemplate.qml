@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	NodeRectTemplate.qml
+// \file	RectNodeTemplate.qml
 // \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
@@ -47,30 +47,15 @@ Item {
     id: template
     property var            nodeItem: undefined
     default property alias  children : contentLayout.children
-    Rectangle {
-        id: background
-        anchors.fill: parent    // Background follow the content layout implicit size
-        radius: 2
-        color: nodeItem.style.backColor
-        border.color: nodeItem.style.borderColor
-        border.width: nodeItem.style.borderWidth
-        antialiasing: true
-    }
-    DropShadow {
-        id: backgroundShadow
+
+    RectNodeBackground {        // Node background and shadow with backOpacity and backRadius support
         anchors.fill: parent
-        source: background
-        horizontalOffset: nodeItem.style.shadowRadius
-        verticalOffset: nodeItem.style.shadowRadius
-        radius: 4; samples: 8
-        color: nodeItem.style.shadowColor
-        visible: nodeItem.style.hasShadow
-        transparentBorder: true
+        nodeItem: template.nodeItem
     }
     ColumnLayout {
         id: layout
         anchors.fill: parent
-        anchors.margins: background.radius / 2; spacing: 0
+        anchors.margins: nodeItem.style.backRadius / 2.; spacing: 0
         visible: !labelEditor.visible
         Label {
             id: nodeLabel
@@ -99,7 +84,7 @@ Item {
     LabelEditor {
         id: labelEditor
         anchors.fill: parent
-        anchors.margins: background.radius / 2
+        anchors.margins: nodeItem.style.backRadius / 2.
         target: parent.nodeItem.node
         visible: false
     }

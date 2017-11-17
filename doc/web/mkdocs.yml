@@ -3,12 +3,13 @@ site_url: 'http://www.destrat.io/quickqanava'
 site_author: 'cneben'
 use_directory_urls: false
 pages:
-  - 'Home': 'index.md'
+  - 'QuickQanava': 'index.md'
   - 'Installation': 'installation.md'
-  - 'Getting started': 'gettingstarted.md'
-  - 'Samples': 'samples.md'
-  - 'Advanced use': 'advanced.md'
+  - 'Topology': 'topology.md'
+  - 'Styles': 'styles.md'
   - 'Utilities': 'utilities.md'
+  - 'Advanced use': 'advanced.md'
+  - 'Samples': 'samples.md'
   - 'API Reference': 'reference.md'
   - 'Licence': 'licence.md'
 
@@ -37,8 +38,6 @@ extra:
       link: 'https://twitter.com/QuickQanava'
     - type: 'github'
       link: 'https://github.com/cneben'
-    - type: 'linkedin'
-      link: 'https://www.linkedin.com/in/benoit-autheman-895a20a3/'
 
 markdown_extensions:
   - admonition

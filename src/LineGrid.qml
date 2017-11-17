@@ -27,80 +27,38 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	CurvedEdge.qml
+// \file	PointGrid.qml
 // \author	benoit@destrat.io
-// \date	2018 09 04
+// \date	2017 11 16
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
-import QtQuick.Layouts  1.3
 import QtQuick.Shapes   1.0
 
 import QuickQanava      2.0 as Qan
 
-Qan.CurveEdgeItem {
-    id: edgeItem
-
-    property color color: style ? style.lineColor : Qt.black
-
+Qan.AbstractLineGrid {
+    opacity: 0.9
+    gridShape : lineGridShape
     Shape {
-        id: edgeCap
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.dstAngle
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
-        ShapePath {
-            id: cap
-            strokeColor: edgeItem.color
-            fillColor: edgeItem.color
-            strokeWidth: 2
-            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
-            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
-            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
-            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
-        }
-    }
-
-    Shape {
-        id: edgeShape
+        id: lineGridShape
         anchors.fill: parent
-        visible: edgeItem.visible && !edgeItem.hidden
-        //asynchronous: true    // FIXME: Benchmark that
-        smooth: true
+        smooth: false
+    }
+    gridScale: 25
+    geometryComponent: Component {
         ShapePath {
-            id: arrow
-            startX: edgeItem.p1.x
-            startY: edgeItem.p1.y
+            property alias endX: line.x
+            property alias endY: line.y
+            property bool visible: false
+            startX: 0; startY: 0
             capStyle: ShapePath.FlatCap
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            strokeColor: edgeItem.color
+            strokeWidth: 1
+            strokeColor: visible ? lineGrid.thickColor : Qt.rgba(0,0,0,0)
             strokeStyle: ShapePath.SolidLine
             fillColor: Qt.rgba(0,0,0,0)
-            PathCubic {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
-                control1X: edgeItem.c1.x
-                control1Y: edgeItem.c1.y
-                control2X: edgeItem.c2.x
-                control2Y: edgeItem.c2.y
-            }
+            PathLine { id: line; x: 0; y: 0 }
         }
-        /*
-        // Debug control points display code. FIXME: remove that for final release
-        Rectangle {
-            width: 8; height: width
-            x: edgeItem.c1.x - ( radius / 2 )
-            y: edgeItem.c1.y - ( radius / 2 )
-            radius: width / 2
-            color: "red"
-        }
-        Rectangle {
-            width: 8; height: width
-            x: edgeItem.c2.x - ( radius / 2 )
-            y: edgeItem.c2.y - ( radius / 2 )
-            radius: width / 2
-            color: "green"
-        }
-        */
     }
+    onAddLine: lineGridShape.data.push(line);
 }

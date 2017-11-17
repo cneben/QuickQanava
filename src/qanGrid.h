@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava library. Copyright 2016 Benoit AUTHEMAN.
 //
-// \file	qanPointGrid.h
+// \file	qanGrid.h
 // \author	benoit@destrat.io
 // \date	2017 01 29
 //-----------------------------------------------------------------------------
@@ -62,23 +62,27 @@ public:
     /*! \name Grid Management *///---------------------------------------------
     //@{
 public:
-    //! Update the grid for a given \c viewRect in \c container coordinate system and project to \c navigable CS.
-    virtual void    updateGrid(const QRectF& viewRect,
+    /*! \brief Update the grid for a given \c viewRect in \c container coordinate system and project to \c navigable CS.
+     *
+     * Base method should be called in concrete implementation, a \c false return value means
+     * incorrect arguments or grid configuration.
+     */
+    virtual bool    updateGrid(const QRectF& viewRect,
                                const QQuickItem& container,
-                               const QQuickItem& navigable ) noexcept { Q_UNUSED(viewRect); Q_UNUSED(container); Q_UNUSED(navigable);}
+                               const QQuickItem& navigable ) noexcept = 0;
 protected:
     //! Update the grid using cached settings when a grid property change.
-    virtual void    updateGrid() noexcept { }
+    virtual bool    updateGrid() noexcept = 0;
 
 public:
-    //! Color for major thicks (usually a point with qan::PointGrid), default to \c darkgrey.
+    //! Color for major thicks (usually a point with qan::PointGrid), default to \c lightgrey.
     Q_PROPERTY( QColor thickColor READ getThickColor WRITE setThickColor NOTIFY thickColorChanged FINAL )
     void            setThickColor( QColor thickColor ) noexcept;
     inline QColor   getThickColor() const noexcept { return _thickColor; }
 signals:
     void            thickColorChanged();
 private:
-    QColor          _thickColor{ 169,169,169 };     // darkgray/darkgrey: #A9A9A9 rgb(169,169,169)
+    QColor          _thickColor{211,211,211};    // lightgrey #D3D3D3 / rgb(211,211,211)
 
 public:
     //! Grid thicks width (width for lines, diameter for points), default to 3.0.
@@ -114,30 +118,74 @@ private:
 };
 
 
+/*! \brief Abstract grid with orthogonal geometry.
+ *
+ * \warning Changing \c geometryComponent dynamically is impossible and sill issue
+ * a warning.
+ *
+ * \nosubgrouping
+ */
+class OrthoGrid : public Grid
+{
+    /*! \name OrthoGrid Object Management *///---------------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit OrthoGrid( QQuickItem* parent = nullptr );
+    virtual ~OrthoGrid();
+    OrthoGrid( const OrthoGrid& ) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Grid Management *///---------------------------------------------
+    //@{
+public:
+    //! Component used to generate grid concrete layout: usually a rounded Rectangle for point grid or a Qt Quick ShapePath for LineGrid.
+    Q_PROPERTY( QQmlComponent* geometryComponent READ getGeometryComponent WRITE setGeometryComponent NOTIFY geometryComponentChanged FINAL )
+    //! \copydoc geometryComponent
+    void                    setGeometryComponent( QQmlComponent* geometryComponent ) noexcept;
+    //! \copydoc geometryComponent
+    inline QQmlComponent*   getGeometryComponent() noexcept { return _geometryComponent.data(); }
+signals:
+    //! \copydoc geometryComponent
+    void                    geometryComponentChanged();
+private:
+    //! \copydoc geometryComponent
+    QPointer< QQmlComponent > _geometryComponent{ nullptr };
+
+public:
+    virtual bool    updateGrid(const QRectF& viewRect,
+                               const QQuickItem& container,
+                               const QQuickItem& navigable ) noexcept override;
+protected:
+    virtual bool    updateGrid() noexcept override;
+
+private:
+    //! View rect cached updated in updateGrid(), allow updateGrid() use with no arguments.
+    QRectF                  _viewRectCache;
+    //! Cache for container targetted by this grid, updated in updateGrid(), allow updateGrid() use with no arguments.
+    QPointer<QQuickItem>    _containerCache;
+    //! Cache for navigable where this grid is used, updated in updateGrid(), allow updateGrid() use with no arguments.
+    QPointer<QQuickItem>    _navigableCache;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+
 /*! \brief Draw an (orthogonal) adaptative grid of point on a qan::Navigable \c overlay or \c underlay.
  *
  * A valid QML Component must be provided by the user to visualize points, for example:
  * \code
  *  Qan.Navigable {
  *    navigable: true
- *    grid: Qan.PointGrid {
- *      id: pointGrid
- *      pointComponent: Component {
- *        Rectangle {
- *          smooth: true
- *          width: pointGrid.gridWidth; height: width   // Binding to pointGrid could be removed for maximum efficiency if no runtime changes are needed
- *          radius: width/2.
- *          color: pointGrid.thickColor
- *        }
- *    }
+ *    Qan.PointGrid { id: pointGrid }
+ *    grid: pointGrid
  *  }
  * \endcode
  *
- * \warning As of 2017/01/30 it is not possible to change pointComponent dynamically.
- *
  * \nosubgrouping
  */
-class PointGrid : public Grid
+class PointGrid : public OrthoGrid
 {
     /*! \name PointGrid Object Management *///---------------------------------
     //@{
@@ -152,37 +200,75 @@ public:
     /*! \name Grid Management *///---------------------------------------------
     //@{
 public:
-    Q_PROPERTY( QQmlComponent* pointComponent READ getPointComponent WRITE setPointComponent NOTIFY pointComponentChanged FINAL )
-    void                    setPointComponent( QQmlComponent* pointComponent ) noexcept;
-    inline QQmlComponent*   getPointComponent() noexcept { return _pointComponent.data(); }
-signals:
-    void                    pointComponentChanged();
-private:
-    QPointer< QQmlComponent > _pointComponent{ nullptr };
-
-public:
-    virtual void    updateGrid(const QRectF& viewRect,
+    virtual bool    updateGrid(const QRectF& viewRect,
                                const QQuickItem& container,
                                const QQuickItem& navigable ) noexcept override;
-protected:
-    virtual void    updateGrid() noexcept override;
-
 private:
-    //! View rect cache (might be invalid before updateGrid() is called).
-    QRectF                  _viewRectCache;
-    //! Cache for container targetted by this grid is used (might be nullptr before updateGrid() is called).
-    QPointer<QQuickItem>    _containerCache;
-    //! Cache for navigable where this grid is used (might be nullptr before updateGrid() is called).
-    QPointer<QQuickItem>    _navigableCache;
-    QVector<QQuickItem*>    _points;
+    //! Grid points cache.
+    std::vector<QQuickItem*>    _points;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+/*! * \brief Draw an orthogonal grid with lines.
+ *
+ * \code
+ *  Qan.Navigable {
+ *    navigable: true
+ *    Qan.LineGrid { id: lineGrid }
+ *    grid: lineGrid
+ *  }
+ * \endcode
+ *
+ * \nosubgrouping
+ */
+class LineGrid : public OrthoGrid
+{
+    /*! \name LineGrid Object Management *///----------------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit LineGrid( QQuickItem* parent = nullptr );
+    virtual ~LineGrid();
+    LineGrid( const LineGrid& ) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Grid Management *///---------------------------------------------
+    //@{
+public:
+    //! Concrete grid Qt Quick Shape visual view.
+    Q_PROPERTY( QObject* gridShape READ getGridShape WRITE setGridShape NOTIFY gridShapeChanged FINAL )
+    //! \copydoc gridShape
+    void                setGridShape( QObject* gridShape ) noexcept;
+    //! \copydoc gridShape
+    inline QObject*     getGridShape() noexcept { return _gridShape.data(); }
+signals:
+    //! \copydoc gridShape
+    void                gridShapeChanged();
+private:
+    //! \copydoc gridShape
+    QPointer< QObject > _gridShape{nullptr};
+signals:
+    //! Emmited when a new line should be inserted in the grid internall Shape (Qt Quick Shapes) view.
+    void                addLine(QObject* line);
+
+public:
+    virtual bool        updateGrid(const QRectF& viewRect,
+                                   const QQuickItem& container,
+                                   const QQuickItem& navigable ) noexcept override;
+private:
+    //! Grid line cache (contains QuickShapePath* objects).
+    std::vector<QObject*>   _lines;
     //@}
     //-------------------------------------------------------------------------
 };
 
 }  // ::qan
 
-QML_DECLARE_TYPE( qan::Grid );
+QML_DECLARE_TYPE( qan::OrthoGrid );
 QML_DECLARE_TYPE( qan::PointGrid );
+QML_DECLARE_TYPE( qan::LineGrid );
 
 #endif // qanPointGrid_h
 

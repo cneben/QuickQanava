@@ -43,6 +43,7 @@ ApplicationWindow {
         id: graphView
         anchors.fill: parent
         navigable   : true
+        //grid: Qan.LineGrid { }
         graph: Qan.Graph {
             id: graph
             connectorEnabled: true
@@ -105,27 +106,47 @@ ApplicationWindow {
 
                 var x = 850; var y = 80
                 generateTestPortLayout(x, y,             Qan.NodeItem.Left, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Left, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Left, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Left, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Left, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Left, Qan.NodeItem.Bottom);
 
-                x = 2400; y = 80
+                x = 1700; y = 80
                 generateTestPortLayout(x, y,             Qan.NodeItem.Top, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Top, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Top, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Top, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Top, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Top, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Top, Qan.NodeItem.Bottom);
 
-                x = 850; y = 1400
+                x = 850; y = 400
                 generateTestPortLayout(x, y,             Qan.NodeItem.Right, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Right, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Right, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Right, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Right, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Right, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Right, Qan.NodeItem.Bottom);
 
-                x = 2400; y = 1400
+                x = 1700; y = 400
                 generateTestPortLayout(x, y,             Qan.NodeItem.Bottom, Qan.NodeItem.Left);
-                generateTestPortLayout(x + 700, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
-                generateTestPortLayout(x, y + 650,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
-                generateTestPortLayout(x + 700, y + 650, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
+                generateTestPortLayout(x + 420, y,       Qan.NodeItem.Bottom, Qan.NodeItem.Top);
+                generateTestPortLayout(x, y + 200,       Qan.NodeItem.Bottom, Qan.NodeItem.Right);
+                generateTestPortLayout(x + 420, y + 200, Qan.NodeItem.Bottom, Qan.NodeItem.Bottom);
+
+                x = 80; y = 600
+                generateTestPortNodeLayout(x, y,             Qan.NodeItem.Left );
+                generateTestPortNodeLayout(x + 420, y,       Qan.NodeItem.Top );
+                generateTestPortNodeLayout(x, y + 200,       Qan.NodeItem.Right );
+                generateTestPortNodeLayout(x + 420, y + 200, Qan.NodeItem.Bottom );
+            }
+
+            function generateTestPortNodeLayout(x, y, srcPortType ) {
+                // SRC/DST horizontally aligned
+                var s = graph.insertNode()
+                s.label = "S1"; s.item.x = x; s.item.y = y
+                var sp1 = graph.insertInPort(s, srcPortType);
+                sp1.label = "OUT#1"
+
+                var d = graph.insertNode()
+                d.label = "D1"; d.item.x = x + 200; d.item.y = y
+
+                var e = graph.insertEdge(s, d);
+                graph.bindEdgeSource(e, sp1)
             }
 
             function generateTestPortLayout(x, y, srcPortType, dstPortType) {
@@ -142,11 +163,11 @@ ApplicationWindow {
 
                 var e = graph.insertEdge(s, d);
                 graph.bindEdgeSource(e, sp1)
-                graph.bindEdgeDestination(e, sp1)
+                //graph.bindEdgeDestination(e, sp1)
                 graph.bindEdgeDestination(e, dp1)
 
                 // SRC/DST vertically aligned
-                var s = graph.insertNode()
+                /*var s = graph.insertNode()
                 s.label = "S1"; s.item.x = x + 450; s.item.y = y
                 var sp1 = graph.insertInPort(s, srcPortType);
                 sp1.label = "OUT#1"
@@ -191,7 +212,7 @@ ApplicationWindow {
                 var e = graph.insertEdge(s, d);
                 graph.bindEdgeSource(e, sp1)
                 graph.bindEdgeDestination(e, sp1)
-                graph.bindEdgeDestination(e, dp1)
+                graph.bindEdgeDestination(e, dp1)*/
             }
         }
     }  // Qan.GraphView
@@ -201,18 +222,33 @@ ApplicationWindow {
         title: "Edge color"
         onAccepted: { defaultEdgeStyle.lineColor = color; }
     }
-    Item {
+    Control {
         id: edgeStyleEditor
-        anchors.top: parent.top;   anchors.topMargin: 15
+        anchors.top: parent.top;        anchors.topMargin: 15
         anchors.right: parent.right;    anchors.rightMargin: 15
-        width: 200; height: 250
-        Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
+        width: 220; height: 395; padding: 0
+        Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
         ColumnLayout {
-            anchors.fill: parent; anchors.margins: 10
             Label {
                 Layout.margins: 3; text: "Edge Style:"
                 font.bold: true; horizontalAlignment: Text.AlignLeft
             }
+            RowLayout {
+                Layout.margins: 2
+                Label { text:"Edge type:" }
+                Item { Layout.fillWidth: true }
+                ComboBox {
+                    model: ["Straight", "Curved"]
+                    enabled: defaultEdgeStyle !== undefined
+                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        if (index == 0 )
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+                        else if ( index == 1 )
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+                    }
+                }
+            } // RowLayout: edgeType
             RowLayout {
                 Layout.margins: 2
                 Label { text:"Line color:" }
@@ -240,6 +276,33 @@ ApplicationWindow {
                     onValueModified: defaultEdgeStyle.lineWidth = value
                 }
             } // RowLayout: lineWidth
+
+            ColumnLayout {
+                Layout.margins: 2
+                CheckBox {
+                    id: dashed
+                    text: "Dashed"
+                    checked: defaultEdgeStyle.dashed
+                    onClicked: {
+                        if (defaultEdgeStyle)
+                            defaultEdgeStyle.dashed = checked
+                    }
+                }
+                ComboBox {
+                    enabled: dashed.checked
+                    model: ["Dash", "Dot", "Dash Dot"]
+                    //currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        if (index == 0 )
+                            defaultEdgeStyle.dashPattern = [2,2]
+                        else if ( index == 1 )
+                            defaultEdgeStyle.dashPattern = [1,1]
+                        else if ( index == 2 )
+                            defaultEdgeStyle.dashPattern = [2,2,4,2]
+                    }
+                }
+            } // ColumneLayout: dashed
+
             ColumnLayout {
                 Layout.margins: 2
                 Label { text:"Arrow size:" }

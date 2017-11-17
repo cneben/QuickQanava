@@ -51,7 +51,8 @@ Qan.GraphView {
             s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
 
             graph.insertEdge(s1, d1)
-            graph.insertEdge(s1, d2)
+            var e12 = graph.insertEdge(s1, d2)
+            e12.label = "TEST"
 
             var d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250

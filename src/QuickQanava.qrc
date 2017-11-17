@@ -1,8 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file alias="QuickQanava/NavigablePreview.qml">NavigablePreview.qml</file>
+        <file alias="QuickQanava/PointGrid.qml">PointGrid.qml</file>
+        <file alias="QuickQanava/LineGrid.qml">LineGrid.qml</file>
         <file alias="QuickQanava/Edge.qml">Edge.qml</file>
-        <file alias="QuickQanava/CurvedEdge.qml">CurvedEdge.qml</file>
+        <file alias="QuickQanava/EdgeTemplate.qml">EdgeTemplate.qml</file>
         <file alias="QuickQanava/GraphView.qml">GraphView.qml</file>
         <file alias="QuickQanava/Node.qml">Node.qml</file>
         <file alias="QuickQanava/Port.qml">Port.qml</file>
@@ -12,6 +14,7 @@
         <file alias="QuickQanava/RectGroupTemplate.qml">RectGroupTemplate.qml</file>
         <file alias="QuickQanava/CanvasNodeTemplate.qml">CanvasNodeTemplate.qml</file>
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
+        <file alias="QuickQanava/RectNodeBackground.qml">RectNodeBackground.qml</file>
         <file alias="QuickQanava/SelectionItem.qml">SelectionItem.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
         <file alias="QuickQanava/StyleEditor.qml">StyleEditor.qml</file>

@@ -4,7 +4,8 @@ QT          += core widgets gui qml quick
 
 include(../GTpo/src/gtpo.pri)
 include(../QuickContainers/src/quickcontainers.pri)
-include(../QuickGeoGL/src/quickgeogl.pri)
+# No longuer included by default since 0.9.2
+#include(../QuickGeoGL/src/quickgeogl.pri)
 
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
@@ -16,7 +17,6 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
             $$PWD/qanEdgeItem.h             \
-            $$PWD/qanCurveEdgeItem.h        \
             $$PWD/qanNode.h                 \
             $$PWD/qanNodeItem.h             \
             $$PWD/qanPortItem.h             \
@@ -35,7 +35,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanStyleManager.h         \
             $$PWD/qanNavigable.h            \
             $$PWD/qanNavigablePreview.h     \
-            $$PWD/qanPointGrid.h            \
+            $$PWD/qanGrid.h                 \
             $$PWD/qanContainerAdapter.h     \
             $$PWD/qanBottomRightResizer.h
 
@@ -43,7 +43,6 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \
             $$PWD/qanEdge.cpp               \
             $$PWD/qanEdgeItem.cpp           \
-            $$PWD/qanCurveEdgeItem.cpp      \
             $$PWD/qanNode.cpp               \
             $$PWD/qanNodeItem.cpp           \
             $$PWD/qanPortItem.cpp           \
@@ -58,13 +57,16 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
             $$PWD/qanNavigablePreview.cpp   \
-            $$PWD/qanPointGrid.cpp          \
+            $$PWD/qanGrid.cpp               \
             $$PWD/qanBottomRightResizer.cpp
 
 OTHER_FILES +=  $$PWD/QuickQanava               \
+                $$PWD/PointGrid.qml             \
+                $$PWD/LineGrid.qml              \
                 $$PWD/GraphView.qml             \
                 $$PWD/Graph.qml                 \
                 $$PWD/RectNodeTemplate.qml      \
+                $$PWD/RectNodeBackground.qml    \
                 $$PWD/CanvasNodeTemplate.qml    \
                 $$PWD/Group.qml                 \
                 $$PWD/RectGroupTemplate.qml     \
@@ -74,7 +76,7 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/HorizontalDock.qml        \
                 $$PWD/VerticalDock.qml          \
                 $$PWD/Edge.qml                  \
-                $$PWD/CurvedEdge.qml            \
+                $$PWD/EdgeTemplate.qml                  \
                 $$PWD/SelectionItem.qml         \
                 $$PWD/StyleListView.qml         \
                 $$PWD/StyleEditor.qml           \

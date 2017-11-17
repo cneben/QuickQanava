@@ -47,8 +47,9 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Material");
     qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
     qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "Grid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "PointGrid");
+    qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
+    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
+    qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");
     QQmlApplicationEngine engine;
     engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
     return app.exec();

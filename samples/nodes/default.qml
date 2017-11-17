@@ -38,13 +38,18 @@ Qan.GraphView {
     anchors.fill: parent
     navigable   : true
     resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
+    gridThickColor: Material.theme === Material.Dark ? "#4e4e4e" : "#c1c1c1"
+
     graph: Qan.Graph {
         id: graph
         Component.onCompleted: {
             var n1 = graph.insertNode()
-            n1.label = "Node 1"; n1.item.x=15; n1.item.y= 25
+            n1.label = "Hello World"; n1.item.x=15; n1.item.y= 25
             var n2 = graph.insertNode()
             n2.label = "Node 2"; n2.item.x=15; n2.item.y= 125
+
+            var e = graph.insertEdge(n1, n2);
+            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
         }
         onNodeClicked: {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )
@@ -93,6 +98,13 @@ Qan.GraphView {
                 enabled: nodeEditor.nodeItem != null
                 checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selectable : false
                 onClicked: nodeEditor.nodeItem.selectable = checked
+            }
+            Label { text: "style.backRadius" }
+            Slider {
+                from: 0.; to: 15.0;
+                value: defaultNodeStyle.backRadius
+                stepSize: 1.0
+                onMoved: defaultNodeStyle.backRadius = value
             }
         }
     }

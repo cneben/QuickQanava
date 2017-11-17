@@ -14,7 +14,7 @@ test-topology.subdir   = samples/topology
 #test-40k.subdir     = samples/40k
 #test-40k.depends    = quickqanava
 
-SUBDIRS +=  test-resizer
+#SUBDIRS +=  test-resizer
 SUBDIRS +=  test-navigable
 SUBDIRS +=  test-nodes
 SUBDIRS +=  test-edges

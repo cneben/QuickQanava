@@ -371,7 +371,8 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             item->setParentItem( getContainerItem() );
         } // Note: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
-        qWarning() << "qan::Graph::createFromComponent(): " << e.getMsg();
+        Q_UNUSED(e);
+        qWarning() << "qan::Graph::createFromComponent(): " << component->errors();
     } catch ( const std::exception& e ) {
         qWarning() << "qan::Graph::createFromComponent(): " << e.what();
     }
@@ -408,7 +409,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
         if ( primitive != nullptr &&
              primitive->getItem() &&
              primitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
-                primitive->getItem()->setSelectionItem(createSelectionItem(primitive->getItem()));
+                primitive->getItem()->setSelectionItem(this->createSelectionItem(primitive->getItem()));
         };
         std::for_each(getGroups().begin(), getGroups().end(), updateSelectionItem);
         std::for_each(getNodes().begin(), getNodes().end(), updateSelectionItem);
@@ -493,9 +494,9 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
             item->setParentItem( getContainerItem() );
         } // Note QAN3: There is no leak until cpp ownership is set
     } catch ( const qan::Error& e ) {
-        qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errorString();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errors();
     } catch ( const std::exception& e ) {
-        qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errorString();
+        qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errors();
     }
     return QPointer<QQuickItem>{item};
 }
@@ -1012,6 +1013,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
 
 qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, QString label) noexcept
 {
+    Q_UNUSED(dock); Q_UNUSED(label);
     if ( node == nullptr )
         return nullptr;
     // FIXME add out port support

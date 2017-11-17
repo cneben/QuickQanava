@@ -25,67 +25,28 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickGeoGL software. Copyright (C) 2016 Benoit Autheman.
+// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	qglSGCanvasNode.h
+// \file	LineGrid.qml
 // \author	benoit@destrat.io
-// \date	2015 11 03
+// \date	2017 11 15
 //-----------------------------------------------------------------------------
 
-#ifndef qglSGLineNode_h
-#define qglSGLineNode_h
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-// Qt headers
-#include <QSGGeometryNode>
-#include <QSGMaterialShader>
+import QuickQanava      2.0 as Qan
 
-// QuickGeoGL headers
-#include "./qglSGPolyLineNode.h"
-
-namespace qgl { // ::qgl
-
-struct LineVertex {
-    float x, y;
-};
-
-struct LineGadget {
-    // Public
-    LineVertex p1;
-    // Public
-    LineVertex p2;
-};
-
-class SGLineNode : public QSGGeometryNode
-{
-    /*! \name SGLineNode Scene Graph Interface *///----------------------------
-    //@{
-public:
-    /*! \brief Construct a SGLineNode with a given \c strokeMaterial material.
-     *
-     *  \param strokeMaterial material used to "stroke" the line, line node does not get the material ownership.
-     */
-    SGLineNode() noexcept;
-    virtual ~SGLineNode( ) {}
-    SGLineNode(const SGLineNode& ) = delete;
-    SGLineNode& operator=(const SGLineNode& ) = delete;
-
-public:
-    auto            updateGeometry( const QPointF& p1, const QPointF& p2 ) noexcept -> void;
-    inline auto     getGadget( ) noexcept -> LineGadget* { return _gadget; }
-    inline auto     getGadget( ) const noexcept -> const LineGadget* { return _gadget; }
-private:
-    static const QSGGeometry::AttributeSet& geometryAttributes();
-
-protected:
-    QSGGeometry*    _geometry{nullptr};
-    QSGMaterial*    _material{nullptr};
-    LineGadget*     _gadget{nullptr};
-    //@}
-    //-------------------------------------------------------------------------
-};
-
-
-} // ::qgl
-
-#endif  // qglSGCanvas.h
-
+Qan.AbstractPointGrid {
+    gridScale: 100
+    opacity: 0.9
+    geometryComponent: Component {
+        Rectangle {
+            smooth: true
+            width: pointGrid.gridWidth
+            height: width
+            radius: width/2.
+            color: pointGrid.thickColor
+        }
+    }
+}

@@ -27,30 +27,25 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
 //
-// \file	Edge.qml
+// \file	CurvedEdge.qml
 // \author	benoit@destrat.io
-// \date	2015 06 20
+// \date	2016 09 04
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
-import QtQuick.Layouts  1.3
+import QtQuick.Shapes   1.0
 
 import QuickQanava          2.0 as Qan
-import QuickGeoGL           1.0 as Qgl
-import "qrc:/QuickGeoGL"    1.0 as Qgl
+import "qrc:/QuickQanava"   as Qan
 
 Qan.EdgeItem {
     id: edgeItem
-    property color  color: style ? style.lineColor : Qt.black
-    Qgl.Arrow {
+
+    // Private hack for visual connector edge color dynamic modification
+    property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
+    Qan.EdgeTemplate {
         anchors.fill: parent
-        id: arrow
-        visible: edgeItem.visible && !edgeItem.hidden
-        p1: edgeItem.p1
-        p2: edgeItem.p2
-        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-        color: edgeItem.color
+        edgeItem: parent
+        color: parent.color
     }
 }
-

@@ -137,7 +137,7 @@ public:
     inline bool getHidden() const noexcept { return _hidden; }
     void        setHidden(bool hidden) noexcept;
 signals:
-    void        hiddenChanged( );
+    void        hiddenChanged();
 private:
     bool        _hidden{false};
 
@@ -151,24 +151,187 @@ public:
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
      */
     virtual void        updateItem() noexcept;
+protected:
+
+     /*! FIXME document that
+      *
+      * \note Edge geometry cache is expressed in _graph global coordinate system_. Projection into
+      * a local CS occurs only in projectGeometry(), until this method is called all internal qan::EdgeItem
+      * geometry (p1, p2, etc.) size and position should be considered invalid.
+      */
+    struct GeometryCache {
+        GeometryCache() = default;
+        GeometryCache(const GeometryCache&) = default;  // Defaut copy ctor is ok.
+        GeometryCache(GeometryCache&& rha) :
+            valid{rha.valid},
+            lineType{rha.lineType},
+            z{rha.z},
+            hidden{rha.hidden},
+            srcBs{std::move(rha.srcBs)},    dstBs{std::move(rha.dstBs)},
+            srcBr{std::move(rha.srcBr)},    dstBr{std::move(rha.dstBr)},
+            srcBrCenter{std::move(rha.srcBrCenter)},
+            dstBrCenter{std::move(rha.dstBrCenter)},
+            p1{std::move(rha.p1)},          p2{std::move(rha.p2)},
+            dstA1{std::move(rha.dstA1)},
+            dstA2{std::move(rha.dstA2)},
+            dstA3{std::move(rha.dstA3)},
+            dstAngle{rha.dstAngle},
+            c1{std::move(rha.c1)},          c2{std::move(rha.c2)},
+            labelPosition{std::move(rha.labelPosition)}
+        {
+            srcItem.swap(rha.srcItem);
+            dstItem.swap(rha.dstItem);
+            rha.valid = false;
+        }
+
+        inline auto isValid() const noexcept -> bool { return valid && srcItem && dstItem; }
+        bool    valid{false};
+        QPointer<const QQuickItem>  srcItem{nullptr};
+        QPointer<const QQuickItem>  dstItem{nullptr};
+        qan::EdgeStyle::LineType    lineType{qan::EdgeStyle::LineType::Straight};
+
+        qreal   z{0.};
+
+        bool hidden{false};
+        QPolygonF   srcBs;
+        QPolygonF   dstBs;
+        QRectF      srcBr;
+        QRectF      dstBr;
+        QPointF     srcBrCenter;
+        QPointF     dstBrCenter;
+
+        QPointF p1;
+        QPointF p2;
+
+        QPointF dstA1;
+        QPointF dstA2;
+        QPointF dstA3;
+        qreal   dstAngle{0.};
+
+        QPointF c1;
+        QPointF c2;
+
+        QPointF labelPosition;
+    };
+    inline GeometryCache    generateGeometryCache() const noexcept;
+
+    /*! \brief Generate edge line source and destination points (GeometryCache::p1 and GeometryCache::p2). */
+    inline void             generateLineGeometry(GeometryCache& cache) const noexcept;
+
+    /*! \brief FIXME
+     *
+     * \note Line geometry may (cache.p1 and cache.p2) could be modified to fit arrow geometry.
+     */
+    inline void             generateArrowGeometry(GeometryCache& cache) const noexcept;
+
+    //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
+    inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
+
+    //! Generate edge line label position.
+    inline void             generateLabelPosition(GeometryCache& cache) const noexcept;
+
+    //! Apply a final valid geometry cache to this.
+    inline void             applyGeometry(const GeometryCache& cache) noexcept;
+
+    /*! Return line angle on line \c line.
+     *
+     * \return angle in degree or a value < 0.0 if an error occurs.
+     */
+    qreal               lineAngle(const QLineF& line) const noexcept;
 public:
     //! Internally used from QML to set src and dst and display an unitialized edge for previewing edges styles.
     Q_INVOKABLE void    setLine( QPoint src, QPoint dst );
     //! Edge source point in item CS (with accurate source bounding shape intersection).
-    Q_PROPERTY( QPointF p1 READ getP1() NOTIFY p1Changed FINAL )
+    Q_PROPERTY( QPointF p1 READ getP1() NOTIFY lineGeometryChanged FINAL )
     inline  auto    getP1() const noexcept -> const QPointF& { return _p1; }
     //! Edge destination point in item CS (with accurate destination bounding shape intersection).
-    Q_PROPERTY( QPointF p2 READ getP2() NOTIFY p2Changed FINAL )
+    Q_PROPERTY( QPointF p2 READ getP2() NOTIFY lineGeometryChanged FINAL )
     inline  auto    getP2() const noexcept -> const QPointF& { return _p2; }
 signals:
-    void            p1Changed();
-    void            p2Changed();
+    void            lineGeometryChanged();
 protected:
     QPointF         _p1;
     QPointF         _p2;
 protected:
-    QPointF         getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const;
-    QLineF          getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const;
+    QPointF         getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& polygon ) const noexcept;
+    QLineF          getLineIntersection( const QPointF& p1, const QPointF& p2, const QPolygonF& srcBp, const QPolygonF& dstBp ) const noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Curve Control Points Management *///-----------------------------
+    //@{
+public:
+    //! Edge source point in item CS (with accurate source bounding shape intersection).
+    Q_PROPERTY( QPointF c1 READ getC1() NOTIFY controlPointsChanged FINAL )
+    //! \copydoc c1
+    inline  auto    getC1() const noexcept -> const QPointF& { return _c1; }
+    //! Edge destination point in item CS (with accurate destination bounding shape intersection).
+    Q_PROPERTY( QPointF c2 READ getC2() NOTIFY controlPointsChanged FINAL )
+    //! \copydoc c2
+    inline  auto    getC2() const noexcept -> const QPointF& { return _c2; }
+signals:
+    //! \copydoc c1
+    void            controlPointsChanged();
+private:
+    //! \copydoc c1
+    QPointF         _c1;
+    //! \copydoc c2
+    QPointF         _c2;
+
+protected:
+    /*! Return cubic curve angle at position \c pos between [0.; 1.] on curve defined by \c start, \c end and controls points \c c1 and \c c2.
+     *
+     * \param  pos  linear position on curve, between [0.; 1.0].
+     * \return angle in degree or a value < 0.0 if an error occurs.
+     */
+    qreal           cubicCurveAngleAt(qreal pos, const QPointF& start, const QPointF& end, const QPointF& c1, const QPointF& c2) const noexcept;
+
+public:
+    //! Destination edge arrow angle.
+    Q_PROPERTY( qreal dstAngle READ getDstAngle() NOTIFY dstAngleChanged FINAL )
+    //! \copydoc dstAngle
+    inline  auto    getDstAngle() const noexcept -> qreal { return _dstAngle; }
+private:
+    //! \copydoc dstAngle
+    qreal           _dstAngle{0.};
+signals:
+    //! \copydoc dstAngle
+    void            dstAngleChanged();
+
+public:
+    //! Source edge arrow angle.
+    Q_PROPERTY( qreal srcAngle READ getSrcAngle() NOTIFY srcAngleChanged FINAL )
+    //! \copydoc srcAngle
+    inline  auto    getSrcAngle() const noexcept -> qreal { return _srcAngle; }
+private:
+    //! \copydoc srcAngle
+    qreal           _srcAngle{0.};
+signals:
+    //! \copydoc srcAngle
+    void            srcAngleChanged();
+
+public:
+    /*! \brief Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
+     *
+     * \note Arrow geometry is updated with a single arrowGeometryChanged() to avoid unecessary binding: all points
+     * geometry must be changed at the same time.
+     */
+    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY arrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA1() const noexcept -> const QPointF& { return _dstA1; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY arrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA2() const noexcept -> const QPointF& { return _dstA2; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY arrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA3() const noexcept -> const QPointF& { return _dstA3; }
+private:
+    //! \copydoc dstA1
+    QPointF         _dstA1, _dstA2, _dstA3;
+signals:
+    void            arrowGeometryChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -182,7 +345,8 @@ signals:
     void            edgeRightClicked( qan::EdgeItem* edge, QPointF pos );
     void            edgeDoubleClicked( qan::EdgeItem* edge, QPointF pos );
 private:
-    inline qreal    distanceFromLine( const QPointF& p, const QLineF& line ) const;
+    //! Return orthogonal distance between point \c p and \c line, or -1 on error.
+    inline qreal    distanceFromLine( const QPointF& p, const QLineF& line ) const noexcept;
 
 public:
     //! Edge label position.
