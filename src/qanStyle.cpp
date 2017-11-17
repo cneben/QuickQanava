@@ -58,6 +58,20 @@ NodeStyle::NodeStyle( QString name, QObject* parent ) :
 //-----------------------------------------------------------------------------
 
 /* Node Style Properties *///--------------------------------------------------
+void    NodeStyle::setBackRadius( qreal backRadius ) noexcept
+{
+    // PRECONDITIONS:
+        // backRadius must be >= 0.
+    if ( backRadius < -0.00001 ) {
+        qWarning() << "qan::NodeStyle::setBackRadius(): Node background radius can't be < 0.";
+        return;
+    }
+    if ( !qFuzzyCompare( 1. + _backRadius, 1. + backRadius ) ) {
+        _backRadius = backRadius;
+        emit backRadiusChanged();
+    }
+}
+
 void    NodeStyle::setBackOpacity( qreal backOpacity ) noexcept
 {
     if ( !qFuzzyCompare( 1. + _backOpacity, 1. + backOpacity ) ) {
@@ -111,6 +125,22 @@ void    NodeStyle::setShadowRadius( qreal shadowRadius ) noexcept
     if ( !qFuzzyCompare( 1. + _shadowRadius, 1. + shadowRadius ) ) {
         _shadowRadius = shadowRadius;
         emit shadowRadiusChanged();
+    }
+}
+
+void    NodeStyle::setFontPointSize( int fontPointSize ) noexcept
+{
+    if ( _fontPointSize != fontPointSize ) {
+        _fontPointSize = fontPointSize;
+        emit fontPointSizeChanged();
+    }
+}
+
+void    NodeStyle::setFontBold( bool fontBold ) noexcept
+{
+    if ( _fontBold != fontBold ) {
+        _fontBold = fontBold;
+        emit fontBoldChanged();
     }
 }
 //-----------------------------------------------------------------------------

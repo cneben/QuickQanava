@@ -93,13 +93,15 @@ ApplicationWindow {
                 }
             }
         }
-        Frame {
+        Control {
             id: groupEditor
             property var group: undefined
             onGroupChanged: groupItem = group ? group.item : undefined
             property var groupItem: undefined
             anchors.bottom: parent.bottom; anchors.bottomMargin: 15
             anchors.right: parent.right; anchors.rightMargin: 15
+            width: 220; height: 180; padding: 0
+            Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
             ColumnLayout {
                 Label {
                     text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."

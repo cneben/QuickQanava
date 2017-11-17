@@ -107,8 +107,13 @@ QQmlComponent*  Group::delegate(QObject* caller) noexcept
 
 qan::Style*     Group::style() noexcept
 {
-    if ( !qan_Group_style )
+    if ( !qan_Group_style ) {
         qan_Group_style = std::make_unique<qan::NodeStyle>();
+        qan_Group_style->setFontPointSize(11);
+        qan_Group_style->setFontBold(true);
+        qan_Group_style->setBorderWidth(2.);
+        qan_Group_style->setBackRadius(8.);
+    }
     return qan_Group_style.get();
 }
 //-----------------------------------------------------------------------------

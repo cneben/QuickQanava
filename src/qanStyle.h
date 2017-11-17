@@ -108,12 +108,43 @@ public:
     /*! \name Node Style Properties *///---------------------------------------
     //@{
 public:
+    /*! \brief Node background rectangle border (corner) radius (default to 4.).
+     *
+     * \note \c backRadius is interpreted as background rectangle border radius when nodes items are
+     * built using Qan.RectNodeTemplate and Qan.RectNodeBackground. When defining custom node
+     * items, value can't be interpreted by the user with no limitations.
+     */
+    Q_PROPERTY( qreal backRadius READ getBackRadius WRITE setBackRadius NOTIFY backRadiusChanged FINAL )
+    //! \copydoc backRadius
+    void            setBackRadius( qreal backRadius ) noexcept;
+    //! \copydoc backRadius
+    inline qreal    getBackRadius() const noexcept { return _backRadius; }
+protected:
+    //! \copydoc backRadius
+    qreal           _backRadius{4.};
+signals:
+    //! \copydoc backRadius
+    void            backRadiusChanged();
+
+public:
+    /*! \brief Node item background opacity (default to 0.85, ie 85% opaque).
+     *
+     * \note \c backOpacity affect node item background, but not it's content or border shadow opacity. Changing
+     * node opacity directly is more efficient, but also affect node content and shadows. Property works
+     * when using Qan.RectNodeTemplate and Qan.RectGroupTemplate, it could be used in custom node items with no
+     * limitations (Qan.RectNodeBackground could be used to add backOpacity support to custom node delegates).
+     *
+     */
     Q_PROPERTY( qreal backOpacity READ getBackOpacity WRITE setBackOpacity NOTIFY backOpacityChanged FINAL )
+    //! \copydoc backOpacity
     void            setBackOpacity( qreal backOpacity ) noexcept;
+    //! \copydoc backOpacity
     inline qreal    getBackOpacity() const noexcept { return _backOpacity; }
 protected:
+    //! \copydoc backOpacity
     qreal           _backOpacity{0.85};
 signals:
+    //! \copydoc backOpacity
     void            backOpacityChanged();
 
 public:
@@ -169,6 +200,36 @@ protected:
     qreal           _shadowRadius{3.};
 signals:
     void            shadowRadiusChanged();
+
+public:
+    /*! \brief Node content text font \c pointSize, set to -1 to use system default (default to -1 ie system default size).
+     */
+    Q_PROPERTY( int fontPointSize READ getFontPointSize WRITE setFontPointSize NOTIFY fontPointSizeChanged FINAL )
+    //! \copydoc fontPointSize
+    void            setFontPointSize( int fontPointSize ) noexcept;
+    //! \copydoc fontPointSize
+    inline int      getFontPointSize() const noexcept { return _fontPointSize; }
+protected:
+    //! \copydoc fontPointSize
+    int             _fontPointSize{-1};
+signals:
+    //! \copydoc fontPointSize
+    void            fontPointSizeChanged();
+
+public:
+    /*! \brief Set to true to display node text with bold font (default to false).
+     */
+    Q_PROPERTY( bool fontBold READ getFontBold WRITE setFontBold NOTIFY fontBoldChanged FINAL )
+    //! \copydoc fontBold
+    void            setFontBold( bool fontBold ) noexcept;
+    //! \copydoc fontBold
+    inline bool     getFontBold() const noexcept { return _fontBold; }
+protected:
+    //! \copydoc fontBold
+    bool            _fontBold{false};
+signals:
+    //! \copydoc fontBold
+    void            fontBoldChanged();
     //@}
     //-------------------------------------------------------------------------
 };

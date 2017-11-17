@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	NodeRectTemplate.qml
+// \file	RectNodeTemplate.qml
 // \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
@@ -48,69 +48,14 @@ Item {
     property var            nodeItem: undefined
     default property alias  children : contentLayout.children
 
-    property real shadowMargin: 15
-    property real rectRadius: 4
-    Item {
-        id: fakeBackground
-        anchors.centerIn: parent
-        layer.enabled: true
-        width: template.width + shadowMargin; height: template.height + shadowMargin
-        visible: false
-        Rectangle {
-            anchors.centerIn: parent
-            width: template.width - 1;  height: template.height - 1
-            radius: rectRadius
-            color: Qt.rgba(0,0,0,1)
-            antialiasing: true
-            visible: false
-            layer.enabled: true
-            layer.effect: DropShadow {
-                horizontalOffset: nodeItem.style.shadowRadius
-                verticalOffset: nodeItem.style.shadowRadius
-                radius: 4; samples: 8
-                color: nodeItem.style.shadowColor
-                visible: nodeItem.style.hasShadow
-                transparentBorder: true
-                cached: false
-            }
-        }
-    }
-    Item {
-        id: backgroundMask
-        anchors.centerIn: parent
-        width: parent.width + shadowMargin; height: parent.height + shadowMargin
-        visible: false
-        Rectangle {
-            anchors.centerIn: parent
-            width: template.width + 1;  height: template.height + 1
-            radius: rectRadius
-            color: Qt.rgba(0,0,0,1)
-            antialiasing: true
-        }
-    }
-    OpacityMask {
-        anchors.centerIn: parent
-        width: parent.width + shadowMargin; height: parent.height + shadowMargin
-        source: ShaderEffectSource { sourceItem: fakeBackground; hideSource: false }
-        maskSource: ShaderEffectSource { format: ShaderEffectSource.Alpha; sourceItem: backgroundMask; hideSource: false }
-        invert: true
-    }
-
-    Rectangle {
-        id: background
-        anchors.fill: parent    // Background follow the content layout implicit size
-        radius: rectRadius
-        color: nodeItem.style.backColor
-        border.color: nodeItem.style.borderColor
-        border.width: nodeItem.style.borderWidth
-        antialiasing: true
-        opacity: nodeItem.style.backOpacity
-        // Note: Do not enable layer to avoid aliasing at high scale
+    RectNodeBackground {        // Node background and shadow with backOpacity and backRadius support
+        anchors.fill: parent
+        nodeItem: template.nodeItem
     }
     ColumnLayout {
         id: layout
         anchors.fill: parent
-        anchors.margins: background.radius / 2; spacing: 0
+        anchors.margins: nodeItem.style.backRadius / 2.; spacing: 0
         visible: !labelEditor.visible
         Label {
             id: nodeLabel
@@ -139,7 +84,7 @@ Item {
     LabelEditor {
         id: labelEditor
         anchors.fill: parent
-        anchors.margins: background.radius / 2
+        anchors.margins: nodeItem.style.backRadius / 2.
         target: parent.nodeItem.node
         visible: false
     }

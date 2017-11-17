@@ -97,6 +97,13 @@ Qan.GraphView {
                 checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selectable : false
                 onClicked: nodeEditor.nodeItem.selectable = checked
             }
+            Label { text: "style.backRadius" }
+            Slider {
+                from: 0.; to: 15.0;
+                value: defaultNodeStyle.backRadius
+                stepSize: 1.0
+                onMoved: defaultNodeStyle.backRadius = value
+            }
         }
     }
 }  // Qan.GraphView

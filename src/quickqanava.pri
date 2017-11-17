@@ -66,6 +66,7 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/GraphView.qml             \
                 $$PWD/Graph.qml                 \
                 $$PWD/RectNodeTemplate.qml      \
+                $$PWD/RectNodeBackground.qml    \
                 $$PWD/CanvasNodeTemplate.qml    \
                 $$PWD/Group.qml                 \
                 $$PWD/RectGroupTemplate.qml     \

@@ -54,7 +54,7 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 | Groups       | 
 | :---:        | 
-| ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-groups.gif) |
+| ![Groups](https://github.com/cneben/QuickQanava/blob/0.9.2/doc/web/docs/images/sample-groups.gif) |
 
   - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/gettingstarted/index.html#using-groups)
 

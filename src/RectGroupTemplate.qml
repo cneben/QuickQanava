@@ -49,27 +49,18 @@ Item {
     default property alias children : content.children
     property alias  content: content
 
-    property alias  radius: groupBackground.radius
-    property alias  border: groupBackground.border
-    property real   labelPointSize: 11
-    property bool   labelBold: false
-
     property var    groupItem: undefined
-    property color  backColor: groupItem !== undefined &&
-                               groupItem.style ? groupItem.style.backColor : Qt.rgba( 0.97, 0.97, 0.97, 1.0 )
+
     Item {
         id: content
         x: 0; y: 0; z: 3
         visible: !groupItem.collapsed
     }
-    Rectangle { // 20160328: Do not set as content child to avoid interferring with content.childrenRect
+    RectNodeBackground {        // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
-        anchors.fill: content
+        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
+        nodeItem: template.groupItem
         visible: !groupItem.collapsed
-        z: 1;
-        color: backColor
-        radius: 6
-        border.width: 2; border.color: Qt.darker( backColor, 1.2 )
     }
     RowLayout {
         id: headerLayout
@@ -82,20 +73,26 @@ Item {
             padding: 0
             Layout.preferredWidth: 32; Layout.preferredHeight: 32
             text: groupItem ? ( groupItem.collapsed ? "+" : "-" ) : "-"
-            font.pointSize: 14; font.bold: true
+            font.pointSize: 13; font.bold: true
             onClicked: groupItem.collapsed = !groupItem.collapsed
         }
         Item {
             clip: false
             Layout.fillWidth: true; Layout.fillHeight: true
+            property int fontPointSize : groupItem.style.fontPointSize  // Do not set pointSize for -1 value
+            onFontPointSizeChanged: {
+                if ( fontPointSize != -1 )
+                    labelEditor.pointSize = fontPointSize
+                groupLabel.font.pointSize = fontPointSize
+            }
             LabelEditor {
                 clip: false
                 id: labelEditor
                 anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
                 target: groupItem && groupItem.group ? groupItem.group : undefined
                 visible: false
-                pointSize: template.labelPointSize
-                bold: template.labelBold
+                //pointSize: groupItem.style.fontPointSize != -1
+                bold: groupItem.style.fontBold
             }
             Label {
                 id: groupLabel
@@ -103,8 +100,7 @@ Item {
                 text: groupItem && groupItem.group ? groupItem.group.label : "              "
                 visible: !labelEditor.visible
                 verticalAlignment: Text.AlignVCenter
-                font.pointSize: template.labelPointSize
-                font.bold: template.labelBold
+                font.bold: groupItem.style.fontBold
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent
@@ -117,7 +113,7 @@ Item {
     } // RowLayout: collapser + label
 
     // Emitted by qan::Group when node dragging start
-    function onNodeDragEnter() { groupBackground.color = Qt.binding( function() { return Qt.darker( template.backColor, 1.05 ) } ) }
+    function onNodeDragEnter() { groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) }
     // Emitted by qan::Group when node dragging ends
-    function onNodeDragLeave() { groupBackground.color = Qt.binding( function() { return template.backColor } ) }
+    function onNodeDragLeave() { groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) }
 }

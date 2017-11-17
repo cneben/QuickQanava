@@ -13,6 +13,7 @@
         <file alias="QuickQanava/RectGroupTemplate.qml">RectGroupTemplate.qml</file>
         <file alias="QuickQanava/CanvasNodeTemplate.qml">CanvasNodeTemplate.qml</file>
         <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
+        <file alias="QuickQanava/RectNodeBackground.qml">RectNodeBackground.qml</file>
         <file alias="QuickQanava/SelectionItem.qml">SelectionItem.qml</file>
         <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
         <file alias="QuickQanava/StyleEditor.qml">StyleEditor.qml</file>

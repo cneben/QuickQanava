@@ -709,6 +709,7 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
             emit controlPointsChanged();
         }
 
+        setZ(cache.z);
         setLabelPos( mapFromItem(graphContainerItem, cache.labelPosition) );
     }
 
