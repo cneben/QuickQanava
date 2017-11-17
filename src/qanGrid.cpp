@@ -354,10 +354,6 @@ bool    LineGrid::updateGrid( const QRectF& viewRect,
     if ( _lines.size() < linesCount )
         return false;
 
-    //for (auto& line : _lines)
-    //    if ( line != nullptr )
-    //        line->setProperty("visible", QVariant{false});
-
     const auto navigableRectified = container.mapRectToItem(&navigable, rectified);
     unsigned int p = 0; // Generate HORIZONTAL lines
     for ( unsigned int npx = 0; npx < numLinesX; ++npx ) {

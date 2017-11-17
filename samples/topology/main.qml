@@ -113,12 +113,6 @@ ApplicationWindow {
         }
     }
 
-    Label {
-        text: "Right click for main menu:
-               \t- Add content with Add Node or Add Face Node entries.
-               \t- Use the DnD connector to add edges between nodes."
-    }
-
     function centerItem( item ) {
         if ( !item ||
              !window.contentItem )
@@ -137,6 +131,8 @@ ApplicationWindow {
         graph       : topology
         navigable   : true
         resizeHandlerColor: Material.accent
+        gridThickColor: Material.theme === Material.Dark ? "#4e4e4e" : "#c1c1c1"
+
         Qan.FaceGraph {
             id: topology
             objectName: "graph"
@@ -146,7 +142,10 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorColor: Material.accent
             connectorEdgeColor: Material.accent
-
+            onConnectorEdgeInserted: {
+                if ( edge )
+                    edge.label = "My edge"
+            }
             property Component faceNodeComponent: Qt.createComponent( "qrc:/FaceNode.qml" )
             onNodeRightClicked: {
                 var globalPos = node.item.mapToItem( topology, pos.x, pos.y )
@@ -299,7 +298,11 @@ ApplicationWindow {
             menu.targetNode = undefined; menu.targetEdge = undefined; menu.open()
         }
     }
-
+    Label {
+        text: "Right click for main menu:
+               \t- Add content with Add Node or Add Face Node entries.
+               \t- Use the DnD connector to add edges between nodes."
+    }
     Item {
         id: edgeList
         anchors.top: parent.top;     anchors.topMargin: 15
@@ -536,5 +539,21 @@ ApplicationWindow {
             checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
             onClicked: ApplicationWindow.contentItem.Material.theme = checked ? Material.Dark : Material.Light
         }
+        RowLayout {
+            Layout.margins: 2
+            Label { text:"Edge type:" }
+            Item { Layout.fillWidth: true }
+            ComboBox {
+                model: ["Straight", "Curved"]
+                enabled: defaultEdgeStyle !== undefined
+                currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                onActivated: {
+                    if (index == 0 )
+                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+                    else if ( index == 1 )
+                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+                }
+            }
+        } // RowLayout: edgeType
     }
 }

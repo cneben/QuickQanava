@@ -38,6 +38,8 @@ Qan.GraphView {
     anchors.fill: parent
     navigable   : true
     resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
+    gridThickColor: Material.theme === Material.Dark ? "#4e4e4e" : "#c1c1c1"
+
     graph: Qan.Graph {
         id: graph
         Component.onCompleted: {

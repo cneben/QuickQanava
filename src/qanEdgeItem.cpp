@@ -607,9 +607,9 @@ void    EdgeItem::generateLineControlPoints(GeometryCache& cache) const noexcept
 
                                            // Left Tp Rgt Bot None
         qreal xCorrect[5][5] =             { { 1,  0,  0,  1, 0 },     // Dock:Left
-                                             { 0,  1,  0, -1, 0 },     // Dock::Top
+                                             { 0,  1,  0,  0, 0 },     // Dock::Top
                                              { 0,  0, -1, -1, 0 },     // Dock::Right
-                                             { 1, -1, -1, -1, 0 },     // Dock::Bottom
+                                             { 1,  0, -1, -1, 0 },     // Dock::Bottom
                                              { 0,  0,  0,  0, 0 } };   // None
 
         qreal yCorrect[5][5] =             { { 1,  1,  0,  0, 0 },     // Dock:Left

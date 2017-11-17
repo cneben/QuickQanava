@@ -56,6 +56,12 @@ Qan.AbstractGraphView {
     onClicked: graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
     onRightClicked: graphView.focus = true
 
+    property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
+    onGridThickColorChanged: {
+        if ( grid )
+            grid.thickColor = gridThickColor
+    }
+
     property alias  resizeHandlerColor: nodeResizer.handlerColor
     Qan.BottomRightResizer {
         id: nodeResizer

@@ -409,7 +409,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
         if ( primitive != nullptr &&
              primitive->getItem() &&
              primitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
-                primitive->getItem()->setSelectionItem(createSelectionItem(primitive->getItem()));
+                primitive->getItem()->setSelectionItem(this->createSelectionItem(primitive->getItem()));
         };
         std::for_each(getGroups().begin(), getGroups().end(), updateSelectionItem);
         std::for_each(getNodes().begin(), getNodes().end(), updateSelectionItem);
@@ -1013,6 +1013,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
 
 qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, QString label) noexcept
 {
+    Q_UNUSED(dock); Q_UNUSED(label);
     if ( node == nullptr )
         return nullptr;
     // FIXME add out port support

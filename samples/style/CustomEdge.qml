@@ -32,25 +32,18 @@
 // \date	2015 06 20
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts  1.3
+import QtQuick                      2.7
+import QtQuick.Controls.Material    2.1
 
 import QuickQanava          2.0 as Qan
-import QuickGeoGL           1.0 as Qgl
-import "qrc:/QuickGeoGL"    1.0 as Qgl
+import "qrc:/QuickQanava"   as Qan
 
 Qan.EdgeItem {
     id: edgeItem
     property color  color: Qt.rgba(0,0,0,1)
-    Qgl.Arrow {
+    Qan.EdgeTemplate {
         anchors.fill: parent
-        id: arrow
-        p1: edgeItem.p1
-        p2: edgeItem.p2
-        p2CapSize: edgeItem.style ? edgeItem.style.arrowSize : 4
-        lineWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-        color: Material.foreground
+        edgeItem: parent
+        color: Material.foreground          // HERE
     }
 }
