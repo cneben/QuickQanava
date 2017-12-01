@@ -161,17 +161,6 @@ protected:
     inline qan::Group*  qmlGetGroup() noexcept { return getGroup().lock().get(); }
     //@}
     //-------------------------------------------------------------------------
-
-    /*! \name Dock Management *///---------------------------------------------
-    //@{
-public:
-    using WeakPortItem  = std::weak_ptr<qan::PortItem>;
-    using DockItemPtr   = std::shared_ptr<qan::PortItem>;
-protected:
-    std::vector<std::shared_ptr<qan::PortItem>> _inPorts;
-    std::vector<std::shared_ptr<qan::PortItem>> _outPorts;
-    //@}
-    //-------------------------------------------------------------------------
 };
 
 } // ::qan

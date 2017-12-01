@@ -46,29 +46,13 @@
 
 namespace qcm { // ::qcm
 
-/*template < typename T >
-struct insert { };
-
-//! Insert \c item with type \t T in \c container of type \c Container<T>: insert<T>::into<Container>(t, container)
-template < typename T >
-struct insert< QList<T> > {
-    static void  into( T t, QList<T>& c ) { c.append( t ); }
-};*/
-
-
-
 template < template<typename...CArgs> class Container, typename T >
 struct container { };
 
 template < typename T >
 struct container< QList, T > {
     static void  insert( T t, QList<T>& c ) { c.append( t ); }
-    static constexpr void  insert( T t, QList<T>& c, int i ) {
-        /*if ( i == 0 )         // Mwai...
-            c.prepend( t );
-        else*/
-            c.insert( i, t );
-    }
+    static constexpr void  insert( T t, QList<T>& c, int i ) { c.insert( i, t ); }
     static void  remove( const T& t, QList<T>& c ) { c.remove( t ); }
 };
 
@@ -85,27 +69,6 @@ struct container< QSet, T > {
     static void  insert( T t, QVector<T>& c, int i ) { c.insert( t ); Q_UNUSED(i); }
     static void  remove( const T& t, QVector<T>& c ) { c.remove( t ); }
 };
-
-
-/*
-template < typename C, typename T >
-struct container< QVector<T>, T > {
-    template <typename ItemT>
-    static void  insert( QVector<T>& c, ItemT t ) { c.append( t ); }
-
-    template <typename ItemT>
-    static void  remove( QVector<T>& c, const ItemT& t ) { c.removeAll( t ); }
-};
-
-template <typename C, typename T >
-struct container< QSet<T>, T > {
-    template <typename ItemT>
-    static void  insert( QSet<T>& c, ItemT t ) { c.insert( t ); }
-
-    template <typename ItemT>
-    static void  remove( QSet<T>& c, const ItemT& t ) { c.remove( t ); }
-};
-*/
 
 } // ::qcm
 
