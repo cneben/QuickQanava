@@ -1,30 +1,22 @@
-site_name: 'QuickQanava graph visualization library'
+site_name: 'QuickQanava C++ graph visualization library'
 site_url: 'http://www.destrat.io/quickqanava'
-site_author: 'cneben'
-use_directory_urls: false
-pages:
-  - 'QuickQanava': 'index.md'
-  - 'Installation': 'installation.md'
-  - 'Topology': 'topology.md'
-  - 'Styles': 'styles.md'
-  - 'Utilities': 'utilities.md'
-  - 'Advanced use': 'advanced.md'
-  - 'Samples': 'samples.md'
-  - 'API Reference': 'reference.md'
-  - 'Licence': 'licence.md'
-
-theme: 'material'
-
+site_author: 'Destrat.io'
+site_description: 'Graph topology library for C++14'
 repo_name: 'GitHub'
 repo_url: 'https://github.com/cneben/QuickQanava'
+edit_uri: ""
 
 copyright: 'Copyright &copy; 2017 Delia Stratégie'
+use_directory_urls: false
 
-#extra_css: ['extra.css']
+theme: 
+  name: 'material'
+#  logo: 'images/logo.png'
+  logo:
+    icon: 'share'
  
 extra:
-  version: '0.8'
-  logo: 'images/logo.png'
+  version: '0.9.3'
   palette:
     primary: 'indigo'
     accent: 'amber'
@@ -45,5 +37,36 @@ markdown_extensions:
   - footnotes
   - meta
   - toc(permalink=true)
-  
-  
+  - pymdownx.tasklist(custom_checkbox=true)
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - markdown.extensions.toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+pages:
+  - 'QuickQanava': 'index.md'
+  - 'Installation': 'installation.md'
+  - 'Topology': 'topology.md'
+  - 'Styles': 'styles.md'
+  - 'Utilities': 'utilities.md'
+  - 'Advanced use': 'advanced.md'
+  - 'Samples': 'samples.md'
+  - 'API Reference': 'reference.md'
+  - 'Licence': 'licence.md'

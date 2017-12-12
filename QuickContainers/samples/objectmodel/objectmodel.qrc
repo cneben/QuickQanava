@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>objectmodel.qml</file>
-        <file>qtquickcontrols2.conf</file>
-    </qresource>
-</RCC>

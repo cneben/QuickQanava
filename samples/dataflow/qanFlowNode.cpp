@@ -55,16 +55,11 @@ void    FlowNodeBehaviour::inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) n
 
 }
 
-QQmlComponent*  FlowNode::delegate(QObject* caller) noexcept
+QQmlComponent*  FlowNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   qan_FlowNode_delegate;
-    if ( !qan_FlowNode_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            qan_FlowNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/FlowNode.qml");
-        else qWarning() << "[static]qan::FlowNode::delegate(): Error: QML engine is nullptr.";
-    }
+    if ( !qan_FlowNode_delegate )
+        qan_FlowNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/FlowNode.qml");
     return qan_FlowNode_delegate.get();
 }
 
@@ -79,10 +74,43 @@ void    FlowNode::setOutput(QVariant output) noexcept
     emit outputChanged();
 }
 
-qan::Node* FlowGraph::insertFlowNode()
+QQmlComponent*  PercentageNode::delegate(QQmlEngine& engine) noexcept
 {
-    const auto flowNode = insertNode<FlowNode>(nullptr);
-    flowNode->installBehaviour(std::make_unique<FlowNodeBehaviour>());
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/PercentageNode.qml");
+    return delegate.get();
+}
+
+QQmlComponent*  OpMultiplyNode::delegate(QQmlEngine& engine) noexcept
+{
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/OpMultiplyNode.qml");
+    return delegate.get();
+}
+
+
+qan::Node* FlowGraph::insertFlowNode(qan::FlowNode::Type type)
+{
+    qan::Node* flowNode = nullptr;
+    switch ( type ) {
+    case qan::FlowNode::Type::Percentage:
+        flowNode = insertNode<FlowNode>(nullptr);
+        break;
+    case qan::FlowNode::Type::Image:
+        flowNode = insertNode<FlowNode>(nullptr);
+        break;
+        flowNode = insertNode<FlowNode>(nullptr);
+    case qan::FlowNode::Type::OpMultiply:
+        break;
+    case qan::FlowNode::Type::OpTint:
+        flowNode = insertNode<FlowNode>(nullptr);
+        break;
+    default: return nullptr;
+    }
+    if ( flowNode )
+        flowNode->installBehaviour(std::make_unique<FlowNodeBehaviour>());
     return flowNode;
 }
 

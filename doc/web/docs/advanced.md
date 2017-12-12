@@ -16,8 +16,8 @@ Creation of a custom graph (MyGraph) with custom node (MyNode) and a dedicated v
 
 Factories have to be redefined in primitive subclasses:
 
-  - `static  QQmlComponent*      delegate(QObject* caller) noexcept`: Return a (usually singleton) QML component that will be used for primitive visual delegate.
-  - `static  qan::NodeStyle*     style() noexcept`: Return a (usually singleton) style used as primitive default style.
+  - `#!cpp static  QQmlComponent*      delegate(QObject* caller) noexcept`: Return a (usually singleton) QML component that will be used for primitive visual delegate.
+  - `#!cpp static  qan::NodeStyle*     style() noexcept`: Return a (usually singleton) style used as primitive default style.
 
 Custom content is then created from a specialized `qan::Graph` class:
 
@@ -63,8 +63,8 @@ Insertion of non Visual Content
 
 Non visual edge or node could be used in graph to model complex topologies or add internal non-visual logic with:
 
-- `qan::Graph::insertNonVisualNode<>()`: default graph `nodeDelegate` will no be used, custom node `delegate()` may be oeither undefined or return nullptr.
-- `qan::Graph::insertNonVisualEdge<>(source, destination)`: Edge could be a regular node -> node edge or an oriented hyper edge node -> edge.
+- `#!cpp qan::Graph::insertNonVisualNode<>()`: default graph `nodeDelegate` will no be used, custom node `delegate()` may be oeither undefined or return nullptr.
+- `#!cpp qan::Graph::insertNonVisualEdge<>(source, destination)`: Edge could be a regular node -> node edge or an oriented hyper edge node -> edge.
 
 
 Observation of Topological Modifications

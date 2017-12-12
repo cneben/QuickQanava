@@ -85,23 +85,17 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-static std::unique_ptr<QQmlComponent>   qan_Node_delegate;
-static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
-
-QQmlComponent*  Node::delegate(QObject* caller) noexcept
+QQmlComponent*  Node::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !qan_Node_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            qan_Node_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Node.qml");
-        else qWarning() << "[static]qan::Node::delegate(): Error: QML engine is nullptr.";
-    }
-    return qan_Node_delegate.get();
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml");
+    return delegate.get();
 }
 
 qan::NodeStyle* Node::style() noexcept
 {
+    static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
     if ( !qan_Node_style )
         qan_Node_style = std::make_unique<qan::NodeStyle>();
     return qan_Node_style.get();

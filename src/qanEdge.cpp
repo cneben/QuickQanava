@@ -77,23 +77,17 @@ void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-static std::unique_ptr<QQmlComponent>   qan_Edge_delegate;
-static std::unique_ptr<qan::EdgeStyle>  qan_Edge_style;
-
-QQmlComponent*  Edge::delegate(QObject* caller) noexcept
+QQmlComponent*  Edge::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !qan_Edge_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr ) {
-            qan_Edge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Edge.qml");
-        }
-    }
-    return qan_Edge_delegate.get();
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Edge.qml");
+    return delegate.get();
 }
 
 qan::EdgeStyle* Edge::style() noexcept
 {
+    static std::unique_ptr<qan::EdgeStyle>  qan_Edge_style;
     if ( !qan_Edge_style )
         qan_Edge_style = std::make_unique<qan::EdgeStyle>();
     return qan_Edge_style.get();

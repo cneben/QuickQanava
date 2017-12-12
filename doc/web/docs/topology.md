@@ -1,4 +1,4 @@
-QuickQanava Quick Start 
+Creating Topology 
 ============================
 
 Building a Simple Directed Graph
@@ -46,9 +46,9 @@ Topology
 
 Content could initialized in graph `onCompleted()` function:
 
-- `Qan.Node Qan.Graph.insertNode()`: 
-- `Qan.Edge Qan.Graph.insertEdge(Qan.Node, Qan.Node)`:
-- `Qan.Group Qan.Graph.insertGroup()`:
+- `#!js Qan.Node Qan.Graph.insertNode()`: 
+- `#!js Qan.Edge Qan.Graph.insertEdge(Qan.Node, Qan.Node)`:
+- `#!js Qan.Group Qan.Graph.insertGroup()`:
 
 All primitives (nodes, edges, groups) have both a "topological and data" aspect (Qan.Node, Qan.Edge, Qan.Group) and a visual counter part accessible trough their `item` property (usually a Qan.NodeItem, Qan.EdgeItem, Qan.GroupItem).
 
@@ -91,9 +91,9 @@ Docks and ports could be used to control how an edge is connected to source and 
 
 Docks and ports are managed trought the Qan.Graph interface:
 
-- `Qan.Graph.insertPort(node, orientation)`:  Insert a port on *node* at a given *orientation* and return a `Qan.PortItem`.
-- `Qan.Graph.bindEdgeDestination(edge, port)`: Bind an *edge* destination on a given *port*.
-- `Qan.Graph.bindEdgeSource(edge, port)`: Bind an *edge* source on a given *port*.
+- `#!js Qan.Graph.insertPort(node, orientation)`:  Insert a port on *node* at a given *orientation* and return a `Qan.PortItem`.
+- `#!js Qan.Graph.bindEdgeDestination(edge, port)`: Bind an *edge* destination on a given *port*.
+- `#!js Qan.Graph.bindEdgeSource(edge, port)`: Bind an *edge* source on a given *port*.
 
 Example of port insertion and binding to existing edges:
 
@@ -212,9 +212,9 @@ Selection can be modified at graph level just by changing the graph selection po
 
 Selection can also be configured with the following Qan.Graph properties:
 
-- `Qan.Graph.selectionColor` / `qan::Graph::setSelectionColor()`: Color for the node selection rectangle.
-- `Qan.Graph.selectionWeight` / `qan::Graph::setSelectionWeight()`: Border width of the node selection rectangle.
-- `Qan.Graph.selectionMargin` / `qan::Graph::setSelectionMargin()`: Margin between the node selection rectangle and the node content (selection weight is taken into account).
+- `Qan.Graph.selectionColor` / `#!js qan::Graph::setSelectionColor()`: Color for the node selection rectangle.
+- `Qan.Graph.selectionWeight` / `#!js qan::Graph::setSelectionWeight()`: Border width of the node selection rectangle.
+- `Qan.Graph.selectionMargin` / `#!js qan::Graph::setSelectionMargin()`: Margin between the node selection rectangle and the node content (selection weight is taken into account).
 
 All theses properties could be changed dynamically.
 

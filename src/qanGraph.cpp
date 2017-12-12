@@ -72,8 +72,11 @@ void    Graph::classBegin()
     setEdgeDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Edge.qml")));
     setSelectionDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml")));
 
-    _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(this) );
-    _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(this) );
+    const auto engine = qmlEngine(this);
+    if ( engine != nullptr ) {
+        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(*engine) );
+        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(*engine) );
+    } else qWarning() << "qan::Graph::classBegin(): Error, no valid QML engine available.";
 }
 
 void    Graph::componentComplete()

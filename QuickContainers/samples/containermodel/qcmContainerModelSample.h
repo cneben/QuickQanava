@@ -33,9 +33,6 @@
 #include <QGuiApplication>
 #include <QQuickView>
 
-// QuickProperties headers
-#include "../../src/QuickProperties.h"
-
 class Dummy : public QObject
 {
     Q_OBJECT

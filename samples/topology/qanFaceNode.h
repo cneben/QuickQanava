@@ -63,7 +63,7 @@ signals:
     /*! \name Node Static Factories *///---------------------------------------
     //@{
 public:
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

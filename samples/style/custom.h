@@ -47,7 +47,7 @@ public:
     CustomRectNode( const CustomRectNode& ) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
     static  qan::NodeStyle*     style() noexcept;
 };
 
@@ -60,7 +60,7 @@ public:
     CustomRoundNode( const CustomRoundNode& ) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
     static  qan::NodeStyle*     style() noexcept;
 };
 
@@ -76,7 +76,7 @@ public:
     CustomEdge( const CustomEdge& ) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
     static  qan::EdgeStyle*     style() noexcept;
 };
 

@@ -31,7 +31,7 @@ For any questions, please contact: benoit@destrat.io
 
 QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
-## QuickQanava Showcase:
+## QuickQanava Showcase
 
 [![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
 
@@ -64,12 +64,12 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
   - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
 
-## Dependencies:
+## Dependencies
 
 - **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
 - **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
 
-## Building:
+## Building
 
 ```sh
 git clone https://github.com/cneben/QuickQanava
@@ -81,7 +81,7 @@ cd QuickQanava
 
 3. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
   
-## Roadmap:
+## Roadmap
 
   - **v0.9.2:**	 
     - [X] Add smarter heuristics for edges's Bezier curve control points generation.

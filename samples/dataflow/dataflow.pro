@@ -10,7 +10,7 @@ SOURCES     +=  dataflow.cpp    \
 				
 HEADERS     +=  qanFlowNode.h
 
-OTHER_FILES +=  dataflow.qml FlowNode.qml
+OTHER_FILES +=  dataflow.qml FlowNode.qml Percentage.qml OpMultiply.qml Image.qml OpTint.qml
 
 RESOURCES   +=  dataflow.qrc
 

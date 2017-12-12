@@ -33,12 +33,13 @@
 #include <QQuickStyle>
 #include <QQmlContext>
 
-// QuickProperties headers
-#include "../../src/qpsContainerModel.h"
-#include "../../src/qpsContainerModelComposer.h"
-#include "./qpsContainerModelSample.h"
+// QuickContainers headers
+#include "../../src/QuickContainers.h"
+#include "../../src/qcmContainerModel.h"
+#include "../../src/qcmContainerModelComposer.h"
+#include "./qcmContainerModelSample.h"
 
-using namespace qps;
+using namespace qcm;
 
 using WeakQA = std::weak_ptr<QA>;
 Q_DECLARE_METATYPE( WeakQA );
@@ -54,41 +55,41 @@ MainView::MainView( QGuiApplication* application ) :
     QQuickView( )
 {
     Q_UNUSED( application );
-    QuickProperties::initialize( engine() );
+    QuickContainers::initialize();
 
     qmlRegisterType< Dummy >( "ContainerModelSample", 1, 0, "Dummy");
 
-    auto ints = new qps::ContainerModel< QVector, int >( this );
+    auto ints = new qcm::ContainerModel< QVector, int >( this );
     ints->append(42);
     ints->append(43);
     ints->append(44);
     ints->append(45);
     rootContext( )->setContextProperty( "ints", ints );
 
-    auto dummies = new qps::ContainerModel< QVector, Dummy* >( this );
+    auto dummies = new qcm::ContainerModel< QVector, Dummy* >( this );
     dummies->append( new Dummy{"First", 42.} );
     dummies->append( new Dummy{"Second", 43.} );
     rootContext( )->setContextProperty( "dummies", dummies );
 
 /*
     using DummyPtr = QPointer<Dummy>;
-    auto qptrDummies = new qps::ContainerModel< QVector, QPointer<Dummy> >( this );
+    auto qptrDummies = new qcm::ContainerModel< QVector, QPointer<Dummy> >( this );
     qptrDummies->append( DummyPtr{new Dummy{"First", 42.}} );
     qptrDummies->append( DummyPtr{new Dummy{"Second", 43.}} );
     rootContext( )->setContextProperty( "qptrDummies", qptrDummies );
 */
 
-    auto dummies1 = new qps::ContainerModel< QVector, Dummy* >( this );
+    auto dummies1 = new qcm::ContainerModel< QVector, Dummy* >( this );
     dummies1->append( new Dummy{"First", 42.} );
     dummies1->append( new Dummy{"Second", 43.} );
     rootContext( )->setContextProperty( "dummies1", dummies1 );
 
-    auto dummies2 = new qps::ContainerModel< QVector, Dummy* >( this );
+    auto dummies2 = new qcm::ContainerModel< QVector, Dummy* >( this );
     dummies2->append( new Dummy{"Third", 44.} );
     dummies2->append( new Dummy{"Fourth", 45.} );
     rootContext( )->setContextProperty( "dummies2", dummies2 );
 
-    auto dummies12 = new qps::ContainerModelComposer<QVector, Dummy*>{};
+    auto dummies12 = new qcm::ContainerModelComposer<QVector, Dummy*>{};
     dummies12->setM1(*dummies1);
     dummies12->setM2(*dummies2);
     rootContext( )->setContextProperty( "dummies12", dummies12 );
@@ -104,7 +105,7 @@ MainView::MainView( QGuiApplication* application ) :
     using SharedQAs = QVector<std::shared_ptr<QA>>;
     auto sharedQAs = new SharedQAs{};   // Create a vector of shared QAs and QBs to avoid their destruction at the end
                                         // of the block.
-    using WeakQAs = qps::ContainerModel< QVector, WeakQA >;
+    using WeakQAs = qcm::ContainerModel< QVector, WeakQA >;
     auto m1{new WeakQAs{}};
     auto m1o1Ptr{std::make_shared<QA>(42)}; auto m1o1{WeakQA{m1o1Ptr}};
     auto m1o2Ptr{std::make_shared<QA>(43)}; auto m1o2{WeakQA{m1o2Ptr}};
@@ -112,7 +113,7 @@ MainView::MainView( QGuiApplication* application ) :
     sharedQAs->append(m1o1Ptr); sharedQAs->append(m1o2Ptr); sharedQAs->append(m1o3Ptr);
     m1->append( m1o1 ); m1->append( m1o2 ); m1->append( m1o3 );
 
-    using WeakQBs = qps::ContainerModel< QVector, WeakQB >;
+    using WeakQBs = qcm::ContainerModel< QVector, WeakQB >;
     using SharedQBs = QVector<std::shared_ptr<QB>>;
     auto sharedQBs = new SharedQBs{};
     auto m2{new WeakQBs{}};
@@ -129,7 +130,7 @@ MainView::MainView( QGuiApplication* application ) :
     sharedQBs->append(m3o1Ptr); sharedQBs->append(m3o2Ptr); sharedQBs->append(m3o3Ptr);
     m3->append( m3o1 ); m3->append( m3o2 ); m3->append( m3o3 );
 
-    using WeakQAsQBsComposer = qps::ContainerModelComposer< QVector, WeakQObject,
+    using WeakQAsQBsComposer = qcm::ContainerModelComposer< QVector, WeakQObject,
                                                             QVector, WeakQA,
                                                             QVector, WeakQB >;
     auto m1m2{new WeakQAsQBsComposer{}};

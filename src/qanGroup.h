@@ -97,10 +97,10 @@ public:
 public:
     /*! \brief Return the default delegate QML component that should be used to generate group \c item.
      *
-     *  \arg caller Use this for \c caller argument, since at component creation a valid QML engine is necessary.
+     *  \arg engine QML engine used for delegate QML component creation.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
      */
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Group.
      *

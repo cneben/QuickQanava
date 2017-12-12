@@ -40,24 +40,17 @@
 #include "../../src/qanGraph.h"
 #include "./custom.h"
 
-
-static std::unique_ptr<QQmlComponent>   CustomRectNode_delegate;
-static std::unique_ptr<qan::NodeStyle>  CustomRectNode_style;
-
-QQmlComponent*  CustomRectNode::delegate(QObject* caller) noexcept
+QQmlComponent*  CustomRectNode::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !CustomRectNode_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            CustomRectNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/RectNode.qml");
-        else qWarning() << "[static]CustomRectNode::delegate(): Error: QML engine is nullptr.";
-    }
+    static std::unique_ptr<QQmlComponent>   CustomRectNode_delegate;
+    if ( !CustomRectNode_delegate )
+        CustomRectNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RectNode.qml");
     return CustomRectNode_delegate.get();
 }
 
 qan::NodeStyle* CustomRectNode::style() noexcept
 {
+    static std::unique_ptr<qan::NodeStyle>  CustomRectNode_style;
     if ( !CustomRectNode_style ) {
         CustomRectNode_style = std::make_unique<qan::NodeStyle>();
         CustomRectNode_style->setBackColor(QColor("#ff29fc"));
@@ -65,23 +58,18 @@ qan::NodeStyle* CustomRectNode::style() noexcept
     return CustomRectNode_style.get();
 }
 
-static std::unique_ptr<QQmlComponent>   CustomRoundNode_delegate;
-static std::unique_ptr<qan::NodeStyle>  CustomRoundNode_style;
 
-QQmlComponent*  CustomRoundNode::delegate(QObject* caller) noexcept
+QQmlComponent*  CustomRoundNode::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !CustomRoundNode_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            CustomRoundNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/RoundNode.qml");
-        else qWarning() << "[static]CustomRoundNode::delegate(): Error: QML engine is nullptr.";
-    }
+    static std::unique_ptr<QQmlComponent>   CustomRoundNode_delegate;
+    if ( !CustomRoundNode_delegate )
+        CustomRoundNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RoundNode.qml");
     return CustomRoundNode_delegate.get();
 }
 
 qan::NodeStyle* CustomRoundNode::style() noexcept
 {
+    static std::unique_ptr<qan::NodeStyle>  CustomRoundNode_style;
     if ( !CustomRoundNode_style ) {
         CustomRoundNode_style = std::make_unique<qan::NodeStyle>();
         CustomRoundNode_style->setBackColor(QColor("#0770ff"));
@@ -89,26 +77,20 @@ qan::NodeStyle* CustomRoundNode::style() noexcept
     return CustomRoundNode_style.get();
 }
 
-static std::unique_ptr<QQmlComponent>   CustomEdge_delegate;
-static std::unique_ptr<qan::EdgeStyle>  CustomEdge_style;
 
-QQmlComponent*  CustomEdge::delegate(QObject* caller) noexcept
+QQmlComponent*  CustomEdge::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !CustomEdge_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            CustomEdge_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/CustomEdge.qml");
-        else qWarning() << "[static]CustomEdge::delegate(): Error: QML engine is nullptr.";
-    }
+    static std::unique_ptr<QQmlComponent>   CustomEdge_delegate;
+    if ( !CustomEdge_delegate )
+        CustomEdge_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
     return CustomEdge_delegate.get();
 }
 
 qan::EdgeStyle* CustomEdge::style() noexcept
 {
-    if ( !CustomEdge_style ) {
+    static std::unique_ptr<qan::EdgeStyle>  CustomEdge_style;
+    if ( !CustomEdge_style )
         CustomEdge_style = std::make_unique<qan::EdgeStyle>();
-    }
     return CustomEdge_style.get();
 }
 
@@ -124,7 +106,8 @@ qan::Node*  CustomGraph::insertRoundNode()
 
 qan::Edge*  CustomGraph::insertCustomEdge(qan::Node* source, qan::Node* destination)
 {
-    if ( source != nullptr && destination != nullptr )
-        return qan::Graph::insertEdge<CustomEdge>(*source, destination, nullptr, CustomEdge::delegate(this) );
+    const auto engine = qmlEngine(this);
+    if ( source != nullptr && destination != nullptr && engine != nullptr )
+        return qan::Graph::insertEdge<CustomEdge>(*source, destination, nullptr, CustomEdge::delegate(*engine) );
     return nullptr;
 }

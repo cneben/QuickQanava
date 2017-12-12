@@ -25,41 +25,40 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library.
+// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	qanFaceNode.cpp
+// \file	FlowNode.qml
 // \author	benoit@destrat.io
-// \date	2017 08 12
+// \date	2017 12 12
 //-----------------------------------------------------------------------------
 
-// QuickQanava headers
-#include "../../src/QuickQanava.h"
-#include "./qanFaceNode.h"
+import QtQuick              2.7
+import QtQuick.Controls     2.0
+import QtQuick.Layouts      1.3
+import QtGraphicalEffects   1.0
 
-namespace qan { // ::qan
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
-FaceNode::FaceNode( QQuickItem* parent ) :
-    qan::Node( parent )
-{
+Qan.NodeItem {
+    id: flowNodeItem
+    Layout.preferredWidth: 150
+    Layout.preferredHeight: 70
+    width: Layout.preferredWidth
+    height: Layout.preferredHeight
 
-}
-
-FaceNode::~FaceNode() { /* Nil */ }
-
-QQmlComponent*  FaceNode::delegate(QQmlEngine& engine) noexcept
-{
-    static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/FaceNode.qml");
-    return delegate.get();
-}
-
-void    FaceNode::setImage(QUrl image) noexcept
-{
-    if ( image != _image ) {
-        _image = image;
-        setLabel(image.toString());
-        emit imageChanged();
+    Qan.RectNodeTemplate {
+        anchors.fill: parent
+        nodeItem : parent
+        ColumnLayout {
+            Label {
+                text: (node.output * 100.) + "%"
+            }
+            Slider {
+                anchors.fill: parent
+                from: 0.; to: 1.0
+                onValueChanged: node.output = value
+            }
+        }
     }
 }
-} // ::qan

@@ -40,7 +40,9 @@ template < class Node_t >
 qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
 {
     if ( nodeComponent == nullptr ) {
-        nodeComponent = Node_t::delegate(this);     // If no delegate component is specified, try the node type delegate() factory
+        const auto engine = qmlEngine(this);
+        if ( engine != nullptr )
+            nodeComponent = Node_t::delegate(*engine);     // If no delegate component is specified, try the node type delegate() factory
         if ( nodeComponent == nullptr )
             nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
     }
@@ -128,7 +130,9 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
          dstEdge == nullptr )
         return nullptr;
     if ( edgeComponent == nullptr ) {
-        edgeComponent = Edge_t::delegate(this);     // If no delegate component is specified, try the edge type delegate() factory
+        const auto engine = qmlEngine(this);
+        if ( engine != nullptr )
+            edgeComponent = Edge_t::delegate(*engine);     // If no delegate component is specified, try the edge type delegate() factory
         if ( edgeComponent == nullptr )
             edgeComponent = _edgeDelegate.get();    // Otherwise, use default edge delegate component
     }
@@ -191,7 +195,10 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan:
 template < class Group_t >
 qan::Group* Graph::insertGroup()
 {
-    QQmlComponent* groupComponent = Group_t::delegate(this);
+    const auto engine = qmlEngine(this);
+    QQmlComponent* groupComponent = nullptr;
+    if ( engine != nullptr )
+        groupComponent = Group_t::delegate(*engine);
     if ( groupComponent == nullptr )
         groupComponent = _groupDelegate.get();
     if ( groupComponent == nullptr ) {

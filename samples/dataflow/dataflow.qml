@@ -56,5 +56,28 @@ ApplicationWindow {
             }
         }
     }  // Qan.GraphView
+
+    Pane { x: menu.x; y: menu.y; width: menu.width; height: menu.height; opacity: 0.8 } // Pane: menu transparent background
+    RowLayout  {
+        id: menu
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top; anchors.topMargin: 4
+        ToolButton {
+            text: "%"
+            onClicked: graph.insertFlowNode(FlowNode.Percentage)
+        }
+        ToolButton {
+            text: "X"
+            onClicked: graph.insertFlowNode(FlowNode.OpMultiply)
+        }
+        ToolButton {
+            text: "Img"
+            onClicked: graph.insertFlowNode(FlowNode.Image)
+        }
+        ToolButton {
+            text: "Tint"
+            onClicked: graph.insertFlowNode(FlowNode.OpTint)
+        }
+    }
 }
 

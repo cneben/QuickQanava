@@ -15,9 +15,9 @@ weight: 0
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 
-!!! warning "QuickQanava is alpha, interface may change before 1.0.0 release, but QuickQanava is already used extensively in production code." 
+!!! warning "QuickQanava is alpha, interface may change before 1.0.0 release, but QuickQanava is already used extensively in production code."
 
-!!! note "QuickQanava is licensed under BSD-3, support is available on demand: contact@destrat.io"
+!!! note "QuickQanava is licensed under BSD-3, support is available on demand: benoit@destrat.io"
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a QtQuick application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content in advanced dynamic user interfaces (with DnD support, resizable content, visual connection of nodes).
 
@@ -41,7 +41,7 @@ Please refer to [Installation](installation.md) subsection and [Quickstart guide
 
 ![styles](images/topology.png)
 
-## Roadmap:
+## Roadmap
 
   - **v0.9.2:**	 
     - [X] Add smarter heuristics for edges's Bezier curve control points generation.

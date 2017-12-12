@@ -59,7 +59,17 @@ class FlowNode : public qan::Node
 {
     Q_OBJECT
 public:
-    explicit FlowNode( QQuickItem* parent = nullptr ) : qan::Node{parent} { /* Nil */ }
+    enum class Type : unsigned int {
+        Percentage,
+        Image,
+        OpMultiply,
+        OpTint
+    };
+    Q_ENUM(Type)
+
+    explicit FlowNode( QQuickItem* parent = nullptr ) : FlowNode( Type::Percentage, parent ) {}
+    explicit FlowNode( Type type, QQuickItem* parent = nullptr ) :
+        qan::Node{parent}, _type{type} { /* Nil */ }
     virtual ~FlowNode() { /* Nil */ }
 
     FlowNode(const FlowNode&) = delete;
@@ -67,19 +77,13 @@ public:
     FlowNode(FlowNode&&) = delete;
     FlowNode& operator=(FlowNode&&) = delete;
 
-public:
-    enum class Type : unsigned int {
-        INPUT,
-        NUM_OP,
-        IMAGE,
-        TINT_OP
-    };
-    Q_ENUM(Type)
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
 
+public:
     Q_PROPERTY(Type type READ getType CONSTANT FINAL)
     inline  Type    getType() const noexcept { return _type; }
 protected:
-    Type        _type{Type::INPUT};
+    Type            _type{Type::Percentage};
 
 public slots:
     void            inNodeOutputChanged();
@@ -92,13 +96,22 @@ protected:
     QVariant        _output;
 signals:
     void            outputChanged();
+};
 
-    /*! \name Node Static Factories *///---------------------------------------
-    //@{
+class PercentageNode : public qan::FlowNode
+{
+    Q_OBJECT
 public:
-    static  QQmlComponent*      delegate(QObject* caller) noexcept;
-    //@}
-    //-------------------------------------------------------------------------
+    PercentageNode() : qan::FlowNode{FlowNode::Type::Percentage} { /* Nil */ }
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+};
+
+class OpMultiplyNode : public qan::FlowNode
+{
+    Q_OBJECT
+public:
+    OpMultiplyNode() : qan::FlowNode{FlowNode::Type::OpMultiply} { /* Nil */ }
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
 };
 
 class FlowGraph : public qan::Graph
@@ -107,7 +120,7 @@ class FlowGraph : public qan::Graph
 public:
     explicit FlowGraph( QQuickItem* parent = nullptr ) noexcept : qan::Graph(parent) { }
 public:
-    Q_INVOKABLE qan::Node* insertFlowNode();
+    Q_INVOKABLE qan::Node* insertFlowNode(qan::FlowNode::Type type);
 };
 
 } // ::qan

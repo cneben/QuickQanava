@@ -42,13 +42,23 @@ import "qrc:/QuickQanava"   as Qan
 
 Qan.NodeItem {
     id: flowNodeItem
-    Layout.preferredWidth: 100
-    Layout.preferredHeight: 125
+    Layout.preferredWidth: 150
+    Layout.preferredHeight: 70
     width: Layout.preferredWidth
     height: Layout.preferredHeight
 
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent
+        ColumnLayout {
+            Label {
+                text: (node.output * 100.) + "%"
+            }
+            Slider {
+                anchors.fill: parent
+                from: 0.; to: 1.0
+                onValueChanged: node.output = value
+            }
+        }
     }
 }

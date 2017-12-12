@@ -1,7 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file>dataflow.qml</file>
-        <file>FlowNode.qml</file>
+        <file>PercentageNode.qml</file>
+        <file>OpMultiplyNode.qml</file>
+        <file>ImageNode.qml</file>
+        <file>OpTintNode.qml</file>
         <file>Lenna-scaled.png</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>

@@ -91,22 +91,17 @@ void    Group::itemEndProposeNodeDrop()
 //-----------------------------------------------------------------------------
 
 /* Group Static Factories *///-------------------------------------------------
-static std::unique_ptr<QQmlComponent>   qan_Group_delegate;
-static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
-
-QQmlComponent*  Group::delegate(QObject* caller) noexcept
+QQmlComponent*  Group::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !qan_Group_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            qan_Group_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/QuickQanava/Group.qml");
-    }
-    return qan_Group_delegate.get();
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml");
+    return delegate.get();
 }
 
 qan::Style*     Group::style() noexcept
 {
+    static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
     if ( !qan_Group_style ) {
         qan_Group_style = std::make_unique<qan::NodeStyle>();
         qan_Group_style->setFontPointSize(11);
