@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>dataflow.qml</file>
+        <file>FlowNode.qml</file>
+        <file>Lenna-scaled.png</file>
+        <file>qtquickcontrols2.conf</file>
+    </qresource>
+</RCC>

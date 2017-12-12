@@ -111,6 +111,11 @@ qan::NodeStyle* Node::style() noexcept
 /* Behaviours Management *///--------------------------------------------------
 void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
 {
+    // PRECONDITIONS:
+        // behaviour can't be nullptr
+    if ( !behaviour )
+        return;
+    behaviour->setHost(this);
     addBehaviour( std::move( behaviour ) );
 }
 //-----------------------------------------------------------------------------

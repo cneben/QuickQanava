@@ -27,68 +27,38 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanBehaviour.cpp
+// \file	dataflow.cpp
 // \author	benoit@destrat.io
-// \date	2016 04 04
+// \date	2017 12 12
 //-----------------------------------------------------------------------------
 
 // Qt headers
-// Nil
+#include <QApplication>
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
 // QuickQanava headers
-#include "./qanBehaviour.h"
-#include "./qanNode.h"
-#include "./qanEdge.h"
+#include <QuickQanava>
 
-namespace qan { // ::qan
+#include "./qanFlowNode.h"
 
-NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
-    QObject{ parent },
-    gtpo::NodeBehaviour< qan::GraphConfig >::NodeBehaviour( name ) { /* Nil*/ }
+using namespace qan;
 
-/* Behaviour Host Management *///----------------------------------------------
-void    NodeBehaviour::setHost( qan::Node* host )
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
 {
-    if ( _host != host ) {
-        _host = host;
-        emit hostChanged();
-    }
+    QApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
+    //qmlRegisterType< qan::FaceNode >( "QuickQanava", 2, 0, "AbstractFaceNode");
+    qmlRegisterType< qan::FlowGraph >( "QuickQanava.Samples", 1, 0, "FlowGraph");
+
+    engine.load(QUrl("qrc:/dataflow.qml"));
+    return app.exec();
 }
 //-----------------------------------------------------------------------------
 
 
-/* Notification Interface *///-------------------------------------------------
-void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
-{
-    auto inNode = weakInNode.lock();
-    auto inEdge = edge.lock();
-    if ( inNode && inEdge )
-        inNodeInserted( *inNode, *inEdge );
-}
-
-void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
-{
-    SharedNode inNode = weakInNode.lock();
-    auto inEdge = edge.lock();
-    if ( inNode && inEdge )
-        inNodeRemoved( *inNode, *inEdge );
-}
-
-void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
-{
-    auto outNode = weakOutNode.lock();
-    auto outEdge = edge.lock();
-    if ( outNode && outEdge )
-        outNodeInserted( *outNode, *outEdge );
-}
-
-void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
-{
-    auto outNode = weakOutNode.lock();
-    auto outEdge = edge.lock();
-    if ( outNode && outEdge )
-        outNodeRemoved( *outNode, *outEdge );
-}
-//-----------------------------------------------------------------------------
-
-} // ::qan

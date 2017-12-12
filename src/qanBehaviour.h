@@ -50,6 +50,14 @@ namespace qan { // ::qan
 
 /*! \brief Define node behaviour interface to react to node topology events (QuickQanava adapter for gtpo::NodeBehaviour<>).
  *
+ * Use qan::Node::installBehaviour() method to install a custom behaviour on a host node to be notified
+ * and react to topological changes.
+ *
+ * \code
+ * const auto node = graph.insertNode();
+ * node->installBehaviour(std::make_unique<MyBehaviour>());
+ * \endcode
+ *
  *  \nosubgrouping
  */
 class NodeBehaviour : public QObject,
@@ -61,6 +69,34 @@ public:
     virtual ~NodeBehaviour() { }
     NodeBehaviour( const NodeBehaviour& ) = delete;
 
+    /*! \name Behaviour Host Management *///-----------------------------------
+    //@{
+public:
+    //! Shortcut to getHost() != nullptr.
+    inline  auto    hasHost() const noexcept -> bool { return getHost() != nullptr; }
+
+    /*! \brief Node behaviour target node.
+     *
+     * Behaviour is set for a host node via qan::Node::installBehaviour(), it can be changed
+     * dynamically after it has been installed (read-only property).
+     */
+    Q_PROPERTY( qan::Node* host READ getHost NOTIFY hostChanged FINAL )
+    inline qan::Node*       getHost() noexcept { return _host.data(); }
+    inline const qan::Node* getHost() const noexcept { return _host.data(); }
+    //! \brief Set behaviour host node to \c host (can't be nullptr), disconnect any signal connected from an old existing host and this.
+    virtual void            setHost( qan::Node* host );
+private:
+    //! \copydoc host
+    QPointer<qan::Node> _host{nullptr};
+signals:
+    //! \copydoc host
+    void                hostChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Notification Interface *///--------------------------------------
+    //@{
+public:
     using WeakNode  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakNode;
     using WeakEdge  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakEdge;
 
@@ -84,6 +120,8 @@ protected:
 
     virtual void    outNodeInserted( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); Q_UNUSED(edge); }
     virtual void    outNodeRemoved( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); Q_UNUSED(edge); }
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan

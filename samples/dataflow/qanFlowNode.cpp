@@ -27,68 +27,63 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanBehaviour.cpp
+// \file	qanFaceNode.cpp
 // \author	benoit@destrat.io
-// \date	2016 04 04
+// \date	2017 12 12
 //-----------------------------------------------------------------------------
 
-// Qt headers
-// Nil
-
 // QuickQanava headers
-#include "./qanBehaviour.h"
-#include "./qanNode.h"
-#include "./qanEdge.h"
+#include "../../src/QuickQanava.h"
+#include "./qanFlowNode.h"
 
 namespace qan { // ::qan
 
-NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
-    QObject{ parent },
-    gtpo::NodeBehaviour< qan::GraphConfig >::NodeBehaviour( name ) { /* Nil*/ }
-
-/* Behaviour Host Management *///----------------------------------------------
-void    NodeBehaviour::setHost( qan::Node* host )
+void    FlowNodeBehaviour::inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept
 {
-    if ( _host != host ) {
-        _host = host;
-        emit hostChanged();
+    const auto inFlowNode = qobject_cast<qan::FlowNode*>(&inNode);
+    const auto flowNodeHost = qobject_cast<qan::FlowNode*>(getHost());
+    if ( inFlowNode != nullptr &&
+         flowNodeHost != nullptr ) {
+        //
+        QObject::connect(inFlowNode,    &qan::FlowNode::outputChanged,
+                         flowNodeHost,  &qan::FlowNode::inNodeOutputChanged);
     }
 }
-//-----------------------------------------------------------------------------
 
-
-/* Notification Interface *///-------------------------------------------------
-void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
+void    FlowNodeBehaviour::inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) noexcept
 {
-    auto inNode = weakInNode.lock();
-    auto inEdge = edge.lock();
-    if ( inNode && inEdge )
-        inNodeInserted( *inNode, *inEdge );
+
 }
 
-void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
+QQmlComponent*  FlowNode::delegate(QObject* caller) noexcept
 {
-    SharedNode inNode = weakInNode.lock();
-    auto inEdge = edge.lock();
-    if ( inNode && inEdge )
-        inNodeRemoved( *inNode, *inEdge );
+    static std::unique_ptr<QQmlComponent>   qan_FlowNode_delegate;
+    if ( !qan_FlowNode_delegate &&
+         caller != nullptr ) {
+        const auto engine = qmlEngine(caller);
+        if ( engine != nullptr )
+            qan_FlowNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/FlowNode.qml");
+        else qWarning() << "[static]qan::FlowNode::delegate(): Error: QML engine is nullptr.";
+    }
+    return qan_FlowNode_delegate.get();
 }
 
-void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
+void    FlowNode::inNodeOutputChanged()
 {
-    auto outNode = weakOutNode.lock();
-    auto outEdge = edge.lock();
-    if ( outNode && outEdge )
-        outNodeInserted( *outNode, *outEdge );
+    qDebug() << "In node output value changed for " << getLabel();
 }
 
-void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
+void    FlowNode::setOutput(QVariant output) noexcept
 {
-    auto outNode = weakOutNode.lock();
-    auto outEdge = edge.lock();
-    if ( outNode && outEdge )
-        outNodeRemoved( *outNode, *outEdge );
+    _output = output;
+    emit outputChanged();
 }
-//-----------------------------------------------------------------------------
+
+qan::Node* FlowGraph::insertFlowNode()
+{
+    const auto flowNode = insertNode<FlowNode>(nullptr);
+    flowNode->installBehaviour(std::make_unique<FlowNodeBehaviour>());
+    return flowNode;
+}
 
 } // ::qan
