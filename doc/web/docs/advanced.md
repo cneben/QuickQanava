@@ -16,7 +16,7 @@ Creation of a custom graph (MyGraph) with custom node (MyNode) and a dedicated v
 
 Factories have to be redefined in primitive subclasses:
 
-  - `#!cpp static  QQmlComponent*      delegate(QObject* caller) noexcept`: Return a (usually singleton) QML component that will be used for primitive visual delegate.
+  - `#!cpp static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept`: Return a (usually singleton) QML component that will be used for primitive visual delegate.
   - `#!cpp static  qan::NodeStyle*     style() noexcept`: Return a (usually singleton) style used as primitive default style.
 
 Custom content is then created from a specialized `qan::Graph` class:
@@ -31,23 +31,17 @@ qan::Node* MyGraph::insertMyNode() noexcept {
 
 ``` cpp 
 // In a custom MyNode.cpp defining MyNode (inheriting from qan::Node)
-static std::unique_ptr<QQmlComponent>   MyNode_delegate;
-static std::unique_ptr<qan::NodeStyle>  MyNode_style;
-
-QQmlComponent*  MyNode::delegate(QObject* caller) noexcept
+QQmlComponent*  MyNode::delegate(QQmlEngine& engine) noexcept
 {
-    if ( !MyNode_delegate &&
-         caller != nullptr ) {
-        const auto engine = qmlEngine(caller);
-        if ( engine != nullptr )
-            CustomRectNode_delegate = std::make_unique<QQmlComponent>(engine, "qrc:/MyNode.qml");
-        else qWarning() << "[static]MyNode::delegate(): Error: QML engine is nullptr.";
-    }
+static std::unique_ptr<QQmlComponent>   MyNode_delegate;
+    if ( !MyNode_delegate )
+            CustomRectNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/MyNode.qml");
     return CustomRectNode_delegate.get();
 }
 
 qan::NodeStyle* MyNode::style() noexcept
 {
+	static std::unique_ptr<qan::NodeStyle>  MyNode_style;
     if ( !MyNode_style ) {
         MyNode_style = std::make_unique<qan::NodeStyle>();
         MyNode_style->setBackColor(QColor("#ff29fc"));		// Initialize primitive default style here
