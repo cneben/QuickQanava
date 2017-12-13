@@ -187,6 +187,8 @@ Qan.GraphView {
 } // Qan.GraphView
 ```
 
+Preventing the visual connector to be shown for specific nodes (for example to force user to use out port to create topology) is possible by setting the node item `Qan.NodeItem.connectable' property to false (See `qan::NodeItem::connectable` [documentation](http://www.destrat.io/quickqanava/doc/classqan_1_1_node_item.html)).
+
 Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html). See also [qan::Graph](http://www.destrat.io/quickqanava/doc/classqan_1_1_graph.html) "Visual Connection Management" section.
 
 Default connector component `Qan.Graph.connector` could be replaced by a user defined `Qan.VisualConnector` to customize connector behavior in more depth. It is possible to add multiple visuals connectors on the same node, using a connector to generate specific topologies (create edges with different concrete types) or select targets visually. Such an advanced use of custom connectors is demonstrated in 'connector' sample: [https://github.com/cneben/QuickQanava/tree/master/samples/connector](https://github.com/cneben/QuickQanava/tree/master/samples/connector)

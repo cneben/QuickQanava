@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
 //
-// \file	ImageNode.qml
+// \file	FlowNode.qml
 // \author	benoit@destrat.io
 // \date	2017 12 12
 //-----------------------------------------------------------------------------
@@ -41,47 +41,36 @@ import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
 Qan.NodeItem {
-    id: imageNodeItem
-    Layout.preferredWidth: 125
-    Layout.preferredHeight: 125
+    id: flowNodeItem
+    Layout.preferredWidth: 100
+    Layout.preferredHeight: 60
     width: Layout.preferredWidth
     height: Layout.preferredHeight
-    connectable: Qan.NodeItem.UnConnectable     // Do not show visual edge connector, use out port instead
-
-    DropShadow {
-        id: backgroundShadow
+    connectable: Qan.NodeItem.UnConnectable          // Do not show visual edge connector, use out port instead
+    Qan.RectNodeTemplate {
         anchors.fill: parent
-        source: image
-        horizontalOffset: imageNodeItem.style.shadowRadius
-        verticalOffset: imageNodeItem.style.shadowRadius
-        radius: 4; samples: 8
-        color: imageNodeItem.style.shadowColor
-        visible: imageNodeItem.style.hasShadow
-        transparentBorder: true
-    }
-    ComboBox {
-        z: 2
-        anchors.left: parent.left; anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 4
-        opacity: 0.85
-        model: [ "Lenna", "Jason"]
-        onCurrentIndexChanged: {
-            node.output = currentIndex === 0 ? "qrc:/Lenna.jpeg" : "qrc:/JS.jpeg"
+        nodeItem : parent
+        RowLayout {
+            anchors.centerIn: parent; anchors.margins: 2
+            Rectangle {
+                width: 32; height: 32
+                color: node.output
+                radius: 4;
+                border.width: 1; border.color: Qt.darker(node.output)
+            }
+            ToolButton {
+                text: "..."
+                onClicked: {
+                    colorPopup.open();
+                }
+                ColorPopup {
+                    id: colorPopup
+                    onClosed: {
+                        if ( selectedColor )
+                                  node.output = selectedColor
+                    }
+                }
+            }
         }
-    }
-    Pane {
-        z: 2
-        padding: 1
-        anchors.left: parent.left; anchors.bottom: parent.bottom;
-        opacity: 0.9
-        Label { text: image.sourceSize.width + "x" + image.sourceSize.height + "px" }
-    }
-    Image {
-        id: image
-        z: 1
-        anchors.fill: parent
-        smooth: true
-        source: imageNodeItem.node.output
     }
 }

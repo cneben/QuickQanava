@@ -116,13 +116,38 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
     qan::Edge* createdEdge = nullptr;   // Result created edge
     if ( srcNode != nullptr &&          //// Regular edge node to node connection //////////
          dstNode != nullptr ) {
+        bool create = true;    // Do not create edge if ports are not bindable, create if there no ports bindings are necessary
+
+        if ( srcPortItem ) {
+            qDebug() << "srcPortItem.multiplicity=" << srcPortItem->getMultiplicity();
+            qDebug() << "srcPortItem.outDegree=" << srcPortItem->getOutEdgeItems().size();
+            qDebug() << "edge source bindable=" << _graph->isEdgeSourceBindable(*srcPortItem );
+        }
+        if ( dstPortItem ) {
+            qDebug() << "dstPortItem.multiplicity=" << dstPortItem->getMultiplicity();
+            qDebug() << "srcPortItem.inDegree=" << dstPortItem->getInEdgeItems().size();
+            qDebug() << "edge source bindable=" << _graph->isEdgeDestinationBindable(*dstPortItem );
+        }
+
+        if ( srcPortItem != nullptr &&
+             dstPortItem != nullptr )
+            create = _graph->isEdgeSourceBindable(*srcPortItem ) &&
+                     _graph->isEdgeDestinationBindable(*dstPortItem);
+        else if ( srcPortItem == nullptr &&
+                  dstPortItem != nullptr )
+            create = _graph->isEdgeDestinationBindable(*dstPortItem);
+        else if ( srcPortItem != nullptr &&
+                  dstPortItem == nullptr )
+            create = _graph->isEdgeSourceBindable(*srcPortItem);
+        qDebug() << "edge can be created=" << create;
         if ( getCreateDefaultEdge() ) {
-            createdEdge = _graph->insertEdge( srcNode, dstNode );
-            if ( createdEdge != nullptr ) {     // Special handling for src or dst port item
-                if ( dstPortItem != nullptr )
-                    _graph->bindEdgeDestination(*createdEdge, *dstPortItem );   // Bind created edge to a destination port
+            if ( create )
+                createdEdge = _graph->insertEdge( srcNode, dstNode );
+            if ( createdEdge != nullptr ) {     // Special handling for src or dst port item binding
                 if ( srcPortItem != nullptr )
                     _graph->bindEdgeSource(*createdEdge, *srcPortItem);
+                if ( dstPortItem != nullptr )
+                    _graph->bindEdgeDestination(*createdEdge, *dstPortItem );   // Bind created edge to a destination port
             }
         } else
             emit requestEdgeCreation(srcNode, dstNode);

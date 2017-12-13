@@ -49,6 +49,8 @@ PortItem::PortItem(QQuickItem* parent) :
     setDraggable(false);
     setSelectable(false);
     setObjectName( QStringLiteral("qan::PortItem") );
+
+    setType(Type::InOut);
 }
 
 PortItem::~PortItem() { /* Nil */ }
@@ -61,6 +63,22 @@ auto    PortItem::setMultiplicity(Multiplicity multiplicity) noexcept -> void
         _multiplicity = multiplicity;
         emit multiplicityChanged();
     }
+}
+
+auto    PortItem::setType(Type type) noexcept -> void
+{
+    _type = type;
+    switch ( type ) {
+    case Type::In:
+        setConnectable(qan::NodeItem::Connectable::InConnectable);
+        break;
+    case Type::Out:
+        setConnectable(qan::NodeItem::Connectable::OutConnectable);
+        break;
+    case Type::InOut:
+        setConnectable(qan::NodeItem::Connectable::Connectable);
+        break;
+    };
 }
 
 void    PortItem::setDockType(NodeItem::Dock dockType) noexcept
@@ -77,6 +95,16 @@ void    PortItem::setLabel( const QString& label ) noexcept
         _label = label;
         emit labelChanged();
     }
+}
+
+void    PortItem::addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept
+{
+    _inEdgeItems.append(&inEdgeItem);
+}
+
+void    PortItem::addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept
+{
+    _outEdgeItems.append(&outEdgeItem);
 }
 //-----------------------------------------------------------------------------
 

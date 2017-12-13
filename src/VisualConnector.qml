@@ -132,16 +132,22 @@ Qan.Connector {
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
-        if ( Drag.target )
+        if ( Drag.target ) {
             visualConnector.z = Drag.target.z + 1
-        if ( !Drag.target && connectorItem ) {
+            if ( connectorItem )
+                connectorItem.z = Drag.target.z + 1
+        }
+        if ( !Drag.target &&
+             connectorItem ) {
             connectorItem.state = "NORMAL"
         } else {
             if ( sourceNode &&
                  sourceNode.item &&
                  Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
                  connectorItem.state = "NORMAL"
-            } else if ( Drag.target.node ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
+            } else if ( ( Drag.target.node &&
+                          ( Drag.target.connectable === Qan.NodeItem.Connectable ||
+                            Drag.target.connectable === Qan.NodeItem.InConnectable    ) ) ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
                         ( hEdgeEnabled && Drag.target.edge ) )
             {
                 connectorItem.state = "HILIGHT"
@@ -186,8 +192,13 @@ Qan.Connector {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            connectorReleased(visualConnector.Drag.target)
-            configureConnectorPosition()
+            if ( connectorItem.state === "HILIGHT" ) {
+                connectorReleased(visualConnector.Drag.target)
+                configureConnectorPosition()
+            } else {
+                edgeItem.visible = false
+                configureConnectorPosition()
+            }
         }
         onPressed : {
             mouse.accepted = true

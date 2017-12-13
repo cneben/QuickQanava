@@ -46,6 +46,7 @@ Qan.NodeItem {
     Layout.preferredHeight: 70
     width: Layout.preferredWidth
     height: Layout.preferredHeight
+    connectable: Qan.NodeItem.UnConnectable     // Do not show visual edge connector, use out port instead
 
     Qan.RectNodeTemplate {
         anchors.fill: parent
@@ -55,7 +56,7 @@ Qan.NodeItem {
             Label {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
-                text: (node.output * 100.).toFixed(2) + "%"
+                text: (node.output * 100.).toFixed(0) + "%"
                 font.bold: true
             }
             Slider {

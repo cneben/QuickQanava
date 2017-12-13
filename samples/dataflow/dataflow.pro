@@ -6,11 +6,18 @@ QT          += widgets core gui qml quick
 include(../../src/quickqanava.pri)
 
 SOURCES     +=  dataflow.cpp    \
-                qanFlowNode.cpp
+                qanDataFlow.cpp
 				
-HEADERS     +=  qanFlowNode.h
+HEADERS     +=  qanDataFlow.h
 
-OTHER_FILES +=  dataflow.qml FlowNode.qml PercentageNode.qml OperationNode.qml ImageNode.qml TintNode.qml
+OTHER_FILES +=  dataflow.qml        \
+                FlowNode.qml        \
+                PercentageNode.qml  \
+                OperationNode.qml   \
+                ImageNode.qml       \
+                TintNode.qml        \
+                ColorNode.qml       \
+                ColorPopup.qml
 
 RESOURCES   +=  dataflow.qrc
 

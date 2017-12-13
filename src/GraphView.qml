@@ -96,7 +96,9 @@ Qan.AbstractGraphView {
             if ( node.group )
                 updateGroupZ(node.group)
             if ( graph.connector &&
-                 graph.connectorEnabled ) {
+                 graph.connectorEnabled &&
+                 ( node.item.connectable === Qan.NodeItem.Connectable ||
+                   node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
                 //console.debug( "node=" + node );
                 //console.debug("graph.connector.sourceNode=" + graph.connector.sourceNode);
                 graph.connector.sourceNode = node;

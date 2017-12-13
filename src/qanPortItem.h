@@ -44,12 +44,15 @@
 
 // QuickQanava headers
 #include "./qanNodeItem.h"
+#include "./qanEdgeItem.h"
 
 namespace qan { // ::qan
 
-/*! \brief FIXME.
+/*! \brief Model a visual port where edge could be binded.
  *
- *  FIXME.
+ * \warning Do not modify \c connectable property directly for qan::PortItem, it is set
+ * automatically in setType().
+ *
  * \nosubgrouping
  */
 class PortItem : public qan::NodeItem
@@ -92,15 +95,15 @@ public:
     Q_ENUM(Multiplicity)
 
 public:
-    //! \copydoc Type
+    //! \copydoc Node in or out or in/out (default to in/out).
     Q_PROPERTY( Type type READ getType FINAL )
     //! \copydoc Type
     inline Type      getType() const noexcept { return _type; }
     //! \copydoc Type
-    auto             setType(Type type) noexcept -> void { _type = type; }
+    auto             setType(Type type) noexcept -> void;
 private:
     //! \copydoc Type
-    Type            _type{Type::In};
+    Type            _type{Type::InOut};
 
 public:
     //! \copydoc Multiplicity
@@ -130,9 +133,35 @@ public:
     void            setLabel( const QString& label ) noexcept;
     inline QString  getLabel() const noexcept { return _label; }
 private:
-    QString         _label{ QStringLiteral("") };
+    QString         _label{QStringLiteral("")};
 signals:
     void            labelChanged();
+
+public:
+    void            setId(const QString& id) noexcept { _id = id; }
+    const QString&  getId() const noexcept { return _id; }
+private:
+    QString         _id{QStringLiteral("")};
+
+public:
+    /* Note: qcm::ContainerModel automatically monitor contained
+     * object for destruction, just delete an item with deleteLater() to
+     * remove it.
+     */
+    using EdgeItems =   qcm::ContainerModel<QVector, qan::EdgeItem*>;
+
+    void                addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
+    void                addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept;
+
+    EdgeItems&          getInEdgeItems() noexcept { return _inEdgeItems; }
+    const EdgeItems&    getInEdgeItems() const noexcept { return _inEdgeItems; }
+
+    EdgeItems&          getOutEdgeItems() noexcept { return _outEdgeItems; }
+    const EdgeItems&    getOutEdgeItems() const noexcept { return _outEdgeItems; }
+
+protected:
+    EdgeItems           _inEdgeItems;
+    EdgeItems           _outEdgeItems;
     //@}
     //-------------------------------------------------------------------------
 };

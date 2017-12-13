@@ -27,13 +27,13 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanFlowNode.h
+// \file	qanDataFlow.h
 // \author	benoit@destrat.io
 // \date	2016 12 12
 //-----------------------------------------------------------------------------
 
-#ifndef qanFlowNode_h
-#define qanFlowNode_h
+#ifndef qanDataFlow_h
+#define qanDataFlow_h
 
 // QuickQanava headers
 #include <QuickQanava>
@@ -61,6 +61,7 @@ public:
         Percentage,
         Image,
         Operation,
+        Color,
         Tint
     };
     Q_ENUM(Type)
@@ -126,10 +127,53 @@ public:
 private:
     Operation           _operation{Operation::Multiply};
 signals:
-    virtual void        operationChanged();
+    void                operationChanged();
 
 protected slots:
     void                inNodeOutputChanged();
+};
+
+class ImageNode : public qan::FlowNode
+{
+    Q_OBJECT
+public:
+    ImageNode() : qan::FlowNode{FlowNode::Type::Image} { setOutput(QStringLiteral("qrc:/Lenna.jpeg")); }
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+};
+
+class ColorNode : public qan::FlowNode
+{
+    Q_OBJECT
+public:
+    ColorNode() : qan::FlowNode{FlowNode::Type::Color} { setOutput(QColor{Qt::darkBlue}); }
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+};
+
+class TintNode : public qan::FlowNode
+{
+    Q_OBJECT
+public:
+    TintNode() : qan::FlowNode{FlowNode::Type::Tint} { }
+    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+
+    Q_PROPERTY(QUrl source READ getSource WRITE setSource NOTIFY sourceChanged)
+    inline QUrl     getSource() const noexcept { return _source; }
+    void            setSource(QUrl source) noexcept;
+private:
+    QUrl            _source;
+signals:
+    void            sourceChanged();
+public:
+    Q_PROPERTY(QColor tintColor READ getTintColor WRITE setTintColor NOTIFY tintColorChanged)
+    inline QColor   getTintColor() const noexcept { return _tintColor; }
+    void            setTintColor(QColor tintColor) noexcept;
+private:
+    QColor          _tintColor{Qt::transparent};
+signals:
+    void            tintColorChanged();
+
+protected slots:
+    void            inNodeOutputChanged();
 };
 
 class FlowGraph : public qan::Graph
@@ -147,5 +191,5 @@ public:
 QML_DECLARE_TYPE( qan::FlowNode )
 QML_DECLARE_TYPE( qan::FlowGraph )
 
-#endif // qanFlowNode_h
+#endif // qanDataFlow_h
 

@@ -111,12 +111,12 @@ private:
     QPointer<qan::Node> _node{nullptr};
 
 public:
+    //! Secure shortcut to getNode().getGraph().
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    //! \copydoc graph
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
-    //! Secure shortcut to getNode().getGraph().
     auto    getGraph() const noexcept -> const qan::Graph*;
-    //! \copydoc getGraph()
     auto    getGraph() noexcept -> qan::Graph*;
 private:
     QPointer<qan::Graph>    _graph;
@@ -124,11 +124,14 @@ private:
 public:
     //! Node minimum size (it can't be resized below if resizable is true).
     Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
+    //! \copydoc minimumSize
     QSizeF          getMinimumSize() const { return _minimumSize; }
+    //! \copydoc minimumSize
     void            setMinimumSize( QSizeF minimumSize ) { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
 private:
     QSizeF          _minimumSize = QSizeF{ 100., 45. };
 signals:
+    //! \internal
     void            minimumSizeChanged();
     //@}
     //-------------------------------------------------------------------------
@@ -156,17 +159,57 @@ protected slots:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Resizing Management *///-----------------------------------------
+    /*! \name Node Configuration *///------------------------------------------
     //@{
 public:
-    // Enable or disable node item resizing (default to true, ie node is resizable).
+    //! Enable or disable node item resizing (default to true, ie node is resizable).
     Q_PROPERTY( bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL )
+    //! \copydoc resizable
     inline bool     getResizable() const noexcept { return _resizable; }
+    //! \copydoc resizable
     void            setResizable( bool resizable ) noexcept;
 protected:
+    //! \copydoc resizable
     bool            _resizable{true};
 signals:
+    //! \copydoc resizable
     void            resizableChanged();
+
+public:
+    //! Define how the GraphView VisualConnector interact with this node.
+    enum class Connectable {
+        //! Node is fully visually connectable.
+        Connectable,
+        //! Node is visually connectable only from another node.
+        InConnectable,
+        //! Node can only be connected visually to another node.
+        OutConnectable,
+        //! Node cannot be visually connected from another node.
+        UnConnectable,
+    };
+    Q_ENUM(Connectable)
+
+    /*! \brief Enable or disable visual connection for a specific node (default to Connectable, ie visually connectable).
+     *
+     * \note When set to InConnectable or Unconnectable, visual node connector will not appear when the node
+     * is clicked. Connecting node programmatically is still possible with qan::Graph::insertEdge().
+     *
+     * \note Disabling visual node connection will not prevent visual connection
+     * from/to node ports.
+     *
+     * \sa Connectable
+     */
+    Q_PROPERTY( Connectable connectable READ getConnectable WRITE setConnectable NOTIFY connectableChanged FINAL )
+    //! \copydoc connectable
+    inline Connectable  getConnectable() const noexcept { return _connectable; }
+    //! \copydoc connectable
+    void            setConnectable( Connectable connectable ) noexcept;
+protected:
+    //! \copydoc connectable
+    Connectable     _connectable{Connectable::Connectable};
+signals:
+    //! \copydoc connectable
+    void            connectableChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -290,7 +333,6 @@ protected:
      * \endcode
      *
      * \sa isInsideBoundingShape()
-     * \ref custom
      */
     Q_INVOKABLE virtual void    setBoundingShape( QVariantList boundingPolygon );
 
@@ -303,7 +345,6 @@ protected:
      *   mouse.accepted = ( isInsideBoundingShape( Qt.point( mouse.x, mouse.y ) ) ? true : false )
      *  }
      * \endcode
-     *  \ref custom
      *  \sa setBoundShapeFrom()
      */
     Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
@@ -314,6 +355,9 @@ protected:
     //@{
 public:
     using PortItems = qcm::ContainerModel<QVector, QQuickItem*>;    // Using QQuickItem instead of qan::PortItem because MSVC does not fully support complete c++14 forward declarations
+
+    //! Look for a port with a given \c id (or nullptr if no such port exists).
+    Q_INVOKABLE qan::PortItem*  findPort(const QString& portId) const noexcept;
 
     //! Read-only list model of this node ports (either in or out).
     Q_PROPERTY( QAbstractListModel* ports READ getPortsModel CONSTANT FINAL )

@@ -384,6 +384,26 @@ public:
     //! Bind an existing edge destination to a visual in port from QML.
     Q_INVOKABLE void        bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept;
 
+    //! Shortcut to bindEdgeSource() and bindEdgeDestination() for edge on \c outPort and \c inPort.
+    Q_INVOKABLE void        bindEdge(qan::Edge* edge, qan::PortItem* outPort, qan::PortItem* inPort ) noexcept;
+
+    /*! \brief Test if an edge source is actually bindable to a given port.
+     *
+     * This method could be used to check if an edge is bindable to a given port
+     * _before_ actually creating the edge and calling bindEdgeSource(). Port \c multiplicity
+     * and \c connectable properties are taken into account to return a result.
+     *
+     * Example: for an out port with \c Single \c multiplicity where an out edge already
+     * exists, this method returns false.
+     */
+    virtual bool            isEdgeSourceBindable( const qan::PortItem& outPort) const noexcept;
+
+    /*! \brief Test if an edge destination is bindable to a visual in port.
+     *
+     * Same behaviour than isEdgeSourceBindable() for edge destination port.
+     */
+    virtual bool            isEdgeDestinationBindable( const qan::PortItem& inPort ) const noexcept;
+
     //! Bind an existing edge source to a visual out port.
     virtual void            bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort) noexcept;
 
@@ -626,11 +646,13 @@ public:
      * \param dock  port dock, default to left for in port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
      * \param type  either an in, out or in/out port (default to in/out).
      * \param label port visible label.
+     * \param id    Optional unique ID for the port (caller must ensure uniqueness), could be used to retrieve ports using qan::NodeItem::getPort().
      */
     Q_INVOKABLE qan::PortItem*  insertPort(qan::Node* node,
                                            qan::NodeItem::Dock dock,
                                            qan::PortItem::Type portType = qan::PortItem::Type::InOut,
-                                           QString label = "" ) noexcept;
+                                           QString label = "",
+                                           QString id = "" ) noexcept;
 
 public:
     //! Default delegate for node in/out port.

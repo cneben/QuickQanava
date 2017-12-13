@@ -43,21 +43,23 @@ import "qrc:/QuickQanava"   as Qan
 Qan.NodeItem {
     id: flowNodeItem
     Layout.preferredWidth: 150
-    Layout.preferredHeight: 70
+    Layout.preferredHeight: 150
     width: Layout.preferredWidth
     height: Layout.preferredHeight
+    connectable: Qan.NodeItem.UnConnectable     // Do not show visual edge connector, use out port instead
 
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent
         ColumnLayout {
-            Label {
-                text: (node.output * 100.) + "%"
-            }
-            Slider {
-                anchors.fill: parent
-                from: 0.; to: 1.0
-                onValueChanged: node.output = value
+            anchors.fill: parent
+            Image {
+                anchors.fill: parent; anchors.margins: 2
+                source: node.source
+                layer.enabled: true
+                layer.effect: ColorOverlay {
+                    color: node.tintColor
+                }
             }
         }
     }

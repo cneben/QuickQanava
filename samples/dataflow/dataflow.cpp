@@ -41,7 +41,7 @@
 // QuickQanava headers
 #include <QuickQanava>
 
-#include "./qanFlowNode.h"
+#include "./qanDataFlow.h"
 
 using namespace qan;
 

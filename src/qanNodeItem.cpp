@@ -115,7 +115,7 @@ void    NodeItem::onHeightChanged()
 }
 //-----------------------------------------------------------------------------
 
-/* Drag'nDrop Management *///--------------------------------------------------
+/* Node Configuration *///-----------------------------------------------------
 void    NodeItem::setResizable( bool resizable ) noexcept
 {
     if ( resizable != _resizable ) {
@@ -124,6 +124,16 @@ void    NodeItem::setResizable( bool resizable ) noexcept
     }
 }
 
+void    NodeItem::setConnectable( Connectable connectable ) noexcept
+{
+    if ( _connectable != connectable ) {
+        _connectable = connectable;
+        emit connectableChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
+/* Draggable Management *///---------------------------------------------------
 void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
 {
     const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
@@ -281,7 +291,18 @@ bool    NodeItem::isInsideBoundingShape( QPointF p )
 }
 //-----------------------------------------------------------------------------
 
-/* Dock Layout Management *///-------------------------------------------------
+/* Port/Dock Management *///---------------------------------------------------
+qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
+{
+    for ( const auto port : std::as_const(_ports) ) {
+        const auto portItem = qobject_cast<qan::PortItem*>(port);
+        if ( portItem &&
+             portItem->getId() == portId )
+            return portItem;
+    }
+    return nullptr;
+}
+
 void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
 {
     if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {

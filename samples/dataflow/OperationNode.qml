@@ -47,6 +47,7 @@ Qan.NodeItem {
     Layout.preferredHeight: 70
     width: Layout.preferredWidth
     height: Layout.preferredHeight
+    connectable: Qan.NodeItem.UnConnectable // Do not show visual edge connector, use out port instead
 
     Connections {       // Observe "node item" "node" ouput value changes andupdate out port label
         target: node

@@ -5,7 +5,10 @@
         <file>OperationNode.qml</file>
         <file>ImageNode.qml</file>
         <file>TintNode.qml</file>
-        <file>Lenna-scaled.png</file>
+        <file>ColorNode.qml</file>
+        <file>ColorPopup.qml</file>
+        <file>Lenna.jpeg</file>
+        <file>JS.jpeg</file>
         <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>

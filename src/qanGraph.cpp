@@ -581,30 +581,129 @@ void    Graph::bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noe
     bindEdgeDestination(*edge, *inPort);
 }
 
+void    Graph::bindEdge(qan::Edge* edge, qan::PortItem* outPort, qan::PortItem* inPort ) noexcept
+{
+    bindEdgeDestination(edge, inPort);
+    bindEdgeSource(edge, outPort );
+}
+
+bool    Graph::isEdgeSourceBindable( const qan::PortItem& outPort) const noexcept
+{
+    // To allow an edge source to be binded to a port, we must have an outport
+    if ( outPort.getType() != qan::PortItem::Type::Out &&
+         outPort.getType() != qan::PortItem::Type::InOut )
+        return false;
+
+    // Do not connect an edge to a port that has Single multiplicity and
+    // already has an in edge
+    if ( outPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple )
+        return true;    // Fast exit
+    if ( outPort.getMultiplicity() == qan::PortItem::Multiplicity::Single ) {
+        const auto outPortInDegree = outPort.getOutEdgeItems().size();
+        if ( outPortInDegree == 0 )
+            return true;
+    }
+    return false;
+}
+
+bool    Graph::isEdgeDestinationBindable( const qan::PortItem& inPort ) const noexcept
+{
+    // To allow an edge destination to be binded to a port, we must have an in port
+    if ( inPort.getType() != qan::PortItem::Type::In &&
+         inPort.getType() != qan::PortItem::Type::InOut )
+        return false;
+
+    // Do not connect an edge to a port that has Single multiplicity and
+    // already has an in edge
+    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple )
+        return true;    // Fast exit
+    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Single ) {
+        const auto inPortInDegree = inPort.getInEdgeItems().size();
+        if ( inPortInDegree == 0 )
+            return true;
+    }
+    return false;
+}
+
 void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcept
 {
     // PRECONDITION:
-        // outPort must be an Out port
         // edge must have an associed item
     auto edgeItem = edge.getItem();
-    if ( edgeItem != nullptr )
-        edgeItem->setSourceItem(&outPort);
+    if ( edgeItem == nullptr )
+        return;
 
-    // FIXME: Remember mapping...
+    if ( isEdgeSourceBindable(outPort) ) {
+        edgeItem->setSourceItem(&outPort);
+        outPort.getOutEdgeItems().append(edgeItem);
+    }
+
+    /*
+    // PRECONDITION:
+        // outPort must be an Out or InOut port
+        // edge must have an associed item
+    if ( outPort.getType() != qan::PortItem::Type::Out &&
+         outPort.getType() != qan::PortItem::Type::InOut )
+        return;
+    auto edgeItem = edge.getItem();
+    if ( edgeItem != nullptr ) {
+        // Do not connect an edge to a port that has Single multiplicity and
+        // already has an in edge
+        const auto outPortInDegree = outPort.getOutEdgeItems().size();
+        switch ( outPort.getMultiplicity() ) {
+        case qan::PortItem::Multiplicity::Single:
+            if ( outPortInDegree == 0 ) {
+                edgeItem->setSourceItem(&outPort);
+                outPort.getOutEdgeItems().append(edgeItem);
+            }
+            break;
+        case qan::PortItem::Multiplicity::Multiple:
+            edgeItem->setSourceItem(&outPort);
+            outPort.getOutEdgeItems().append(edgeItem);
+            break;
+        }
+    }
+    */
 }
 
 void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
 {
     // PRECONDITION:
-        // inPort must be an In port
         // edge must have an associed item
-    if ( inPort.getType() != qan::PortItem::Type::In )
+    auto edgeItem = edge.getItem();
+    if ( edgeItem == nullptr )
+        return;
+
+    if ( isEdgeDestinationBindable(inPort) ) {
+        edgeItem->setDestinationItem(&inPort);
+        inPort.getInEdgeItems().append(edgeItem);
+    }
+
+    /*
+    // PRECONDITION:
+        // inPort must be an In or InOut port
+        // edge must have an associed item
+    if ( inPort.getType() != qan::PortItem::Type::In &&
+         inPort.getType() != qan::PortItem::Type::InOut )
         return;
     auto edgeItem = edge.getItem();
-    if ( edgeItem != nullptr )
-        edgeItem->setDestinationItem(&inPort);
-
-    // FIXME: Remember mapping...
+    if ( edgeItem != nullptr ) {
+        // Do not connect an edge to a port that has Single multiplicity and
+        // already has an in edge
+        const auto inPortInDegree = inPort.getInEdgeItems().size();
+        switch ( inPort.getMultiplicity() ) {
+        case qan::PortItem::Multiplicity::Single:
+            if ( inPortInDegree == 0 ) {
+                edgeItem->setDestinationItem(&inPort);
+                inPort.getInEdgeItems().append(edgeItem);
+            }
+            break;
+        case qan::PortItem::Multiplicity::Multiple:
+            edgeItem->setDestinationItem(&inPort);
+            inPort.getInEdgeItems().append(edgeItem);
+            break;
+        }
+    }*/
 }
 
 bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
@@ -957,7 +1056,8 @@ void    Graph::mousePressEvent( QMouseEvent* event )
 qan::PortItem*  Graph::insertPort(qan::Node* node,
                                   qan::NodeItem::Dock dockType,
                                   qan::PortItem::Type portType,
-                                  QString label) noexcept
+                                  QString label,
+                                  QString id ) noexcept
 {
     // PRECONDITIONS:
         // node can't be nullptr
@@ -978,6 +1078,7 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
         if ( portItem != nullptr ) {
             portItem->setType(portType);
             portItem->setLabel(label);
+            portItem->setId(id);
             portItem->setDockType(dockType);
 
             // Configure port mouse events forwarding to qan::Graph
