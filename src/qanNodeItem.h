@@ -310,8 +310,19 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Dock Layout Management *///--------------------------------------
+    /*! \name Port/Dock Layout Management *///---------------------------------
     //@{
+public:
+    using PortItems = qcm::ContainerModel<QVector, QQuickItem*>;    // Using QQuickItem instead of qan::PortItem because MSVC does not fully support complete c++14 forward declarations
+
+    //! Read-only list model of this node ports (either in or out).
+    Q_PROPERTY( QAbstractListModel* ports READ getPortsModel CONSTANT FINAL )
+    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( &_ports ); }
+    inline auto         getPorts() noexcept -> PortItems& { return _ports; }
+    inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
+private:
+    PortItems           _ports;
+
 public:
     //! Define port dock type/index/position.
     enum class Dock : unsigned int {

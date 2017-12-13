@@ -38,7 +38,6 @@ ApplicationWindow {
     visible: true
     width: 1280; height: 720
     title: "Dataflow sample"
-
     Pane { anchors.fill: parent }
 
     Qan.GraphView {
@@ -49,9 +48,9 @@ ApplicationWindow {
             id: graph
             connectorEnabled: true
             Component.onCompleted: {
-                var i1 = graph.insertFlowNode()
+                var i1 = graph.insertFlowNode(FlowNode.Type.Percentage)
                 i1.label = "Input"; i1.item.x = 50; i1.item.y = 50
-                var i2 = graph.insertFlowNode()
+                var i2 = graph.insertFlowNode(FlowNode.Type.Percentage)
                 i2.label = "Input"; i2.item.x = 50; i2.item.y = 150
             }
         }
@@ -64,19 +63,25 @@ ApplicationWindow {
         anchors.top: parent.top; anchors.topMargin: 4
         ToolButton {
             text: "%"
-            onClicked: graph.insertFlowNode(FlowNode.Percentage)
+            onClicked: {
+                var r = graph.insertFlowNode(FlowNode.Type.Percentage)
+                r.label = "Percentage"
+            }
         }
         ToolButton {
-            text: "X"
-            onClicked: graph.insertFlowNode(FlowNode.OpMultiply)
+            text: "+/*"
+            onClicked: {
+                var r = graph.insertFlowNode(FlowNode.Type.Operation)
+                r.label = "Operation"
+            }
         }
         ToolButton {
             text: "Img"
-            onClicked: graph.insertFlowNode(FlowNode.Image)
+            onClicked: graph.insertFlowNode(ImageNode.Image)
         }
         ToolButton {
             text: "Tint"
-            onClicked: graph.insertFlowNode(FlowNode.OpTint)
+            onClicked: graph.insertFlowNode(TintNode.Tint)
         }
     }
 }

@@ -82,12 +82,38 @@ public:
     };
     Q_ENUM(Type)
 
+    //! Port acces either multiple or single in or out connections (depending on port \c type).
+    enum class Multiplicity {
+        //! Port accept only on in or out connections (default).
+        Multiple,
+        //! Port accept only in connections (default).
+        Single
+    };
+    Q_ENUM(Multiplicity)
+
 public:
+    //! \copydoc Type
     Q_PROPERTY( Type type READ getType FINAL )
+    //! \copydoc Type
     inline Type      getType() const noexcept { return _type; }
+    //! \copydoc Type
     auto             setType(Type type) noexcept -> void { _type = type; }
 private:
+    //! \copydoc Type
     Type            _type{Type::In};
+
+public:
+    //! \copydoc Multiplicity
+    Q_PROPERTY( Multiplicity multiplicity READ getMultiplicity WRITE setMultiplicity NOTIFY multiplicityChanged FINAL )
+    //! \copydoc Multiplicity
+    inline Multiplicity getMultiplicity() const noexcept { return _multiplicity; }
+    //! \copydoc Multiplicity
+    auto                setMultiplicity(Multiplicity multiplicity) noexcept -> void;
+private:
+    //! \copydoc Multiplicity
+    Multiplicity        _multiplicity{Multiplicity::Multiple};
+signals:
+    void                multiplicityChanged();
 
 public:
     //!

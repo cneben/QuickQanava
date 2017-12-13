@@ -619,22 +619,18 @@ public:
     /*! QML interface for adding an in port to node \c node using default port delegate.
      *
      * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
+     * \note After creation, you should configure node multiplicity (hability to have multiple connections
+     * per port), connecivity default to qan::PortItem::Multiple.
      *
      * \param node  port host node.
-     * \param label port visible label.
      * \param dock  port dock, default to left for in port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
-     */
-    Q_INVOKABLE qan::PortItem*  insertInPort(qan::Node* node, qan::NodeItem::Dock dock, QString label = "" ) noexcept;
-
-    /*! QML interface for adding an out port to node \c node using default port delegate.
-     *
-     * \note might return nullptr if std::bad_alloc is thrown internally or \c node is invalid or nullptr.
-     *
-     * \param node  port host node.
+     * \param type  either an in, out or in/out port (default to in/out).
      * \param label port visible label.
-     * \param dock  port dock, default to right for out port (either Dock::Top, Dock::Bottom, Dock::Right, Dock::Left).
      */
-    Q_INVOKABLE qan::PortItem*  insertOutPort(qan::Node* node, qan::NodeItem::Dock dock = NodeItem::Dock::Right, QString label = "") noexcept;
+    Q_INVOKABLE qan::PortItem*  insertPort(qan::Node* node,
+                                           qan::NodeItem::Dock dock,
+                                           qan::PortItem::Type portType = qan::PortItem::Type::InOut,
+                                           QString label = "" ) noexcept;
 
 public:
     //! Default delegate for node in/out port.

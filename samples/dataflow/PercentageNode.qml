@@ -51,11 +51,16 @@ Qan.NodeItem {
         anchors.fill: parent
         nodeItem : parent
         ColumnLayout {
+            anchors.fill: parent
             Label {
-                text: (node.output * 100.) + "%"
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                text: (node.output * 100.).toFixed(2) + "%"
+                font.bold: true
             }
             Slider {
-                anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 from: 0.; to: 1.0
                 onValueChanged: node.output = value
             }

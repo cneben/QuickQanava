@@ -50,22 +50,22 @@ Qan.GraphView {
             var n2 = graph.insertNode()
             n2.label = "N2"; n2.item.x = 250; n2.item.y = 100
 
-            var n2p1 = graph.insertInPort(n2, Qan.NodeItem.Left);
+            var n2p1 = graph.insertPort(n2, Qan.NodeItem.Left);
             n2p1.label = "IN #1"
-            var n2p2 = graph.insertInPort(n2, Qan.NodeItem.Left);
+            var n2p2 = graph.insertPort(n2, Qan.NodeItem.Left);
             n2p2.label = "IN #2"
 
-            var n2p3 = graph.insertInPort(n2, Qan.NodeItem.Right);
+            var n2p3 = graph.insertPort(n2, Qan.NodeItem.Right);
             n2p3.label = "OUT #1"
 
             var n3 = graph.insertNode()
             n3.label = "N3"; n3.item.x = 500; n3.item.y = 100
-            var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Left);
+            var n3p1 = graph.insertPort(n3, Qan.NodeItem.Left);
             n3p1.label = "IN #1"
 
-            var n3p1 = graph.insertInPort(n3, Qan.NodeItem.Top);
+            var n3p1 = graph.insertPort(n3, Qan.NodeItem.Top);
             n3p1.label = "OUT #1"
-            var n3p2 = graph.insertInPort(n3, Qan.NodeItem.Bottom);
+            var n3p2 = graph.insertPort(n3, Qan.NodeItem.Bottom);
             n3p2.label = "OUT #2"
 
             var e1 = graph.insertEdge(n11, n2);

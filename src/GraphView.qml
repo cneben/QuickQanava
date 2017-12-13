@@ -97,6 +97,8 @@ Qan.AbstractGraphView {
                 updateGroupZ(node.group)
             if ( graph.connector &&
                  graph.connectorEnabled ) {
+                //console.debug( "node=" + node );
+                //console.debug("graph.connector.sourceNode=" + graph.connector.sourceNode);
                 graph.connector.sourceNode = node;
 
                 // FIXME: connector remove that....

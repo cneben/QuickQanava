@@ -82,29 +82,69 @@ QQmlComponent*  PercentageNode::delegate(QQmlEngine& engine) noexcept
     return delegate.get();
 }
 
-QQmlComponent*  OpMultiplyNode::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  OperationNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/OpMultiplyNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/OperationNode.qml");
     return delegate.get();
 }
 
+void    OperationNode::setOperation(Operation operation) noexcept
+{
+    if ( _operation != operation ) {
+        _operation = operation;
+        emit operationChanged();
+    }
+}
 
-qan::Node* FlowGraph::insertFlowNode(qan::FlowNode::Type type)
+void    OperationNode::inNodeOutputChanged()
+{
+    FlowNode::inNodeOutputChanged();
+    qreal o{0.}; // For the example sake we do not deal with overflow
+    bool oIsInitialized{false};
+    for ( const auto& inNode : getInNodes() ) {
+        const auto inFlowNode = qobject_cast<qan::FlowNode*>(inNode.lock().get());
+        if ( inFlowNode == nullptr ||
+             !inFlowNode->getOutput().isValid())
+            continue;
+        bool ok{false};
+        const auto inOutput = inFlowNode->getOutput().toReal(&ok);
+        if ( ok ) {
+            switch ( _operation ) {
+            case Operation::Add:        o += inOutput; break;
+            case Operation::Multiply:
+                if ( !oIsInitialized ) {
+                    o = inOutput;
+                    oIsInitialized = true;
+                } else
+                    o *= inOutput;
+                break;
+            }
+        }
+    }
+    setOutput(o);
+}
+
+qan::Node* FlowGraph::insertFlowNode(FlowNode::Type type)
 {
     qan::Node* flowNode = nullptr;
     switch ( type ) {
     case qan::FlowNode::Type::Percentage:
-        flowNode = insertNode<FlowNode>(nullptr);
+        flowNode = insertNode<PercentageNode>(nullptr);
+        insertPort(flowNode, qan::NodeItem::Dock::Right, qan::PortItem::Type::Out, "OUT" );
         break;
     case qan::FlowNode::Type::Image:
         flowNode = insertNode<FlowNode>(nullptr);
         break;
-        flowNode = insertNode<FlowNode>(nullptr);
-    case qan::FlowNode::Type::OpMultiply:
+    case qan::FlowNode::Type::Operation:
+        flowNode = insertNode<OperationNode>(nullptr);
+        // Insert out port first we need to modify it from OperationNode.qml delegate
+        insertPort(flowNode, qan::NodeItem::Dock::Right, qan::PortItem::Type::Out, "OUT" );
+        insertPort(flowNode, qan::NodeItem::Dock::Left, qan::PortItem::Type::In, "IN" );
+        insertPort(flowNode, qan::NodeItem::Dock::Left, qan::PortItem::Type::In, "IN" );
         break;
-    case qan::FlowNode::Type::OpTint:
+    case qan::FlowNode::Type::Tint:
         flowNode = insertNode<FlowNode>(nullptr);
         break;
     default: return nullptr;

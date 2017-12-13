@@ -139,7 +139,7 @@ ApplicationWindow {
                 // SRC/DST horizontally aligned
                 var s = graph.insertNode()
                 s.label = "S1"; s.item.x = x; s.item.y = y
-                var sp1 = graph.insertInPort(s, srcPortType);
+                var sp1 = graph.insertPort(s, srcPortType);
                 sp1.label = "OUT#1"
 
                 var d = graph.insertNode()
@@ -153,12 +153,12 @@ ApplicationWindow {
                 // SRC/DST horizontally aligned
                 var s = graph.insertNode()
                 s.label = "S1"; s.item.x = x; s.item.y = y
-                var sp1 = graph.insertInPort(s, srcPortType);
+                var sp1 = graph.insertPort(s, srcPortType);
                 sp1.label = "OUT#1"
 
                 var d = graph.insertNode()
                 d.label = "D1"; d.item.x = x + 200; d.item.y = y
-                var dp1 = graph.insertInPort(d, dstPortType);
+                var dp1 = graph.insertPort(d, dstPortType);
                 dp1.label = "IN#1"
 
                 var e = graph.insertEdge(s, d);
@@ -169,12 +169,12 @@ ApplicationWindow {
                 // SRC/DST vertically aligned
                 /*var s = graph.insertNode()
                 s.label = "S1"; s.item.x = x + 450; s.item.y = y
-                var sp1 = graph.insertInPort(s, srcPortType);
+                var sp1 = graph.insertPort(s, srcPortType);
                 sp1.label = "OUT#1"
 
                 var d = graph.insertNode()
                 d.label = "D1"; d.item.x = x + 450; d.item.y = y + 200
-                var dp1 = graph.insertInPort(d, dstPortType);
+                var dp1 = graph.insertPort(d, dstPortType);
                 dp1.label = "IN#1"
 
                 var e = graph.insertEdge(s, d);
@@ -185,12 +185,12 @@ ApplicationWindow {
                 // SRC bottom left / DST top right
                 var s = graph.insertNode()
                 s.label = "S"; s.item.x = x; s.item.y = y + 150
-                var sp1 = graph.insertInPort(s, srcPortType);
+                var sp1 = graph.insertPort(s, srcPortType);
                 sp1.label = "OUT#1"
 
                 var d = graph.insertNode()
                 d.label = "D1"; d.item.x = x + 300; d.item.y = y + 300
-                var dp1 = graph.insertInPort(d, dstPortType);
+                var dp1 = graph.insertPort(d, dstPortType);
                 dp1.label = "IN#1"
 
                 var e = graph.insertEdge(s, d);
@@ -201,12 +201,12 @@ ApplicationWindow {
                 // SRC top left / DST bottom right
                 var s = graph.insertNode()
                 s.label = "S"; s.item.x = x + 300; s.item.y = y + 400
-                var sp1 = graph.insertInPort(s, srcPortType);
+                var sp1 = graph.insertPort(s, srcPortType);
                 sp1.label = "OUT#1"
 
                 var d = graph.insertNode()
                 d.label = "D1"; d.item.x = x; d.item.y = y + 550
-                var dp1 = graph.insertInPort(d, dstPortType);
+                var dp1 = graph.insertPort(d, dstPortType);
                 dp1.label = "IN#1"
 
                 var e = graph.insertEdge(s, d);

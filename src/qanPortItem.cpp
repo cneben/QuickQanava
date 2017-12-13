@@ -55,6 +55,14 @@ PortItem::~PortItem() { /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Port Properties Management *///---------------------------------------------
+auto    PortItem::setMultiplicity(Multiplicity multiplicity) noexcept -> void
+{
+    if ( _multiplicity != multiplicity ) {
+        _multiplicity = multiplicity;
+        emit multiplicityChanged();
+    }
+}
+
 void    PortItem::setDockType(NodeItem::Dock dockType) noexcept
 {
     if ( dockType != _dockType ) {

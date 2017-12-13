@@ -39,25 +39,34 @@ import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
+import QuickQanava.Samples  1.0
 
 Qan.NodeItem {
-    id: flowNodeItem
+    id: operationNodeItem
     Layout.preferredWidth: 150
     Layout.preferredHeight: 70
     width: Layout.preferredWidth
     height: Layout.preferredHeight
 
+    Connections {       // Observe "node item" "node" ouput value changes andupdate out port label
+        target: node
+        onOutputChanged: {
+            if ( ports.itemCount > 0 )
+                ports.listReference.itemAt(0).label = "OUT=" + node.output.toFixed(1)
+        }
+    }
+
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent
-        ColumnLayout {
-            Label {
-                text: (node.output * 100.) + "%"
-            }
-            Slider {
-                anchors.fill: parent
-                from: 0.; to: 1.0
-                onValueChanged: node.output = value
+        ComboBox {
+            anchors.left: parent.left; anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: 4
+            model: [ "+ operator", "* operator"]
+            currentIndex: node.operation === OperationNode.Add ? 0 : 1
+            onCurrentIndexChanged: {
+                node.operation = currentIndex === 0 ? OperationNode.Add : OperationNode.Multiply
             }
         }
     }

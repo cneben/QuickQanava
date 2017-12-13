@@ -53,7 +53,8 @@ int	main( int argc, char** argv )
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
     QuickQanava::initialize(&engine);
-    //qmlRegisterType< qan::FaceNode >( "QuickQanava", 2, 0, "AbstractFaceNode");
+    qmlRegisterType< qan::FlowNode >( "QuickQanava.Samples", 1, 0, "FlowNode");
+    qmlRegisterType< qan::OperationNode >( "QuickQanava.Samples", 1, 0, "OperationNode");
     qmlRegisterType< qan::FlowGraph >( "QuickQanava.Samples", 1, 0, "FlowGraph");
 
     engine.load(QUrl("qrc:/dataflow.qml"));

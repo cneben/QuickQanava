@@ -954,7 +954,10 @@ void    Graph::mousePressEvent( QMouseEvent* event )
 
 
 /* Port/Dock Management *///---------------------------------------------------
-qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockType, QString label) noexcept
+qan::PortItem*  Graph::insertPort(qan::Node* node,
+                                  qan::NodeItem::Dock dockType,
+                                  qan::PortItem::Type portType,
+                                  QString label) noexcept
 {
     // PRECONDITIONS:
         // node can't be nullptr
@@ -964,7 +967,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
          node->getItem() == nullptr )
         return nullptr;
     if ( !_portDelegate ) {
-        qWarning() << "qan::Graph::insertInPort(): no default port delegate available.";
+        qWarning() << "qan::Graph::insertPort(): no default port delegate available.";
         return nullptr;
     }
 
@@ -973,12 +976,12 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
     if ( nodeStyle ) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
         if ( portItem != nullptr ) {
-            portItem->setType(qan::PortItem::Type::In);
+            portItem->setType(portType);
             portItem->setLabel(label);
             portItem->setDockType(dockType);
 
             // Configure port mouse events forwarding to qan::Graph
-            auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            const auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
                 if ( portItem != nullptr &&
                      portItem->getNode() != nullptr )
@@ -986,7 +989,7 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
             };
             connect( portItem, &qan::NodeItem::nodeClicked, notifyPortClicked );
 
-            auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            const auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
                 if ( portItem != nullptr &&
                      portItem->getNode() != nullptr )
@@ -994,9 +997,9 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
             };
             connect( portItem, &qan::NodeItem::nodeRightClicked, notifyPortRightClicked );
 
-
             if ( node->getItem() != nullptr ) {
-                portItem->setNode(node); // inPort item in fact map to this concrete node.
+                portItem->setNode(node); // portitem node in fact map to this concrete node.
+                node->getItem()->getPorts().append(portItem);
                 auto dockItem = node->getItem()->getDock(dockType);
                 if ( dockItem == nullptr ) {
                     // Create a dock item from the default dock delegate
@@ -1012,15 +1015,6 @@ qan::PortItem*  Graph::insertInPort(qan::Node* node, qan::NodeItem::Dock dockTyp
         }
     }
     return portItem;
-}
-
-qan::PortItem*  Graph::insertOutPort(qan::Node* node, qan::NodeItem::Dock dock, QString label) noexcept
-{
-    Q_UNUSED(dock); Q_UNUSED(label);
-    if ( node == nullptr )
-        return nullptr;
-    // FIXME add out port support
-    return nullptr;
 }
 
 void    Graph::qmlSetPortDelegate(QQmlComponent* portDelegate) noexcept

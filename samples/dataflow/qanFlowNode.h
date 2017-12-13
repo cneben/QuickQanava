@@ -48,8 +48,6 @@ class FlowNodeBehaviour : public qan::NodeBehaviour
     Q_OBJECT
 public:
     explicit FlowNodeBehaviour(QObject* parent = nullptr) : qan::NodeBehaviour{ "FlowNodeBehaviour", parent } { /* Nil */ }
-    virtual ~FlowNodeBehaviour( ) { /* Nil*/ }
-    FlowNodeBehaviour(FlowNodeBehaviour&) = delete;
 protected:
     virtual void    inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept override;
     virtual void    inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) noexcept override;
@@ -59,11 +57,11 @@ class FlowNode : public qan::Node
 {
     Q_OBJECT
 public:
-    enum class Type : unsigned int {
+    enum class Type {
         Percentage,
         Image,
-        OpMultiply,
-        OpTint
+        Operation,
+        Tint
     };
     Q_ENUM(Type)
 
@@ -86,7 +84,7 @@ protected:
     Type            _type{Type::Percentage};
 
 public slots:
-    void            inNodeOutputChanged();
+    virtual void    inNodeOutputChanged();
 
 public:
     Q_PROPERTY(QVariant output READ getOutput WRITE setOutput NOTIFY outputChanged)
@@ -102,16 +100,36 @@ class PercentageNode : public qan::FlowNode
 {
     Q_OBJECT
 public:
-    PercentageNode() : qan::FlowNode{FlowNode::Type::Percentage} { /* Nil */ }
+    PercentageNode() : qan::FlowNode{FlowNode::Type::Percentage} { setOutput(0.); }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
 };
 
-class OpMultiplyNode : public qan::FlowNode
+class OperationNode : public qan::FlowNode
 {
     Q_OBJECT
 public:
-    OpMultiplyNode() : qan::FlowNode{FlowNode::Type::OpMultiply} { /* Nil */ }
+    enum class Operation {
+        Add,
+        Multiply
+    };
+    Q_ENUM(Operation)
+
+    OperationNode() : qan::FlowNode{FlowNode::Type::Operation} {
+        // When user change operation, recompute an output value
+        connect(this, &OperationNode::operationChanged, this, &FlowNode::inNodeOutputChanged);
+    }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+
+    Q_PROPERTY(Operation operation READ getOperation WRITE setOperation NOTIFY operationChanged)
+    inline Operation    getOperation() const noexcept { return _operation; }
+    void                setOperation(Operation operation) noexcept;
+private:
+    Operation           _operation{Operation::Multiply};
+signals:
+    virtual void        operationChanged();
+
+protected slots:
+    void                inNodeOutputChanged();
 };
 
 class FlowGraph : public qan::Graph
@@ -120,7 +138,8 @@ class FlowGraph : public qan::Graph
 public:
     explicit FlowGraph( QQuickItem* parent = nullptr ) noexcept : qan::Graph(parent) { }
 public:
-    Q_INVOKABLE qan::Node* insertFlowNode(qan::FlowNode::Type type);
+    Q_INVOKABLE qan::Node*  insertFlowNode(int type) { return insertFlowNode(static_cast<FlowNode::Type>(type)); }       // FlowNode::Type could not be used from QML, Qt 5.10 bug???
+    qan::Node*              insertFlowNode(FlowNode::Type type);
 };
 
 } // ::qan

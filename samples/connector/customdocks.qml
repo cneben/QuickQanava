@@ -87,10 +87,10 @@ Qan.GraphView {
             n1.label = "Default.Node"
             n1.item.x = 30
             n1.item.y = 30
-            topology.insertInPort(n1, Qan.NodeItem.Left)
-            topology.insertInPort(n1, Qan.NodeItem.Left)
-            topology.insertInPort(n1, Qan.NodeItem.Right)
-            topology.insertInPort(n1, Qan.NodeItem.Right)
+            topology.insertPort(n1, Qan.NodeItem.Left)
+            topology.insertPort(n1, Qan.NodeItem.Left)
+            topology.insertPort(n1, Qan.NodeItem.Right)
+            topology.insertPort(n1, Qan.NodeItem.Right)
         }
     }
 }
