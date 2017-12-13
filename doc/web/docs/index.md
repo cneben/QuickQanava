@@ -37,7 +37,7 @@ Please refer to [Installation](installation.md) subsection and [Quickstart guide
 | Node Grouping                | Visual Connection of Nodes         | 
 | :---:                       | :---:             | 
 | ![groups](images/sample-groups.gif) | ![connector](images/sample-nodes.gif) | 
-| ![connector](images/sample-connector.gif) | ![styles](images/sample-styles.gif) | 
+| ![connector](images/sample-dataflow-short.gif) | ![styles](images/sample-styles.gif) | 
 
 ![styles](images/topology.png)
 

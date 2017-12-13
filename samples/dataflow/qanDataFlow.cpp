@@ -173,6 +173,9 @@ void    TintNode::inNodeOutputChanged()
     qDebug() << "TintNode::inNodeOutputValueChanged()";
     if ( getInNodes().size() != 3 )
         return;
+
+    // FIXME: Do not find port item by index, but by id with qan::NodeItem::findPort()...
+
     const auto inFactorNode = qobject_cast<qan::FlowNode*>(getInNodes().at(0).lock().get());
     const auto inColorNode = qobject_cast<qan::FlowNode*>(getInNodes().at(1).lock().get());
     const auto inImageNode = qobject_cast<qan::FlowNode*>(getInNodes().at(2).lock().get());

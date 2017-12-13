@@ -15,7 +15,7 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.9.2-blue.svg) |
+![](https://img.shields.io/badge/version-0.9.3-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
@@ -24,8 +24,8 @@ QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quick
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://www.destrat.io/quickqanava (**updated 20171116**)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**deprecated**)
++ Project homepage: http://www.destrat.io/quickqanava (**updated 20171213**)
++ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20171213**)
 
 For any questions, please contact: benoit@destrat.io
 
@@ -43,26 +43,26 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 | :---:       |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif) |
 
-  - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/gettingstarted/index.html#displaying-custom-nodes)
+  - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/advanced/index.html#defining-custom-topology)
 
 | Visual Connector       |   
 | :---:                  | 
-![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-connector.gif) |
+![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-dataflow-short.gif) |
 
-  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/gettingstarted/index.html#topology)
+  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/topology/index.html#visual-connection-of-nodes)
   - Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
 
 | Groups       | 
 | :---:        | 
 | ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-groups.gif) |
 
-  - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/gettingstarted/index.html#using-groups)
+  - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/topology/index.html#using-groups)
 
 | Styles       |
 | :---:        | 
 | ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
 
-  - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/gettingstarted/index.html#defining-styles)
+  - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/styles/index.html#introduction)
 
 ## Dependencies
 
@@ -88,9 +88,10 @@ cd QuickQanava
     - [X] Integrate Qt Quick Shapes 1.0.
     - [X] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
   - **v0.9.3:**
+    - [X] Add complete port/dock support.
+  - **v0.9.4:**	 
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-  - **v0.9.4:**	 
 	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
 		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
 		- [ ] Add support for standard library containers.
