@@ -34,6 +34,7 @@
 
 // Std headers
 #include <algorithm>    // std::for_each
+#include <utility>      // std::as_const
 
 // Qt headers
 #include <QPainter>
