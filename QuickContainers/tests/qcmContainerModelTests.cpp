@@ -1,20 +1,27 @@
 /*
-    This file is part of QuickContainers library.
+ Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
-    Copyright (C) 2016  Benoit AUTHEMAN
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //-----------------------------------------------------------------------------
@@ -25,16 +32,20 @@
 // \date	2016 11 25
 //-----------------------------------------------------------------------------
 
+// Qt headers
+#include <memory>
+
+// Qt headers
+#include <QSignalSpy>
+
 // QuickContainers headers
 #include "./qcmTests.h"
-#include "../src/qcmContainerModelListReference.h"
-#include "../src/qcmContainerModelComposer.h"
 #include "./qcmContainerModelTests.h"
 
 //-----------------------------------------------------------------------------
 // Static tag dispatching test
 //-----------------------------------------------------------------------------
-
+/*
 TEST(qpsContainerModel, staticDispatch)
 {
     std::cerr << "qcm::ItemDispatcher<int>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<int>::type >() << std::endl;
@@ -73,55 +84,233 @@ TEST(qpsContainerModel, staticDispatch)
     bool isWeakQObjectPtr{ std::is_same< qcm::ItemDispatcher<std::weak_ptr<QObject>>::type, qcm::ItemDispatcherBase::weak_ptr_qobject_type>::value };
     EXPECT_TRUE( isWeakQObjectPtr );
 }
+*/
 
 //-----------------------------------------------------------------------------
-// qcm::ContainerModel
+// qcm::Adapter tests
 //-----------------------------------------------------------------------------
-
-TEST(qpsContainerModel, vectorPodEmpty)
+template <class Adapter, class C>
+void    testAdapterSequenceInt()
 {
-    using Ints = qcm::ContainerModel< QVector, int >;
-    Ints ints;
-    EXPECT_EQ( ints.rowCount(), 0 );
-    EXPECT_EQ( ints.getItemCount(), 0 );
+    C ints;
+
+    // Adapter<>::reserve()
+    Adapter::reserve(ints, 10);
+
+    // Adapter<>::insert(&)
+    Adapter::insert(ints, 42);
+    EXPECT_EQ(1, ints.size());
+
+    // Adapter<>::insert(&&)
+    int i{43};
+    Adapter::insert(ints, std::move(i));
+    EXPECT_EQ(2, ints.size());
+
+    // Adapter<>::indexOf() / Adapter<>::contains()
+    EXPECT_EQ(1, Adapter::indexOf(ints, 43));
+    EXPECT_TRUE(Adapter::contains(ints, 43));
+    EXPECT_FALSE(Adapter::contains(ints, 4343));
+
+    // Adapter<>::append(&)
+    Adapter::append(ints, 72);
+    EXPECT_EQ(3, ints.size());
+
+    // Adapter<>::append(&&)
+    int i2{43};
+    Adapter::append(ints, std::move(i2));
+    EXPECT_EQ(4, ints.size());  // 43 already inserted
+    int i3{44};
+    Adapter::append(ints, std::move(i3));
+    EXPECT_EQ(5, ints.size());
+
+    // Adapter<>::remove()
+    Adapter::remove(ints, 0);       // Remove 42
+    EXPECT_EQ(4, ints.size());
+    EXPECT_EQ(0, Adapter::indexOf(ints, 43));
+    EXPECT_EQ(-1, Adapter::indexOf(ints, 4242));
+
+    // Adapter<>::removeAll()
+    Adapter::insert(ints, 42);
+    Adapter::insert(ints, 43);
+    Adapter::insert(ints, 42);
+
+    // Can't have the removed item count with std::vector
+    const auto originalSize = ints.size();
+    // Can't test removeAll, with std it _always_ return -1
+    Adapter::removeAll(ints, 42);
+    //EXPECT_EQ(-1, Adapter::removeAll(ints, 42));
+    EXPECT_EQ(originalSize - 2, ints.size());
 }
 
-TEST(qpsContainerModel, vectorQObjectPtrEmpty)
+TEST( qcmAdapter, qVectorInt )
 {
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
-    QObjects qobjects;
-    EXPECT_EQ( qobjects.rowCount(), 0 );
-    EXPECT_EQ( qobjects.getItemCount(), 0 );
+    using Adapter = qcm::adapter<QVector, int>;
+    testAdapterSequenceInt<Adapter, QVector<int>>();
 }
 
-TEST(qpsContainerModel, vectorPodItemCount)
+TEST( qcmAdapter, qListInt )
 {
-    using Ints = qcm::ContainerModel< QVector, int >;
-    Ints ints;
-    EXPECT_EQ( ints.rowCount(), 0 );
-    EXPECT_EQ( ints.getItemCount(), 0 );
-    ints.append( 42 );
-    ints.append( 43 );
-    EXPECT_EQ( ints.rowCount(), 2 );
-    EXPECT_EQ( ints.getItemCount(), 2 );
+    using Adapter = qcm::adapter<QList, int>;
+    testAdapterSequenceInt<Adapter, QList<int>>();
 }
 
-TEST(qpsContainerModel, vectorQObjectPtrItemCount)
+TEST( qcmAdapter, stdVectorInt )
 {
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
-    QObjects qobjects;
-    EXPECT_EQ( qobjects.rowCount(), 0 );
-    EXPECT_EQ( qobjects.getItemCount(), 0 );
-    qobjects.append( new QObject{nullptr} );
-    qobjects.append( new QObject{nullptr} );
-    EXPECT_EQ( qobjects.rowCount(), 2 );
-    EXPECT_EQ( qobjects.getItemCount(), 2 );
+    using Adapter = qcm::adapter<std::vector, int>;
+    testAdapterSequenceInt<Adapter, std::vector<int>>();
 }
 
-TEST(qpsContainerModel, vectorQObjectPtr)
+template <class Adapter, class C>
+void    testAssociativeSequenceInt()
 {
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
+    C ints;
+
+    // Adapter<>::reserve()
+    Adapter::reserve(ints, 10);
+
+    // Adapter<>::insert(&)
+    Adapter::insert(ints, 42);
+    EXPECT_EQ(1, ints.size());
+
+    // Adapter<>::insert(&&)
+    int i{43};
+    Adapter::insert(ints, std::move(i));
+    EXPECT_EQ(2, ints.size());
+
+    // Adapter<>::indexOf() / Adapter<>::contains()
+        // Testing indexOf() has no sense with associative containers (QSet is an hashtable)
+    EXPECT_NE(Adapter::indexOf(ints, 42), Adapter::indexOf(ints, 43));
+    EXPECT_EQ(-1, Adapter::indexOf(ints, 4242));
+    EXPECT_TRUE(Adapter::contains(ints, 42));
+    EXPECT_FALSE(Adapter::contains(ints, 4242));
+
+    // Adapter<>::append(&)
+    Adapter::append(ints, 72);
+    EXPECT_EQ(3, ints.size());
+
+    // Adapter<>::append(&&)
+    int i2{43};
+    Adapter::append(ints, std::move(i2));
+    EXPECT_EQ(3, ints.size());  // 43 already inserted
+    int i3{44};
+    Adapter::append(ints, std::move(i3));
+    EXPECT_EQ(4, ints.size());
+
+    // Adapter<>::remove()
+    Adapter::remove(ints, 0);       // Remove "a value"!
+    EXPECT_EQ(3, ints.size());
+
+    // Adapter<>::removeAll()
+    Adapter::insert(ints, 42);
+    Adapter::insert(ints, 43);
+    Adapter::insert(ints, 42);
+
+    // Can't have the removed item count with std::vector
+    const auto originalSize = ints.size();
+    // Can't test removeAll, with std it _always_ return -1
+    Adapter::removeAll(ints, 42);
+    EXPECT_EQ(originalSize - 1, ints.size());
+}
+
+TEST( qcmAdapter, qSetInt )
+{
+    using Adapter = qcm::adapter<QSet, int>;
+    testAssociativeSequenceInt<Adapter, QSet<int>>();
+}
+
+//-----------------------------------------------------------------------------
+// qcm::Container QVector POD tests
+//-----------------------------------------------------------------------------
+TEST(qpsContainer, qVectorPod)
+{
+    using Ints = qcm::Container< QVector, int >;
+    {
+        Ints ints;
+        EXPECT_EQ( ints.model()->rowCount(), 0 );
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+
+    {   // adapter::reserve()
+        Ints ints;
+        ints.reserve(10);
+        EXPECT_EQ( ints.model()->rowCount(), 0 );
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+
+    {   // adapter::append()
+        Ints ints;
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+        ints.append( 42 );
+        ints.append( 43 );
+        EXPECT_EQ( ints.model()->getLength(), 2 );
+    }
+
+    {   // adapter::remove()
+        Ints ints;
+        ints.append(42);
+        ints.append(43);
+        EXPECT_EQ( ints.model()->getLength(), 2 );
+        ints.removeAll(43);
+        EXPECT_EQ( ints.model()->getLength(), 1 );
+        ints.removeAll(42);
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+}
+
+//-----------------------------------------------------------------------------
+// qcm::Container std::vector POD tests
+//-----------------------------------------------------------------------------
+TEST(qpsContainer, stdVectorPod)
+{
+    using Ints = qcm::Container<std::vector, int >;
+    {
+        Ints ints;
+        EXPECT_EQ( ints.model()->rowCount(), 0 );
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+
+    {   // adapter::reserve()
+        Ints ints;
+        ints.reserve(10);
+        EXPECT_EQ( ints.model()->rowCount(), 0 );
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+
+    {   // adapter::append()
+        Ints ints;
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+        ints.append( 42 );
+        ints.append( 43 );
+        EXPECT_EQ( ints.model()->getLength(), 2 );
+    }
+
+    {   // adapter::remove()
+        Ints ints;
+        ints.append(42);
+        ints.append(43);
+        EXPECT_EQ( ints.model()->getLength(), 2 );
+        ints.removeAll(43);
+        EXPECT_EQ( ints.model()->getLength(), 1 );
+        ints.removeAll(42);
+        EXPECT_EQ( ints.model()->getLength(), 0 );
+    }
+}
+
+TEST(qpsContainer, qVectorQObjectPtrEmpty)
+{
+    using QObjects = qcm::Container<QVector, QObject*>;
     QObjects objects;
+    EXPECT_EQ( objects.model()->rowCount(), 0 );
+    EXPECT_EQ( objects.model()->getLength(), 0 );
+    EXPECT_EQ( objects.size(), 0 );
+
+    objects.append( new QObject{nullptr} );
+    objects.append( new QObject{nullptr} );
+    EXPECT_EQ( objects.model()->rowCount(), 2 );
+    EXPECT_EQ( objects.model()->getLength(), 2 );
+    EXPECT_EQ( objects.size(), 2 );
+
+    objects.clear();
     QObject* o = new QObject();
     o->setObjectName( "Hola" );
 
@@ -130,18 +319,17 @@ TEST(qpsContainerModel, vectorQObjectPtr)
     objects.append( new QObject() );
     objects.append( new QObject() );
     objects.append( nullptr );  // Shouldn't throw
-    EXPECT_EQ( objects.rowCount(), 3 );
-    EXPECT_EQ( objects.getItemCount(), 3 );
+    EXPECT_EQ( objects.size(), 3 );
     EXPECT_EQ( objects.at(0)->objectName(), "Hola" );
 
     // ContainerModel::remove()
-    objects.remove( o );
-    objects.remove( nullptr );
-    EXPECT_EQ( objects.rowCount(), 2 );
+    objects.removeAll( o );
+    objects.removeAll( nullptr );
+    EXPECT_EQ( objects.size(), 2 );
 
     // ContainerModel::insert()
     objects.insert( new QObject(), 0 );
-    EXPECT_EQ( objects.rowCount(), 3 );
+    EXPECT_EQ( objects.size(), 3 );
 
     // ContainerModel::indexOf()
     QObject* o2 = new QObject();
@@ -150,171 +338,372 @@ TEST(qpsContainerModel, vectorQObjectPtr)
     EXPECT_EQ( objects.indexOf( o2 ), 1 );
 }
 
-TEST(qpsContainerModel, vectorPtrData)
-{
-    using Ints = qcm::ContainerModel< QVector, int >;
-    Ints ints;
-    ints.append( 42 );
-    ints.append( 43 );
-    ints.append( 44 );
-    QVariant v = ints.data( ints.index( 0 ) );
-    EXPECT_EQ( v.toString(), "42" );
-
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
-    QObjects objects;
-    QObject* o = new QObject();
-    objects.append( o );
-    EXPECT_EQ( objects.data( objects.index( 0 ), QObjects::ItemDataRole ), QVariant::fromValue<QObject*>( o ) );
-    //EXPECT_EQ( objects.data( objects.index( 0 ) ), QVariant( "Item #0" ) );
-}
-
 //-----------------------------------------------------------------------------
-// Container model list reference tests
-// FIXME 20161127: Add strong test support for qcm::\ContainerModelListInterface insert()/remove() methods (for qobject ptr/shared_ptr/weak_ptr).
+// Container model tests
 //-----------------------------------------------------------------------------
 
-TEST(qpsContainerModel, qObjectPtrListReferenceItemAtEmpty)
+TEST(qpsContainerModel, qVectorQObjectEmpty)
 {
     // Expect invalid return for invalid input arguments
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
+    using QObjects = qcm::Container< QVector, QObject* >;
     QObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(-1) == QVariant{} ) );   // EXPECT -1, argument is invalid
-    ASSERT_TRUE( ( listRef->itemAt(0) == QVariant{} ) );    // EXPECT invalid return QVariant, index is invalid
+    auto model = objects.getModel();
+    ASSERT_TRUE( model != nullptr );
+    //ASSERT_TRUE( ( model->itemAt(-1) == QVariant{} ) );   // EXPECT -1, argument is invalid
+    //ASSERT_TRUE( ( model->itemAt(0) == QVariant{} ) );    // EXPECT invalid return QVariant, index is invalid
 
-    ASSERT_TRUE( ( listRef->at(-1) == nullptr ) );   // EXPECT nullptr, argument is invalid
-    ASSERT_TRUE( ( listRef->at(0) == nullptr ) );    // EXPECT nullptr, index is invalid
+    ASSERT_TRUE( ( model->at(-1) == nullptr ) );   // EXPECT nullptr, argument is invalid
+    ASSERT_TRUE( ( model->at(0) == nullptr ) );    // EXPECT nullptr, index is invalid
 }
 
-TEST(qpsContainerModel, qObjectPtrListReferenceItemAt)
+TEST(qpsContainerModel, qVectorQObject)
 {
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
+    using QObjects = qcm::Container< QVector, QObject* >;
     QObjects objects;
 
     QObject* o1{new QObject()};
     QObject* o2{new QObject()};
 
-    objects.append( o1 );
-    objects.append( new QObject() );
-    objects.append( o2 );
+    auto model = objects.getModel();
+    ASSERT_TRUE( model != nullptr );
 
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(0) != QVariant{} ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(0) ) == o1 ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(2) ) == o2 ) );
-    ASSERT_TRUE( ( listRef->itemAt(3) == QVariant{} ) );
+    // qcm::ContainerModel::append()
+    ASSERT_EQ( 0, model->getLength() );
+    model->append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    model->append( new QObject() );
+    model->append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
 
-    ASSERT_TRUE( ( listRef->at(0) != nullptr ) );
-    EXPECT_TRUE( ( listRef->at(0) == o1 ) );
-    EXPECT_TRUE( ( listRef->at(2) == o2 ) );
-    ASSERT_TRUE( ( listRef->at(3) == nullptr ) );
+    // qcm::ContainerModel::at()
+    ASSERT_TRUE( ( model->at(0) != nullptr ) );
+    EXPECT_TRUE( ( model->at(0) == o1 ) );
+    EXPECT_TRUE( ( model->at(2) == o2 ) );
+    ASSERT_TRUE( ( model->at(3) == nullptr ) );  // Overflow
+
+    // qcm::ContainerModel::at()
+    QObject* o3{new QObject()};
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_EQ( 0, model->indexOf(o1) );
+    EXPECT_EQ( 2, model->indexOf(o2) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1);
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
 }
 
-TEST(qpsContainerModel, qObjectPtrListReferenceItemIndexEmpty)
+TEST(qpsContainerModel, qListQObject)
 {
-    // Expect invalid return for invalid input arguments
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
+    using QObjects = qcm::Container< QList, QObject* >;
     QObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemIndex(nullptr) == -1 ) );   // EXPECT -1, argument is invalid
-    QObject* o1{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o1) == -1 ) );        // EXPECT -1 return: o1 is not in the container model
-}
 
-TEST(qpsContainerModel, qObjectPtrListReferenceItemIndex)
-{
-    using QObjects = qcm::ContainerModel< QVector, QObject* >;
-    QObjects objects;
     QObject* o1{new QObject()};
     QObject* o2{new QObject()};
 
-    objects.append( o1 );
-    objects.append( new QObject() );
-    objects.append( o2 );
+    auto model = objects.getModel();
+    ASSERT_TRUE( model != nullptr );
 
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
+    // qcm::ContainerModel::append()
+    ASSERT_EQ( 0, model->getLength() );
+    model->append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    model->append( new QObject() );
+    model->append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
 
-    ASSERT_TRUE( listRef->itemIndex(nullptr) == -1 );
-    ASSERT_TRUE( listRef->itemIndex(o1) == 0 );
-    ASSERT_TRUE( listRef->itemIndex(o2) == 2 );
+    // qcm::ContainerModel::at()
+    ASSERT_TRUE( ( model->at(0) != nullptr ) );
+    EXPECT_TRUE( ( model->at(0) == o1 ) );
+    EXPECT_TRUE( ( model->at(2) == o2 ) );
+    ASSERT_TRUE( ( model->at(3) == nullptr ) );  // Overflow
+
+    // qcm::ContainerModel::at()
     QObject* o3{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o3) == -1 ) );        // EXPECT -1 return: o3 is not in the container model
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_EQ( 0, model->indexOf(o1) );
+    EXPECT_EQ( 2, model->indexOf(o2) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1);
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
 }
 
-// std::shared_ptr<QObject> container model
-TEST(qpsContainerModel, sharedQObjectListReferenceItemAtEmpty)
+TEST(qpsContainerModel, qSetQObject)
 {
-    // Expect invalid return for invalid input arguments
-    using SharedQObjects = qcm::ContainerModel< QVector, std::shared_ptr<QObject> >;
-    SharedQObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(-1) == QVariant{} ) );   // EXPECT -1, argument is invalid
-    ASSERT_TRUE( ( listRef->itemAt(0) == QVariant{} ) );    // EXPECT invalid return QVariant, index is invalid
+    using QObjects = qcm::Container< QList, QObject* >;
+    QObjects objects;
 
-    ASSERT_TRUE( ( listRef->at(-1) == nullptr ) );   // EXPECT nullptr, argument is invalid
-    ASSERT_TRUE( ( listRef->at(0) == nullptr ) );    // EXPECT nullptr, index is invalid
-}
-
-TEST(qpsContainerModel, sharedQObjectPtrListReferenceItemAt)
-{
-    using SharedQObjects = qcm::ContainerModel< QVector, std::shared_ptr<QObject> >;
-    SharedQObjects objects;
-    auto o1{std::make_shared<QObject>()};
-    auto o2{std::make_shared<QObject>()};
-    objects.append( o1 );
-    objects.append( std::make_shared<QObject>() );
-    objects.append( o2 );
-
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(0) != QVariant{} ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(0) ) == o1.get() ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(2) ) == o2.get() ) );
-    ASSERT_TRUE( ( listRef->itemAt(3) == QVariant{} ) );
-
-    ASSERT_TRUE( ( listRef->at(0) != nullptr ) );
-    EXPECT_TRUE( ( listRef->at(0) == o1.get() ) );
-    EXPECT_TRUE( ( listRef->at(2) == o2.get() ) );
-    ASSERT_TRUE( ( listRef->at(3) == nullptr ) );
-}
-
-TEST(qpsContainerModel, sharedQObjectPtrListReferenceItemIndexEmpty)
-{
-    // Expect invalid return for invalid input arguments
-    using SharedQObjects = qcm::ContainerModel< QVector, std::shared_ptr<QObject> >;
-    SharedQObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemIndex(nullptr) == -1 ) );   // EXPECT -1, argument is invalid
     QObject* o1{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o1) == -1 ) );        // EXPECT -1 return: o1 is not in the container model
+    QObject* o2{new QObject()};
+
+    auto model = objects.getModel();
+    ASSERT_TRUE( model != nullptr );
+
+    // qcm::ContainerModel::append()
+    ASSERT_EQ( 0, model->getLength() );
+    model->append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    model->append( new QObject() );
+    model->append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
+    //model->append( o2 );                    // Inserting same value should not increment length with QSet
+    //ASSERT_EQ( 3, model->getLength() );
+
+    // qcm::ContainerModel::at() / indexOf()
+    QObject* o3{new QObject()};
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_TRUE( ( model->at(0) == o1 ) );
+    EXPECT_TRUE( ( model->at(model->indexOf(o1)) == o1 ) );
+    EXPECT_TRUE( ( model->at(model->indexOf(o2)) == o2 ) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1);
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
 }
 
-TEST(qpsContainerModel, sharedQObjectPtrListReferenceItemIndex)
+TEST(qpsContainerModel, stdVectorQObject)
 {
-    using SharedQObjects = qcm::ContainerModel< QVector, std::shared_ptr<QObject> >;
-    SharedQObjects objects;
+    using QObjects = qcm::Container< std::vector, QObject* >;
+    QObjects objects;
+
+    QObject* o1{new QObject()};
+    QObject* o2{new QObject()};
+
+    auto model = objects.getModel();
+    ASSERT_TRUE( model != nullptr );
+
+    // qcm::ContainerModel::append()
+    ASSERT_EQ( 0, model->getLength() );
+    model->append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    model->append( new QObject() );
+    model->append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
+
+    // qcm::ContainerModel::at()
+    ASSERT_TRUE( ( model->at(0) != nullptr ) );
+    EXPECT_TRUE( ( model->at(0) == o1 ) );
+    EXPECT_TRUE( ( model->at(2) == o2 ) );
+    ASSERT_TRUE( ( model->at(3) == nullptr ) );  // Overflow
+
+    // qcm::ContainerModel::at()
+    QObject* o3{new QObject()};
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_EQ( 0, model->indexOf(o1) );
+    EXPECT_EQ( 2, model->indexOf(o2) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1);
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
+}
+
+template <class C>
+void    testContainerModelStdSharedQObject(C& container)
+{
+    auto model = container.getModel();
+    ASSERT_TRUE( model != nullptr );
+
     auto o1{std::make_shared<QObject>()};
     auto o2{std::make_shared<QObject>()};
-    objects.append( o1 );
-    objects.append( std::make_shared<QObject>() );
-    objects.append( o2 );
 
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
+    // qcm::ContainerModel::append()
+    ASSERT_EQ( 0, model->getLength() );
+    container.append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    container.append(std::make_shared<QObject>());
+    container.append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
 
-    ASSERT_TRUE( listRef->itemIndex(nullptr) == -1 );
-    ASSERT_TRUE( listRef->itemIndex(o1.get()) == 0 );
-    ASSERT_TRUE( listRef->itemIndex(o2.get()) == 2 );
+    // qcm::ContainerModel::at()
+    ASSERT_TRUE( ( model->at(0) != nullptr ) );
+    EXPECT_TRUE( ( model->at(0) == o1.get() ) );
+    EXPECT_TRUE( ( model->at(2) == o2.get() ) );
+    ASSERT_TRUE( ( model->at(3) == nullptr ) );  // Overflow
+
+    // qcm::ContainerModel::at()
     QObject* o3{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o3) == -1 ) );        // EXPECT -1 return: o3 is not in the container model
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_EQ( 0, model->indexOf(o1.get()) );
+    EXPECT_EQ( 2, model->indexOf(o2.get()) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1.get());
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1.get()) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2.get()) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
 }
 
+TEST(qpsContainerModel, qVectorStdSharedQObject)
+{
+/*    using SharedQObjects = qcm::Container<QVector, std::shared_ptr<QObject>>;
+    SharedQObjects objects;
+    auto model = objects.getModel();
+    auto o1{std::make_shared<QObject>()};
+    objects.append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    ASSERT_EQ( 1, objects.size() );
+    objects.append( std::make_shared<QObject>() );
+    //objects.removeAll( o1 );
+    model->remove( o1.get() );
+    EXPECT_EQ( 1, objects.size() );
+    EXPECT_EQ( 1, model->getLength() );
+*/
+    using SharedQObjects = qcm::Container<QVector, std::shared_ptr<QObject>>;
+    SharedQObjects objects;
+    testContainerModelStdSharedQObject<SharedQObjects>(objects);
+}
+
+
+TEST(qpsContainerModel, qListStdSharedQObject)
+{
+    using SharedQObjects = qcm::Container<QList, std::shared_ptr<QObject>>;
+    SharedQObjects objects;
+    testContainerModelStdSharedQObject<SharedQObjects>(objects);
+}
+
+TEST(qpsContainerModel, stdVectorStdSharedQObject)
+{
+    using SharedQObjects = qcm::Container<std::vector, std::shared_ptr<QObject>>;
+    SharedQObjects objects;
+    testContainerModelStdSharedQObject<SharedQObjects>(objects);
+}
+
+template <class C>
+void    testContainerModelStdWeakQObject(C& container)
+{
+    auto model = container.getModel();
+    ASSERT_TRUE( model != nullptr );
+
+    using T = typename C::Item_type;
+    //using WeakT = std::weak_ptr<T>;
+
+    auto so1{std::make_shared<QObject>()};
+    auto so2{std::make_shared<QObject>()};
+    auto o1 = T{so1};
+    auto o2 = T{so2};
+
+    // qcm::ContainerModel::append()
+    auto so3 = std::make_shared<QObject>();
+    ASSERT_EQ( 0, model->getLength() );
+    container.append( o1 );
+    ASSERT_EQ( 1, model->getLength() );
+    container.append(so3);
+    container.append( o2 );
+    ASSERT_EQ( 3, model->getLength() );
+
+    // qcm::ContainerModel::at()
+    ASSERT_TRUE( ( model->at(0) != nullptr ) );
+    EXPECT_TRUE( ( model->at(0) == o1.lock().get() ) );
+    EXPECT_TRUE( ( model->at(2) == o2.lock().get() ) );
+    ASSERT_TRUE( ( model->at(3) == nullptr ) );  // Overflow
+
+    // qcm::ContainerModel::at()
+    QObject* o3{new QObject()};
+    ASSERT_EQ( -1, model->indexOf(nullptr) );   // Invalid input
+    ASSERT_EQ( -1, model->indexOf(o3) );        // Invalid input, o3 is not inserted
+    EXPECT_EQ( 0, model->indexOf(o1.lock().get()) );
+    EXPECT_EQ( 2, model->indexOf(o2.lock().get()) );
+
+    // qcm::ContainerModel::remove()
+    model->remove(nullptr);                 // Invalid input
+    model->remove(o3);                      // Invalid input (o3 is not inserted)
+    model->remove(o1.lock().get());
+    ASSERT_EQ( 2, model->getLength() );
+
+    // qcm::ContainerModel::contains()
+    ASSERT_FALSE( model->contains(nullptr) );    // Invalid input
+    ASSERT_FALSE( model->contains(o3) );         // Invalid input o3 is not inserted
+    ASSERT_FALSE( model->contains(o1.lock().get()) );         // o1 has been removce
+    ASSERT_TRUE( model->contains(o2.lock().get()) );
+
+    // qcm::ContainerModel::clear()
+    model->clear();
+    ASSERT_TRUE( model->at(0) == nullptr );
+    ASSERT_EQ( 0, model->getLength() );
+}
+
+TEST(qpsContainerModel, qVectorStdWeakQObject)
+{
+    using WeakQObjects = qcm::Container<QVector, std::weak_ptr<QObject>>;
+    WeakQObjects objects;
+    testContainerModelStdWeakQObject<WeakQObjects>(objects);
+}
+TEST(qpsContainerModel, stdVectorStdWeakQObject)
+{
+    using WeakQObjects = qcm::Container<std::vector, std::weak_ptr<QObject>>;
+    WeakQObjects objects;
+    testContainerModelStdWeakQObject<WeakQObjects>(objects);
+}
+
+/*
 // std::weak_ptr<QObject> container model
 TEST(qpsContainerModel, weakQObjectListReferenceItemAtEmpty)
 {
@@ -359,149 +748,118 @@ TEST(qpsContainerModel, weakQObjectPtrListReferenceItemAt)
     EXPECT_TRUE( ( listRef->at(2) == o2.lock().get() ) );
     ASSERT_TRUE( ( listRef->at(3) == nullptr ) );
 }
-
-TEST(qpsContainerModel, weakQObjectPtrListReferenceItemIndexEmpty)
-{
-    // Expect invalid return for invalid input arguments
-    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
-    WeakQObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemIndex(nullptr) == -1 ) );   // EXPECT -1, argument is invalid
-    QObject* o1{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o1) == -1 ) );        // EXPECT -1 return: o1 is not in the container model
-}
-
-TEST(qpsContainerModel, weakQObjectPtrListReferenceItemIndex)
-{
-    using WeakQObject = std::weak_ptr<QObject>;
-    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
-    WeakQObjects objects;
-    auto o1Ptr{std::make_shared<QObject>()};
-    auto o1{WeakQObject{o1Ptr}};
-    auto o2Ptr{std::make_shared<QObject>()};
-    auto o2{WeakQObject{o2Ptr}};
-    objects.append( o1 );
-    auto o3Ptr{std::make_shared<QObject>()};
-    objects.append( WeakQObject{o3Ptr} );
-    objects.append( o2 );
-
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-
-    ASSERT_TRUE( listRef->itemIndex(nullptr) == -1 );
-    ASSERT_TRUE( listRef->itemIndex(o1.lock().get()) == 0 );
-    ASSERT_TRUE( listRef->itemIndex(o2.lock().get()) == 2 );
-    QObject* o3{new QObject()};
-    ASSERT_TRUE( ( listRef->itemIndex(o3) == -1 ) );        // EXPECT -1 return: o3 is not in the container model
-}
-
+*/
 //-----------------------------------------------------------------------------
-// Container model composer tests
+// Container model item display role test
 //-----------------------------------------------------------------------------
-
-TEST(qpsContainerModelComposer, m1VectorQObject)
+template <class Container>
+void    testItemDisplayRole(Container& container)
 {
-    using QObjectsVector = qcm::ContainerModel< QVector, QObject* >;
-    QObjectsVector m1;
-    auto m1o1{new QObject()}, m1o2{new QObject()}, m1o3{new QObject()};
-    m1.append( m1o1 ); m1.append( m1o2 ); m1.append( m1o3 );
+    auto& model = *container.model();
+    DataChangedSignalSpy spy(model);
+    ASSERT_EQ(0, spy.count);
 
-    qcm::ContainerModelComposer<QVector, QObject*> composer;
-    composer.setM1(m1);
+    // Content is not monitored for changes _before_ beeing displayed,
+    // simulate a view access to QAbstractItemModel::data()
+    model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole);
+    model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole);
+    ASSERT_EQ(0, spy.count);
 
-    ASSERT_TRUE( composer.size() == 3 );
-    ASSERT_TRUE( composer.getItemCount() == 3 );
-    ASSERT_TRUE( composer.rowCount() == 3 );
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(m1o3) == 2 ) );        // EXPECT -1 return: o3 is not in the container model
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(nullptr) == -1 ) );        // EXPECT -1 return: o3 is not in the container model
+    // Now modify container model qobject properties used as display role.
+    container.at(0)->setLabel("D1 label");
+    ASSERT_EQ(spy.count, 1);
+    container.at(1)->setLabel("D2 label");
+    ASSERT_EQ(spy.count, 2);
+
+    // Check that label content is correct
+    ASSERT_EQ( QVariant{"D1 label"}, model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole) );
+    ASSERT_EQ( QVariant{"D2 label"}, model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole) );
+
+    // Dynamically modify label role
+    spy.count = 0;
+    model.setItemDisplayRole("dummyString");
+    //ASSERT_EQ(2, spy.count);
+
+    ASSERT_EQ( QVariant{"Dummy1"}, model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole) );
+    ASSERT_EQ( QVariant{"Dummy2"}, model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole) );
 }
 
-TEST(qpsContainerModelComposer, m2VectorQObject)
+TEST(qpsContainerModel, qObjectPtrItemDisplayRole)
 {
-    using QObjectsVector = qcm::ContainerModel< QVector, QObject* >;
-    QObjectsVector m2;
-    auto m2o1{new QObject()}; auto m2o2{new QObject()}; auto m2o3{new QObject()};
-    m2.append( m2o1 ); m2.append( m2o2 ); m2.append( m2o3 );
+    using Dummies = qcm::Container<QVector, QDummy*>;
+    Dummies dummies;
+    auto& model = *dummies.model();   // Force model creation...
 
-    qcm::ContainerModelComposer<QVector, QObject*> composer;
-    composer.setM2(m2);
+    auto d1 = new QDummy{42., "Dummy1"};
+    auto d2 = new QDummy{43., "Dummy2"};
+    dummies.append(d1);
+    dummies.append(d2);
 
-    ASSERT_TRUE( composer.size() == 3 );
-    ASSERT_TRUE( composer.getItemCount() == 3 );
-    ASSERT_TRUE( composer.rowCount() == 3 );
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(m2o3) == 2 ) );        // EXPECT -1 return: o3 is not in the container model
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(nullptr) == -1 ) );        // EXPECT -1 return: o3 is not in the container model
+    testItemDisplayRole(dummies);
 }
 
-TEST(qpsContainerModelComposer, m1m2VectorQObject)
+TEST(qpsContainerModel, qObjectSharedPtrItemDisplayRole)
 {
-    using QObjectsVector = qcm::ContainerModel< QVector, QObject* >;
-    QObjectsVector m1;
-    auto m1o1{new QObject()}, m1o2{new QObject()}, m1o3{new QObject()};
-    m1.append( m1o1 ); m1.append( m1o2 ); m1.append( m1o3 );
-    QObjectsVector m2;
-    auto m2o1{new QObject()}; auto m2o2{new QObject()}; auto m2o3{new QObject()};
-    m2.append( m2o1 ); m2.append( m2o2 ); m2.append( m2o3 );
+    using Dummies = qcm::Container<QVector, std::shared_ptr<QDummy>>;
+    Dummies dummies;
+    auto& model = *dummies.model();   // Force model creation...
 
-    // Test creating a model and setting m1, then m2
-    qcm::ContainerModelComposer<QVector, QObject*> composer;
-    composer.setM1(m1);
-    composer.setM2(m2);
+    auto d1 = std::make_shared<QDummy>(42., "Dummy1");
+    auto d2 = std::make_shared<QDummy>(43., "Dummy2");
+    dummies.append(d1);
+    dummies.append(d2);
 
-    ASSERT_TRUE( composer.size() == 6 );
-    ASSERT_TRUE( composer.getItemCount() == 6 );
-    ASSERT_TRUE( composer.rowCount() == 6 );
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(m1o3) == 2 ) );
-    ASSERT_TRUE( ( composer.getListReference()->itemIndex(nullptr) == -1 ) );
-
-    // Test creating a model and setting m2 then m1
-    qcm::ContainerModelComposer<QVector, QObject*> composer2;
-    composer2.setM2(m2);
-    composer2.setM1(m1);
-
-    ASSERT_TRUE( composer2.size() == 6 );
-    ASSERT_TRUE( composer2.getItemCount() == 6 );
-    ASSERT_TRUE( composer2.rowCount() == 6 );
-    ASSERT_TRUE( ( composer2.getListReference()->itemIndex(m2o3) == 5 ) );
-    ASSERT_TRUE( ( composer2.getListReference()->itemIndex(nullptr) == -1 ) );
+    testItemDisplayRole(dummies);
 }
 
 
-// Composition of Heterogeneous containers of weak_ptr on QObject
-using WeakQA = std::weak_ptr<QA>;
-Q_DECLARE_METATYPE( WeakQA );
-
-using WeakQB = std::weak_ptr<QB>;
-Q_DECLARE_METATYPE( WeakQB );
-
-TEST(qpsContainerModel, heterogeneousWeakQObjects)
+template <class Container>
+void    testWeakItemDisplayRole(Container& container)
 {
-    using WeakQAs = qcm::ContainerModel< QVector, WeakQA >;
-    WeakQAs m1;
-    auto m1o1Ptr{std::make_shared<QA>()}; auto m1o1{WeakQA{m1o1Ptr}};
-    auto m1o2Ptr{std::make_shared<QA>()}; auto m1o2{WeakQA{m1o2Ptr}};
-    auto m1o3Ptr{std::make_shared<QA>()}; auto m1o3{WeakQA{m1o3Ptr}};
-    m1.append( m1o1 ); m1.append( m1o3 ); m1.append( m1o2 );
+    auto& model = *container.model();
+    DataChangedSignalSpy spy(model);
+    ASSERT_EQ(0, spy.count);
 
-    using WeakQBs = qcm::ContainerModel< QVector, WeakQB >;
-    WeakQBs m2;
-    auto m2o1Ptr{std::make_shared<QB>()}; auto m2o1{WeakQB{m2o1Ptr}};
-    auto m2o2Ptr{std::make_shared<QB>()}; auto m2o2{WeakQB{m2o2Ptr}};
-    auto m2o3Ptr{std::make_shared<QB>()}; auto m2o3{WeakQB{m2o3Ptr}};
-    m2.append( m2o1 ); m2.append( m2o3 ); m2.append( m2o2 );
+    // Content is not monitored for changes _before_ beeing displayed,
+    // simulate a view access to QAbstractItemModel::data()
+    model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole);
+    model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole);
+    ASSERT_EQ(0, spy.count);
 
-    qcm::ContainerModelComposer< QVector, WeakQObject,
-                                 QVector, WeakQA,
-                                 QVector, WeakQB > m1m2;
-    m1m2.setM1(m1);
-    m1m2.setM2(m2);
-    EXPECT_TRUE( m1m2.at(0).expired() == false);
+    // Now modify container model qobject properties used as display role.
+    container.at(0).lock()->setLabel("D1 label");
+    ASSERT_EQ(spy.count, 1);
+    container.at(1).lock()->setLabel("D2 label");
+    ASSERT_EQ(spy.count, 2);
 
-    EXPECT_TRUE( m1m2.at(3).expired() == false );
-    EXPECT_TRUE( m1m2.at(3).lock().get() != nullptr );
-    EXPECT_EQ( m1m2.at(3).lock().get(), m2o1.lock().get() );
-    EXPECT_EQ( m1m2.at(0).lock().get()->objectName(), QString( "::QA") ); // We have a pointer on QObject wich is a QA
-    EXPECT_EQ( m1m2.at(3).lock().get()->objectName(), QString( "::QB") ); // We have a pointer on QObject wich is a QB
+    // Check that label content is correct
+    ASSERT_EQ( QVariant{"D1 label"}, model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole) );
+    ASSERT_EQ( QVariant{"D2 label"}, model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole) );
+
+    // Dynamically modify label role
+    spy.count = 0;
+    model.setItemDisplayRole("dummyString");
+    //ASSERT_EQ(2, spy.count);
+
+    ASSERT_EQ( QVariant{"Dummy1"}, model.data(model.index(0,0), qcm::ContainerModel::ItemLabelRole) );
+    ASSERT_EQ( QVariant{"Dummy2"}, model.data(model.index(1,0), qcm::ContainerModel::ItemLabelRole) );
+}
+
+TEST(qpsContainerModel, qObjectWeakPtrItemDisplayRole)
+{
+    using   WeakDummy = std::weak_ptr<QDummy>;
+    using Dummies = qcm::Container<QVector, std::weak_ptr<QDummy>>;
+    Dummies dummies;
+    auto& model = *dummies.model();   // Force model creation...
+
+    auto sd1 = std::make_shared<QDummy>(42., "Dummy1");
+    auto sd2 = std::make_shared<QDummy>(43., "Dummy2");
+
+    auto d1 = WeakDummy{sd1};
+    auto d2 = WeakDummy{sd2};
+    dummies.append(d1);
+    dummies.append(d2);
+
+    testWeakItemDisplayRole(dummies);
 }
 

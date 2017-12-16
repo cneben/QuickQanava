@@ -40,7 +40,7 @@
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include "../QuickContainers/src/qcmContainerModel.h"
+#include "../QuickContainers/src/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"
@@ -104,14 +104,15 @@ private:
     DelegateEdgeStyleMap            _edgeStyles;
 
 public:
-    using ObjectVectorModel = qcm::ContainerModel<QVector, QObject*>;
+    using ObjectVectorModel = qcm::Container<QVector, QObject*>;
 
-    Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
+    // FIXME...
+    /*Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
     inline QAbstractItemModel*      qmlGetStyles() noexcept { return &_styles; }
-    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }
+    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }*/
 private:
     //! Styles containers.
-    ObjectVectorModel               _styles;
+    //ObjectVectorModel               _styles;
 public:
     Q_INVOKABLE qan::Style*         getStyleAt( int s );
     //@}

@@ -30,13 +30,25 @@
 // QuickContainers headers
 #include <QuickContainers>
 
-class QA : public QObject
+class QDummy : public QObject
 {
     Q_OBJECT
 public:
-    QA( QObject* parent = nullptr ) : QObject{ parent }  {
-        setObjectName("::QA");
+    QDummy( QObject* parent = nullptr ) :
+        QObject{ parent }
+    {
+        setObjectName("::QDummy");
     }
+    QDummy( qreal dummyReal, const QString& dummyString, QObject* parent = nullptr ) :
+        QObject{ parent },
+        _dummyReal{dummyReal},
+        _dummyString{dummyString}
+    {
+        setObjectName("::QDummy");
+    }
+    virtual ~QDummy() { /* Nil */ }
+private:
+    Q_DISABLE_COPY(QDummy)
 
 public:
     Q_PROPERTY( qreal dummyReal READ getDummyReal WRITE setDummyReal NOTIFY dummyRealChanged )
@@ -46,23 +58,45 @@ protected:
     qreal       _dummyReal{ 42. };
 signals:
     void        dummyRealChanged( );
+
+public:
+    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged )
+    const QString&  getLabel() const { return _label; }
+    void            setLabel(const QString& label ){ _label = label; emit labelChanged(); }
+protected:
+    QString         _label{QStringLiteral("Label")};
+signals:
+    void            labelChanged( );
+
+public:
+    Q_PROPERTY( QString dummyString READ getDummyString WRITE setDummyString NOTIFY dummyStringChanged )
+    const QString&  getDummyString() const { return _dummyString; }
+    void            setDummyString(const QString& dummyString ){ _dummyString = dummyString; emit dummyStringChanged(); }
+protected:
+    QString         _dummyString{QStringLiteral("Dummy")};
+signals:
+    void            dummyStringChanged( );
 };
 
-
-class QB : public QObject
+class DataChangedSignalSpy : public QObject
 {
     Q_OBJECT
 public:
-    QB( QObject* parent = nullptr ) : QObject{ parent }  {
-        setObjectName("::QB");
+    DataChangedSignalSpy(const QAbstractItemModel& target) :
+        QObject{nullptr}
+    {
+        connect( &target,   &QAbstractItemModel::dataChanged,
+                 this,      &DataChangedSignalSpy::onDataChanged );
     }
-public:
-    Q_PROPERTY( qreal dummyReal READ getDummyReal WRITE setDummyReal NOTIFY dummyRealChanged )
-    qreal       getDummyReal( ) const { return _dummyReal; }
-    void        setDummyReal( qreal dummyReal ) { _dummyReal = dummyReal; emit dummyRealChanged(); }
-protected:
-    qreal       _dummyReal{ 43. };
-signals:
-    void        dummyRealChanged( );
+
+    int     count = 0;
+public slots:
+    void    onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int> ())
+    {
+        Q_UNUSED(topLeft); Q_UNUSED(bottomRight); Q_UNUSED(roles);
+        count++;
+    }
 };
+
+
 

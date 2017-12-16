@@ -12,7 +12,7 @@ qcm-tests.subdir   = tests
 qcm-tests.depends  = quickcontainers
 
 #SUBDIRS     +=  quickcontainers
-SUBDIRS     +=  sample-containermodel
+#SUBDIRS     +=  sample-containermodel
 SUBDIRS     +=  qcm-tests
 
 

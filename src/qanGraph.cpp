@@ -520,7 +520,7 @@ void    Graph::removeNode( qan::Node* node )
         weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return; }
     if ( _selectedNodes.contains(node) )
-        _selectedNodes.remove(node);
+        _selectedNodes.removeAll(node);
     GTpoGraph::removeNode( weakNode );
 }
 //-----------------------------------------------------------------------------
@@ -965,7 +965,7 @@ bool    Graph::selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers )
 
 template < class Primitive_t >
 void    addToSelectionImpl( Primitive_t& primitive,
-                            qcm::ContainerModel< QVector, Primitive_t* >& selectedPrimitives,
+                            qcm::Container< QVector, Primitive_t* >& selectedPrimitives,
                             qan::Graph& graph )
 {
     if ( !selectedPrimitives.contains( &primitive ) ) {
@@ -985,10 +985,10 @@ void    Graph::addToSelection( qan::Group& group ) { addToSelectionImpl<qan::Gro
 
 template < class Primitive_t >
 void    removeFromSelectionImpl( Primitive_t& primitive,
-                             qcm::ContainerModel< QVector, Primitive_t* >& selectedPrimitives )
+                             qcm::Container< QVector, Primitive_t* >& selectedPrimitives )
 {
     if ( selectedPrimitives.contains( &primitive ) )
-        selectedPrimitives.remove( &primitive );
+        selectedPrimitives.removeAll( &primitive );
 //    if ( primitive.getItem() != nullptr )
 //        primitive.getItem()->setSelected(false);
 }
@@ -999,13 +999,13 @@ void    Graph::removeFromSelection( QQuickItem* item ) {
     const auto nodeItem = qobject_cast<qan::NodeItem*>(item);
     if ( nodeItem != nullptr &&
          nodeItem->getNode() != nullptr ) {
-        _selectedNodes.remove(nodeItem->getNode());
+        _selectedNodes.removeAll(nodeItem->getNode());
 //        nodeItem->setSelected(false);
     } else {
         const auto groupItem = qobject_cast<qan::GroupItem*>(item);
         if ( groupItem != nullptr &&
              groupItem->getGroup() != nullptr ) {
-            _selectedGroups.remove(groupItem->getGroup());
+            _selectedGroups.removeAll(groupItem->getGroup());
         }
     }
 }

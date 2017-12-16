@@ -352,7 +352,7 @@ public:
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
-    QAbstractItemModel*     getNodesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getNodes())); }
+    QAbstractItemModel*     getNodesModel() const { return getNodes().model(); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -437,7 +437,7 @@ public:
 public:
     //! Access the list of edges with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
-    QAbstractItemModel* getEdgesModel() const { return const_cast<QAbstractItemModel*>( static_cast<const QAbstractItemModel*>(&getEdges())); }
+    QAbstractItemModel* getEdgesModel() const { return getEdges().model(); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -593,8 +593,8 @@ public:
     inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
 
 public:
-    using SelectedNodes = qcm::ContainerModel< QVector, qan::Node* > ;
-    using SelectedGroups = qcm::ContainerModel< QVector, qan::Group* > ;
+    using SelectedNodes = qcm::Container< QVector, qan::Node* > ;
+    using SelectedGroups = qcm::Container< QVector, qan::Group* > ;
 
     //! Read-only list model of currently selected nodes.
     Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )

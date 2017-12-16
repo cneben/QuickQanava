@@ -36,7 +36,6 @@
 // QuickContainers headers
 #include "../../src/QuickContainers.h"
 #include "../../src/qcmContainerModel.h"
-#include "../../src/qcmContainerModelComposer.h"
 #include "./qcmContainerModelSample.h"
 
 using namespace qcm;
@@ -89,11 +88,6 @@ MainView::MainView( QGuiApplication* application ) :
     dummies2->append( new Dummy{"Fourth", 45.} );
     rootContext( )->setContextProperty( "dummies2", dummies2 );
 
-    auto dummies12 = new qcm::ContainerModelComposer<QVector, Dummy*>{};
-    dummies12->setM1(*dummies1);
-    dummies12->setM2(*dummies2);
-    rootContext( )->setContextProperty( "dummies12", dummies12 );
-
     // Used in heterogeneous model composer
     // m1 is a vector of std::weak_ptr<QA> smart pointers
     // m2 and m3 are vectors of std::weak_ptr<QB> smart pointers
@@ -130,16 +124,9 @@ MainView::MainView( QGuiApplication* application ) :
     sharedQBs->append(m3o1Ptr); sharedQBs->append(m3o2Ptr); sharedQBs->append(m3o3Ptr);
     m3->append( m3o1 ); m3->append( m3o2 ); m3->append( m3o3 );
 
-    using WeakQAsQBsComposer = qcm::ContainerModelComposer< QVector, WeakQObject,
-                                                            QVector, WeakQA,
-                                                            QVector, WeakQB >;
-    auto m1m2{new WeakQAsQBsComposer{}};
-    m1m2->setM1(*m1);
-    m1m2->setM2(*m2);
     rootContext( )->setContextProperty( "m1", m1 );
     rootContext( )->setContextProperty( "m2", m2 );
     rootContext( )->setContextProperty( "m3", m3 );
-    rootContext( )->setContextProperty( "m1m2", m1m2 );
 
     setSource( QUrl( "qrc:/main.qml" ) );
 

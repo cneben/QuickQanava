@@ -35,13 +35,12 @@
 #ifndef qanStyle_h
 #define qanStyle_h
 
-// QuickContainers headers
-#include "../QuickContainers/src/qcmObjectModel.h"
-
 // Qt headers
 #include <QColor>
 #include <QFont>
 #include <QSizeF>
+#include <QVector>
+#include <QQmlEngine>
 
 namespace qan { // ::qan
 

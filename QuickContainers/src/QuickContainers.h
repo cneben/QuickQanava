@@ -39,13 +39,12 @@
 // Nil
 
 // QuickContainers headers
-#include "./qcmObjectModel.h"
-#include "./qcmContainerModel.h"
+#include "./qcmAbstractContainer.h"
+#include "./qcmContainer.h"
 
 struct QuickContainers {
     static void initialize() {
-        qmlRegisterType< qcm::AbstractContainerModel >( "QuickContainers", 1, 0, "AbstractContainerModel" );
-        qmlRegisterType< qcm::ObjectModel >( "QuickContainers", 1, 0, "ObjectModel");
+        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
     }
 };
 

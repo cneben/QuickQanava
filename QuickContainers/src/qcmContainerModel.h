@@ -29,432 +29,284 @@
 //
 // \file    qcmContainerModel.h
 // \author  benoit@destrat.io
-// \date    2015 06 20
+// \date    2016 11 25
 //-----------------------------------------------------------------------------
 
 #ifndef qcmContainerModel_h
 #define qcmContainerModel_h
 
+// Std headers
+#include <memory>
+#include <unordered_map>
+
 // Qt headers
-#include <QQmlEngine>           // QQmlEngine::setObjectOwnership()
+#include <QObject>
+#include <QDebug>
+#include <QQmlEngine>   // Q_QML_DECLARE_TYPE, qmlEngine()
 #include <QAbstractListModel>
-
-// QuickContainers headers
-#include "./qcmObjectModel.h"
-#include "./qcmAbstractContainerModel.h"
-#include "./qcmContainerConcept.h"
-#include "./qcmContainerModelComposerListReference.h"
-#include "./qcmContainerModelListReference.h"
-
-// STD headers
-#include <memory>       // shared_ptr, weak_ptr
-#include <type_traits>  // integral_constant
-
-QT_BEGIN_NAMESPACE
-
-#ifndef COMPARE_WEAK_PTR
-#define COMPARE_WEAK_PTR
-
-//! Compare two std::weak_ptr that must have been checked for expired() and nullptr content (ie use_count()==0).
-template < class T >
-auto    qcm_compare_weak_ptr( const std::weak_ptr<T>& left, const std::weak_ptr<T>& right ) noexcept -> bool {
-    return !left.owner_before( right ) && !right.owner_before( left );
-}
-
-template< typename T >
-inline bool operator==(const std::weak_ptr<T>& e1, const std::weak_ptr<T>& e2)
-{
-    return qcm_compare_weak_ptr( e1, e2 );
-}
-
-template<typename T>
-inline uint qHash(const std::weak_ptr<T>& t, uint seed ) /*noexcept( qHash(t) ) )*/
-{
-    return qHash( static_cast<T*>( t.lock().get() ), seed );
-}
-#endif
-
-QT_END_NAMESPACE
-
 
 namespace qcm { // ::qcm
 
-/*! \brief Expose a standard container such as QList or QVector to a Qt QAbstractItemModel abstract list model easy to use in a QML application.
+struct ItemDispatcherBase {
+    using unsupported_type          = std::integral_constant<int, 0>;
+
+    using non_ptr_type              = std::integral_constant<int, 1>;
+    using ptr_type                  = std::integral_constant<int, 2>;
+    using ptr_qobject_type          = std::integral_constant<int, 3>;
+    using q_ptr_type                = std::integral_constant<int, 4>;
+
+    using shared_ptr_type           = std::integral_constant<int, 5>;
+    using shared_ptr_qobject_type   = std::integral_constant<int, 6>;
+
+    using weak_ptr_type             = std::integral_constant<int, 7>;
+    using weak_ptr_qobject_type     = std::integral_constant<int, 8>;
+
+    template <typename T>
+    inline static constexpr auto debug_type() -> const char* { return "unsupported"; }
+};
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::non_ptr_type>() -> const char* { return "non_ptr_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::ptr_type>() -> const char* { return "ptr_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::ptr_qobject_type>() -> const char* { return "ptr_qobject_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::q_ptr_type>() -> const char* { return "q_ptr_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::shared_ptr_type>() -> const char* { return "shared_ptr_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::shared_ptr_qobject_type>() -> const char* { return "shared_ptr_qobject_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::weak_ptr_type>() -> const char* { return "weak_ptr_type"; }
+
+template <>
+inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::weak_ptr_qobject_type>() -> const char* { return "weak_ptr_qobject_type"; }
+
+template <typename Item_type>
+struct ItemDispatcher : public ItemDispatcherBase {
+    // QObject or non copy constructible POD are unsupported
+    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value ||
+                                            !std::is_copy_constructible<Item_type>::value,
+                                                                                ItemDispatcherBase::unsupported_type,
+                                                                                ItemDispatcherBase::non_ptr_type
+                                          >::type;
+};
+
+
+template <typename Item_type>
+struct ItemDispatcher<Item_type*>  : public ItemDispatcherBase {
+    using type = typename std::conditional< std::is_base_of< QObject, typename std::remove_pointer< Item_type >::type >::value,
+                                                                                ItemDispatcherBase::ptr_qobject_type,
+                                                                                ItemDispatcherBase::ptr_type
+                                            >::type;
+};
+
+template < typename Item_type >
+struct ItemDispatcher<QPointer<Item_type>>  : public ItemDispatcherBase {
+    using type = ItemDispatcherBase::q_ptr_type;
+};
+
+template < typename Item_type >
+struct ItemDispatcher<std::shared_ptr<Item_type>>  : public ItemDispatcherBase {
+    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value,
+                                                                                ItemDispatcherBase::shared_ptr_qobject_type,
+                                                                                ItemDispatcherBase::shared_ptr_type
+                                            >::type;
+};
+
+template < typename Item_type >
+struct ItemDispatcher<std::weak_ptr<Item_type>>  : public ItemDispatcherBase {
+    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value,
+                                                                        ItemDispatcherBase::weak_ptr_qobject_type,
+                                                                        ItemDispatcherBase::weak_ptr_type
+                                            >::type;
+};
+
+/*! \brief Reference on an abstrat container model allowing to access a qcm::ContainerModel directly from QML.
  *
- * Defining a item model for a QVector container of int or pointers on QObject:
  * \code
- *   using Ints = qcm::ContainerModel< QVector, int >;
- *   Ints ints;
- *   using QObjects = qcm::ContainerModel< QVector, QObject* >;
- *   QObjects qobjects;
+ * Button {
+ *   text: "remove"
+ *   onClicked: { testModel.listReference.insert(object) }
+ * }
+ * ListView {
+ *   id: testList
+ *   model: testModel
+ * }
  * \endcode
  *
- * \c ints or \c qobjects could then be used in any QML item model view such as ListView, ComboBox (with displayRole set
- * to "itemLabel") or GridView.
- *
- * \note ContainerModel containers could be iterated standard C++11 for(:) keyword. Qt \c for_each "keyword" usually
- * generate compilations errors for non const iterator because container model (volontarily)
- * does not define a copy constructor.
- *
- * Do not forget to declare the type to QML:
- * \code
- * using MyContainer = qcm::ContainerModel<Qlist, QObject>;
- * QML_DECLARE_TYPE( MyContainer )
- * \endcode
- *
- * When a container is defined with standard library smart pointers (currently std::weak_ptr or std::shared_ptr) or QPointer<>, the resulting types
- * must be declared with Q_DECLARE_METATYPE:
- * \code
- * #include <memory>
- *
- * Q_DECLARE_METATYPE( std::shared_ptr<QObject> )
- * using MyContainer = qcm::ContainerModel< QVector, std::shared_ptr<QObject> >;
- *
- * Q_DECLARE_METATYPE( std::weak_ptr<QObject> )
- * using MyContainer = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
- * \endcode
- *
- * \note std::unique_ptr and QScoppedPointer are not supported since they are not commonly used in containers. Support
- * for QSharedPointer and QWeakPointer is not planned (but easy to implement) since they are conceptually equivalent
- * to existing standard smart pointers: std::shared_ptr and std::weak_ptr.
- *
- * \note In data intensive application, delay calls to getListReference() (and access to \c listReference property from
- * QML) until your model is fully initialized: \c listReference interface is created on the fly at first
- * getListReference() call and until this object is created, there is no modifications notifications sent trought signals
- * or virtualized calls (still some signals are sent from QAbstractListModel internally).
- *
- * \warning Depending of your build configuration: method indexOf() specialization is O(n) for containers of std::weak_ptr (with
- * n the number of items in the underlining container, even if it is a sorted container defining fast lookup methods). Note
- * 20161125: There is actually a qobjectfriend == operator defined for weak_ptr in ... Qt namespace, be aware of it since it could
- * collide with user code (behaviour for expired weak_ptr is undefined...).
- *
- * \warning data() method for containers of objects inheriting QObject stored in std::shared_ptr<> or
- * std::weak_ptr<> return QVariant variants that could be converted back to QObject* with a qvariant_cast() (this
- * behaviour is "transparent" for the user on the QML side).
- *
- * \warning data() method will return a QVariant with a QObject* value when container is shared_ptr_qobject_type
- * or weak_ptr_qobject_type. In ptr_qobject_type, the returned QVariant will not be QObject but T*. Sometime QML
- * might have trouble making a distinction between a QVariant encoding a QObject* while it should be a concrete
- * QObject* subclass.
+ * \note ContainerModel is very simlar in meaning and interface to a read/write QQmlListReference,
+ * please refer to Qt documentation.
  */
-template < template<typename...CArgs> class Container, class T >
-class ContainerModel : public AbstractContainerModel
+class ContainerModel : public QAbstractListModel
 {
-    /*! \name ContainerModel Object Management *///------------------------
+    Q_OBJECT
+public:
+    ContainerModel() : QAbstractListModel{nullptr} {}
+    virtual ~ContainerModel() {}
+    ContainerModel(const ContainerModel&) = delete;
+
+    // FIXME: Ro6
+
+    /*! \name Qt Abstract Model Interface *///---------------------------------
     //@{
 public:
-    explicit ContainerModel( QObject* parent = nullptr ) :
-        AbstractContainerModel( parent ) { }
-    virtual ~ContainerModel( ) { }
-    ContainerModel( const ContainerModel<Container, T>& container ) = delete;
+    virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override { Q_UNUSED(parent); return 0; }
+    virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override { Q_UNUSED(index); Q_UNUSED(role); return QVariant{}; }
 
-    // Container model list reference need access to createIndex().
-    friend qcm::ContainerModelListReference;
-    friend qcm::ContainerModelListReferenceImpl< ContainerModel<Container, T>, qcm::ContainerModelListReference >;
-    friend qcm::ContainerModelListReferenceImpl< ContainerModel<Container, T>, qcm::ContainerModelComposerListReference >;
-    friend qcm::ContainerModelListReferenceImpl< ContainerModel<Container, T> >;
-    friend qcm::ContainerModelComposerListReferenceImpl< ContainerModel<Container, T> >;
-protected:
-    virtual     std::unique_ptr<qcm::ContainerModelListReference>     createListReference() override {
-        return std::move( std::make_unique< qcm::ContainerModelListReferenceImpl< ContainerModel<Container, T> > >(*this) );
-    }
-public:
-    using   ItemT = T;
-    using   Item_type = T;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name STL Interface *///-----------------------------------------------
-    //@{
-public:
-    using   const_pointer   = typename Container< T >::const_pointer;
-    using   const_reference = typename Container< T >::const_reference;
-    using   size_type       = typename Container< T >::size_type;
-    using   value_type      = typename Container< T >::value_type;
-    using   const_iterator  = typename Container< T >::const_iterator;
-    using   iterator        = typename Container< T >::iterator;
-
-public:
-    inline auto    begin( ) const noexcept-> const_iterator { return _container.begin( ); }
-    inline auto    end( ) const noexcept-> const_iterator { return _container.end( ); }
-
-    inline auto    begin( ) noexcept -> iterator { return _container.begin( ); }
-    inline auto    end( ) noexcept -> iterator { return _container.end( ); }
-
-    inline auto    cbegin( ) const noexcept -> const_iterator { return _container.cbegin( ); }
-    inline auto    cend( ) const noexcept -> const_iterator { return _container.cend( ); }
-
-    //! Define a cast operator to const Container<T>&.
-    inline operator Container< T >&() noexcept { return _container; }
-
-    //! Define a cast operator to const Container<T>&.
-    inline operator const Container< T >&() const noexcept { return _container; }
-
-public:
-    inline auto     push_back( const T& value ) -> void { append( value ); }
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Generic Interface *///-------------------------------------------
-    //@{
-private:
-    inline auto     isNullPtr( T item, ItemDispatcherBase::unsupported_type )        const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::non_ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::non_ptr_type )            const noexcept -> bool { Q_UNUSED(item); return false; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::ptr_type )                const noexcept -> bool { return item == nullptr; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::ptr_qobject_type )        const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::q_ptr_type )              const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::shared_ptr_type )         const noexcept -> bool { return !item; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::shared_ptr_qobject_type ) const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::shared_ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::weak_ptr_type )           const noexcept -> bool { return item.expired(); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::weak_ptr_qobject_type )   const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::weak_ptr_type{} ); }
-private:
-    inline auto     getNullT( ItemDispatcherBase::unsupported_type )        const -> T { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::non_ptr_type )            const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::ptr_type )                const -> T  { return nullptr; }
-    inline auto     getNullT( ItemDispatcherBase::ptr_qobject_type )        const -> T  { return nullptr; }
-    inline auto     getNullT( ItemDispatcherBase::q_ptr_type )              const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::shared_ptr_type )         const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::shared_ptr_qobject_type ) const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::weak_ptr_type )           const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::weak_ptr_qobject_type )   const -> T  { return T{}; }
-
-public:
-    /*! \brief Shortcut to Container<T>::at() with bounding checking.
-     *
-     * \param i index of the element to access, if i < 0 std::out_of_range is thrown, if i >= container.size(), a nullptr or empty smart pointer is returned.
-     */
-    auto at( int i ) const noexcept -> T {
-        if ( i < 0 )
-            return getNullT( typename ItemDispatcher<T>::type{} );
-        return atImpl( i, typename ItemDispatcher<T>::type{} );
-    }
-private:
-    inline auto atImpl( int i, ItemDispatcherBase::non_ptr_type )           const -> T {
-        return _container.at( i );
-    }
-    inline auto atImpl( int i, ItemDispatcherBase::unsupported_type )       const -> T { return atImpl( i, ItemDispatcherBase::non_ptr_type{} ); }
-
-    inline auto atImpl( int i, ItemDispatcherBase::ptr_type )               const -> T {
-        return ( i < _container.size() ? _container.at( i ) : nullptr );
-    }
-    inline auto atImpl( int i, ItemDispatcherBase::ptr_qobject_type )       const -> T { return atImpl( i, ItemDispatcherBase::ptr_type{} ); }
-
-    inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_type )        const -> T {
-        return ( i < _container.size() ? _container.at( i ) : T{} );
-    }
-    inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_qobject_type ) const -> T { return atImpl( i, ItemDispatcherBase::shared_ptr_type{} ); }
-
-    inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_type )          const -> T {
-        return ( i < _container.size() ? _container.at( i ) : T{} );
-    }
-    inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_qobject_type )  const -> T { return atImpl( i, ItemDispatcherBase::weak_ptr_type{} ); }
-
-public:
-    //! Shortcut to Container<T>::size().
-    inline int  size( ) const { return _container.size( ); }
-
-    //! Shortcut to Container<T>::append().
-    void        append( T item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
-            return;
-        beginInsertRows( QModelIndex{}, _container.size( ), _container.size( ) );
-        _container.append( item );
-        appendImpl( item, typename ItemDispatcher<T>::type{} );
-        endInsertRows( );
-        emitItemCountChanged();
-    }
-
-    //! Shortcut to Container<T>::insert().
-    void        insert( T item, int i ) {
-        if ( i < 0 ||           // i == 0      === prepend
-             i > size() ||      // i == size() === append
-             isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
-            return;
-        beginInsertRows( QModelIndex{}, i, i );
-        qcm::container<Container, T>::insert( item, _container, i );
-        appendImpl( item, typename ItemDispatcher<T>::type{} );
-        endInsertRows( );
-        emitItemCountChanged();
-    }
-
-private:
-    inline auto appendImpl( T, ItemDispatcherBase::unsupported_type ) noexcept  -> void {}
-    inline auto appendImpl( T, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
-    inline auto appendImpl( T item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
-        if ( item != nullptr )
-            _qObjectItemMap.insert( item, item );
-    }
-    inline auto appendImpl( T item, ItemDispatcherBase::q_ptr_type )   noexcept -> void {
-        if ( item != nullptr )
-            _qObjectItemMap.insert( item.data(), item );
-    }
-    inline auto appendImpl( T, ItemDispatcherBase::shared_ptr_type ) noexcept  -> void {}
-    inline auto appendImpl( T item, ItemDispatcherBase::shared_ptr_qobject_type ) noexcept -> void {
-        _qObjectItemMap.insert( item.get(), item );
-    }
-    inline auto appendImpl( T, ItemDispatcherBase::weak_ptr_type ) noexcept  -> void {}
-    inline auto appendImpl( T item, ItemDispatcherBase::weak_ptr_qobject_type )   noexcept -> void {
-        if ( !item.expired() )
-            _qObjectItemMap.insert( item.lock().get(), item );
-    }
-
-public:
-    //! Shortcut to Container<T>::remove().
-    void        remove( T item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
-            return;
-        int itemIndex = _container.indexOf( item );
-        if ( itemIndex < 0 )
-            return;
-        beginRemoveRows( QModelIndex{}, itemIndex, itemIndex );
-        removeImpl( item, typename ItemDispatcher<T>::type{} );
-        _container.removeAll( item );
-        endRemoveRows( );
-        emitItemCountChanged();
-    }
-private:
-    inline auto removeImpl( T, ItemDispatcherBase::unsupported_type )               -> void {}
-    inline auto removeImpl( T, ItemDispatcherBase::non_ptr_type )                   -> void {}
-    inline auto removeImpl( T, ItemDispatcherBase::ptr_type )                       -> void {}
-    inline auto removeImpl( T item, ItemDispatcherBase::ptr_qobject_type )          -> void {
-        if ( item != nullptr ) {
-            _qObjectItemMap.remove( item );
-            item->disconnect( 0, this, 0 );
-        }
-    }
-    inline auto removeImpl( T item, ItemDispatcherBase::q_ptr_type )                -> void {
-        if ( item != nullptr ) {
-            _qObjectItemMap.remove( item.data() );
-            item->disconnect( 0, this, 0 );
-        }
-    }
-    inline auto removeImpl( T, ItemDispatcherBase::shared_ptr_type )                -> void {}
-    inline auto removeImpl( T item, ItemDispatcherBase::shared_ptr_qobject_type )   -> void {
-        QObject* qobject = item.get();
-        if ( qobject != nullptr ) {
-            _qObjectItemMap.remove( item.get() );
-            qobject->disconnect( 0, this, 0 );
-        }
-    }
-    inline auto removeImpl( T, ItemDispatcherBase::weak_ptr_type )                  -> void {}
-    inline auto removeImpl( T item, ItemDispatcherBase::weak_ptr_qobject_type )     -> void {
-        if ( !item.expired() ) {
-            QObject* qobject = item.lock().get();
-            if ( qobject ) {
-                _qObjectItemMap.remove( item.lock().get() );
-                qobject->disconnect( 0, this, 0 );
-            }
-        }
-    }
-
-public:
-    /*! \brief Remove a given node from the internal node list.
-     *
-     *  Similar to remove(), defined for QList/QVector compatibility.
-     */
-    inline  void    removeAll( T item ) noexcept {
-        if ( !isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
-            remove( item );
-    }
-
-    inline  void    clear() noexcept {
-        beginResetModel();
-        _qObjectItemMap.clear();
-        _container.clear( );
-        endResetModel();
-        emitItemCountChanged();
-    }
-
-public:
-    /*! \brief Clear the container and optionally call delete on contained objects.
-     *
-     * Argument \c deleteContent is taken into account only in the following situations:
-     * \li Delete will be called if \c deleteContent is true if \c T is a pointer type, or a pointer on QObject.
-     * \li If \c T is a smart pointer (either a std::shared_ptr or std::weak_ptr), or a non pointer type (either QObject or POD), delete
-     *      won't be called even if \c deleteContent is true.
-     *
-     * \arg deleteContent if true, delete will eventually be called on each container item before the container is cleared.
-     */
-    void    clear( bool deleteContent ) {
-        beginResetModel();
-        clearImpl( deleteContent, typename ItemDispatcher<T>::type{} );
-        _qObjectItemMap.clear();
-        _container.clear();
-        endResetModel();
-        emitItemCountChanged();
-    }
-private:
-    inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_type ) -> void {
-        if ( deleteContent ) {
-            for ( const auto& p: qAsConst(_container) )
-                delete p;
-        }
-    }
-    inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_qobject_type ) -> void {
-        clearImpl( deleteContent, ItemDispatcherBase::ptr_type{} );
-    }
-
-public:
-    /*! \brief Shortcut to Container<T>::contains().
-     *
-     * \note argument \c item could be nullptr.
-     */
-    auto    contains( T item ) const noexcept -> bool { return _container.contains( item ); }
-
-public:
-    /*! \brief Shortcut to Container<T>::indexOf(), return index of a given \c item element in this model container.
-     *
-     * \note argument \c item could be nullptr.
-     */
-    auto    indexOf( T item ) const noexcept -> int {
-        return _container.indexOf( item );
-    }
-
-private:
-    Container< T >          _container;
-public:
-    //! The preffered way of accessing internal list is to use cast operator with static_cast<const Container<T>>( containerModel ).
-    inline const Container< T >&    getContainer( ) const noexcept { return _container; }
-protected:
-    inline Container< T >&          getContainer( ) noexcept { return _container; }
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Qt Item Model Interface *///-------------------------------------
-    //@{
 public:
     enum PropertiesRoles {
         ItemDataRole = Qt::UserRole + 1,
-        LabelRole
+        ItemLabelRole
     };
-public:
-    virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override {
-        return ( parent.isValid() ? 0 : _container.size( ) );
+protected:
+    virtual QHash< int, QByteArray >    roleNames( ) const override {
+        QHash< int, QByteArray > roles;
+        roles[ItemDataRole]  = "itemData";
+        roles[ItemLabelRole] = "itemLabel";
+        return roles;
     }
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Display Role Monitoring *///-------------------------------------
+    //@{
+public:
+    /*! \brief When the container is a container of QObject*, the data() method will return the content of property
+     *  \c displayRoleProperty for both Qt::DisplayRole and "itemLabel" dispay role.
+     *
+     * To use a container of QObject* with a Q_PROPERTY( QString label, ...) property, use the following
+     * configuration:
+     * \code
+     * qcm::ContainerModel< QVector, QObject* > myContainer;
+     * myContainer->setItemDisplayRole( QStringLiteral( "label" ) );    // Expose that as myContainer context property in QML
+     *
+     * // Then from QML, a ComboBox (for example) might be configured as:
+     * ComboBox {
+     *   model: myContainer
+     *   textRole: "itemLabel"
+     * }
+     * \endcode
+     */
+    void        setItemDisplayRole( QString displayRoleProperty ) { _displayRoleProperty = displayRoleProperty; }
+protected:
+    QString     getItemDisplayRole( ) const { return _displayRoleProperty; }
+private:
+    QString     _displayRoleProperty{QStringLiteral("label")};
+protected slots:
+    void    itemDisplayPropertyChanged() {
+        QObject* qItem = sender();
+        if ( qItem == nullptr )
+            return;
+        int qItemIndex = indexOf( qItem );
+        if ( qItemIndex >= 0 ) {
+            QModelIndex itemIndex{ index( qItemIndex ) };
+            if ( itemIndex.isValid( ) )
+                emit dataChanged( itemIndex, itemIndex );
+        } else
+            disconnect( qItem, 0, this, 0 );    // Do not disconnect if getListReference() or qItem is nullptr !
+    }
+    //-------------------------------------------------------------------------
+
+    // FIXME: group doc
+public:
+    // Necessary to invoke QAbstractModel methods from concrete qcm::Container<>...
+    friend class AbstractContainer;
+protected:
+    template <typename... Args>
+    inline void    fwdBeginInsertRows(Args... args) noexcept { beginInsertRows(std::forward<Args>(args)...); }
+    inline void    fwdEndInsertRows() noexcept { endInsertRows(); }
+    inline void    fwdEmitLengthChanged() noexcept { emitLengthChanged(); }
+
+    template <typename... Args>
+    inline void    fwdBeginRemoveRows(Args... args) noexcept { beginRemoveRows(std::forward<Args>(args)...); }
+    inline void    fwdEndRemoveRows() noexcept { endRemoveRows(); }
+
+    inline void    fwdBeginResetModel() noexcept { beginResetModel(); }
+    inline void    fwdEndResetModel() noexcept { endResetModel(); }
+
+    /*! \name QML Container Interface *///-------------------------------------
+    //@{
+public:
+    //! Similar to ES6 array.length.
+    Q_PROPERTY( int length READ getLength NOTIFY lengthChanged FINAL )
+    //! \copydoc length
+    Q_INVOKABLE int getLength() const noexcept { return rowCount(QModelIndex{}); }
+protected:
+    //! Shortcut to emit lengthChanged() signal.
+    inline void     emitLengthChanged() noexcept { emit lengthChanged(); }
+signals:
+    //! \sa length
+    void            lengthChanged();
 
 public:
+    Q_INVOKABLE virtual bool        append(QObject *object) const { Q_UNUSED(object); return false; }
+    Q_INVOKABLE virtual void        remove(QObject *object) const { Q_UNUSED(object); }
+    Q_INVOKABLE virtual QObject*    at(int index) const { Q_UNUSED(index); return nullptr; }
+    Q_INVOKABLE virtual bool        contains(QObject *object) const { return indexOf(object) >= 0; }
+    Q_INVOKABLE virtual int         indexOf(QObject* item) const { Q_UNUSED(item); return 0; }
+    Q_INVOKABLE virtual bool        clear() const { return false; }
+public:
+    // FIXME: check if this method is _really_ necessary...
+    //! Return the element at the requested container \c index position.
+    //Q_INVOKABLE virtual QVariant    itemAt( int index ) { Q_UNUSED(index); return QVariant{}; }
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+template < class Container >
+class ContainerModelImpl : public qcm::ContainerModel
+{
+public:
+    explicit ContainerModelImpl( Container& container ) :
+        qcm::ContainerModel{},
+        _container( container ) { }
+    ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
+    // FIXME Ro6
+private:
+    Container&    _container;
+
+    /*! \name Qt Abstract Model Interface *///---------------------------------
+    //@{
+public:
+    using T = typename Container::Item_type;
+
+    virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override {
+        return ( parent.isValid() ? 0 : static_cast<int>(_container.size()) );
+    }
     virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override {
-        if ( index.row( ) >= 0 &&
-             index.row( ) < _container.size( ) ) {
+        if ( index.row() >= 0 &&
+             index.row() < _container.size() ) {
             if ( role == Qt::DisplayRole ||
-                 role == LabelRole )
+                 role == ContainerModel::ItemLabelRole )
                 return dataDisplayRole( index.row(), typename ItemDispatcher<T>::type{} );
-            else if ( role == ItemDataRole )
+            else if ( role == ContainerModel::ItemDataRole )
                 return dataItemRole( index.row(), typename ItemDispatcher<T>::type{} );
         }
         return QVariant{};
     }
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Container/Model Mapping *///-------------------------------------
+    //@{
 public:
-    //! Defined for MSVC2015U2 which has trouble with friendship of classe inheriting from on of it's template parameter, do not use, should be considered protected.
-    const QMap< const QObject*, T >&    getqObjectItemMap() const { return _qObjectItemMap; }
-protected:
+    using ObjectItemMap = std::unordered_map<const QObject*, T>;
+    const ObjectItemMap&    getqObjectItemMap() const { return _qObjectItemMap; }
+public:
     //! Maintain a mapping between smart<T> and T* when T is a QObject.
-    mutable QMap< const QObject*, T >  _qObjectItemMap;
+    mutable ObjectItemMap   _qObjectItemMap;
 
 protected:
     inline auto dataDisplayRole( int row, ItemDispatcherBase::non_ptr_type )        const -> QVariant {
-        return QVariant{ at( row ) };
+        return QVariant{ _container.at( row ) };
     }
     inline auto dataDisplayRole( int, ItemDispatcherBase::unsupported_type )    const -> QVariant {
         return QVariant{};
@@ -465,7 +317,7 @@ protected:
                                       QVariant{} );
     }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::ptr_qobject_type )    const -> QVariant {
-        T item = at( row );
+        T item = qobject_cast<T>(at( row ));
         monitorItem( item );
         return ( item != nullptr ? item->property( getItemDisplayRole( ).toLatin1() ) :
                                       QVariant{} );
@@ -476,15 +328,15 @@ protected:
                         QVariant{} );
     }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::shared_ptr_qobject_type ) const -> QVariant {
-        T item = at( row );
-        QObject* qItem = item.get();
+        QObject* qItem = at( row );
+        //QObject* qItem = item.get();
         monitorItem( qItem );
         return ( qItem != nullptr ? qItem->property( getItemDisplayRole().toLatin1() ) :
                                     QVariant{} );
     }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_type )           const -> QVariant { Q_UNUSED(row); return QVariant{}; }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_qobject_type )   const -> QVariant {
-        T item = at( row );
+        T item = _container.at(row);
         monitorItem( item.lock().get() );
         return ( item.expired() ||
                  item.lock() == nullptr ? QVariant{} :
@@ -494,66 +346,174 @@ protected:
 private:
     //! Catch an item label property change notify signal and force model update for it's index.
     void    monitorItem( QObject* item ) const {
-        if ( item != nullptr ) {
-            QMetaProperty displayProperty = item->metaObject()->property(
-                        item->metaObject()->indexOfProperty( getItemDisplayRole().toLatin1() ) );
-            if ( displayProperty.isValid() &&
-                 displayProperty.hasNotifySignal() ) {
-                QMetaMethod displayPropertyChanged = displayProperty.notifySignal( );
-                // Note 20161125: Direct connection (without method(indexOfSlot()) call is impossible, there is no existing QObject::connect
-                // overload taking (QObject*, QMetaMethod, QObject*, pointer on method).
-                QMetaMethod itemDisplayPropertyChangedSlot = metaObject( )->method( metaObject( )->indexOfSlot( "itemDisplayPropertyChanged()" ) );
-                auto c = connect( item, displayPropertyChanged,
-                                  const_cast< ContainerModel< Container, T>* >( this ), itemDisplayPropertyChangedSlot );
-            }
+        if ( item == nullptr )
+            return;
+        QMetaProperty displayProperty = item->metaObject()->property(
+                    item->metaObject()->indexOfProperty( getItemDisplayRole().toLatin1() ) );
+        if ( displayProperty.isValid() &&
+             displayProperty.hasNotifySignal() ) {
+            QMetaMethod displayPropertyChanged = displayProperty.notifySignal( );
+            // Note 20161125: Direct connection (without method(indexOfSlot()) call is impossible, there is no existing QObject::connect
+            // overload taking (QObject*, QMetaMethod, QObject*, pointer on method).
+            QMetaMethod itemDisplayPropertyChangedSlot = metaObject( )->method( metaObject( )->indexOfSlot( "itemDisplayPropertyChanged()" ) );
+            auto c = connect( item, displayPropertyChanged,
+                              this, itemDisplayPropertyChangedSlot );
         }
     }
 
 private:
     inline auto dataItemRole( int row, ItemDispatcherBase::non_ptr_type )           const -> QVariant {
-        T item = at( row );
+        T item = _container.at( row );
         return QVariant{ item };
     }
     inline auto dataItemRole( int, ItemDispatcherBase::unsupported_type )           const -> QVariant { /* empty */ return QVariant{};  }
 
     inline auto dataItemRole( int, ItemDispatcherBase::ptr_type )                   const -> QVariant { /* empty */ return QVariant{};  }
     inline auto dataItemRole( int row, ItemDispatcherBase::ptr_qobject_type )       const -> QVariant {
-        T item = at( row );
+        T item = qobject_cast<T>(at( row ));
         if ( item != nullptr )
             QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
         return QVariant::fromValue< T >( item );
     }
     inline auto dataItemRole( int, ItemDispatcherBase::shared_ptr_type )            const -> QVariant { /* empty */ return QVariant{};  }
     inline auto dataItemRole( int row, ItemDispatcherBase::shared_ptr_qobject_type ) const -> QVariant {
-        T item = at( row );
-        auto qItem = qobject_cast<QObject*>( item.get() );
+        T item = _container.at(row);
+        auto qItem = qobject_cast<QObject*>(item.get());
         if ( qItem != nullptr )
             QQmlEngine::setObjectOwnership( qItem, QQmlEngine::CppOwnership );
-        return QVariant::fromValue<QObject*>( qItem );
+        return QVariant::fromValue<QObject*>( qItem );  // Might return a QVariant with an empty QObject*
     }
 
     inline auto dataItemRole( int, ItemDispatcherBase::weak_ptr_type )              const -> QVariant { /* empty */ return QVariant{}; }
     inline auto dataItemRole( int row, ItemDispatcherBase::weak_ptr_qobject_type )  const -> QVariant {
-        T item = at( row );
+        T item = _container.at( row );
         auto qItem = ( item.expired() ? nullptr : qobject_cast<QObject*>( item.lock().get() ) );
         if ( qItem )
             QQmlEngine::setObjectOwnership( qItem, QQmlEngine::CppOwnership );
-        return ( qItem != nullptr ? QVariant::fromValue<QObject*>(qItem) :
-                                    QVariant{} );
-    }
-
-protected: 
-    virtual QHash< int, QByteArray >    roleNames( ) const override {
-        QHash< int, QByteArray > roles;
-        roles[ ItemDataRole ] = "itemData";
-        roles[ LabelRole ] = "itemLabel";
-        return roles;
+        return QVariant::fromValue<QObject*>(qItem);    // Might return a QVariant with an empty QObject*
     }
     //@}
     //-------------------------------------------------------------------------
+
+
+public:
+    virtual bool        append(QObject* object) const {
+        return appendImpl( object, typename ItemDispatcher<typename Container::Item_type>::type{} );
+    }
+
+    virtual void        remove(QObject* object) const override {
+        if ( object != nullptr )
+            removeImpl( object, typename ItemDispatcher<typename Container::Item_type>::type{} );
+    }
+
+    virtual QObject*    at(int index) const override {
+        auto item = atImpl( index, typename ItemDispatcher<typename Container::Item_type>::type{} );
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        return item;
+    }
+
+    virtual int         indexOf( QObject* item ) const {
+        return indexOfImpl( item, typename ItemDispatcher<typename Container::Item_type>::type{} );
+    }
+
+    virtual bool        clear() const override { _container.clear(); return true; }
+
+private:
+    inline auto appendImpl( QObject*, ItemDispatcherBase::non_ptr_type )                    const -> bool { return false; }
+    inline auto appendImpl( QObject*, ItemDispatcherBase::unsupported_type )                const -> bool { return false; }
+    inline auto appendImpl( QObject*, ItemDispatcherBase::ptr_type )                        const -> bool { return false; }
+    inline auto appendImpl( QObject* object, ItemDispatcherBase::ptr_qobject_type )         const -> bool {
+        _container.append(reinterpret_cast<typename Container::Item_type>(object));
+        return true;
+    }
+    inline auto appendImpl( QObject*, ItemDispatcherBase::shared_ptr_type )                 const ->bool { return false; }
+    inline auto appendImpl( QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> bool {
+        (void)object;
+        qWarning() << "Containers Model: Error: Using append() from QML is unsupported with an underlying container of std::shared_ptr.";
+        return false;
+    }
+    inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_type )                   const -> bool { return false; }
+    inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_qobject_type )           const -> bool {
+        // Note 20161127: It is conceptually impossible to append a weak_ptr without adding also to master
+        // container of shared_ptr (otherwise, it is expired before beeing added!)
+        qWarning() << "Containers Model: Error: Using append() from QML is unsupported with an underlying container of std::weak_ptr.";
+        return false;
+    }
+
+private:
+    inline auto removeImpl( const QObject*, ItemDispatcherBase::non_ptr_type )                const -> void {}
+    inline auto removeImpl( const QObject*, ItemDispatcherBase::unsupported_type )            const -> void {}
+    inline auto removeImpl( const QObject*, ItemDispatcherBase::ptr_type )                    const -> void {}
+    inline auto removeImpl( const QObject* object, ItemDispatcherBase::ptr_qobject_type )     const -> void {
+        _container.removeAll(qobject_cast<typename Container::Item_type>(const_cast<QObject*>(object)));
+    }
+    inline auto removeImpl( const QObject*, ItemDispatcherBase::shared_ptr_type )                 const -> void {}
+    inline auto removeImpl( const QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> void {
+        if ( object == nullptr )
+            return;
+        const auto itemIter = _qObjectItemMap.find(object);
+        if ( itemIter != _qObjectItemMap.cend() ) {
+            const T t = itemIter->second;
+            _container.removeAll( t );
+        }
+    }
+    inline auto removeImpl( const QObject*, ItemDispatcherBase::weak_ptr_type )                   const -> void {}
+    inline auto removeImpl( const QObject* object, ItemDispatcherBase::weak_ptr_qobject_type )    const -> void {
+        if ( object == nullptr )
+            return;
+        const auto itemIter = _qObjectItemMap.find(object);
+        if ( itemIter != _qObjectItemMap.cend() ) {
+            const T t = itemIter->second;
+            _container.removeAll( t );
+        }
+    }
+
+private:
+    inline auto atImpl( int, ItemDispatcherBase::non_ptr_type )             const -> QObject* { return nullptr; }
+    inline auto atImpl( int, ItemDispatcherBase::unsupported_type )         const -> QObject* { return nullptr; }
+    inline auto atImpl( int, ItemDispatcherBase::ptr_type )                 const -> QObject* { return nullptr; }
+    inline auto atImpl( int index, ItemDispatcherBase::ptr_qobject_type )   const -> QObject* { return _container.at(index); }
+    inline auto atImpl( int, ItemDispatcherBase::shared_ptr_type )                  const -> QObject* { return nullptr; }
+    inline auto atImpl( int index, ItemDispatcherBase::shared_ptr_qobject_type )    const -> QObject* {
+        auto itemPtr = _container.at(index);
+        return ( itemPtr ? itemPtr.get() : nullptr );
+    }
+    inline auto atImpl( int, ItemDispatcherBase::weak_ptr_type )                    const -> QObject* { return nullptr; }
+    inline auto atImpl( int index, ItemDispatcherBase::weak_ptr_qobject_type )      const -> QObject* {
+        auto itemPtr = _container.at(index);
+        return ( !itemPtr.expired() ? itemPtr.lock().get() : nullptr );
+    }
+
+private:
+    inline auto indexOfImpl( QObject*, ItemDispatcherBase::non_ptr_type )             const -> int { return -1; }
+    inline auto indexOfImpl( QObject*, ItemDispatcherBase::unsupported_type )         const -> int { return -1;  }
+    inline auto indexOfImpl( QObject*, ItemDispatcherBase::ptr_type )                 const -> int { return -1;  }
+    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::ptr_qobject_type )    const -> int {
+        return ( item != nullptr ? _container.indexOf(qobject_cast<T>(item)) : -1 );
+    }
+    inline auto indexOfImpl( QObject*, ItemDispatcherBase::shared_ptr_type )              const -> int { return -1;  }
+    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::shared_ptr_qobject_type ) const -> int {
+        if ( item == nullptr )
+            return -1;
+        const auto& itemIter = _qObjectItemMap.find(item);
+        if ( itemIter != _qObjectItemMap.cend() )
+            return _container.indexOf( itemIter->second );
+        return -1;
+    }
+    inline auto indexOfImpl( QObject*, ItemDispatcherBase::weak_ptr_type )                const -> int { return -1; }
+    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::weak_ptr_qobject_type )   const -> int {
+        if ( item == nullptr )
+            return -1;
+        const auto& itemIter = _qObjectItemMap.find(item);
+        if ( itemIter != _qObjectItemMap.cend() )
+            return _container.indexOf( itemIter->second );
+        return -1;
+    }
 };
 
 } // ::qcm
+
+QML_DECLARE_TYPE(qcm::ContainerModel)
 
 #endif // qcmContainerModel_h
 

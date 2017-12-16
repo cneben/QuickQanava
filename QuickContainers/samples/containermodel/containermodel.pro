@@ -11,8 +11,7 @@ HEADERS	+=  qcmContainerModelSample.h
 
 DISTFILES   +=  main.qml                    \
                 containermodel.qml          \
-                listreference.qml           \
-                containermodelcomposer.qml
+                listreference.qml
 
 RESOURCES   +=  containermodel.qrc
 

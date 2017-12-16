@@ -148,7 +148,7 @@ public:
      * object for destruction, just delete an item with deleteLater() to
      * remove it.
      */
-    using EdgeItems =   qcm::ContainerModel<QVector, qan::EdgeItem*>;
+    using EdgeItems =   qcm::Container<QVector, qan::EdgeItem*>;
 
     void                addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
     void                addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept;

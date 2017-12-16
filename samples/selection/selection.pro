@@ -1,7 +1,7 @@
 TEMPLATE    = app
 TARGET      = test-selection
 CONFIG      += qt warn_on thread c++14
-QT          += widgets core gui qml quick
+QT          += widgets core gui qml quick quickcontrols2
 INCLUDEPATH +=  ../../src
 INCLUDEPATH +=  ../../QuickContainers/src
 

@@ -49,7 +49,7 @@
 #include <GTpo>
 
 // QuickContainers headers
-#include "../QuickContainers/src/qcmContainerModel.h"
+#include "../QuickContainers/src/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanNavigable.h"
@@ -92,10 +92,10 @@ public:
     using FinalGroup    = qan::Group;
 
     template <class ...Args>
-    using NodeContainer = qcm::ContainerModel< QVector, Args... >;
+    using NodeContainer = qcm::Container< QVector, Args... >;
 
     template <class ...Args>
-    using EdgeContainer = qcm::ContainerModel< QVector, Args... >;
+    using EdgeContainer = qcm::Container< QVector, Args... >;
 
     template < class ...Args >
     using SearchContainer = QSet< Args... >;

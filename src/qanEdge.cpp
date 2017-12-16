@@ -110,7 +110,7 @@ qan::Edge*  Edge::getHDestination() noexcept
     return qobject_cast<qan::Edge*>(getHDst().lock().get());
 }
 
-QAbstractItemModel* Edge::getInHNodesModel() const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( &getInHNodes() ) ); }
+QAbstractItemModel* Edge::getInHNodesModel() const { return getInHNodes().model(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------

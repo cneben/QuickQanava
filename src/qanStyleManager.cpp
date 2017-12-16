@@ -56,7 +56,8 @@ StyleManager::~StyleManager( )
 
 void    StyleManager::clear()
 {
-    _styles.clear();
+    // FIXME...
+    //_styles.clear();
     _nodeStyles.clear();
     _edgeStyles.clear();
 }
@@ -66,12 +67,13 @@ void    StyleManager::clear()
 void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
 {
     //qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;
-    if ( style != nullptr &&
+    // FIXME remove that code...
+    /*if ( style != nullptr &&
          component != nullptr ) {
         _styleComponentMap.insert( style, component );
         if ( !_styles.contains(style) )
             _styles.append(style);
-    }
+    }*/
 }
 
 QQmlComponent*  StyleManager::getStyleComponent(qan::Style* style) noexcept
@@ -117,10 +119,14 @@ qan::EdgeStyle* StyleManager::getEdgeStyle( QQmlComponent* delegate )
 
 qan::Style*     StyleManager::getStyleAt( int s )
 {
+    Q_UNUSED(s);
+    // FIXME QAN5: remove that code...
+    /*
     const auto style = qobject_cast< qan::Style* >( _styles.at( s ) );
     if ( style != nullptr )
         QQmlEngine::setObjectOwnership(style, QQmlEngine::CppOwnership );
-    return style;
+    return style;*/
+    return nullptr;
 }
 
 //-----------------------------------------------------------------------------

@@ -21,8 +21,7 @@ import QtQuick          2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
 
-import QuickProperties          2.0 as Qps
-import "qrc:/QuickProperties"       as Qps
+import QuickContainers  1.0
 
 Item {
     id: mainVindow
@@ -32,7 +31,6 @@ Item {
         Layout.fillWidth: true; Layout.fillHeight: false
         TabButton { text: "Containers" }
         TabButton { text: "List Reference" }
-        TabButton { text: "Composer" }
     }
     StackLayout {
         Layout.fillWidth: true; Layout.fillHeight: true
@@ -42,9 +40,6 @@ Item {
         }
         Item {
             Loader { anchors.fill: parent; anchors.topMargin: tabBar.height; source: "qrc:/listreference.qml"}
-        }
-        Item {
-            Loader { anchors.fill: parent; anchors.topMargin: tabBar.height; source: "qrc:/containermodelcomposer.qml"}
         }
     }
 }

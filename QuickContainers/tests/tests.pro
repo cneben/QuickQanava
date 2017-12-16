@@ -2,7 +2,7 @@ TEMPLATE    = app
 TARGET      = qcmTests
 CONFIG      += warn_on thread c++14
 LANGUAGE    = C++
-QT          +=  core gui qml quick charts
+QT          +=  core gui qml quick charts testlib
 INCLUDEPATH += ../src
 
 include(../quickcontainers-common.pri)
@@ -14,7 +14,6 @@ HEADERS	+=  ./qcmTests.h                    \					\
             ./qcmContainerModelTests.h
 
 SOURCES	+=  ./qcmTests.cpp                  \
-            ./qcmObjectModelTests.cpp        \
             ./qcmContainerModelTests.cpp
 
 CONFIG(debug, debug|release) {

@@ -21,8 +21,7 @@ import QtQuick          2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
 
-import QuickProperties          2.0 as Qps
-import "qrc:/QuickProperties"       as Qps
+import QuickContainers  1.0
 
 import ContainerModelSample 1.0
 
