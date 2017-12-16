@@ -31,6 +31,8 @@ For any questions, please contact: benoit@destrat.io
 
 QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
 
+Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/visual-programming-and-d3ne-efcd49690703)
+
 ## QuickQanava Showcase
 
 [![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
