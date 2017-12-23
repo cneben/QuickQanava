@@ -385,10 +385,10 @@ public:
      */
     auto            groupNode( WeakGroup weakGroup, WeakNode weakNode ) noexcept(false) -> void
     {
-        auto group{ weakGroup.lock() };
+        auto group = weakGroup.lock();
         gtpo::assert_throw( group != nullptr, "gtpo::GenGroup<>::groupNode(): Error: trying to insert a node into an expired group." );
 
-        auto node{ weakNode.lock() };
+        auto node = weakNode.lock();
         gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::groupNode(): Error: trying to insert an expired node in group." );
 
         node->setGroup( weakGroup );
@@ -418,10 +418,10 @@ public:
      */
     auto            ungroupNode( WeakGroup weakGroup, WeakNode weakNode ) noexcept(false) -> void
     {
-        auto group{ weakGroup.lock() };
+        auto group = weakGroup.lock();
         gtpo::assert_throw( group != nullptr, "gtpo::GenGroup<>::ungroupNode(): Error: trying to ungroup from an expired group." );
 
-        auto node{ weakNode.lock() };
+        auto node = weakNode.lock();
         gtpo::assert_throw( node != nullptr, "gtpo::GenGroup<>::ungroupNode(): Error: trying to ungroup an expired node from a group." );
 
         gtpo::assert_throw( node->getGroup().lock() == group, "gtpo::GenGroup<>::ungroupNode(): Error: trying to ungroup a node that is not part of group." );
