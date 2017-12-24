@@ -218,7 +218,7 @@ template < class Config >
 auto    GenGraph< Config >::insertEdge( SharedEdge edge ) -> WeakEdge
 {
     assert_throw( edge != nullptr );
-    auto source{ edge->getSrc().lock() };
+    auto source = edge->getSrc().lock();
     if ( source == nullptr ||
          ( edge->getDst().expired() && edge->getHDst().expired() ) )
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::insertEdge(): Error: Either source and/or destination nodes are expired." );
@@ -227,17 +227,17 @@ auto    GenGraph< Config >::insertEdge( SharedEdge edge ) -> WeakEdge
     Config::template container_adapter<WeakEdgesSearch>::insert( edge, _edgesSearch );
     try {
         source->addOutEdge( edge );
-        auto destination{ edge->getDst().lock() };
+        auto destination = edge->getDst().lock();
         if ( destination != nullptr ) {
             destination->addInEdge( edge );
             if ( source.get() != destination.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 Config::template container_adapter<WeakNodes>::remove( destination, _rootNodes );    // Otherwise destination is no longer a root node
         } else {
-            auto hDestination{ edge->getHDst().lock() };
+            auto hDestination = edge->getHDst().lock();
             if ( hDestination != nullptr )
                 hDestination->addInHEdge( edge );
         }
-        auto weakEdge{WeakEdge{edge}};
+        auto weakEdge = WeakEdge(edge);
         BehaviourableBase::notifyEdgeInserted( weakEdge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::GenGraph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
@@ -297,7 +297,7 @@ void    GenGraph< Config >::removeEdge( WeakEdge edge )
 
     // If there is in hyper edges, remove them since their destination edge is beeing destroyed
     if ( edgePtr->getInHDegree() > 0 ) {
-        auto& inHEdges{ edgePtr->getInHEdges() };    // Make a deep copy of in hyper edges
+        auto& inHEdges = edgePtr->getInHEdges();    // Make a deep copy of in hyper edges
         for ( auto& inHEdge : inHEdges )
             removeEdge( inHEdge );
     }

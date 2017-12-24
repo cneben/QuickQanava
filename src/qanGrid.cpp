@@ -33,7 +33,8 @@
 //-----------------------------------------------------------------------------
 
 // Std headers
-#include <cmath>        // std::round
+//#include <cmath>        // std::round
+#include <math.h>        // std::round
 #include <iostream>
 
 // Qt headers
@@ -213,8 +214,8 @@ bool    PointGrid::updateGrid(const QRectF& viewRect,
     //qDebug() << "rectified.bottomRight=" << rectified.bottomRight();
 
     // FIXME: check that the rounding do not generate the graphics glitchs...
-    const unsigned int numPointsX = static_cast<unsigned int>(std::round(rectified.width() / adaptativeScale));
-    const unsigned int numPointsY = static_cast<unsigned int>(std::round(rectified.height() / adaptativeScale));
+    const unsigned int numPointsX = static_cast<unsigned int>(round(rectified.width() / adaptativeScale));
+    const unsigned int numPointsY = static_cast<unsigned int>(round(rectified.height() / adaptativeScale));
 
     // Update points cache size
     const unsigned int pointsCount = static_cast<unsigned int>(numPointsX * numPointsY);
@@ -324,8 +325,8 @@ bool    LineGrid::updateGrid( const QRectF& viewRect,
     //qDebug() << "rectified.topLeft=" << rectified.topLeft();
     //qDebug() << "rectified.bottomRight=" << rectified.bottomRight();
 
-    const unsigned int numLinesX = static_cast<unsigned int>(std::round(rectified.width() / adaptativeScale));
-    const unsigned int numLinesY = static_cast<unsigned int>(std::round(rectified.height() / adaptativeScale));
+    const unsigned int numLinesX = static_cast<unsigned int>(round(rectified.width() / adaptativeScale));
+    const unsigned int numLinesY = static_cast<unsigned int>(round(rectified.height() / adaptativeScale));
 
     // Update points cache size
     const unsigned int linesCount = numLinesX + numLinesY;
