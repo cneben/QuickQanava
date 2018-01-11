@@ -30,7 +30,6 @@
 // \author	benoit@destrat.io
 // \date	2017 08 12
 //-----------------------------------------------------------------------------
-
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 
@@ -46,7 +45,7 @@ Qan.PortItem {
             name: "left"
             when: dockType === Qan.NodeItem.Left
 
-            PropertyChanges {
+            AnchorChanges {
                 target: labelPane
                 anchors {
                     left: undefined
@@ -61,7 +60,7 @@ Qan.PortItem {
             name: "top"
             when: dockType === Qan.NodeItem.Top
 
-            PropertyChanges {
+            AnchorChanges {
                 target: labelPane
                 anchors {
                     left: undefined
@@ -76,7 +75,7 @@ Qan.PortItem {
             name: "right"
             when: dockType === Qan.NodeItem.Right
 
-            PropertyChanges {
+            AnchorChanges {
                 target: labelPane
                 anchors {
                     left: contentItem.left
@@ -91,7 +90,7 @@ Qan.PortItem {
             name: "bottom"
             when: dockType === Qan.NodeItem.Bottom
 
-            PropertyChanges {
+            AnchorChanges {
                 target: labelPane
                 anchors {
                     left: undefined
@@ -100,6 +99,10 @@ Qan.PortItem {
                     bottom: undefined
                     horizontalCenter: portItem.horizontalCenter
                 }
+            }
+
+            PropertyChanges {
+                target: labelPane
                 width: label.implicitWidth
                 height: label.implicitHeight
             }

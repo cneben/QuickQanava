@@ -37,26 +37,34 @@ ColumnLayout {
             name: "left"
             when: hostNodeItem && dockType === Qan.NodeItem.Left
 
-            PropertyChanges {
+            AnchorChanges {
                 target: root
                 anchors {
                     right: hostNodeItem.left
-                    rightMargin: root.rightMargin
                     verticalCenter: hostNodeItem.verticalCenter
                 }
+            }
+
+            PropertyChanges {
+                target: root
+                rightMargin: root.rightMargin
             }
         },
         State {
             name: "right"
             when: hostNodeItem && dockType === Qan.NodeItem.Right
 
-            PropertyChanges {
+            AnchorChanges {
                 target: root
                 anchors {
                     left: hostNodeItem.right
-                    leftMargin: root.leftMargin
                     verticalCenter: hostNodeItem.verticalCenter
                 }
+            }
+
+            PropertyChanges {
+                target: root
+                leftMargin: root.leftMargin
             }
         }
     ]
