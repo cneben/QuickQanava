@@ -1118,6 +1118,32 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
     return portItem;
 }
 
+void    Graph::removePort(qan::Node* node, qan::PortItem* port) noexcept
+{
+    if ( node == nullptr &&
+         node->getItem() == nullptr &&
+         port == nullptr )
+        return;
+
+    qan::NodeItem::PortItems& ports = node->getItem()->getPorts();
+
+    // TODO: iter only nodes' edges
+    for (const auto &edge : getEdges()) {
+        if (!edge)
+            continue;
+
+        if ( edge->getItem()->getSourceItem() == port ||
+             edge->getItem()->getDestinationItem() == port )
+            // TODO: fix: sometimes some edges remain visible until the node is moved
+            removeEdge(edge.get());
+    }
+
+    if (ports.contains(port))
+        ports.removeAll(port);
+
+    delete port;
+}
+
 void    Graph::qmlSetPortDelegate(QQmlComponent* portDelegate) noexcept
 {
     if ( portDelegate != _portDelegate.get() ) {

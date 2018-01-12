@@ -654,6 +654,13 @@ public:
                                            QString label = "",
                                            QString id = "" ) noexcept;
 
+    /*! Remove a port from a node.
+     *
+     * \param node  port host node.
+     * \param port  node's port to remove.
+     */
+    Q_INVOKABLE void        removePort(qan::Node* node, qan::PortItem* port) noexcept;
+
 public:
     //! Default delegate for node in/out port.
     Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE qmlSetPortDelegate NOTIFY portDelegateChanged FINAL )
