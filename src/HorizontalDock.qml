@@ -37,26 +37,34 @@ RowLayout {
             name: "top"
             when: hostNodeItem && dockType === Qan.NodeItem.Top
 
-            PropertyChanges {
+            AnchorChanges {
                 target: root
                 anchors {
                     bottom: hostNodeItem.top
-                    bottomMargin: root.bottomMargin
                     horizontalCenter: hostNodeItem.horizontalCenter
                 }
+            }
+
+            PropertyChanges {
+                target: root
+                bottomMargin: root.bottomMargin
             }
         },
         State {
             name: "bottom"
             when: hostNodeItem && dockType === Qan.NodeItem.Bottom
 
-            PropertyChanges {
+            AnchorChanges {
                 target: root
                 anchors {
                     top: hostNodeItem.bottom
-                    topMargin: root.topMargin
                     horizontalCenter: hostNodeItem.horizontalCenter
                 }
+            }
+
+            PropertyChanges {
+                target: root
+                topMargin: root.topMargin
             }
         }
     ]

@@ -361,7 +361,7 @@ public:
 
     //! Read-only list model of this node ports (either in or out).
     Q_PROPERTY( QAbstractListModel* ports READ getPortsModel CONSTANT FINAL )
-    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( &_ports ); }
+    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( _ports.getModel() ); }
     inline auto         getPorts() noexcept -> PortItems& { return _ports; }
     inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
 private:
