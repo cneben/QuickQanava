@@ -38,6 +38,10 @@
 #include <QQmlEngine>
 #include <QQmlComponent>
 
+#ifdef USE_GRAPHVIZ
+#include <gvc.h>
+#endif
+
 // QuickQanava headers
 #include "./qanUtils.h"
 #include "./qanGraph.h"
@@ -1209,5 +1213,175 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
 }
 //-----------------------------------------------------------------------------
 
-} // ::qan
+#ifdef USE_GRAPHVIZ
+/* Node auto-positioning *///--------------------------------------------------
+void    Graph::autoPositionNodes() noexcept
+{
+    GVC_t *gvc = gvContext();
+    Agraph_t *g = agopen(const_cast<char*>("g"), Agdirected, nullptr);
+    // NOTE: agset() nowhere seems to work, use agxset() evereywhere
+    Agsym_t *symOverlap = agattr(g, AGRAPH, const_cast<char*>("overlap"), const_cast<char*>("prism"));
+    agxset(g, symOverlap, const_cast<char*>("prism"));
 
+    std::unique_ptr<Agnode_t*[]> nodes = std::make_unique<Agnode_t*[]>(getNodeCount());
+    std::map<Node*, int> indexMap;
+    for (int i = 0; i < getNodeCount(); ++i) {
+        indexMap.insert(std::make_pair(getNodes().at(i).get(), i));
+
+        int left = 0;
+        int right = 0;
+        int top = 0;
+        int bottom = 0;
+        for (const auto &p : getNodes().at(i)->getItem()->getPorts()) {
+            PortItem *cp = static_cast<PortItem*>(p);
+            if (!cp) {
+                continue;
+            }
+            switch (cp->getDockType()) {
+            case PortItem::Dock::Left:
+                ++left;
+                break;
+            case PortItem::Dock::Right:
+                ++right;
+                break;
+            case PortItem::Dock::Top:
+                ++top;
+                break;
+            case PortItem::Dock::Bottom:
+                ++bottom;
+                break;
+            }
+        }
+        QString nodeLabel = "{";
+        int j = 0;
+        for (; j < left; ++j) {
+            if (j == 0) {
+                nodeLabel += "<" + QString::number(j) + ">";
+            } else {
+                nodeLabel += "|<" + QString::number(j) + ">";
+            }
+        }
+        nodeLabel += "} | {";
+        int k = j;
+        for (; j < top; ++j) {
+            if (j == k) {
+                nodeLabel += "<" + QString::number(j) + ">";
+            } else {
+                nodeLabel += "|<" + QString::number(j) + ">";
+            }
+        }
+        nodeLabel += "| |";
+        int n = j;
+        for (; j < bottom; ++j) {
+            if (j == n) {
+                nodeLabel += "<" + QString::number(j) + ">";
+            } else {
+                nodeLabel += "|<" + QString::number(j) + ">";
+            }
+        }
+        nodeLabel += "} | {";
+        int m = j;
+        for (; j < right; ++j) {
+            if (j == m) {
+                nodeLabel += "<" + QString::number(j) + ">";
+            } else {
+                nodeLabel += "|<" + QString::number(j) + ">";
+            }
+        }
+        nodeLabel += "}";
+        // 72 points = 1 inch
+        double height = getNodes().at(i)->getItem()->property("height").toDouble() / 72;
+        double width = getNodes().at(i)->getItem()->property("width").toDouble() / 72;
+
+        Agsym_t *symHeight = agattr(g, AGNODE, const_cast<char*>("height"), const_cast<char*>(qPrintable(QString::number(height))));
+        Agsym_t *symWidth = agattr(g, AGNODE, const_cast<char*>("width"), const_cast<char*>(qPrintable(QString::number(width))));
+        Agsym_t *symShape = agattr(g, AGNODE, const_cast<char*>("shape"), const_cast<char*>("record"));
+        Agsym_t *symFixedsize = agattr(g, AGNODE, const_cast<char*>("fixedsize"), const_cast<char*>("shape"));
+        Agsym_t *symLabel = agattr(g, AGNODE, const_cast<char*>("label"), const_cast<char*>(qPrintable(nodeLabel)));
+
+        nodes[i] = agnode(g, nullptr, 1);
+        agxset(nodes[i], symShape, const_cast<char*>("record"));
+        agxset(nodes[i], symFixedsize, const_cast<char*>("shape"));
+        agxset(nodes[i], symHeight, const_cast<char*>(qPrintable(QString::number(height))));
+        agxset(nodes[i], symWidth, const_cast<char*>(qPrintable(QString::number(width))));
+        agxset(nodes[i], symLabel, const_cast<char*>(qPrintable(nodeLabel)));
+    }
+    for (const auto &e : getEdges()) {
+        Agedge_t *edge = agedge(g, nodes[indexMap[e->getSource()]], nodes[indexMap[e->getDestination()]], nullptr, 1);
+        if (!edge) {
+            continue;
+        }
+        // tailport: source of arrow
+        // headport: destination part, arrowhead
+        QString tp = "e";
+        QString hp = "w";
+        for (const auto &p : e->getSource()->getItem()->getPorts()) {
+            PortItem *cp = static_cast<PortItem*>(p);
+            if (!cp) {
+                continue;
+            }
+            for (const auto &ei : cp->getOutEdgeItems()) {
+                if (ei == e->getItem()) {
+                    switch (cp->getDockType()) {
+                    case PortItem::Dock::Left:
+                        tp = "w";
+                        break;
+                    case PortItem::Dock::Right:
+                        tp = "e";
+                        break;
+                    case PortItem::Dock::Top:
+                        tp = "n";
+                        break;
+                    case PortItem::Dock::Bottom:
+                        tp = "s";
+                        break;
+                    }
+                }
+            }
+        }
+        for (const auto &p : e->getDestination()->getItem()->getPorts()) {
+            PortItem *cp = static_cast<PortItem*>(p);
+            if (!cp) {
+                continue;
+            }
+            for (const auto &ei : cp->getInEdgeItems()) {
+                if (ei == e->getItem()) {
+                    switch (cp->getDockType()) {
+                    case PortItem::Dock::Left:
+                        hp = "w";
+                        break;
+                    case PortItem::Dock::Right:
+                        hp = "e";
+                        break;
+                    case PortItem::Dock::Top:
+                        hp = "n";
+                        break;
+                    case PortItem::Dock::Bottom:
+                        hp = "s";
+                        break;
+                    }
+                }
+            }
+        }
+        // TODO: use ports
+        Agsym_t *symHeadport = agattr(g, AGEDGE, const_cast<char*>("headport"), const_cast<char*>(qPrintable(hp)));
+        Agsym_t *symTailport = agattr(g, AGEDGE, const_cast<char*>("tailport"), const_cast<char*>(qPrintable(tp)));
+        agxset(edge, symHeadport, const_cast<char*>(qPrintable(hp)));
+        agxset(edge, symTailport, const_cast<char*>(qPrintable(tp)));
+    }
+
+    gvLayout(gvc, g, "dot"); // apply/compute layout
+
+    for (int i = 0; i < getNodeCount(); ++i) {
+        getNodes().at(i)->getItem()->setX(ND_coord(nodes[i]).x * 1.2);
+        getNodes().at(i)->getItem()->setY(ND_coord(nodes[i]).y * 1.2);
+    }
+
+    gvFreeLayout(gvc, g);
+    agclose(g);
+    gvFreeContext(gvc);
+}
+//-----------------------------------------------------------------------------
+#endif
+
+} // ::qan

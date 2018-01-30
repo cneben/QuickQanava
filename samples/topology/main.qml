@@ -546,7 +546,7 @@ ApplicationWindow {
                 textRole: "itemLabel"
             }
         }
-    } // portList
+    } // nodeList
 
     Item {
         id: portList
@@ -615,7 +615,19 @@ ApplicationWindow {
                 }
             }
         }
-    } // nodeList
+    } // portList
+
+    Button {
+        id: autoPosButton
+        anchors.top: portList.bottom
+        anchors.topMargin: 15
+        anchors.left: portList.left
+        width: 110
+        height: 50
+        text: "AutoPos"
+
+        onClicked: topology.autoPositionNodes()
+    }
 
     ColorDialog {
         id: selectionColorDialog
