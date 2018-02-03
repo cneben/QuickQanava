@@ -725,6 +725,16 @@ protected:
     QPointer<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
     //@}
     //-------------------------------------------------------------------------
+
+#ifdef USE_GRAPHVIZ
+    /*! \name Node auto-positioning *///----------------------------------------
+    //@{
+public:
+    //! Auto-position nodes using Graphviz's dot layout.
+    Q_INVOKABLE void autoPositionNodes() noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+#endif
 };
 
 } // ::qan

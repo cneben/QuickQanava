@@ -16,4 +16,3 @@ HEADERS     +=  ./qanTopologySample.h   \
 
 OTHER_FILES +=  main.qml        \
                 FaceNode.qml
-
