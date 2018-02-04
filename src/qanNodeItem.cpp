@@ -175,8 +175,10 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
 void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 {
     const auto nodeDraggableCtrl = static_cast<NodeDraggableCtrl*>(_draggableCtrl.get());
-    nodeDraggableCtrl->handleMouseMoveEvent(event);
-    QQuickItem::mouseMoveEvent(event);
+    if ( nodeDraggableCtrl->handleMouseMoveEvent(event) )
+        event->accept();
+    else
+        QQuickItem::mouseMoveEvent(event);
 }
 
 void    NodeItem::mousePressEvent( QMouseEvent* event )

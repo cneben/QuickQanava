@@ -1,12 +1,9 @@
 
 CONFIG      += warn_on qt thread c++14
-CONFIG      += use_graphviz
 QT          += core widgets gui qml quick
 
 include(../GTpo/src/gtpo.pri)
 include(../QuickContainers/src/quickcontainers.pri)
-# No longuer included by default since 0.9.2
-#include(../QuickGeoGL/src/quickgeogl.pri)
 
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
@@ -83,19 +80,22 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/StyleEditor.qml           \
                 $$PWD/VisualConnector.qml       \
                 $$PWD/LabelEditor.qml
-
+CONFIG      += use_graphviz
 use_graphviz {
     DEFINES     += USE_GRAPHVIZ
     unix: CONFIG += link_pkgconfig
     unix: PKGCONFIG += libgvc
 
+    GRAPHVIZ_DIR = "C:\graphviz"
+
     # note these are x64 libs, graphviz only distributes x86 ones
-    win32: LIBS += -L"C:/Graphviz2.38/lib/" -lgvc
-    win32: LIBS += -L"C:/Graphviz2.38/lib/" -lcgraph
-    win32: LIBS += -L"C:/Graphviz2.38/lib/" -lcdt
-    win32: INCLUDEPATH += "C:/Graphviz2.38/include/graphviz"
-    win32: DEPENDPATH += "C:/Graphviz2.38/include/graphviz"
-    win32: PRE_TARGETDEPS += "C:/Graphviz2.38/lib/gvc.lib"
-    win32: PRE_TARGETDEPS += "C:/Graphviz2.38/lib/cdt.lib"
-    win32: PRE_TARGETDEPS += "C:/Graphviz2.38/lib/cgraph.lib"
+    win32: LIBS += $$GRAPHVIZ_DIR/lib/gvc.lib
+    win32: LIBS += $$GRAPHVIZ_DIR/lib/cgraph.lib
+    win32: LIBS += $$GRAPHVIZ_DIR/lib/cdt.lib
+    win32: LIBS += $$GRAPHVIZ_DIR/lib/gvplugin_dot_layout.lib
+    win32: INCLUDEPATH += "$$GRAPHVIZ_DIR/include/graphviz"
+    win32: DEPENDPATH += "$$GRAPHVIZ_DIR/include/graphviz"
+    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/gvc.lib
+    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cdt.lib
+    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cgraph.lib
 }

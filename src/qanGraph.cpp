@@ -1213,10 +1213,11 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
 }
 //-----------------------------------------------------------------------------
 
-#ifdef USE_GRAPHVIZ
 /* Node auto-positioning *///--------------------------------------------------
 void    Graph::autoPositionNodes() noexcept
 {
+#ifdef USE_GRAPHVIZ
+    qDebug() << "autoPositionNodes...";
     GVC_t *gvc = gvContext();
     Agraph_t *g = agopen(const_cast<char*>("g"), Agdirected, nullptr);
     // NOTE: agset() nowhere seems to work, use agxset() evereywhere
@@ -1372,6 +1373,7 @@ void    Graph::autoPositionNodes() noexcept
 
     gvLayout(gvc, g, "dot"); // apply/compute layout
 
+    // FIXME cneben innefficient iterate over getNodes() directly...
     for (int i = 0; i < getNodeCount(); ++i) {
         getNodes().at(i)->getItem()->setX(ND_coord(nodes[i]).x * 1.2);
         getNodes().at(i)->getItem()->setY(ND_coord(nodes[i]).y * 1.2);
@@ -1380,8 +1382,8 @@ void    Graph::autoPositionNodes() noexcept
     gvFreeLayout(gvc, g);
     agclose(g);
     gvFreeContext(gvc);
+#endif
 }
 //-----------------------------------------------------------------------------
-#endif
 
 } // ::qan

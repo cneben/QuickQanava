@@ -63,10 +63,12 @@ bool    DraggableCtrl<Node_t, NodeItem_t>::handleDragEnterEvent( QDragEnterEvent
         }
         else { // Get the source item from the quick drag attached object received
             QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-            QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-            if ( draggedStyle.isValid() ) {
-                event->accept();
-                return true;
+            if ( sourceItem != nullptr ) {
+                QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+                if ( draggedStyle.isValid() ) {
+                    event->accept();
+                    return true;
+                }
             }
         }
     }
@@ -118,9 +120,11 @@ void    DraggableCtrl<Node_t, NodeItem_t>::handleMouseDoubleClickEvent(QMouseEve
 template <class Node_t, class NodeItem_t>
 bool    DraggableCtrl<Node_t, NodeItem_t>::handleMouseMoveEvent(QMouseEvent* event )
 {
+    if ( event->buttons().testFlag(Qt::NoButton) )
+        return false;
     if ( _targetItem != nullptr &&
          _targetItem->getDraggable() &&      // Dragging management
-         event->buttons() | Qt::LeftButton) {
+         event->buttons().testFlag(Qt::LeftButton)) {
         if ( !_targetItem->getDragged() ) {
             beginDragMove( event->windowPos(), _targetItem->getSelected() );
             return true;

@@ -354,7 +354,7 @@ protected:
     /*! \name Port/Dock Layout Management *///---------------------------------
     //@{
 public:
-    using PortItems = qcm::Container<QVector, QQuickItem*>;    // Using QQuickItem instead of qan::PortItem because MSVC does not fully support complete c++14 forward declarations
+    using PortItems = qcm::Container<QVector, QQuickItem*>;    // Using QQuickItem instead of qan::PortItem because MSVC15 does not fully support complete c++14 forward declarations
 
     //! Look for a port with a given \c id (or nullptr if no such port exists).
     Q_INVOKABLE qan::PortItem*  findPort(const QString& portId) const noexcept;
