@@ -74,8 +74,8 @@ struct adapter< QList, T > {
     inline static void  remove(QList<T>& c, std::size_t i ) { c.removeAt(static_cast<int>(i)); }
     inline static int   removeAll(QList<T>& c, const T& t ) { return c.removeAll(t); }
 
-    inline static bool      contains(const QList<T>& c, const T& t) { return c.contains(t); }
-    inline static int       indexOf(const QList<T>& c, const T& t) { return c.indexOf(t); }
+    inline static bool  contains(const QList<T>& c, const T& t) { return c.contains(t); }
+    inline static int   indexOf(const QList<T>& c, const T& t) { return c.indexOf(t); }
 };
 
 template < typename T >

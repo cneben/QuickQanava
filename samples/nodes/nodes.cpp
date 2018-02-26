@@ -38,7 +38,7 @@
 #include <QQuickStyle>
 
 // QuickQanava headers
-#include <QuickQanava>
+#include <QuickQanava.h>
 
 using namespace qan;
 

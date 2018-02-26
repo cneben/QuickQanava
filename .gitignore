@@ -1,3 +1,4 @@
+*.pro.user*
 CMakeLists.txt.user
 quickqanava.pro.user
 QuickContainers/quickcontainers.pro.user
