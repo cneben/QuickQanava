@@ -16,22 +16,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set( source_files
-    nodes.cpp
+    edges.cpp
 )
 
 set (header_files )
 
 set(CMAKE_AUTORCC ON)
 qt5_wrap_cpp(source_files, header_files)
-qt5_add_resources(RESOURCES nodes.qrc)
+qt5_add_resources(RESOURCES edges.qrc)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_executable(sample_nodes ${source_files} ${RESOURCES})
-target_include_directories(sample_nodes PUBLIC QuickQanava Qt5::QuickControls2)
-target_link_libraries(sample_nodes QuickQanava QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
-
-
+add_executable(sample_edges ${source_files} ${RESOURCES})
+target_include_directories(sample_edges PUBLIC QuickQanava Qt5::QuickControls2)
+target_link_libraries(sample_edges QuickQanava QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
 

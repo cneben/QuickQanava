@@ -31,7 +31,6 @@ import QtQuick.Controls.Material 2.1
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-import "qrc:/QuickContainers" as Qps
 
 ApplicationWindow {
     id: window

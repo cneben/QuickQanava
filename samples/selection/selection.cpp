@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
-#include <QApplication>
+#include <QGuiApplication>
 #include <QtQml>
 #include <QQuickStyle>
 
@@ -45,7 +45,7 @@ using namespace qan;
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
     QuickQanava::initialize(&engine);

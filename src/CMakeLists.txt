@@ -70,10 +70,10 @@ set (qan_header_files
         ${CMAKE_CURRENT_SOURCE_DIR}/qanBottomRightResizer.h
 )
 qt5_wrap_cpp(qan_source_files, qan_header_files)
-qt5_add_resources(RESOURCES quickqanava.qrc)
+qt5_add_resources(RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_library(QuickQanava SHARED ${qan_source_files} )
+add_library(QuickQanava SHARED ${qan_source_files} ${RESOURCES})
 
 target_include_directories(QuickQanava INTERFACE ../GTpo/src)
 target_include_directories(QuickQanava INTERFACE GTpo QuickContainers)

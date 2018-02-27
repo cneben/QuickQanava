@@ -294,9 +294,8 @@ private:
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
         if ( item != nullptr ) {
             connect( item, &QObject::destroyed,
-                     [this](const auto o) {
-                            removeAll(static_cast<T*&>(qobject_cast<T*>(o)));
-                            //removeAll(qobject_cast<typename std::remove_pointer<T>::type>(*o));
+                     [this](auto o) {
+                            removeAll(qobject_cast<T>(o));
                         } );
             if ( _modelImpl  )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
