@@ -146,6 +146,9 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
         }
         if ( qan::Selectable::getSelectionItem() )              // Hide selection item when group is collapsed
             qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
+
+        if ( !collapsed )
+            groupMoved();   // Force update of all adjacent edges
         emit collapsedChanged();
     }
 }
@@ -154,13 +157,16 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
 /* Group DnD Management *///---------------------------------------------------
 void    GroupItem::groupMoved()
 {
+    if ( _collapsed )   // Do not update edges when the group is collapsed
+        return;
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
         for ( auto weakEdge : _group->getAdjacentEdges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&
-                 edge->getItem() != nullptr )
+                 edge->getItem() != nullptr &&
+                 edge->getItem()->isVisible() )
                 edge->getItem()->updateItem();
         }
     }
