@@ -68,33 +68,39 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
     }
+
     property real maxZ: -1.
+    function    sendToTop(node) {
+        if (node) {
+            if (node.item) {
+                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
+                node.item.z = maxZ + 1;
+            }
+            if ( node.group )
+                updateGroupZ(node.group)
+        }
+    }
+
     onPortClicked: {
         if ( graph &&
              port ) {
-            // FIXME: force node z max update
-                //maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-                //node.item.z = maxZ + 1;
-            // FIXME: force node resizer update
-            // FIXME: factor that code with node clicked
-            if ( graph.connector &&
-                 graph.connectorEnabled )
+            if (port.node)    // Force port host node on top
+                sendToTop(port.node)
+            if (graph.connector &&
+                graph.connectorEnabled)
                 graph.connector.sourcePort = port
-        } else if ( graph ) {
+        } else if (graph) {
             graph.connector.visible = false
         }
     }
+
     onPortRightClicked: {
-        console.debug("onPortRightClicked(): port=" + port)
     }
 
     onNodeClicked: {
         if ( graph &&
              node && node.item ) {
-            maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-            node.item.z = maxZ + 1;
-            if ( node.group )
-                updateGroupZ(node.group)
+            sendToTop(node)
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
@@ -112,7 +118,7 @@ Qan.AbstractGraphView {
                 nodeResizer.minimumTargetSize = node.item.minimumSize
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
-                nodeResizer.z = node.item.z + 1.
+                nodeResizer.z = node.item.z + 2.    // Using 2.0 because selection item is z is 1.0, we want resizer to stay on top of selection item and ports.
             } else {
                 nodeResizer.target = null
                 nodeResizer.visible = false

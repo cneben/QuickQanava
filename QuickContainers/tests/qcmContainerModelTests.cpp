@@ -45,46 +45,45 @@
 //-----------------------------------------------------------------------------
 // Static tag dispatching test
 //-----------------------------------------------------------------------------
-/*
 TEST(qpsContainerModel, staticDispatch)
 {
-    std::cerr << "qcm::ItemDispatcher<int>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<int>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<int>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<int>::type >() << std::endl;
     bool isNonPtr{ std::is_same< qcm::ItemDispatcher<int>::type, qcm::ItemDispatcherBase::non_ptr_type>::value };
     EXPECT_TRUE( isNonPtr );
 
-    std::cerr << "qcm::ItemDispatcher<int*>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<int*>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<int*>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<int*>::type >() << std::endl;
     bool isPtr{ std::is_same< qcm::ItemDispatcher<int*>::type, qcm::ItemDispatcherBase::ptr_type>::value };
     EXPECT_TRUE( isPtr );
 
-    std::cerr << "qcm::ItemDispatcher<QObject>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QObject>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<QObject>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QObject>::type >() << std::endl;
     bool isUnsupported{ std::is_same< qcm::ItemDispatcher<QObject>::type, qcm::ItemDispatcherBase::unsupported_type>::value };
     EXPECT_TRUE( isUnsupported );
 
-    std::cerr << "qcm::ItemDispatcher<QObject*>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QObject*>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<QObject*>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QObject*>::type >() << std::endl;
     bool isQObjectPtr{ std::is_same< qcm::ItemDispatcher<QObject*>::type, qcm::ItemDispatcherBase::ptr_qobject_type>::value };
     EXPECT_TRUE( isQObjectPtr );
 
-    std::cerr << "qcm::ItemDispatcher<QPointer<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QPointer<QObject>>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<QPointer<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<QPointer<QObject>>::type >() << std::endl;
     bool isQPointer{ std::is_same< qcm::ItemDispatcher<QPointer<QObject>>::type, qcm::ItemDispatcherBase::q_ptr_type>::value };
     EXPECT_TRUE( isQPointer );
 
-    std::cerr << "qcm::ItemDispatcher<std::shared_ptr<int>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::shared_ptr<int>>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<std::shared_ptr<int>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::shared_ptr<int>>::type >() << std::endl;
     bool isSharedPtr{ std::is_same< qcm::ItemDispatcher<std::shared_ptr<int>>::type, qcm::ItemDispatcherBase::shared_ptr_type>::value };
     EXPECT_TRUE( isSharedPtr );
 
-    std::cerr << "qcm::ItemDispatcher<std::shared_ptr<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::shared_ptr<QObject>>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<std::shared_ptr<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::shared_ptr<QObject>>::type >() << std::endl;
     bool isSharedQObjectPtr{ std::is_same< qcm::ItemDispatcher<std::shared_ptr<QObject>>::type, qcm::ItemDispatcherBase::shared_ptr_qobject_type>::value };
     EXPECT_TRUE( isSharedQObjectPtr );
 
-    std::cerr << "qcm::ItemDispatcher<std::weak_ptr<int>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::weak_ptr<int>>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<std::weak_ptr<int>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::weak_ptr<int>>::type >() << std::endl;
     bool isWeakPtr{ std::is_same< qcm::ItemDispatcher<std::weak_ptr<int>>::type, qcm::ItemDispatcherBase::weak_ptr_type>::value };
     EXPECT_TRUE( isWeakPtr );
 
-    std::cerr << "qcm::ItemDispatcher<std::weak_ptr<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::weak_ptr<QObject>>::type >() << std::endl;
+    //std::cerr << "qcm::ItemDispatcher<std::weak_ptr<QObject>>::type=" << qcm::ItemDispatcherBase::debug_type< qcm::ItemDispatcher<std::weak_ptr<QObject>>::type >() << std::endl;
     bool isWeakQObjectPtr{ std::is_same< qcm::ItemDispatcher<std::weak_ptr<QObject>>::type, qcm::ItemDispatcherBase::weak_ptr_qobject_type>::value };
     EXPECT_TRUE( isWeakQObjectPtr );
 }
-*/
+
 
 //-----------------------------------------------------------------------------
 // qcm::Adapter tests
@@ -603,19 +602,6 @@ void    testContainerModelStdSharedQObject(C& container)
 
 TEST(qpsContainerModel, qVectorStdSharedQObject)
 {
-/*    using SharedQObjects = qcm::Container<QVector, std::shared_ptr<QObject>>;
-    SharedQObjects objects;
-    auto model = objects.getModel();
-    auto o1{std::make_shared<QObject>()};
-    objects.append( o1 );
-    ASSERT_EQ( 1, model->getLength() );
-    ASSERT_EQ( 1, objects.size() );
-    objects.append( std::make_shared<QObject>() );
-    //objects.removeAll( o1 );
-    model->remove( o1.get() );
-    EXPECT_EQ( 1, objects.size() );
-    EXPECT_EQ( 1, model->getLength() );
-*/
     using SharedQObjects = qcm::Container<QVector, std::shared_ptr<QObject>>;
     SharedQObjects objects;
     testContainerModelStdSharedQObject<SharedQObjects>(objects);
@@ -643,7 +629,6 @@ void    testContainerModelStdWeakQObject(C& container)
     ASSERT_TRUE( model != nullptr );
 
     using T = typename C::Item_type;
-    //using WeakT = std::weak_ptr<T>;
 
     auto so1{std::make_shared<QObject>()};
     auto so2{std::make_shared<QObject>()};
@@ -703,52 +688,6 @@ TEST(qpsContainerModel, stdVectorStdWeakQObject)
     testContainerModelStdWeakQObject<WeakQObjects>(objects);
 }
 
-/*
-// std::weak_ptr<QObject> container model
-TEST(qpsContainerModel, weakQObjectListReferenceItemAtEmpty)
-{
-    // Expect invalid return for invalid input arguments
-    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
-    WeakQObjects objects;
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(-1) == QVariant{} ) );   // EXPECT -1, argument is invalid
-    ASSERT_TRUE( ( listRef->itemAt(0) == QVariant{} ) );    // EXPECT invalid return QVariant, index is invalid
-
-    ASSERT_TRUE( ( listRef->at(-1) == nullptr ) );   // EXPECT nullptr, argument is invalid
-    ASSERT_TRUE( ( listRef->at(0) == nullptr ) );    // EXPECT nullptr, index is invalid
-}
-
-using WeakQObject = std::weak_ptr<QObject>;
-Q_DECLARE_METATYPE( WeakQObject );
-
-TEST(qpsContainerModel, weakQObjectPtrListReferenceItemAt)
-{
-    using WeakQObject = std::weak_ptr<QObject>;
-    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
-    WeakQObjects objects;
-    auto o1Ptr{std::make_shared<QObject>()};
-    auto o1{WeakQObject{o1Ptr}};
-    auto o2Ptr{std::make_shared<QObject>()};
-    auto o2{WeakQObject{o2Ptr}};
-    objects.append( o1 );
-    auto o3Ptr{std::make_shared<QObject>()};
-    objects.append( WeakQObject{o3Ptr} );
-    objects.append( o2 );
-
-    auto listRef = objects.getListReference();
-    ASSERT_TRUE( listRef != nullptr );
-    ASSERT_TRUE( ( listRef->itemAt(0) != QVariant{} ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(0) ) == o1.lock().get() ) );
-    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(2) ) == o2.lock().get() ) );
-    ASSERT_TRUE( ( listRef->itemAt(3) == QVariant{} ) );
-
-    ASSERT_TRUE( ( listRef->at(0) != nullptr ) );
-    EXPECT_TRUE( ( listRef->at(0) == o1.lock().get() ) );
-    EXPECT_TRUE( ( listRef->at(2) == o2.lock().get() ) );
-    ASSERT_TRUE( ( listRef->at(3) == nullptr ) );
-}
-*/
 //-----------------------------------------------------------------------------
 // Container model item display role test
 //-----------------------------------------------------------------------------
@@ -863,3 +802,67 @@ TEST(qpsContainerModel, qObjectWeakPtrItemDisplayRole)
     testWeakItemDisplayRole(dummies);
 }
 
+
+// Test QObject destroyed signal monitoring (a QObject deleted from qt side outside
+// QCM interface should be automatically removed from a QCM container
+TEST(qpsContainer, qVectorQObjectPtrDestroyed)
+{
+    using QObjects = qcm::Container<QVector, QObject*>;
+    QObjects objects;
+    const auto o1 = new QObject{nullptr};
+    objects.append( o1 );
+    objects.append( new QObject{nullptr} );
+    EXPECT_EQ( objects.size(), 2 );
+    delete o1;                          // Expecting o1 to be automatically removed from container even when deleted outside of QCM interface
+    EXPECT_EQ( objects.size(), 1 );
+
+    // Note: Testing against std::shared_ptr<QObject> or std::weak_ptr<QObject> has no sense: destruction of such a managed
+    // pointer throw a system exception... (linux g++7...)
+}
+
+/*
+// std::weak_ptr<QObject> container model
+TEST(qpsContainerModel, weakQObjectListReferenceItemAtEmpty)
+{
+    // Expect invalid return for invalid input arguments
+    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
+    WeakQObjects objects;
+    auto listRef = objects.getListReference();
+    ASSERT_TRUE( listRef != nullptr );
+    ASSERT_TRUE( ( listRef->itemAt(-1) == QVariant{} ) );   // EXPECT -1, argument is invalid
+    ASSERT_TRUE( ( listRef->itemAt(0) == QVariant{} ) );    // EXPECT invalid return QVariant, index is invalid
+
+    ASSERT_TRUE( ( listRef->at(-1) == nullptr ) );   // EXPECT nullptr, argument is invalid
+    ASSERT_TRUE( ( listRef->at(0) == nullptr ) );    // EXPECT nullptr, index is invalid
+}
+
+using WeakQObject = std::weak_ptr<QObject>;
+Q_DECLARE_METATYPE( WeakQObject );
+
+TEST(qpsContainerModel, weakQObjectPtrListReferenceItemAt)
+{
+    using WeakQObject = std::weak_ptr<QObject>;
+    using WeakQObjects = qcm::ContainerModel< QVector, std::weak_ptr<QObject> >;
+    WeakQObjects objects;
+    auto o1Ptr{std::make_shared<QObject>()};
+    auto o1{WeakQObject{o1Ptr}};
+    auto o2Ptr{std::make_shared<QObject>()};
+    auto o2{WeakQObject{o2Ptr}};
+    objects.append( o1 );
+    auto o3Ptr{std::make_shared<QObject>()};
+    objects.append( WeakQObject{o3Ptr} );
+    objects.append( o2 );
+
+    auto listRef = objects.getListReference();
+    ASSERT_TRUE( listRef != nullptr );
+    ASSERT_TRUE( ( listRef->itemAt(0) != QVariant{} ) );
+    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(0) ) == o1.lock().get() ) );
+    EXPECT_TRUE( ( qvariant_cast<QObject*>( listRef->itemAt(2) ) == o2.lock().get() ) );
+    ASSERT_TRUE( ( listRef->itemAt(3) == QVariant{} ) );
+
+    ASSERT_TRUE( ( listRef->at(0) != nullptr ) );
+    EXPECT_TRUE( ( listRef->at(0) == o1.lock().get() ) );
+    EXPECT_TRUE( ( listRef->at(2) == o2.lock().get() ) );
+    ASSERT_TRUE( ( listRef->at(3) == nullptr ) );
+}
+*/

@@ -127,7 +127,7 @@ auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
         _sourceItem = source;
         emit sourceItemChanged();
         if ( source->z() < z() )
-            setZ( source->z() );
+            setZ( source->z() - 0.5 );
         updateItem();
     }
 }
@@ -187,7 +187,7 @@ void    EdgeItem::configureDestinationItem( QQuickItem* item )
     connect( item, dstWidth.notifySignal(),   this, updateItemSlot );
     connect( item, dstHeight.notifySignal(),  this, updateItemSlot );
     if ( item->z() < z() )
-        setZ( item->z() );
+        setZ( item->z() - 0.5);
 }
 //-----------------------------------------------------------------------------
 
@@ -321,7 +321,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     // Generate edge geometry Z according to actual src and dst z
     const qreal srcZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
     const qreal dstZ = dstGroupItem != nullptr ? dstGroupItem->z() + dstItem->z() : dstItem->z();
-    cache.z = qMax(srcZ, dstZ) + 0.1;
+    cache.z = qMax(srcZ, dstZ) - 0.1;   // Edge z value should be less than src/dst value to ensure port item and selection is on top of edge
 
     if ( _style )
         cache.lineType = _style->getLineType();

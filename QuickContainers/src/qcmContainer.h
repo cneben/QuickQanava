@@ -226,22 +226,22 @@ public:
     }
 private:
     inline auto atImpl( int i, ItemDispatcherBase::non_ptr_type )           const -> T {
-        return _container.at( i );
+        return _container.at(i);
     }
     inline auto atImpl( int i, ItemDispatcherBase::unsupported_type )       const -> T { return atImpl( i, ItemDispatcherBase::non_ptr_type{} ); }
 
     inline auto atImpl( int i, ItemDispatcherBase::ptr_type )               const -> T {
-        return ( i < _container.size() ? _container.at( i ) : nullptr );
+        return ( i < static_cast<int>(_container.size()) ? _container.at(i) : nullptr );
     }
     inline auto atImpl( int i, ItemDispatcherBase::ptr_qobject_type )       const -> T { return atImpl( i, ItemDispatcherBase::ptr_type{} ); }
 
     inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_type )        const -> T {
-        return ( i < _container.size() ? _container.at( i ) : T{} );
+        return ( i < static_cast<int>(_container.size()) ? _container.at( i ) : T{} );
     }
     inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_qobject_type ) const -> T { return atImpl( i, ItemDispatcherBase::shared_ptr_type{} ); }
 
     inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_type )          const -> T {
-        return ( i < _container.size() ? _container.at( i ) : T{} );
+        return ( i < static_cast<int>(_container.size()) ? _container.at( i ) : T{} );
     }
     inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_qobject_type )  const -> T { return atImpl( i, ItemDispatcherBase::weak_ptr_type{} ); }
 
@@ -292,9 +292,14 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::unsupported_type ) noexcept  -> void {}
     inline auto appendImpl( const T&, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
-        if ( _modelImpl &&
-             item != nullptr )
-            _modelImpl->_qObjectItemMap.insert( { item, item } );
+        if ( item != nullptr ) {
+            connect( item, &QObject::destroyed,
+                     [this](auto o) {
+                            removeAll(qobject_cast<T>(o));
+                        } );
+            if ( _modelImpl  )
+                _modelImpl->_qObjectItemMap.insert( { item, item } );
+        }
     }
     inline auto appendImpl( const T& item, ItemDispatcherBase::q_ptr_type )   noexcept -> void {
         if ( _modelImpl &&
@@ -303,6 +308,8 @@ private:
     }
     inline auto appendImpl( const T&, ItemDispatcherBase::shared_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::shared_ptr_qobject_type ) noexcept -> void {
+        // Note: deleted() signal of item is not monitored since calling delete on a std::shared_ptr manager
+        // pointer throw a system exception anyway (at least on linux...)
         if ( _modelImpl &&
              item )
             _modelImpl->_qObjectItemMap.insert( { item.get(), item } );
@@ -310,7 +317,7 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::weak_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::weak_ptr_qobject_type )   noexcept -> void {
         if ( _modelImpl &&
-             !item.expired() )
+             !item.expired() ) // FIXME add destroyed monitoring support here
             _modelImpl->_qObjectItemMap.insert( { item.lock().get(), item } );
     }
 
@@ -323,7 +330,8 @@ public:
         if ( itemIndex < 0 )
             return;
         if ( _model ) {
-            // FIXME: buggy, we should iterate until indexOf is -1 ....
+            // FIXME: Model updating is actually quite buggy: removeAll might remove
+            // items at multiple index, but model update is requested only for itemIndex...
             fwdBeginRemoveRows( QModelIndex{},
                                 static_cast<int>(itemIndex),
                                 static_cast<int>(itemIndex) );

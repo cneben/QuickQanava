@@ -12,4 +12,3 @@ HEADERS +=  $$PWD/qcmContainerModel.h       \
 
 OTHER_FILES +=  $$PWD/QuickContainers
 
-RESOURCES   +=  $$PWD/QuickContainers.qrc

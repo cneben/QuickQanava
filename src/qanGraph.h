@@ -319,7 +319,7 @@ public:
     using WeakNode          = GTpoGraph::WeakNode;
     using SharedNode        = GTpoGraph::SharedNode;
 
-    //! Proxy for GTpo graph insertNode().s
+    //! Proxy for GTpo graph insertNode().
     auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return GTpoGraph::insertNode(node); }
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
@@ -723,6 +723,14 @@ private:
 protected:
     //! Create a dock item from an existing dock item delegate.
     QPointer<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Node auto-positioning *///----------------------------------------
+    //@{
+public:
+    //! Auto-position nodes using Graphviz's dot layout.
+    Q_INVOKABLE void autoPositionNodes() noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

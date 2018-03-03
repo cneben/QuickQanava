@@ -36,7 +36,7 @@
 #include "../../src/QuickQanava.h"
 
 // Qt headers
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQuickStyle>
 
 // Topology sample headers
@@ -47,7 +47,7 @@ using namespace qan;
 
 int	main( int argc, char** argv )
 {
-    QApplication app( argc, argv );
+    QGuiApplication app( argc, argv );
     app.setQuitOnLastWindowClosed( true );
     QQuickStyle::setStyle("Material");
 

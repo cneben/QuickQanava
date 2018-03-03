@@ -15,8 +15,10 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.9.3-blue.svg) |
+![](https://img.shields.io/badge/version-0.9.4-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
+
+**WARNING** master is under heavy maintenance, please delay your forks/clones (20180303)
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
@@ -83,23 +85,21 @@ cd QuickQanava
 
 3. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
   
-## Roadmap
+## Roadmap / Changelog
 
-  - **v0.9.2:**	 
-    - [X] Add smarter heuristics for edges's Bezier curve control points generation.
-    - [X] Integrate Qt Quick Shapes 1.0.
-    - [X] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
-  - **v0.9.3:**
-    - [X] Add complete port/dock support.
   - **v0.9.4:**	 
+	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
+		- [X] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
+		- [X] Add support for standard library containers.
+		- [X] Increase test coverage.
+    - [X] Fix port remove issues.
+    - [X] Add full CMake support..    
+  - **v0.9.5:**	 
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
-		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-		- [ ] Add support for standard library containers.
-		- [ ] Increase test coverage.
   - **v1.0.0: Advanced edge visualization**	 
     - GTpo (Configurable topology library):
+      - [ ] Redesign using adjacency matrix, immutable and full move semantic support.
 	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
 
@@ -108,5 +108,5 @@ License
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017 Delia Stratégie
+Copyright (c) 2017 BA
 

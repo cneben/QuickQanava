@@ -58,10 +58,11 @@ public:
     explicit AbstractContainer( QObject* parent = nullptr ) : QObject{parent} { /* Nil */ }
     virtual ~AbstractContainer( ) { /* Nil */ }
 
-    // FIXME Ro6
     AbstractContainer( const AbstractContainer& ) = delete;
+    AbstractContainer& operator=(const AbstractContainer&) = delete;
+    AbstractContainer( AbstractContainer&& ) = delete;
 
-    // WARNING: check _model before calling theses fwd methods.
+    // WARNING: _model must have been checked on user side before calling theses fwd methods.
     template <typename... Args>         // std::forward<As>(a)...
     inline void    fwdBeginInsertRows(Args... args) noexcept { _model->fwdBeginInsertRows(std::forward<Args>(args)...); }
     inline void    fwdEndInsertRows() noexcept { _model->fwdEndInsertRows(); }
@@ -89,7 +90,7 @@ public:
 
 protected:
     //! Create a concrete container model list reference for this abstract interface (called once).
-    virtual     void     createModel() { }
+    virtual     void            createModel() { }
 protected:
     mutable QPointer<ContainerModel>    _model;
 };

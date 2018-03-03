@@ -53,6 +53,8 @@ struct ItemDispatcherBase {
     using non_ptr_type              = std::integral_constant<int, 1>;
     using ptr_type                  = std::integral_constant<int, 2>;
     using ptr_qobject_type          = std::integral_constant<int, 3>;
+
+    // Note: Not actually used, extension for later QPointer support
     using q_ptr_type                = std::integral_constant<int, 4>;
 
     using shared_ptr_type           = std::integral_constant<int, 5>;
@@ -65,6 +67,7 @@ struct ItemDispatcherBase {
     inline static constexpr auto debug_type() -> const char* { return "unsupported"; }
 };
 
+// FIXME: Use c++14 template using instead of traits here....
 template <>
 inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::non_ptr_type>() -> const char* { return "non_ptr_type"; }
 
@@ -91,7 +94,7 @@ inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::weak_ptr_qobject_
 
 template <typename Item_type>
 struct ItemDispatcher : public ItemDispatcherBase {
-    // QObject or non copy constructible POD are unsupported
+    // QObject and non copy constructible POD are unsupported
     using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value ||
                                             !std::is_copy_constructible<Item_type>::value,
                                                                                 ItemDispatcherBase::unsupported_type,
@@ -150,10 +153,10 @@ class ContainerModel : public QAbstractListModel
     Q_OBJECT
 public:
     ContainerModel() : QAbstractListModel{nullptr} {}
-    virtual ~ContainerModel() {}
+    virtual ~ContainerModel() override {}
     ContainerModel(const ContainerModel&) = delete;
-
-    // FIXME: Ro6
+    ContainerModel& operator=(const ContainerModel&) = delete;
+    ContainerModel(ContainerModel&&) = delete;
 
     /*! \name Qt Abstract Model Interface *///---------------------------------
     //@{
@@ -215,7 +218,7 @@ protected slots:
     }
     //-------------------------------------------------------------------------
 
-    // FIXME: group doc
+    //-------------------------------------------------------------------------
 public:
     // Necessary to invoke QAbstractModel methods from concrete qcm::Container<>...
     friend class AbstractContainer;
@@ -231,6 +234,7 @@ protected:
 
     inline void    fwdBeginResetModel() noexcept { beginResetModel(); }
     inline void    fwdEndResetModel() noexcept { endResetModel(); }
+    //-------------------------------------------------------------------------
 
     /*! \name QML Container Interface *///-------------------------------------
     //@{
@@ -253,10 +257,6 @@ public:
     Q_INVOKABLE virtual bool        contains(QObject *object) const { return indexOf(object) >= 0; }
     Q_INVOKABLE virtual int         indexOf(QObject* item) const { Q_UNUSED(item); return 0; }
     Q_INVOKABLE virtual bool        clear() const { return false; }
-public:
-    // FIXME: check if this method is _really_ necessary...
-    //! Return the element at the requested container \c index position.
-    //Q_INVOKABLE virtual QVariant    itemAt( int index ) { Q_UNUSED(index); return QVariant{}; }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -269,7 +269,6 @@ public:
         qcm::ContainerModel{},
         _container( container ) { }
     ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
-    // FIXME Ro6
 private:
     Container&    _container;
 
@@ -283,7 +282,7 @@ public:
     }
     virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override {
         if ( index.row() >= 0 &&
-             index.row() < _container.size() ) {
+             index.row() < static_cast<int>(_container.size()) ) {
             if ( role == Qt::DisplayRole ||
                  role == ContainerModel::ItemLabelRole )
                 return dataDisplayRole( index.row(), typename ItemDispatcher<T>::type{} );
@@ -329,7 +328,6 @@ protected:
     }
     inline auto dataDisplayRole( int row, ItemDispatcherBase::shared_ptr_qobject_type ) const -> QVariant {
         QObject* qItem = at( row );
-        //QObject* qItem = item.get();
         monitorItem( qItem );
         return ( qItem != nullptr ? qItem->property( getItemDisplayRole().toLatin1() ) :
                                     QVariant{} );

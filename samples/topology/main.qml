@@ -31,7 +31,6 @@ import QtQuick.Controls.Material 2.1
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-import "qrc:/QuickContainers" as Qps
 
 ApplicationWindow {
     id: window
@@ -183,6 +182,8 @@ ApplicationWindow {
                 menu.open()
             }
             onEdgeRightClicked: {
+                if (!edge)
+                    return
                 var globalPos = edge.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
@@ -546,7 +547,7 @@ ApplicationWindow {
                 textRole: "itemLabel"
             }
         }
-    } // portList
+    } // nodeList
 
     Item {
         id: portList
@@ -615,7 +616,19 @@ ApplicationWindow {
                 }
             }
         }
-    } // nodeList
+    } // portList
+
+    Button {
+        id: autoPosButton
+        anchors.top: portList.bottom
+        anchors.topMargin: 15
+        anchors.left: portList.left
+        width: 110
+        height: 50
+        text: "AutoPos"
+
+        onClicked: topology.autoPositionNodes()
+    }
 
     ColorDialog {
         id: selectionColorDialog
