@@ -98,7 +98,7 @@ void    Selectable::setSelectionItem( QQuickItem* selectionItem ) noexcept
     if ( selectionItem == nullptr )
         return;
     if ( selectionItem != _selectionItem ) {
-        if ( _selectionItem != nullptr ) {      // Clean the old selection item
+        if ( _selectionItem ) {      // Clean the old selection item
             _selectionItem->setParentItem(nullptr); // Force QML garbage collection
             _selectionItem->setEnabled(false);      // Disable and hide item in case it is not
             _selectionItem->setVisible(false);      // immediately destroyed or garbage collected
@@ -111,8 +111,10 @@ void    Selectable::setSelectionItem( QQuickItem* selectionItem ) noexcept
             if ( _selectionItem ) {
                 if ( getSelectable() )
                     _selectionItem->setState( getSelected() ? "SELECTED" : "UNSELECTED" );
-                if ( _target )
+                if ( _target ) {
                     _selectionItem->setParentItem( _target.data() );  // Configure Quick item
+                    _selectionItem->setZ(1.0);
+                }
             }
         }
 
@@ -148,6 +150,7 @@ void    Selectable::configureSelectionItem()
 
         _selectionItem->setX( x );
         _selectionItem->setY( y );
+        _selectionItem->setZ( 1.0 );
         _selectionItem->setWidth( width );
         _selectionItem->setHeight( height );
         _selectionItem->setVisible( true );

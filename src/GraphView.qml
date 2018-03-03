@@ -118,7 +118,7 @@ Qan.AbstractGraphView {
                 nodeResizer.minimumTargetSize = node.item.minimumSize
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
-                nodeResizer.z = node.item.z + 1.
+                nodeResizer.z = node.item.z + 2.    // Using 2.0 because selection item is z is 1.0, we want resizer to stay on top of selection item and ports.
             } else {
                 nodeResizer.target = null
                 nodeResizer.visible = false

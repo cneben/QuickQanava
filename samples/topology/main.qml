@@ -182,6 +182,8 @@ ApplicationWindow {
                 menu.open()
             }
             onEdgeRightClicked: {
+                if (!edge)
+                    return
                 var globalPos = edge.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y

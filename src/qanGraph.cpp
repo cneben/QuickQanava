@@ -432,8 +432,10 @@ QPointer<QQuickItem> Graph::createSelectionItem( QQuickItem* parent ) noexcept
         selectionItem->setState("UNSELECTED");
         selectionItem->setVisible(true);
         QQmlEngine::setObjectOwnership( selectionItem, QQmlEngine::CppOwnership );
-        if (parent != nullptr )
+        if (parent != nullptr ) {
             selectionItem->setParentItem(parent);
+            selectionItem->setZ(1.0);
+        }
         return selectionItem;
     }
     return QPointer<QQuickItem>{nullptr};
@@ -1114,8 +1116,10 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
                 }
                 if ( dockItem != nullptr )
                     portItem->setParentItem(dockItem);
-                else
+                else {
                     portItem->setParentItem(node->getItem());
+                    portItem->setZ(1.5);    // 1.5 because port item should be on top of selection item and under node resizer (selection item z=1.0, resizer z=2.0)
+                }
             }
         }
     }

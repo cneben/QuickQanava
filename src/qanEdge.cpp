@@ -76,7 +76,7 @@ void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 }
 //-----------------------------------------------------------------------------
 
-/* Node Static Factories *///--------------------------------------------------
+/* Edge Static Factories *///--------------------------------------------------
 QQmlComponent*  Edge::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;

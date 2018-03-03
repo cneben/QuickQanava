@@ -32,6 +32,7 @@ import "qrc:/QuickQanava" as Qan
 ColumnLayout {
     id: root
     spacing: 20
+    z: 1.5   // Selection item z=1.0, dock must be on top of selection
     states: [
         State {
             name: "left"
