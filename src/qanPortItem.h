@@ -61,7 +61,7 @@ class PortItem : public qan::NodeItem
     //@{
     Q_OBJECT
 public:
-    //! Node constructor.
+    //! PortItem constructor.
     explicit PortItem( QQuickItem* parent = nullptr );
     virtual ~PortItem();
     PortItem( const PortItem& ) = delete;

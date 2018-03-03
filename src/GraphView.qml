@@ -68,22 +68,33 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
     }
+
     property real maxZ: -1.
+    function    sendToTop(node) {
+        if (node) {
+            if (node.item) {
+                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
+                node.item.z = maxZ + 1;
+            }
+            if ( node.group )
+                updateGroupZ(node.group)
+        }
+    }
+
     onPortClicked: {
         if ( graph &&
              port ) {
-            // FIXME: force node z max update
-                //maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-                //node.item.z = maxZ + 1;
-            // FIXME: force node resizer update
-            // FIXME: factor that code with node clicked
-            if ( graph.connector &&
+            console.log("onPortclicked: port=" + port + typeof(port))
+            if (port.parent)    // Force parent
+                sendToTop(port.parent)             // FIXME: voir si QML support objectType() == Node
+            if ( graph.connector &&                         // BTW: ce serait pas mal de selectionner le noeud également...
                  graph.connectorEnabled )
                 graph.connector.sourcePort = port
         } else if ( graph ) {
             graph.connector.visible = false
         }
     }
+
     onPortRightClicked: {
         console.debug("onPortRightClicked(): port=" + port)
     }
@@ -91,10 +102,7 @@ Qan.AbstractGraphView {
     onNodeClicked: {
         if ( graph &&
              node && node.item ) {
-            maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-            node.item.z = maxZ + 1;
-            if ( node.group )
-                updateGroupZ(node.group)
+            sendToTop(node)
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||

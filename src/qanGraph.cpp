@@ -1124,28 +1124,27 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
 
 void    Graph::removePort(qan::Node* node, qan::PortItem* port) noexcept
 {
-    if ( node == nullptr &&
-         node->getItem() == nullptr &&
-         port == nullptr )
+    if ( node == nullptr ||             // PRECONDITION: node must have a graphical FIXME FIXME....
+         node->getItem() == nullptr )
+        return;
+    if ( port == nullptr )              // PRECONDITION: port can't be nullptr
         return;
 
-    qan::NodeItem::PortItems& ports = node->getItem()->getPorts();
+    auto removeConnectEdge = [this, port](auto& edge) {
+        auto edgePtr = edge.lock();
+        if (edgePtr &&
+            edgePtr->getItem() != nullptr &&
+            ( edgePtr->getItem()->getSourceItem() == port ||
+             edgePtr->getItem()->getDestinationItem() == port ))
+            this->removeEdge(edgePtr.get());
+    };
+    std::for_each(node->getInEdges().begin(), node->getInEdges().end(), removeConnectEdge);
+    std::for_each(node->getOutEdges().begin(), node->getOutEdges().end(), removeConnectEdge);
 
-    // TODO: iter only nodes' edges
-    for (const auto &edge : getEdges()) {
-        if (!edge)
-            continue;
-
-        if ( edge->getItem()->getSourceItem() == port ||
-             edge->getItem()->getDestinationItem() == port )
-            // TODO: fix: sometimes some edges remain visible until the node is moved
-            removeEdge(edge.get());
-    }
-
+    auto& ports = node->getItem()->getPorts();
     if (ports.contains(port))
         ports.removeAll(port);
-
-    delete port;
+    port->deleteLater();        // Note: port is owned by ports qcm::Container
 }
 
 void    Graph::qmlSetPortDelegate(QQmlComponent* portDelegate) noexcept

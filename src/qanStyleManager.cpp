@@ -44,12 +44,12 @@
 namespace qan { // ::qan
 
 /* Style Object Management *///------------------------------------------------
-StyleManager::StyleManager( QObject* parent ) :
-    QObject{ parent }
+StyleManager::StyleManager(QObject* parent) :
+    QObject{parent}
 {
 }
 
-StyleManager::~StyleManager( )
+StyleManager::~StyleManager()
 {
     clear();
 }
@@ -66,6 +66,8 @@ void    StyleManager::clear()
 /* Style Management *///-------------------------------------------------------
 void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
 {
+    Q_UNUSED(style);
+    Q_UNUSED(component);
     //qDebug() << "qan::StyleManager::setStylecomponent(): style=" << style << "\tcomponent=" << component;
     // FIXME remove that code...
     /*if ( style != nullptr &&
@@ -81,9 +83,9 @@ QQmlComponent*  StyleManager::getStyleComponent(qan::Style* style) noexcept
     if ( style == nullptr )
         return nullptr;
     auto component = _styleComponentMap.value(style, nullptr);
-    if ( component != nullptr )
-        QQmlEngine::setObjectOwnership(component, QQmlEngine::CppOwnership);
-    return component;
+    if (component)
+        QQmlEngine::setObjectOwnership(component.data(), QQmlEngine::CppOwnership);
+    return component.data();
 }
 
 void    StyleManager::setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle )

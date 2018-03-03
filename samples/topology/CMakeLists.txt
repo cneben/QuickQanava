@@ -1,15 +1,6 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-# Configure Qt
-find_package(Qt5Core)
-find_package(Qt5Widgets)
-find_package(Qt5Gui)
-find_package(Qt5Quick REQUIRED)
-find_package(Qt5Qml)
-find_package(Qt5QuickControls2 REQUIRED)
-set(CMAKE_AUTOMOC ON)
-
 # Require C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,9 +13,18 @@ set( source_files
 
 set (header_files qanTopologySample.h qanFaceNode.h)
 
+# Configure Qt
+find_package(Qt5Core)
+find_package(Qt5Widgets)
+find_package(Qt5Gui)
+find_package(Qt5Quick REQUIRED)
+find_package(Qt5Qml)
+find_package(Qt5QuickControls2 REQUIRED)
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 qt5_wrap_cpp(source_files, header_files)
 qt5_add_resources(RESOURCES topology.qrc)
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )

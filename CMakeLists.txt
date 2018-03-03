@@ -1,7 +1,7 @@
 
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.5.0)
 
-project(QuickQanava)
+project(QuickQanava VERSION 0.9.4 LANGUAGES CXX)
 
 add_subdirectory(GTpo)
 add_subdirectory(QuickContainers)

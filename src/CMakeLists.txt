@@ -3,19 +3,6 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(QuickQanava)
 
-# Configure Qt
-set(CMAKE_AUTOMOC ON)
-find_package(Qt5Core)
-find_package(Qt5Widgets)
-find_package(Qt5Gui)
-find_package(Qt5Quick REQUIRED)
-find_package(Qt5Qml)
-
-# Require C++14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
 set( qan_source_files
     qanGraphView.cpp
     qanUtils.cpp
@@ -69,16 +56,30 @@ set (qan_header_files
         ${CMAKE_CURRENT_SOURCE_DIR}/qanContainerAdapter.h
         ${CMAKE_CURRENT_SOURCE_DIR}/qanBottomRightResizer.h
 )
+
+# Configure Qt
+set(CMAKE_AUTOMOC ON)
+find_package(Qt5Core 5.10 REQUIRED)
+find_package(Qt5Widgets 5.10 REQUIRED)
+find_package(Qt5Gui 5.10 REQUIRED)
+find_package(Qt5Quick 5.10 REQUIRED)
+find_package(Qt5Qml 5.10 REQUIRED)
+find_package(Qt5QuickControls2 5.10 REQUIRED)
+
 qt5_wrap_cpp(qan_source_files, qan_header_files)
 qt5_add_resources(RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
+
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
+
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(QuickQanava SHARED ${qan_source_files} ${RESOURCES})
 
+# Require C++14
+target_compile_features(QuickQanava PUBLIC cxx_std_14)
+
 target_include_directories(QuickQanava INTERFACE ../GTpo/src)
 target_include_directories(QuickQanava INTERFACE GTpo QuickContainers)
-#target_include_directories(QuickQanava INTERFACE ${qan_header_files})
 target_sources(QuickQanava INTERFACE ${qan_header_files})
-target_link_libraries(QuickQanava GTpo)
-
+target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
 

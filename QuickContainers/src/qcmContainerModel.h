@@ -218,7 +218,7 @@ protected slots:
     }
     //-------------------------------------------------------------------------
 
-    // FIXME: group doc
+    //-------------------------------------------------------------------------
 public:
     // Necessary to invoke QAbstractModel methods from concrete qcm::Container<>...
     friend class AbstractContainer;
@@ -234,6 +234,7 @@ protected:
 
     inline void    fwdBeginResetModel() noexcept { beginResetModel(); }
     inline void    fwdEndResetModel() noexcept { endResetModel(); }
+    //-------------------------------------------------------------------------
 
     /*! \name QML Container Interface *///-------------------------------------
     //@{
