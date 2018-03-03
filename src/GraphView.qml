@@ -84,19 +84,17 @@ Qan.AbstractGraphView {
     onPortClicked: {
         if ( graph &&
              port ) {
-            console.log("onPortclicked: port=" + port + typeof(port))
-            if (port.parent)    // Force parent
-                sendToTop(port.parent)             // FIXME: voir si QML support objectType() == Node
-            if ( graph.connector &&                         // BTW: ce serait pas mal de selectionner le noeud également...
-                 graph.connectorEnabled )
+            if (port.node)    // Force port host node on top
+                sendToTop(port.node)
+            if (graph.connector &&
+                graph.connectorEnabled)
                 graph.connector.sourcePort = port
-        } else if ( graph ) {
+        } else if (graph) {
             graph.connector.visible = false
         }
     }
 
     onPortRightClicked: {
-        console.debug("onPortRightClicked(): port=" + port)
     }
 
     onNodeClicked: {
