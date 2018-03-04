@@ -31,6 +31,8 @@ install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
       source /opt/qt510/bin/qt510-env.sh;
+      g++ --version;
+      cmake --version;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew update;
