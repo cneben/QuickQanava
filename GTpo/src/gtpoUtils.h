@@ -40,6 +40,7 @@
 #include <exception>    // std::runtime_error
 #include <memory>       // std::weak_ptr
 #include <iostream>     // std::cout
+#include <utility>      // std::index_sequence / std::make_index_sequence
 
 namespace gtpo { // ::gtpo
 
