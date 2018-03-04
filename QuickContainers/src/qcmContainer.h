@@ -295,7 +295,7 @@ private:
         if ( item != nullptr ) {
             connect( item, &QObject::destroyed,
                      [this](auto o) {
-                            removeAll(qobject_cast<T>(o));
+                            this->removeAll(qobject_cast<T>(o));
                         } );
             if ( _modelImpl  )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
