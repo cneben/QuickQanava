@@ -6,21 +6,21 @@ matrix:
   include:
     - os: linux
       compiler: gcc
+      env: "CXX=g++-5"
+      addons:
+        apt: 
+            sources: 
+                - "ubuntu-toolchain-r-test"
+                - sourceline: "ppa:beineri/opt-qt-5.10.1-trusty"
+            packages: 
+                - cmake
+                - g++-5
+                - qt510base
+                - qt510declarative
+                - qt510graphicaleffects
+                - qt510quickcontrols2
     - os: osx
       compiler: clang
-
-addons:
-  apt:
-    packages:
-      - cmake
-      - g++-5
-      - qt58base
-      - qt58declarative
-      - qt58graphicaleffects
-      - qt58quickcontrols2
-    sources:
-      - ubuntu-toolchain-r-test
-      - sourceline: "ppa:beineri/opt-qt58-trusty"
 
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -30,7 +30,7 @@ before_install:
 install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
-      source /opt/qt58/bin/qt58-env.sh;
+      source /opt/qt510/bin/qt510-env.sh;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew update;
