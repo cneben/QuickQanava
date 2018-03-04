@@ -80,7 +80,8 @@ OTHER_FILES +=  $$PWD/QuickQanava               \
                 $$PWD/StyleEditor.qml           \
                 $$PWD/VisualConnector.qml       \
                 $$PWD/LabelEditor.qml
-CONFIG      += use_graphviz
+
+#CONFIG      += use_graphviz
 use_graphviz {
     DEFINES     += USE_GRAPHVIZ
     unix: CONFIG += link_pkgconfig
