@@ -395,7 +395,7 @@ private:
 
 
 public:
-    virtual bool        append(QObject* object) const {
+    virtual bool        append(QObject* object) const override {
         return appendImpl( object, typename ItemDispatcher<typename Container::Item_type>::type{} );
     }
 
@@ -410,7 +410,7 @@ public:
         return item;
     }
 
-    virtual int         indexOf( QObject* item ) const {
+    virtual int         indexOf( QObject* item ) const override {
         return indexOfImpl( item, typename ItemDispatcher<typename Container::Item_type>::type{} );
     }
 

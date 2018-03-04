@@ -6,15 +6,16 @@ matrix:
   include:
     - os: linux
       compiler: gcc
-      env: "CXX=g++-5"
+      env: 
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
       addons:
         apt: 
             sources: 
-                - "ubuntu-toolchain-r-test"
+                - ubuntu-toolchain-r-test
                 - sourceline: "ppa:beineri/opt-qt-5.10.1-trusty"
             packages: 
                 - cmake
-                - g++-5
+                - g++-6
                 - qt510base
                 - qt510declarative
                 - qt510graphicaleffects
@@ -23,6 +24,7 @@ matrix:
       compiler: clang
 
 before_install:
+  - eval "${MATRIX_EVAL}"
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake;
     fi
