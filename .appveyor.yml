@@ -16,7 +16,7 @@ branches:
 before_build:
   - set PATH=%QTDIR%\bin;%PATH%
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %PLATFORM%
-  - cmake -G "NMake Makefiles" .
+  - qmake
   
 build_script:
   - nmake
