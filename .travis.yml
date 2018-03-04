@@ -31,10 +31,8 @@ before_install:
 
 install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90;
       source /opt/qt510/bin/qt510-env.sh;
-      g++ --version;
-      cmake --version;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew update;
@@ -58,8 +56,11 @@ before_script:
 script:
   - which qmake
   - qmake --version
-  - qmake quickqanava.pro -r
-  - make -j 2
+  - g++ --version
+  - cmake --version
+  - mkdir build
+  - cd build
+  - cmake .. && make -j
 
 notifications:
   email: false
