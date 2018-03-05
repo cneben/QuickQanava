@@ -63,7 +63,7 @@ void    NodeBehaviour::inNodeInserted( WeakNode& weakInNode, const WeakEdge& edg
     auto inNode = weakInNode.lock();
     auto inEdge = edge.lock();
     if ( inNode && inEdge )
-        inNodeInserted( *inNode, *inEdge );
+        inNodeInserted( *qobject_cast<qan::Node*>(inNode.get()), *inEdge );
 }
 
 void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept
@@ -71,7 +71,7 @@ void    NodeBehaviour::inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge
     SharedNode inNode = weakInNode.lock();
     auto inEdge = edge.lock();
     if ( inNode && inEdge )
-        inNodeRemoved( *inNode, *inEdge );
+        inNodeRemoved( *qobject_cast<qan::Node*>(inNode.get()), *inEdge );
 }
 
 void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
@@ -79,7 +79,7 @@ void    NodeBehaviour::outNodeInserted( WeakNode& weakOutNode, const WeakEdge& e
     auto outNode = weakOutNode.lock();
     auto outEdge = edge.lock();
     if ( outNode && outEdge )
-        outNodeInserted( *outNode, *outEdge );
+        outNodeInserted( *qobject_cast<qan::Node*>(outNode.get()), *outEdge );
 }
 
 void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge ) noexcept
@@ -87,7 +87,7 @@ void    NodeBehaviour::outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& ed
     auto outNode = weakOutNode.lock();
     auto outEdge = edge.lock();
     if ( outNode && outEdge )
-        outNodeRemoved( *outNode, *outEdge );
+        outNodeRemoved( *qobject_cast<qan::Node*>(outNode.get()), *outEdge );
 }
 //-----------------------------------------------------------------------------
 

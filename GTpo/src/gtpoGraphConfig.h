@@ -53,7 +53,7 @@ namespace gtpo { // ::gtpo
 template <class Config>
 class GenGraph;
 
-template <class Config, class ConcreteNode>
+template <class Config>
 class GenNode;
 
 template <class Config>
@@ -83,10 +83,10 @@ struct GraphConfig
     //! Define gtpo::GenEdge base class.
     using EdgeBase  = Empty;
     //! Define gtpo::GenGroup base class.
-    //using GroupBase = Empty;
+    using GroupBase = Empty;
 
     using FinalGroup        = gtpo::GenGroup<GraphConfig>;
-    using FinalNode         = gtpo::GenNode<GraphConfig, FinalGroup>;
+    using FinalNode         = gtpo::GenNode<GraphConfig>;
     using FinalEdge         = gtpo::GenEdge<GraphConfig>;
     using FinalGroupEdge    = gtpo::GenGroupEdge<GraphConfig>;
 

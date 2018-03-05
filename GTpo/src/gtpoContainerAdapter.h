@@ -66,9 +66,9 @@ struct std_container_adapter< std::vector<T> > {
 
 template < typename T >
 struct std_container_adapter< std::vector<std::shared_ptr<T>> > {
-    static void             insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
-    static constexpr void   insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const std::shared_ptr<T>& t, std::vector<std::shared_ptr<T>>& c )
+    inline static void          insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
+    static constexpr void       insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
+    inline static void          remove( const std::shared_ptr<T>& t, std::vector<std::shared_ptr<T>>& c )
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
@@ -79,9 +79,9 @@ struct std_container_adapter< std::vector<std::shared_ptr<T>> > {
 
 template < typename T >
 struct std_container_adapter< std::vector<std::weak_ptr<T>> > {
-    static void             insert( std::weak_ptr<T> t, std::vector<std::weak_ptr<T>>& c ) { c.emplace_back( t ); }
+    inline static void      insert( std::weak_ptr<T> t, std::vector<std::weak_ptr<T>>& c ) { c.emplace_back( t ); }
     static constexpr void   insert( std::weak_ptr<T> t, std::vector<std::weak_ptr<T>>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const std::weak_ptr<T>& t, std::vector<std::weak_ptr<T>>& c )
+    inline static void      remove( const std::weak_ptr<T>& t, std::vector<std::weak_ptr<T>>& c )
     {
         c.erase( std::remove_if(c.begin(), c.end(), [=](const std::weak_ptr<T>& wp){
             return gtpo::compare_weak_ptr( wp, t );
@@ -98,9 +98,9 @@ struct std_container_adapter< std::vector<std::weak_ptr<T>> > {
 
 template < typename T >
 struct std_container_adapter< std::list<T> > {
-    static void             insert( T t, std::list<T>& c ) { c.emplace_back( t ); }
-    static constexpr void   insert( T t, std::list<T>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const T& t, std::list<T>& c )
+    inline static void             insert( T t, std::list<T>& c ) { c.emplace_back( t ); }
+    inline static constexpr void   insert( T t, std::list<T>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const T& t, std::list<T>& c )
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
@@ -108,9 +108,9 @@ struct std_container_adapter< std::list<T> > {
 
 template < typename T >
 struct std_container_adapter< std::list<std::shared_ptr<T>> > {
-    static void             insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
-    static constexpr void   insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const std::shared_ptr<T>& t, std::list<std::shared_ptr<T>>& c )
+    inline static void             insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
+    inline static constexpr void   insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const std::shared_ptr<T>& t, std::list<std::shared_ptr<T>>& c )
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
@@ -118,30 +118,30 @@ struct std_container_adapter< std::list<std::shared_ptr<T>> > {
 
 template < typename T >
 struct std_container_adapter< std::set<T> > {
-    static void             insert( T t, std::set<T>& c ) { c.insert( t ); }
-    static constexpr void   insert( T t, std::set<T>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const T& t, std::set<T>& c ) { c.erase(t); }
+    inline static void             insert( T t, std::set<T>& c ) { c.insert( t ); }
+    inline static constexpr void   insert( T t, std::set<T>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const T& t, std::set<T>& c ) { c.erase(t); }
 };
 
 template < typename T >
 struct std_container_adapter< std::set<std::shared_ptr<T>> > {
-    static void             insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c ) { c.insert( t ); }
-    static constexpr void   insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const std::shared_ptr<T>& t, std::set<std::shared_ptr<T>>& c ) { c.erase(t); }
+    inline static void             insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c ) { c.insert( t ); }
+    inline static constexpr void   insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const std::shared_ptr<T>& t, std::set<std::shared_ptr<T>>& c ) { c.erase(t); }
 };
 
 template < typename T >
 struct std_container_adapter< std::unordered_set<T> > {
-    static void             insert( T t, std::unordered_set<T>& c ) { c.insert( t ); }
-    static constexpr void   insert( T t, std::unordered_set<T>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const T& t, std::unordered_set<T>& c ) { c.erase(t); }
+    inline static void             insert( T t, std::unordered_set<T>& c ) { c.insert( t ); }
+    inline static constexpr void   insert( T t, std::unordered_set<T>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const T& t, std::unordered_set<T>& c ) { c.erase(t); }
 };
 
 template < typename T >
 struct std_container_adapter< std::unordered_set<std::shared_ptr<T>> > {
-    static void             insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c ) { c.insert( t ); }
-    static constexpr void   insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
-    static void             remove( const std::shared_ptr<T>& t, std::unordered_set<std::shared_ptr<T>>& c ) { c.erase(t); }
+    inline static void             insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c ) { c.insert( t ); }
+    inline static constexpr void   insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
+    inline static void             remove( const std::shared_ptr<T>& t, std::unordered_set<std::shared_ptr<T>>& c ) { c.erase(t); }
 };
 
 } // ::gtpo

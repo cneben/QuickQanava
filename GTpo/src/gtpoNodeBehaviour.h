@@ -40,7 +40,7 @@
 
 namespace gtpo { // ::gtpo
 
-template < class Config, class ConcreteNode >
+template < class Config >
 class GenNode;
 
 template < class Config >
@@ -58,8 +58,8 @@ public:
     NodeBehaviour( const NodeBehaviour& ) = delete;
     NodeBehaviour& operator=( const NodeBehaviour& ) = delete;
 
-    using WeakNode          = typename GenNode<Config, typename Config::FinalNode>::Weak;
-    using SharedNode        = typename GenNode<Config, typename Config::FinalNode>::Shared;
+    using WeakNode          = typename GenNode<Config>::Weak;
+    using SharedNode        = typename GenNode<Config>::Shared;
     using SharedNodes       = typename Config::template NodeContainer< SharedNode >;
     using WeakNodesSearch   = typename Config::template SearchContainer< WeakNode >;
     using WeakEdge          = typename GenEdge<Config>::Weak;

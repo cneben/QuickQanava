@@ -412,14 +412,23 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
         delegateChanged = true;
     }
     if ( delegateChanged ) {  // Update all existing delegates...
-        auto updateSelectionItem = [this]( auto& primitive ) -> void {
-        if ( primitive != nullptr &&
-             primitive->getItem() &&
-             primitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
-                primitive->getItem()->setSelectionItem(this->createSelectionItem(primitive->getItem()));
+        // Note: It could be done in a more more 'generic' way!
+        auto updateNodeSelectionItem = [this]( auto& primitive ) -> void {
+            auto finalPrimitive = qobject_cast<qan::Node*>(primitive.get());
+            if ( finalPrimitive != nullptr &&
+                 finalPrimitive->getItem() &&
+                 finalPrimitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
+                    finalPrimitive->getItem()->setSelectionItem(this->createSelectionItem(finalPrimitive->getItem()));
         };
-        std::for_each(getGroups().begin(), getGroups().end(), updateSelectionItem);
-        std::for_each(getNodes().begin(), getNodes().end(), updateSelectionItem);
+        auto updateGroupSelectionItem = [this]( auto& primitive ) -> void {
+            auto finalPrimitive = qobject_cast<qan::Group*>(primitive.get());
+            if ( finalPrimitive != nullptr &&
+                 finalPrimitive->getItem() &&
+                 finalPrimitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
+                    finalPrimitive->getItem()->setSelectionItem(this->createSelectionItem(finalPrimitive->getItem()));
+        };
+        std::for_each(getGroups().begin(), getGroups().end(), updateGroupSelectionItem);
+        std::for_each(getNodes().begin(), getNodes().end(), updateNodeSelectionItem);
         emit selectionDelegateChanged();
     }
 }
@@ -523,7 +532,8 @@ void    Graph::removeNode( qan::Node* node )
         return;
     WeakNode weakNode;
     try {
-        weakNode = WeakNode{ node->shared_from_this() };
+        weakNode = node->shared_from_this();
+        //weakNode = WeakNode{ node->shared_from_this() };
     } catch ( std::bad_weak_ptr ) { return; }
     if ( _selectedNodes.contains(node) )
         _selectedNodes.removeAll(node);
@@ -717,7 +727,7 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
 {
     _styleManager.setStyleComponent(&style, &edgeComponent);
     auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
-    // FIXME: a leak miht occurs if qobject_cast fails, but createFromComponent() return a non nullptr object...
+    // FIXME: a leak might occurs if qobject_cast fails, but createFromComponent() return a non nullptr object...
     if ( edgeItem == nullptr ) {
         qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
         return false;
@@ -822,7 +832,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
-    return GTpoGraph::hasGroup( WeakGroup{group->shared_from_this()} );
+    return GTpoGraph::hasGroup( WeakGroup{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
 }
 
 auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transformPosition ) noexcept(false) -> void
@@ -830,7 +840,8 @@ auto    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
     if ( group != nullptr &&
          node != nullptr ) {
         try {
-            GTpoGraph::groupNode( group->shared_from_this(), node->shared_from_this() );
+            GTpoGraph::groupNode( std::dynamic_pointer_cast<Group>(group->shared_from_this()),
+                                  node->shared_from_this() );
         } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
         if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
@@ -860,7 +871,8 @@ auto    qan::Graph::ungroupNode( Group* group, qan::Node* node ) noexcept(false)
         try {
             if ( group->getItem() )
                 group->getItem()->ungroupNodeItem(node->getItem());
-            GTpoGraph::ungroupNode( group->shared_from_this(), node->shared_from_this() );
+            GTpoGraph::ungroupNode( std::dynamic_pointer_cast<Group>(group->shared_from_this()),
+                                    node->shared_from_this() );
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
 }
@@ -1128,7 +1140,7 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
 
 void    Graph::removePort(qan::Node* node, qan::PortItem* port) noexcept
 {
-    if ( node == nullptr ||             // PRECONDITION: node must have a graphical FIXME FIXME....
+    if ( node == nullptr ||             // PRECONDITION: node must have a graphical, non visual nodes can't have ports
          node->getItem() == nullptr )
         return;
     if ( port == nullptr )              // PRECONDITION: port can't be nullptr

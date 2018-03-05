@@ -46,6 +46,7 @@
 // GTpo headers
 #include "./gtpoUtils.h"
 #include "./gtpoBehaviour.h"
+#include "./gtpoGraphConfig.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -54,7 +55,7 @@ namespace gtpo { // ::gtpo
 template <class Config>
 class GenGraph;
 
-template <class Config, class ConcreteNode>
+template <class Config>
 class GenNode;
 
 template <class Config>
@@ -75,8 +76,8 @@ class GenEdge : public Config::EdgeBase,
 public:
     using Graph         = GenGraph<Config>;
 
-    using WeakNode      = typename GenNode<Config, typename Config::FinalNode>::Weak;
-    using SharedNode    = typename GenNode<Config, typename Config::FinalNode>::Shared;
+    using WeakNode      = typename GenNode<Config>::Weak;
+    using SharedNode    = typename GenNode<Config>::Shared;
 
     using Weak          = std::weak_ptr<typename Config::FinalEdge>;
     using Shared        = std::shared_ptr<typename Config::FinalEdge>;
@@ -84,9 +85,9 @@ public:
     using SharedEdge    = Shared;
 
     GenEdge() noexcept : Config::EdgeBase{} {}
-    explicit GenEdge( WeakNode& src, WeakNode& dst ) :
+    explicit GenEdge( const WeakNode& src, const WeakNode& dst ) :
         Config::EdgeBase{}, _src{ src }, _dst{ dst } { }
-    explicit GenEdge( WeakNode& src, WeakEdge& hDst ) :
+    explicit GenEdge( const WeakNode& src, const WeakEdge& hDst ) :
         Config::EdgeBase{}, _src{ src }, _hDst{ hDst } { }
     ~GenEdge() {
         if ( _graph != nullptr )
@@ -101,7 +102,7 @@ protected:
     inline const Graph* getGraph() const noexcept { return _graph; }
 private:
     void                setGraph( Graph* graph ) { _graph = graph; }
-public: // FIXME
+public:
     Graph*              _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------

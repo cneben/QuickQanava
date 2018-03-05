@@ -317,7 +317,7 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::weak_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::weak_ptr_qobject_type )   noexcept -> void {
         if ( _modelImpl &&
-             !item.expired() ) // FIXME add destroyed monitoring support here
+             !item.expired() )
             _modelImpl->_qObjectItemMap.insert( { item.lock().get(), item } );
     }
 

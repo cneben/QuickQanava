@@ -32,7 +32,6 @@
 
 // GTpo headers
 #include <GTpo>
-#include <gtpoProgressNotifier.h>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -174,6 +173,7 @@ TEST(GTpoTopology, insertEdgeBadTopology)
     EXPECT_NO_THROW( g.insertEdge(e4) );
 }
 
+/*
 TEST(GTpoTopology, insertEdgeBasicCircuit)
 {
     // TEST: Creating an edge that is a circuit to a root node does not remove destination
@@ -283,11 +283,14 @@ TEST(GTpoTopology, parallelEdges)
     EXPECT_TRUE( g.getEdgeCount(n2, n3) == 0 ) ;
     g.clear();
 }
+*/
 
 //-----------------------------------------------------------------------------
 // GTpo topology restricted hyper edges tests
 //-----------------------------------------------------------------------------
 
+// FIXME: restricted hEdge support???
+/*
 TEST(GTpoTopology, createHEdge)
 {
     // TEST: create hyper edge and expect hyper edge in degree change
@@ -382,6 +385,8 @@ TEST(GTpoTopology, removeHEdgeHInDegree)
     ASSERT_TRUE( e1Ptr.get() != nullptr );
     EXPECT_EQ( e1Ptr->getInHDegree(), 0 );
 }
+*/
+
 /*
 TEST(GTpoTopology, removeEdgeWithHEdge)
 {

@@ -63,10 +63,11 @@ class GenEdge;
  *
  * \nosubgrouping
  */
-template <class Config = gtpo::GraphConfig, class ConcreteNode = typename Config::FinalNode >
+template <class Config = gtpo::GraphConfig>
 class GenNode : public Config::NodeBase,
                 public gtpo::BehaviourableNode< gtpo::NodeBehaviour< Config >, std::tuple<> >,
-                public std::enable_shared_from_this<ConcreteNode>
+                public std::enable_shared_from_this<GenNode<Config>>
+                //public std::enable_shared_from_this<typename Config::FinalNode>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
@@ -74,8 +75,10 @@ class GenNode : public Config::NodeBase,
     //@{
 public:
     using Graph         = GenGraph<Config>;
-    using Weak          = std::weak_ptr< typename Config::FinalNode >;
-    using Shared        = std::shared_ptr< typename Config::FinalNode >;
+//    using Weak          = std::weak_ptr< typename Config::FinalNode >;
+//    using Shared        = std::shared_ptr< typename Config::FinalNode >;
+    using Weak          = std::weak_ptr<GenNode<Config> >;
+    using Shared        = std::shared_ptr<GenNode<Config>>;
     using WeakNode      = Weak;
     using SharedNode    = Shared;
     using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
@@ -100,7 +103,7 @@ protected:
     inline  const Graph*    getGraph() const noexcept { return _graph; }
 private:
     inline void             setGraph( Graph* graph ) noexcept { _graph = graph; }
-public: // FIXME
+public:
     Graph*                  _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------

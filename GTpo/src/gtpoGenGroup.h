@@ -59,10 +59,9 @@ namespace gtpo { // ::gtpo
  * \nosubgrouping
 */
 template <class Config = gtpo::GraphConfig>
-class GenGroup : public gtpo::GenNode<Config, typename Config::FinalGroup>,
+class GenGroup : public gtpo::GenNode<Config>,
                  public gtpo::BehaviourableGroup< gtpo::GroupBehaviour< Config >,
                                                   std::tuple< gtpo::GroupAdjacentEdgesBehaviour< Config > > >
-                                                    //typename Config::GroupBehaviours>
 {
     friend GenGraph<Config>;   // GenGraph need access to setGraph()
 
@@ -83,7 +82,7 @@ public:
     using WeakGroup     = Weak;
     using SharedGroup   = Shared;
 
-    GenGroup() noexcept : gtpo::GenNode<Config, typename Config::FinalGroup>() { }
+    GenGroup() noexcept : gtpo::GenNode<Config>() { }
     ~GenGroup() { /* Nil */ }
     GenGroup( const GenGroup& ) = delete;
     GenGroup& operator=( GenGroup const& ) = delete;
