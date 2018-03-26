@@ -58,27 +58,32 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanGrid.cpp               \
             $$PWD/qanBottomRightResizer.cpp
 
-OTHER_FILES +=  $$PWD/QuickQanava               \
-                $$PWD/PointGrid.qml             \
-                $$PWD/LineGrid.qml              \
-                $$PWD/GraphView.qml             \
-                $$PWD/Graph.qml                 \
-                $$PWD/RectNodeTemplate.qml      \
-                $$PWD/RectNodeBackground.qml    \
-                $$PWD/CanvasNodeTemplate.qml    \
-                $$PWD/Group.qml                 \
-                $$PWD/RectGroupTemplate.qml     \
-                $$PWD/BottomRightResizer.qml    \
-                $$PWD/Node.qml                  \
-                $$PWD/Port.qml                  \
-                $$PWD/HorizontalDock.qml        \
-                $$PWD/VerticalDock.qml          \
-                $$PWD/Edge.qml                  \
-                $$PWD/EdgeTemplate.qml          \
-                $$PWD/SelectionItem.qml         \
-                $$PWD/StyleListView.qml         \
-                $$PWD/StyleEditor.qml           \
-                $$PWD/VisualConnector.qml       \
+OTHER_FILES +=  $$PWD/QuickQanava                   \
+                $$PWD/PointGrid.qml                 \
+                $$PWD/LineGrid.qml                  \
+                $$PWD/GraphView.qml                 \
+                $$PWD/Graph.qml                     \
+                $$PWD/RectNodeTemplate.qml          \
+                $$PWD/RectSolidBackground.qml       \
+                $$PWD/RectSolidShadowBackground.qml \
+                $$PWD/RectSolidGlowBackground.qml   \
+                $$PWD/RectGradientBackground.qml        \
+                $$PWD/RectGradientShadowBackground.qml  \
+                $$PWD/RectGradientGlowBackground.qml    \
+                $$PWD/CanvasNodeTemplate.qml        \
+                $$PWD/Group.qml                     \
+                $$PWD/RectGroupTemplate.qml         \
+                $$PWD/BottomRightResizer.qml        \
+                $$PWD/Node.qml                      \
+                $$PWD/Port.qml                      \
+                $$PWD/HorizontalDock.qml            \
+                $$PWD/VerticalDock.qml              \
+                $$PWD/Edge.qml                      \
+                $$PWD/EdgeTemplate.qml              \
+                $$PWD/SelectionItem.qml             \
+                $$PWD/StyleListView.qml             \
+                $$PWD/StyleEditor.qml               \
+                $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml
 
 #CONFIG      += use_graphviz

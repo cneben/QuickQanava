@@ -56,7 +56,7 @@ Item {
         x: 0; y: 0; z: 3
         visible: !groupItem.collapsed
     }
-    RectNodeBackground {        // Node background and shadow with backOpacity and backRadius support
+    RectSolidBackground {        // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
         anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
         nodeItem: template.groupItem

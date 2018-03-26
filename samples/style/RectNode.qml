@@ -52,7 +52,9 @@ Qan.NodeItem {
         radius: 2; color: "white"
         border.color: Material.accent; border.width: 2
     }
-    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color styleBackColor: style.backColor
+    onStyleBackColorChanged: nodeColor = Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color nodeColor
     property color backColor: Material.background
     LinearGradient {
         anchors.fill: parent

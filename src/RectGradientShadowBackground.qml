@@ -27,23 +27,21 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software. Copyright 2017 Benoit AUTHEMAN.
 //
-// \file	RectNodeBackground.qml
+// \file	RectGradientShadowBackground.qml
 // \author	benoit@destrat.io
-// \date	2017 11 17
+// \date	2018 03 25
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtQuick.Layouts      1.3
-import QtQuick.Controls     2.0
 import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
 
-/*! \brief Node or group background component with backOpacity property support
+/*! \brief Node or group background component with gradient fill, shadow effect and backOpacity style support
  *
  */
 Item {
-    id: nodeBackground
+    id: background
 
     // Public:
     property var    nodeItem: undefined
@@ -53,28 +51,30 @@ Item {
 
     // private:
     // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    property real   shadowMargin: 15
+    property real   shadowOffset : nodeItem && nodeItem.style ? nodeItem.style.effectOffset : 4
+    property real   shadowRadius : nodeItem && nodeItem.style ? nodeItem.style.effectRadius : 4
+    property color  shadowColor  : nodeItem && nodeItem.style ? nodeItem.style.effectColor : Qt.rgba(0.1, 0.1, 0.1)
+    property real   shadowMargin : (shadowRadius + shadowOffset) * 2
 
     Item {
-        id: fakeBackground
+        z: -1   // Effect should be behind edges , docks and connectors...
+        id: effectBackground
         anchors.centerIn: parent
-        layer.enabled: true
         width: nodeItem.width + shadowMargin; height: nodeItem.height + shadowMargin
         visible: false
         Rectangle {
             anchors.centerIn: parent
-            width: nodeItem.width - 1;  height: nodeItem.height - 1
-            radius: nodeItem.style.backRadius
-            color: Qt.rgba(0,0,0,1)
+            width: nodeItem.width - 1.0;  height: nodeItem.height - 2.0 // Reduce rectangle used to generate shadow/glow to
+            radius: nodeItem.style.backRadius                           // avoid aliasing artifacts at high scales.
+            color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             visible: false
             layer.enabled: true
             layer.effect: DropShadow {
-                horizontalOffset: nodeItem.style.shadowRadius
-                verticalOffset: nodeItem.style.shadowRadius
-                radius: 4; samples: 8
-                color: nodeItem.style.shadowColor
-                visible: nodeItem.style.hasShadow
+                horizontalOffset: shadowOffset; verticalOffset: shadowOffset
+                radius: shadowRadius; samples: 8
+                color: shadowColor
+                visible: nodeItem.style.effectEnabled
                 transparentBorder: true
                 cached: false
             }
@@ -87,29 +87,22 @@ Item {
         visible: false
         Rectangle {
             anchors.centerIn: parent
-            width: nodeItem.width + 1;  height: nodeItem.height + 1
+            width: nodeItem.width - 0.5;  height: nodeItem.height - 0.5
             radius: nodeItem.style.backRadius
-            color: Qt.rgba(0,0,0,1)
+            color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
         }
     }
     OpacityMask {
         anchors.centerIn: parent
         width: parent.width + shadowMargin; height: parent.height + shadowMargin
-        source: ShaderEffectSource { sourceItem: fakeBackground; hideSource: false }
+        source: ShaderEffectSource { sourceItem: effectBackground; hideSource: false }
         maskSource: ShaderEffectSource { format: ShaderEffectSource.Alpha; sourceItem: backgroundMask; hideSource: false }
         invert: true
     }
 
-    Rectangle {
-        id: background
-        anchors.fill: parent    // Background follow the content layout implicit size
-        radius: nodeItem.style.backRadius
-        color: backColor
-        border.color: nodeItem.style.borderColor
-        border.width: nodeItem.style.borderWidth
-        antialiasing: true
-        opacity: nodeItem.style.backOpacity
-        // Note: Do not enable layer to avoid aliasing at high scale
+    RectGradientBackground {
+        anchors.fill: parent
+        nodeItem: background.nodeItem
     }
 }

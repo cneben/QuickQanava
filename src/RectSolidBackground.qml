@@ -25,66 +25,34 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software. Copyright 2017 Benoit AUTHEMAN.
 //
-// \file	ImgNode.qml
+// \file	RectSolidBackground.qml
 // \author	benoit@destrat.io
-// \date	2016 02 11
+// \date	2017 11 17
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtQuick.Controls     2.0
-import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
-
 import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
 
-Qan.NodeItem {
-    id: faceNodeItem
-    Layout.preferredWidth: 100
-    Layout.preferredHeight: 125
-    width: Layout.preferredWidth
-    height: Layout.preferredHeight
+/*! \brief Node or group background component with plain solid color backOpacity style support
+ *
+ */
+Rectangle {
+    id: background
 
-    DropShadow {
-        id: backgroundShadow
-        anchors.fill: parent
-        source: image
-        horizontalOffset: faceNodeItem.style.effectRadius
-        verticalOffset: faceNodeItem.style.effectRadius
-        radius: 4; samples: 8
-        color: faceNodeItem.style.effectColor
-        visible: faceNodeItem.style.effectEnabled
-        transparentBorder: true
-    }
-    Pane {
-        z: 2
-        anchors.horizontalCenter: parent.horizontalCenter
-        padding: 1
-        opacity: 0.9
-        RowLayout {
-            Label {
-                Layout.maximumWidth: faceNodeItem.width - 10
-                z: 3
-                text: faceNodeItem.node.label
-                horizontalAlignment: Text.AlignHCenter
-                maximumLineCount: 2; elide: Text.ElideLeft
-            }
-        }
-    }
-    Pane {
-        z: 2
-        padding: 1
-        anchors.left: parent.left; anchors.bottom: parent.bottom;
-        opacity: 0.9
-        Label { text: image.sourceSize.width + "x" + image.sourceSize.height + "px" }
-    }
-    Image {
-        id: image
-        z: 1
-        anchors.fill: parent
-        smooth: true
-        source: faceNodeItem.node.image
-    }
+    // Public:
+    property var    nodeItem: undefined
+
+    //! Back color property, default to style.backColor, but available for user overidde.
+    property color  backColor: nodeItem.style.backColor
+
+    anchors.fill: parent    // Background follow the content layout implicit size
+    radius: nodeItem.style.backRadius
+    color: backColor
+    border.color: nodeItem.style.borderColor
+    border.width: nodeItem.style.borderWidth
+    antialiasing: true
+    opacity: nodeItem.style.backOpacity
+    // Note: Do not enable layer to avoid aliasing at high scale
 }

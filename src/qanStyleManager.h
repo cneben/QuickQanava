@@ -75,7 +75,7 @@ public:
     using StyleComponentMap = QMap< qan::Style*, QPointer<QQmlComponent> >;
 
     Q_INVOKABLE void            setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept;
-    Q_INVOKABLE QQmlComponent*  getStyleComponent(qan::Style* style)noexcept;
+    Q_INVOKABLE QQmlComponent*  getStyleComponent(qan::Style* style) noexcept;
 private:
     StyleComponentMap           _styleComponentMap;
 
@@ -106,15 +106,14 @@ private:
 public:
     using ObjectVectorModel = qcm::Container<QVector, QObject*>;
 
-    // FIXME...
-    /*Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
-    inline QAbstractItemModel*      qmlGetStyles() noexcept { return &_styles; }
-    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }*/
+    Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
+    inline QAbstractItemModel*      qmlGetStyles() noexcept { return _styles.model(); }
+    inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }
 private:
-    //! Styles containers.
-    //ObjectVectorModel               _styles;
+    //! Styles containers (contain all style for both edges and nodes).
+    ObjectVectorModel               _styles;
 public:
-    Q_INVOKABLE qan::Style*         getStyleAt( int s );
+    Q_INVOKABLE qan::Style*         getStyleAt(int s);
     //@}
     //-------------------------------------------------------------------------
 };

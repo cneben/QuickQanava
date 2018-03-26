@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQuickStyle>
 
 // QuickQanava headers

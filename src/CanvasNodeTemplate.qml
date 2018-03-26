@@ -65,13 +65,13 @@ Item {
     DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
-        horizontalOffset: nodeItem.style.shadowRadius
-        verticalOffset: nodeItem.style.shadowRadius
+        horizontalOffset: nodeItem.style.effectRadius
+        verticalOffset: nodeItem.style.effectRadius
         radius: 8.0
         samples: 16
         smooth: true
-        color: nodeItem.style.shadowColor
-        visible: nodeItem.style.hasShadow
+        color: nodeItem.style.effectColor
+        visible: nodeItem.style.effectEnabled
         transparentBorder: true
     }
 

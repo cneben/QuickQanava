@@ -110,7 +110,7 @@ public:
     /*! \brief Node background rectangle border (corner) radius (default to 4.).
      *
      * \note \c backRadius is interpreted as background rectangle border radius when nodes items are
-     * built using Qan.RectNodeTemplate and Qan.RectNodeBackground. When defining custom node
+     * built using Qan.RectNodeTemplate and Qan.RectSolidBackground. When defining custom node
      * items, value can't be interpreted by the user with no limitations.
      */
     Q_PROPERTY( qreal backRadius READ getBackRadius WRITE setBackRadius NOTIFY backRadiusChanged FINAL )
@@ -131,7 +131,7 @@ public:
      * \note \c backOpacity affect node item background, but not it's content or border shadow opacity. Changing
      * node opacity directly is more efficient, but also affect node content and shadows. Property works
      * when using Qan.RectNodeTemplate and Qan.RectGroupTemplate, it could be used in custom node items with no
-     * limitations (Qan.RectNodeBackground could be used to add backOpacity support to custom node delegates).
+     * limitations (Qan.RectSolidBackground could be used to add backOpacity support to custom node delegates).
      *
      */
     Q_PROPERTY( qreal backOpacity READ getBackOpacity WRITE setBackOpacity NOTIFY backOpacityChanged FINAL )
@@ -141,12 +141,42 @@ public:
     inline qreal    getBackOpacity() const noexcept { return _backOpacity; }
 protected:
     //! \copydoc backOpacity
-    qreal           _backOpacity{0.85};
+    qreal           _backOpacity{0.80};
 signals:
     //! \copydoc backOpacity
     void            backOpacityChanged();
 
 public:
+    /*! \brief Define how node background is filled (either with a solid plain color or a gradient), default to solid.
+     *
+     * In FillType::FillGradient, \c baseColor is used at gradient for linear gradient origin, \c backColor
+     * as final color value.
+     *
+     * \note 20180325: Gradient fill orientation is currently fixed from top left to bottom right.
+     * \since 0.9.4
+     */
+    enum class FillType : unsigned int {
+        FillSolid       = 1,
+        FillGradient    = 2
+    };
+    Q_ENUM(FillType)
+
+public:
+    //! \copydoc FillType
+    Q_PROPERTY( FillType fillType READ getFillType WRITE setFillType NOTIFY fillTypeChanged FINAL )
+    //! \copydoc FillType
+    void                setFillType(FillType fillType) noexcept;
+    //! \copydoc FillType
+    inline FillType     getFillType() const noexcept { return _fillType; }
+protected:
+    //! \copydoc FillType
+    FillType            _fillType{FillType::FillSolid};
+signals:
+    //! \copydoc FillType
+    void                fillTypeChanged();
+
+public:
+    //! \brief Node background color (default to white).
     Q_PROPERTY( QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged FINAL )
     void            setBackColor( const QColor& backColor ) noexcept;
     const QColor&   getBackColor() const noexcept { return _backColor; }
@@ -154,6 +184,19 @@ protected:
     QColor          _backColor{Qt::white};
 signals:
     void            backColorChanged();
+
+public:
+    /*! \brief Base color is used as gradient start color when \c fillType is set to FillType::Gradient (default to white).
+     *
+     * \since 0.9.4
+     */
+    Q_PROPERTY( QColor baseColor READ getBaseColor WRITE setBaseColor NOTIFY baseColorChanged FINAL )
+    void            setBaseColor( const QColor& backColor ) noexcept;
+    const QColor&   getBaseColor() const noexcept { return _baseColor; }
+protected:
+    QColor          _baseColor{Qt::white};
+signals:
+    void            baseColorChanged();
 
 public:
     Q_PROPERTY( QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL )
@@ -174,31 +217,62 @@ signals:
     void            borderWidthChanged();
 
 public:
-    Q_PROPERTY( bool hasShadow READ getHasShadow WRITE setHasShadow NOTIFY hasShadowChanged FINAL )
-    void            setHasShadow( bool hasShadow ) noexcept;
-    inline bool     getHasShadow() const noexcept { return _hasShadow; }
-protected:
-    bool            _hasShadow = true;
-signals:
-    void            hasShadowChanged();
+    //! Define what effect should be used when drawing node background (either nothing, a drop shadow or a glow effect).
+    enum class EffectType : unsigned int {
+        EffectNone      = 0,
+        EffectShadow    = 1,
+        EffectGlow      = 2
+    };
+    Q_ENUM(EffectType)
 
 public:
-    Q_PROPERTY( QColor shadowColor READ getShadowColor WRITE setShadowColor NOTIFY shadowColorChanged FINAL )
-    void            setShadowColor( QColor shadowColor ) noexcept;
-    inline QColor   getShadowColor() const noexcept { return _shadowColor; }
+    Q_PROPERTY( EffectType effectType READ getEffectType WRITE setEffectType NOTIFY effectTypeChanged FINAL )
+    void                setEffectType(EffectType effectType) noexcept;
+    inline EffectType   getEffectType() const noexcept { return _effectType; }
 protected:
-    QColor          _shadowColor = QColor{ 0, 0, 0, 127 };
+    EffectType          _effectType{EffectType::EffectShadow};
 signals:
-    void            shadowColorChanged();
+    void                effectTypeChanged();
 
 public:
-    Q_PROPERTY( qreal shadowRadius READ getShadowRadius WRITE setShadowRadius NOTIFY shadowRadiusChanged FINAL )
-    void            setShadowRadius( qreal shadowRadius ) noexcept;
-    inline qreal    getShadowRadius() const noexcept { return _shadowRadius; }
+    Q_PROPERTY( bool effectEnabled READ getEffectEnabled WRITE setEffectEnabled NOTIFY effectEnabledChanged FINAL )
+    void            setEffectEnabled( bool effectEnabled ) noexcept;
+    inline bool     getEffectEnabled() const noexcept { return _effectEnabled; }
 protected:
-    qreal           _shadowRadius{3.};
+    bool            _effectEnabled = true;
 signals:
-    void            shadowRadiusChanged();
+    void            effectEnabledChanged();
+
+public:
+    Q_PROPERTY( QColor effectColor READ getEffectColor WRITE setEffectColor NOTIFY effectColorChanged FINAL )
+    void            setEffectColor( QColor effectColor ) noexcept;
+    inline QColor   getEffectColor() const noexcept { return _effectColor; }
+protected:
+    QColor          _effectColor = QColor{ 0, 0, 0, 127 };
+signals:
+    void            effectColorChanged();
+
+public:
+    Q_PROPERTY( qreal effectRadius READ getEffectRadius WRITE setEffectRadius NOTIFY effectRadiusChanged FINAL )
+    void            setEffectRadius( qreal effectRadius ) noexcept;
+    inline qreal    getEffectRadius() const noexcept { return _effectRadius; }
+protected:
+    qreal           _effectRadius{3.};
+signals:
+    void            effectRadiusChanged();
+
+public:
+    /*! \brief Effect offset, when effect is a shadow offset is drop shadow offset, no meaning for glow effect.
+     *
+     * Any value is considered valid (even negative offset for drop shadows).
+     */
+    Q_PROPERTY( qreal effectOffset READ getEffectOffset WRITE setEffectOffset NOTIFY effectOffsetChanged FINAL )
+    void            setEffectOffset( qreal effectOFfset ) noexcept;
+    inline qreal    getEffectOffset() const noexcept { return _effectOffset; }
+protected:
+    qreal           _effectOffset{3.};
+signals:
+    void            effectOffsetChanged();
 
 public:
     /*! \brief Node content text font \c pointSize, set to -1 to use system default (default to -1 ie system default size).

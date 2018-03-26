@@ -25,66 +25,58 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software. Copyright 2017 Benoit AUTHEMAN.
 //
-// \file	ImgNode.qml
+// \file	RectGradientBackground.qml
 // \author	benoit@destrat.io
-// \date	2016 02 11
+// \date	2018 03 25
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtQuick.Controls     2.0
-import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
 
-Qan.NodeItem {
-    id: faceNodeItem
-    Layout.preferredWidth: 100
-    Layout.preferredHeight: 125
-    width: Layout.preferredWidth
-    height: Layout.preferredHeight
+/*! \brief Node or group background component with gradient fill, no effect and backOpacity style support
+ *
+ */
+Item {
+    // Public:
+    property var    nodeItem: undefined
 
-    DropShadow {
-        id: backgroundShadow
+    // Note: Using an item to separate render tree of background with a gradient effect and foreground (mainly
+    // rectangle border), to ensure that rectangle border is always rasterized even at high scale and never
+    //  batched/cached with gradient effect SG node...
+
+    anchors.fill: parent
+    Rectangle {
+        id: background
         anchors.fill: parent
-        source: image
-        horizontalOffset: faceNodeItem.style.effectRadius
-        verticalOffset: faceNodeItem.style.effectRadius
-        radius: 4; samples: 8
-        color: faceNodeItem.style.effectColor
-        visible: faceNodeItem.style.effectEnabled
-        transparentBorder: true
-    }
-    Pane {
-        z: 2
-        anchors.horizontalCenter: parent.horizontalCenter
-        padding: 1
-        opacity: 0.9
-        RowLayout {
-            Label {
-                Layout.maximumWidth: faceNodeItem.width - 10
-                z: 3
-                text: faceNodeItem.node.label
-                horizontalAlignment: Text.AlignHCenter
-                maximumLineCount: 2; elide: Text.ElideLeft
+        radius: nodeItem.style.backRadius
+        color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
+        border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
+        antialiasing: true
+        opacity: nodeItem.style.backOpacity
+
+        layer.enabled: true
+        layer.effect:    LinearGradient {
+            start:  Qt.point(0.,0.)
+            end:    Qt.point(background.width, background.height)
+            cached: false
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: nodeItem.style.baseColor }
+                GradientStop { position: 1.0;  color: nodeItem.style.backColor }
             }
         }
     }
-    Pane {
-        z: 2
-        padding: 1
-        anchors.left: parent.left; anchors.bottom: parent.bottom;
-        opacity: 0.9
-        Label { text: image.sourceSize.width + "x" + image.sourceSize.height + "px" }
-    }
-    Image {
-        id: image
-        z: 1
-        anchors.fill: parent
-        smooth: true
-        source: faceNodeItem.node.image
+    Rectangle {
+        id: foreground
+        anchors.fill: parent    // Background follow the content layout implicit size
+        radius: nodeItem.style.backRadius
+        color: Qt.rgba(0, 0, 0, 0)  // Fully transparent
+        border.color: nodeItem.style.borderColor
+        border.width: nodeItem.style.borderWidth
+        antialiasing: true
+        // Note: Do not enable layer to avoid aliasing at high scale
     }
 }

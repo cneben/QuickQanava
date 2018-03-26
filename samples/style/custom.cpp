@@ -42,61 +42,61 @@
 
 QQmlComponent*  CustomRectNode::delegate(QQmlEngine& engine) noexcept
 {
-    static std::unique_ptr<QQmlComponent>   CustomRectNode_delegate;
-    if ( !CustomRectNode_delegate )
-        CustomRectNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RectNode.qml");
-    return CustomRectNode_delegate.get();
+    static std::unique_ptr<QQmlComponent>   customRectNode_delegate;
+    if ( !customRectNode_delegate )
+        customRectNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RectNode.qml");
+    return customRectNode_delegate.get();
 }
 
 qan::NodeStyle* CustomRectNode::style() noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  CustomRectNode_style;
-    if ( !CustomRectNode_style ) {
-        CustomRectNode_style = std::make_unique<qan::NodeStyle>();
-        CustomRectNode_style->setBackColor(QColor("#ff29fc"));
+    static std::unique_ptr<qan::NodeStyle>  customRectNode_style;
+    if ( !customRectNode_style ) {
+        customRectNode_style = std::make_unique<qan::NodeStyle>();
+        customRectNode_style->setBackColor(QColor("#b254fb"));
     }
-    return CustomRectNode_style.get();
+    return customRectNode_style.get();
 }
 
 
 QQmlComponent*  CustomRoundNode::delegate(QQmlEngine& engine) noexcept
 {
-    static std::unique_ptr<QQmlComponent>   CustomRoundNode_delegate;
-    if ( !CustomRoundNode_delegate )
-        CustomRoundNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RoundNode.qml");
-    return CustomRoundNode_delegate.get();
+    static std::unique_ptr<QQmlComponent>   customRoundNode_delegate;
+    if ( !customRoundNode_delegate )
+        customRoundNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/RoundNode.qml");
+    return customRoundNode_delegate.get();
 }
 
 qan::NodeStyle* CustomRoundNode::style() noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  CustomRoundNode_style;
-    if ( !CustomRoundNode_style ) {
-        CustomRoundNode_style = std::make_unique<qan::NodeStyle>();
-        CustomRoundNode_style->setBackColor(QColor("#0770ff"));
+    static std::unique_ptr<qan::NodeStyle>  customRoundNode_style;
+    if ( !customRoundNode_style ) {
+        customRoundNode_style = std::make_unique<qan::NodeStyle>();
+        customRoundNode_style->setBackColor(QColor("#0770ff"));
     }
-    return CustomRoundNode_style.get();
+    return customRoundNode_style.get();
 }
 
 
 QQmlComponent*  CustomEdge::delegate(QQmlEngine& engine) noexcept
 {
-    static std::unique_ptr<QQmlComponent>   CustomEdge_delegate;
-    if ( !CustomEdge_delegate )
-        CustomEdge_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
-    return CustomEdge_delegate.get();
+    static std::unique_ptr<QQmlComponent>   customEdge_delegate;
+    if ( !customEdge_delegate )
+        customEdge_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
+    return customEdge_delegate.get();
 }
 
 qan::EdgeStyle* CustomEdge::style() noexcept
 {
-    static std::unique_ptr<qan::EdgeStyle>  CustomEdge_style;
-    if ( !CustomEdge_style )
-        CustomEdge_style = std::make_unique<qan::EdgeStyle>();
-    return CustomEdge_style.get();
+    static std::unique_ptr<qan::EdgeStyle>  customEdge_style;
+    if ( !customEdge_style )
+        customEdge_style = std::make_unique<qan::EdgeStyle>();
+    return customEdge_style.get();
 }
 
 qan::Node*  CustomGraph::insertRectNode()
 {
-    return qan::Graph::insertNode<CustomRectNode>(nullptr);
+    return qan::Graph::insertNode<CustomRectNode>();
 }
 
 qan::Node*  CustomGraph::insertRoundNode()

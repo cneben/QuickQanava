@@ -49,10 +49,13 @@ Qan.NodeItem {
         id: background
         z: 1
         anchors.fill: parent
-        radius: width / 2; color: "white"
+        radius: width / 2;
         border.color: Material.accent; border.width: 2
+        color: roundNode.style.backColor
     }
-    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color styleBackColor: style.backColor
+    onStyleBackColorChanged: nodeColor = Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color nodeColor
     property color backColor: Material.background
     LinearGradient {
         anchors.fill: parent
@@ -68,6 +71,14 @@ Qan.NodeItem {
                 color: Qt.tint( roundNode.nodeColor, roundNode.backColor )
             }
         }
+    }
+    Rectangle {
+        id: border
+        z: 3
+        anchors.fill: parent
+        radius: width / 2;
+        border.color: Material.accent; border.width: 2
+        color: Qt.rgba(0, 0, 0, 0)
     }
     Label {
         text: roundNode.node ? roundNode.node.label : ""

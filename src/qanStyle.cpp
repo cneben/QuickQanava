@@ -80,11 +80,27 @@ void    NodeStyle::setBackOpacity( qreal backOpacity ) noexcept
     }
 }
 
+void    NodeStyle::setFillType(NodeStyle::FillType fillType) noexcept
+{
+    if ( _fillType != fillType ) {
+        _fillType = fillType;
+        emit fillTypeChanged();
+    }
+}
+
 void    NodeStyle::setBackColor( const QColor& backColor ) noexcept
 {
     if ( _backColor != backColor ) {
         _backColor = backColor;
         emit backColorChanged();
+    }
+}
+
+void    NodeStyle::setBaseColor( const QColor& baseColor ) noexcept
+{
+    if ( _baseColor != baseColor ) {
+        _baseColor = baseColor;
+        emit baseColorChanged();
     }
 }
 
@@ -104,27 +120,46 @@ void    NodeStyle::setBorderWidth( qreal borderWidth ) noexcept
     }
 }
 
-void    NodeStyle::setHasShadow( bool hasShadow ) noexcept
+void    NodeStyle::setEffectType(NodeStyle::EffectType effectType) noexcept
 {
-    if ( _hasShadow != hasShadow ) {
-        _hasShadow = hasShadow;
-        emit hasShadowChanged();
+    if ( _effectType != effectType ) {
+        setEffectEnabled(effectType == EffectType::EffectNone ? false : true);
+        _effectType = effectType;
+        emit effectTypeChanged();
     }
 }
 
-void    NodeStyle::setShadowColor( QColor shadowColor ) noexcept
+void    NodeStyle::setEffectEnabled(bool effectEnabled) noexcept
 {
-    if ( _shadowColor != shadowColor ) {
-        _shadowColor = shadowColor;
-        emit shadowColorChanged();
+    if ( _effectEnabled != effectEnabled ) {
+        _effectEnabled = effectEnabled;
+        emit effectEnabledChanged();
     }
 }
 
-void    NodeStyle::setShadowRadius( qreal shadowRadius ) noexcept
+void    NodeStyle::setEffectColor(QColor effectColor) noexcept
 {
-    if ( !qFuzzyCompare( 1. + _shadowRadius, 1. + shadowRadius ) ) {
-        _shadowRadius = shadowRadius;
-        emit shadowRadiusChanged();
+    if ( _effectColor != effectColor ) {
+        _effectColor = effectColor;
+        emit effectColorChanged();
+    }
+}
+
+void    NodeStyle::setEffectRadius( qreal effectRadius ) noexcept
+{
+    if (effectRadius < 0.0)
+            return;
+    if ( !qFuzzyCompare( 1. + _effectRadius, 1. + effectRadius ) ) {
+        _effectRadius = effectRadius;
+        emit effectRadiusChanged();
+    }
+}
+
+void    NodeStyle::setEffectOffset( qreal effectOffset ) noexcept
+{
+    if ( !qFuzzyCompare( 1. + _effectOffset, 1. + effectOffset ) ) {
+        _effectOffset = effectOffset;
+        emit effectOffsetChanged();
     }
 }
 

@@ -293,10 +293,12 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
         if ( item != nullptr ) {
-            connect( item, &QObject::destroyed,
+            /*connect( item, &QObject::destroyed,
                      [this](auto o) {
+                        if (this->contains(qobject_cast<T>(o))) // Do not remove if item is no longer contained
                             this->removeAll(qobject_cast<T>(o));
                         } );
+                        */
             if ( _modelImpl  )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
         }

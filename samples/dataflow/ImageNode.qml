@@ -52,11 +52,11 @@ Qan.NodeItem {
         id: backgroundShadow
         anchors.fill: parent
         source: image
-        horizontalOffset: imageNodeItem.style.shadowRadius
-        verticalOffset: imageNodeItem.style.shadowRadius
+        horizontalOffset: imageNodeItem.style.effectRadius
+        verticalOffset: imageNodeItem.style.effectRadius
         radius: 4; samples: 8
-        color: imageNodeItem.style.shadowColor
-        visible: imageNodeItem.style.hasShadow
+        color: imageNodeItem.style.effectColor
+        visible: imageNodeItem.style.effectEnabled
         transparentBorder: true
     }
     ComboBox {

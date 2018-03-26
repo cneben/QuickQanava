@@ -45,12 +45,36 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
-    property var            nodeItem: undefined
+    property var            nodeItem : undefined
     default property alias  children : contentLayout.children
 
-    RectNodeBackground {        // Node background and shadow with backOpacity and backRadius support
+    Loader {
         anchors.fill: parent
-        nodeItem: template.nodeItem
+        source: {
+            if ( !nodeItem ||
+                 !nodeItem.style )     // Defaul to solid no effect with unconfigured nodes
+                return "qrc:/QuickQanava/RectSolidBackground.qml";
+            switch ( nodeItem.style.fillType ) {  // Otherwise, select the delegate according to current style configuration
+            case Qan.NodeStyle.FillSolid:
+                switch (nodeItem.style.effectType ) {
+                case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectSolidBackground.qml";
+                case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectSolidShadowBackground.qml";
+                case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectSolidGlowBackground.qml";
+                }
+                break;
+            case Qan.NodeStyle.FillGradient:
+                switch (nodeItem.style.effectType ) {
+                case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectGradientBackground.qml";
+                case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectGradientShadowBackground.qml";
+                case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectGradientGlowBackground.qml";
+                }
+                break;
+            } // case fillType
+        }
+        onItemChanged: {
+            if (item)
+                item.nodeItem = Qt.binding(function() { return template.nodeItem; } );
+        }
     }
     ColumnLayout {
         id: layout
