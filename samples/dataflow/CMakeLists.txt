@@ -22,7 +22,7 @@ find_package(Qt5Qml)
 find_package(Qt5QuickControls2 REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-qt5_wrap_cpp(source_files, header_files)
+#qt5_wrap_cpp(source_files, header_files)
 qt5_add_resources(RESOURCES dataflow.qrc)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -34,5 +34,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_dataflow ${source_files} ${RESOURCES})
 target_include_directories(sample_dataflow PUBLIC QuickQanava Qt5::QuickControls2)
 target_link_libraries(sample_dataflow QuickQanava QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
+
+if(WIN32)
+    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
+    add_custom_command(TARGET sample_dataflow POST_BUILD
+        COMMAND ${WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_FILE:sample_dataflow> $<$<CONFIG:Debug>:--pdb>)
+    add_custom_command(TARGET sample_dataflow POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_dataflow>)
+endif()
+
 
 

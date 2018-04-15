@@ -28,6 +28,7 @@ import QtQuick                   2.8
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
+import QtQuick.Shapes            1.0
 
 import QuickQanava          2.0 as Qan
 import QuickQanava.Samples  1.0

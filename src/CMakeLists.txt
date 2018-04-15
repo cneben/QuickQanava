@@ -66,7 +66,7 @@ find_package(Qt5Quick 5.10 REQUIRED)
 find_package(Qt5Qml 5.10 REQUIRED)
 find_package(Qt5QuickControls2 5.10 REQUIRED)
 
-qt5_wrap_cpp(qan_source_files, qan_header_files)
+#qt5_wrap_cpp(qan_source_files, qan_header_files)
 qt5_add_resources(RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
