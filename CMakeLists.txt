@@ -8,6 +8,8 @@ add_subdirectory(QuickContainers)
 add_subdirectory(src)
 
 option(BUILD_SAMPLES "Build the samples" TRUE)
+option(DEPLOY "Use windeployqt on Windows" FALSE)
+
 if (${BUILD_SAMPLES})
     #add_subdirectory(samples/resizer)
     add_subdirectory(samples/navigable)

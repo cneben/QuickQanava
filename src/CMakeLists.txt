@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.5.0)
 
 project(QuickQanava)
 
@@ -56,6 +56,8 @@ set (qan_header_files
         ${CMAKE_CURRENT_SOURCE_DIR}/qanContainerAdapter.h
         ${CMAKE_CURRENT_SOURCE_DIR}/qanBottomRightResizer.h
 )
+source_group("Headers" FILES ${qan_header_files})
+source_group("Sources" FILES ${qan_source_files})
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
@@ -66,14 +68,17 @@ find_package(Qt5Quick 5.10 REQUIRED)
 find_package(Qt5Qml 5.10 REQUIRED)
 find_package(Qt5QuickControls2 5.10 REQUIRED)
 
-#qt5_wrap_cpp(qan_source_files, qan_header_files)
-qt5_add_resources(RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
+qt5_wrap_cpp(qan_source_files, qan_header_files)
+
+set(CMAKE_AUTORCC ON)
+list(APPEND RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
+#qt5_add_resources(RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/QuickQanava.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_library(QuickQanava SHARED ${qan_source_files} ${RESOURCES})
+add_library(QuickQanava ${qan_source_files} ${RESOURCES})
 
 # Require C++14
 target_compile_features(QuickQanava PUBLIC cxx_std_14)
