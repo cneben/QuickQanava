@@ -63,7 +63,7 @@ namespace qan {  // ::qan
  * \endcode
  *
  * \note Resizer not necessarilly has to be in \c target sibling, you can perfectly define
- * the Fql.BottomRightResizer outside of target item hierarchy, for example to avoid corrupting
+ * the Tpp.BottomRightResizer outside of target item hierarchy, for example to avoid corrupting
  * the target childrenRect property. It is however more efficient to use the resizer as a target
  * child (it is the most common case).
  *
@@ -195,8 +195,25 @@ signals:
 private:
     bool        _autoHideHandler{ false };
 
+public:
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+    Q_PROPERTY( bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY preserveRatioChanged FINAL )
+    void        setPreserveRatio(bool preserveRatio) noexcept;
+    bool        getPreserveRatio() const noexcept { return _preserveRatio; }
+signals:
+    void        preserveRatioChanged();
 private:
-    //QPointer< QQuickItem >  _handler{ nullptr };
+    bool        _preserveRatio{false};
+
+public:
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+    Q_PROPERTY( qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL )
+    void        setRatio(qreal ratio) noexcept;
+    qreal       getRatio() const noexcept { return _ratio; }
+signals:
+    void        ratioChanged();
+private:
+    qreal       _ratio{1.0};
     //@}
     //-------------------------------------------------------------------------
 

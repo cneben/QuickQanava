@@ -107,7 +107,7 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
                     _handler->installEventFilter(this);
                 }
                 else {
-                    qWarning() << "FastQml: fql::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
+                    qWarning() << "qan::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
                     qWarning() << "QML Component status=" << defaultHandlerComponent.status();
                 }
             }
@@ -280,6 +280,23 @@ void    BottomRightResizer::setAutoHideHandler( bool autoHideHandler )
         _handler->setVisible( false );
     _autoHideHandler = autoHideHandler;
     emit autoHideHandlerChanged();
+}
+
+void    BottomRightResizer::setPreserveRatio(bool preserveRatio) noexcept
+{
+    qWarning() << "BottomRightResizer::preserveRatio=" << preserveRatio;
+    if (preserveRatio != _preserveRatio) {
+        _preserveRatio = preserveRatio;
+        emit preserveRatioChanged();
+    }
+}
+
+void    BottomRightResizer::setRatio(qreal ratio) noexcept
+{
+    if (!qFuzzyCompare(1.0 + ratio, 1.0 + ratio)) {
+        _ratio = ratio;
+        emit ratioChanged();
+    }
 }
 //-----------------------------------------------------------------------------
 

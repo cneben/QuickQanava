@@ -176,6 +176,25 @@ signals:
     void            resizableChanged();
 
 public:
+    /*! \brief Set the node "allowed" resizing ratio when visual resizing is enabled with \c resizable (default to -1.).
+     *
+     * Ratio is witdh / height ratio that is allowed for visual resizing operations.
+     *
+     * Ration conservation is disabled if \c ration is < 0.
+     */
+    Q_PROPERTY( qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL )
+    //! \copydoc ratio
+    inline qreal    getRatio() const noexcept { return _ratio; }
+    //! \copydoc ratio
+    void            setRatio(qreal ratio) noexcept;
+protected:
+    //! \copydoc ratio
+    qreal           _ratio{-1.};
+signals:
+    //! \copydoc ratio
+    void            ratioChanged();
+
+public:
     //! Define how the GraphView VisualConnector interact with this node.
     enum class Connectable {
         //! Node is fully visually connectable.

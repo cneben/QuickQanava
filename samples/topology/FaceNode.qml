@@ -1,4 +1,4 @@
-/*
+ /*
  Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -86,5 +86,14 @@ Qan.NodeItem {
         anchors.fill: parent
         smooth: true
         source: faceNodeItem.node.image
+        onSourceSizeChanged: {
+            console.info("onSourceSizeChanged(): w=" + sourceSize.width + "  h=" + sourceSize.height)
+            if ( sourceSize.width > 0 &&
+                 sourceSize.height > 0 ) {
+                faceNodeItem.ratio = sourceSize.width / sourceSize.height;
+                console.info("ratio=" + faceNodeItem.ratio)
+            } else
+                faceNodeItem.ratio = -1.;
+        }
     }
 }
