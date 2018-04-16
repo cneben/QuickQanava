@@ -33,7 +33,7 @@ Qan.AbstractNavigablePreview {
     property var    overlay : overlayItem
 
     //! Color for the visible window rect border (default to red).
-    property var    visibleWindowColor: Qt.rgba(1, 0, 0, 1)
+    property color  visibleWindowColor: Qt.rgba(1, 0, 0, 1)
 
     //! Show or hide the target navigable content as a background image (default to true).
     property alias  backgroundPreviewVisible: sourcePreview.visible

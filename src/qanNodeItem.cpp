@@ -125,6 +125,12 @@ void    NodeItem::setResizable( bool resizable ) noexcept
     }
 }
 
+void    NodeItem::setRatio(qreal ratio) noexcept
+{
+    _ratio = ratio;
+    emit ratioChanged();
+}
+
 void    NodeItem::setConnectable( Connectable connectable ) noexcept
 {
     if ( _connectable != connectable ) {

@@ -65,7 +65,7 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-
+        Q_INIT_RESOURCE(QuickQanava);
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
         qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
 #endif

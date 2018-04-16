@@ -45,6 +45,7 @@ Qan.GraphView {
         Component.onCompleted: {
             var n1 = graph.insertNode()
             n1.label = "Hello World"; n1.item.x=15; n1.item.y= 25
+            n1.item.ratio = 0.4
             var n2 = graph.insertNode()
             n2.label = "Node 2"; n2.item.x=15; n2.item.y= 125
 
