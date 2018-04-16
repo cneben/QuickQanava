@@ -77,7 +77,7 @@ class BottomRightResizer : public QQuickItem
 public:
     //! .
     explicit BottomRightResizer( QQuickItem* parent = nullptr );
-    virtual ~BottomRightResizer( );
+    virtual ~BottomRightResizer() override;
     BottomRightResizer( const BottomRightResizer& ) = delete;
     //@}
     //-------------------------------------------------------------------------
