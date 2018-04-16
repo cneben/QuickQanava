@@ -41,9 +41,6 @@ install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew link qt5 --force;
     fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew linkapps qt5;
-    fi
 
 before_script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
