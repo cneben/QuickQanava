@@ -475,24 +475,21 @@
 <p><img alt="styles" src="./images/topology.png" /></p>
 <h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>v0.9.2:</strong>  <ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Add smarter heuristics for edges's Bezier curve control points generation.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Integrate Qt Quick Shapes 1.0.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.</li>
+<li><strong>v0.9.4:</strong>  <ul class="task-list">
+<li>QuickContainers (Qt/QML observable adapter for STL or Qt containers):<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Redesign QuickContainers: qcm::ContainerModel&lt;&gt; memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Add support for standard library containers.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Increase test coverage.</li>
 </ul>
 </li>
-<li><strong>v0.9.3:</strong><ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Fix port remove issues.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Add full CMake support..    </li>
+</ul>
+</li>
+<li><strong>v0.9.5:</strong><ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add support for direct visual dragging of port items.</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add full support for groups inside group (ie subgraphs).</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Fix current qan::PointGrid bugs and add "snap to grid" support.</li>
-</ul>
-</li>
-<li><strong>v0.9.4:</strong>  <ul>
-<li>QuickContainers (Qt/QML observable adapter for STL or Qt containers):<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Redesign QuickContainers: qcm::ContainerModel&lt;&gt; memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add support for standard library containers.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Increase test coverage.</li>
-</ul>
-</li>
 </ul>
 </li>
 <li><strong>v1.0.0: Advanced edge visualization</strong>  <ul class="task-list">
