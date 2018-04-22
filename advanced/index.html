@@ -1,0 +1,680 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Graph topology library for C++14">
+      
+      
+        <link rel="canonical" href="http://cneben.github.io/QuickQanava/advanced/index.html">
+      
+      
+        <meta name="author" content="Destrat.io">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-0.17.3, mkdocs-material-2.7.0">
+    
+    
+      
+        <title>Advanced use - QuickQanava C++ graph visualization library</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.78aab2dc.css">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.1aa3b519.js"></script>
+    
+    
+      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+      
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
+    
+      <a href="#advanced-use" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="http://cneben.github.io/QuickQanava/" title="QuickQanava C++ graph visualization library" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon">share</i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                QuickQanava C++ graph visualization library
+              </span>
+              <span class="md-header-nav__topic">
+                Advanced use
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+
+  <a href="https://github.com/cneben/QuickQanava" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="drawer">
+    <span class="md-nav__button md-logo">
+      
+        <i class="md-icon">share</i>
+      
+    </span>
+    QuickQanava C++ graph visualization library
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+
+  <a href="https://github.com/cneben/QuickQanava" title="Go to repository" class="md-source" data-md-source="github">
+    
+      <div class="md-source__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <use xlink:href="#github" width="24" height="24"></use>
+        </svg>
+      </div>
+    
+    <div class="md-source__repository">
+      GitHub
+    </div>
+  </a>
+
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../index.html" title="QuickQanava" class="md-nav__link">
+      QuickQanava
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../installation/index.html" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../topology/index.html" title="Topology" class="md-nav__link">
+      Topology
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../styles/index.html" title="Styles" class="md-nav__link">
+      Styles
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../utilities/index.html" title="Utilities" class="md-nav__link">
+      Utilities
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Advanced use
+      </label>
+    
+    <a href="index.html" title="Advanced use" class="md-nav__link md-nav__link--active">
+      Advanced use
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-topology" title="Defining Custom Topology" class="md-nav__link">
+    Defining Custom Topology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#insertion-of-non-visual-content" title="Insertion of non Visual Content" class="md-nav__link">
+    Insertion of non Visual Content
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observation-of-topological-modifications" title="Observation of Topological Modifications" class="md-nav__link">
+    Observation of Topological Modifications
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../samples/index.html" title="Samples" class="md-nav__link">
+      Samples
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../reference/index.html" title="API Reference" class="md-nav__link">
+      API Reference
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../licence/index.html" title="Licence" class="md-nav__link">
+      Licence
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-topology" title="Defining Custom Topology" class="md-nav__link">
+    Defining Custom Topology
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#insertion-of-non-visual-content" title="Insertion of non Visual Content" class="md-nav__link">
+    Insertion of non Visual Content
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observation-of-topological-modifications" title="Observation of Topological Modifications" class="md-nav__link">
+    Observation of Topological Modifications
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="advanced-use">Advanced Use<a class="headerlink" href="#advanced-use" title="Permanent link">&para;</a></h1>
+<h2 id="defining-custom-topology">Defining Custom Topology<a class="headerlink" href="#defining-custom-topology" title="Permanent link">&para;</a></h2>
+<p>QuickQanava topology is described using GTpo library. Topology is modelled using non visual objects modelling node (<a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node.html">qan::Node</a>) connected by directed edges (<a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_edge.html">qan::Edge</a>) eventually grouped in <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_group.html">qan::Group</a>. These non-visual objects (called primitives) are mapped to QQuickItem based visual items. Concrete QQuickItem are generated on demand using QML QQmlComponent objects. </p>
+<p>QuickQanava provide default delegates for all primitives, but custom delegate could be specify by providing an argument for all primitive creation functions: <code class="codehilite">qan::Graph::insertNode()</code>, <code class="codehilite">qan::Graph::insertEdge()</code>, <code class="codehilite">qan::Graph::insertGroup()</code> and their QML counterpart in <code class="codehilite">Qan.Graph</code>. Simple custom delegate mapping is described in <a href="http://www.destrat.io/quickqanava/gettingstarted/index.html#displaying-custom-nodes">QuickStart</a>.</p>
+<p>Primitives classes could be subclassed from c++ to provide specific customization. Mapping between non-visual topology primitive and their QtQuick counterpart is managed trought static singleton factories defined in qan::Node, qan::Edge and qan::Group. Theses factories are automatically called from qan::Graph when a primitive creation request happen: a visual item with a specific style is then automatically created.</p>
+<p>Creation of a custom graph (MyGraph) with custom node (MyNode) and a dedicated visual item (MyNodeItem) could be achieved with the following architecture:</p>
+<p><img alt="Graph Class Diagram" src="../advanced/class-custom-nodes.png" /></p>
+<p>Factories have to be redefined in primitive subclasses:</p>
+<ul>
+<li><code class="codehilite"><span class="k">static</span>  <span class="n">QQmlComponent</span><span class="o">*</span>      <span class="n">delegate</span><span class="p">(</span><span class="n">QQmlEngine</span><span class="o">&amp;</span> <span class="n">engine</span><span class="p">)</span> <span class="k">noexcept</span></code>: Return a (usually singleton) QML component that will be used for primitive visual delegate.</li>
+<li><code class="codehilite"><span class="k">static</span>  <span class="n">qan</span><span class="o">::</span><span class="n">NodeStyle</span><span class="o">*</span>     <span class="n">style</span><span class="p">()</span> <span class="k">noexcept</span></code>: Return a (usually singleton) style used as primitive default style.</li>
+</ul>
+<p>Custom content is then created from a specialized <code class="codehilite">qan::Graph</code> class:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// class MyGraph : public qan::Graph ...</span>
+
+<span class="n">qan</span><span class="o">::</span><span class="n">Node</span><span class="o">*</span> <span class="n">MyGraph</span><span class="o">::</span><span class="n">insertMyNode</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span>
+<span class="hll">  <span class="k">return</span> <span class="n">insertNode</span><span class="o">&lt;</span><span class="n">MyNode</span><span class="o">&gt;</span><span class="p">()</span>
+</span><span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// In a custom MyNode.cpp defining MyNode (inheriting from qan::Node)</span>
+<span class="n">QQmlComponent</span><span class="o">*</span>  <span class="n">MyNode</span><span class="o">::</span><span class="n">delegate</span><span class="p">(</span><span class="n">QQmlEngine</span><span class="o">&amp;</span> <span class="n">engine</span><span class="p">)</span> <span class="k">noexcept</span>
+<span class="p">{</span>
+<span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">QQmlComponent</span><span class="o">&gt;</span>   <span class="n">MyNode_delegate</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">MyNode_delegate</span> <span class="p">)</span>
+            <span class="n">CustomRectNode_delegate</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">QQmlComponent</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">engine</span><span class="p">,</span> <span class="s">&quot;qrc:/MyNode.qml&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">CustomRectNode_delegate</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">qan</span><span class="o">::</span><span class="n">NodeStyle</span><span class="o">*</span> <span class="n">MyNode</span><span class="o">::</span><span class="n">style</span><span class="p">()</span> <span class="k">noexcept</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">qan</span><span class="o">::</span><span class="n">NodeStyle</span><span class="o">&gt;</span>  <span class="n">MyNode_style</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">MyNode_style</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">MyNode_style</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">qan</span><span class="o">::</span><span class="n">NodeStyle</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">MyNode_style</span><span class="o">-&gt;</span><span class="n">setBackColor</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="s">&quot;#ff29fc&quot;</span><span class="p">));</span>      <span class="c1">// Initialize primitive default style here</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">MyNode_style</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<div class="admonition note">
+<p class="admonition-title">Selection, visual connection and navigation will works out of the box for custom primitives (either nodes, edges or groups).</p>
+</div>
+<h2 id="insertion-of-non-visual-content">Insertion of non Visual Content<a class="headerlink" href="#insertion-of-non-visual-content" title="Permanent link">&para;</a></h2>
+<p>Non visual edge or node could be used in graph to model complex topologies or add internal non-visual logic with:</p>
+<ul>
+<li><code class="codehilite"><span class="n">qan</span><span class="o">::</span><span class="n">Graph</span><span class="o">::</span><span class="n">insertNonVisualNode</span><span class="o">&lt;&gt;</span><span class="p">()</span></code>: default graph <code class="codehilite">nodeDelegate</code> will no be used, custom node <code class="codehilite">delegate()</code> may be oeither undefined or return nullptr.</li>
+<li><code class="codehilite"><span class="n">qan</span><span class="o">::</span><span class="n">Graph</span><span class="o">::</span><span class="n">insertNonVisualEdge</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span></code>: Edge could be a regular node -&gt; node edge or an oriented hyper edge node -&gt; edge.</li>
+</ul>
+<h2 id="observation-of-topological-modifications">Observation of Topological Modifications<a class="headerlink" href="#observation-of-topological-modifications" title="Permanent link">&para;</a></h2>
+<p>QuickQanava provide a full observation interface with the qan::Behaviour concept to react when underlying graph topology is modified. All primitives (nodes, edges or groups) could define custom behaviours to observe and react to topological changes.</p>
+<ul>
+<li><code class="codehilite">qan::NodeBehaviour</code>: </li>
+</ul>
+<p>A behaviour could then be registered using: <code class="codehilite">registerBehaviour()</code> method in <code class="codehilite">qan::Node</code>.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;QuickQanava&gt;</span><span class="cp"></span>
+
+<span class="k">class</span> <span class="nc">CustomBehaviour</span> <span class="o">:</span> <span class="k">public</span> <span class="n">qan</span><span class="o">::</span><span class="n">NodeBehaviour</span>
+<span class="p">{</span>
+  <span class="n">Q_OBJECT</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="k">explicit</span> <span class="n">NodeBehaviour</span><span class="p">(</span> <span class="n">QObject</span><span class="o">*</span> <span class="n">parent</span> <span class="o">=</span> <span class="k">nullptr</span> <span class="p">)</span> <span class="o">:</span>
+     <span class="n">qan</span><span class="o">::</span><span class="n">NodeBehaviour</span><span class="p">{</span> <span class="s">&quot;Custom Behaviour&quot;</span><span class="p">,</span> <span class="n">parent</span> <span class="p">}</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="k">virtual</span> <span class="o">~</span><span class="n">NodeBehaviour</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* Nil */</span> <span class="p">}</span> 
+  <span class="n">NodeBehaviour</span><span class="p">(</span> <span class="k">const</span> <span class="n">NodeBehaviour</span><span class="o">&amp;</span> <span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="hll">  <span class="k">virtual</span> <span class="kt">void</span>  <span class="n">inNodeInserted</span><span class="p">(</span> <span class="n">qan</span><span class="o">::</span><span class="n">Node</span><span class="o">&amp;</span> <span class="n">inNode</span><span class="p">,</span> <span class="n">qan</span><span class="o">::</span><span class="n">Edge</span><span class="o">&amp;</span> <span class="n">edge</span> <span class="p">)</span> <span class="k">noexcept</span> <span class="k">override</span><span class="p">;</span>
+</span><span class="hll">  <span class="k">virtual</span> <span class="kt">void</span>  <span class="nf">inNodeRemoved</span><span class="p">(</span> <span class="n">qan</span><span class="o">::</span><span class="n">Node</span><span class="o">&amp;</span> <span class="n">inNode</span><span class="p">,</span> <span class="n">qan</span><span class="o">::</span><span class="n">Edge</span><span class="o">&amp;</span> <span class="n">edge</span> <span class="p">)</span> <span class="k">noexcept</span> <span class="k">override</span><span class="p">;</span>
+</span><span class="p">};</span>
+</pre></div>
+</td></tr></table>
+
+<p>Such a custom node behaviour could be installed with the following code:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="p">{</span>
+  <span class="n">qan</span><span class="o">::</span><span class="n">Graph</span> <span class="n">graph</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">node</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">();</span>
+<span class="hll">  <span class="n">node</span><span class="o">-&gt;</span><span class="n">attachBehaviour</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">CustomBehaviour</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">);</span>
+</span>  <span class="c1">// node will now react when an in node is inserted or removed</span>
+  <span class="k">auto</span> <span class="n">source</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">();</span>
+  <span class="k">auto</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">node</span><span class="p">);</span>   <span class="c1">// CustomBehaviour::Inserted() called</span>
+  <span class="n">graph</span><span class="p">.</span><span class="n">removeEdge</span><span class="p">(</span><span class="n">edge</span><span class="p">);</span>                       <span class="c1">// CustomBehaviour::inNodeRemoved() called</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<p>Methods <code class="codehilite">inNodeInserted()</code> and <code class="codehilite">inNodeRemoved()</code> are called automatically when an in node is inserted or removed on behaviour target node.</p>
+<p>Reference documentation:</p>
+<ul>
+<li><a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node_behaviour.html">qan::NodeBehaviour</a></li>
+<li><a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node.html#af7f55d1894caae050bfdfc31d37166c3">qan::Node::installBehaviour()</a></li>
+</ul>
+                
+                  
+                
+              
+              
+                
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../utilities/index.html" title="Utilities" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Utilities
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../samples/index.html" title="Samples" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Samples
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2017 Delia Stratégie
+          </div>
+        
+        powered by
+        <a href="http://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+  <div class="md-footer-social">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+      <a href="https://twitter.com/QuickQanava" class="md-footer-social__link fa fa-twitter"></a>
+    
+      <a href="https://github.com/cneben" class="md-footer-social__link fa fa-github"></a>
+    
+  </div>
+
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.8eb9be28.js"></script>
+      
+      <script>app.initialize({version:"0.17.3",url:{base:".."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>
