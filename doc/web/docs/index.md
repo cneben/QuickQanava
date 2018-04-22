@@ -25,8 +25,7 @@ QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quick
 
 QuickQanava is primarily developed with Qt >= 5.10 with MSVC2015 and g++5.4. Since 0.9.2, minimal required Qt version is **Qt 5.10**.
 
-+ Project homepage: [http://www.destrat.io/quickqanava](http://www.destrat.io/quickqanava)
-+ Reference documentation: [http://www.destrat.io/qanava/doc/index.html](http://www.destrat.io/qanava/doc/index.html)
++ Project homepage: [http://cneben.github.io/QuickQanava/index.html](http://cneben.github.io/QuickQanava/index.html)
 
 Please refer to [Installation](installation.md) subsection and [Quickstart guide](topology.md) for more information about installing and using QuickQanava.
 

@@ -24,7 +24,7 @@ QuickQanava
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
-QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
+QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
 
@@ -104,6 +104,7 @@ cd QuickQanava
     - [X] Fix port remove issues.
     - [X] Add full CMake support..    
   - **v0.9.5:**	 
+    - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
   - **v1.0.0: Advanced edge visualization**	 
