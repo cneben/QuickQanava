@@ -13,10 +13,12 @@ QuickQanava
 
 [![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows/MSVC 2015 x64/Qt5.10/qmake)
 
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
 ![](https://img.shields.io/badge/version-0.9.4-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
+
+**There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
 **CHANGELOG 20180326:** Add style support for gradient fill and glow effect. Reactivate style management (see style sample).
 
@@ -26,8 +28,15 @@ QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quick
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://www.destrat.io/quickqanava (**updated 20171213**)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20171213**)
++ Project homepage: http://cneben.github.io/QuickQanava/topology/index.html
+
++ [Managing topology documentation](http://cneben.github.io/QuickQanava/topology/index.html)
+  + [Visual node connection](http://cneben.github.io/QuickQanava/topology/index.html#visual-connection-of-nodes)
+  + [Selection](http://cneben.github.io/QuickQanava/topology/index.html#selection)
+  + [Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
++ [Styling](http://cneben.github.io/QuickQanava/styles/index.html)
++ [Advanced use, custom topology](http://cneben.github.io/QuickQanava/advanced/index.html)
+
 
 For any questions, please contact: benoit@destrat.io
 
@@ -47,26 +56,26 @@ Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/
 | :---:       |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif) |
 
-  - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/advanced/index.html#defining-custom-topology)
+  - User Doc:  [QuickStart - Custom Nodes](http://cneben.github.io/QuickQanava/topology/index.html#displaying-custom-nodes)
 
 | Visual Connector       |   
 | :---:                  | 
 ![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-dataflow-short.gif) |
 
-  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/topology/index.html#visual-connection-of-nodes)
-  - Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
+  - User Doc:  [QuickStart - Visual Connector](http://cneben.github.io/QuickQanava/topology/index.html#visual-connection-of-nodes)
+  - Reference documentation: qan::Connector interface and Qan.VisualConnector component
 
 | Groups       | 
 | :---:        | 
 | ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-groups.gif) |
 
-  - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/topology/index.html#using-groups)
+  - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
 
 | Styles       |
 | :---:        | 
 | ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
 
-  - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/styles/index.html#introduction)
+  - User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles/index.html)
 
 ## Dependencies
 

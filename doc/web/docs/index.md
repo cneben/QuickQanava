@@ -43,18 +43,17 @@ Please refer to [Installation](installation.md) subsection and [Quickstart guide
 
 ## Roadmap
 
-  - **v0.9.2:**	 
-    - [X] Add smarter heuristics for edges's Bezier curve control points generation.
-    - [X] Integrate Qt Quick Shapes 1.0.
-    - [X] Remove QuickGeoGL support, QuickQanava will become Qt 5.10 only.
-  - **v0.9.3:**
-    - [ ] Add full support for groups inside group (ie subgraphs).
-    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
   - **v0.9.4:**	 
 	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
-		- [ ] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-		- [ ] Add support for standard library containers.
-		- [ ] Increase test coverage.
+		- [X] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
+		- [X] Add support for standard library containers.
+		- [X] Increase test coverage.
+    - [X] Fix port remove issues.
+    - [X] Add full CMake support..    
+  - **v0.9.5:**
+    - [ ] Add support for direct visual dragging of port items.
+    - [ ] Add full support for groups inside group (ie subgraphs).
+    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
   - **v1.0.0: Advanced edge visualization**	 
     - GTpo (Configurable topology library):
 	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
