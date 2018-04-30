@@ -20,6 +20,7 @@ QuickQanava
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
+**CHANGELOG 20180429:** Major documentation update (see [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html) and [Node Style](http://cneben.github.io/QuickQanava/styles/index.html#node-style).
 **CHANGELOG 20180326:** Add style support for gradient fill and glow effect. Reactivate style management (see style sample).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
@@ -30,11 +31,13 @@ QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (mini
 
 + Project homepage: http://cneben.github.io/QuickQanava/topology/index.html
 
-+ [Managing topology documentation](http://cneben.github.io/QuickQanava/topology/index.html)
-  + [Visual node connection](http://cneben.github.io/QuickQanava/topology/index.html#visual-connection-of-nodes)
-  + [Selection](http://cneben.github.io/QuickQanava/topology/index.html#selection)
-  + [Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
-+ [Styling](http://cneben.github.io/QuickQanava/styles/index.html)
++ [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
++ [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html)
+  + [Ports and Docks](http://cneben.github.io/QuickQanava/nodes/index.html#docks-and-ports)
+  + [Visual node connection](http://cneben.github.io/QuickQanava/edges/index.html#visual-creation-of-edges)
+  + [Selection](http://cneben.github.io/QuickQanava/nodes/index.html#selection)
+  + [Groups](http://cneben.github.io/QuickQanava/nodes/index.html#grouping-nodes)
++ [Styling](http://cneben.github.io/QuickQanava/styles/index.html#node-style)
 + [Advanced use, custom topology](http://cneben.github.io/QuickQanava/advanced/index.html)
 
 
@@ -84,16 +87,40 @@ Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/
 
 ## Building
 
+Get the latest QuickQanava sources:
+
 ```sh
 git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
 ```
-1. Open quickqanava.pro in QtCreator
+
+QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
+
+1. Open _quickqanava.pro_ in QtCreator.
 
 2. Select a kit, build and launch samples.
 
-3. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
-  
+or (CMake > 3.5)
+
+1. Open _CMakeLists.txt_ in QtCreator.
+
+2. In 'Projects' panel, set DBUILD_SAMPLES option to true in CMake configuration panel.
+
+3. Select a kit, build and launch samples.
+
+Or manually using CMake:
+
+```sh
+$ git submodule add https://github.com/cneben/QuickQanava
+$ git submodule update
+$ cd QuickQanava
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE ..
+$ cmake --build .
+# Then run the samples
+```
+
 ## Roadmap / Changelog
 
   - **v0.9.4:**	 
@@ -107,6 +134,8 @@ cd QuickQanava
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+  - **v0.9.6:**
+    - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
   - **v1.0.0: Advanced edge visualization**	 
     - GTpo (Configurable topology library):
       - [ ] Redesign using adjacency matrix, immutable and full move semantic support.

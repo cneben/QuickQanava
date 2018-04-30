@@ -35,7 +35,7 @@ or (CMake > 3.5)
 
 3. Select a kit, build and launch samples.
 
-Or manually using CMAke:
+Or manually using CMake:
 
 ```sh
 $ git submodule add https://github.com/cneben/QuickQanava
