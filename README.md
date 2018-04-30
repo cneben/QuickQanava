@@ -20,8 +20,8 @@ QuickQanava
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
-**CHANGELOG 20180429:** Major documentation update (see [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html) and [Node Style](http://cneben.github.io/QuickQanava/styles/index.html#node-style).
-**CHANGELOG 20180326:** Add style support for gradient fill and glow effect. Reactivate style management (see style sample).
++ **CHANGELOG 20180429:** Major documentation update (see [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html) and [Node Style](http://cneben.github.io/QuickQanava/styles/index.html#node-style).
++ **CHANGELOG 20180326:** Add style support for gradient fill and glow effect. Reactivate style management (see style sample).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
