@@ -13,7 +13,7 @@
         <meta name="description" content="Graph topology library for C++14">
       
       
-        <link rel="canonical" href="http://cneben.github.io/QuickQanava/samples/index.html">
+        <link rel="canonical" href="http://cneben.github.io/QuickQanava/graph/index.html">
       
       
         <meta name="author" content="Destrat.io">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Samples - QuickQanava C++ graph visualization library</title>
+        <title>Graph - QuickQanava C++ graph visualization library</title>
       
     
     
@@ -99,7 +99,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#quickqanava-samples" tabindex="1" class="md-skip">
+      <a href="#graph-topology-and-visualization" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -125,7 +125,7 @@
                 QuickQanava C++ graph visualization library
               </span>
               <span class="md-header-nav__topic">
-                Samples
+                Graph
               </span>
             
           
@@ -264,11 +264,70 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../graph/index.html" title="Graph" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Graph
+      </label>
+    
+    <a href="index.html" title="Graph" class="md-nav__link md-nav__link--active">
       Graph
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-model" title="Data Model" class="md-nav__link">
+    Data Model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickqanava-initialization" title="QuickQanava Initialization" class="md-nav__link">
+    QuickQanava Initialization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" title="Navigation" class="md-nav__link">
+    Navigation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#grid" title="Grid" class="md-nav__link">
+    Grid
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -336,77 +395,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="toc">
-        Samples
-      </label>
-    
-    <a href="index.html" title="Samples" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../samples/index.html" title="Samples" class="md-nav__link">
       Samples
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#custom-nodes-custom" title="Custom Nodes: 'custom'" class="md-nav__link">
-    Custom Nodes: 'custom'
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#navigable-area-navigable" title="Navigable Area: 'navigable'" class="md-nav__link">
-    Navigable Area: 'navigable'
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#groups-management-groups" title="Groups Management: 'groups'" class="md-nav__link">
-    Groups Management: 'groups'
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#style-management-style" title="Style Management: 'style'" class="md-nav__link">
-    Style Management: 'style'
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#topology-sample-topology" title="Topology Sample: 'topology'" class="md-nav__link">
-    Topology Sample: 'topology'
-  </a>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -455,36 +448,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#custom-nodes-custom" title="Custom Nodes: 'custom'" class="md-nav__link">
-    Custom Nodes: 'custom'
+  <a href="#data-model" title="Data Model" class="md-nav__link">
+    Data Model
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigable-area-navigable" title="Navigable Area: 'navigable'" class="md-nav__link">
-    Navigable Area: 'navigable'
+  <a href="#quickqanava-initialization" title="QuickQanava Initialization" class="md-nav__link">
+    QuickQanava Initialization
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#groups-management-groups" title="Groups Management: 'groups'" class="md-nav__link">
-    Groups Management: 'groups'
+  <a href="#navigation" title="Navigation" class="md-nav__link">
+    Navigation
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#style-management-style" title="Style Management: 'style'" class="md-nav__link">
-    Style Management: 'style'
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#topology-sample-topology" title="Topology Sample: 'topology'" class="md-nav__link">
-    Topology Sample: 'topology'
+  <a href="#grid" title="Grid" class="md-nav__link">
+    Grid
   </a>
   
 </li>
@@ -506,33 +492,84 @@
               
                 
                 
-                <h1 id="quickqanava-samples">QuickQanava Samples<a class="headerlink" href="#quickqanava-samples" title="Permanent link">&para;</a></h1>
-<h2 id="custom-nodes-custom">Custom Nodes: 'custom'<a class="headerlink" href="#custom-nodes-custom" title="Permanent link">&para;</a></h2>
-<p>Demonstrate:</p>
-<ul>
-<li>How to define node with custom graphic content using QuickQanava node QML templates using custom delegates and <code class="codehilite">Qan.Graph.insertNode()</code> calls.</li>
-<li>How to use custom Canvas Qt Quick item for drawing node content with <code class="codehilite">Qan.CanvasNodeTemplate</code> component (see <code class="codehilite">DiamonNode.qml</code>).</li>
-<li>How to use existing Qt Quick item controls in QuickQanava nodes (see <code class="codehilite">ControlNode.qml</code>).</li>
-</ul>
-<p><img alt="Custom nodes sample" src="../samples/quickqanava-sample-custom.png" /></p>
-<h2 id="navigable-area-navigable">Navigable Area: 'navigable'<a class="headerlink" href="#navigable-area-navigable" title="Permanent link">&para;</a></h2>
-<p>Demonstrate use of <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_navigable.html"><code class="codehilite">qan::Navigable</code></a>. </p>
-<h2 id="groups-management-groups">Groups Management: 'groups'<a class="headerlink" href="#groups-management-groups" title="Permanent link">&para;</a></h2>
-<p>Demonstrate:</p>
-<ul>
-<li>How to create groups of node using <code class="codehilite">Qan.Graph.insertNode()</code> calls.</li>
-<li>How to interact with groups by catching <code class="codehilite">Qan.Graph.groupClicked()</code> and <code class="codehilite">Qan.Graph.groupRightClicked()</code> signals.</li>
-</ul>
-<p><img alt="Groups sample" src="../samples/quickqanava-sample-groups.png" /></p>
-<h2 id="style-management-style">Style Management: 'style'<a class="headerlink" href="#style-management-style" title="Permanent link">&para;</a></h2>
-<p><img alt="Styles sample" src="../samples/quickqanava-sample-style.png" /></p>
-<h2 id="topology-sample-topology">Topology Sample: 'topology'<a class="headerlink" href="#topology-sample-topology" title="Permanent link">&para;</a></h2>
-<p>Demonstrate:</p>
-<ul>
-<li>How to use <code class="codehilite">Qan.Graph.selectionPolicy</code>.</li>
-<li>How to use custom delegates to visualize nodes and edges in a ListView with <code class="codehilite">Qan.Graph.nodes</code> and <code class="codehilite">Qan.Graph.edges</code> properties.</li>
-</ul>
-<p><img alt="Topology sample" src="../samples/quickqanava-sample-topology.png" /></p>
+                <h1 id="graph-topology-and-visualization">Graph Topology and Visualization<a class="headerlink" href="#graph-topology-and-visualization" title="Permanent link">&para;</a></h1>
+<h2 id="data-model">Data Model<a class="headerlink" href="#data-model" title="Permanent link">&para;</a></h2>
+<p><img alt="Graph Datamodel" src="../graph/graph-datamodel.png" /></p>
+<p>QuickQanava data model enforce a clear separation between description of topology and it's visual representation. Topology is usually defined from C++ or QML using the <code class="codehilite">qan::Graph</code> interface. To keep datamodel simple and efficient, topology is defined in a imperative way in C++ code or in a QML <code class="codehilite">Component.onCompleted()</code> handler. Visual representation of graph topology is then managed with a view, usually in pure QML with <code class="codehilite">Qan.GraphView</code> component. The unique proxy for editing topology is <code class="codehilite">qan::Graph</code> class and it's QML interface <code class="codehilite">Qan.Graph</code>.</p>
+<h2 id="quickqanava-initialization">QuickQanava Initialization<a class="headerlink" href="#quickqanava-initialization" title="Permanent link">&para;</a></h2>
+<p>QuickQanava should be initialized in your c++ main function:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;QuickQanava&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="n">QGuiApplication</span> <span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+    <span class="n">QQuickStyle</span><span class="o">::</span><span class="n">setStyle</span><span class="p">(</span><span class="s">&quot;Material&quot;</span><span class="p">);</span>
+    <span class="n">QQmlApplicationEngine</span> <span class="n">engine</span><span class="p">;</span>
+    <span class="c1">// Or in a custom QQuickView constructor:</span>
+<span class="hll">    <span class="n">QuickQanava</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+</span>    <span class="n">engine</span><span class="p">.</span><span class="n">load</span><span class="p">(</span> <span class="p">...</span> <span class="p">);</span>
+    <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<p>Then, in QML import QuickQanava:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">import</span> <span class="n">QuickQanava</span> <span class="mf">2.0</span> <span class="n">as</span> <span class="n">Qan</span>
+<span class="n">import</span> <span class="s">&quot;qrc:/QuickQanava&quot;</span> <span class="n">as</span> <span class="n">Qan</span>
+</pre></div>
+</td></tr></table></p>
+<p>And create a <code class="codehilite">Qan.Graph</code> component to build a simple directed graph:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+    <span class="nl">id</span><span class="p">:</span> <span class="n">graph</span>
+    <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+    <span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+        <span class="n">n1</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Hello World&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></p>
+<h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h2>
+<p>A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, <code class="codehilite">Qan.Graph</code> component must be defined in the <code class="codehilite">graph</code> property of a <code class="codehilite">Qan.GraphView</code> item:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
+  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+  <span class="nl">navigable</span>   <span class="p">:</span> <span class="nb">true</span>
+<span class="hll">  <span class="nl">graph</span><span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+</span>      <span class="nl">id</span><span class="p">:</span> <span class="n">topology</span>
+    <span class="p">}</span> <span class="c1">// Qan.Graph: topology</span>
+<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
+</pre></div>
+</td></tr></table>
+
+<p>Navigation could be disabled by setting the <code class="codehilite">QanGraph.navigable</code> property to false (it default to true).</p>
+<h2 id="grid">Grid<a class="headerlink" href="#grid" title="Permanent link">&para;</a></h2>
                 
                   
                 
@@ -553,7 +590,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../advanced/index.html" title="Advanced use" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../installation/index.html" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -562,19 +599,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Advanced use
+                Installation
               </span>
             </div>
           </a>
         
         
-          <a href="../reference/index.html" title="API Reference" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../nodes/index.html" title="Nodes" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                API Reference
+                Nodes
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

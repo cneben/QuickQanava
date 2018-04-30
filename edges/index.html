@@ -13,7 +13,7 @@
         <meta name="description" content="Graph topology library for C++14">
       
       
-        <link rel="canonical" href="http://cneben.github.io/QuickQanava/styles/index.html">
+        <link rel="canonical" href="http://cneben.github.io/QuickQanava/edges/index.html">
       
       
         <meta name="author" content="Destrat.io">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Styles - QuickQanava C++ graph visualization library</title>
+        <title>Edges - QuickQanava C++ graph visualization library</title>
       
     
     
@@ -99,7 +99,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#managing-styles" tabindex="1" class="md-skip">
+      <a href="#edges" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -125,7 +125,7 @@
                 QuickQanava C++ graph visualization library
               </span>
               <span class="md-header-nav__topic">
-                Styles
+                Edges
               </span>
             
           
@@ -288,18 +288,6 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../edges/index.html" title="Edges" class="md-nav__link">
-      Edges
-    </a>
-  </li>
-
-    
-      
-      
-      
-
   
 
 
@@ -311,11 +299,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Styles
+        Edges
       </label>
     
-    <a href="index.html" title="Styles" class="md-nav__link md-nav__link--active">
-      Styles
+    <a href="index.html" title="Edges" class="md-nav__link md-nav__link--active">
+      Edges
     </a>
     
       
@@ -329,36 +317,36 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
+  <a href="#creating-edges" title="Creating Edges" class="md-nav__link">
+    Creating Edges
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#defining-styles" title="Defining Styles" class="md-nav__link">
-    Defining Styles
+  <a href="#visual-creation-of-edges" title="Visual creation of edges" class="md-nav__link">
+    Visual creation of edges
   </a>
   
     <nav class="md-nav">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#node-style" title="Node Style" class="md-nav__link">
-    Node Style
+  <a href="#visual-connectors" title="Visual Connectors" class="md-nav__link">
+    Visual Connectors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-connectors" title="Custom Connectors" class="md-nav__link">
+    Custom Connectors
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#material" title="Material" class="md-nav__link">
-    Material
-  </a>
   
 </li>
       
@@ -370,6 +358,18 @@
   
 </nav>
     
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../styles/index.html" title="Styles" class="md-nav__link">
+      Styles
+    </a>
   </li>
 
     
@@ -454,36 +454,36 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
+  <a href="#creating-edges" title="Creating Edges" class="md-nav__link">
+    Creating Edges
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#defining-styles" title="Defining Styles" class="md-nav__link">
-    Defining Styles
+  <a href="#visual-creation-of-edges" title="Visual creation of edges" class="md-nav__link">
+    Visual creation of edges
   </a>
   
     <nav class="md-nav">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#node-style" title="Node Style" class="md-nav__link">
-    Node Style
+  <a href="#visual-connectors" title="Visual Connectors" class="md-nav__link">
+    Visual Connectors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-connectors" title="Custom Connectors" class="md-nav__link">
+    Custom Connectors
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#material" title="Material" class="md-nav__link">
-    Material
-  </a>
   
 </li>
       
@@ -504,100 +504,85 @@
               
                 
                 
-                <h1 id="managing-styles">Managing Styles<a class="headerlink" href="#managing-styles" title="Permanent link">&para;</a></h1>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
-<p><img alt="Style Class Diagram" src="../styles/class-style-manager.png" /></p>
-<h2 id="defining-styles">Defining Styles<a class="headerlink" href="#defining-styles" title="Permanent link">&para;</a></h2>
-<p><img alt="Style Sample" src="../samples/quickqanava3-sample-style.png" /></p>
-<p>Three shortcut context variables are available from QML to access default styles: <code class="codehilite">defaultNodeStyle</code>, <code class="codehilite">defaultEdgeStyle</code>, <code class="codehilite">defaultGroupStyle</code>.</p>
-<p>QuickQanava provide a ready to use visual <code class="codehilite">Qan.StyleListView</code> component for visualizing, editing styles and dragging them visually on existing graph content. </p>
-<h3 id="node-style">Node Style<a class="headerlink" href="#node-style" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th align="center">Description</th>
-<th align="center">Default</th>
-<th align="center">Sample</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code class="codehilite">backRadius</code></td>
-<td align="center">Background rectangle border (corner) radius</td>
-<td align="center"><code class="codehilite">4.0</code></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td><code class="codehilite">backOpacity</code></td>
-<td align="center">Background item opacity</td>
-<td align="center"><code class="codehilite">0.85</code> (85% opaque)</td>
-<td align="center"><img alt="" src="../styles/styles-node-backopacity.png" /> 1.0 opacity and 0.30 opacity</td>
-</tr>
-<tr>
-<td><code class="codehilite">fillType</code></td>
-<td align="center">Background fill (<code class="codehilite">NodeStyle.FillGradient</code> or <code class="codehilite">NodeStyle.FillSolid</code>)</td>
-<td align="center"><code class="codehilite">FillSolid</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-filltype.png" /> <code class="codehilite">fillType=Gradient</code> with <code class="codehilite">baseColor</code> 'violet' and <code class="codehilite">backColor</code> 'blue'</td>
-</tr>
-<tr>
-<td><code class="codehilite">backColor</code></td>
-<td align="center">Background color</td>
-<td align="center"><code class="codehilite">white</code></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td><code class="codehilite">baseColor</code></td>
-<td align="center">Background color used as base (ie top-left) color in gradient fill</td>
-<td align="center"><code class="codehilite">white</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-filltype.png" /> <code class="codehilite">baseColor</code> 'violet' and <code class="codehilite">backColor</code> 'blue'</td>
-</tr>
-<tr>
-<td><code class="codehilite">borderColor</code></td>
-<td align="center">Node border line color</td>
-<td align="center"><code class="codehilite">black</code></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td><code class="codehilite">borderWidth</code></td>
-<td align="center">Node border line width</td>
-<td align="center"><code class="codehilite">1.0</code></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td><code class="codehilite">effectType</code></td>
-<td align="center">Node effect, either <code class="codehilite">EffectNone</code>, <code class="codehilite">EffectShadow</code> (drop shadow) or <code class="codehilite">EffectGlow</code></td>
-<td align="center"><code class="codehilite">Qan.NodeStyle.EffectShadow</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-effectype.png" /> <code class="codehilite">effectType=EffectShadow</code> and <code class="codehilite">EffectGlow</code></td>
-</tr>
-<tr>
-<td><code class="codehilite">effectEnabled</code></td>
-<td align="center">Set to false to disable effect (much more efficient than setting <code class="codehilite">effectType</code> to <code class="codehilite">EffectNone</code></td>
-<td align="center"><code class="codehilite">true</code></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td><code class="codehilite">effectColor</code></td>
-<td align="center">Effect color (ie drop shadow or glow effect color)</td>
-<td align="center"><code class="codehilite">darkgrey</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-effectcolor.png" /> 'violet' drop shadow</td>
-</tr>
-<tr>
-<td><code class="codehilite">effectRadius</code></td>
-<td align="center">Effect radius</td>
-<td align="center"><code class="codehilite">8.0</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-effectradius.png" /> 4.0 and 20.0 drop shadow radius</td>
-</tr>
-<tr>
-<td><code class="codehilite">effectOffset</code></td>
-<td align="center">Effect offset (used only for <code class="codehilite">NodeStyle.EffectShadow</code>)</td>
-<td align="center"><code class="codehilite">4.0</code></td>
-<td align="center"><img alt="" src="../styles/styles-node-effectoffset.png" /> 4.0 and 15.0 drop shadow offset</td>
-</tr>
-</tbody>
-</table>
-<h2 id="material">Material<a class="headerlink" href="#material" title="Permanent link">&para;</a></h2>
-<p>There is easy to use properties shortcuts in <code class="codehilite">Qan.GraphView</code> and <code class="codehilite">Qan.Graph</code> to bind UI elements colors to a Qt Quick Controls 2 theme. The following sample show the minimal necessary binding to support Light and Dark mode when using the Qt Quick Material style:</p>
+                <h1 id="edges">Edges<a class="headerlink" href="#edges" title="Permanent link">&para;</a></h1>
+<h2 id="creating-edges">Creating Edges<a class="headerlink" href="#creating-edges" title="Permanent link">&para;</a></h2>
+<p>Edges are managed from <code class="codehilite">Qan.Graph</code> (QML) or <code class="codehilite">qan::Graph</code> (C++) interface, usually in graph <code class="codehilite">Component.onCompleted()</code> handler:</p>
+<ul>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Edge</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertEdge</span><span class="p">(</span><span class="nx">Qan</span><span class="p">.</span><span class="nx">Node</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Node</span> <span class="nx">dst</span><span class="p">)</span></code>: Insert a directed edge from source node to destination node.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Edge</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">removeEdge</span><span class="p">(</span><span class="nx">Qan</span><span class="p">.</span><span class="nx">Edge</span><span class="p">)</span></code>:</li>
+</ul>
+<p>Connections between nodes could be added from QML using Qan.Graph.insertEdge() function, or from c++ with qan::Graph::insertEdge() method. Edges graphics appearance is configured trought their <code class="codehilite">style</code> property, more information on available edge style option is available in <a href="../styles/index.html">Styles section </a></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>    <span class="c1">// Qan.Graph.Component.onCompleted()</span>
+    <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+    <span class="n">n1</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Hello World&quot;</span><span class="p">;</span> <span class="n">n1</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">x</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span> <span class="n">n1</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">y</span><span class="o">=</span> <span class="mi">50</span>
+    <span class="n">var</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+    <span class="n">n2</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Node 2&quot;</span><span class="p">;</span> <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">;</span> <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">y</span><span class="o">=</span> <span class="mi">125</span>
+
+<span class="hll">    <span class="n">var</span> <span class="n">e</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">);</span>
+</span>    <span class="n">defaultEdgeStyle</span><span class="p">.</span><span class="n">lineType</span> <span class="o">=</span> <span class="n">Qan</span><span class="p">.</span><span class="n">EdgeStyle</span><span class="p">.</span><span class="n">Curved</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<p><img alt="Default Edge" src="../edges/edges-edge.png" /></p>
+<p>Edges appearance could be tuned by changing default styles properties directly from QML with global variables <code class="codehilite">defaultEdgeStyle</code>, see the <a href="../styles/index.html">Style Management</a> section for more options.</p>
+<h2 id="visual-creation-of-edges">Visual creation of edges<a class="headerlink" href="#visual-creation-of-edges" title="Permanent link">&para;</a></h2>
+<h3 id="visual-connectors">Visual Connectors<a class="headerlink" href="#visual-connectors" title="Permanent link">&para;</a></h3>
+<p>QuickQanava allow visual connection of node with the <code class="codehilite">Qan.VisualConnector</code> component. Default visual connector is configured in <code class="codehilite">Qan.Graph</code> component using the following properties:</p>
+<ul>
+<li>
+<p><code class="codehilite">Qan.Graph.connectorEnabled</code> (bool): Set to true to enable visual connection of nodes (default to false).</p>
+</li>
+<li>
+<p><code class="codehilite">Qan.Graph.connectorEdgeColor</code> (color): Set the visual connector preview edge color (useful to have Light/Dark theme support, default to black).</p>
+</li>
+<li>
+<p><code class="codehilite">Qan.Graph.connectorCreateDefaultEdge</code> (bool, default to true): When set to false, default visual connector does not use Qan.Graph.insertEdge() to create edge, but instead emit <code class="codehilite">connectorRequestEdgeCreation()</code> signal to allow user to create custom edge be calling a user defined method on graph (<code class="codehilite">connectorEdgeInserted()</code> is not emitted).</p>
+</li>
+<li>
+<p><code class="codehilite">Qan.Graph.setConnectorSource</code> (node): Select the node that should host the current visual connector.</p>
+</li>
+</ul>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
+  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+  <span class="nl">graph</span> <span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+<span class="hll">    <span class="nl">connectorEnabled</span><span class="p">:</span> <span class="nb">true</span>
+</span>    <span class="nl">connectorEdgeInserted</span><span class="p">:</span> <span class="n">console</span><span class="p">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Edge inserted between &quot;</span> <span class="o">+</span> <span class="n">src</span><span class="p">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot; and  &quot;</span> <span class="o">+</span> <span class="n">dst</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
+    <span class="nl">connectorEdgeColor</span><span class="p">:</span> <span class="s">&quot;violet&quot;</span>
+    <span class="nl">connectorColor</span><span class="p">:</span> <span class="s">&quot;lightblue&quot;</span>
+  <span class="p">}</span> <span class="c1">// Qan.Graph</span>
+<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
+</pre></div>
+</td></tr></table>
+
+<p><img alt="Visual connector configuration" src="../edges/edges-visual-connector-configuration.png" /></p>
+<p>The following notifications callbacks are available:</p>
+<ul>
+<li>
+<p>Signal <code class="codehilite">Qan.Graph.connectorEdgeInserted(edge)</code>: Emitted when the visual connector has been dragged on a destination node or edge to allow specific user configuration on created edge.</p>
+</li>
+<li>
+<p>Signal <code class="codehilite">Qan.Graph.connectorRequestEdgeCreation(src, dst)</code>: Emitted when the visual connector is dragged on a target with <code class="codehilite">createDefaultEdge</code> set to false: allow creation of custom edge (or any other action) by the user. Example:</p>
+</li>
+</ul>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -609,28 +594,26 @@
  9
 10
 11
-12
-13
-14
-15
-16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">import</span> <span class="n">QtQuick</span><span class="p">.</span><span class="n">Controls</span><span class="p">.</span><span class="n">Material</span> <span class="mf">2.1</span>
-<span class="n">import</span> <span class="n">QuickQanava</span>               <span class="mf">2.0</span> <span class="n">as</span> <span class="n">Qan</span>
-<span class="n">import</span> <span class="s">&quot;qrc:/QuickQanava&quot;</span>        <span class="n">as</span> <span class="n">Qan</span>
-
-<span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
-    <span class="nl">resizeHandlerColor</span><span class="p">:</span> <span class="n">Material</span><span class="p">.</span><span class="n">accent</span>
-    <span class="nl">gridThickColor</span><span class="p">:</span> <span class="n">Material</span><span class="p">.</span><span class="n">theme</span> <span class="o">===</span> <span class="n">Material</span><span class="p">.</span><span class="n">Dark</span> <span class="o">?</span> <span class="s">&quot;#4e4e4e&quot;</span> <span class="o">:</span> <span class="s">&quot;#c1c1c1&quot;</span>
-    <span class="nl">topology</span><span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
-        <span class="c1">// ...</span>
-        <span class="nl">selectionColor</span><span class="p">:</span> <span class="n">Material</span><span class="p">.</span><span class="n">accent</span>
-        <span class="nl">connectorColor</span><span class="p">:</span> <span class="n">Material</span><span class="p">.</span><span class="n">accent</span>
-        <span class="nl">connectorEdgeColor</span><span class="p">:</span> <span class="n">Material</span><span class="p">.</span><span class="n">accent</span>
-        <span class="c1">// ...</span>
-    <span class="p">}</span> <span class="c1">// Qan.Graph</span>
-    <span class="c1">// ...</span>
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
+  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
+  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+  <span class="nl">graph</span> <span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+    <span class="nl">id</span><span class="p">:</span> <span class="n">graph</span>
+    <span class="nl">connectorEnabled</span><span class="p">:</span> <span class="nb">true</span>
+    <span class="nl">connectorCreateDefaultEdge</span><span class="p">:</span> <span class="nb">false</span>
+<span class="hll">    <span class="nl">onConnectorRequestEdgeCreation</span><span class="p">:</span> <span class="p">{</span> 
+</span>      <span class="c1">// Do whatever you want here, for example: graph.insertEdge(src, dst)</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="c1">// Qan.Graph</span>
 <span class="p">}</span> <span class="c1">// Qan.GraphView</span>
 </pre></div>
 </td></tr></table>
+
+<p>Preventing the visual connector to be shown for specific nodes (for example to force user to use out port to create topology) is possible by setting the node item <code class="codehilite">Qan.NodeItem.connectable&#39; property to false (See</code>qan::NodeItem::connectable` header documentation).</p>
+<p>Reference documentation: <a href="https://github.com/cneben/QuickQanava/blob/master/src/qanConnector.h">qan::Connector interface</a></p>
+<h3 id="custom-connectors">Custom Connectors<a class="headerlink" href="#custom-connectors" title="Permanent link">&para;</a></h3>
+<p>Default connector component <code class="codehilite">Qan.Graph.connector</code> could be replaced by a user defined <code class="codehilite">Qan.VisualConnector</code> to customize connector behavior in more depth. It is possible to add multiple visuals connectors on the same node, using a connector to generate specific topologies (create edges with different concrete types) or select targets visually. Such an advanced use of custom connectors is demonstrated in 'connector' sample: <a href="https://github.com/cneben/QuickQanava/tree/master/samples/connector">https://github.com/cneben/QuickQanava/tree/master/samples/connector</a></p>
+<p><img alt="Visual connectors" src="../images/sample-connector.gif" /></p>
                 
                   
                 
@@ -651,7 +634,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../edges/index.html" title="Edges" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../nodes/index.html" title="Nodes" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -660,19 +643,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Edges
+                Nodes
               </span>
             </div>
           </a>
         
         
-          <a href="../utilities/index.html" title="Utilities" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../styles/index.html" title="Styles" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Utilities
+                Styles
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

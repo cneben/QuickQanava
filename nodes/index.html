@@ -13,7 +13,7 @@
         <meta name="description" content="Graph topology library for C++14">
       
       
-        <link rel="canonical" href="http://cneben.github.io/QuickQanava/topology/index.html">
+        <link rel="canonical" href="http://cneben.github.io/QuickQanava/nodes/index.html">
       
       
         <meta name="author" content="Destrat.io">
@@ -38,15 +38,17 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.3, mkdocs-material-2.7.0">
+      <meta name="generator" content="mkdocs-0.17.3, mkdocs-material-2.7.3">
     
     
       
-        <title>Topology - QuickQanava C++ graph visualization library</title>
+        <title>Nodes - QuickQanava C++ graph visualization library</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.78aab2dc.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.8d40d89b.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.6079476c.css">
       
     
     
@@ -64,7 +66,9 @@
     
   </head>
   
-    <body dir="ltr">
+    
+    
+    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="amber">
   
     <svg class="md-svg">
       <defs>
@@ -91,11 +95,11 @@
         
       </defs>
     </svg>
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#creating-topology" tabindex="1" class="md-skip">
+      <a href="#defining-nodes" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -121,7 +125,7 @@
                 QuickQanava C++ graph visualization library
               </span>
               <span class="md-header-nav__topic">
-                Topology
+                Nodes
               </span>
             
           
@@ -260,6 +264,18 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href="../graph/index.html" title="Graph" class="md-nav__link">
+      Graph
+    </a>
+  </li>
+
+    
+      
+      
+      
+
   
 
 
@@ -271,11 +287,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Topology
+        Nodes
       </label>
     
-    <a href="index.html" title="Topology" class="md-nav__link md-nav__link--active">
-      Topology
+    <a href="index.html" title="Nodes" class="md-nav__link md-nav__link--active">
+      Nodes
     </a>
     
       
@@ -287,13 +303,6 @@
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#building-a-simple-directed-graph" title="Building a Simple Directed Graph" class="md-nav__link">
-    Building a Simple Directed Graph
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#topology" title="Topology" class="md-nav__link">
@@ -311,22 +320,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#navigation" title="Navigation" class="md-nav__link">
-    Navigation
+  <a href="#docks-and-ports" title="Docks and Ports" class="md-nav__link">
+    Docks and Ports
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#visual-connection-of-nodes" title="Visual connection of nodes" class="md-nav__link">
-    Visual connection of nodes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resizing" title="Resizing" class="md-nav__link">
-    Resizing
+  <a href="#node-resizing" title="Node Resizing" class="md-nav__link">
+    Node Resizing
   </a>
   
 </li>
@@ -344,15 +346,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-groups" title="Using Groups" class="md-nav__link">
-    Using Groups
+  <a href="#defining-custom-nodes" title="Defining Custom Nodes" class="md-nav__link">
+    Defining Custom Nodes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#displaying-custom-nodes" title="Displaying Custom Nodes" class="md-nav__link">
-    Displaying Custom Nodes
+  <a href="#grouping-nodes" title="Grouping Nodes" class="md-nav__link">
+    Grouping Nodes
   </a>
   
 </li>
@@ -365,6 +367,18 @@
   
 </nav>
     
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../edges/index.html" title="Edges" class="md-nav__link">
+      Edges
+    </a>
   </li>
 
     
@@ -461,13 +475,6 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#building-a-simple-directed-graph" title="Building a Simple Directed Graph" class="md-nav__link">
-    Building a Simple Directed Graph
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#topology" title="Topology" class="md-nav__link">
     Topology
   </a>
@@ -483,22 +490,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#navigation" title="Navigation" class="md-nav__link">
-    Navigation
+  <a href="#docks-and-ports" title="Docks and Ports" class="md-nav__link">
+    Docks and Ports
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#visual-connection-of-nodes" title="Visual connection of nodes" class="md-nav__link">
-    Visual connection of nodes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resizing" title="Resizing" class="md-nav__link">
-    Resizing
+  <a href="#node-resizing" title="Node Resizing" class="md-nav__link">
+    Node Resizing
   </a>
   
 </li>
@@ -516,15 +516,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-groups" title="Using Groups" class="md-nav__link">
-    Using Groups
+  <a href="#defining-custom-nodes" title="Defining Custom Nodes" class="md-nav__link">
+    Defining Custom Nodes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#displaying-custom-nodes" title="Displaying Custom Nodes" class="md-nav__link">
-    Displaying Custom Nodes
+  <a href="#grouping-nodes" title="Grouping Nodes" class="md-nav__link">
+    Grouping Nodes
   </a>
   
 </li>
@@ -546,66 +546,13 @@
               
                 
                 
-                <h1 id="creating-topology">Creating Topology<a class="headerlink" href="#creating-topology" title="Permanent link">&para;</a></h1>
-<h2 id="building-a-simple-directed-graph">Building a Simple Directed Graph<a class="headerlink" href="#building-a-simple-directed-graph" title="Permanent link">&para;</a></h2>
-<p>QuickQanava should be initialized in your c++ main function:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;QuickQanava&gt;</span><span class="cp"></span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-    <span class="n">QGuiApplication</span> <span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
-    <span class="n">QQuickStyle</span><span class="o">::</span><span class="n">setStyle</span><span class="p">(</span><span class="s">&quot;Material&quot;</span><span class="p">);</span>
-    <span class="n">QQmlApplicationEngine</span> <span class="n">engine</span><span class="p">;</span>
-    <span class="c1">// Or in a custom QQuickView constructor:</span>
-<span class="hll">    <span class="n">QuickQanava</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
-</span>    <span class="n">engine</span><span class="p">.</span><span class="n">load</span><span class="p">(</span> <span class="p">...</span> <span class="p">);</span>
-    <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-
-<p>Then, in QML import QuickQanava:
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">import</span> <span class="n">QuickQanava</span> <span class="mf">2.0</span> <span class="n">as</span> <span class="n">Qan</span>
-<span class="n">import</span> <span class="s">&quot;qrc:/QuickQanava&quot;</span> <span class="n">as</span> <span class="n">Qan</span>
-</pre></div>
-</td></tr></table></p>
-<p>And create a <code class="codehilite">Qan.Graph</code> component:
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
-    <span class="nl">id</span><span class="p">:</span> <span class="n">graph</span>
-    <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
-    <span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>
-        <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
-        <span class="n">n1</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Hello World&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</td></tr></table></p>
+                <h1 id="defining-nodes">Defining Nodes<a class="headerlink" href="#defining-nodes" title="Permanent link">&para;</a></h1>
 <h2 id="topology">Topology<a class="headerlink" href="#topology" title="Permanent link">&para;</a></h2>
 <h3 id="adding-content">Adding content<a class="headerlink" href="#adding-content" title="Permanent link">&para;</a></h3>
-<p>Content could initialized in graph <code class="codehilite">onCompleted()</code> function:</p>
+<p>Nodes are managed from <code class="codehilite">qan::Graph</code> (C++) graph or <code class="codehilite">Qan.Graph</code> (QML) interface. In QML, nodes are usually modified from <code class="codehilite">Qan.Graph Component.onCompleted()</code> function:</p>
 <ul>
 <li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Node</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertNode</span><span class="p">()</span></code>: </li>
-<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Edge</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertEdge</span><span class="p">(</span><span class="nx">Qan</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span></code>:</li>
-<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Group</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertGroup</span><span class="p">()</span></code>:</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Group</span> <span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">removeNode</span><span class="p">()</span></code>:</li>
 </ul>
 <p>All primitives (nodes, edges, groups) have both a "topological and data" aspect (Qan.Node, Qan.Edge, Qan.Group) and a visual counter part accessible trough their <code class="codehilite">item</code> property (usually a Qan.NodeItem, Qan.EdgeItem, Qan.GroupItem).</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -628,30 +575,9 @@
 </pre></div>
 </td></tr></table>
 
-<p><img alt="Default Node" src="../topology/topology-default-node.png" /></p>
-<p>Connections between nodes could be added from QML using Qan.Graph.insertEdge() function, or from c++ with qan::Graph::insertEdge() method. Edges graphics appearance is configured trought their <code class="codehilite">style</code> property, more information on available edge style option is available in <a href="../styles/index.html">Styles section </a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>    <span class="c1">// Qan.Graph.Component.onCompleted()</span>
-    <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
-    <span class="n">n1</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Hello World&quot;</span><span class="p">;</span> <span class="n">n1</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">x</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span> <span class="n">n1</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">y</span><span class="o">=</span> <span class="mi">50</span>
-    <span class="n">var</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
-    <span class="n">n2</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Node 2&quot;</span><span class="p">;</span> <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">x</span><span class="o">=</span><span class="mi">200</span><span class="p">;</span> <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">y</span><span class="o">=</span> <span class="mi">125</span>
-
-<span class="hll">    <span class="n">var</span> <span class="n">e</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">);</span>
-</span>    <span class="n">defaultEdgeStyle</span><span class="p">.</span><span class="n">lineType</span> <span class="o">=</span> <span class="n">Qan</span><span class="p">.</span><span class="n">EdgeStyle</span><span class="p">.</span><span class="n">Curved</span>
-<span class="p">}</span>
-</pre></div>
-</td></tr></table>
-
-<p><img alt="Default Edge" src="../topology/topology-edge.png" /></p>
-<p>Node and edges appearance could be tuned by changing default styles properties directly from QML with global variables <code class="codehilite">defaultEdgeStyle</code> and <code class="codehilite">defaultNodeStyle</code>, see the <a href="../styles/index.html">Style Management</a> section for more options.</p>
+<p><img alt="Default Node" src="../nodes/nodes-default-node.png" /></p>
+<p>Node appearance could be tuned by changing default styles properties directly from QML with global variable <code class="codehilite">defaultNodeStyle</code>, see the <a href="../styles/index.html">Style Management</a> section for more options.</p>
+<h3 id="docks-and-ports">Docks and Ports<a class="headerlink" href="#docks-and-ports" title="Permanent link">&para;</a></h3>
 <p>Docks and ports could be used to control how an edge is connected to source and destination node:</p>
 <ul>
 <li>A dock <code class="codehilite">Qan.DockItem</code> is a visual group of ports. QuickQanava define 4 ports identified by their position: Qan.NodeItem.Left / Qan.NodeItem.Top / Qan.NodeItem.Right / Qan.NodeItem.Bottom.</li>
@@ -697,76 +623,13 @@
 </td></tr></table>
 
 <p>(Note: Port/Dock API is still subject to change after v0.9.2)</p>
-<p><img alt="Node Ports" src="../topology/topology-ports.png" /></p>
+<p><img alt="Node Ports" src="../nodes/nodes-ports.png" /></p>
 <p>Docks could be fully customized using QML delegates and custom node items, refer to <a href="https://github.com/cneben/QuickQanava/blob/master/samples/connector/customdocks.qml">customdocks.qml</a> example in connector sample.</p>
-<h3 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h3>
-<p>A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, <code class="codehilite">Qan.Graph</code> component must be defined in the <code class="codehilite">graph</code> property of a <code class="codehilite">Qan.GraphView</code> item:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
-  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
-  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
-  <span class="nl">navigable</span>   <span class="p">:</span> <span class="nb">true</span>
-<span class="hll">  <span class="nl">graph</span><span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
-</span>      <span class="nl">id</span><span class="p">:</span> <span class="n">topology</span>
-    <span class="p">}</span> <span class="c1">// Qan.Graph: topology</span>
-<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
-</pre></div>
-</td></tr></table>
-
-<p>Navigation could be disabled by setting the <code class="codehilite">navigable</code> property to false (it default to true).</p>
-<h3 id="visual-connection-of-nodes">Visual connection of nodes<a class="headerlink" href="#visual-connection-of-nodes" title="Permanent link">&para;</a></h3>
-<p>QuickQanava allow visual connection of node with the <code class="codehilite">Qan.VisualConnector</code> component. Default visual connector is configured in <code class="codehilite">Qan.Graph</code> component using the following properties:</p>
+<h3 id="node-resizing">Node Resizing<a class="headerlink" href="#node-resizing" title="Permanent link">&para;</a></h3>
+<p>Node resizing behaviour could be configured with the following Qan.NodeItem (or qan::NodeItem) properties:</p>
 <ul>
-<li>
-<p><code class="codehilite">Qan.Graph.connectorEnabled</code> (bool): Set to true to enable visual connection of nodes (default to false).</p>
-</li>
-<li>
-<p><code class="codehilite">Qan.Graph.connectorEdgeColor</code> (color): Set the visual connector preview edge color (useful to have Light/Dark theme support, default to black).</p>
-</li>
-<li>
-<p><code class="codehilite">Qan.Graph.connectorCreateDefaultEdge</code> (bool, default to true): When set to false, default visual connector does not use Qan.Graph.insertEdge() to create edge, but instead emit <code class="codehilite">connectorRequestEdgeCreation()</code> signal to allow user to create custom edge be calling a user defined method on graph (<code class="codehilite">connectorEdgeInserted()</code> is not emitted).</p>
-</li>
-<li>
-<p><code class="codehilite">Qan.Graph.setConnectorSource</code> (node): Select the node that should host the current visual connector.</p>
-</li>
-</ul>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
-  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
-  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
-  <span class="nl">graph</span> <span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
-<span class="hll">    <span class="nl">connectorEnabled</span><span class="p">:</span> <span class="nb">true</span>
-</span>    <span class="nl">connectorEdgeInserted</span><span class="p">:</span> <span class="n">console</span><span class="p">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Edge inserted between &quot;</span> <span class="o">+</span> <span class="n">src</span><span class="p">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot; and  &quot;</span> <span class="o">+</span> <span class="n">dst</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
-    <span class="nl">connectorEdgeColor</span><span class="p">:</span> <span class="s">&quot;violet&quot;</span>
-    <span class="nl">connectorColor</span><span class="p">:</span> <span class="s">&quot;lightblue&quot;</span>
-  <span class="p">}</span> <span class="c1">// Qan.Graph</span>
-<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
-</pre></div>
-</td></tr></table>
-
-<p><img alt="Visual connector configuration" src="../images/visual-connector-configuration.png" /></p>
-<p>The following notifications callbacks are available:</p>
-<ul>
-<li>
-<p>Signal <code class="codehilite">Qan.Graph.connectorEdgeInserted(edge)</code>: Emitted when the visual connector has been dragged on a destination node or edge to allow specific user configuration on created edge.</p>
-</li>
-<li>
-<p>Signal <code class="codehilite">Qan.Graph.connectorRequestEdgeCreation(src, dst)</code>: Emitted when the visual connector is dragged on a target with <code class="codehilite">createDefaultEdge</code> set to false: allow creation of custom edge (or any other action) by the user. Example:</p>
-</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">NodeItem</span><span class="p">.</span><span class="nx">resizable</span></code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">NodeItem</span><span class="o">::</span><span class="nx">setResizable</span><span class="p">()</span></code>: Enable or disable node item resizing (default to <code class="codehilite">true</code>, ie node is resizable).</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">NodeItem</span><span class="p">.</span><span class="nx">ratio</span></code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">NodeItem</span><span class="o">::</span><span class="nx">setRatio</span><span class="p">()</span></code>: Set the node "allowed" resizing ratio when visual resizing is enabled. Ratio is witdh / height ratio that is allowed during visual resizing operations. Ratio conservation is disabled if <code class="codehilite">ratio</code> is &lt; 0. <code class="codehilite">ratio</code> default to -1, ie ratio is not conserved.</li>
 </ul>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -778,47 +641,40 @@
  8
  9
 10
-11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
-  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
-  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
-  <span class="nl">graph</span> <span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
-    <span class="nl">id</span><span class="p">:</span> <span class="n">graph</span>
-    <span class="nl">connectorEnabled</span><span class="p">:</span> <span class="nb">true</span>
-    <span class="nl">connectorCreateDefaultEdge</span><span class="p">:</span> <span class="nb">false</span>
-<span class="hll">    <span class="nl">onConnectorRequestEdgeCreation</span><span class="p">:</span> <span class="p">{</span> 
-</span>      <span class="c1">// Do whatever you want here, for example: graph.insertEdge(src, dst)</span>
-    <span class="p">}</span>
-  <span class="p">}</span> <span class="c1">// Qan.Graph</span>
-<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
+11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>    <span class="c1">// Qan.Graph.Component.onCompleted()</span>
+    <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+    <span class="n">n1</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">resizable</span> <span class="o">=</span> <span class="nb">false</span>   <span class="c1">// n1 is not resizable</span>
+
+    <span class="n">var</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+    <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">resizable</span> <span class="o">=</span> <span class="nb">true</span>    <span class="c1">// n2 is resizable (setting to true is </span>
+                                <span class="c1">// not mandatory, it&#39;s the default behaviour)</span>
+
+<span class="hll">    <span class="n">n2</span><span class="p">.</span><span class="n">item</span><span class="p">.</span><span class="n">ratio</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1">// node resizing will maintain a width/height ratio </span>
+</span>                         <span class="c1">// of 0.5, ie height will alays be half of width.</span>
+<span class="p">}</span>
 </pre></div>
 </td></tr></table>
 
-<p>Preventing the visual connector to be shown for specific nodes (for example to force user to use out port to create topology) is possible by setting the node item <code class="codehilite">Qan.NodeItem.connectable&#39; property to false (See</code>qan::NodeItem::connectable` <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node_item.html">documentation</a>).</p>
-<p>Reference documentation: <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html">qan::Connector interface</a> and <a href="http://www.destrat.io/quickqanava/doc/class_visual_connector.html">Qan.VisualConnector component</a>. See also <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_graph.html">qan::Graph</a> "Visual Connection Management" section.</p>
-<p>Default connector component <code class="codehilite">Qan.Graph.connector</code> could be replaced by a user defined <code class="codehilite">Qan.VisualConnector</code> to customize connector behavior in more depth. It is possible to add multiple visuals connectors on the same node, using a connector to generate specific topologies (create edges with different concrete types) or select targets visually. Such an advanced use of custom connectors is demonstrated in 'connector' sample: <a href="https://github.com/cneben/QuickQanava/tree/master/samples/connector">https://github.com/cneben/QuickQanava/tree/master/samples/connector</a></p>
-<p><img alt="Visual connectors" src="../images/sample-connector.gif" /></p>
-<h3 id="resizing">Resizing<a class="headerlink" href="#resizing" title="Permanent link">&para;</a></h3>
-<p>Default resizing behaviour could be configured in <code class="codehilite">Qan.GraphView</code> using the following properties:</p>
+<p>Default resizer color could be configured in <code class="codehilite">Qan.GraphView</code> using the following properties:</p>
 <ul>
 <li><code class="codehilite">resizeHandlerColor</code> (color): Color of the visual drop node component (could be set to Material.accent for example)</li>
 </ul>
-<p>Node with custom delegate could be resized using the <code class="codehilite">Qan.BottomRightResizer</code> component. </p>
+<p>Node defining custom delegate resizing will be handled automatically by the framework. Complete customization of the resizing behaviour of custom nodes is possible using the <code class="codehilite">Qan.BottomRightResizer</code> component directly from custom delegates (See <a href="../utilities/index.html">Bottom Right Resizer</a>). </p>
 <h2 id="selection">Selection<a class="headerlink" href="#selection" title="Permanent link">&para;</a></h2>
 <p>Selection can be modified at graph level just by changing the graph selection policy property <code class="codehilite">Qan.Graph.selectionPolicy</code>:</p>
 <ul>
-<li><code class="codehilite">Qan.AbstractGraph.NoSelection</code>: Selection will be disabled in the whole graph.</li>
-<li><code class="codehilite">Qan.AbstractGraph.SelectOnClick</code>: Node are selected when clicked, multiple selection is enabled when CTRL is pressed.</li>
-<li><code class="codehilite">Qan.AbstractGraph.SelectOnCtrlClick</code>: Node are selected only if CTRL is pressed when node is clicked (multiple selection is still available).</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">AbstractGraph</span><span class="p">.</span><span class="nx">NoSelection</span></code>: Selection will be disabled in the whole graph.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">AbstractGraph</span><span class="p">.</span><span class="nx">SelectOnClick</span></code>: Node are selected when clicked, multiple selection is enabled when CTRL is pressed.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">AbstractGraph</span><span class="p">.</span><span class="nx">SelectOnCtrlClick</span></code>: Node are selected only if CTRL is pressed when node is clicked (multiple selection is still available).</li>
 </ul>
 <p>Selection can also be configured with the following Qan.Graph properties:</p>
 <ul>
-<li><code class="codehilite">Qan.Graph.selectionColor</code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionColor</span><span class="p">()</span></code>: Color for the node selection rectangle.</li>
-<li><code class="codehilite">Qan.Graph.selectionWeight</code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionWeight</span><span class="p">()</span></code>: Border width of the node selection rectangle.</li>
-<li><code class="codehilite">Qan.Graph.selectionMargin</code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionMargin</span><span class="p">()</span></code>: Margin between the node selection rectangle and the node content (selection weight is taken into account).</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionColor</span></code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionColor</span><span class="p">()</span></code>: Color for the node selection rectangle.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionWeight</span></code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionWeight</span><span class="p">()</span></code>: Border width of the node selection rectangle.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionMargin</span></code> / <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span><span class="o">::</span><span class="nx">setSelectionMargin</span><span class="p">()</span></code>: Margin between the node selection rectangle and the node content (selection weight is taken into account).</li>
 </ul>
 <p>All theses properties could be changed dynamically.</p>
-<p>Selection could also be disabled at node level by setting <code class="codehilite">Qan.Node.selectable</code> to false, node become unselectable even if global graph selection policy is not set to <code class="codehilite">NoSelection</code>.</p>
+<p>Selection could also be disabled at node level by setting <code class="codehilite">Qan.Node.selectable</code> property to <code class="codehilite">false</code>, node become unselectable even if global graph selection policy <code class="codehilite">Qan.Graph.selectionPolicy</code> is set to something else than <code class="codehilite">NoSelection</code>.</p>
 <p>Current multiple selection (or single selection) is available through Qan.Graph <code class="codehilite">selectedNodes</code> property. <code class="codehilite">selectedNodes</code> is a list model, it can be used in any QML view, or iterated from C++ to read the current selection:
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -892,9 +748,23 @@
 </pre></div>
 </td></tr></table></p>
 <p>Example of <code class="codehilite">Qan.AbstractGraph.SelectOnClick</code> selection policy with multiple selection dragging inside a group:</p>
-<p><img alt="selection" src="../images/Selection.gif" /></p>
-<h2 id="using-groups">Using Groups<a class="headerlink" href="#using-groups" title="Permanent link">&para;</a></h2>
-<p><img alt="Groups" src="../images/sample-groups.gif" /></p>
+<p><img alt="selection" src="../nodes/Selection.gif" /></p>
+<h2 id="defining-custom-nodes">Defining Custom Nodes<a class="headerlink" href="#defining-custom-nodes" title="Permanent link">&para;</a></h2>
+<p>Refer to <code class="codehilite">custom.qml</code> file in <a href="https://github.com/cneben/QuickQanava/blob/master/samples/nodes/nodes.qml">Nodes</a> sample for more information regarding configuration and installation of specifics custom delegates for nodes and edges.</p>
+<p>When defining custom nodes with complex geometry (ie. non rectangular), there is multiple ways to take bounding shape generation into account :</p>
+<ul>
+<li>
+<p>Using the default behavior for rectangular node with <code class="codehilite">complexBoundingShape</code> set to false (default value), bounding shape is automatically generated on node width or height change in <code class="codehilite">generateDefaultBoundingShape()</code>.</p>
+</li>
+<li>
+<p>Using dedicated code by setting <code class="codehilite">complexBoundingShape</code> to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.</p>
+</li>
+</ul>
+<p>Note that signal <code class="codehilite">requestUpdateBoundingShape</code> won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override <code class="codehilite">generateDefaultBoundingShape()</code> method.</p>
+<h2 id="grouping-nodes">Grouping Nodes<a class="headerlink" href="#grouping-nodes" title="Permanent link">&para;</a></h2>
+<p>Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using <code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertGroup</span><span class="p">()</span></code> method. Nodes are ususally inserted inside existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using <code class="codehilite">qan::Graph::groupNode()</code> and <code class="codehilite">qan::Graph::ungroupNode()</code> API.</p>
+<p>Group visual item (<code class="codehilite">Qan.GroupItem</code>) is accessible from <code class="codehilite">Qan.Group.item</code> property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be visually collapsed using the <code class="codehilite">Qan.GroupItem.collapsed</code> property.</p>
+<p><img alt="Groups" src="../nodes/sample-groups.gif" /></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -935,24 +805,15 @@
 </pre></div>
 </td></tr></table>
 
-<h2 id="displaying-custom-nodes">Displaying Custom Nodes<a class="headerlink" href="#displaying-custom-nodes" title="Permanent link">&para;</a></h2>
-<p>See the <code class="codehilite">custom.qml</code> file in <code class="codehilite">nodes</code> sample for more information regarding installation of specifics custom delegates for nodes and edges.</p>
-<p>When defining custom nodes with complex geometry (ie. non rectangular), there is multiple ways to take bounding shape generation into account :</p>
-<ul>
-<li>
-<p>Using the default behavior for rectangular node with <code class="codehilite">complexBoundingShape</code> set to false (default value), bounding shape is automatically generated on node width or height change in <code class="codehilite">generateDefaultBoundingShape()</code>.</p>
-</li>
-<li>
-<p>Using dedicated code by setting <code class="codehilite">complexBoundingShape</code> to true and with a call to \c setBoundingShape() from a custom onRequestUpdateBoundingShape() signal handler.</p>
-</li>
-</ul>
-<p>Note that signal <code class="codehilite">requestUpdateBoundingShape</code> won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override <code class="codehilite">generateDefaultBoundingShape()</code> method.</p>
+<p>Refer to <a href="https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml">Group Sample</a> for more detailled information.</p>
                 
                   
                 
               
               
                 
+
+
               
             </article>
           </div>
@@ -965,7 +826,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../installation/index.html" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../graph/index.html" title="Graph" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -974,19 +835,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Installation
+                Graph
               </span>
             </div>
           </a>
         
         
-          <a href="../styles/index.html" title="Styles" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../edges/index.html" title="Edges" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Styles
+                Edges
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -1002,7 +863,7 @@
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2017 Delia Stratégie
+            Copyright &copy; 2018 BA
           </div>
         
         powered by
@@ -1030,7 +891,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.8eb9be28.js"></script>
+      <script src="../assets/javascripts/application.b438e6c5.js"></script>
       
       <script>app.initialize({version:"0.17.3",url:{base:".."}})</script>
       

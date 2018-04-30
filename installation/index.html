@@ -38,7 +38,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.3, mkdocs-material-2.7.0">
+      <meta name="generator" content="mkdocs-0.17.3, mkdocs-material-2.7.3">
     
     
       
@@ -46,7 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.78aab2dc.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.8d40d89b.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.6079476c.css">
       
     
     
@@ -64,7 +66,9 @@
     
   </head>
   
-    <body dir="ltr">
+    
+    
+    <body dir="ltr" data-md-color-primary="indigo" data-md-color-accent="amber">
   
     <svg class="md-svg">
       <defs>
@@ -91,8 +95,8 @@
         
       </defs>
     </svg>
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
       <a href="#quickqanava-quick-start" tabindex="1" class="md-skip">
@@ -314,8 +318,32 @@
 
 
   <li class="md-nav__item">
-    <a href="../topology/index.html" title="Topology" class="md-nav__link">
-      Topology
+    <a href="../graph/index.html" title="Graph" class="md-nav__link">
+      Graph
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../nodes/index.html" title="Nodes" class="md-nav__link">
+      Nodes
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../edges/index.html" title="Edges" class="md-nav__link">
+      Edges
     </a>
   </li>
 
@@ -487,26 +515,57 @@
 </pre></div>
 </td></tr></table>
 
-<p>QuickQanava use <em>qmake</em> as its main build configuration system.</p>
+<p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system.</p>
 <ol>
 <li>
-<p>Open <em>quickqanava.pro</em> in QtCreator</p>
+<p>Open <em>quickqanava.pro</em> in QtCreator.</p>
 </li>
 <li>
 <p>Select a kit, build and launch samples.</p>
 </li>
 </ol>
+<p>or (CMake &gt; 3.5)</p>
+<ol>
+<li>
+<p>Open <em>CMakeLists.txt</em> in QtCreator.</p>
+</li>
+<li>
+<p>In 'Projects' panel, set DBUILD_SAMPLES option to true in CMake configuration panel.</p>
+</li>
+<li>
+<p>Select a kit, build and launch samples.</p>
+</li>
+</ol>
+<p>Or manually using CMAke:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>$ git submodule add https://github.com/cneben/QuickQanava
+$ git submodule update
+$ <span class="nb">cd</span> QuickQanava
+$ mkdir build
+$ <span class="nb">cd</span> build
+$ cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DBUILD_SAMPLES<span class="o">=</span>TRUE ..
+$ cmake --build .
+<span class="c1"># Then run the samples</span>
+</pre></div>
+</td></tr></table>
+
 <h2 id="using-from-external-projects">Using from external projects<a class="headerlink" href="#using-from-external-projects" title="Permanent link">&para;</a></h2>
 <p>The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># Install QuickQanava as a GIT submodule</span>
 $ git submodule add https://github.com/cneben/QuickQanava
-<span class="p">&amp;</span> git submodule update
+* git submodule update
 </pre></div>
 </td></tr></table>
 
-<p>Once GIT has finished downloading, QuickQanava and its dependencies (<a href="https://github.com/cneben/GTpo">GTpo</a>) projects files could be included directly in your main qmake .pro file with the following two #include statements:</p>
+<p>Once GIT has finished downloading, QuickQanava project file could be included directly in your main qmake .pro file with the following two #include statements:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">#in your project main .pro qmake configuration file</span>
 include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/quickqanava.pri<span class="o">)</span>
@@ -518,6 +577,8 @@ include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/qui
               
               
                 
+
+
               
             </article>
           </div>
@@ -545,13 +606,13 @@ include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/qui
           </a>
         
         
-          <a href="../topology/index.html" title="Topology" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../graph/index.html" title="Graph" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Topology
+                Graph
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -567,7 +628,7 @@ include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/qui
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            Copyright &copy; 2017 Delia Stratégie
+            Copyright &copy; 2018 BA
           </div>
         
         powered by
@@ -595,7 +656,7 @@ include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/qui
       
     </div>
     
-      <script src="../assets/javascripts/application.8eb9be28.js"></script>
+      <script src="../assets/javascripts/application.b438e6c5.js"></script>
       
       <script>app.initialize({version:"0.17.3",url:{base:".."}})</script>
       
