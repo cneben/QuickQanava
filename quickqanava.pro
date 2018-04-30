@@ -16,14 +16,14 @@ test-topology.subdir   = samples/topology
 #test-40k.depends    = quickqanava
 
 SUBDIRS +=  test-resizer
-#SUBDIRS +=  test-navigable
-#SUBDIRS +=  test-nodes
-#SUBDIRS +=  test-edges
-#SUBDIRS +=  test-connector
-#SUBDIRS +=  test-groups
-#SUBDIRS +=  test-selection
-#SUBDIRS +=  test-style
+SUBDIRS +=  test-navigable
+SUBDIRS +=  test-nodes
+SUBDIRS +=  test-edges
+SUBDIRS +=  test-connector
+SUBDIRS +=  test-groups
+SUBDIRS +=  test-selection
+SUBDIRS +=  test-style
 SUBDIRS +=  test-topology
-#SUBDIRS +=  test-dataflow
+SUBDIRS +=  test-dataflow
 
 #SUBDIRS +=  test-40k
