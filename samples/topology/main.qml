@@ -377,8 +377,8 @@ ApplicationWindow {
         anchors.topMargin: 15
         anchors.right: parent.right
         anchors.rightMargin: 15
-        width: 200
-        height: 300
+        width: 200; height: 300
+        visible: showDebugControls.checked
         Frame {
             anchors.fill: parent
             opacity: 0.8
@@ -480,8 +480,8 @@ ApplicationWindow {
         anchors.topMargin: 15
         anchors.right: portList.left
         anchors.rightMargin: 15
-        width: 200
-        height: 300
+        width: 200; height: 300
+        visible: showDebugControls.checked
         Frame {
             anchors.fill: parent
             opacity: 0.8
@@ -556,8 +556,8 @@ ApplicationWindow {
         anchors.topMargin: 15
         anchors.right: edgeList.left
         anchors.rightMargin: 15
-        width: 200
-        height: 300
+        width: 200; height: 300
+        visible: showDebugControls.checked
         Frame {
             anchors.fill: parent
             opacity: 0.8
@@ -627,8 +627,8 @@ ApplicationWindow {
         width: 110
         height: 50
         text: "AutoPos"
-
         onClicked: topology.autoPositionNodes()
+        visible: showDebugControls.checked
     }
 
     ColorDialog {
@@ -644,8 +644,8 @@ ApplicationWindow {
         anchors.topMargin: 15
         anchors.right: parent.right
         anchors.rightMargin: 15
-        width: 250
-        height: 280
+        width: 250; height: 280
+        visible: showDebugControls.checked
         Frame {
             anchors.fill: parent
             opacity: 0.8
@@ -838,6 +838,11 @@ ApplicationWindow {
                     else if (index == 1)
                         defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
                 }
+            }
+            CheckBox {
+                id: showDebugControls
+                text: "Show Debug controls"
+                checked: true
             }
         } // RowLayout: edgeType
     }
