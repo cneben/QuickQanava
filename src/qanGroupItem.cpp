@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -72,6 +72,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 
     setStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
+
+    setWidth(200); setHeight(150);
 }
 
 GroupItem::~GroupItem() { /* Nil */ }
@@ -95,7 +97,37 @@ auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
 }
 auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
 auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+
+auto    GroupItem::setRect(const QRectF& r) noexcept -> void
+{
+    // PRECONDITIONS:
+        // r rect must be valid
+    if (!r.isValid())
+        return;
+    setX(r.left());
+    setY(r.top());
+    setWidth(r.width());
+    setHeight(r.height());
+}
 //-----------------------------------------------------------------------------
+
+
+/* Selection and Sizing Management *///----------------------------------------
+void    GroupItem::setMinimumSize(QSizeF minimumSize) noexcept
+{
+    _minimumSize = minimumSize;
+    emit minimumSizeChanged( );
+}
+
+void    GroupItem::setResizable( bool resizable ) noexcept
+{
+    if ( resizable != _resizable ) {
+        _resizable = resizable;
+        emit resizableChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 /* Style Management *///-------------------------------------------------------
 void    GroupItem::setStyle( qan::Style* style ) noexcept

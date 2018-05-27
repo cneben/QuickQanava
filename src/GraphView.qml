@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -53,8 +53,7 @@ Qan.AbstractGraphView {
     Qan.LineGrid { id: lineGrid }
     grid: lineGrid
 
-    onClicked: graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
-    onRightClicked: graphView.focus = true
+    property real maxZ: -1.    // Node management ////////////////////////////////////////////////////////
 
     property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
     onGridThickColorChanged: {
@@ -62,25 +61,48 @@ Qan.AbstractGraphView {
             grid.thickColor = gridThickColor
     }
 
-    property alias  resizeHandlerColor: nodeResizer.handlerColor
+    property color  resizeHandlerColor: Qt.rgba(0.117, 0.564, 1.0)  // dodgerblue=rgb( 30, 144, 255)
+    property real   resizeHandlerOpacity: 1.0
+    property real   resizeHandlerRadius: 4.0
+    property real   resizeHandlerWidth: 4.0
+    property size   resizeHandlerSize: "9x9"
+
     Qan.BottomRightResizer {
         id: nodeResizer
         parent: graph.containerItem
         visible: false
+
+        opacity: resizeHandlerOpacity
+        handlerColor: resizeHandlerColor
+        handlerRadius: resizeHandlerRadius
+        handlerWidth: resizeHandlerWidth
+        handlerSize: resizeHandlerSize
+    }
+    Qan.BottomRightResizer {
+        id: groupResizer
+        parent: graph.containerItem
+        visible: false
+
+        opacity: resizeHandlerOpacity
+        handlerColor: resizeHandlerColor
+        handlerRadius: resizeHandlerRadius
+        handlerWidth: resizeHandlerWidth
+        handlerSize: resizeHandlerSize
     }
 
-    property real maxZ: -1.
-    function    sendToTop(node) {
-        if (node) {
-            if (node.item) {
-                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-                node.item.z = maxZ + 1;
-            }
-            if ( node.group )
-                updateGroupZ(node.group)
-        }
-    }
+    // View Click management //////////////////////////////////////////////////
+    onClicked: {
+        // Hide resizers when view background is clicked
+        nodeResizer.target = null
+        nodeResizer.visible = false
+        groupResizer.target = null
+        groupResizer.visible = false
 
+        graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
+    }
+    onRightClicked: graphView.focus = true
+
+    // Port management ////////////////////////////////////////////////////////
     onPortClicked: {
         if ( graph &&
              port ) {
@@ -93,33 +115,55 @@ Qan.AbstractGraphView {
             graph.connector.visible = false
         }
     }
+    onPortRightClicked: { }
 
-    onPortRightClicked: {
+    // Node management ////////////////////////////////////////////////////////
+    function    sendToTop(node) {
+        if (node) {
+            if (node.item) {
+                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
+                node.item.z = maxZ + 1;
+            }
+            if ( node.group )
+                sendGroupToTop(node.group)
+        }
+    }
+
+    // Dynamically handle currently selected node item onRatioChanged() signal
+    Connections { // and update nodeResizer ratio policy (selected node is nodeResizer target)
+        id: nodeItemRatioWatcher
+        target: null
+        onRatioChanged: {
+            if ( nodeResizer &&
+                 target &&
+                 nodeResizer.target === target ) {
+                nodeResizer.preserveRatio = target.ratio > 0.
+                nodeResizer.ratio = target.ratio
+            }
+        }
     }
 
     onNodeClicked: {
         if ( graph &&
-             node && node.item ) {
+             node &&
+             node.item ) {
             sendToTop(node)
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
                    node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
-                //console.debug( "node=" + node );
-                //console.debug("graph.connector.sourceNode=" + graph.connector.sourceNode);
                 graph.connector.sourceNode = node;
-
                 // FIXME: connector remove that....
                 graph.connector.y = -graph.connector.height / 2
             }
-            if ( nodeResizer &&
-                 node.item.resizable ) {
+            if ( node.item.resizable ) {
+                nodeItemRatioWatcher.target = node.item
                 nodeResizer.parent = node.item
                 nodeResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
                 nodeResizer.minimumTargetSize = node.item.minimumSize   // to avoid old target beeing eventually resized to new target min size...
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
-                nodeResizer.z = node.item.z + 2.    // Using 2.0 because selection item is z is 1.0, we want resizer to stay on top of selection item and ports.
+                nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 nodeResizer.preserveRatio = (node.item.ratio > 0.)
                 if (node.item.ratio > 0. ) {
                     nodeResizer.ratio = node.item.ratio
@@ -131,20 +175,52 @@ Qan.AbstractGraphView {
                 nodeResizer.visible = false
             }
         } else if ( graph ) {
+            nodeItemRatioWatcher.target = null
             graph.connector.visible = false
             resizer.visible = false
         }
     }
-    function updateGroupZ(group) {
+
+    // Group management ///////////////////////////////////////////////////////
+    function sendGroupToTop(group) {
         if ( group && group.item ) {
             maxZ = Math.max( group.item.z + 1, maxZ + 1 )
             group.item.z = maxZ + 1;
         }
     }
-    onGroupClicked: updateGroupZ(group)
-    onGroupRightClicked: updateGroupZ(group)
-    onGroupDoubleClicked: updateGroupZ(group)
-    Component.onCompleted: { }
-    Component.onDestruction: { }
-}
+
+    onGroupClicked: {
+        sendGroupToTop(group)
+
+        // FIXME: fast exit on incorrect argument...
+        if ( !graph )
+            return
+        if ( !group || !(group.item) )
+            return
+        if ( !group.item.container ) {
+            console.error("Qan.GraphView.onGroupClicked(): Trying to add a bottom right resizer to a group with invalid container property")
+            return
+        }
+
+        if ( group.item.resizable ) {
+            groupResizer.parent = group.item
+            groupResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
+            groupResizer.minimumTargetSize = Qt.binding( function() {
+                return Qt.size( Math.max( group.item.minimumSize.width, group.item.container.childrenRect.x + group.item.container.childrenRect.width + 10 ),
+                                Math.max( group.item.minimumSize.height, group.item.container.childrenRect.y + group.item.container.childrenRect.height + 10 ) )
+            } )
+            groupResizer.target = group.item
+            // Do not show resizer when group is collapsed
+            groupResizer.visible = Qt.binding( function() { return (!groupResizer.target.collapsed) && groupResizer.target.resizable; } )
+            groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
+            groupResizer.preserveRatio = false
+        } else {
+            groupResizer.target = null
+            groupResizer.visible = false
+        } // group.item.resizable
+    }
+
+    onGroupRightClicked: sendGroupToTop(group)
+    onGroupDoubleClicked: sendGroupToTop(group)
+} // Qan.GraphView
 

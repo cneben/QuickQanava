@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -113,6 +113,10 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
                 }
             }
         }
+
+        forceHandlerWidth(_handlerWidth);       // Force taking into account handler
+        forceHandlerRadius(_handlerRadius);     // setting if they have been modified before
+        forceHandlerSize(_handlerSize);         // _handler item has been created
     }
 
     // Configure handler on given target
@@ -200,13 +204,18 @@ void    BottomRightResizer::onTargetHeightChanged()
     }
 }
 
-void    BottomRightResizer::setHandlerSize( QSizeF handlerSize )
+void    BottomRightResizer::setHandlerSize( const QSizeF& handlerSize )
 {
     if ( handlerSize.isEmpty() )
         return;
     if ( handlerSize == _handlerSize )  // Binding loop protection
         return;
 
+    forceHandlerSize(handlerSize);
+}
+
+void    BottomRightResizer::forceHandlerSize( const QSizeF& handlerSize )
+{
     _handlerSize = handlerSize;
     if ( _handler ) {
         onTargetWidthChanged();     // Force resize handler position change
@@ -238,6 +247,11 @@ void    BottomRightResizer::setHandlerRadius( qreal handlerRadius )
 {
     if ( qFuzzyCompare( 1.0 + handlerRadius, 1.0 + _handlerRadius ) )    // Binding loop protection
         return;
+    forceHandlerRadius(handlerRadius);
+}
+
+void    BottomRightResizer::forceHandlerRadius( qreal handlerRadius )
+{
     if ( _handler )
         _handler->setProperty( "radius", handlerRadius );
     _handlerRadius = handlerRadius;
@@ -248,6 +262,11 @@ void    BottomRightResizer::setHandlerWidth( qreal handlerWidth )
 {
     if ( qFuzzyCompare( 1.0 + handlerWidth, 1.0 + _handlerWidth ) )    // Binding loop protection
         return;
+    forceHandlerWidth(handlerWidth);
+}
+
+void    BottomRightResizer::forceHandlerWidth( qreal handlerWidth )
+{
     if ( _handler ) {
         QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
         if ( handlerBorder != nullptr ) {
@@ -257,6 +276,7 @@ void    BottomRightResizer::setHandlerWidth( qreal handlerWidth )
     _handlerWidth = handlerWidth;
     emit handlerWidthChanged();
 }
+
 void    BottomRightResizer::setMinimumTargetSize( QSizeF minimumTargetSize )
 {
     if ( minimumTargetSize.isEmpty() )
@@ -352,7 +372,6 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
                     if ( targetWidth > _minimumTargetSize.width() )        // Note: do not use (?:)
                             _target->setWidth( targetWidth );
                     if ( _preserveRatio ) {
-                        qWarning() << "ratio=" << getRatio();
                         const qreal finalTargetWidth = targetWidth > _minimumTargetSize.width() ? targetWidth :
                                                                                             _minimumTargetSize.width();
                         const qreal targetHeight = finalTargetWidth * getRatio();

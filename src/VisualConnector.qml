@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -61,8 +61,8 @@ Qan.Connector {
     //! Connector control radius (final diameter will be radius x 2).
     property real   radius: 8
 
-    //! Connector color (default to Qt.DarkBlue).
-    property color  connectorColor: "darkblue"
+    //! Connector color (default to dodgerblue).
+    property color  connectorColor: "dodgerblue"
 
     //! Default connector line width (default to 2.0).
     property real   connectorLineWidth: 2

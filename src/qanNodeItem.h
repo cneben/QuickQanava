@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -122,17 +122,21 @@ private:
     QPointer<qan::Graph>    _graph;
 
 public:
-    //! Node minimum size (it can't be resized below if resizable is true).
+    //! Node minimum size, default to "100 x 45" (node could not be visually resized below this size if \c resizable property is true).
     Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
     //! \copydoc minimumSize
-    QSizeF          getMinimumSize() const { return _minimumSize; }
+    const QSizeF&   getMinimumSize() const noexcept { return _minimumSize; }
     //! \copydoc minimumSize
-    void            setMinimumSize( QSizeF minimumSize ) { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
+    void            setMinimumSize(QSizeF minimumSize) noexcept { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
 private:
-    QSizeF          _minimumSize = QSizeF{ 100., 45. };
+    QSizeF          _minimumSize{100., 45.};
 signals:
     //! \internal
     void            minimumSizeChanged();
+
+public:
+    //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
+    auto            setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 

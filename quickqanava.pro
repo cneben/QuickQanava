@@ -10,8 +10,8 @@ test-groups.subdir      = samples/groups
 test-selection.subdir   = samples/selection
 test-style.subdir       = samples/style
 test-dataflow.subdir    = samples/dataflow
-
-test-topology.subdir   = samples/topology
+test-topology.subdir    = samples/topology
+test-cpp.subdir         = samples/cpp
 #test-40k.subdir     = samples/40k
 #test-40k.depends    = quickqanava
 
@@ -25,5 +25,6 @@ SUBDIRS +=  test-selection
 SUBDIRS +=  test-style
 SUBDIRS +=  test-topology
 SUBDIRS +=  test-dataflow
+SUBDIRS +=  test-cpp
 
 #SUBDIRS +=  test-40k

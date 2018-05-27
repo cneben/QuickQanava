@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -85,8 +85,7 @@ void    Selectable::setSelected( bool selected ) noexcept
         _selected = selected;
         emitSelectedChanged();
     }
-    if ( getSelectionItem() != nullptr &&   // Done outside of binding loop protection
-         isSelectable() )
+    if ( getSelectionItem() != nullptr )    // Done outside of binding loop protection
         getSelectionItem()->setState( selected ? "SELECTED" : "UNSELECTED" );
 }
 

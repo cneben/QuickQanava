@@ -6,28 +6,21 @@ QT          += core
 DEPENDPATH  += ../src
 INCLUDEPATH += ../src
 
-#include (../gtpo-common.pri)
-#DEFINES -= "GTPO_HAS_PROTOBUF"
-
 include (../src/gtpo.pri)
 
 # On win32, set Google Test and Mock source and library directories manually
-win32-msvc*:GMOCK_DIR       =  c:/projects/DELIA/libs/googletest-master/googlemock
-win32-msvc*:GTEST_DIR       =  c:/projects/DELIA/libs/googletest-master/googletest
-win32-msvc*:INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
+#win32-msvc*:GMOCK_DIR       =  path/to/gmock
+#win32-msvc*:GTEST_DIR       =  path/to/gtest
+#win32-msvc*:INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
 
 SOURCES	+=  ./gtpoTests.cpp         \
-            #./gtpoContainers.cpp    \
+            ./gtpoContainers.cpp    \
             ./gtpoTopology.cpp      \
-            #./gtpoGroups.cpp        \
-            #./gtpoBehaviour.cpp
-            #./gtpoConcrete.cpp
+            ./gtpoGroups.cpp        \
+            ./gtpoBehaviour.cpp
+            ./gtpoConcrete.cpp
 
 HEADERS	+=  
-
-contains(DEFINES, GTPO_HAS_PROTOBUF) {
-    #SOURCES += ./gtpoProtobuf.cpp
-}
 
 CONFIG(debug, debug|release) {
     linux-g++*:     LIBS	+= -L../build/ -lgtest -lgmock -lprotobuf

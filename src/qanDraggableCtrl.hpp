@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -202,7 +202,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
          _targetItem &&
          graph != nullptr ) {
         if ( _target->getGroup().lock() ) {
-            graph->ungroupNode(_target->getGroup().lock().get(), _target );
+            graph->ungroupNode(_target,_target->getGroup().lock().get());
             _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Reset position cache since the node has changed parent and
                                                          // thus position (same scene pos but different local pos)
             _dragInitialPos = _targetItem->parentItem() != nullptr ? _targetItem->parentItem()->mapToScene( _targetItem->position() ) :

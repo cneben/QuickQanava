@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -38,14 +38,26 @@ ApplicationWindow {
     id: window
     visible: true
     width: 1280; height: 720
-    title: "Custom nodes sample"
+    title: "Groups sample"
     Pane { anchors.fill: parent }
-    ToolTip { id: toolTip; timeout: 2000 }
+    ToolTip { x: 0; id: toolTip; timeout: 2000 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
+
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
         navigable   : true
+        function centerItem( item ) {
+            if ( !item )
+                return
+            var windowCenter = Qt.point( ( window.contentItem.width - item.width ) / 2.,
+                                        ( window.contentItem.height - item.height ) / 2. )
+            var graphNodeCenter = window.contentItem.mapToItem( containerItem, windowCenter.x, windowCenter.y )
+            item.x = graphNodeCenter.x
+            item.y = graphNodeCenter.y
+            item.z = graphView.maxZ
+            graphView.maxZ += 1.
+        }
         graph: Qan.Graph {
             id: topology
             connectorEnabled: true
@@ -54,15 +66,20 @@ ApplicationWindow {
             Component.onCompleted: {
                 var n1 = topology.insertNode()
                 n1.label = "N1"
+                n1.item.x = 80; n1.item.y = 85
                 var n2 = topology.insertNode()
                 n2.label = "N2"
+                n2.item.x = 80; n2.item.y = 155
                 var n3 = topology.insertNode()
                 n3.label = "N3"
+                n3.item.x = 80; n3.item.y = 225
                 //topology.insertEdge( n1, n2 )
                 //topology.insertEdge( n2, n3 )
 
                 var g1 = topology.insertGroup()
-                g1.label = "GROUP"; g1.item.x = 250; g1.item.y = 45
+                g1.label = "GROUP";
+                g1.item.x = 300; g1.item.y = 80
+                g1.item.width = 250; g1.item.height = 270
                 //topology.insertEdge( n2, g1 )
             }
             onGroupClicked: {
@@ -71,26 +88,50 @@ ApplicationWindow {
             }
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
             onGroupRightClicked: { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
+            onNodeClicked: {
+                ungroupNodeButton.node = node
+            }
         } // Qan.Graph: graph
+
+        onClicked: {
+            ungroupNodeButton.node = undefined
+            groupEditor.group = undefined
+        }
+
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
             anchors.horizontalCenter: parent.horizontalCenter
             width: 200
-            RoundButton {
-                text: "Group"
+            ToolButton {
+                text: "Add Group"
                 onClicked: {
-                    var gg = topology.insertGroup()
-                    if ( gg )
-                        gg.label = "Group"
+                    var g = topology.insertGroup()
+                    if (g) {
+                        g.label = "Group"
+                        graphView.centerItem(g.item)
+                    }
                 }
             }
-            RoundButton {
-                text: "Node"
+            ToolButton {
+                text: "Add Node"
                 onClicked: {
                     var n = topology.insertNode( )
-                    if ( n )
+                    if (n) {
                         n.label = "Node"
+                        n.x = graphView
+                        graphView.centerItem(n.item)
+                    }
+                }
+            }
+            ToolButton {
+                id: ungroupNodeButton
+                text: "Ungroup Node"
+                property var node: undefined
+                enabled: node !== undefined
+                onClicked: {
+                    if ( node && node.group )
+                        topology.ungroupNode(node)
                 }
             }
         }
@@ -101,7 +142,7 @@ ApplicationWindow {
             property var groupItem: undefined
             anchors.bottom: parent.bottom; anchors.bottomMargin: 15
             anchors.right: parent.right; anchors.rightMargin: 15
-            width: 220; height: 180; padding: 0
+            width: 220; height: 325; padding: 0
             Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
             ColumnLayout {
                 Label {
@@ -114,6 +155,12 @@ ApplicationWindow {
                     onClicked: groupEditor.groupItem.draggable = checked
                 }
                 CheckBox {
+                    text: "Resizable"
+                    enabled: groupEditor.groupItem != null
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
+                    onClicked: groupEditor.groupItem.resizable = checked
+                }
+                CheckBox {
                     text: "Selected (read-only)"
                     enabled: false
                     checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
@@ -123,6 +170,18 @@ ApplicationWindow {
                     enabled: groupEditor.groupItem != null
                     checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
                     onClicked: groupEditor.groupItem.selectable = checked
+                }
+                CheckBox {
+                    text: "Label editor"
+                    enabled: groupEditor.groupItem !== undefined
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
+                    onClicked: groupEditor.groupItem.labelEditorVisible = checked
+                }
+                CheckBox {
+                    text: "Expand button"
+                    enabled: groupEditor.groupItem !== undefined
+                    checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
+                    onClicked: groupEditor.groupItem.expandButtonVisible = checked
                 }
             }
         }

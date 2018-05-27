@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -160,14 +160,14 @@ private:
     QColor          _connectorEdgeColor{Qt::black};
 
 public:
-    //! Alias to VisualConnector::connectorColor property (default to DarkBlue).
+    //! Alias to VisualConnector::connectorColor property (default to DodgerBlue).
     Q_PROPERTY( QColor connectorColor READ getConnectorColor WRITE setConnectorColor NOTIFY connectorColorChanged FINAL )
     inline QColor   getConnectorColor() const noexcept { return _connectorColor; }
     void            setConnectorColor( QColor connectorColor ) noexcept;
 signals:
     void            connectorColorChanged();
 private:
-    QColor          _connectorColor{Qt::darkBlue};   // #00008B = DarkBlue
+    QColor          _connectorColor{30, 144, 255};  // dodgerblue=rgb(30, 144, 255)
 
 public:
     //! Alias to VisualConnector::hEdgeEnabled (default to false).
@@ -478,16 +478,16 @@ public:
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
-    auto            groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false) -> void;
+    Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);
 
-    //! \copydoc gtpo::GenGraph::groupNode()
-    auto            groupNode( qan::Group* group, qan::Group* node ) noexcept(false) -> void;
+    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
+    void                    groupNode( qan::Group*, qan::Group* ) noexcept(false) { }
 
-    //! \copydoc gtpo::GenGraph::ungroupNode()
-    auto            ungroupNode( Group* group, qan::Node* node ) noexcept(false) -> void;
+    //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
+    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept(false);
 
-    //! \copydoc gtpo::GenGraph::ungroupNode()
-    auto            ungroupNode( Group* group, qan::Group* node ) noexcept(false) -> void;
+    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
+    void                    ungroupNode( qan::Group*, qan::Group* ) noexcept(false) { }
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
@@ -528,12 +528,12 @@ signals:
 
 
 public:
-    //! Color for the node selection hilgither component (default to dark blue).
+    //! Color for the node selection hilgither component (default to dodgerblue).
     Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
     void            setSelectionColor( QColor selectionColor ) noexcept;
     inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
 private:
-    QColor          _selectionColor{ Qt::darkBlue };
+    QColor          _selectionColor{30, 144, 255};  // dodgerblue=rgb(30, 144, 255)
 signals:
     void            selectionColorChanged();
 
