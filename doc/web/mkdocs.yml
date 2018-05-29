@@ -68,7 +68,7 @@ pages:
   - 'Edges': 'edges.md'
   - 'Styles': 'styles.md'
   - 'Utilities': 'utilities.md'
-  - 'Advanced use': 'advanced.md'
+  - 'Advanced use (C++)': 'advanced.md'
   - 'Samples': 'samples.md'
   - 'API Reference': 'reference.md'
   - 'Licence': 'licence.md'

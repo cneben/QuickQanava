@@ -40,7 +40,7 @@ Please refer to [Installation](installation.md) manual and [Graph](graph.md), [N
 | ![groups](nodes/sample-groups.gif) | ![connector](images/sample-nodes.gif) | 
 | ![connector](images/sample-dataflow-short.gif) | ![styles](images/sample-styles.gif) | 
 
-![styles](images/topology.png)
+![styles](samples/topology.png)
 
 ## Roadmap
 
