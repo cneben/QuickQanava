@@ -385,8 +385,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../advanced/index.html" title="Advanced use" class="md-nav__link">
-      Advanced use
+    <a href="../advanced/index.html" title="Advanced use (C++)" class="md-nav__link">
+      Advanced use (C++)
     </a>
   </li>
 
@@ -495,7 +495,13 @@
                 <h1 id="graph-topology-and-visualization">Graph Topology and Visualization<a class="headerlink" href="#graph-topology-and-visualization" title="Permanent link">&para;</a></h1>
 <h2 id="data-model">Data Model<a class="headerlink" href="#data-model" title="Permanent link">&para;</a></h2>
 <p><img alt="Graph Datamodel" src="../graph/graph-datamodel.png" /></p>
-<p>QuickQanava data model enforce a clear separation between description of topology and it's visual representation. Topology is usually defined from C++ or QML using the <code class="codehilite">qan::Graph</code> interface. To keep datamodel simple and efficient, topology is defined in a imperative way in C++ code or in a QML <code class="codehilite">Component.onCompleted()</code> handler. Visual representation of graph topology is then managed with a view, usually in pure QML with <code class="codehilite">Qan.GraphView</code> component. The unique proxy for editing topology is <code class="codehilite">qan::Graph</code> class and it's QML interface <code class="codehilite">Qan.Graph</code>.</p>
+<p>QuickQanava data model enforce a clear separation between description of topology and it's visual representation:</p>
+<ul>
+<li>Topology is defined from C++ or QML (with imperative Js) using the <code class="codehilite">qan::Graph</code> interface. </li>
+<li>Topology primitives returned by <code class="codehilite">createX()</code> or <code class="codehilite">insertX()</code> have a visual counterpart available trough their <code class="codehilite">getItem()</code> method or <code class="codehilite">item</code> property.</li>
+</ul>
+<p>To keep data-model simple and efficient, topology is defined in a imperative way in C++ code or in a QML <code class="codehilite">Component.onCompleted()</code> handler. Visual representation of graph topology is then managed from a view, usually in pure QML with <code class="codehilite">Qan.GraphView</code> component. The unique proxy for editing topology is <code class="codehilite">qan::Graph</code> class and it's QML interface <code class="codehilite">Qan.Graph</code>.</p>
+<p>Graph topology is internally modeled using <a href="https://en.wikipedia.org/wiki/Adjacency_list">adjacency lists</a>, these lists are exposed to QML and C++ with Qt abstract item models: a change in topology trigger a signal or a virtual method call in behavior observers. For example, any view connected to a node <code class="codehilite">outNodes</code> model is automatically updated when a directed edge is inserted from that node to another one.</p>
 <h2 id="quickqanava-initialization">QuickQanava Initialization<a class="headerlink" href="#quickqanava-initialization" title="Permanent link">&para;</a></h2>
 <p>QuickQanava should be initialized in your c++ main function:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1

@@ -326,8 +326,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../advanced/index.html" title="Advanced use" class="md-nav__link">
-      Advanced use
+    <a href="../advanced/index.html" title="Advanced use (C++)" class="md-nav__link">
+      Advanced use (C++)
     </a>
   </li>
 
@@ -507,6 +507,84 @@
                 
                 
                 <h1 id="quickqanava-samples">QuickQanava Samples<a class="headerlink" href="#quickqanava-samples" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th align="center">nodes</th>
+<th align="center">connector</th>
+<th align="center">groups</th>
+<th align="center">topology</th>
+<th align="center">dataflow</th>
+<th align="center">cpp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Visual connector</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"><img alt="" src="../samples/green.png" /> (and custom connectors)</td>
+<td align="center"></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Custom visual connector</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Selection</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"></td>
+<td align="center"><img alt="" src="../samples/orange.png" /></td>
+<td align="center"><img alt="" src="../samples/green.png" /> QML &amp; C++</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Custom nodes QML</td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Custom groups QML</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+</tr>
+<tr>
+<td>Custom nodes C++</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+</tr>
+<tr>
+<td>Topology in C++</td>
+<td align="center"><img alt="" src="../samples/grey.png" /></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"><img alt="" src="../samples/green.png" /></td>
+</tr>
+</tbody>
+</table>
 <h2 id="custom-nodes-custom">Custom Nodes: 'custom'<a class="headerlink" href="#custom-nodes-custom" title="Permanent link">&para;</a></h2>
 <p>Demonstrate:</p>
 <ul>
@@ -514,7 +592,7 @@
 <li>How to use custom Canvas Qt Quick item for drawing node content with <code class="codehilite">Qan.CanvasNodeTemplate</code> component (see <code class="codehilite">DiamonNode.qml</code>).</li>
 <li>How to use existing Qt Quick item controls in QuickQanava nodes (see <code class="codehilite">ControlNode.qml</code>).</li>
 </ul>
-<p><img alt="Custom nodes sample" src="../samples/quickqanava-sample-custom.png" /></p>
+<p><img alt="Custom nodes sample" src="../samples/nodes.png" /></p>
 <h2 id="navigable-area-navigable">Navigable Area: 'navigable'<a class="headerlink" href="#navigable-area-navigable" title="Permanent link">&para;</a></h2>
 <p>Demonstrate use of <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_navigable.html"><code class="codehilite">qan::Navigable</code></a>. </p>
 <h2 id="groups-management-groups">Groups Management: 'groups'<a class="headerlink" href="#groups-management-groups" title="Permanent link">&para;</a></h2>
@@ -523,16 +601,16 @@
 <li>How to create groups of node using <code class="codehilite">Qan.Graph.insertNode()</code> calls.</li>
 <li>How to interact with groups by catching <code class="codehilite">Qan.Graph.groupClicked()</code> and <code class="codehilite">Qan.Graph.groupRightClicked()</code> signals.</li>
 </ul>
-<p><img alt="Groups sample" src="../samples/quickqanava-sample-groups.png" /></p>
+<p><img alt="Groups sample" src="../samples/groups.png" /></p>
 <h2 id="style-management-style">Style Management: 'style'<a class="headerlink" href="#style-management-style" title="Permanent link">&para;</a></h2>
-<p><img alt="Styles sample" src="../samples/quickqanava-sample-style.png" /></p>
+<p><img alt="Styles sample" src="../samples/styles.png" /></p>
 <h2 id="topology-sample-topology">Topology Sample: 'topology'<a class="headerlink" href="#topology-sample-topology" title="Permanent link">&para;</a></h2>
 <p>Demonstrate:</p>
 <ul>
 <li>How to use <code class="codehilite">Qan.Graph.selectionPolicy</code>.</li>
 <li>How to use custom delegates to visualize nodes and edges in a ListView with <code class="codehilite">Qan.Graph.nodes</code> and <code class="codehilite">Qan.Graph.edges</code> properties.</li>
 </ul>
-<p><img alt="Topology sample" src="../samples/quickqanava-sample-topology.png" /></p>
+<p><img alt="Topology sample" src="../samples/topology.png" /></p>
                 
                   
                 
@@ -553,7 +631,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../advanced/index.html" title="Advanced use" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../advanced/index.html" title="Advanced use (C++)" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -562,7 +640,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Advanced use
+                Advanced use (C++)
               </span>
             </div>
           </a>
