@@ -91,6 +91,7 @@ TEST(GTpoGroups, groupNodeExcept)
 TEST(GTpoGroups, groupNode)
 {
     gtpo::GenGraph<> g;
+    EXPECT_EQ( g.getGroupCount(), 0 );
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
     EXPECT_EQ( g.getGroupCount(), 1 );
@@ -134,6 +135,27 @@ TEST(GTpoGroups, ungroupUngroupedNode)
     EXPECT_THROW( g.ungroupNode(group, n), gtpo::bad_topology_error );
 }
 
+TEST(GTpoGroups, groupRootNodeContract)
+{
+    // Ensure that graph root node count is not modified when a node is grouped
+    // CONTRACT: A node with zero in-degree is a root node even when it is grouped.
+    gtpo::GenGraph<> g;
+    auto group = g.createGroup().lock();
+    ASSERT_TRUE(group);
+    EXPECT_EQ(g.getRootNodeCount(), 0);
+    auto n = g.createNode();
+    EXPECT_EQ(g.getRootNodeCount(), 1);
+
+    g.groupNode(group, n);
+    EXPECT_EQ( group->getNodeCount(), 1 );
+    EXPECT_EQ( g.getGroupCount(), 1 );
+    EXPECT_EQ(g.getRootNodeCount(), 1);
+
+    g.ungroupNode(group, n);
+    EXPECT_EQ( group->getNodeCount(), 0 );
+    EXPECT_EQ(g.getRootNodeCount(), 1);
+}
+
 TEST(GTpoGroups, groupGroup)
 {
     gtpo::GenGraph<> g;
@@ -158,29 +180,51 @@ TEST(GTpoGroups, ungroupGroup)
     EXPECT_EQ( group1->getNodeCount(), 0 );
 }
 
-TEST(GTpoGroups, clear)
+TEST(GTpoGroups, clearTopology)
 {
-    // TEST: clearing a graph with two nodes linked by an edge in a group should lead to an empty graph
-/*    gtpo::GenGraph<> g;
+    // TEST: clearing a graph with a group with content should remove group and group
+    // topology
+    gtpo::GenGraph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
     auto e1 = g.createEdge(n1, n2);
     auto g1 = g.createGroup();
-    {
-        auto g1Ptr = g1.lock();     // g1Ptr is released at the end of block to ensure all groups are cleared
-        if ( g1Ptr ) {
-            g1Ptr->insertNode( n1 );
-            g1Ptr->insertNode( n2 );
-        }
-    }
+    EXPECT_EQ( g.getNodeCount(), 2 );
+    EXPECT_EQ( g.getGroupCount(), 1 );
+    EXPECT_EQ( g.getEdgeCount(), 1 );
+    g.groupNode( g1, n1 );
+    g.groupNode( g1, n2 );
     g.clear();
     EXPECT_TRUE( n1.expired() );
     EXPECT_EQ( g.getNodeCount(), 0 );
     EXPECT_EQ( g.getGroupCount(), 0 );
+    EXPECT_EQ( g.getEdgeCount(), 0 );
     EXPECT_TRUE( g1.expired() );
- */
 }
 
+TEST(GTpoGroups, removeGroupTopology)
+{
+    // TEST: removing a group with content should preserve group topology
+    gtpo::GenGraph<> g;
+    auto n1 = g.createNode();
+    auto n2 = g.createNode();
+    auto e1 = g.createEdge(n1, n2);
+    EXPECT_EQ( g.getNodeCount(), 2 );
+    EXPECT_EQ( g.getEdgeCount(), 1 );
+
+    auto g1 = g.createGroup();
+    EXPECT_EQ( g.getGroupCount(), 1 );
+    g.groupNode( g1, n1 );
+    g.groupNode( g1, n2 );
+
+    g.removeGroup(g1);
+    EXPECT_EQ( g.getGroupCount(), 0 );
+
+    // Group topology should remain in the graph
+    EXPECT_EQ( g.getNodeCount(), 2 );
+    EXPECT_EQ( g.getEdgeCount(), 1 );
+    g.clear();
+}
 
 //-----------------------------------------------------------------------------
 // GTpo Groups adjacent node/edge

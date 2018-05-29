@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+**20180529:**
+
+- Fix all tests in GTpo, increase coverage for groups.
+- Reactivate qan::Graph::removeGroup() method (see groups sample).
+- Minor fixes in topology and dataflow samples.
+
 **20180527:**
 
 - Add the cpp sample to demonstrate the C++ API, add a complete custom group implementation sample.

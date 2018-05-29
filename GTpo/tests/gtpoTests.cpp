@@ -40,11 +40,8 @@
 #include "../src/gtpoUtils.h"
 
 int main(int argc, char **argv) {
-    //::testing::InitGoogleMock(&argc, argv);
+    ::testing::InitGoogleMock(&argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
-#ifdef GTPO_HAS_PROTOBUF
-    gtpo::ProtoSerializer<>::initProtocolBuffer();
-#endif
     return RUN_ALL_TESTS();
 }
 

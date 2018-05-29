@@ -809,29 +809,23 @@ void    Graph::removeGroup( qan::Group* group )
 {
     if ( group == nullptr )
         return;
+
     // Reparent all group childrens (ie node) to graph before destructing the group
     // otherwise all child iems get destructed too
-
-    // FIXME QAN3       (use std::copy() here...)
-    /*auto groupNodes{group->getNodes()};
-    for ( auto& node : groupNodes ) {
-        auto nodePtr{ node.lock() };
-        if ( nodePtr != nullptr ) {
-            // FIXME QAN3
-            //nodePtr->ungroup();
-            //nodePtr->setParentItem( this );
-        }
+    for ( auto& node : group->getNodes() ) {
+        const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
+        if (qanNode != nullptr)
+            group->getItem()->ungroupNodeItem(qanNode->getItem());
     }
-    WeakGroup weakGroup = group->shared_from_this();
-    if ( !weakGroup.expired() )
-        gtpo::GenGraph< qan::GraphConfig >::removeGroup( weakGroup );
-    */
+    // FIXME: don't like that dynamic cast, probably not necessary
+    GTpoGraph::removeGroup( WeakGroup{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
+    // FIXME: don't like that dynamic cast, probably not necessary
     return GTpoGraph::hasGroup( WeakGroup{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
 }
 

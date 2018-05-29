@@ -39,7 +39,6 @@
 
 // GTpo headers
 #include <GTpo>
-#include <gtpoProgressNotifier.h>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -139,7 +138,7 @@ class GroupBehaviourMock : public gtpo::GroupBehaviour< Config >
 {
 public:
     GroupBehaviourMock() { }
-    virtual ~GroupBehaviourMock() { }
+    virtual ~GroupBehaviourMock() override { }
 
     using WeakNode      = std::weak_ptr< typename Config::FinalNode >;
     using WeakEdge      = std::weak_ptr< typename Config::FinalEdge >;
@@ -158,7 +157,11 @@ public:
     MOCK_METHOD0(mockGroupRemoved, void(void));
 };
 
-TEST(GTpoBehaviour, groupBehaviour)
+// FIXME groups:
+    // A contract should enforce the behaviour when a grouped node or edge is actually
+    // removed from topology, is a group edgeRemoved() or nodeRemoved() signal emitted ?
+
+TEST(GTpoBehaviour, groupBehaviourNodeInserted)
 {
     gtpo::GenGraph<> g;
     using MockGroupBehaviour = GroupBehaviourMock< gtpo::GenGraph<>::Configuration >;
@@ -172,16 +175,28 @@ TEST(GTpoBehaviour, groupBehaviour)
     // nodeInserted() notification
     EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(1);
     g.groupNode(group, n);
-    EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(AtLeast(1));
+    //EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(0);
 
     // nodeRemoved() notification
     EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(1);
     g.ungroupNode(group, n);
-    EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(AtLeast(1));
+    //EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(0);
 
     // FIXME
     //EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(1);
     //g.removeNode(n);
+}
+
+TEST(GTpoBehaviour, groupBehaviourGroupInserted)
+{
+    gtpo::GenGraph<> g;
+    using MockGroupBehaviour = GroupBehaviourMock< gtpo::GenGraph<>::Configuration >;
+    auto group = g.createGroup();
+    auto n = g.createNode();
+
+    ASSERT_TRUE(group.lock());
+    auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
+    group.lock()->addGroupBehaviour( std::unique_ptr<MockGroupBehaviour>(groupMockBehaviour) );
 
     // nodeInserted() notification
     using WeakGroup = gtpo::GenGroup<>::WeakGroup;
@@ -193,7 +208,6 @@ TEST(GTpoBehaviour, groupBehaviour)
     EXPECT_CALL(*groupMockBehaviour, mockGroupRemoved()).Times(1);
     g.ungroupNode(group, WeakGroup{group2});
 }
-
 
 //-----------------------------------------------------------------------------
 // GTpo Node Behaviour tests

@@ -129,14 +129,14 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
             qDebug() << "edge source bindable=" << _graph->isEdgeDestinationBindable(*dstPortItem );
         }
 
-        if ( srcPortItem != nullptr &&
+        if ( srcPortItem &&
              dstPortItem != nullptr )
             create = _graph->isEdgeSourceBindable(*srcPortItem ) &&
                      _graph->isEdgeDestinationBindable(*dstPortItem);
-        else if ( srcPortItem == nullptr &&
+        else if ( !srcPortItem &&
                   dstPortItem != nullptr )
             create = _graph->isEdgeDestinationBindable(*dstPortItem);
-        else if ( srcPortItem != nullptr &&
+        else if ( srcPortItem &&
                   dstPortItem == nullptr )
             create = _graph->isEdgeSourceBindable(*srcPortItem);
         qDebug() << "edge can be created=" << create;
@@ -144,7 +144,7 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
             if ( create )
                 createdEdge = _graph->insertEdge( srcNode, dstNode );
             if ( createdEdge != nullptr ) {     // Special handling for src or dst port item binding
-                if ( srcPortItem != nullptr )
+                if ( srcPortItem )
                     _graph->bindEdgeSource(*createdEdge, *srcPortItem);
                 if ( dstPortItem != nullptr )
                     _graph->bindEdgeDestination(*createdEdge, *dstPortItem );   // Bind created edge to a destination port

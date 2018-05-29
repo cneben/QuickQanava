@@ -138,37 +138,3 @@ TEST(GTpoContainerAdapter, stdUnorderedSetInsertRemove)
     std_container_adapter<IntUnorderedSet>::insert(i, il);
     std_container_adapter<IntUnorderedSet>::remove(i, il);
 }
-
-
-
-
-
-/*    using IntList = std::list< std::shared_ptr<int> >;
-    IntList l;
-    using IntVector = std::vector< std::shared_ptr<int> >;
-    IntVector v;
-
-    using IntSet = std::set< std::shared_ptr<int> >;
-    IntSet s;
-    using IntUnorderedSet = std::unordered_set< std::shared_ptr<int> >;
-    IntUnorderedSet us;
-
-    // It is rather more a "compile test" than a runtime one, since
-    // we have 100+ lines of specialized template code for just
-    // adding/removing items in so-called generic containers; STL
-    // sucks, but we probably won a few ms over Qt containers
-    l.push_back( std::make_shared<int>( 42 ) );
-    gtpo::std_container_adapter<std::list, std::shared_ptr<int>>::remove( l.front(), l );
-    auto cs = l.size();
-    EXPECT_TRUE( ( cs == 1 && l.size() == 0 ) );
-
-    v.push_back( std::make_shared<int>( 42 ) );
-    cs = v.size();
-    gtpo::std_container_adapter<std::vector, std::shared_ptr<int>>::remove( v[0], v );
-    EXPECT_TRUE( ( cs == 1 && v.size() == 0 ) ) ;
-
-    s.insert( std::make_shared<int>( 42 ) );
-    cs = s.size();
-    gtpo::std_container_adapter<std::set, std::shared_ptr<int>>::remove( *s.begin(), s );
-    EXPECT_TRUE( ( cs == 1 && s.size() == 0 ) ) ;*/
-

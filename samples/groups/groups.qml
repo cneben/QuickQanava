@@ -130,6 +130,7 @@ ApplicationWindow {
                 property var node: undefined
                 enabled: node !== undefined
                 onClicked: {
+                    console.info("node.group=" + node.group)
                     if ( node && node.group )
                         topology.ungroupNode(node)
                 }
@@ -142,7 +143,7 @@ ApplicationWindow {
             property var groupItem: undefined
             anchors.bottom: parent.bottom; anchors.bottomMargin: 15
             anchors.right: parent.right; anchors.rightMargin: 15
-            width: 220; height: 325; padding: 0
+            width: 220; height: 385; padding: 0
             Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
             ColumnLayout {
                 Label {
@@ -183,8 +184,17 @@ ApplicationWindow {
                     checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
                     onClicked: groupEditor.groupItem.expandButtonVisible = checked
                 }
-            }
-        }
+                ToolButton {
+                    text: "Remove group"
+                    enabled: groupEditor.groupItem !== undefined
+                    onClicked: {
+                        if (groupEditor.groupItem !== undefined) {
+                            topology.removeGroup(groupEditor.groupItem.group)
+                        }
+                    }
+                }
+            } // groupEditor ColumnLayout
+        } // Control groupEditor
     } // Qan.GraphView
 }
 
