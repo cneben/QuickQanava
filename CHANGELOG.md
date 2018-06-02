@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+**20180602:**
+
+- DOC: Fix 'grouping nodes' section and add a 'custom group' paragraph.
+- DOC: In 'graph' section, update Qan.GraphView documentation and a grid subsection.
+- DOC: In 'Advanced use', add an introduction to C++ initialization.
+
 **20180529:**
 
 - Fix all tests in GTpo, increase coverage for groups.

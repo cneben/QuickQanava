@@ -179,9 +179,11 @@ Note that signal `requestUpdateBoundingShape` won't be emitted for non complex b
 Grouping Nodes
 ------------------
 
+### Default Groups
+
 Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using `#!js Qan.Graph.insertGroup()` method. Nodes are ususally inserted inside existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using `qan::Graph::groupNode()` and `qan::Graph::ungroupNode()` API.
 
-Group visual item (`Qan.GroupItem`) is accessible from `Qan.Group.item` property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be visually collapsed using the `Qan.GroupItem.collapsed` property.
+Group visual item (`Qan.GroupItem`) is accessible from `Qan.Group.item` property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be collapsed visually using the `Qan.GroupItem.collapsed` property.
 
 ![Groups](nodes/sample-groups.gif)
 
@@ -207,5 +209,25 @@ Qan.Graph {
 } // Qan.Graph: graph
 ```
 
-Refer to [Group Sample](https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml) for more detailled information.
+The following configuration options are available for `Qan.Group`:
+
+- `Group.resizable` or `qan::GroupItem::resizable`: Enable or disable visual group resizing.
+- `Group.labelEditorVisible (QML only)`: Show or hide the group label visualization and edition visual component (label is editable by default).
+- `Group.expandButtonVisible (QML only)`: Show or hide the group default delegate expand/collapse button (button is visible by default).
+
+Group size could be modified directly trough standard `Qan.GroupItem` quick items `width` and `height` properties, if no size is specified `minimumSize` property will be used.
+
+Refer to [Group Sample](https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml) for more detailled informations.
+
+### Custom Groups
+
+`GroupItem` is build using `Qan.RectGroupTemplate` template, a custom group delegate with full selection/resizing and styling support could easily be built using this template, see the [Qan.Group](https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/src/Group.qml#L42) component implementation for a demonstration.
+
+A group visual delegate could be built completely from scratch, by inheriting a component from `Qan.GroupItem` or directly from `#!js qan::GroupItem` class, but the following interface must be configured to enable node drag and drop and complete integration in QuickQanava framework:
+
+- `Qan.GroupItem.container` or `#!js qan::GroupItem::container` must be binded to a QuickItem acting as a group concrete container, otherwise visual drag and drop of nodes won't works (Mandatory).
+- Custom group item should react to signals `onNodeDragEnter()` and `onNodeDragLeave()` when a candidate node is dragged above the group to send a visual feedback to the user (Optional).
+
+
+There is a complete demonstration for a custom group component without the use of default rectangular group template in 'cpp' sample: [CustomGroup.qml](https://github.com/cneben/QuickQanava/blob/master/samples/cpp/CustomGroup.qml) and [C++ class CustomGroup](https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/samples/cpp/cpp_sample.h#L44)
 

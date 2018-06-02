@@ -130,15 +130,13 @@ int	main( int argc, char** argv )
 
     { // We can here customize QuickQanava graph topology _synchronously_ before the
       // Qt/QML event loop starts
-        QPointer<CustomGraph> graph{nullptr};
-        const auto rootObjects = engine.rootObjects();
-
-        // FIXME: Demonstrat with std::find_if ....
-        for (const auto rootObject : rootObjects) {
+        QPointer<CustomGraph> graph = nullptr;
+        for (const auto rootObject : engine.rootObjects()) {
             graph = qobject_cast<CustomGraph*>(rootObject->findChild<QQuickItem *>("graph"));
             if (graph)
                 break;
         }
+
         if (graph) {
             unsigned int n = 0;
             static constexpr qreal defaultWidth{40.}, defaultHeight{30.};

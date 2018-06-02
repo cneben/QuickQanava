@@ -54,10 +54,10 @@ Qan.Graph {
 }
 ```
 
-Navigation
+Graph View
 ------------------
 
-A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, `Qan.Graph` component must be defined in the `graph` property of a `Qan.GraphView` item:
+A `Qan.Graph` or `#!js qan::Graph` is actually a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the `Qan.GraphView.graph` property:
 
 ``` cpp hl_lines="5"
 Qan.GraphView {
@@ -70,8 +70,56 @@ Qan.GraphView {
 } // Qan.GraphView
 ```
 
-Navigation could be disabled by setting the `QanGraph.navigable` property to false (it default to true).
+Binding a `Qan.Graph` component to `graph` property of a `Qan.GraphView` item allow navigation using mouse panning and zooming, navigation could be disabled by setting the `QanGraph.navigable` property to false (it default to true).
+
+There is more options for customizing how the view is rendered:
+
+![Qan.GraphView properties](graph/graphview_graph_properties.png)
+
+- `#!js Qan.Graph.connectorColor`: Visual edge creation tool 'handler' color (default to dodgerblue).
+- `#!js Qan.Graph.selectionColor`: Selection rect color (available for nodes and groups).
+- `#!js Qan.GraphView.resizeHandlerColor`: Bottom right corner resize handler color.
+- `#!js Qan.GraphView.resizeHandlerOpacity`, `#!js resizeHandlerRadius`, `#!js resizeHandlerWidth` and `#!js resizeHandlerSize`: More options for bottom right corner resize handler configuration.
+- `#!js Qan.GraphView.gridThickColor`: Grid major thick color (works for both point and line grids).
+
+For a more detailed description, see [Material Styling](styles.md#material)
 
 
 Grid
 ------------------
+
+Grid could be configured with `Qan.GraphView.grid` property, either a point or line grid could be used (`Qan.PointGrid` and `Qan.LineGrid` components), default grid is drawn with orthogonal lines.
+
+``` cpp hl_lines="5"
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
+
+Qan.GraphView {
+  id: graphView
+  anchors.fill: parent
+  graph: Qan.Graph {
+      gridThickColor: "lightgrey"
+      grid: Qan.LineGrid{ 
+        gridScale: 50
+        gridMajor: 5
+      }
+      // or 
+      //grid: Qan.PointGrid{
+      //}
+    } // Qan.Graph: topology
+} // Qan.GraphView
+```
+
+Grid appearance is configurable using the following abstract interface working for both points and lines grids:
+
+- `gridScale`: Interval in points between lines or points.
+- `gridMajor`: Number of thicks between major points or lines (for example for lines, setting `gridMajor` to 5.0 means that a major strong line will be drawn every 5 grid tiles).
+- `gridWidth`: size in points, either grid points or line width.
+- `thickColor`: Color for points or lines.
+
+| Qan.PointGrid                                       |Qan.LineGrid                                       |
+| ---                                                 | :---:                                             | 
+| ![Qan.GraphView properties](graph/grid_points.png)  | ![Qan.GraphView properties](graph/grid_lines.png) | 
+
+!!! warning "As of 20180602, grid support is still under development, see issues [33](https://github.com/cneben/QuickQanava/issues/33) and [25](https://github.com/cneben/QuickQanava/issues/25). Snap to grid is also unsupported, contributions are welcome !"
+

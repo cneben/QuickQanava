@@ -9,7 +9,7 @@ Introduction
 Defining Styles
 ------------------
 
-![Style Sample](samples/quickqanava3-sample-style.png)
+![Style Sample](samples/styles.png)
 
 Three shortcut context variables are available from QML to access default styles: `defaultNodeStyle`, `defaultEdgeStyle`, `defaultGroupStyle`.
 
@@ -33,7 +33,7 @@ QuickQanava provide a ready to use visual `Qan.StyleListView` component for visu
 | `effectOffset`  | Effect offset (used only for `NodeStyle.EffectShadow`)              | `4.0`               | ![](styles/styles-node-effectoffset.png) 4.0 and 15.0 drop shadow offset | 
 
 
-Material
+Material Styling
 ------------------
 
 There is easy to use properties shortcuts in `Qan.GraphView` and `Qan.Graph` to bind UI elements colors to a Qt Quick Controls 2 theme. The following sample show the minimal necessary binding to support Light and Dark mode when using the Qt Quick Material style:
