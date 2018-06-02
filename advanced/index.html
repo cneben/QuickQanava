@@ -99,7 +99,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#advanced-use" tabindex="1" class="md-skip">
+      <a href="#advanced-use-c" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -353,6 +353,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#using-from-c" title="Using from C++" class="md-nav__link">
+    Using from C++
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defining-custom-topology" title="Defining Custom Topology" class="md-nav__link">
     Defining Custom Topology
   </a>
@@ -441,6 +448,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#using-from-c" title="Using from C++" class="md-nav__link">
+    Using from C++
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defining-custom-topology" title="Defining Custom Topology" class="md-nav__link">
     Defining Custom Topology
   </a>
@@ -478,11 +492,93 @@
               
                 
                 
-                <h1 id="advanced-use">Advanced Use<a class="headerlink" href="#advanced-use" title="Permanent link">&para;</a></h1>
+                <h1 id="advanced-use-c">Advanced Use (C++)<a class="headerlink" href="#advanced-use-c" title="Permanent link">&para;</a></h1>
+<h2 id="using-from-c">Using from C++<a class="headerlink" href="#using-from-c" title="Permanent link">&para;</a></h2>
+<p>QuickQanava rely on and underlying QML engine to efficiently draw visual content using QML scene graph (eventually with HW OpenGL acceleration). While the API is almost 100% usable from C++, a QML engine must be initialized in the background for rendering topology, a minimal QuickQanava initialization from QML should thus create graph view and a graph topology components:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// main.qml</span>
+<span class="n">import</span> <span class="n">QuickQanava</span>          <span class="mf">2.0</span> <span class="n">as</span> <span class="n">Qan</span>
+<span class="n">import</span> <span class="s">&quot;qrc:/QuickQanava&quot;</span>   <span class="n">as</span> <span class="n">Qan</span>
+
+<span class="n">ApplicationWindow</span> <span class="p">{</span>
+    <span class="nl">title</span><span class="p">:</span> <span class="s">&quot;QuickQanava cpp API&quot;</span>
+    <span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
+        <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+        <span class="nl">graph</span> <span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+<span class="hll">            <span class="nl">objectName</span><span class="p">:</span> <span class="s">&quot;graph&quot;</span>
+</span>            <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+        <span class="p">}</span> <span class="c1">// Qan.Graph: graph</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<p>On the C++ side, a QML engine should be initialized before starting the application event loop:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1">// main.cpp</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">QGuiApplication</span> <span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+    <span class="n">QQmlApplicationEngine</span> <span class="n">engine</span><span class="p">;</span>
+    <span class="n">QuickQanava</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">engine</span><span class="p">);</span>   <span class="c1">// Mandatory</span>
+<span class="hll">    <span class="n">engine</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">QUrl</span><span class="p">(</span><span class="s">&quot;qrc:/main.qml&quot;</span><span class="p">));</span>
+</span>    <span class="c1">// Custom &quot;synchronous&quot; topology initialization should be added here    </span>
+    <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
+
+<p>It is then easy to access <code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">{</span> <span class="nx">objectName</span><span class="o">:</span><span class="s2">&quot;graph&quot;</span><span class="p">}</span></code> QML component trough it's <code class="codehilite"><span class="n">qan</span><span class="o">::</span><span class="n">Graph</span></code>  virtual interface:
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>  <span class="n">QPointer</span><span class="o">&lt;</span><span class="n">CustomGraph</span><span class="o">&gt;</span> <span class="n">graph</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span> <span class="nl">rootObject</span> <span class="p">:</span> <span class="n">engine</span><span class="p">.</span><span class="n">rootObjects</span><span class="p">())</span> <span class="p">{</span>
+<span class="hll">    <span class="n">graph</span> <span class="o">=</span> <span class="n">qobject_cast</span><span class="o">&lt;</span><span class="n">CustomGraph</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">rootObject</span><span class="o">-&gt;</span><span class="n">findChild</span><span class="o">&lt;</span><span class="n">QQuickItem</span> <span class="o">*&gt;</span><span class="p">(</span><span class="s">&quot;graph&quot;</span><span class="p">));</span>
+</span>    <span class="k">if</span> <span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Go on</span>
+  <span class="p">}</span>
+</pre></div>
+</td></tr></table></p>
+<p>At this point, any modification should be done:</p>
+<ul>
+<li>Synchronously before application event loop is started using app.exec().</li>
+<li>In signals handlers reacting to <code class="codehilite">qan::Graph</code> or <code class="codehilite">qan::GraphView</code> events such as <code class="codehilite">nodeClicked()</code> or <code class="codehilite">groupClicked()</code> and so on (See <a href="https://github.com/cneben/QuickQanava/blob/master/src/qanGraph.h">qan::Graph</a> and <a href="https://github.com/cneben/QuickQanava/blob/master/src/qanGraphView.h">qan::GraphView</a> signals).</li>
+<li>Using behavior observers (See <a href="../advanced.qml#observation-of-topological-modifications">Behaviors section</a>).</li>
+</ul>
+<p>Please refer to the <a href="https://github.com/cneben/QuickQanava/tree/master/samples/cpp">cpp sample</a> and more specifically <a href="https://github.com/cneben/QuickQanava/blob/master/samples/cpp/cpp_sample.cpp">cpp_sample.cpp</a> for a sample about using <code class="codehilite">qan::Graph</code> topology related methods.</p>
 <h2 id="defining-custom-topology">Defining Custom Topology<a class="headerlink" href="#defining-custom-topology" title="Permanent link">&para;</a></h2>
-<p>QuickQanava topology is described using GTpo library. Topology is modelled using non visual objects modelling node (<a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node.html">qan::Node</a>) connected by directed edges (<a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_edge.html">qan::Edge</a>) eventually grouped in <a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_group.html">qan::Group</a>. These non-visual objects (called primitives) are mapped to QQuickItem based visual items. Concrete QQuickItem are generated on demand using QML QQmlComponent objects. </p>
-<p>QuickQanava provide default delegates for all primitives, but custom delegate could be specify by providing an argument for all primitive creation functions: <code class="codehilite">qan::Graph::insertNode()</code>, <code class="codehilite">qan::Graph::insertEdge()</code>, <code class="codehilite">qan::Graph::insertGroup()</code> and their QML counterpart in <code class="codehilite">Qan.Graph</code>. Simple custom delegate mapping is described in <a href="http://www.destrat.io/quickqanava/gettingstarted/index.html#displaying-custom-nodes">QuickStart</a>.</p>
-<p>Primitives classes could be subclassed from c++ to provide specific customization. Mapping between non-visual topology primitive and their QtQuick counterpart is managed trought static singleton factories defined in qan::Node, qan::Edge and qan::Group. Theses factories are automatically called from qan::Graph when a primitive creation request happen: a visual item with a specific style is then automatically created.</p>
+<p>QuickQanava topology is described using GTpo library. Topology is modelled using non visual objects modelling node (<a href="https://github.com/cneben/QuickQanava/blob/master/src/qanNode.h">qan::Node</a> connected by directed edges (<a href="https://github.com/cneben/QuickQanava/blob/master/src/qanEdge.h">qan::Edge</a> eventually grouped in <a href="https://github.com/cneben/QuickQanava/blob/master/src/qanGroup.h">qan::Group</a>. These non-visual objects (called primitives) are mapped to QML QQuickItem based visual items. Concrete QQuickItem are generated on demand using QML QQmlComponent objects. </p>
+<p>QuickQanava provide default delegates for all primitives, but custom delegate could be specify by providing an argument for all primitive creation functions: <code class="codehilite">qan::Graph::insertNode()</code>, <code class="codehilite">qan::Graph::insertEdge()</code>, <code class="codehilite">qan::Graph::insertGroup()</code> and their QML counterpart in <code class="codehilite">Qan.Graph</code>. Simple custom delegate mapping is described in <a href="../nodes/index.html#defining-custom-nodes">custom nodes</a> and <a href="../nodes/index.html#custom-groups">custom groups</a> sections.</p>
+<p>Primitives classes could be subclassed from c++ to provide specific customization. Mapping between non-visual topology primitive and their QtQuick counterpart is managed trought static singleton factories defined in <code class="codehilite">qan::Node</code>, <code class="codehilite">qan::Edge</code> and <code class="codehilite">qan::Group</code>. Theses factories are automatically called from <code class="codehilite">qan::Graph</code> when a primitive creation request happen: a visual item with a specific style is then automatically created.</p>
 <p>Creation of a custom graph (MyGraph) with custom node (MyNode) and a dedicated visual item (MyNodeItem) could be achieved with the following architecture:</p>
 <p><img alt="Graph Class Diagram" src="../advanced/class-custom-nodes.png" /></p>
 <p>Factories have to be redefined in primitive subclasses:</p>
@@ -610,8 +706,8 @@
 <p>Methods <code class="codehilite">inNodeInserted()</code> and <code class="codehilite">inNodeRemoved()</code> are called automatically when an in node is inserted or removed on behaviour target node.</p>
 <p>Reference documentation:</p>
 <ul>
-<li><a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node_behaviour.html">qan::NodeBehaviour</a></li>
-<li><a href="http://www.destrat.io/quickqanava/doc/classqan_1_1_node.html#af7f55d1894caae050bfdfc31d37166c3">qan::Node::installBehaviour()</a></li>
+<li><a href="https://github.com/cneben/QuickQanava/blob/master/src/qanBehaviour.h">qan::NodeBehaviour</a></li>
+<li><a href="https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/src/qanNode.h#L139">qan::Node::installBehaviour()</a></li>
 </ul>
                 
                   

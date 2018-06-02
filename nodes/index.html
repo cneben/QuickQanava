@@ -357,6 +357,26 @@
     Grouping Nodes
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-groups" title="Default Groups" class="md-nav__link">
+    Default Groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-groups" title="Custom Groups" class="md-nav__link">
+    Custom Groups
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
       
@@ -526,6 +546,26 @@
   <a href="#grouping-nodes" title="Grouping Nodes" class="md-nav__link">
     Grouping Nodes
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-groups" title="Default Groups" class="md-nav__link">
+    Default Groups
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-groups" title="Custom Groups" class="md-nav__link">
+    Custom Groups
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -762,8 +802,9 @@
 </ul>
 <p>Note that signal <code class="codehilite">requestUpdateBoundingShape</code> won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override <code class="codehilite">generateDefaultBoundingShape()</code> method.</p>
 <h2 id="grouping-nodes">Grouping Nodes<a class="headerlink" href="#grouping-nodes" title="Permanent link">&para;</a></h2>
+<h3 id="default-groups">Default Groups<a class="headerlink" href="#default-groups" title="Permanent link">&para;</a></h3>
 <p>Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using <code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertGroup</span><span class="p">()</span></code> method. Nodes are ususally inserted inside existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using <code class="codehilite">qan::Graph::groupNode()</code> and <code class="codehilite">qan::Graph::ungroupNode()</code> API.</p>
-<p>Group visual item (<code class="codehilite">Qan.GroupItem</code>) is accessible from <code class="codehilite">Qan.Group.item</code> property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be visually collapsed using the <code class="codehilite">Qan.GroupItem.collapsed</code> property.</p>
+<p>Group visual item (<code class="codehilite">Qan.GroupItem</code>) is accessible from <code class="codehilite">Qan.Group.item</code> property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be collapsed visually using the <code class="codehilite">Qan.GroupItem.collapsed</code> property.</p>
 <p><img alt="Groups" src="../nodes/sample-groups.gif" /></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -805,7 +846,22 @@
 </pre></div>
 </td></tr></table>
 
-<p>Refer to <a href="https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml">Group Sample</a> for more detailled information.</p>
+<p>The following configuration options are available for <code class="codehilite">Qan.Group</code>:</p>
+<ul>
+<li><code class="codehilite">Group.resizable</code> or <code class="codehilite">qan::GroupItem::resizable</code>: Enable or disable visual group resizing.</li>
+<li><code class="codehilite">Group.labelEditorVisible (QML only)</code>: Show or hide the group label visualization and edition visual component (label is editable by default).</li>
+<li><code class="codehilite">Group.expandButtonVisible (QML only)</code>: Show or hide the group default delegate expand/collapse button (button is visible by default).</li>
+</ul>
+<p>Group size could be modified directly trough standard <code class="codehilite">Qan.GroupItem</code> quick items <code class="codehilite">width</code> and <code class="codehilite">height</code> properties, if no size is specified <code class="codehilite">minimumSize</code> property will be used.</p>
+<p>Refer to <a href="https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml">Group Sample</a> for more detailled informations.</p>
+<h3 id="custom-groups">Custom Groups<a class="headerlink" href="#custom-groups" title="Permanent link">&para;</a></h3>
+<p><code class="codehilite">GroupItem</code> is build using <code class="codehilite">Qan.RectGroupTemplate</code> template, a custom group delegate with full selection/resizing and styling support could easily be built using this template, see the <a href="https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/src/Group.qml#L42">Qan.Group</a> component implementation for a demonstration.</p>
+<p>A group visual delegate could be built completely from scratch, by inheriting a component from <code class="codehilite">Qan.GroupItem</code> or directly from <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">GroupItem</span></code> class, but the following interface must be configured to enable node drag and drop and complete integration in QuickQanava framework:</p>
+<ul>
+<li><code class="codehilite">Qan.GroupItem.container</code> or <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">GroupItem</span><span class="o">::</span><span class="nx">container</span></code> must be binded to a QuickItem acting as a group concrete container, otherwise visual drag and drop of nodes won't works (Mandatory).</li>
+<li>Custom group item should react to signals <code class="codehilite">onNodeDragEnter()</code> and <code class="codehilite">onNodeDragLeave()</code> when a candidate node is dragged above the group to send a visual feedback to the user (Optional).</li>
+</ul>
+<p>There is a complete demonstration for a custom group component without the use of default rectangular group template in 'cpp' sample: <a href="https://github.com/cneben/QuickQanava/blob/master/samples/cpp/CustomGroup.qml">CustomGroup.qml</a> and <a href="https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/samples/cpp/cpp_sample.h#L44">C++ class CustomGroup</a></p>
                 
                   
                 

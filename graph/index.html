@@ -307,8 +307,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigation" title="Navigation" class="md-nav__link">
-    Navigation
+  <a href="#graph-view" title="Graph View" class="md-nav__link">
+    Graph View
   </a>
   
 </li>
@@ -462,8 +462,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigation" title="Navigation" class="md-nav__link">
-    Navigation
+  <a href="#graph-view" title="Graph View" class="md-nav__link">
+    Graph View
   </a>
   
 </li>
@@ -554,8 +554,8 @@
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></p>
-<h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h2>
-<p>A graph is not "navigable" by default, to allow navigation using mouse panning and zooming, <code class="codehilite">Qan.Graph</code> component must be defined in the <code class="codehilite">graph</code> property of a <code class="codehilite">Qan.GraphView</code> item:</p>
+<h2 id="graph-view">Graph View<a class="headerlink" href="#graph-view" title="Permanent link">&para;</a></h2>
+<p>A <code class="codehilite">Qan.Graph</code> or <code class="codehilite"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span></code> is actually a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the <code class="codehilite">Qan.GraphView.graph</code> property:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -574,8 +574,79 @@
 </pre></div>
 </td></tr></table>
 
-<p>Navigation could be disabled by setting the <code class="codehilite">QanGraph.navigable</code> property to false (it default to true).</p>
+<p>Binding a <code class="codehilite">Qan.Graph</code> component to <code class="codehilite">graph</code> property of a <code class="codehilite">Qan.GraphView</code> item allow navigation using mouse panning and zooming, navigation could be disabled by setting the <code class="codehilite">QanGraph.navigable</code> property to false (it default to true).</p>
+<p>There is more options for customizing how the view is rendered:</p>
+<p><img alt="Qan.GraphView properties" src="../graph/graphview_graph_properties.png" /></p>
+<ul>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">connectorColor</span></code>: Visual edge creation tool 'handler' color (default to dodgerblue).</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionColor</span></code>: Selection rect color (available for nodes and groups).</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerColor</span></code>: Bottom right corner resize handler color.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerOpacity</span></code>, <code class="codehilite"><span class="nx">resizeHandlerRadius</span></code>, <code class="codehilite"><span class="nx">resizeHandlerWidth</span></code> and <code class="codehilite"><span class="nx">resizeHandlerSize</span></code>: More options for bottom right corner resize handler configuration.</li>
+<li><code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">gridThickColor</span></code>: Grid major thick color (works for both point and line grids).</li>
+</ul>
+<p>For a more detailed description, see <a href="../styles/index.html#material">Material Styling</a></p>
 <h2 id="grid">Grid<a class="headerlink" href="#grid" title="Permanent link">&para;</a></h2>
+<p>Grid could be configured with <code class="codehilite">Qan.GraphView.grid</code> property, either a point or line grid could be used (<code class="codehilite">Qan.PointGrid</code> and <code class="codehilite">Qan.LineGrid</code> components), default grid is drawn with orthogonal lines.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">import</span> <span class="n">QuickQanava</span>          <span class="mf">2.0</span> <span class="n">as</span> <span class="n">Qan</span>
+<span class="n">import</span> <span class="s">&quot;qrc:/QuickQanava&quot;</span>   <span class="n">as</span> <span class="n">Qan</span>
+
+<span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span> <span class="p">{</span>
+<span class="hll">  <span class="nl">id</span><span class="p">:</span> <span class="n">graphView</span>
+</span>  <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
+  <span class="nl">graph</span><span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+      <span class="nl">gridThickColor</span><span class="p">:</span> <span class="s">&quot;lightgrey&quot;</span>
+      <span class="nl">grid</span><span class="p">:</span> <span class="n">Qan</span><span class="p">.</span><span class="n">LineGrid</span><span class="p">{</span> 
+        <span class="nl">gridScale</span><span class="p">:</span> <span class="mi">50</span>
+        <span class="nl">gridMajor</span><span class="p">:</span> <span class="mi">5</span>
+      <span class="p">}</span>
+      <span class="c1">// or </span>
+      <span class="c1">//grid: Qan.PointGrid{</span>
+      <span class="c1">//}</span>
+    <span class="p">}</span> <span class="c1">// Qan.Graph: topology</span>
+<span class="p">}</span> <span class="c1">// Qan.GraphView</span>
+</pre></div>
+</td></tr></table>
+
+<p>Grid appearance is configurable using the following abstract interface working for both points and lines grids:</p>
+<ul>
+<li><code class="codehilite">gridScale</code>: Interval in points between lines or points.</li>
+<li><code class="codehilite">gridMajor</code>: Number of thicks between major points or lines (for example for lines, setting <code class="codehilite">gridMajor</code> to 5.0 means that a major strong line will be drawn every 5 grid tiles).</li>
+<li><code class="codehilite">gridWidth</code>: size in points, either grid points or line width.</li>
+<li><code class="codehilite">thickColor</code>: Color for points or lines.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Qan.PointGrid</th>
+<th align="center">Qan.LineGrid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Qan.GraphView properties" src="../graph/grid_points.png" /></td>
+<td align="center"><img alt="Qan.GraphView properties" src="../graph/grid_lines.png" /></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">As of 20180602, grid support is still under development, see issues <a href="https://github.com/cneben/QuickQanava/issues/33">33</a> and <a href="https://github.com/cneben/QuickQanava/issues/25">25</a>. Snap to grid is also unsupported, contributions are welcome !</p>
+</div>
                 
                   
                 
