@@ -190,6 +190,8 @@ public:
 
 QML_DECLARE_TYPE( qan::FlowNode )
 QML_DECLARE_TYPE( qan::FlowGraph )
+Q_DECLARE_METATYPE( qan::FlowNode::Type )
+Q_DECLARE_METATYPE( qan::OperationNode::Operation )
 
 #endif // qanDataFlow_h
 

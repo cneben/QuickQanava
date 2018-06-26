@@ -463,6 +463,7 @@ private:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::NodeItem)
+Q_DECLARE_METATYPE(qan::NodeItem::Connectable)
 Q_DECLARE_METATYPE(qan::NodeItem::Dock)
 
 #endif // qanNodeItem_h
