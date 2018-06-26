@@ -16,6 +16,7 @@ include (../src/gtpo.pri)
 SOURCES	+=  ./gtpoTests.cpp         \
             ./gtpoContainers.cpp    \
             ./gtpoTopology.cpp      \
+            ./gtpoGraph.cpp         \
             ./gtpoGroups.cpp        \
             ./gtpoBehaviour.cpp
             ./gtpoConcrete.cpp

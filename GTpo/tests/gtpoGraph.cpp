@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,41 +25,53 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the GTpo software.
 //
-// \file	ControlNode.qml
-// \author	benoit@destrat.io
-// \date	2016 07 13
+// \file	gtpoGraph.cpp
+// \author	benoit@qanava.org
+// \date	2018 06 19
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
+// STD headers
+#include <list>
+#include <memory>
+#include <iostream>
 
-import QuickQanava 2.0 as Qan
+// GTpo headers
+#include <GTpo>
 
-Qan.NodeItem {
-    id: customNode
-    width: 160; height: 180
-    x: 150; y: 15
-    Item {
-        anchors.fill: parent
-        Rectangle {
-            anchors.fill: parent
-            radius: 10; color: "blue"
-            border.color: "violet"; border.width: 2
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 4
-                Label {
-                    text: "Node with controls"
-                    color: "lightgray"
-                    font.bold: true
-                }
-                Slider { Layout.fillWidth: true }
-                Slider { Layout.fillWidth: true }
-                Slider { Layout.fillWidth: true }
-            }
-        }
-    }
+// Google Test
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+//-----------------------------------------------------------------------------
+// Graph DFS linearization
+//-----------------------------------------------------------------------------
+
+TEST(GTpoGraph, linearize_dfs_rec)
+{
+    // Inserting a node should increase node count and root node count
+    gtpo::GenGraph<> g;
+    auto nc = g.getNodeCount();
+    auto rnc = g.getRootNodeCount();
+    EXPECT_EQ( nc, 0);
+    EXPECT_EQ( rnc, 0);
+    g.createNode();
+    EXPECT_EQ( g.getNodeCount(), nc + 1 );
+    EXPECT_EQ( g.getRootNodeCount(), rnc + 1 );
+    g.clear();
+}
+
+TEST(GTpoGraph, levelize_dfs_rec)
+{
+    // Inserting a node should increase node count and root node count
+    gtpo::GenGraph<> g;
+    auto nc = g.getNodeCount();
+    auto rnc = g.getRootNodeCount();
+    EXPECT_EQ( nc, 0);
+    EXPECT_EQ( rnc, 0);
+    g.createNode();
+    EXPECT_EQ( g.getNodeCount(), nc + 1 );
+    EXPECT_EQ( g.getRootNodeCount(), rnc + 1 );
+    g.clear();
 }

@@ -20,7 +20,7 @@ QuickQanava
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
-+ **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [USing from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
++ **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
 + **CHANGELOG 20180527:** Fix major issues with grouping, see [CHANGELOG](https://github.com/cneben/QuickQanava/blob/master/CHANGELOG.md).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
