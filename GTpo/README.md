@@ -1,4 +1,4 @@
-# GTpo  (C++14 Topology library)
+GTpo  (C++14 Topology library)
 ===========================
 
 GTpo (Generic Topology) is the C++11 graph topology library used in QuickQanava2 graph visualization library. GTpo is available under the 
@@ -12,35 +12,21 @@ GTpo root namespace 'gtpo' contains generic code, user not interested in using s
     
 * QuickQanava2: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: ![QuickQanava2](https://github.com/cneben/QuickQanava)
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/graph-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/gtpo-datamodel.png)
 
 GTpo is **highly** alpha.
 
-+ Project homepage: http://www.qanava.org/
-+ Reference documentation: http://www.delia-strategie.fr/doc/gtpo/index.html
-+ Developper manual: https://github.com/cneben/GTpo/blob/master/doc/manual/manual.md
++ Project homepage: https://github.com/cneben/QuickQanava/GTpo
 
 # Installation
 
 ## Dependencies
 * Googletest: https://github.com/google/googletest/ 
 
-## Roadmap
-
-- [X] Basic directed graph topology support with custom containers and property support.
-- [X] Topology serialization using Protocol Buffer v3.
-- [X] Basic GraphML support (OUT).
-- [X] Virtual behaviours/layouts/observers support.
-- [ ] Gephi GEXF file format IN/OUT support.
-- [ ] Complete asynchronous graph access with a read/write graph view MUTEX protection.
-- [ ] Advanced asynchronous graph access with Intel TBD thread safe containers.
-- [X] Static behaviours/layouts/observers support (C++14 only).
-- [ ] Graph search algorithms (Djikstra/A-Star).
-
 ## Installation:
 GTpo use _qmake_ as its main build configuration system, dependencies are configured in the root directory _common.pri_ file:
 
-~~~~~~~~~~~~~{.cpp}master
+~~~~~~~~~~~~~{.cpp}
 # Comment if you do not intent to serialize graph to Protocol Buffer
 DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
 
@@ -72,7 +58,7 @@ include(./GTpo/src/gtpo.pri)
 Data model
 ------------------
 
-![GTpo data model schema](https://github.com/cneben/GTpo/blob/master/doc/graph-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/gtpo-datamodel.png)
 
 
 Behaviours
@@ -132,6 +118,6 @@ to the concrete container.
 When a gtpo::GroupEdgeSetBehaviour is registered in graph (ie added in gtpo::GraphConfig::GroupBehaviours std::tuple), edges and adjacent edges of a group could be searched 
 with gtpo::GenGroup<>::getEdges() and gtpo::GenGroup<>::getAdjacentEdges():
 
-![](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/gtpo_topo_group_adjacent_edges.png)
+![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo_topo_group_adjacent_edges.png)
 
 
