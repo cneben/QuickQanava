@@ -134,7 +134,8 @@ void    GroupItem::setStyle( qan::Style* style ) noexcept
 {
     if ( style != _style ) {
         if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, 0, this, 0 );
+            QObject::disconnect( _style, nullptr,
+                                 this,   nullptr );
         _style = style;
         if ( _style )
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
@@ -170,7 +171,7 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
     if ( _group &&
          collapsed != _collapsed ) {
         _collapsed = collapsed;
-        for ( auto weakEdge : _group->getAdjacentEdges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
+        for ( auto weakEdge : _group->get_adjacent_edges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
             const auto edge = weakEdge.lock() ;
             if ( edge &&
                  edge->getItem() != nullptr )
@@ -194,7 +195,7 @@ void    GroupItem::groupMoved()
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
-        for ( auto weakEdge : _group->getAdjacentEdges() ) {
+        for ( auto weakEdge : _group->get_adjacent_edges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&
                  edge->getItem() != nullptr &&

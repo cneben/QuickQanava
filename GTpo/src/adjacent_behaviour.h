@@ -63,7 +63,7 @@ public:
     using shared_group_t      = std::shared_ptr<typename config_t::final_group_t>;
 
     using group_t           = typename config_t::final_group_t;
-    using weak_edges_t_search = typename config_t::template search_container_t< weak_edge_t >;
+    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
 public:
     void    node_inserted( weak_node_t& weakNode ) noexcept;
@@ -86,7 +86,7 @@ public:
 
     using weak_edge_t         = std::weak_ptr<typename config_t::final_edge_t>;
     using group_t           = typename config_t::final_group_t;
-    using weak_edges_t_search = typename config_t::template search_container_t< weak_edge_t >;
+    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
 public:
     void    edge_inserted( weak_edge_t& weakEdge ) noexcept;

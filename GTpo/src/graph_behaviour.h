@@ -154,7 +154,7 @@ public:
     auto get_primitive_graph(std::weak_ptr<primitive_t>& weak_primitive) -> gtpo::graph<config_t>*
     {
         auto primitive = weak_primitive.lock();
-        return ( primitive ? primitive->getGraph() : nullptr );
+        return ( primitive ? primitive->get_graph() : nullptr );
     }
 
     void    node_inserted( weak_node_t& weakNode ) noexcept {

@@ -64,7 +64,7 @@ public:
     using weak_node_t          = std::weak_ptr<typename config_t::final_node_t>;
     using shared_node_t        = std::shared_ptr<typename config_t::final_node_t>;
     using shared_nodes_t       = typename config_t::template node_container_t< shared_node_t >;
-    using weak_node_ts_search  = typename config_t::template search_container_t< weak_node_t >;
+    using weak_nodes_t_search  = typename config_t::template search_container_t< weak_node_t >;
 
     using weak_edge_t          = std::weak_ptr<typename config_t::final_edge_t>;
     //@}
@@ -116,7 +116,7 @@ public:
     using weak_node_t          = std::weak_ptr<typename config_t::final_node_t>;
     using shared_node_t        = std::shared_ptr<typename config_t::final_node_t>;
     using shared_nodes_t       = typename config_t::template node_container_t< shared_node_t >;
-    using weak_node_ts_search  = typename config_t::template search_container_t< weak_node_t >;
+    using weak_nodes_t_search  = typename config_t::template search_container_t< weak_node_t >;
 
     using weak_edge_t          = std::weak_ptr<typename config_t::final_edge_t>;
 

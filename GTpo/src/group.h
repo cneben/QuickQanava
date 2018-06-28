@@ -60,17 +60,17 @@ template <class config_t = gtpo::config<>>
 class group : public gtpo::node<config_t>,
               public gtpo::behaviourable_group<config_t>
 {
-    friend graph<config_t>;   // graph need access to setGraph()
+    friend graph<config_t>;   // graph need access to set_graph()
 
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
     using weak_node_t         = std::weak_ptr<typename config_t::final_node_t>;
     using shared_node_t       = std::shared_ptr<typename config_t::final_node_t>;
-    using weak_node_ts        = typename config_t::template node_container_t< weak_node_t >;
+    using weak_nodes_t        = typename config_t::template node_container_t< weak_node_t >;
 
     using weak_edge_t         = std::weak_ptr<typename config_t::final_edge_t>;
-    using weak_edges_t_search = typename config_t::template search_container_t< weak_edge_t >;
+    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
     using weak_group_t        = std::weak_ptr< typename config_t::final_group_t >;
     using shared_group_t      = std::shared_ptr< typename config_t::final_group_t >;
@@ -86,29 +86,29 @@ public:
     //@{
 public:
     //! Return group's nodes.
-    inline auto getNodes() noexcept -> const weak_node_ts& { return _nodes; }
+    inline auto get_nodes() noexcept -> const weak_nodes_t& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        hasNode( const weak_node_t& node ) const noexcept -> bool;
+    auto        has_node( const weak_node_t& node ) const noexcept -> bool;
     //! Return group registered node count.
     inline auto get_node_count( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
 private:
-    weak_node_ts   _nodes;
+    weak_nodes_t   _nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Adjacent Edges *///----------------------------------------------
     //@{
 public:
-    inline auto     get_edges() noexcept -> weak_edges_t_search& { return _edges; }
-    inline auto     get_edges() const noexcept -> const weak_edges_t_search& { return _edges; }
+    inline auto     get_edges() noexcept -> weak_edges_search_t& { return _edges; }
+    inline auto     get_edges() const noexcept -> const weak_edges_search_t& { return _edges; }
 
-    inline auto     getAdjacentEdges() noexcept -> weak_edges_t_search& { return _adjacentEdges; }
-    inline auto     getAdjacentEdges() const noexcept -> const weak_edges_t_search& { return _adjacentEdges; }
+    inline auto     get_adjacent_edges() noexcept -> weak_edges_search_t& { return _adjacentEdges; }
+    inline auto     get_adjacent_edges() const noexcept -> const weak_edges_search_t& { return _adjacentEdges; }
 
 protected:
-    weak_edges_t_search _edges;
-    weak_edges_t_search _adjacentEdges;
+    weak_edges_search_t _edges;
+    weak_edges_search_t _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 };

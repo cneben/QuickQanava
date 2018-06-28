@@ -375,9 +375,6 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     virtual qan::Edge*      insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
 
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
-
     //! Bind an existing edge source to a visual out port from QML.
     Q_INVOKABLE void        bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort ) noexcept;
 
@@ -412,17 +409,17 @@ public:
 
 public:
     template < class Edge_t >
-    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
+    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent = nullptr );
 private:
     /*! \brief Internal utility used to insert an existing edge \c edge to either a destination \c dstNode node OR edge \c dstEdge.
      *
      * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
      */
     bool                    configureEdge( qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
-                                           qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+                                           qan::Node& src, qan::Node* dstNode );
 public:
     template < class Edge_t >
-    qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+    qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode );
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().

@@ -156,13 +156,13 @@ public:
     auto get_primitive_graph(std::weak_ptr<primitive_t>& weak_primitive) -> gtpo::graph<config_t>*
     {
         auto primitive = weak_primitive.lock();
-        return ( primitive ? primitive->getGraph() : nullptr );
+        return ( primitive ? primitive->get_graph() : nullptr );
     }
     void    node_inserted( weak_node_t& weakNode ) noexcept {
         const auto node = weakNode.lock();
         if (!node)
             return;
-        const auto node_group = node->getGroup().lock();
+        const auto node_group = node->get_group().lock();
         const auto group_behaviourable = static_cast<gtpo::behaviourable_group<config_t>*>(node_group.get());
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::node_inserted, weakNode );
@@ -171,7 +171,7 @@ public:
         const auto node = weakNode.lock();
         if (!node)
             return;
-        const auto node_group = node->getGroup().lock();
+        const auto node_group = node->get_group().lock();
         const auto group_behaviourable = static_cast<gtpo::behaviourable_group<config_t>*>(node_group.get());
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::node_removed, weakNode );
@@ -180,7 +180,7 @@ public:
         const auto group = weakGroup.lock();
         if (!group)
             return;
-        const auto group_group = group->getGroup().lock();
+        const auto group_group = group->get_group().lock();
         const auto group_behaviourable = static_cast<gtpo::behaviourable_group<config_t>*>(group_group.get());
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::group_inserted, weakGroup );
@@ -189,7 +189,7 @@ public:
         const auto group = weakGroup.lock();
         if (!group)
             return;
-        const auto group_group = group->getGroup().lock();
+        const auto group_group = group->get_group().lock();
         const auto group_behaviourable = static_cast<gtpo::behaviourable_group<config_t>*>(group_group.get());
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::group_removed, weakGroup );

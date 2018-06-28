@@ -80,7 +80,7 @@ public:
     using graph_t       = gtpo::graph<config_t>;
     using weak_node_t     = std::weak_ptr<typename config_t::final_node_t>;
     using shared_node_t   = std::shared_ptr<typename config_t::final_node_t>;
-    using weak_node_ts    = typename config_t::template node_container_t< weak_node_t >;
+    using weak_nodes_t    = typename config_t::template node_container_t< weak_node_t >;
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.
     using behaviourable_base = gtpo::behaviourable_node< config_t >;
@@ -116,36 +116,36 @@ public:
      *
      * \note if \c outEdge source node is different from this node, it is set to this node.
      */
-    auto    addOutEdge( weak_edge_t sharedOutEdge ) noexcept( false ) -> void;
+    auto    add_out_edge( weak_edge_t sharedOutEdge ) noexcept( false ) -> void;
     /*! \brief Insert edge \c inEdge as an in edge for \c node.
      *
      * \note if \c inEdge destination node is different from \c node, it is automatically set to \c node.
      */
-    auto    addInEdge( weak_edge_t sharedInEdge ) noexcept( false ) -> void;
+    auto    add_in_edge( weak_edge_t sharedInEdge ) noexcept( false ) -> void;
     /*! \brief Remove edge \c outEdge from this node out edges.
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    removeOutEdge( const weak_edge_t outEdge ) noexcept( false ) -> void;
+    auto    remove_out_edge( const weak_edge_t outEdge ) noexcept( false ) -> void;
     /*! \brief Remove edge \c inEdge from this node in edges.
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    removeInEdge( const weak_edge_t inEdge ) noexcept( false ) -> void;
+    auto    remove_in_edge( const weak_edge_t inEdge ) noexcept( false ) -> void;
 
-    inline auto     getInEdges() const noexcept -> const weak_edges_t& { return _inEdges; }
-    inline auto     getOutEdges() const noexcept -> const weak_edges_t& { return _outEdges; }
+    inline auto     get_in_edges() const noexcept -> const weak_edges_t& { return _inEdges; }
+    inline auto     get_out_edges() const noexcept -> const weak_edges_t& { return _outEdges; }
 
-    inline auto     getInNodes() const noexcept -> const weak_node_ts& { return _inNodes; }
-    inline auto     getOutNodes() const noexcept -> const weak_node_ts& { return _outNodes; }
+    inline auto     get_in_nodes() const noexcept -> const weak_nodes_t& { return _inNodes; }
+    inline auto     get_out_nodes() const noexcept -> const weak_nodes_t& { return _outNodes; }
 
-    inline auto     getInDegree() const noexcept -> unsigned int { return static_cast<int>( _inEdges.size() ); }
-    inline auto     getOutDegree() const noexcept -> unsigned int { return static_cast<int>( _outEdges.size() ); }
+    inline auto     get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _inEdges.size() ); }
+    inline auto     get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _outEdges.size() ); }
 private:
     weak_edges_t       _inEdges;
     weak_edges_t       _outEdges;
-    weak_node_ts       _inNodes;
-    weak_node_ts       _outNodes;
+    weak_nodes_t       _inNodes;
+    weak_nodes_t       _outNodes;
     //@}
     //-------------------------------------------------------------------------
 
@@ -153,8 +153,8 @@ private:
     //@{
 public:
     inline auto set_group( const std::weak_ptr<typename config_t::final_group_t>& group ) noexcept -> void { _group = group; }
-    inline auto getGroup( ) noexcept -> std::weak_ptr<typename config_t::final_group_t>& { return _group; }
-    inline auto getGroup( ) const noexcept -> const std::weak_ptr<typename config_t::final_group_t>& { return _group; }
+    inline auto get_group( ) noexcept -> std::weak_ptr<typename config_t::final_group_t>& { return _group; }
+    inline auto get_group( ) const noexcept -> const std::weak_ptr<typename config_t::final_group_t>& { return _group; }
 private:
     std::weak_ptr<typename config_t::final_group_t> _group;
     //@}

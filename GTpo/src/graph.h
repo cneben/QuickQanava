@@ -88,14 +88,14 @@ public:
     using shared_node_t       = typename std::shared_ptr<typename config_t::final_node_t>;
     using weak_node_t         = typename std::weak_ptr<typename config_t::final_node_t>;
     using shared_nodes_t      = typename config_t::template node_container_t< shared_node_t >;
-    using weak_node_ts        = typename config_t::template node_container_t< weak_node_t >;
-    using weak_node_ts_search = typename config_t::template search_container_t< weak_node_t >;
+    using weak_nodes_t        = typename config_t::template node_container_t< weak_node_t >;
+    using weak_nodes_t_search = typename config_t::template search_container_t< weak_node_t >;
 
     using weak_edge_t         = typename std::weak_ptr<typename config_t::final_edge_t>;
     using shared_edge_t       = typename std::shared_ptr<typename config_t::final_edge_t>;
     using weak_edges_t        = typename config_t::template edge_container_t< weak_edge_t >;
     using shared_edges_t      = typename config_t::template edge_container_t< shared_edge_t >;
-    using weak_edges_t_search = typename config_t::template search_container_t< weak_edge_t >;
+    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
     using shared_group_t      = typename std::shared_ptr<typename config_t::final_group_t>;
     using weak_group_t        = typename std::weak_ptr<typename config_t::final_group_t>;
@@ -199,7 +199,7 @@ public:
     auto    install_root_node( weak_node_t node ) noexcept( false ) -> void;
     /*! \brief Test if a given \c node is a root node.
      *
-     * This method is safer than testing node->getInDegree()==0, since it check
+     * This method is safer than testing node->get_in_degree()==0, since it check
      * \c node in degree and its presence in the internal root node cache.
      *
      * \return true if \c node is a root node, false otherwise.
@@ -223,12 +223,12 @@ public:
     inline auto     cend() const -> typename shared_nodes_t::const_iterator { return _nodes.cend(); }
 
     //! Graph root nodes container.
-    inline auto     get_root_nodes() const -> const weak_node_ts& { return _root_nodes; }
+    inline auto     get_root_nodes() const -> const weak_nodes_t& { return _root_nodes; }
 
 private:
     shared_nodes_t        _nodes;
-    weak_node_ts        _root_nodes;
-    weak_node_ts_search _nodes_search;
+    weak_nodes_t        _root_nodes;
+    weak_nodes_t_search _nodes_search;
     //@}
     //-------------------------------------------------------------------------
 
@@ -308,13 +308,6 @@ public:
      * \throw noexcept.
      */
     auto        find_edge( weak_node_t source, weak_edge_t destination ) const noexcept -> weak_edge_t;
-    /*! \brief Test if a directed restricted hyper edge exists between nodes \c source and \c destination.
-     *
-     * This method only test a 1 degree relationship (ie a direct edge between \c source
-     * and \c destination). Worst case complexity is O(edge count).
-     * \throw noexcept.
-     */
-    auto        has_edge( weak_node_t source, weak_edge_t destination ) const noexcept -> bool;
 
     //! Return the number of edges currently existing in graph.
     auto        get_edge_count() const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
@@ -336,7 +329,7 @@ public:
     inline auto get_edges() const noexcept -> const shared_edges_t& { return _edges; }
 private:
     shared_edges_t        _edges;
-    weak_edges_t_search   _edgesSearch;
+    weak_edges_search_t   _edges_search;
     //@}
     //-------------------------------------------------------------------------
 
@@ -382,7 +375,7 @@ public:
      * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
      * node_inserted() will be called.
      *
-     * \note \c weakNode getGroup() will return \c weakGroup if grouping succeed.
+     * \note \c weakNode get_group() will return \c weakGroup if grouping succeed.
      */
     auto            group_node( weak_node_t weakNode, weak_group_t weakGroup) noexcept(false) -> void
     {
@@ -393,7 +386,7 @@ public:
         gtpo::assert_throw( node != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
 
         node->set_group( weakGroup );
-        config_t::template container_adapter<weak_node_ts>::insert( weakNode, group->_nodes );
+        config_t::template container_adapter<weak_nodes_t>::insert( weakNode, group->_nodes );
         group->notify_node_inserted( weakNode );
     }
     //! \copydoc group_node()
@@ -415,7 +408,7 @@ public:
      * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
      * node_removed() will be called.
      *
-     * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
+     * \note \c node get_group() will return an expired weak pointer if ungroup succeed.
      */
     auto            ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void
     {
@@ -425,9 +418,9 @@ public:
         auto node = weakNode.lock();
         gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
 
-        gtpo::assert_throw( node->getGroup().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
+        gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
 
-        config_t::template container_adapter<weak_node_ts>::remove( weakNode, group->_nodes );
+        config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
         group->notify_node_removed( weakNode );
         node->set_group( weak_group_t{} );  // Warning: group must remain valid while notify_node_removed() is called
     }

@@ -27,51 +27,28 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpoGraph.cpp
+// \file	gtpo_tests.cpp
 // \author	benoit@qanava.org
-// \date	2018 06 19
+// \date	2016 01 26
 //-----------------------------------------------------------------------------
-
-// STD headers
-#include <list>
-#include <memory>
-#include <iostream>
-
-// GTpo headers
-#include <GTpo>
 
 // Google Test
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-//-----------------------------------------------------------------------------
-// Graph DFS linearization
-//-----------------------------------------------------------------------------
+// GTpo headers
+#include "../src/utils.h"
 
-TEST(GTpoGraph, linearize_dfs_rec)
-{
-    // Inserting a node should increase node count and root node count
-    gtpo::graph<> g;
-    auto nc = g.getNodeCount();
-    auto rnc = g.getRootNodeCount();
-    EXPECT_EQ( nc, 0);
-    EXPECT_EQ( rnc, 0);
-    g.createNode();
-    EXPECT_EQ( g.getNodeCount(), nc + 1 );
-    EXPECT_EQ( g.getRootNodeCount(), rnc + 1 );
-    g.clear();
+int main(int argc, char **argv) {
+    ::testing::InitGoogleMock(&argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
 
-TEST(GTpoGraph, levelize_dfs_rec)
+TEST(GTpoUtils, assertThrow)
 {
-    // Inserting a node should increase node count and root node count
-    gtpo::graph<> g;
-    auto nc = g.getNodeCount();
-    auto rnc = g.getRootNodeCount();
-    EXPECT_EQ( nc, 0);
-    EXPECT_EQ( rnc, 0);
-    g.createNode();
-    EXPECT_EQ( g.getNodeCount(), nc + 1 );
-    EXPECT_EQ( g.getRootNodeCount(), rnc + 1 );
-    g.clear();
+    EXPECT_THROW( gtpo::assert_throw(false, "" ), gtpo::bad_topology_error );
+    EXPECT_NO_THROW( gtpo::assert_throw(true, "" ) );
 }
+
+

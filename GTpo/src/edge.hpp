@@ -34,34 +34,5 @@
 
 namespace gtpo { // ::gtpo
 
-/* edge Restricted Hyper Edge Management *///-------------------------------
-template <class config_t>
-auto edge<config_t>::addInHEdge( weak_edge_t inHEdge ) -> void
-{
-    if ( inHEdge.expired() )
-        throw gtpo::bad_topology_error( "gtpo::edge<>::addInHEdge(): Error: Input hyper edge is null." );
-    shared_edge_t inHEdgePtr{ inHEdge.lock() };
-    if ( inHEdgePtr != nullptr ) {
-        if ( inHEdgePtr->getHDst().expired() )
-            inHEdgePtr->setHDst( this->shared_from_this() );
-        config_t::template container_adapter< weak_edges_t >::insert( inHEdge, _inHEdges );
-        if ( !inHEdgePtr->getSrc().expired() )
-            config_t::template container_adapter< weak_node_ts >::insert( inHEdgePtr->getSrc(), _inHNodes );
-    }
-}
-
-template < class config_t >
-auto edge<config_t>::removeInHEdge( weak_edge_t inHEdge ) -> void
-{
-    if ( inHEdge.expired() )
-        return;                 // Do not throw, removing a null inHEdge let edge in a perfectely valid state
-    shared_edge_t inHEdgePtr{ inHEdge.lock() };
-    if ( inHEdgePtr != nullptr ) {
-        inHEdgePtr->setHDst( shared_edge_t{} );
-        config_t::template container_adapter< weak_edges_t >::remove( inHEdge, _inHEdges );
-        config_t::template container_adapter< weak_node_ts >::remove( inHEdgePtr->getSrc(), _inHNodes );
-    }
-}
-//-----------------------------------------------------------------------------
 
 } // ::gtpo

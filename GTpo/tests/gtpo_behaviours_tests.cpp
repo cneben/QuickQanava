@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpo_config_tests.cpp
+// \file	gtpo_behaviours_tests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------

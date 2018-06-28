@@ -58,11 +58,11 @@ Group::~Group() {
 }
 
 qan::Graph*         Group::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::group< qan::Config >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::group< qan::Config >::get_graph() );
 }
 
 const qan::Graph*   Group::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::group< qan::Config >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::group< qan::Config >::get_graph() );
 }
 
 qan::GroupItem*  Group::getItem() noexcept { return _item.data(); }
@@ -120,7 +120,7 @@ bool    Group::hasNode( qan::Node* node ) const
         return false;
     try {
         auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
-        return gtpo::group< qan::Config >::hasNode( weakNode );
+        return gtpo::group< qan::Config >::has_node( weakNode );
     } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
     return false;
 }

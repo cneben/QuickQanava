@@ -72,21 +72,19 @@ class edge : public config_t::edge_base,
 {
     /*! \name Edge Construction *///-------------------------------------------
     //@{
-    friend graph<config_t>;   // graph need access to setGraph()
+    friend graph<config_t>;   // graph need access to set_graph()
 public:
     using graph_t       = graph<config_t>;
 
-    using weak_node_t     = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node_t   = std::shared_ptr<typename config_t::final_node_t>;
+    using weak_node_t   = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t = std::shared_ptr<typename config_t::final_node_t>;
 
-    using weak_edge_t     = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge_t   = std::shared_ptr<typename config_t::final_edge_t>;
+    using weak_edge_t   = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_edge_t = std::shared_ptr<typename config_t::final_edge_t>;
 
     edge() noexcept : config_t::edge_base{} {}
     explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
         config_t::edge_base{}, _src{ src }, _dst{ dst } { }
-    explicit edge( const weak_node_t& src, const weak_edge_t& hDst ) :
-        config_t::edge_base{}, _src{ src }, _hDst{ hDst } { }
     ~edge() {
         if ( _graph != nullptr )
             std::cerr << "gtpo::edge<>::~edge(): Warning: an edge has been deleted before beeing " <<
@@ -96,10 +94,10 @@ public:
     edge(const edge& ) = delete;
 
 public:
-    inline graph_t*         getGraph() noexcept { return _graph; }
-    inline const graph_t*   getGraph() const noexcept { return _graph; }
+    inline graph_t*         get_graph() noexcept { return _graph; }
+    inline const graph_t*   get_graph() const noexcept { return _graph; }
 private:
-    void                    setGraph( graph_t* graph ) { _graph = graph; }
+    void                    set_graph( graph_t* graph ) { _graph = graph; }
 public:
     graph_t*                _graph{ nullptr };
     //@}
@@ -109,11 +107,11 @@ public:
     //@{
 public:
     //! Get the edge current serializable property (false=not serializable, for example a control node).
-    inline  auto    getSerializable( ) const -> bool { return _serializable; }
-    //! Shortcut to getSerializable().
-    inline  auto    isSerializable( ) const -> bool { return getSerializable(); }
+    inline  auto    get_serializable( ) const -> bool { return _serializable; }
+    //! Shortcut to get_serializable().
+    inline  auto    is_serializable( ) const -> bool { return get_serializable(); }
     //! Change the edge serializable property (it will not trigger an edge changed call in graph behaviour).
-    inline  auto    setSerializable( bool serializable ) -> void { _serializable = serializable; }
+    inline  auto    set_serializable( bool serializable ) -> void { _serializable = serializable; }
 private:
     //! Edge serializable property (default to true ie serializable).
     bool            _serializable = true;
@@ -123,42 +121,15 @@ private:
     /*! \name Source / Destination Management *///-----------------------------
     //@{
 public:
-    inline auto setSrc( weak_node_t src ) noexcept -> void { _src = src; }
-    inline auto setDst( weak_node_t dst ) noexcept -> void { _dst = dst; }
-    inline auto getSrc( ) noexcept -> weak_node_t& { return _src; }
-    inline auto getSrc( ) const noexcept -> const weak_node_t& { return _src; }
-    inline auto getDst( ) noexcept -> weak_node_t& { return _dst; }
-    inline auto getDst( ) const noexcept -> const weak_node_t& { return _dst; }
+    inline auto set_src( weak_node_t src ) noexcept -> void { _src = src; }
+    inline auto set_dst( weak_node_t dst ) noexcept -> void { _dst = dst; }
+    inline auto get_src( ) noexcept -> weak_node_t& { return _src; }
+    inline auto get_src( ) const noexcept -> const weak_node_t& { return _src; }
+    inline auto get_dst( ) noexcept -> weak_node_t& { return _dst; }
+    inline auto get_dst( ) const noexcept -> const weak_node_t& { return _dst; }
 private:
-    weak_node_t    _src;
-    weak_node_t    _dst;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Restricted Hyper Edge Management *///----------------------------
-    //@{
-public:
-    using weak_edges_t     = typename config_t::template edge_container_t< weak_edge_t >;
-    using weak_node_ts     = typename config_t::template node_container_t< weak_node_t >;
-
-    inline auto setHDst( weak_edge_t hDst ) noexcept -> void { _hDst = hDst; }
-    inline auto getHDst() const noexcept -> const weak_edge_t& { return _hDst; }
-    inline auto getInHEdges() const noexcept -> const weak_edges_t& { return _inHEdges; }
-    inline auto addInHEdge( weak_edge_t inHEdge ) -> void;
-    inline auto removeInHEdge( weak_edge_t inHEdge ) -> void;
-    inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
-
-    inline auto getInHNodes() const noexcept -> const weak_node_ts& { return _inHNodes; }
-
-protected:
-    inline auto getInHEdges() noexcept -> weak_edges_t& { return _inHEdges; }
-private:
-    //! Restricted hyper edge destination (ie this edge target another edge as destination).
-    weak_edge_t    _hDst;
-    //! Restricted in hyper edges (ie an in hyper edge with this edge as a destination).
-    weak_edges_t   _inHEdges;
-    //! Restricted hyper in nodes (ie all source node for in restricted hyper edges).
-    weak_node_ts   _inHNodes;
+    weak_node_t _src;
+    weak_node_t _dst;
     //@}
     //-------------------------------------------------------------------------
 };

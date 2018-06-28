@@ -66,9 +66,9 @@ public:
     graph_property_impl& operator=(graph_property_impl<graph_t>&&) noexcept = default;
 
 public:
-    inline  graph_t*        getGraph() noexcept { return _graph; }
-    inline  const graph_t*  getGraph() const noexcept { return _graph; }
-    inline  void            setGraph( graph_t* graph ) noexcept { _graph = graph; }
+    inline  graph_t*        get_graph() noexcept { return _graph; }
+    inline  const graph_t*  get_graph() const noexcept { return _graph; }
+    inline  void            set_graph( graph_t* graph ) noexcept { _graph = graph; }
 protected:
     // Note: This is the only raw pointer in GTpo.
     graph_t*                _graph{ nullptr };

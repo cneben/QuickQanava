@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpoContainers.cpp
+// \file	gtpo_containers_tests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------

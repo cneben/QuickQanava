@@ -36,7 +36,7 @@ namespace gtpo { // ::gtpo
 
 /* Group Nodes Management *///-------------------------------------------------
 template < class config_t >
-auto group<config_t>::hasNode( const weak_node_t& node ) const noexcept -> bool
+auto group<config_t>::has_node( const weak_node_t& node ) const noexcept -> bool
 {
     if ( node.expired() )
         return false;

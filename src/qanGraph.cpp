@@ -561,17 +561,7 @@ qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCo
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
-    return insertEdge<qan::Edge>(*source, destination, nullptr, edgeComponent );
-}
-
-qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent )
-{
-    // PRECONDITIONS:
-        // source and destination can't be nullptr
-    if ( source == nullptr ||
-         destination == nullptr )
-        return nullptr;
-    return insertEdge<qan::Edge>(*source, nullptr, destination, edgeComponent );
+    return insertEdge<qan::Edge>(*source, destination, edgeComponent );
 }
 
 void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
@@ -720,7 +710,7 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
 }
 
 bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
-                              qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge )
+                              qan::Node& src, qan::Node* dstNode )
 {
     _styleManager.setStyleComponent(&style, &edgeComponent);
     auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
@@ -733,14 +723,10 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
     edgeItem->setSourceItem( src.getItem() );
     if ( dstNode != nullptr )
         edgeItem->setDestinationItem( dstNode->getItem() );
-    else if ( dstEdge != nullptr )
-        edgeItem->setDestinationEdge( dstEdge->getItem() );
 
-    edge.setSrc( std::static_pointer_cast<Config::final_node_t>(src.shared_from_this()) );
+    edge.set_src( std::static_pointer_cast<Config::final_node_t>(src.shared_from_this()) );
     if ( dstNode != nullptr )
-        edge.setDst( std::static_pointer_cast<Config::final_node_t>(dstNode->shared_from_this()) );
-    else if ( dstEdge != nullptr)
-        edge.setHDst( dstEdge->shared_from_this() );
+        edge.set_dst( std::static_pointer_cast<Config::final_node_t>(dstNode->shared_from_this()) );
 
     auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
         if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
@@ -813,7 +799,7 @@ void    Graph::removeGroup( qan::Group* group )
 
     // Reparent all group childrens (ie node) to graph before destructing the group
     // otherwise all child iems get destructed too
-    for ( auto& node : group->getNodes() ) {
+    for ( auto& node : group->get_nodes() ) {
         const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
         if (qanNode != nullptr)
             group->getItem()->ungroupNodeItem(qanNode->getItem());
@@ -842,7 +828,7 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
         //std::static_pointer_cast<Config::final_node_t>(
         gtpo_graph_t::group_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                  std::static_pointer_cast<Group>(group->shared_from_this()) );
-        if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
+        if ( node->get_group().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
              node->getItem() != nullptr ) {
             group->getItem()->groupNodeItem(node->getItem(), transformPosition);
@@ -860,12 +846,12 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept(false)
     if ( node == nullptr )
         return;
     if ( group == nullptr &&
-         !node->getGroup().lock() )
+         !node->get_group().lock() )
         return;
     if ( group != nullptr &&
-         group != node->getGroup().lock().get() )
+         group != node->get_group().lock().get() )
         return;
-    group = node->getGroup().lock().get();
+    group = node->get_group().lock().get();
     if ( group != nullptr &&
          node != nullptr ) {
         try {
@@ -1139,8 +1125,8 @@ void    Graph::removePort(qan::Node* node, qan::PortItem* port) noexcept
              edgePtr->getItem()->getDestinationItem() == port ))
             this->removeEdge(edgePtr.get());
     };
-    std::for_each(node->getInEdges().begin(), node->getInEdges().end(), removeConnectEdge);
-    std::for_each(node->getOutEdges().begin(), node->getOutEdges().end(), removeConnectEdge);
+    std::for_each(node->get_in_edges().begin(), node->get_in_edges().end(), removeConnectEdge);
+    std::for_each(node->get_out_edges().begin(), node->get_out_edges().end(), removeConnectEdge);
 
     auto& ports = node->getItem()->getPorts();
     if (ports.contains(port))

@@ -32,8 +32,7 @@
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanEdge_h
-#define qanEdge_h
+#pragma once
 
 // Qt headers
 
@@ -103,11 +102,6 @@ public:
 public:
     Q_INVOKABLE qan::Node* getSource() noexcept;
     Q_INVOKABLE qan::Node* getDestination() noexcept;
-    Q_INVOKABLE qan::Edge* getHDestination() noexcept;
-
-    //! Read-only abstract item model for this edge "in hyper nodes".
-    Q_PROPERTY( QAbstractItemModel* inHNodes READ getInHNodesModel CONSTANT FINAL )
-    QAbstractItemModel* getInHNodesModel() const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -141,5 +135,3 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Edge )
-
-#endif // qanEdge_h

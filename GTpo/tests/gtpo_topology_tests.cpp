@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpoTopology.cpp
+// \file	gtpo_topology_tests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
@@ -321,12 +321,12 @@ TEST(GTpoTopology, edgeNodeInOutDegree)
     // Check in/out degree after multiple edge insertion
     gtpo::graph<>::shared_node_t node2 = n2.lock();
     EXPECT_TRUE( node2 );
-    EXPECT_EQ( node2->getInDegree(), 1 );
-    EXPECT_EQ( node2->getOutDegree(), 2 );
-    EXPECT_EQ( node2->getInEdges().size(), 1 );
-    EXPECT_EQ( node2->getOutEdges().size(), 2 );
-    EXPECT_EQ( node2->getInNodes().size(), 1 );
-    EXPECT_EQ( node2->getOutNodes().size(), 2 );
+    EXPECT_EQ( node2->get_in_degree(), 1 );
+    EXPECT_EQ( node2->get_out_degree(), 2 );
+    EXPECT_EQ( node2->get_in_edges().size(), 1 );
+    EXPECT_EQ( node2->get_out_edges().size(), 2 );
+    EXPECT_EQ( node2->get_in_nodes().size(), 1 );
+    EXPECT_EQ( node2->get_out_nodes().size(), 2 );
 
     // Check in/out degree after multiple edge removal
     ASSERT_THROW(g.remove_edge(n2, gtpo::graph<>::weak_node_t()), gtpo::bad_topology_error );
@@ -335,9 +335,9 @@ TEST(GTpoTopology, edgeNodeInOutDegree)
     g.remove_edge(n2, n4);
     EXPECT_FALSE( g.has_edge( n2, n4 ) );
     g.remove_edge(n2, n3);
-    EXPECT_EQ( node2->getOutDegree(), 0 );
-    EXPECT_EQ( node2->getOutEdges().size(), 0 );
-    EXPECT_EQ( node2->getOutNodes().size(), 0 );
+    EXPECT_EQ( node2->get_out_degree(), 0 );
+    EXPECT_EQ( node2->get_out_edges().size(), 0 );
+    EXPECT_EQ( node2->get_out_nodes().size(), 0 );
     EXPECT_EQ( g.get_root_node_count(), 3 );
     EXPECT_TRUE( g.is_root_node( n3 ) );
     EXPECT_TRUE( g.is_root_node( n4 ) );
@@ -357,8 +357,8 @@ TEST(GTpoTopology, remove_nodeInOutDegree)
     g.create_edge(wn2, wn3);
     // n1 now has 1 in node and 1 out node
     auto n2 = wn2.lock();
-    EXPECT_EQ( n2->getOutDegree(), 1 );
-    EXPECT_EQ( n2->getInDegree(), 1 );
+    EXPECT_EQ( n2->get_out_degree(), 1 );
+    EXPECT_EQ( n2->get_in_degree(), 1 );
 
     // Removing node n2 should also remove all edges
     g.remove_node( wn2 );
@@ -366,6 +366,6 @@ TEST(GTpoTopology, remove_nodeInOutDegree)
     EXPECT_EQ( g.get_edge_count(), 0 );
     auto n1 = wn1.lock();
     auto n3 = wn3.lock();
-    EXPECT_EQ( n1->getOutDegree(), 0 );
-    EXPECT_EQ( n3->getInDegree(), 0 );
+    EXPECT_EQ( n1->get_out_degree(), 0 );
+    EXPECT_EQ( n3->get_in_degree(), 0 );
 }

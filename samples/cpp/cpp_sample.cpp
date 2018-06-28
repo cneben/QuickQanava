@@ -107,8 +107,7 @@ qan::Edge *CustomGraph::insertCustomEdge(qan::Node *source,
   if (source != nullptr &&
       destination != nullptr &&
       engine != nullptr)
-    return qan::Graph::insertEdge<CustomEdge>(*source, destination, nullptr,
-                                              CustomEdge::delegate(*engine));
+    return qan::Graph::insertEdge<CustomEdge>(*source, destination, CustomEdge::delegate(*engine));
   return nullptr;
 }
 

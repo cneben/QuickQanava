@@ -59,11 +59,11 @@ Node::~Node()
 }
 
 qan::Graph* Node::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
 }
 
 const qan::Graph* Node::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
 }
 
 bool    Node::operator==( const qan::Node& right ) const
