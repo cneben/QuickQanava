@@ -58,9 +58,12 @@ by modifying graph definition:
 + **Static behaviours**: FIXME.
 + **Virtual behaviours**: FIXME.
 
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-behaviours-class.png)
+
+
  Behaviours could be disabled by calling gtpo::behaviour::disable() method, disabling all behaviours might be usefull before calling gtpo::Graph<>::clear() method or before serializing the graph in or out.
  
-
+ 
 ### Group topology
 
 When a gtpo::GroupEdgeSetBehaviour is registered in graph (ie added in gtpo::GraphConfig::GroupBehaviours std::tuple), edges and adjacent edges of a group could be searched 
