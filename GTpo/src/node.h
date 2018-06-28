@@ -64,11 +64,13 @@ class edge;
  *
  * \nosubgrouping
  */
-template <class config_t = gtpo::config>
+template <class config_t = gtpo::config<>>
 class node : public config_t::node_base,
              public graph_property_impl<gtpo::graph<config_t>>,
              public gtpo::behaviourable_node< config_t >,
              public std::enable_shared_from_this<node<config_t>>
+             //Note: following don't work : public std::enable_shared_from_this<typename config_t::final_node_t>
+                // It prevent node and group from having a common ancestor...
 {
     friend gtpo::graph<config_t>;   // graph need access to graph_property_impl<>::set_graph()
 
@@ -76,10 +78,8 @@ class node : public config_t::node_base,
     //@{
 public:
     using graph_t       = gtpo::graph<config_t>;
-    using weak          = std::weak_ptr<node<config_t> >;
-    using shared        = std::shared_ptr<node<config_t>>;
-    using weak_node     = weak;
-    using shared_node   = shared;
+    using weak_node     = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node   = std::shared_ptr<typename config_t::final_node_t>;
     using weak_nodes    = typename config_t::template node_container_t< weak_node >;
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.

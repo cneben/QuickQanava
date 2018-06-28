@@ -56,7 +56,7 @@ namespace gtpo { // ::gtpo
  *
  * \nosubgrouping
 */
-template <class config_t = gtpo::config>
+template <class config_t = gtpo::config<>>
 class group : public gtpo::node<config_t>,
               public gtpo::behaviourable_group<config_t>
 {
@@ -65,17 +65,15 @@ class group : public gtpo::node<config_t>,
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
-    using weak_node         = typename node<config_t>::weak;
-    using shared_node       = typename node<config_t>::shared;
+    using weak_node         = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node       = std::shared_ptr<typename config_t::final_node_t>;
     using weak_nodes        = typename config_t::template node_container_t< weak_node >;
 
-    using weak_edge         = typename edge<config_t>::weak;
+    using weak_edge         = std::weak_ptr<typename config_t::final_edge_t>;
     using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 
-    using weak          = std::weak_ptr< typename config_t::final_group_t >;
-    using shared        = std::shared_ptr< typename config_t::final_group_t >;
-    using weak_group    = weak;
-    using shared_group  = shared;
+    using weak_group        = std::weak_ptr< typename config_t::final_group_t >;
+    using shared_group      = std::shared_ptr< typename config_t::final_group_t >;
 
     group() noexcept : gtpo::node<config_t>() { }
     ~group() { /* Nil */ }

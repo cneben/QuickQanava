@@ -118,11 +118,11 @@ bool    Group::hasNode( qan::Node* node ) const
 {
     if ( node == nullptr )
         return false;
-    weak_node weakNode;
     try {
-        weakNode = weak_node{ node->shared_from_this() };
-    } catch ( std::bad_weak_ptr ) { return false; } // C++17
-    return gtpo::group< qan::GraphConfig >::hasNode( weakNode );
+        auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
+        return gtpo::group< qan::GraphConfig >::hasNode( weakNode );
+    } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
+    return false;
 }
 //-----------------------------------------------------------------------------
 

@@ -56,13 +56,15 @@ public:
     group_adjacent_edges_behaviour( const group_adjacent_edges_behaviour& ) = delete;
     group_adjacent_edges_behaviour& operator=( const group_adjacent_edges_behaviour& ) = delete;
 
-    using weak_node         = typename node<config_t>::weak;
-    using shared_node       = typename node<config_t>::shared;
+    using weak_node         = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node       = std::shared_ptr<typename config_t::final_node_t>;
 
-    using weak_edge         = typename edge<config_t>::weak;
-    using shared_group      = std::shared_ptr< group<config_t> >;
+    using weak_edge         = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_group      = std::shared_ptr<typename config_t::final_group_t>;
+
     using group_t           = typename config_t::final_group_t;
     using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
+
 public:
     void    node_inserted( weak_node& weakNode ) noexcept;
     void    node_removed( weak_node& weakNode ) noexcept;
@@ -82,7 +84,7 @@ public:
     graph_group_adjacent_edges_behaviour( const graph_group_adjacent_edges_behaviour& ) = default;
     graph_group_adjacent_edges_behaviour& operator=( const graph_group_adjacent_edges_behaviour& ) = delete;
 
-    using weak_edge         = typename edge<config_t>::weak;
+    using weak_edge         = std::weak_ptr<typename config_t::final_edge_t>;
     using group_t           = typename config_t::final_group_t;
     using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 

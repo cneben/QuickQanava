@@ -54,9 +54,9 @@ public:
     graph_behaviour( const graph_behaviour<config_t>& ) = delete;
     graph_behaviour& operator=( const graph_behaviour<config_t>& ) = delete;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_edge      = typename gtpo::edge<config_t>::weak;
-    using weak_group     = typename gtpo::group<config_t>::weak;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_edge      = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
 
     /*! \name Graph Notification Interface *///--------------------------------
     //@{
@@ -95,9 +95,9 @@ public:
     dynamic_graph_behaviour( dynamic_graph_behaviour<config_t>&& ) = default;
     dynamic_graph_behaviour& operator=( dynamic_graph_behaviour<config_t>&& ) = default;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_edge      = typename gtpo::edge<config_t>::weak;
-    using weak_group     = typename gtpo::group<config_t>::weak;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_edge      = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     void    node_inserted( weak_node& weakNode ) noexcept { on_node_inserted(weakNode); }
@@ -145,9 +145,9 @@ public:
     enable_graph_dynamic_behaviour( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
     enable_graph_dynamic_behaviour& operator=( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_edge      = typename gtpo::edge<config_t>::weak;
-    using weak_group     = typename gtpo::group<config_t>::weak;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_edge      = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     template < class primitive_t >

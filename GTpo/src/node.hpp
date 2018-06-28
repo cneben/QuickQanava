@@ -39,7 +39,7 @@ template < class config_t >
 auto node<config_t>::addOutEdge( weak_edge outEdgePtr ) -> void
 {
     assert_throw( !outEdgePtr.expired(), "gtpo::node<>::addOutEdge(): Error: out edge is expired." );
-    auto node = this->shared_from_this();
+    auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
     auto outEdge = outEdgePtr.lock();
     auto outEdgeSrc = outEdge->getSrc().lock();
     if ( outEdge ) {
@@ -57,7 +57,7 @@ template <class config_t>
 auto node<config_t>::addInEdge( weak_edge inEdgePtr ) -> void
 {
     assert_throw( !inEdgePtr.expired(), "gtpo::node<>::addInEdge(): Error: in edge is expired." );
-    auto node = this->shared_from_this();
+    auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
     auto inEdge = inEdgePtr.lock( );
     if ( inEdge ) {
         auto inEdgeDst = inEdge->getDst().lock();
@@ -78,7 +78,7 @@ auto node<config_t>::removeOutEdge( const weak_edge outEdge ) -> void
     gtpo::assert_throw( !outEdge.expired(), "gtpo::node<>::removeOutEdge(): Error: Out edge has expired" );
     auto outEdgePtr = outEdge.lock( );
     auto outEdgeSrcPtr = outEdgePtr->getSrc().lock();
-    weak_node node{ this->shared_from_this() };
+    weak_node node{ std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this()) };
     gtpo::assert_throw( outEdgeSrcPtr != nullptr &&    // Out edge src must be this node
                         outEdgeSrcPtr.get() == this, "gtpo::node<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
 
@@ -101,7 +101,7 @@ template < class config_t >
 auto node<config_t>::removeInEdge( const weak_edge inEdge ) -> void
 {
     gtpo::assert_throw( !inEdge.expired(), "gtpo::node<>::removeInEdge(): Error: In edge has expired" );
-    auto nodePtr = this->shared_from_this();
+    auto nodePtr = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
     auto inEdgePtr = inEdge.lock( );
     auto inEdgeDstPtr = inEdgePtr->getDst().lock();
     gtpo::assert_throw( inEdgeDstPtr &&    // in edge dst must be this node

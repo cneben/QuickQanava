@@ -530,14 +530,11 @@ void    Graph::removeNode( qan::Node* node )
 {
     if ( node == nullptr )
         return;
-    WeakNode weakNode;
     try {
-        weakNode = node->shared_from_this();
-        //weakNode = WeakNode{ node->shared_from_this() };
+        if ( _selectedNodes.contains(node) )
+            _selectedNodes.removeAll(node);
+        gtpo_graph_t::removeNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()) );
     } catch ( std::bad_weak_ptr ) { return; }
-    if ( _selectedNodes.contains(node) )
-        _selectedNodes.removeAll(node);
-    gtpo_graph_t::removeNode( weakNode );
 }
 //-----------------------------------------------------------------------------
 
@@ -739,9 +736,9 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
     else if ( dstEdge != nullptr )
         edgeItem->setDestinationEdge( dstEdge->getItem() );
 
-    edge.setSrc( src.shared_from_this() );
+    edge.setSrc( std::static_pointer_cast<GraphConfig::final_node_t>(src.shared_from_this()) );
     if ( dstNode != nullptr )
-        edge.setDst( dstNode->shared_from_this() );
+        edge.setDst( std::static_pointer_cast<GraphConfig::final_node_t>(dstNode->shared_from_this()) );
     else if ( dstEdge != nullptr)
         edge.setHDst( dstEdge->shared_from_this() );
 
@@ -772,8 +769,10 @@ void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
     WeakNode sharedSource;
     WeakNode sharedDestination;
     try {
-        sharedSource = WeakNode{ source->shared_from_this() };
-        sharedDestination = WeakNode{ destination->shared_from_this() };
+        //sharedSource = WeakNode{ source->shared_from_this() };
+        //sharedDestination = WeakNode{ destination->shared_from_this() };
+        sharedSource = std::static_pointer_cast<GraphConfig::final_node_t>( source->shared_from_this() );
+        sharedDestination = std::static_pointer_cast<GraphConfig::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr ) { return; }
     return gtpo_graph_t::removeEdge( sharedSource, sharedDestination );
 }
@@ -792,8 +791,10 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
     WeakNode sharedSource;
     WeakNode sharedDestination;
     try {
-        sharedSource = WeakNode{ source->shared_from_this() };
-        sharedDestination = WeakNode{ destination->shared_from_this() };
+        //sharedSource = WeakNode{ source->shared_from_this() };
+        //sharedDestination = WeakNode{ destination->shared_from_this() };
+        sharedSource = std::static_pointer_cast<GraphConfig::final_node_t>( source->shared_from_this() );
+        sharedDestination = std::static_pointer_cast<GraphConfig::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr e ) { return false; }
     return gtpo_graph_t::hasEdge( sharedSource, sharedDestination );
 }
@@ -838,8 +839,9 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
         return;
 
     try {
-        gtpo_graph_t::groupNode( node->shared_from_this(),
-                                 std::dynamic_pointer_cast<Group>(group->shared_from_this()) );
+        //std::static_pointer_cast<GraphConfig::final_node_t>(
+        gtpo_graph_t::groupNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()),
+                                 std::static_pointer_cast<Group>(group->shared_from_this()) );
         if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
              node->getItem() != nullptr ) {
@@ -869,8 +871,8 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept(false)
         try {
             if ( group->getItem() )
                  group->getItem()->ungroupNodeItem(node->getItem());
-            gtpo_graph_t::ungroupNode( node->shared_from_this(),
-                                       std::dynamic_pointer_cast<Group>(group->shared_from_this()) );
+            gtpo_graph_t::ungroupNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()),
+                                       std::static_pointer_cast<Group>(group->shared_from_this()) );
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
 }

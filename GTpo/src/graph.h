@@ -73,7 +73,7 @@ class graph_group_adjacent_edges_behaviour;
  *       typename X::template T c++11 syntax and using Nodes = typename config_t::template node_container_t< Node* >;
  *
  */
-template < class config_t = gtpo::config >
+template < class config_t = gtpo::config<> >
 class graph : public config_t::graph_base,
               public gtpo::behaviourable_graph< config_t >
 {
@@ -85,21 +85,21 @@ public:
     // Shortcut for user access to graph configuration.
     using configuration     = config_t;
 
-    using shared_node       = typename node<config_t>::shared;
-    using weak_node         = typename node<config_t>::weak;
+    using shared_node       = typename std::shared_ptr<typename config_t::final_node_t>;
+    using weak_node         = typename std::weak_ptr<typename config_t::final_node_t>;
     using shared_nodes      = typename config_t::template node_container_t< shared_node >;
     using weak_nodes        = typename config_t::template node_container_t< weak_node >;
     using weak_nodes_search = typename config_t::template search_container_t< weak_node >;
 
-    using weak_edge         = typename edge<config_t>::weak;
-    using shared_edge       = typename edge<config_t>::shared;
+    using weak_edge         = typename std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_edge       = typename std::shared_ptr<typename config_t::final_edge_t>;
     using weak_edges        = typename config_t::template edge_container_t< weak_edge >;
     using shared_edges      = typename config_t::template edge_container_t< shared_edge >;
     using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 
-    using shared_group   = typename group<config_t>::shared;
-    using weak_group     = typename group<config_t>::weak;
-    using shared_groups  = typename config_t::template node_container_t< shared_group >;
+    using shared_group      = typename std::shared_ptr<typename config_t::final_group_t>;
+    using weak_group        = typename std::weak_ptr<typename config_t::final_group_t>;
+    using shared_groups     = typename config_t::template node_container_t< shared_group >;
 
     //! User friendly shortcut to this concrete graph behaviour.
     using behaviour = graph_behaviour< config_t >;

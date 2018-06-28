@@ -61,11 +61,12 @@ public:
     node_behaviour( const node_behaviour<config_t>& ) = delete;
     node_behaviour& operator=( const node_behaviour<config_t>& ) = delete;
 
-    using weak_node          = std::weak_ptr<gtpo::node<config_t>>;
-    using shared_node        = std::shared_ptr<gtpo::node<config_t>>;
+    using weak_node          = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node        = std::shared_ptr<typename config_t::final_node_t>;
     using shared_nodes       = typename config_t::template node_container_t< shared_node >;
     using weak_nodes_search  = typename config_t::template search_container_t< weak_node >;
-    using weak_edge          = std::weak_ptr<gtpo::edge<config_t>>;
+
+    using weak_edge          = std::weak_ptr<typename config_t::final_edge_t>;
     //@}
     //-------------------------------------------------------------------------
 
@@ -112,11 +113,12 @@ public:
     dynamic_node_behaviour( dynamic_node_behaviour<config_t>&& ) = delete;
     dynamic_node_behaviour& operator=( dynamic_node_behaviour<config_t>&& ) = delete;
 
-    using weak_node          = std::weak_ptr<gtpo::node<config_t>>;
-    using shared_node        = std::shared_ptr<gtpo::node<config_t>>;
+    using weak_node          = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node        = std::shared_ptr<typename config_t::final_node_t>;
     using shared_nodes       = typename config_t::template node_container_t< shared_node >;
     using weak_nodes_search  = typename config_t::template search_container_t< weak_node >;
-    using weak_edge          = typename edge<config_t>::weak;
+
+    using weak_edge          = std::weak_ptr<typename config_t::final_edge_t>;
 
 public:
     void    in_node_inserted( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { on_in_node_inserted(target, weakInNode, edge); }
@@ -168,10 +170,8 @@ public:
     enable_node_dynamic_behaviour() noexcept : gtpo::node_behaviour<config_t>{} {}
     ~enable_node_dynamic_behaviour() noexcept = default;
 
-    using weak_node = std::weak_ptr<gtpo::node<config_t>>;
-    //using weak_edge = std::weak_ptr<gtpo::edge<config_t>>;
+    using weak_node = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge = std::weak_ptr<typename config_t::final_edge_t>;
-    //using weak_edge = typename config_t::final_edge_t;
     using base_t    = gtpo::node_behaviour<config_t>;
 
 public:

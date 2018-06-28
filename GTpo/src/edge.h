@@ -66,7 +66,7 @@ class group;
  *
  * \nosubgrouping
  */
-template <class config_t = gtpo::config>
+template <class config_t = gtpo::config<>>
 class edge : public config_t::edge_base,
                 public std::enable_shared_from_this<typename config_t::final_edge_t>
 {
@@ -76,13 +76,11 @@ class edge : public config_t::edge_base,
 public:
     using graph_t       = graph<config_t>;
 
-    using weak_node     = typename gtpo::node<config_t>::weak;
-    using shared_node   = typename gtpo::node<config_t>::shared;
+    using weak_node     = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node   = std::shared_ptr<typename config_t::final_node_t>;
 
-    using weak          = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared        = std::shared_ptr<typename config_t::final_edge_t>;
-    using weak_edge     = weak;
-    using shared_edge   = shared;
+    using weak_edge     = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_edge   = std::shared_ptr<typename config_t::final_edge_t>;
 
     edge() noexcept : config_t::edge_base{} {}
     explicit edge( const weak_node& src, const weak_node& dst ) :
@@ -165,7 +163,7 @@ private:
     //-------------------------------------------------------------------------
 };
 
-template <class config_t = gtpo::config>
+template <class config_t = gtpo::config<>>
 class group_edge : public gtpo::edge<config_t>
 {
 

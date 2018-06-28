@@ -62,7 +62,7 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node& weakN
             // Remove all node in/out edges from group adjacent edge set
             // Except if this edge "other" src or dst is still part of the group
             for ( const auto& inWeakEdge : node->getInEdges() ) {
-                using weak_edge = typename edge<config_t>::weak;
+                using weak_edge = std::weak_ptr<typename config_t::final_edge_t>;
                 using weak_edges_search   = typename config_t::template search_container_t< weak_edge >;
                 auto inEdge = inWeakEdge.lock();
                 if ( inEdge ) {

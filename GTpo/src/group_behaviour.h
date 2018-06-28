@@ -63,8 +63,8 @@ public:
     group_behaviour( group_behaviour<config_t>&& ) = default;
     group_behaviour& operator=( group_behaviour<config_t>&& ) = default;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_group     = std::weak_ptr<gtpo::group<config_t>>;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
     //@}
     //-------------------------------------------------------------------------
 
@@ -100,8 +100,8 @@ public:
     dynamic_group_behaviour( dynamic_group_behaviour<config_t>&& ) = default;
     dynamic_group_behaviour& operator=( dynamic_group_behaviour<config_t>&& ) = default;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_group     = std::weak_ptr<gtpo::group<config_t>>;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     void    node_inserted( weak_node& weakNode ) noexcept { on_node_inserted(weakNode); }
@@ -145,11 +145,11 @@ public:
     enable_group_dynamic_behaviour( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
     enable_group_dynamic_behaviour& operator=( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
 
-    using weak_node      = typename gtpo::node<config_t>::weak;
-    using weak_edge      = typename gtpo::edge<config_t>::weak;
-    // Note: The following does not work on g++
-    //using weak_group     = typename gtpo::group<config_t>::weak;
-    using weak_group     = std::weak_ptr<gtpo::group<config_t>>;
+    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+
+    using weak_edge      = std::weak_ptr<typename config_t::final_edge_t>;
+
+    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     template < class primitive_t >

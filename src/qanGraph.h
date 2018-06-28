@@ -316,8 +316,8 @@ private:
     //@{
 public:
     using Node              = typename GraphConfig::final_node_t;
-    using WeakNode          = gtpo_graph_t::weak_node;
-    using SharedNode        = gtpo_graph_t::shared_node;
+    using WeakNode          = std::weak_ptr<typename GraphConfig::final_node_t>;
+    using SharedNode        = std::shared_ptr<typename GraphConfig::final_node_t>;
 
     //! Proxy for GTpo graph insertNode().
     auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return gtpo_graph_t::insertNode(node); }

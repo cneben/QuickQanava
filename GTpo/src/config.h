@@ -80,26 +80,30 @@ class enable_group_dynamic_behaviour;
 template <class config_t>
 class enable_node_dynamic_behaviour;
 
+//template < typename final_config >
+//struct config;
+
+struct default_config;
+
 /*! \brief Default configuration for GTpo primitive, containers and behaviours.
  *
  */
+template < typename final_config = default_config >
 struct config
 {
     //! Define gtpo::graph base class.
-    using graph_base = gtpo::empty;
+    typedef gtpo::empty     graph_base;
     //! Define gtpo::node base class.
-    using node_base  = gtpo::empty;
+    typedef gtpo::empty     node_base;
     //! Define gtpo::edge base class.
-    using edge_base  = gtpo::empty;
+    typedef gtpo::empty     edge_base;
     //! Define gtpo::group base class.
-    using group_base = gtpo::empty;
+    typedef gtpo::empty     group_base;
 
-    using final_group_t        = gtpo::group<config>;
-    using final_node_t         = gtpo::node<config>;
-    using final_edge_t         = gtpo::edge<config>;
-    using final_group_edge_t   = gtpo::group_edge<config>;
-
-    using final_config = config;
+    typedef gtpo::group<final_config>       final_group_t;
+    typedef gtpo::node<final_config>        final_node_t;
+    typedef gtpo::edge<final_config>        final_edge_t;
+    typedef gtpo::group_edge<final_config>  final_group_edge_t;
 
     using graph_behaviours = std::tuple< gtpo::graph_group_adjacent_edges_behaviour<final_config>,
                                          gtpo::enable_graph_dynamic_behaviour<final_config>
@@ -128,6 +132,10 @@ struct config
     using search_container_t = std::unordered_set<T>;
 };
 
+struct default_config : public config<default_config>
+{
+
+};
 
 } // ::gtpo
 
