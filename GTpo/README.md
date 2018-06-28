@@ -12,7 +12,7 @@ GTpo root namespace 'gtpo' contains generic code, user not interested in using s
     
 * QuickQanava2: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: ![QuickQanava2](https://github.com/cneben/QuickQanava)
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/gtpo-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
 
 GTpo is **highly** alpha.
 
@@ -39,7 +39,7 @@ include(./GTpo/src/gtpo.pri)
 Data model
 ------------------
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/GTpo/blob/devel/doc/gtpo-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
 
   Memory in GTpo is managed with std::shared_ptr and std::weak_ptr, using definition in graph types are prefixed with either *shared_* or *weak_* according
 to the underlying concrete container.
