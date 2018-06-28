@@ -1,6 +1,10 @@
 CHANGELOG
 ---------
 
+**20180628:**
+
+- Upgrade the topology backend to GTpo 3 (a totally refactored GTpo): no major API changes from a user POV.
+
 **20180602:**
 
 - DOC: Fix 'grouping nodes' section and add a 'custom group' paragraph.
