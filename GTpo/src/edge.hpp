@@ -27,52 +27,41 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoBehaviour.hpp
+// \file	edge.hpp
 // \author	benoit@destrat.io
-// \date	2016 02 08
+// \date	2016 01 22
 //-----------------------------------------------------------------------------
-
-#include "./gtpoUtils.h"
 
 namespace gtpo { // ::gtpo
 
-/* Virtual Behaviours Management *///------------------------------------------
-template < class Behaviour, class SBehaviours  >
-template < class T >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&), T& arg ) noexcept -> void
+/* edge Restricted Hyper Edge Management *///-------------------------------
+template <class config_t>
+auto edge<config_t>::addInHEdge( weak_edge inHEdge ) -> void
 {
-    // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
-    // For calling pointer on template template parameter template keyword functions.
-    // std::unique_ptr has no overload for .* or ->* operator
-    // (*behaviour) == (*behaviour.get())
-    // Equivalent to: ((*behaviour.get()).*method)(arg)
-    for ( auto& behaviour : _behaviours )
-        if ( behaviour )
-            ((*behaviour).*method)(arg);
+    if ( inHEdge.expired() )
+        throw gtpo::bad_topology_error( "gtpo::edge<>::addInHEdge(): Error: Input hyper edge is null." );
+    shared_edge inHEdgePtr{ inHEdge.lock() };
+    if ( inHEdgePtr != nullptr ) {
+        if ( inHEdgePtr->getHDst().expired() )
+            inHEdgePtr->setHDst( this->shared_from_this() );
+        config_t::template container_adapter< weak_edges >::insert( inHEdge, _inHEdges );
+        if ( !inHEdgePtr->getSrc().expired() )
+            config_t::template container_adapter< weak_nodes >::insert( inHEdgePtr->getSrc(), _inHNodes );
+    }
 }
 
-template < class Behaviour, class SBehaviours  >
-template < class T, class T2 >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours( void (Behaviour::*method)(T&, T2&), T& arg, T2& arg2 ) noexcept -> void
+template < class config_t >
+auto edge<config_t>::removeInHEdge( weak_edge inHEdge ) -> void
 {
-    // Note 20160314: See http://stackoverflow.com/questions/1485983/calling-c-class-methods-via-a-function-pointer
-    // For calling pointer on template template parameter template keyword functions.
-    // std::unique_ptr has no overload for .* or ->* operator
-    // (*behaviour) == (*behaviour.get())
-    // Equivalent to: ((*behaviour.get()).*method)(arg)
-    for ( auto& behaviour : _behaviours )
-        if ( behaviour )
-            ((*behaviour).*method)(arg, arg2);
-}
-
-template < class Behaviour, class SBehaviours  >
-auto    Behaviourable< Behaviour, SBehaviours >::notifyBehaviours0( void (Behaviour::*method)() ) noexcept -> void
-{
-    for ( auto& behaviour : _behaviours )
-        if ( behaviour != nullptr )
-            ((*behaviour).*method)();
+    if ( inHEdge.expired() )
+        return;                 // Do not throw, removing a null inHEdge let edge in a perfectely valid state
+    shared_edge inHEdgePtr{ inHEdge.lock() };
+    if ( inHEdgePtr != nullptr ) {
+        inHEdgePtr->setHDst( shared_edge{} );
+        config_t::template container_adapter< weak_edges >::remove( inHEdge, _inHEdges );
+        config_t::template container_adapter< weak_nodes >::remove( inHEdgePtr->getSrc(), _inHNodes );
+    }
 }
 //-----------------------------------------------------------------------------
 
 } // ::gtpo
-

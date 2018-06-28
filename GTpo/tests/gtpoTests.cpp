@@ -37,7 +37,7 @@
 #include <gmock/gmock.h>
 
 // GTpo headers
-#include "../src/gtpoUtils.h"
+#include "../src/utils.h"
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleMock(&argc, argv);

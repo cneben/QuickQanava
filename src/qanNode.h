@@ -62,7 +62,7 @@ class PortItem;
  *
  * \nosubgrouping
 */
-class Node : public gtpo::GenNode< qan::GraphConfig >
+class Node : public gtpo::node<qan::GraphConfig>
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
@@ -75,7 +75,7 @@ public:
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
-    //! Shortcut to gtpo::GenNode<>::getGraph().
+    //! Shortcut to gtpo::node<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
@@ -129,7 +129,7 @@ public:
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::GenNode< qan::GraphConfig >::getOutEdges().model() ) ); }
+    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::GraphConfig>::getOutEdges().model() ) ); }
     //@}
     //-------------------------------------------------------------------------
 

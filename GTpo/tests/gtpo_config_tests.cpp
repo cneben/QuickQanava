@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	qtpoConcrete.cpp
+// \file	qtpo_config_tests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
@@ -32,7 +32,6 @@
 
 // GTpo headers
 #include <GTpo>
-#include <GTpoStd>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -41,50 +40,43 @@
 //-----------------------------------------------------------------------------
 // GTpo topology tests with concrete support
 //-----------------------------------------------------------------------------
+namespace custom {
 
 class Node;
-class Edge;
-class Graph;
-class Group;
 
-struct MyNode {
-    std::string     _label;
-};
-
-class CustomConfig final :  public gtpo::GraphConfig,
-                            public gtpo::StdContainerAccessors
+struct Config final :  public gtpo::config
 {
-public:
-    using UserNode      = MyNode;
-    //using FinalEdge     = stpo::Edge;
-    //using FinalGroup    = stpo::Group;
+    using graph_base = gtpo::empty;
+    using node_base  = gtpo::empty;
+    using edge_base  = gtpo::empty;
+    using group_base = gtpo::empty;
 
-    using FinalNode     = gtpo::GenNode<CustomConfig>;
-    using FinalEdge     = gtpo::GenEdge<CustomConfig>;
-    using FinalGroup    = gtpo::GenGroup<CustomConfig>;
+    using final_group_t        = gtpo::group<config>;
+    using final_node_t         = custom::Node;
+    using final_edge_t         = gtpo::edge<config>;
+    using final_group_edge_t   = gtpo::group_edge<config>;
 
-    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< CustomConfig> >;
-    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< CustomConfig > >;
-
-    template <class...Ts>
-    using NodeContainer = std::vector<Ts...>;
-
-    template <class...Ts>
-    using EdgeContainer = std::vector<Ts...>;
-
-    template <class T>
-    using SearchContainer = std::unordered_set<T>;
+    using final_config = Config;
 };
+
+class Node : public gtpo::node<Config> {
+public:
+    Node() = default;
+
+    std::string _label;
+};
+
+}
 
 TEST(GTpoConcrete, compilation)
 {
-    using CustomGraph = gtpo::GenGraph<CustomConfig>;
+    using Graph = gtpo::graph<custom::Config>;
 
-    CustomGraph g;
-    auto n = std::make_shared<CustomGraph::Node>();
-    n->data()._label = "test";
-    g.insertNode(n);
+    Graph g;
+    auto n = std::make_shared<custom::Node>();
+    //n->_label = "test";
+    //g.insertNode(n);
 
-    EXPECT_TRUE( true );
+    EXPECT_TRUE(true);
 }
 

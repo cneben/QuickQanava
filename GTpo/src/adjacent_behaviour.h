@@ -27,73 +27,71 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoAdjacentBehaviour.h
+// \file	adjacent_behaviour.h
 // \author	benoit@destrat.io
 // \date	2017 03 09
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoAdjacentBehaviour_h
-#define gtpoAdjacentBehaviour_h
+#pragma once
 
 // GTpo headers
-#include "./gtpoGraphBehaviour.h"
-#include "./gtpoGenGroup.h"
-#include "./gtpoGroupBehaviour.h"
+#include "./graph_behaviour.h"
+#include "./group.h"
+#include "./group_behaviour.h"
 
 namespace gtpo { // ::gtpo
 
 /*! \brief Collect and maintain a group adjacent edge set when a node is removed or inserted in a group.
  *
- *  This behaviour should be used with GraphGroupAjacentEdgesBehaviour.
+ *  This behaviour should be used with graph_group_adjacent_edges_behaviour.
  */
-template < class Config >
-class GroupAdjacentEdgesBehaviour : public GroupBehaviour< Config >
+template <class config_t>
+class group_adjacent_edges_behaviour : public group_behaviour<config_t>
 {
-    /* Group Edge Set Behaviour *///-------------------------------------------
+    /* Group Edge Set behaviour *///-------------------------------------------
 public:
-    GroupAdjacentEdgesBehaviour() noexcept = default;
-    virtual ~GroupAdjacentEdgesBehaviour() = default;
-    GroupAdjacentEdgesBehaviour( const GroupAdjacentEdgesBehaviour& ) = delete;
-    GroupAdjacentEdgesBehaviour& operator=( const GroupAdjacentEdgesBehaviour& ) = delete;
+    //group_adjacent_edges_behaviour() noexcept = default;
+    group_adjacent_edges_behaviour() = default;
+    ~group_adjacent_edges_behaviour() noexcept = default;
+    group_adjacent_edges_behaviour( const group_adjacent_edges_behaviour& ) = delete;
+    group_adjacent_edges_behaviour& operator=( const group_adjacent_edges_behaviour& ) = delete;
 
-    using WeakNode      = typename GenNode<Config>::Weak;
-    using SharedNode    = typename GenNode<Config>::Shared;
+    using weak_node         = typename node<config_t>::weak;
+    using shared_node       = typename node<config_t>::shared;
 
-    using WeakEdge          = typename GenEdge<Config>::Weak;
-    using SharedGroup       = std::shared_ptr< GenGroup<Config> >;
-    using Group             = typename Config::FinalGroup;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+    using weak_edge         = typename edge<config_t>::weak;
+    using shared_group      = std::shared_ptr< group<config_t> >;
+    using group_t           = typename config_t::final_group_t;
+    using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 public:
-    virtual void    nodeInserted( WeakNode& weakNode ) noexcept override;
-    virtual void    nodeRemoved( WeakNode& weakNode ) noexcept override;
+    void    node_inserted( weak_node& weakNode ) noexcept;
+    void    node_removed( weak_node& weakNode ) noexcept;
     //-------------------------------------------------------------------------
 };
 
 /*! \brief Collect and maintain a group adjacent edge set and group edge set.
  *
  */
-template < class Config >
-class GraphGroupAjacentEdgesBehaviour : public GraphBehaviour< Config >
+template < class config_t >
+class graph_group_adjacent_edges_behaviour : public graph_behaviour< config_t >
 {
-    /* Group Edge Set Behaviour *///-------------------------------------------
+    /* Group Edge Set behaviour *///-------------------------------------------
 public:
-    GraphGroupAjacentEdgesBehaviour() noexcept { }
-    virtual ~GraphGroupAjacentEdgesBehaviour() { }
-    GraphGroupAjacentEdgesBehaviour( const GraphGroupAjacentEdgesBehaviour& ) = default;
-    GraphGroupAjacentEdgesBehaviour& operator=( const GraphGroupAjacentEdgesBehaviour& ) = delete;
+    graph_group_adjacent_edges_behaviour() noexcept : graph_behaviour<config_t>{} { }
+    ~graph_group_adjacent_edges_behaviour() noexcept = default;
+    graph_group_adjacent_edges_behaviour( const graph_group_adjacent_edges_behaviour& ) = default;
+    graph_group_adjacent_edges_behaviour& operator=( const graph_group_adjacent_edges_behaviour& ) = delete;
 
-    using WeakEdge  = typename GenEdge<Config>::Weak;
-    using Group     = typename Config::FinalGroup;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+    using weak_edge         = typename edge<config_t>::weak;
+    using group_t           = typename config_t::final_group_t;
+    using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 
 public:
-    virtual void    edgeInserted( WeakEdge& weakEdge ) noexcept override;
-    virtual void    edgeRemoved( WeakEdge& weakEdge ) noexcept override;
+    void    edge_inserted( weak_edge& weakEdge ) noexcept;
+    void    edge_removed( weak_edge& weakEdge ) noexcept;
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
 
-#include "./gtpoAdjacentBehaviour.hpp"
-
-#endif // gtpoAdjacentBehaviour_h
+#include "./adjacent_behaviour.hpp"

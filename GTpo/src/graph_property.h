@@ -27,26 +27,54 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	GTpo.h
+// \file	graph_property.h
 // \author	benoit@destrat.io
-// \date	2016 01 22
+// \date	2018 06 25
 //-----------------------------------------------------------------------------
 
-#ifndef GTpo_h
-#define GTpo_h
+#ifndef gtpo_graph_property_h
+#define gtpo_graph_property_h
 
-#include "./utils.h"
-#include "./behaviour.h"
-#include "./node.h"
-#include "./group.h"
-#include "./edge.h"
-#include "./graph.h"
+// STD headers
+// Nil
 
-#include "./node.hpp"
-#include "./group.hpp"
-#include "./edge.hpp"
-#include "./graph.hpp"
+// GTpo headers
+// Nil
 
-#include "./container_adapter.h"
+namespace gtpo { // ::gtpo
 
-#endif // GTpo_h
+/*! \brief Add support for a pointer on owning graph for primitive (either a node, edge or group).
+ *
+ * \note The pointer on graph is intentionally a raw pointer to avoid any "smart pointer overhead". Moreover,
+ * GTpo is inherently designed to be used from Qt/QML who is not managing memory with std::make_shared, hence,
+ * using a std::weak_ptr or inheriting graph from std::enable_shared_from_this would be a nonsense...
+ */
+template<class graph_t>
+class graph_property_impl
+{
+public:
+    // FIXME: it is actually not working with gcc, set_graph() call from
+    // gtpo::graph is not allowed when set_graph() is protected...
+
+    friend graph_t;   // graph need access to graph_property_impl<>::set_graph()
+
+    graph_property_impl() noexcept = default;
+    ~graph_property_impl() noexcept = default;
+    graph_property_impl(const graph_property_impl<graph_t>&) noexcept = default;
+    graph_property_impl& operator=(const graph_property_impl<graph_t>&) noexcept = default;
+    graph_property_impl(graph_property_impl<graph_t>&&) noexcept = default;
+    graph_property_impl& operator=(graph_property_impl<graph_t>&&) noexcept = default;
+
+public:
+    inline  graph_t*        getGraph() noexcept { return _graph; }
+    inline  const graph_t*  getGraph() const noexcept { return _graph; }
+    inline  void            setGraph( graph_t* graph ) noexcept { _graph = graph; }
+protected:
+    // Note: This is the only raw pointer in GTpo.
+    graph_t*                _graph{ nullptr };
+};
+
+} // ::gtpo
+
+#endif // gtpo_graph_property_h
+

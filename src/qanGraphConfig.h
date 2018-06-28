@@ -73,32 +73,41 @@ class Node;
 class Edge;
 class Group;
 
-class GraphConfig final : public gtpo::GraphConfig
+class GraphConfig final : public gtpo::config
 {
 public:
-    using GraphBase = QQuickItem;
-    using NodeBase  = QObject;
-    using EdgeBase  = QObject;
-    using GroupBase = QObject;
+    using graph_base = QQuickItem;
+    using node_base  = QObject;
+    using edge_base  = QObject;
+    using group_base = QObject;
 
-    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< qan::GraphConfig > >;
-    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< qan::GraphConfig > >;
+    using final_node_t     = qan::Node;
+    using final_edge_t     = qan::Edge;
+    using final_group_t    = qan::Group;
+
+    using final_config = GraphConfig;
+    using graph_behaviours = std::tuple< gtpo::graph_group_adjacent_edges_behaviour<final_config>,
+                                         gtpo::enable_graph_dynamic_behaviour<final_config>
+                                       >; // std::tuple
+
+    using group_behaviours = std::tuple< gtpo::group_adjacent_edges_behaviour<final_config>,
+                                         gtpo::enable_group_dynamic_behaviour<final_config>
+                                       >; // std::tuple
+
+    using node_behaviours = std::tuple< gtpo::enable_node_dynamic_behaviour<final_config>
+                                       >; // std::tuple
 
     template <typename T>
     using container_adapter = qan::ContainerAdapter<T>;
 
-    using FinalNode     = qan::Node;
-    using FinalEdge     = qan::Edge;
-    using FinalGroup    = qan::Group;
+    template <class ...Args>
+    using node_container_t = qcm::Container< QVector, Args... >;
 
     template <class ...Args>
-    using NodeContainer = qcm::Container< QVector, Args... >;
-
-    template <class ...Args>
-    using EdgeContainer = qcm::Container< QVector, Args... >;
+    using edge_container_t = qcm::Container< QVector, Args... >;
 
     template < class ...Args >
-    using SearchContainer = QSet< Args... >;
+    using search_container_t = QSet< Args... >;
 };
 
 } // ::qan

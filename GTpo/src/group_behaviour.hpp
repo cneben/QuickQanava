@@ -27,46 +27,42 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoGroupBehaviour.hpp
+// \file	group_behaviour.hpp
 // \author	benoit@destrat.io
 // \date	2016 02 08
 //-----------------------------------------------------------------------------
 
-#include "./gtpoUtils.h"
+#include "./utils.h"
 
 namespace gtpo { // ::gtpo
 
 /* Notification Helper Methods *///--------------------------------------------
-template < class Behaviour, class SBehaviours >
-template < class Group >
-auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyGroupInserted( Group& group ) noexcept -> void
+template < class config_t >
+template < class group_t >
+auto    behaviourable_group< config_t >::notify_group_inserted( group_t& group ) noexcept -> void
 {
-    this->notifyBehaviours( &Behaviour::groupInserted, group );
-    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupInserted( group ); } );
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.group_inserted( group ); } );
 }
 
-template < class Behaviour, class SBehaviours >
-template < class Group >
-auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyGroupRemoved( Group& group ) noexcept -> void
+template < class config_t >
+template < class group_t >
+auto    behaviourable_group< config_t >::notify_group_removed( group_t& group ) noexcept -> void
 {
-    this->notifyBehaviours( &Behaviour::groupRemoved, group );
-    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.groupRemoved( group ); } );
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.group_removed( group ); } );
 }
 
-template < class Behaviour, class SBehaviours >
-template < class Node >
-auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyNodeInserted( Node& node ) noexcept -> void
+template < class config_t >
+template < class node_t >
+auto    behaviourable_group< config_t >::notify_node_inserted( node_t& node ) noexcept -> void
 {
-    this->notifyBehaviours( &Behaviour::nodeInserted, node );
-    this->sNotifyBehaviours( [&node](auto& behaviour) noexcept { behaviour.nodeInserted( node ); } );
+    this->notify_static_behaviours( [&node](auto& behaviour) noexcept { behaviour.node_inserted( node ); } );
 }
 
-template < class Behaviour, class SBehaviours >
-template < class Node >
-auto    BehaviourableGroup< Behaviour, SBehaviours >::notifyNodeRemoved( Node& node ) noexcept -> void
+template < class config_t >
+template < class node_t >
+auto    behaviourable_group< config_t >::notify_node_removed( node_t& node ) noexcept -> void
 {
-    this->notifyBehaviours( &Behaviour::nodeRemoved, node );
-    this->sNotifyBehaviours( [&](auto& behaviour) noexcept { behaviour.nodeRemoved( node ); } );
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.node_removed( node ); } );
 }
 //-----------------------------------------------------------------------------
 

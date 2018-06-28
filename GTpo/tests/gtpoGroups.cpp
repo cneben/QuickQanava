@@ -50,13 +50,13 @@
 
 TEST(GTpoGroups, basic)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     EXPECT_EQ( g.getGroupCount(), 0 );
 }
 
 TEST(GTpoGroups, createGroup)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     EXPECT_EQ( g.getGroupCount(), 0 );
     auto group1 = g.createGroup().lock();
     ASSERT_TRUE(group1);
@@ -68,7 +68,7 @@ TEST(GTpoGroups, createGroup)
 
 TEST(GTpoGroups, removeGroup)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
     EXPECT_EQ( g.getGroupCount(), 1 );
@@ -78,19 +78,19 @@ TEST(GTpoGroups, removeGroup)
 
 TEST(GTpoGroups, groupNodeExcept)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
-    using WeakGroup = gtpo::GenGroup<>::WeakGroup;
-    using WeakNode = gtpo::GenGroup<>::WeakNode;
-    EXPECT_THROW( g.groupNode(group, WeakNode{}), gtpo::bad_topology_error );
+    using weak_group = gtpo::group<>::weak_group;
+    using weak_node = gtpo::group<>::weak_node;
+    EXPECT_THROW( g.groupNode(group, weak_node{}), gtpo::bad_topology_error );
     auto n = g.createNode();
-    EXPECT_THROW( g.groupNode(WeakGroup{}, n), gtpo::bad_topology_error );
+    EXPECT_THROW( g.groupNode(weak_group{}, n), gtpo::bad_topology_error );
     ASSERT_NO_THROW( g.groupNode(group, n) );
 }
 
 TEST(GTpoGroups, groupNode)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     EXPECT_EQ( g.getGroupCount(), 0 );
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
@@ -103,18 +103,18 @@ TEST(GTpoGroups, groupNode)
 
 TEST(GTpoGroups, ungroupNodeExcept)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
-    using WeakGroup = gtpo::GenGroup<>::WeakGroup;
-    using WeakNode = gtpo::GenGroup<>::WeakNode;
-    EXPECT_THROW( g.ungroupNode(group, WeakNode{}), gtpo::bad_topology_error );
+    using weak_group = gtpo::group<>::weak_group;
+    using weak_node = gtpo::group<>::weak_node;
+    EXPECT_THROW( g.ungroupNode(group, weak_node{}), gtpo::bad_topology_error );
     auto n = g.createNode();
-    EXPECT_THROW( g.ungroupNode(WeakGroup{}, n), gtpo::bad_topology_error );
+    EXPECT_THROW( g.ungroupNode(weak_group{}, n), gtpo::bad_topology_error );
 }
 
 TEST(GTpoGroups, ungroupNode)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
     auto n = g.createNode();
@@ -127,7 +127,7 @@ TEST(GTpoGroups, ungroupNode)
 
 TEST(GTpoGroups, ungroupUngroupedNode)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
     auto n = g.createNode();
@@ -139,7 +139,7 @@ TEST(GTpoGroups, groupRootNodeContract)
 {
     // Ensure that graph root node count is not modified when a node is grouped
     // CONTRACT: A node with zero in-degree is a root node even when it is grouped.
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group = g.createGroup().lock();
     ASSERT_TRUE(group);
     EXPECT_EQ(g.getRootNodeCount(), 0);
@@ -158,25 +158,25 @@ TEST(GTpoGroups, groupRootNodeContract)
 
 TEST(GTpoGroups, groupGroup)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group1 = g.createGroup().lock();
     auto group2 = g.createGroup().lock();
-    using WeakGroup = gtpo::GenGroup<>::WeakGroup;
+    using weak_group = gtpo::group<>::weak_group;
     EXPECT_EQ( group1->getNodeCount(), 0 );
-    g.groupNode(group1, WeakGroup{group2});
+    g.groupNode(group1, weak_group{group2});
     EXPECT_EQ( group1->getNodeCount(), 1 );
 }
 
 TEST(GTpoGroups, ungroupGroup)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto group1 = g.createGroup().lock();
     auto group2 = g.createGroup().lock();
-    using WeakGroup = gtpo::GenGroup<>::WeakGroup;
-    g.groupNode(group1, WeakGroup{group2});
+    using weak_group = gtpo::group<>::weak_group;
+    g.groupNode(group1, weak_group{group2});
     EXPECT_EQ( group1->getNodeCount(), 1 );
     EXPECT_EQ( g.getGroupCount(), 2 );
-    g.ungroupNode(group1, WeakGroup{group2});
+    g.ungroupNode(group1, weak_group{group2});
     EXPECT_EQ( group1->getNodeCount(), 0 );
 }
 
@@ -184,7 +184,7 @@ TEST(GTpoGroups, clearTopology)
 {
     // TEST: clearing a graph with a group with content should remove group and group
     // topology
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
     auto e1 = g.createEdge(n1, n2);
@@ -205,7 +205,7 @@ TEST(GTpoGroups, clearTopology)
 TEST(GTpoGroups, removeGroupTopology)
 {
     // TEST: removing a group with content should preserve group topology
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
     auto e1 = g.createEdge(n1, n2);
@@ -232,7 +232,7 @@ TEST(GTpoGroups, removeGroupTopology)
 
 TEST(GTpoGroups, adjacentEdgesSimple)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
 
@@ -266,7 +266,7 @@ TEST(GTpoGroups, adjacentEdgesSimple)
 
 TEST(GTpoGroups, adjacentEdges)
 {
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto n1 = g.createNode();
     auto n2 = g.createNode();
     auto n3 = g.createNode();

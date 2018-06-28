@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::GenNode< qan::GraphConfig >{}
+    gtpo::node< qan::GraphConfig >{}
 {
     Q_UNUSED(parent)
 }
@@ -59,11 +59,11 @@ Node::~Node()
 }
 
 qan::Graph* Node::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::GenNode< qan::GraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::node< qan::GraphConfig >::getGraph() );
 }
 
 const qan::Graph* Node::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::GenNode< qan::GraphConfig >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::node< qan::GraphConfig >::getGraph() );
 }
 
 bool    Node::operator==( const qan::Node& right ) const
@@ -110,7 +110,7 @@ void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
     if ( !behaviour )
         return;
     behaviour->setHost(this);
-    addBehaviour( std::move( behaviour ) );
+    add_dynamic_node_behaviour( std::move(behaviour) );
 }
 //-----------------------------------------------------------------------------
 

@@ -13,13 +13,14 @@ include (../src/gtpo.pri)
 #win32-msvc*:GTEST_DIR       =  path/to/gtest
 #win32-msvc*:INCLUDEPATH     += $$GTEST_DIR/include $$GMOCK_DIR/include
 
-SOURCES	+=  ./gtpoTests.cpp         \
-            ./gtpoContainers.cpp    \
-            ./gtpoTopology.cpp      \
-            ./gtpoGraph.cpp         \
-            ./gtpoGroups.cpp        \
-            ./gtpoBehaviour.cpp
-            ./gtpoConcrete.cpp
+SOURCES	+=  ./gtpoTests.cpp             \
+            ./gtpo_behaviours_tests.cpp \
+            ./gtpo_config_tests.cpp     #\
+            #./gtpoContainers.cpp    \
+            #./gtpoTopology.cpp      \
+            #./gtpoGraph.cpp         \
+            #./gtpoGroups.cpp        \
+            #./gtpoConcrete.cpp
 
 HEADERS	+=  
 

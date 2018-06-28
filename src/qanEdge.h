@@ -51,7 +51,7 @@ class EdgeItem;
 /*!
     \nosubgrouping
  */
-class Edge : public gtpo::GenEdge< qan::GraphConfig >
+class Edge : public gtpo::edge<qan::GraphConfig>
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
@@ -64,7 +64,7 @@ public:
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
-    //! Shortcut to gtpo::GenEdge<>::getGraph().
+    //! Shortcut to gtpo::edge<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;

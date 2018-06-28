@@ -87,7 +87,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
         };
         connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
         node->setItem(nodeItem);
-        GTpoGraph::insertNode( node );
+        gtpo_graph_t::insertNode( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
         return nullptr; // node eventually destroyed by shared_ptr
@@ -109,7 +109,7 @@ qan::Node*  Graph::insertNonVisualNode()
     const auto node = std::make_shared<Node_t>();
     try {
         QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-        GTpoGraph::insertNode( node );
+        gtpo_graph_t::insertNode( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
         return nullptr; // node eventually destroyed by shared_ptr
@@ -151,7 +151,7 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
         if ( configureEdge( *edge,  *edgeComponent, *style,
                             src,    dstNode,        dstEdge ) ) {
-            GTpoGraph::insertEdge( edge );
+            gtpo_graph_t::insertEdge( edge );
             configuredEdge = edge.get();
         }
     } catch ( gtpo::bad_topology_error e ) {
@@ -178,7 +178,7 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan:
             edge->setDst( dstNode->shared_from_this() );
         else if ( dstEdge != nullptr)
             edge->setHDst( dstEdge->shared_from_this() );
-        GTpoGraph::insertEdge( edge );
+        gtpo_graph_t::insertEdge( edge );
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
         // FIXME
@@ -221,7 +221,7 @@ qan::Group* Graph::insertGroup()
                 groupItem->setGraph(this);
                 group->setItem(groupItem);
 
-                GTpoGraph::insertGroup( group );
+                gtpo_graph_t::insertGroup( group );
 
                 auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
                     if ( groupItem != nullptr && groupItem->getGroup() != nullptr )

@@ -1,30 +1,32 @@
 
 CONFIG      += warn_on qt thread c++14
-QT          += core gui
+QT          += core
 
 INCLUDEPATH += $$PWD
 
-HEADERS +=  $$PWD/gtpoUtils.h               \
-            $$PWD/gtpoGraphConfig.h         \
-            $$PWD/gtpoGenEdge.h             \
-            $$PWD/gtpoGenEdge.hpp           \
-            $$PWD/gtpoGenNode.h             \
-            $$PWD/gtpoGenNode.hpp           \
-            $$PWD/gtpoGenGroup.h            \
-            $$PWD/gtpoGenGroup.hpp          \
-            $$PWD/gtpoGenGraph.h            \
-            $$PWD/gtpoGenGraph.hpp          \
-            $$PWD/gtpoBehaviour.h           \
-            $$PWD/gtpoBehaviour.hpp         \
-            $$PWD/gtpoGraphBehaviour.h      \
-            $$PWD/gtpoGraphBehaviour.hpp    \
-            $$PWD/gtpoNodeBehaviour.h       \
-            $$PWD/gtpoNodeBehaviour.hpp     \
-            $$PWD/gtpoGroupBehaviour.h      \
-            $$PWD/gtpoGroupBehaviour.hpp    \
-            $$PWD/gtpoAdjacentBehaviour.h   \
-            $$PWD/gtpoAdjacentBehaviour.hpp \
-            $$PWD/gtpoContainerAdapter.h    \
+HEADERS +=  $$PWD/utils.h                \
+            $$PWD/config.h               \
+            $$PWD/edge.h                 \
+            $$PWD/edge.hpp               \
+            $$PWD/node.h                 \
+            $$PWD/node.hpp               \
+            $$PWD/group.h                \
+            $$PWD/group.hpp              \
+            $$PWD/graph.h                \
+            $$PWD/graph.hpp              \
+            $$PWD/graph_property.h       \
+            $$PWD/behaviour.h            \
+            $$PWD/behaviourable.h        \
+            $$PWD/behaviourable.hpp      \
+            $$PWD/graph_behaviour.h      \
+            $$PWD/graph_behaviour.hpp    \
+            $$PWD/node_behaviour.h       \
+            $$PWD/node_behaviour.hpp     \
+            $$PWD/group_behaviour.h      \
+            $$PWD/group_behaviour.hpp    \
+            $$PWD/adjacent_behaviour.h   \
+            $$PWD/adjacent_behaviour.hpp \
+            $$PWD/container_adapter.h    \
             $$PWD/GTpo.h
 
 OTHER_FILES += $$PWD/GTpo

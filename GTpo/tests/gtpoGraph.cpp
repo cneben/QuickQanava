@@ -51,7 +51,7 @@
 TEST(GTpoGraph, linearize_dfs_rec)
 {
     // Inserting a node should increase node count and root node count
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto nc = g.getNodeCount();
     auto rnc = g.getRootNodeCount();
     EXPECT_EQ( nc, 0);
@@ -65,7 +65,7 @@ TEST(GTpoGraph, linearize_dfs_rec)
 TEST(GTpoGraph, levelize_dfs_rec)
 {
     // Inserting a node should increase node count and root node count
-    gtpo::GenGraph<> g;
+    gtpo::graph<> g;
     auto nc = g.getNodeCount();
     auto rnc = g.getRootNodeCount();
     EXPECT_EQ( nc, 0);

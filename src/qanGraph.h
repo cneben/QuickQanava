@@ -65,12 +65,12 @@ class PortItem;
  *
  * \nosubgrouping
  */
-class Graph : public gtpo::GenGraph< qan::GraphConfig >
+class Graph : public gtpo::graph<qan::GraphConfig>
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
 
-    using GTpoGraph = gtpo::GenGraph< qan::GraphConfig >;
+    using gtpo_graph_t = gtpo::graph<qan::GraphConfig>;
 
     friend class qan::Selectable;
 
@@ -315,12 +315,12 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
-    using Node              = typename GraphConfig::FinalNode;
-    using WeakNode          = GTpoGraph::WeakNode;
-    using SharedNode        = GTpoGraph::SharedNode;
+    using Node              = typename GraphConfig::final_node_t;
+    using WeakNode          = gtpo_graph_t::weak_node;
+    using SharedNode        = gtpo_graph_t::shared_node;
 
     //! Proxy for GTpo graph insertNode().
-    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return GTpoGraph::insertNode(node); }
+    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return gtpo_graph_t::insertNode(node); }
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -347,7 +347,7 @@ public:
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
-    Q_INVOKABLE int         getNodeCount() { return GTpoGraph::getNodeCount(); }
+    Q_INVOKABLE int         getNodeCount() { return gtpo_graph_t::getNodeCount(); }
 
 public:
     //! Access the list of nodes with an abstract item model interface.
@@ -475,7 +475,7 @@ public:
     bool                    hasGroup( qan::Group* group ) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::graph<qan::GraphConfig>::getGroupCount(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
     Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);

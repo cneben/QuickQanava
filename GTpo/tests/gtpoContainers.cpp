@@ -36,7 +36,7 @@
 #include <iostream>
 
 // GTpo headers
-#include "../src/gtpoContainerAdapter.h"
+#include "../src/container_adapter.h"
 
 // Google Test
 #include <gtest/gtest.h>

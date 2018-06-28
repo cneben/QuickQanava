@@ -27,13 +27,12 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoGenGroup.h
+// \file	group.h
 // \author	benoit@destrat.io
 // \date	2017 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoGenGroup_h
-#define gtpoGenGroup_h
+#pragma once
 
 // STD headers
 #include <list>
@@ -44,48 +43,44 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpoGraphConfig.h"
-#include "./gtpoUtils.h"
-#include "./gtpoGenNode.h"
-#include "./gtpoGenEdge.h"
-#include "./gtpoGroupBehaviour.h"
-#include "./gtpoAdjacentBehaviour.h"
+#include "./config.h"
+#include "./utils.h"
+#include "./node.h"
+#include "./edge.h"
+#include "./group_behaviour.h"
+#include "./adjacent_behaviour.h"
 
 namespace gtpo { // ::gtpo
 
-
-/*! \brief Base class for modelling groups of nodes in a gtpo::GenGraph graph.
+/*! \brief Base class for modelling groups of nodes in a gtpo::graph graph.
  *
  * \nosubgrouping
 */
-template <class Config = gtpo::GraphConfig>
-class GenGroup : public gtpo::GenNode<Config>,
-                 public gtpo::BehaviourableGroup< gtpo::GroupBehaviour< Config >,
-                                                  std::tuple< gtpo::GroupAdjacentEdgesBehaviour< Config > > >
+template <class config_t = gtpo::config>
+class group : public gtpo::node<config_t>,
+              public gtpo::behaviourable_group<config_t>
 {
-    friend GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend graph<config_t>;   // graph need access to setGraph()
 
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
-    using Graph             = GenGraph<Config>;
+    using weak_node         = typename node<config_t>::weak;
+    using shared_node       = typename node<config_t>::shared;
+    using weak_nodes        = typename config_t::template node_container_t< weak_node >;
 
-    using WeakNode          = typename GenNode<Config>::Weak;
-    using SharedNode        = typename GenNode<Config>::Shared;
-    using WeakNodes         = typename Config::template NodeContainer< WeakNode >;
+    using weak_edge         = typename edge<config_t>::weak;
+    using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
 
-    using WeakEdge          = typename GenEdge<Config>::Weak;
-    using WeakEdgesSearch   = typename Config::template SearchContainer< WeakEdge >;
+    using weak          = std::weak_ptr< typename config_t::final_group_t >;
+    using shared        = std::shared_ptr< typename config_t::final_group_t >;
+    using weak_group    = weak;
+    using shared_group  = shared;
 
-    using Weak          = std::weak_ptr< typename Config::FinalGroup >;
-    using Shared        = std::shared_ptr< typename Config::FinalGroup >;
-    using WeakGroup     = Weak;
-    using SharedGroup   = Shared;
-
-    GenGroup() noexcept : gtpo::GenNode<Config>() { }
-    ~GenGroup() { /* Nil */ }
-    GenGroup( const GenGroup& ) = delete;
-    GenGroup& operator=( GenGroup const& ) = delete;
+    group() noexcept : gtpo::node<config_t>() { }
+    ~group() { /* Nil */ }
+    group( const group& ) = delete;
+    group& operator=( group const& ) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -93,34 +88,32 @@ public:
     //@{
 public:
     //! Return group's nodes.
-    inline auto getNodes() noexcept -> const WeakNodes& { return _nodes; }
+    inline auto getNodes() noexcept -> const weak_nodes& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        hasNode( const WeakNode& node ) const noexcept -> bool;
+    auto        hasNode( const weak_node& node ) const noexcept -> bool;
     //! Return group registered node count.
     inline auto getNodeCount( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
 private:
-    WeakNodes   _nodes;
+    weak_nodes   _nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Adjacent Edges *///----------------------------------------------
     //@{
 public:
-    inline auto     getEdges() noexcept -> WeakEdgesSearch& { return _edges; }
-    inline auto     getEdges() const noexcept -> const WeakEdgesSearch& { return _edges; }
+    inline auto     getEdges() noexcept -> weak_edges_search& { return _edges; }
+    inline auto     getEdges() const noexcept -> const weak_edges_search& { return _edges; }
 
-    inline auto     getAdjacentEdges() noexcept -> WeakEdgesSearch& { return _adjacentEdges; }
-    inline auto     getAdjacentEdges() const noexcept -> const WeakEdgesSearch& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() noexcept -> weak_edges_search& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() const noexcept -> const weak_edges_search& { return _adjacentEdges; }
 
 protected:
-    WeakEdgesSearch _edges;
-    WeakEdgesSearch _adjacentEdges;
+    weak_edges_search _edges;
+    weak_edges_search _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
-
-#endif // gtpoGenGroup_h
 

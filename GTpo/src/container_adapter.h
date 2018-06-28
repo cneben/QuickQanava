@@ -27,13 +27,13 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickContainers library.
 //
-// \file    gtpoContainerAdapter.h
+// \file    container_adapter.h
 // \author  benoit@destrat.io
 // \date    2017 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoContainerAdapter_h
-#define gtpoContainerAdapter_h
+#ifndef gtpo_container_adapter_h
+#define gtpo_container_adapter_h
 
 // Std headers
 #include <cstddef>          // std::size_t
@@ -44,7 +44,7 @@
 #include <memory>
 
 // Gtpo headers
-#include "./gtpoUtils.h"
+#include "./utils.h"
 
 namespace gtpo { // ::gtpo
 
@@ -146,5 +146,5 @@ struct std_container_adapter< std::unordered_set<std::shared_ptr<T>> > {
 
 } // ::gtpo
 
-#endif // gtpoContainerAdapter_h
+#endif // gtpo_container_adapter_h
 

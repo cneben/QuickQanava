@@ -27,13 +27,13 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoGenEdge.h
+// \file	edge.h
 // \author	benoit@destrat.io
 // \date	2017 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoGenEdge_h
-#define gtpoGenEdge_h
+#ifndef gtpo_edge_h
+#define gtpo_edge_h
 
 // STD headers
 #include <list>
@@ -44,66 +44,66 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpoUtils.h"
-#include "./gtpoBehaviour.h"
-#include "./gtpoGraphConfig.h"
+#include "./utils.h"
+#include "./behaviour.h"
+#include "./config.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
 namespace gtpo { // ::gtpo
 
-template <class Config>
-class GenGraph;
+template <class config>
+class graph;
 
-template <class Config>
-class GenNode;
+template <class config>
+class node;
 
-template <class Config>
-class GenGroup;
+template <class config>
+class group;
 
 
 /*! Directed edge linking two nodes in a graph.
  *
  * \nosubgrouping
  */
-template <class Config = GraphConfig>
-class GenEdge : public Config::EdgeBase,
-                public std::enable_shared_from_this<typename Config::FinalEdge>
+template <class config_t = gtpo::config>
+class edge : public config_t::edge_base,
+                public std::enable_shared_from_this<typename config_t::final_edge_t>
 {
     /*! \name Edge Construction *///-------------------------------------------
     //@{
-    friend GenGraph<Config>;   // GenGraph need access to setGraph()
+    friend graph<config_t>;   // graph need access to setGraph()
 public:
-    using Graph         = GenGraph<Config>;
+    using graph_t       = graph<config_t>;
 
-    using WeakNode      = typename GenNode<Config>::Weak;
-    using SharedNode    = typename GenNode<Config>::Shared;
+    using weak_node     = typename gtpo::node<config_t>::weak;
+    using shared_node   = typename gtpo::node<config_t>::shared;
 
-    using Weak          = std::weak_ptr<typename Config::FinalEdge>;
-    using Shared        = std::shared_ptr<typename Config::FinalEdge>;
-    using WeakEdge      = Weak;
-    using SharedEdge    = Shared;
+    using weak          = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared        = std::shared_ptr<typename config_t::final_edge_t>;
+    using weak_edge     = weak;
+    using shared_edge   = shared;
 
-    GenEdge() noexcept : Config::EdgeBase{} {}
-    explicit GenEdge( const WeakNode& src, const WeakNode& dst ) :
-        Config::EdgeBase{}, _src{ src }, _dst{ dst } { }
-    explicit GenEdge( const WeakNode& src, const WeakEdge& hDst ) :
-        Config::EdgeBase{}, _src{ src }, _hDst{ hDst } { }
-    ~GenEdge() {
+    edge() noexcept : config_t::edge_base{} {}
+    explicit edge( const weak_node& src, const weak_node& dst ) :
+        config_t::edge_base{}, _src{ src }, _dst{ dst } { }
+    explicit edge( const weak_node& src, const weak_edge& hDst ) :
+        config_t::edge_base{}, _src{ src }, _hDst{ hDst } { }
+    ~edge() {
         if ( _graph != nullptr )
-            std::cerr << "gtpo::GenEdge<>::~GenEdge(): Warning: an edge has been deleted before beeing " <<
+            std::cerr << "gtpo::edge<>::~edge(): Warning: an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
         _graph = nullptr;
     }
-    GenEdge(const GenEdge& ) = delete;
+    edge(const edge& ) = delete;
 
-protected:
-    inline Graph*       getGraph() noexcept { return _graph; }
-    inline const Graph* getGraph() const noexcept { return _graph; }
-private:
-    void                setGraph( Graph* graph ) { _graph = graph; }
 public:
-    Graph*              _graph{ nullptr };
+    inline graph_t*         getGraph() noexcept { return _graph; }
+    inline const graph_t*   getGraph() const noexcept { return _graph; }
+private:
+    void                    setGraph( graph_t* graph ) { _graph = graph; }
+public:
+    graph_t*                _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
@@ -125,53 +125,53 @@ private:
     /*! \name Source / Destination Management *///-----------------------------
     //@{
 public:
-    inline auto setSrc( WeakNode src ) noexcept -> void { _src = src; }
-    inline auto setDst( WeakNode dst ) noexcept -> void { _dst = dst; }
-    inline auto getSrc( ) noexcept -> WeakNode& { return _src; }
-    inline auto getSrc( ) const noexcept -> const WeakNode& { return _src; }
-    inline auto getDst( ) noexcept -> WeakNode& { return _dst; }
-    inline auto getDst( ) const noexcept -> const WeakNode& { return _dst; }
+    inline auto setSrc( weak_node src ) noexcept -> void { _src = src; }
+    inline auto setDst( weak_node dst ) noexcept -> void { _dst = dst; }
+    inline auto getSrc( ) noexcept -> weak_node& { return _src; }
+    inline auto getSrc( ) const noexcept -> const weak_node& { return _src; }
+    inline auto getDst( ) noexcept -> weak_node& { return _dst; }
+    inline auto getDst( ) const noexcept -> const weak_node& { return _dst; }
 private:
-    WeakNode    _src;
-    WeakNode    _dst;
+    weak_node    _src;
+    weak_node    _dst;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Restricted Hyper Edge Management *///----------------------------
     //@{
 public:
-    using WeakEdges     = typename Config::template EdgeContainer< WeakEdge >;
-    using WeakNodes     = typename Config::template NodeContainer< WeakNode >;
+    using weak_edges     = typename config_t::template edge_container_t< weak_edge >;
+    using weak_nodes     = typename config_t::template node_container_t< weak_node >;
 
-    inline auto setHDst( WeakEdge hDst ) noexcept -> void { _hDst = hDst; }
-    inline auto getHDst() const noexcept -> const WeakEdge& { return _hDst; }
-    inline auto getInHEdges() const noexcept -> const WeakEdges& { return _inHEdges; }
-    inline auto addInHEdge( WeakEdge inHEdge ) -> void;
-    inline auto removeInHEdge( WeakEdge inHEdge ) -> void;
+    inline auto setHDst( weak_edge hDst ) noexcept -> void { _hDst = hDst; }
+    inline auto getHDst() const noexcept -> const weak_edge& { return _hDst; }
+    inline auto getInHEdges() const noexcept -> const weak_edges& { return _inHEdges; }
+    inline auto addInHEdge( weak_edge inHEdge ) -> void;
+    inline auto removeInHEdge( weak_edge inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
 
-    inline auto getInHNodes() const noexcept -> const WeakNodes& { return _inHNodes; }
+    inline auto getInHNodes() const noexcept -> const weak_nodes& { return _inHNodes; }
 
 protected:
-    inline auto getInHEdges() noexcept -> WeakEdges& { return _inHEdges; }
+    inline auto getInHEdges() noexcept -> weak_edges& { return _inHEdges; }
 private:
     //! Restricted hyper edge destination (ie this edge target another edge as destination).
-    WeakEdge    _hDst;
+    weak_edge    _hDst;
     //! Restricted in hyper edges (ie an in hyper edge with this edge as a destination).
-    WeakEdges   _inHEdges;
+    weak_edges   _inHEdges;
     //! Restricted hyper in nodes (ie all source node for in restricted hyper edges).
-    WeakNodes   _inHNodes;
+    weak_nodes   _inHNodes;
     //@}
     //-------------------------------------------------------------------------
 };
 
-template <class Config = GraphConfig>
-class GenGroupEdge : public gtpo::GenEdge<Config>
+template <class config_t = gtpo::config>
+class group_edge : public gtpo::edge<config_t>
 {
 
 };
 
 } // ::gtpo
 
-#endif // gtpoGenEdge_h
+#endif // gtpo_edge_h
 

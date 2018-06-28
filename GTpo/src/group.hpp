@@ -25,42 +25,27 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the GTpo software library.
+// This file is a part of the GTpo software.
 //
-// \file	gtpoEdge.hpp
+// \file	group.hpp
 // \author	benoit@destrat.io
-// \date	2016 01 22
+// \date	2016 03 22
 //-----------------------------------------------------------------------------
 
 namespace gtpo { // ::gtpo
 
-/* GenEdge Restricted Hyper Edge Management *///-------------------------------
-template < class Config >
-auto GenEdge< Config >::addInHEdge( WeakEdge inHEdge ) -> void
+/* Group Nodes Management *///-------------------------------------------------
+template < class config_t >
+auto group<config_t>::hasNode( const weak_node& node ) const noexcept -> bool
 {
-    if ( inHEdge.expired() )
-        throw gtpo::bad_topology_error( "gtpo::GenEdge<>::addInHEdge(): Error: Input hyper edge is null." );
-    SharedEdge inHEdgePtr{ inHEdge.lock() };
-    if ( inHEdgePtr != nullptr ) {
-        if ( inHEdgePtr->getHDst().expired() )
-            inHEdgePtr->setHDst( this->shared_from_this() );
-        Config::template container_adapter< WeakEdges >::insert( inHEdge, _inHEdges );
-        if ( !inHEdgePtr->getSrc().expired() )
-            Config::template container_adapter< WeakNodes >::insert( inHEdgePtr->getSrc(), _inHNodes );
-    }
-}
-
-template < class Config >
-auto GenEdge< Config >::removeInHEdge( WeakEdge inHEdge ) -> void
-{
-    if ( inHEdge.expired() )
-        return;                 // Do not throw, removing a null inHEdge let edge in a perfectely valid state
-    SharedEdge inHEdgePtr{ inHEdge.lock() };
-    if ( inHEdgePtr != nullptr ) {
-        inHEdgePtr->setHDst( SharedEdge{} );
-        Config::template container_adapter< WeakEdges >::remove( inHEdge, _inHEdges );
-        Config::template container_adapter< WeakNodes >::remove( inHEdgePtr->getSrc(), _inHNodes );
-    }
+    if ( node.expired() )
+        return false;
+    shared_node groupNode = node.lock();
+    if ( groupNode == nullptr )
+        return false;
+    auto groupNodeIter = std::find_if( _nodes.begin(), _nodes.end(),
+                                        [=](const weak_node& groupNode ){ return ( compare_weak_ptr<>( node, groupNode ) ); } );
+    return groupNodeIter != _nodes.end();
 }
 //-----------------------------------------------------------------------------
 

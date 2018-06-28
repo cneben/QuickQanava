@@ -54,7 +54,7 @@ class GroupItem;
  *
  * \nosubgrouping
  */
-class Group : public gtpo::GenGroup< qan::GraphConfig >
+class Group : public gtpo::group<qan::GraphConfig>
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
@@ -69,7 +69,7 @@ public:
     Group( const Group& ) = delete;
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
-    //! Shortcut to gtpo::GenGroup<>::getGraph().
+    //! Shortcut to gtpo::group<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
@@ -113,7 +113,7 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::GenGroup<qan::GraphConfig>::hasNode().
+    //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::GraphConfig>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
     //@}
     //-------------------------------------------------------------------------

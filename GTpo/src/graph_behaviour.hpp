@@ -25,28 +25,60 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the GTpo software.
+// This file is a part of the GTpo software library.
 //
-// \file	gtpoGroup.hpp
+// \file	graph_behaviour.hpp
 // \author	benoit@destrat.io
-// \date	2016 03 22
+// \date	2017 03 09
 //-----------------------------------------------------------------------------
+
+#include "./utils.h"
 
 namespace gtpo { // ::gtpo
 
-/* Group Nodes Management *///-------------------------------------------------
-template < class Config >
-auto GenGroup< Config >::hasNode( const WeakNode& node ) const noexcept -> bool
+/* Notification Helper Methods *///--------------------------------------------
+template < class config_t >
+template < class node_t >
+auto    behaviourable_graph< config_t >::notify_node_inserted( node_t& node ) noexcept -> void
 {
-    if ( node.expired() )
-        return false;
-    SharedNode groupNode = node.lock();
-    if ( groupNode == nullptr )
-        return false;
-    auto groupNodeIter = std::find_if( _nodes.begin(), _nodes.end(),
-                                        [=](const WeakNode& groupNode ){ return ( compare_weak_ptr<>( node, groupNode ) ); } );
-    return groupNodeIter != _nodes.end();
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.node_inserted( node ); } );
+}
+
+template < class config_t >
+template < class node_t >
+auto    behaviourable_graph< config_t >::notify_node_removed( node_t& node ) noexcept -> void
+{
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.node_removed( node ); } );
+}
+
+template < class config_t >
+template < class edge_t >
+auto    behaviourable_graph< config_t >::notify_edge_inserted( edge_t& edge ) noexcept -> void
+{
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.edge_inserted( edge ); } );
+}
+
+template < class config_t >
+template < class edge_t >
+auto    behaviourable_graph< config_t >::notify_edge_removed( edge_t& edge ) noexcept -> void
+{
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.edge_removed( edge ); } );
+}
+
+template < class config_t >
+template < class group_t >
+auto    behaviourable_graph< config_t >::notify_group_inserted( group_t& group ) noexcept -> void
+{
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.group_inserted( group ); } );
+}
+
+template < class config_t >
+template < class group_t >
+auto    behaviourable_graph< config_t >::notify_group_removed( group_t& group ) noexcept -> void
+{
+    this->notify_static_behaviours( [&](auto& behaviour) noexcept { behaviour.group_removed( group ); } );
 }
 //-----------------------------------------------------------------------------
 
 } // ::gtpo
+

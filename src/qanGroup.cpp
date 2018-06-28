@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
 Group::Group( QObject* parent ) :
-    gtpo::GenGroup< qan::GraphConfig >{}
+    gtpo::group< qan::GraphConfig >{}
 {
     Q_UNUSED(parent);
 }
@@ -58,11 +58,11 @@ Group::~Group() {
 }
 
 qan::Graph*         Group::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::group< qan::GraphConfig >::getGraph() );
 }
 
 const qan::Graph*   Group::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::GenGroup< qan::GraphConfig >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::group< qan::GraphConfig >::getGraph() );
 }
 
 qan::GroupItem*  Group::getItem() noexcept { return _item.data(); }
@@ -118,11 +118,11 @@ bool    Group::hasNode( qan::Node* node ) const
 {
     if ( node == nullptr )
         return false;
-    WeakNode weakNode;
+    weak_node weakNode;
     try {
-        weakNode = WeakNode{ node->shared_from_this() };
-    } catch ( std::bad_weak_ptr ) { return false; }
-    return gtpo::GenGroup< qan::GraphConfig >::hasNode( weakNode );
+        weakNode = weak_node{ node->shared_from_this() };
+    } catch ( std::bad_weak_ptr ) { return false; } // C++17
+    return gtpo::group< qan::GraphConfig >::hasNode( weakNode );
 }
 //-----------------------------------------------------------------------------
 

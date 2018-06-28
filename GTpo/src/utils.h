@@ -27,13 +27,13 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	gtpoUtils.h
+// \file	utils.h
 // \author	benoit@destrat.io
 // \date	2016 01 22
 //-----------------------------------------------------------------------------
 
-#ifndef gtpoUtils_h
-#define gtpoUtils_h
+#ifndef gtpo_utils_h
+#define gtpo_utils_h
 
 // STD headers
 #include <algorithm>
@@ -45,7 +45,7 @@
 namespace gtpo { // ::gtpo
 
 //! Empty class
-class Empty { };
+class empty { };
 
 /*! \brief Exception thrown by GTpo to notify user that a topology related error occurs.
  *
@@ -93,11 +93,11 @@ auto    find_weak_ptr( const C& container, const T& element ) -> bool {
 
 /*! Configuration interface for accessing graph containers.
  *
- * GTpo GenGraph Config configuration struct should inherit from ContainerAccessors since
- * GenGraph access its nodes, edges and groups container trought the generic insert()/remove() interface.
+ * GTpo graph config configuration struct should inherit from ContainerAccessors since
+ * graph access its nodes, edges and groups container trought the generic insert()/remove() interface.
  *
  */
-struct ContainerAccessors {
+struct container_accessors {
     /*! \brief Generic "item inserter" for list/set/vector, specialize for your custom container types.
      */
     template <typename T>
@@ -110,7 +110,7 @@ struct ContainerAccessors {
      *   IntList l;
      *   l.push_back( 42 );
      *   // Same interface for std::list/set/vector
-     *   gtpo::DefaultConfig::remove<IntList>::from( l, 42 );
+     *   gtpo::Defaultconfig::remove<IntList>::from( l, 42 );
      * \endcode
      */
     template <typename T>
@@ -146,5 +146,5 @@ namespace std
     };
 }
 
-#endif // gtpoUtils_h
+#endif // gtpo_utils_h
 
