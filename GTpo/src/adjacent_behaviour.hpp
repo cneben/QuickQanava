@@ -38,22 +38,22 @@ namespace gtpo { // ::gtpo
 
 /* Group Adjacent Edges behaviour *///-----------------------------------------
 template < class config_t >
-void    group_adjacent_edges_behaviour<config_t>::node_inserted( weak_node& weakNode ) noexcept
+void    group_adjacent_edges_behaviour<config_t>::node_inserted( weak_node_t& weakNode ) noexcept
 {
-    shared_node node = weakNode.lock();
+    shared_node_t node = weakNode.lock();
     if ( node ) {
         auto group = std::static_pointer_cast<gtpo::group<config_t>>(node->getGroup().lock());
         if ( group ) {
             for ( const auto& inEdge : node->getInEdges() ) // Add all node in/out edges to adjacent edge set
-                config_t::template container_adapter<weak_edges_search>::insert( inEdge, group->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::insert( inEdge, group->getAdjacentEdges() );
             for ( const auto& outEdge : node->getOutEdges() )
-                config_t::template container_adapter<weak_edges_search>::insert( outEdge, group->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::insert( outEdge, group->getAdjacentEdges() );
         }
     }
 }
 
 template < class config_t >
-void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node& weakNode ) noexcept
+void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node_t& weakNode ) noexcept
 {
     auto node = weakNode.lock();
     if ( node ) {
@@ -62,14 +62,14 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node& weakN
             // Remove all node in/out edges from group adjacent edge set
             // Except if this edge "other" src or dst is still part of the group
             for ( const auto& inWeakEdge : node->getInEdges() ) {
-                using weak_edge = std::weak_ptr<typename config_t::final_edge_t>;
-                using weak_edges_search   = typename config_t::template search_container_t< weak_edge >;
+                using weak_edge_t = std::weak_ptr<typename config_t::final_edge_t>;
+                using weak_edges_t_search   = typename config_t::template search_container_t< weak_edge_t >;
                 auto inEdge = inWeakEdge.lock();
                 if ( inEdge ) {
                     auto inEdgeSrc = inEdge->getSrc().lock();
                     if ( inEdgeSrc &&
                          inEdgeSrc->getGroup().lock().get() != group.get() )
-                        config_t::template container_adapter<weak_edges_search>::remove( inWeakEdge, group->getAdjacentEdges() );
+                        config_t::template container_adapter<weak_edges_t_search>::remove( inWeakEdge, group->getAdjacentEdges() );
                 }
             }
             for ( const auto& outWeakEdge : node->getOutEdges() ) {
@@ -78,7 +78,7 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node& weakN
                     auto outEdgeDst = outEdge->getDst().lock();
                     if ( outEdgeDst &&
                          outEdgeDst->getGroup().lock().get() != group.get() )
-                        config_t::template container_adapter<weak_edges_search>::remove( outWeakEdge, group->getAdjacentEdges() );
+                        config_t::template container_adapter<weak_edges_t_search>::remove( outWeakEdge, group->getAdjacentEdges() );
                 }
             }
         }
@@ -88,7 +88,7 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node& weakN
 
 /* Graph Group Edge Set behaviour *///-----------------------------------------
 template < class config_t >
-void    graph_group_adjacent_edges_behaviour<config_t>::edge_inserted( weak_edge& weakEdge ) noexcept
+void    graph_group_adjacent_edges_behaviour<config_t>::edge_inserted( weak_edge_t& weakEdge ) noexcept
 {
     auto edge = weakEdge.lock();
     if ( edge != nullptr ) {
@@ -97,19 +97,19 @@ void    graph_group_adjacent_edges_behaviour<config_t>::edge_inserted( weak_edge
         if ( src != nullptr ) {
             auto srcGroup = std::static_pointer_cast<group_t>(src->getGroup().lock());
             if ( srcGroup != nullptr )
-                config_t::template container_adapter<weak_edges_search>::insert( weakEdge, srcGroup->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::insert( weakEdge, srcGroup->getAdjacentEdges() );
         }
         auto dst = edge->getDst().lock();
         if ( dst != nullptr ) {
             auto dstGroup = std::static_pointer_cast<group_t>(dst->getGroup().lock());
             if ( dstGroup != nullptr )
-                config_t::template container_adapter<weak_edges_search>::insert( weakEdge, dstGroup->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::insert( weakEdge, dstGroup->getAdjacentEdges() );
         }
     }
 }
 
 template < class config_t >
-void    graph_group_adjacent_edges_behaviour<config_t>::edge_removed( weak_edge& weakEdge ) noexcept
+void    graph_group_adjacent_edges_behaviour<config_t>::edge_removed( weak_edge_t& weakEdge ) noexcept
 {
     auto edge = weakEdge.lock();
     if ( edge ) {
@@ -118,13 +118,13 @@ void    graph_group_adjacent_edges_behaviour<config_t>::edge_removed( weak_edge&
         if ( src != nullptr ) {
             auto srcGroup = std::static_pointer_cast<group_t>(src->getGroup().lock());
             if ( srcGroup != nullptr )
-                config_t::template container_adapter<weak_edges_search>::remove( weakEdge, srcGroup->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::remove( weakEdge, srcGroup->getAdjacentEdges() );
         }
         auto dst = edge->getDst().lock();
         if ( dst != nullptr ) {
             auto dstGroup = std::static_pointer_cast<group_t>(dst->getGroup().lock());
             if ( dstGroup != nullptr )
-                config_t::template container_adapter<weak_edges_search>::remove( weakEdge, dstGroup->getAdjacentEdges() );
+                config_t::template container_adapter<weak_edges_t_search>::remove( weakEdge, dstGroup->getAdjacentEdges() );
         }
     }
 }

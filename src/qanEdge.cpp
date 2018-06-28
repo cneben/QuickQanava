@@ -46,7 +46,7 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge() :
-    gtpo::edge< qan::GraphConfig >{}
+    gtpo::edge< qan::Config >{}
 {
 }
 
@@ -57,11 +57,11 @@ Edge::~Edge()
 }
 
 qan::Graph* Edge::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::edge< qan::GraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::edge< qan::Config >::getGraph() );
 }
 
 const qan::Graph* Edge::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::edge< qan::GraphConfig >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::edge< qan::Config >::getGraph() );
 }
 
 qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }

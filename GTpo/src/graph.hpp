@@ -52,8 +52,8 @@ void    graph<config_t>::clear() noexcept
     _edges.clear();
     for ( auto& node: _nodes )   // Do not maintain topology during node deletion
         node->_graph = nullptr;
-    _rootNodes.clear();         // Remove weak_ptr containers first
-    _nodesSearch.clear();
+    _root_nodes.clear();         // Remove weak_ptr containers first
+    _nodes_search.clear();
     _nodes.clear();
 
     // Clearing groups and behaviours
@@ -66,233 +66,231 @@ void    graph<config_t>::clear() noexcept
 
 /* Graph Node Management *///--------------------------------------------------
 template < class config_t >
-auto graph<config_t>::createNode( ) -> weak_node
+auto graph<config_t>::create_node( ) -> weak_node_t
 {
-    weak_node weakNode;
+    weak_node_t node;
     try {
-        auto node = std::make_shared< typename config_t::final_node_t >();
-        weakNode = insertNode( node );
-    } catch (...) { gtpo::assert_throw( false, "graph<>::createNode(): Error: can't insert node in graph." ); }
-    return weakNode;
+        node = insert_node( std::make_shared< typename config_t::final_node_t >() );
+    } catch (...) { gtpo::assert_throw( false, "graph<>::create_node(): Error: can't insert node in graph." ); }
+    return node;
 }
 
 template < class config_t >
-auto    graph<config_t>::insertNode( shared_node node ) -> weak_node
+auto    graph<config_t>::insert_node( shared_node_t node ) -> weak_node_t
 {
-    assert_throw( node != nullptr, "gtpo::graph<>::insertNode(): Error: Trying to insert a nullptr node in graph." );
-    weak_node weakNode;
+    assert_throw( node != nullptr, "gtpo::graph<>::insert_node(): Error: Trying to insert a nullptr node in graph." );
+    weak_node_t weak_node;
     try {
-        weakNode = node;
+        weak_node = node;
         node->setGraph( this );
-        config_t::template container_adapter< shared_nodes >::insert( node, _nodes );
-        config_t::template container_adapter< weak_nodes_search >::insert( weakNode, _nodesSearch );
-        config_t::template container_adapter< weak_nodes >::insert( weakNode, _rootNodes );
-        behaviourable_base::notify_node_inserted( weakNode );
-    } catch (...) { gtpo::assert_throw( false, "gtpo::graph<>::insertNode(): Error: can't insert node in graph." ); }
-    return weakNode;
+        config_t::template container_adapter< shared_nodes_t >::insert( node, _nodes );
+        config_t::template container_adapter< weak_node_ts_search >::insert( weak_node, _nodes_search );
+        config_t::template container_adapter< weak_node_ts >::insert( weak_node, _root_nodes );
+        behaviourable_base::notify_node_inserted( weak_node );
+    } catch (...) { gtpo::assert_throw( false, "gtpo::graph<>::insert_node(): Error: can't insert node in graph." ); }
+    return weak_node;
 }
 
 template < class config_t >
-auto    graph<config_t>::removeNode( weak_node weakNode ) -> void
+auto    graph<config_t>::remove_node( weak_node_t weak_node ) -> void
 {
-    gtpo::assert_throw( !weakNode.expired(), "gtpo::graph<>::removeNode(): Error: trying to remove an expired node." );
-    auto node = weakNode.lock();
+    auto node = weak_node.lock();
     if ( !node )
-        gtpo::assert_throw( false, "gtpo::graph<>::removeNode(): Error: node is expired." );
+        gtpo::assert_throw( false, "gtpo::graph<>::remove_node(): Error: node is expired." );
 
     // Eventually, ungroup node
     auto group = node->getGroup().lock();
     if ( group )
-        ungroupNode(weakNode, group);
+        ungroup_node(weak_node, group);
 
-    behaviourable_base::notify_node_removed( weakNode );
+    behaviourable_base::notify_node_removed( weak_node );
 
     // Removing all orphant edges pointing to node.
-    weak_edges nodeInEdges; std::copy( node->getInEdges().cbegin(),
+    weak_edges_t nodeInEdges; std::copy( node->getInEdges().cbegin(),
                                       node->getInEdges().cend(),
                                       std::back_inserter( nodeInEdges ) );
     for ( auto inEdge: nodeInEdges )
         node->removeInEdge( inEdge );
     for ( auto inEdge: nodeInEdges )
-        removeEdge( inEdge );
+        remove_edge( inEdge );
 
-    weak_edges nodeOutEdges; std::copy( node->getOutEdges().cbegin(),
+    weak_edges_t nodeOutEdges; std::copy( node->getOutEdges().cbegin(),
                                       node->getOutEdges().cend(),
                                       std::back_inserter( nodeOutEdges ) );
     for ( auto outEdge: nodeOutEdges )
         node->removeOutEdge( outEdge );
     for ( auto outEdge: nodeOutEdges )
-        removeEdge( outEdge );    
+        remove_edge( outEdge );
 
     // Remove node from main graph containers (it will generate node destruction)
-    config_t::template container_adapter<weak_nodes_search>::remove( weakNode, _nodesSearch );
-    config_t::template container_adapter<weak_nodes>::remove( weakNode, _rootNodes );
+    config_t::template container_adapter<weak_node_ts_search>::remove( weak_node, _nodes_search );
+    config_t::template container_adapter<weak_node_ts>::remove( weak_node, _root_nodes );
     node->setGraph( nullptr );
-    config_t::template container_adapter<shared_nodes>::remove( node, _nodes );
+    config_t::template container_adapter<shared_nodes_t>::remove( node, _nodes );
 }
 
 template < class config_t >
-auto    graph<config_t>::installRootNode( weak_node node ) -> void
+auto    graph<config_t>::install_root_node( weak_node_t node ) -> void
 {
     assert_throw( !node.expired(), "gtpo::graph<>::setRootNode(): Error: node is expired." );
-    shared_node sharedNode = node.lock();
+    shared_node_t sharedNode = node.lock();
     assert_throw( sharedNode->getInDegree() == 0, "gtpo::graph<>::setRootNode(): Error: trying to set a node with non 0 in degree as a root node." );
 
-    config_t::template container_adapter<weak_nodes>::insert( node, _rootNodes );
+    config_t::template container_adapter<weak_node_ts>::insert( node, _root_nodes );
 }
 
 template < class config_t >
-auto    graph<config_t>::isRootNode( weak_node node ) const -> bool
+auto    graph<config_t>::is_root_node( weak_node_t node ) const -> bool
 {
-    assert_throw( !node.expired(), "gtpo::graph<>::isRootNode(): Error: node is expired." );
-    shared_node sharedNode = node.lock();
+    assert_throw( !node.expired(), "gtpo::graph<>::is_root_node(): Error: node is expired." );
+    shared_node_t sharedNode = node.lock();
     if ( sharedNode->getInDegree() != 0 )   // Fast exit when node in degree != 0, it can't be a root node
         return false;
-    return gtpo::find_weak_ptr( _rootNodes, node );
+    return gtpo::find_weak_ptr( _root_nodes, node );
 }
 
 template < class config_t >
-auto    graph<config_t>::contains( weak_node node ) const noexcept -> bool
+auto    graph<config_t>::contains( weak_node_t node ) const noexcept -> bool
 {
     if ( node.expired() )   // Fast exit.
         return false;
-    auto nodeIter = std::find_if( _nodesSearch.cbegin(), _nodesSearch.cend(),
-                                            [=](const weak_node& n ) { return ( compare_weak_ptr<>( node, n ) ); } );
-    return nodeIter != _nodesSearch.cend();
+    auto nodeIter = std::find_if( _nodes_search.cbegin(), _nodes_search.cend(),
+                                            [=](const weak_node_t& n ) { return ( compare_weak_ptr<>( node, n ) ); } );
+    return nodeIter != _nodes_search.cend();
 }
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
 template < class config_t >
 template < class Edge_t >
-auto    graph< config_t >::createEdge( weak_node source, weak_node destination ) -> weak_edge
+auto    graph< config_t >::create_edge( weak_node_t source, weak_node_t destination ) -> weak_edge_t
 {
     auto sourcePtr = source.lock();
     auto destinationPtr = destination.lock();
     if ( !sourcePtr ||
          !destinationPtr )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::createEdge(Node,Node): Insertion of edge failed, either source or destination nodes are expired." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, either source or destination nodes are expired." );
 
     auto edge = std::make_shared<Edge_t>();
     edge->setGraph( this );
-    config_t::template container_adapter< shared_edges >::insert( edge, _edges );
-    config_t::template container_adapter< weak_edges_search >::insert( edge, _edgesSearch );
+    config_t::template container_adapter< shared_edges_t >::insert( edge, _edges );
+    config_t::template container_adapter< weak_edges_t_search >::insert( edge, _edgesSearch );
     edge->setSrc( source );
     edge->setDst( destination );
     try {
         sourcePtr->addOutEdge( edge );
         destinationPtr->addInEdge( edge );
         if ( sourcePtr.get() != destinationPtr.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
-            config_t::template container_adapter<weak_nodes>::remove( destination, _rootNodes );    // Otherwise destination is no longer a root node
-        auto weakEdge = weak_edge{edge};
+            config_t::template container_adapter<weak_node_ts>::remove( destination, _root_nodes );    // Otherwise destination is no longer a root node
+        auto weakEdge = weak_edge_t{edge};
         behaviourable_base::notify_edge_inserted( weakEdge );
     } catch ( ... ) {
-        throw gtpo::bad_topology_error( "gtpo::graph<>::createEdge(Node,Node): Insertion of edge failed, source or destination nodes topology can't be modified." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
     return edge;
 }
 
 template < class config_t >
-auto    graph<config_t>::createEdge( weak_node source, weak_edge destination ) -> weak_edge
+auto    graph<config_t>::create_edge( weak_node_t source, weak_edge_t destination ) -> weak_edge_t
 {
     auto sourcePtr = source.lock();
     auto destinationPtr = destination.lock();
     if ( !sourcePtr ||
          !destinationPtr )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::createEdge(Node,Edge): Insertion of edge failed, either source node and/or destination edge is expired." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Edge): Insertion of edge failed, either source node and/or destination edge is expired." );
 
     auto edge = std::make_shared< typename config_t::final_edge_t >();
     edge->_graph = this;
-    config_t::template container_adapter< shared_edges >::insert( edge, _edges );
-    config_t::template container_adapter< weak_edges_search >::insert( edge, _edgesSearch );
+    config_t::template container_adapter< shared_edges_t >::insert( edge, _edges );
+    config_t::template container_adapter< weak_edges_t_search >::insert( edge, _edgesSearch );
     edge->setSrc( source );
     edge->setHDst( destination );
     try {
         sourcePtr->addOutEdge( edge );
         destinationPtr->addInHEdge( edge );
         // Note: hEdge does not modify root nodes.
-        auto weakEdge = weak_edge{edge};
+        auto weakEdge = weak_edge_t{edge};
         behaviourable_base::notify_edge_inserted( weakEdge );
     } catch ( ... ) {
-        throw gtpo::bad_topology_error( "gtpo::graph<>::createEdge(Node,Edge): Insertion of edge failed, source or destination nodes topology can't be modified." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Edge): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
     return edge;
 }
 
 template < class config_t >
-auto    graph<config_t>::insertEdge( shared_edge edge ) -> weak_edge
+auto    graph<config_t>::insert_edge( shared_edge_t edge ) -> weak_edge_t
 {
     assert_throw( edge != nullptr );
     auto source = edge->getSrc().lock();
     if ( source == nullptr ||
          ( edge->getDst().expired() && edge->getHDst().expired() ) )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::insertEdge(): Error: Either source and/or destination nodes are expired." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::insert_edge(): Error: Either source and/or destination nodes are expired." );
     edge->setGraph( this );
-    config_t::template container_adapter<shared_edges>::insert( edge, _edges );
-    config_t::template container_adapter<weak_edges_search>::insert( edge, _edgesSearch );
+    config_t::template container_adapter<shared_edges_t>::insert( edge, _edges );
+    config_t::template container_adapter<weak_edges_t_search>::insert( edge, _edgesSearch );
     try {
         source->addOutEdge( edge );
         auto destination = edge->getDst().lock();
         if ( destination != nullptr ) {
             destination->addInEdge( edge );
             if ( source.get() != destination.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
-                config_t::template container_adapter<weak_nodes>::remove( destination, _rootNodes );    // Otherwise destination is no longer a root node
+                config_t::template container_adapter<weak_node_ts>::remove( destination, _root_nodes );    // Otherwise destination is no longer a root node
         } else {
             auto hDestination = edge->getHDst().lock();
             if ( hDestination != nullptr )
                 hDestination->addInHEdge( edge );
         }
-        auto weakEdge = weak_edge(edge);
+        auto weakEdge = weak_edge_t(edge);
         behaviourable_base::notify_edge_inserted( weakEdge );
     } catch ( ... ) {
-        throw gtpo::bad_topology_error( "gtpo::graph<>::createEdge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
     return edge;
 }
 
 template < class config_t >
-void    graph<config_t>::removeEdge( weak_node source, weak_node destination )
+void    graph<config_t>::remove_edge( weak_node_t source, weak_node_t destination )
 {
     if ( source.expired() ||
          destination.expired() )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::removeEdge(): Topology error." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Topology error." );
 
     // Find the edge associed with source / destination
     if ( _edges.size() == 0 )
         return; // Fast exit
     auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                 [=](const shared_edge& e ){
+                                 [=](const shared_edge_t& e ){
                                     return ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                              compare_weak_ptr<>( e->getDst(), destination ) );
                                     }
                                  ); // std::find_if
     if ( edgeIter != _edges.end() )
-        removeEdge( *edgeIter );
+        remove_edge( *edgeIter );
 }
 
 template < class config_t >
-void    graph<config_t>::removeAllEdges( weak_node source, weak_node destination )
+void    graph<config_t>::remove_all_edges( weak_node_t source, weak_node_t destination )
 {
     if ( source.expired() ||
          destination.expired() )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::removeEdge(): Topology error." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Topology error." );
 
-    while ( getEdgeCount( source, destination ) > 0 )
-        removeEdge( source, destination );
+    while ( get_edge_count( source, destination ) > 0 )
+        remove_edge( source, destination );
 }
 
 template < class config_t >
-void    graph<config_t>::removeEdge( weak_edge edge )
+void    graph<config_t>::remove_edge( weak_edge_t edge )
 {
-    shared_edge edgePtr = edge.lock();
+    shared_edge_t edgePtr = edge.lock();
     if ( edgePtr == nullptr )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::removeEdge(): Error: Edge to be removed is already expired." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Error: Edge to be removed is already expired." );
     auto source = edgePtr->getSrc().lock();
     auto destination = edgePtr->getDst().lock();
     auto hDestination = edgePtr->getHDst().lock();
     if ( source == nullptr ||           // Expecting a non null source and either a destination or an hyper destination
          ( destination == nullptr && hDestination == nullptr ) )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::removeEdge(): Error: Edge source or destination are expired." );
+        throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Error: Edge source or destination are expired." );
     behaviourable_base::notify_edge_removed( edge );
     source->removeOutEdge( edge );
     if ( destination )      // Remove edge from destination in edges
@@ -304,54 +302,54 @@ void    graph<config_t>::removeEdge( weak_edge edge )
     if ( edgePtr->getInHDegree() > 0 ) {
         auto& inHEdges = edgePtr->getInHEdges();    // Make a deep copy of in hyper edges
         for ( auto& inHEdge : inHEdges )
-            removeEdge( inHEdge );
+            remove_edge( inHEdge );
     }
     edgePtr->setGraph( nullptr );
-    config_t::template container_adapter<shared_edges>::remove( edgePtr, _edges );
-    config_t::template container_adapter<weak_edges_search>::remove( edge, _edgesSearch );
+    config_t::template container_adapter<shared_edges_t>::remove( edgePtr, _edges );
+    config_t::template container_adapter<weak_edges_t_search>::remove( edge, _edgesSearch );
 }
 
 template < class config_t >
-auto    graph<config_t>::findEdge( weak_node source, weak_node destination ) const noexcept -> weak_edge
+auto    graph<config_t>::find_edge( weak_node_t source, weak_node_t destination ) const noexcept -> weak_edge_t
 {
     // Find the edge associed with source / destination
     auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                    [=](const shared_edge& e ) noexcept {
+                                    [=](const shared_edge_t& e ) noexcept {
                                         return ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                                  compare_weak_ptr<>( e->getDst(), destination ) );
                                     } );
-    return ( edgeIter != _edges.end() ? *edgeIter : weak_edge{} );   // std::shared_ptr::operator* is noexcept
+    return ( edgeIter != _edges.end() ? *edgeIter : weak_edge_t{} );   // std::shared_ptr::operator* is noexcept
 }
 
 template < class config_t >
-auto    graph<config_t>::hasEdge( weak_node source, weak_node destination ) const noexcept -> bool
+auto    graph<config_t>::has_edge( weak_node_t source, weak_node_t destination ) const noexcept -> bool
 {
-    return ( findEdge( source, destination).use_count() != 0 );
+    return ( find_edge( source, destination).use_count() != 0 );
 }
 
 template < class config_t >
-auto    graph<config_t>::findEdge( weak_node source, weak_edge destination ) const noexcept -> weak_edge
+auto    graph<config_t>::find_edge( weak_node_t source, weak_edge_t destination ) const noexcept -> weak_edge_t
 {
     // Find the edge associed with source / destination
     auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                    [=](const shared_edge& e ) noexcept {
+                                    [=](const shared_edge_t& e ) noexcept {
                                         return ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                                  compare_weak_ptr<>( e->getHDst(), destination ) );
                                     } );
-    return ( edgeIter != _edges.end() ? *edgeIter : weak_edge{} );   // std::shared_ptr::operator* is noexcept
+    return ( edgeIter != _edges.end() ? *edgeIter : weak_edge_t{} );   // std::shared_ptr::operator* is noexcept
 }
 
 template < class config_t >
-auto    graph<config_t>::hasEdge( weak_node source, weak_edge destination ) const noexcept -> bool
+auto    graph<config_t>::has_edge( weak_node_t source, weak_edge_t destination ) const noexcept -> bool
 {
-    return ( findEdge( source, destination ).use_count() != 0 );
+    return ( find_edge( source, destination ).use_count() != 0 );
 }
 
 template < class config_t >
-auto    graph<config_t>::getEdgeCount( weak_node source, weak_node destination ) const -> unsigned int
+auto    graph<config_t>::get_edge_count( weak_node_t source, weak_node_t destination ) const -> unsigned int
 {
     unsigned int edgeCount = 0;
-    std::for_each( _edges.begin(), _edges.end(), [&](const shared_edge& e ) {
+    std::for_each( _edges.begin(), _edges.end(), [&](const shared_edge_t& e ) {
                                                         if ( compare_weak_ptr<>( e->getSrc(), source ) &&
                                                              compare_weak_ptr<>( e->getDst(), destination ) )
                                                             ++edgeCount;
@@ -360,63 +358,63 @@ auto    graph<config_t>::getEdgeCount( weak_node source, weak_node destination )
 }
 
 template < class config_t >
-auto    graph<config_t>::contains( weak_edge edge ) const noexcept -> bool
+auto    graph<config_t>::contains( weak_edge_t edge ) const noexcept -> bool
 {
     if ( edge.expired() )   // Fast exit.
         return false;
     auto edgeIter = std::find_if( _edgesSearch.cbegin(), _edgesSearch.cend(),
-                                            [=](const weak_edge& n ) { return ( compare_weak_ptr<>( edge, n ) ); } );
+                                            [=](const weak_edge_t& n ) { return ( compare_weak_ptr<>( edge, n ) ); } );
     return edgeIter != _edgesSearch.cend();
 }
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
 template < class config_t >
-auto graph<config_t>::createGroup() -> weak_group
+auto graph<config_t>::create_group() -> weak_group_t
 {
-    weak_group weakGroup;
+    weak_group_t weakGroup;
     try {
         auto group = std::make_shared< typename config_t::final_group_t >();
-        weakGroup = insertGroup( group );
-    } catch (...) { gtpo::assert_throw( false, "gtpo::graph<>::createGroup(): Error: can't insert group in graph." ); }
+        weakGroup = insert_group( group );
+    } catch (...) { gtpo::assert_throw( false, "gtpo::graph<>::create_group(): Error: can't insert group in graph." ); }
     return weakGroup;
 }
 
 template < class config_t >
-auto    graph<config_t>::insertGroup( shared_group group ) noexcept( false ) -> weak_group
+auto    graph<config_t>::insert_group( shared_group_t group ) noexcept( false ) -> weak_group_t
 {
-    assert_throw( group != nullptr, "gtpo::graph<>::insertGroup(): Error: trying to insert a nullptr shared_group" );
-    weak_group weakGroup;
+    assert_throw( group != nullptr, "gtpo::graph<>::insert_group(): Error: trying to insert a nullptr shared_group_t" );
+    weak_group_t weakGroup;
     try {
         weakGroup = group;
         group->setGraph( this );
-        config_t::template container_adapter<shared_groups>::insert( group, _groups );
+        config_t::template container_adapter<shared_groups_t>::insert( group, _groups );
         this->notify_group_inserted( weakGroup );
-    } catch (...) { throw gtpo::bad_topology_error( "gtpo::graph<>::insertGroup(): Insertion of group failed" ); }
+    } catch (...) { throw gtpo::bad_topology_error( "gtpo::graph<>::insert_group(): Insertion of group failed" ); }
     return weakGroup;
 }
 
 template < class config_t >
-auto    graph<config_t>::removeGroup( weak_group weakGroup ) noexcept( false ) -> void
+auto    graph<config_t>::remove_group( weak_group_t weakGroup ) noexcept( false ) -> void
 {
-    gtpo::assert_throw( !weakGroup.expired(), "gtpo::graph<>::removeGroup(): Error: trying to remove an expired group." );
-    shared_group group = weakGroup.lock();
+    gtpo::assert_throw( !weakGroup.expired(), "gtpo::graph<>::remove_group(): Error: trying to remove an expired group." );
+    shared_group_t group = weakGroup.lock();
     if ( !group )
-        gtpo::assert_throw( false, "graph<>::removeGroup(): Error: trying to remove and expired group." );
+        gtpo::assert_throw( false, "graph<>::remove_group(): Error: trying to remove and expired group." );
 
     // Remove group (it will be automatically deallocated)
     this->notify_group_removed( weakGroup );
     group->setGraph( nullptr );
-    config_t::template container_adapter<shared_groups>::remove( group, _groups );
+    config_t::template container_adapter<shared_groups_t>::remove( group, _groups );
 }
 
 template < class config_t >
-auto    graph<config_t>::hasGroup( const weak_group& group ) const -> bool
+auto    graph<config_t>::has_group( const weak_group_t& group ) const -> bool
 {
     if ( group.expired() )
         return false;
     auto groupIter = std::find_if( _groups.begin(), _groups.end(),
-                                        [=](const weak_group& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
+                                        [=](const weak_group_t& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
     return groupIter != _groups.end();
 }
 //-----------------------------------------------------------------------------

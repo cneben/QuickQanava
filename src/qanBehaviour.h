@@ -32,8 +32,7 @@
 // \date	2016 04 04
 //-----------------------------------------------------------------------------
 
-#ifndef qanBehaviour_h
-#define qanBehaviour_h
+#pragma once
 
 // Qt headers
 #include <QObject>
@@ -61,7 +60,7 @@ namespace qan { // ::qan
  *  \nosubgrouping
  */
 class NodeBehaviour : public QObject,
-                      public gtpo::dynamic_node_behaviour< qan::GraphConfig >
+                      public gtpo::dynamic_node_behaviour< qan::Config >
 {
     Q_OBJECT
 public:
@@ -97,8 +96,8 @@ signals:
     /*! \name Notification Interface *///--------------------------------------
     //@{
 public:
-    using WeakNode  = gtpo::dynamic_node_behaviour< qan::GraphConfig >::weak_node;
-    using WeakEdge  = gtpo::dynamic_node_behaviour< qan::GraphConfig >::weak_edge;
+    using WeakNode  = gtpo::dynamic_node_behaviour< qan::Config >::weak_node_t;
+    using WeakEdge  = gtpo::dynamic_node_behaviour< qan::Config >::weak_edge_t;
 
     //! \copydoc gtpo::dynamic_node_nehaviour::inNodeInserted()
     virtual void    on_in_node_inserted(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
@@ -128,4 +127,3 @@ protected:
 
 QML_DECLARE_TYPE( qan::NodeBehaviour )
 
-#endif // qanBehaviour_h

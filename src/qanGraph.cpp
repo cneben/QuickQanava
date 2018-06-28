@@ -57,7 +57,7 @@ namespace qan { // ::qan
 
 /* Graph Object Management *///------------------------------------------------
 Graph::Graph( QQuickItem* parent ) noexcept :
-    gtpo::graph< qan::GraphConfig >( parent )
+    gtpo::graph< qan::Config >( parent )
 {
     setContainerItem( this );
     setAntialiasing( true );
@@ -122,7 +122,7 @@ void    Graph::qmlClearGraph() noexcept
 void    Graph::clear() noexcept
 {
     _selectedNodes.clear();
-    gtpo::graph< qan::GraphConfig >::clear();
+    gtpo::graph< qan::Config >::clear();
     _styleManager.clear();
 }
 
@@ -167,7 +167,7 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 
 qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
 {
-    for ( const auto& group : getGroups() )
+    for ( const auto& group : get_groups() )
         if ( group &&
              group->getItem() != nullptr ) {
             const auto groupItem = group->getItem();
@@ -427,8 +427,8 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
                  finalPrimitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
                     finalPrimitive->getItem()->setSelectionItem(this->createSelectionItem(finalPrimitive->getItem()));
         };
-        std::for_each(getGroups().begin(), getGroups().end(), updateGroupSelectionItem);
-        std::for_each(getNodes().begin(), getNodes().end(), updateNodeSelectionItem);
+        std::for_each(get_groups().begin(), get_groups().end(), updateGroupSelectionItem);
+        std::for_each(get_nodes().begin(), get_nodes().end(), updateNodeSelectionItem);
         emit selectionDelegateChanged();
     }
 }
@@ -533,7 +533,7 @@ void    Graph::removeNode( qan::Node* node )
     try {
         if ( _selectedNodes.contains(node) )
             _selectedNodes.removeAll(node);
-        gtpo_graph_t::removeNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()) );
+        gtpo_graph_t::remove_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()) );
     } catch ( std::bad_weak_ptr ) { return; }
 }
 //-----------------------------------------------------------------------------
@@ -736,9 +736,9 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
     else if ( dstEdge != nullptr )
         edgeItem->setDestinationEdge( dstEdge->getItem() );
 
-    edge.setSrc( std::static_pointer_cast<GraphConfig::final_node_t>(src.shared_from_this()) );
+    edge.setSrc( std::static_pointer_cast<Config::final_node_t>(src.shared_from_this()) );
     if ( dstNode != nullptr )
-        edge.setDst( std::static_pointer_cast<GraphConfig::final_node_t>(dstNode->shared_from_this()) );
+        edge.setDst( std::static_pointer_cast<Config::final_node_t>(dstNode->shared_from_this()) );
     else if ( dstEdge != nullptr)
         edge.setHDst( dstEdge->shared_from_this() );
 
@@ -771,17 +771,17 @@ void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
     try {
         //sharedSource = WeakNode{ source->shared_from_this() };
         //sharedDestination = WeakNode{ destination->shared_from_this() };
-        sharedSource = std::static_pointer_cast<GraphConfig::final_node_t>( source->shared_from_this() );
-        sharedDestination = std::static_pointer_cast<GraphConfig::final_node_t>( destination->shared_from_this() );
+        sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
+        sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr ) { return; }
-    return gtpo_graph_t::removeEdge( sharedSource, sharedDestination );
+    return gtpo_graph_t::remove_edge( sharedSource, sharedDestination );
 }
 
 void    Graph::removeEdge( qan::Edge* edge )
 {
     using WeakEdge = std::weak_ptr<qan::Edge>;
     if ( edge != nullptr )
-        gtpo_graph_t::removeEdge( WeakEdge{edge->shared_from_this()} );
+        gtpo_graph_t::remove_edge( WeakEdge{edge->shared_from_this()} );
 }
 
 bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
@@ -793,10 +793,10 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
     try {
         //sharedSource = WeakNode{ source->shared_from_this() };
         //sharedDestination = WeakNode{ destination->shared_from_this() };
-        sharedSource = std::static_pointer_cast<GraphConfig::final_node_t>( source->shared_from_this() );
-        sharedDestination = std::static_pointer_cast<GraphConfig::final_node_t>( destination->shared_from_this() );
+        sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
+        sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr e ) { return false; }
-    return gtpo_graph_t::hasEdge( sharedSource, sharedDestination );
+    return gtpo_graph_t::has_edge( sharedSource, sharedDestination );
 }
 //-----------------------------------------------------------------------------
 
@@ -819,7 +819,7 @@ void    Graph::removeGroup( qan::Group* group )
             group->getItem()->ungroupNodeItem(qanNode->getItem());
     }
     // FIXME: don't like that dynamic cast, probably not necessary
-    gtpo_graph_t::removeGroup( weak_group{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
+    gtpo_graph_t::remove_group( weak_group_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
@@ -827,7 +827,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
     if ( group == nullptr )
         return false;
     // FIXME: don't like that dynamic cast, probably not necessary
-    return gtpo_graph_t::hasGroup( weak_group{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
+    return gtpo_graph_t::has_group( weak_group_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
 }
 
 void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transformPosition ) noexcept(false)
@@ -839,8 +839,8 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
         return;
 
     try {
-        //std::static_pointer_cast<GraphConfig::final_node_t>(
-        gtpo_graph_t::groupNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()),
+        //std::static_pointer_cast<Config::final_node_t>(
+        gtpo_graph_t::group_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                  std::static_pointer_cast<Group>(group->shared_from_this()) );
         if ( node->getGroup().lock().get() == group &&  // Check that group insertion succeed
              group->getItem() != nullptr &&
@@ -871,7 +871,7 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept(false)
         try {
             if ( group->getItem() )
                  group->getItem()->ungroupNodeItem(node->getItem());
-            gtpo_graph_t::ungroupNode( std::static_pointer_cast<GraphConfig::final_node_t>(node->shared_from_this()),
+            gtpo_graph_t::ungroup_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                        std::static_pointer_cast<Group>(group->shared_from_this()) );
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
@@ -1050,7 +1050,7 @@ void    Graph::mousePressEvent( QMouseEvent* event )
         emit rightClicked(event->pos());
     }
     event->ignore();
-    qan::GraphConfig::graph_base::mousePressEvent(event);
+    qan::Config::graph_base::mousePressEvent(event);
 }
 //-----------------------------------------------------------------------------
 

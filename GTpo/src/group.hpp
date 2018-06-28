@@ -36,16 +36,16 @@ namespace gtpo { // ::gtpo
 
 /* Group Nodes Management *///-------------------------------------------------
 template < class config_t >
-auto group<config_t>::hasNode( const weak_node& node ) const noexcept -> bool
+auto group<config_t>::hasNode( const weak_node_t& node ) const noexcept -> bool
 {
     if ( node.expired() )
         return false;
-    shared_node groupNode = node.lock();
-    if ( groupNode == nullptr )
+    shared_node_t group_node = node.lock();
+    if ( group_node == nullptr )
         return false;
-    auto groupNodeIter = std::find_if( _nodes.begin(), _nodes.end(),
-                                        [=](const weak_node& groupNode ){ return ( compare_weak_ptr<>( node, groupNode ) ); } );
-    return groupNodeIter != _nodes.end();
+    auto group_nodeIter = std::find_if( _nodes.begin(), _nodes.end(),
+                                        [=](const weak_node_t& group_node ){ return ( compare_weak_ptr<>( node, group_node ) ); } );
+    return group_nodeIter != _nodes.end();
 }
 //-----------------------------------------------------------------------------
 

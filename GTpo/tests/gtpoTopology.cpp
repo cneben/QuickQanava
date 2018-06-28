@@ -52,38 +52,38 @@ TEST(GTpoTopology, nodeBasic)
 {
     // A default empty graph should have no nodes nor root nodes
     gtpo::graph<> g;
-    EXPECT_EQ( g.getNodeCount(), 0 );
-    EXPECT_EQ( g.getRootNodeCount(), 0 );
+    EXPECT_EQ( g.get_node_count(), 0 );
+    EXPECT_EQ( g.get_root_node_count(), 0 );
 }
 
 TEST(GTpoTopology, nodeInsertCount)
 {
     // Inserting a node should increase node count and root node count
     gtpo::graph<> g;
-    auto nc = g.getNodeCount();
-    auto rnc = g.getRootNodeCount();
+    auto nc = g.get_node_count();
+    auto rnc = g.get_root_node_count();
     EXPECT_EQ( nc, 0);
     EXPECT_EQ( rnc, 0);
-    g.createNode();
-    EXPECT_EQ( g.getNodeCount(), nc + 1 );
-    EXPECT_EQ( g.getRootNodeCount(), rnc + 1 );
+    g.create_node();
+    EXPECT_EQ( g.get_node_count(), nc + 1 );
+    EXPECT_EQ( g.get_root_node_count(), rnc + 1 );
     g.clear();
 }
 
-TEST(GTpoTopology, removeNodeCount)
+TEST(GTpoTopology, remove_nodeCount)
 {
     gtpo::graph<> g;
-    gtpo::graph<>::weak_node n = g.createNode();
-    auto nc = g.getNodeCount();
-    auto rnc = g.getRootNodeCount();
-    g.installRootNode( n ); // Just a test, it should not be called by the user directly
-    EXPECT_TRUE( g.isRootNode( n ) );
+    gtpo::graph<>::weak_node_t n = g.create_node();
+    auto nc = g.get_node_count();
+    auto rnc = g.get_root_node_count();
+    g.install_root_node( n ); // Just a test, it should not be called by the user directly
+    EXPECT_TRUE( g.is_root_node( n ) );
     EXPECT_TRUE( g.contains( n ) );
-    g.removeNode( n );
+    g.remove_node( n );
     EXPECT_FALSE( g.contains( n ) );
-    EXPECT_EQ( g.getNodeCount(), nc - 1 );
-    EXPECT_EQ( g.getRootNodeCount(), rnc - 1 ) ;
-    g.createNode();
+    EXPECT_EQ( g.get_node_count(), nc - 1 );
+    EXPECT_EQ( g.get_root_node_count(), rnc - 1 ) ;
+    g.create_node();
     g.clear();
 }
 
@@ -95,21 +95,21 @@ TEST(GTpoTopology, graphClear)
 {
     // TEST: clearing an empty graph, expecting no node after clearing an empty graph
     gtpo::graph<> g;
-    EXPECT_EQ( g.getNodeCount(), 0 );
+    EXPECT_EQ( g.get_node_count(), 0 );
     g.clear();
-    EXPECT_EQ( g.getNodeCount(), 0 );
+    EXPECT_EQ( g.get_node_count(), 0 );
 }
 
 TEST(GTpoTopo, graphClearNode)
 {
     // TEST: clearing a graph with one node should lead to an empty graph
     gtpo::graph<> g;
-    auto n = g.createNode();
-    EXPECT_TRUE( g.isRootNode( n ) );
+    auto n = g.create_node();
+    EXPECT_TRUE( g.is_root_node( n ) );
     EXPECT_TRUE( g.contains( n ) );
     g.clear();
     EXPECT_FALSE( g.contains( n ) );
-    EXPECT_EQ( g.getNodeCount(), 0 );
+    EXPECT_EQ( g.get_node_count(), 0 );
     EXPECT_TRUE( n.expired() );
 }
 
@@ -117,18 +117,18 @@ TEST(GTpoTopology, graphClearNodeEdge)
 {
     // TEST: clearing a graph with two nodes linked by an edge should lead to an empty graph
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    auto e1 = g.createEdge<gtpo::edge<>>(n1, n2);
-    EXPECT_EQ( g.getNodeCount(), 2 );
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    auto e1 = g.create_edge<gtpo::edge<>>(n1, n2);
+    EXPECT_EQ( g.get_node_count(), 2 );
     EXPECT_TRUE( g.contains(e1) );
     g.clear();
-    EXPECT_EQ( g.getNodeCount(), 0 );
+    EXPECT_EQ( g.get_node_count(), 0 );
     EXPECT_FALSE( g.contains(e1) );
     EXPECT_TRUE( n1.expired() );
     EXPECT_TRUE( n2.expired() );
     EXPECT_TRUE( e1.expired() );
-    EXPECT_EQ( g.getEdgeCount(),0 );
+    EXPECT_EQ( g.get_edge_count(),0 );
 }
 
 //-----------------------------------------------------------------------------
@@ -139,53 +139,53 @@ TEST(GTpoTopology, edgeBasic)
 {
     // A default empty graph should have no edges
     gtpo::graph<> g;
-    EXPECT_EQ( g.getEdgeCount(), 0 );
+    EXPECT_EQ( g.get_edge_count(), 0 );
 }
 
 TEST(GTpoTopology, edgeCreateBadTopology)
 {
     // TEST: Creating an edge with no source and/or destination should throw a bad_topology_error
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    EXPECT_THROW( g.createEdge(n1, gtpo::graph<>::weak_node{}), gtpo::bad_topology_error );
-    EXPECT_THROW( g.createEdge(gtpo::graph<>::weak_node{}, gtpo::graph<>::weak_node{}), gtpo::bad_topology_error );
-    EXPECT_THROW( g.createEdge(gtpo::graph<>::weak_node{}, n1), gtpo::bad_topology_error );
+    auto n1 = g.create_node();
+    EXPECT_THROW( g.create_edge(n1, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
+    EXPECT_THROW( g.create_edge(gtpo::graph<>::weak_node_t{}, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
+    EXPECT_THROW( g.create_edge(gtpo::graph<>::weak_node_t{}, n1), gtpo::bad_topology_error );
 
-    auto n2 = g.createNode();
-    EXPECT_NO_THROW( g.createEdge(n1, n2) );
+    auto n2 = g.create_node();
+    EXPECT_NO_THROW( g.create_edge(n1, n2) );
 }
 
 TEST(GTpoTopology, edgeCreate)
 {
     // TEST: Creating an edge should remove dst from the root node set
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    EXPECT_TRUE( ( g.getRootNodeCount() == 2 ) );
-    auto e = g.createEdge(n1, n2);
-    EXPECT_TRUE( ( g.getRootNodeCount() == 1 ) );   // n2 is no longer a root node
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    EXPECT_TRUE( ( g.get_root_node_count() == 2 ) );
+    auto e = g.create_edge(n1, n2);
+    EXPECT_TRUE( ( g.get_root_node_count() == 1 ) );   // n2 is no longer a root node
 }
 
 TEST(GTpoTopology, edgeCreateBasicCircuit)
 {
     // TEST: Creating an edge that is a circuit to a root node does not remove destination
     // from root nodes
-    {   // Test with createEdge()
+    {   // Test with create_edge()
         gtpo::graph<> g;
-        EXPECT_TRUE( g.getRootNodeCount() == 0 );
-        auto n1 = g.createNode();
-        EXPECT_TRUE( g.getRootNodeCount() == 1 );
-        g.createEdge( n1, n1 );
-        EXPECT_TRUE( g.getRootNodeCount() == 1 );
+        EXPECT_TRUE( g.get_root_node_count() == 0 );
+        auto n1 = g.create_node();
+        EXPECT_TRUE( g.get_root_node_count() == 1 );
+        g.create_edge( n1, n1 );
+        EXPECT_TRUE( g.get_root_node_count() == 1 );
     }
-    {   // Test with insertEdge()
+    {   // Test with insert_edge()
         gtpo::graph<> g;
-        EXPECT_TRUE( g.getRootNodeCount() == 0 );
-        auto n1 = g.createNode();
-        EXPECT_TRUE( g.getRootNodeCount() == 1 );
+        EXPECT_TRUE( g.get_root_node_count() == 0 );
+        auto n1 = g.create_node();
+        EXPECT_TRUE( g.get_root_node_count() == 1 );
         auto e1 = std::make_shared<gtpo::edge<>>(n1, n1);
-        g.insertEdge( e1 );
-        EXPECT_TRUE( g.getRootNodeCount() == 1 );
+        g.insert_edge( e1 );
+        EXPECT_TRUE( g.get_root_node_count() == 1 );
     }
 }
 
@@ -193,98 +193,98 @@ TEST(GTpoTopology, edgeInsertRootNode)
 {
     // TEST: inserting an existing edge must remove dst from the root node set
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
     auto e1 = std::make_shared<gtpo::edge<>>(n1, n2);
-    EXPECT_EQ( g.getRootNodeCount(), 2 );
-    g.insertEdge(e1);
-    EXPECT_EQ( g.getRootNodeCount(), 1 );   // n2 is no longer a root node
+    EXPECT_EQ( g.get_root_node_count(), 2 );
+    g.insert_edge(e1);
+    EXPECT_EQ( g.get_root_node_count(), 1 );   // n2 is no longer a root node
 }
 
 TEST(GTpoTopology, edgeCreateRootNode)
 {
     // TEST: inserting an existing edge must remove dst from the root node set
     gtpo::graph<> g;
-    EXPECT_EQ( g.getRootNodeCount(), 0 );
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    EXPECT_EQ( g.getRootNodeCount(), 2 );
-    g.createEdge(n1, n2);
-    EXPECT_EQ( g.getRootNodeCount(), 1 );   // n2 is no longer a root node
+    EXPECT_EQ( g.get_root_node_count(), 0 );
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    EXPECT_EQ( g.get_root_node_count(), 2 );
+    g.create_edge(n1, n2);
+    EXPECT_EQ( g.get_root_node_count(), 1 );   // n2 is no longer a root node
 }
 
 TEST(GTpoTopology, edgeInsertBadTopology)
 {
     // TEST: Inserting an edge with no source and/or destination should throw a bad_topology_error
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    EXPECT_THROW( g.insertEdge(gtpo::graph<>::shared_edge{}), gtpo::bad_topology_error );
-    auto e1 = std::make_shared<gtpo::edge<>>(n1, gtpo::graph<>::weak_node{});
-    auto e2 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node{}, gtpo::graph<>::weak_node{});
-    auto e3 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node{}, n1);
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    EXPECT_THROW( g.insert_edge(gtpo::graph<>::shared_edge_t{}), gtpo::bad_topology_error );
+    auto e1 = std::make_shared<gtpo::edge<>>(n1, gtpo::graph<>::weak_node_t{});
+    auto e2 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node_t{}, gtpo::graph<>::weak_node_t{});
+    auto e3 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node_t{}, n1);
 
-    // Test error with insertEdge()
-    EXPECT_THROW( g.insertEdge(e1), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insertEdge(e2), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insertEdge(e3), gtpo::bad_topology_error );
+    // Test error with insert_edge()
+    EXPECT_THROW( g.insert_edge(e1), gtpo::bad_topology_error );
+    EXPECT_THROW( g.insert_edge(e2), gtpo::bad_topology_error );
+    EXPECT_THROW( g.insert_edge(e3), gtpo::bad_topology_error );
 
-    // Test error with createEdge()
-    EXPECT_THROW( g.createEdge(n1, gtpo::graph<>::weak_node{}), gtpo::bad_topology_error );
-    EXPECT_THROW( g.createEdge(gtpo::graph<>::weak_node{}, n1), gtpo::bad_topology_error );
-    EXPECT_THROW( g.createEdge(gtpo::graph<>::weak_node{}, gtpo::graph<>::weak_node{}), gtpo::bad_topology_error );
+    // Test error with create_edge()
+    EXPECT_THROW( g.create_edge(n1, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
+    EXPECT_THROW( g.create_edge(gtpo::graph<>::weak_node_t{}, n1), gtpo::bad_topology_error );
+    EXPECT_THROW( g.create_edge(gtpo::graph<>::weak_node_t{}, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
 
-    // Test success with insertEdge()
+    // Test success with insert_edge()
     auto e4 = std::make_shared<gtpo::edge<>>(n1, n2);
-    EXPECT_NO_THROW( g.insertEdge(e4) );
+    EXPECT_NO_THROW( g.insert_edge(e4) );
 
-    // Test success with createEdge()
-    EXPECT_NO_THROW( g.createEdge(n1, n2) );
+    // Test success with create_edge()
+    EXPECT_NO_THROW( g.create_edge(n1, n2) );
 }
 
 TEST(GTpoTopology, edgeInsertparallel)
 {
-    { // Test if createEdge() successfully generate parallel edges
+    { // Test if create_edge() successfully generate parallel edges
         gtpo::graph<> g;
-        auto n1 = g.createNode();
-        auto n2 = g.createNode();
-        auto n3 = g.createNode();
-        auto n4 = g.createNode();
-        g.createEdge(n1, n2);
-        EXPECT_EQ( g.getEdgeCount(n1, n2), 1 );
-        g.createEdge(n2, n3);
-        g.createEdge(n2, n3);
-        g.createEdge(n2, n3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
-        g.removeEdge(n2, n3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 2 ) ;
-        g.removeAllEdges(n2, n3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 0 ) ;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n2);
+        EXPECT_EQ( g.get_edge_count(n1, n2), 1 );
+        g.create_edge(n2, n3);
+        g.create_edge(n2, n3);
+        g.create_edge(n2, n3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
+        g.remove_edge(n2, n3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 2 ) ;
+        g.remove_all_edges(n2, n3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 0 ) ;
         g.clear();
     }
 
-    { // Test if insertEdge() successfully generate parallel edges
+    { // Test if insert_edge() successfully generate parallel edges
         gtpo::graph<> g;
-        auto n1 = g.createNode();
-        auto n2 = g.createNode();
-        auto n3 = g.createNode();
-        auto n4 = g.createNode();
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
 
         auto e1 = std::make_shared<gtpo::edge<>>(n1, n2);
-        g.insertEdge(e1);
-        EXPECT_EQ( g.getEdgeCount(n1, n2), 1 );
+        g.insert_edge(e1);
+        EXPECT_EQ( g.get_edge_count(n1, n2), 1 );
 
         auto e2 = std::make_shared<gtpo::edge<>>(n2, n3);
         auto e3 = std::make_shared<gtpo::edge<>>(n2, n3);
         auto e4 = std::make_shared<gtpo::edge<>>(n2, n3);
-        g.insertEdge(e2);
-        g.insertEdge(e3);
-        g.insertEdge(e3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
-        g.removeEdge(n2, n3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 2 ) ;
-        g.removeAllEdges(n2, n3);
-        EXPECT_EQ( g.getEdgeCount(n2, n3), 0 ) ;
+        g.insert_edge(e2);
+        g.insert_edge(e3);
+        g.insert_edge(e3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
+        g.remove_edge(n2, n3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 2 ) ;
+        g.remove_all_edges(n2, n3);
+        EXPECT_EQ( g.get_edge_count(n2, n3), 0 ) ;
         g.clear();
     }
 }
@@ -293,33 +293,33 @@ TEST(GTpoTopology, edgeRemoveContains)
 {
     // Graph must no longer contains() an edge that has been removed
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    EXPECT_EQ( g.getEdgeCount(), 0 );
-    auto e1 = g.createEdge(n1, n2);
-    EXPECT_EQ( g.getEdgeCount(), 1 );
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    EXPECT_EQ( g.get_edge_count(), 0 );
+    auto e1 = g.create_edge(n1, n2);
+    EXPECT_EQ( g.get_edge_count(), 1 );
     EXPECT_TRUE( g.contains(e1) );
-    g.removeEdge(n1, n2);
+    g.remove_edge(n1, n2);
     EXPECT_FALSE( g.contains(e1) );
-    EXPECT_FALSE( g.hasEdge(n1, n2) );
+    EXPECT_FALSE( g.has_edge(n1, n2) );
 }
 
 TEST(GTpoTopology, edgeNodeInOutDegree)
 {
     gtpo::graph<> g;
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    auto n3 = g.createNode();
-    auto n4 = g.createNode();
-    EXPECT_EQ( g.getRootNodeCount(), 4 );
-    g.createEdge(n1, n2);
-    EXPECT_EQ( g.getRootNodeCount(), 3 );
-    g.createEdge(n2, n3);
-    g.createEdge(n2, n4);
-    EXPECT_EQ( g.getRootNodeCount(), 1 );
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    auto n3 = g.create_node();
+    auto n4 = g.create_node();
+    EXPECT_EQ( g.get_root_node_count(), 4 );
+    g.create_edge(n1, n2);
+    EXPECT_EQ( g.get_root_node_count(), 3 );
+    g.create_edge(n2, n3);
+    g.create_edge(n2, n4);
+    EXPECT_EQ( g.get_root_node_count(), 1 );
 
     // Check in/out degree after multiple edge insertion
-    gtpo::graph<>::shared_node node2 = n2.lock();
+    gtpo::graph<>::shared_node_t node2 = n2.lock();
     EXPECT_TRUE( node2 );
     EXPECT_EQ( node2->getInDegree(), 1 );
     EXPECT_EQ( node2->getOutDegree(), 2 );
@@ -329,41 +329,41 @@ TEST(GTpoTopology, edgeNodeInOutDegree)
     EXPECT_EQ( node2->getOutNodes().size(), 2 );
 
     // Check in/out degree after multiple edge removal
-    ASSERT_THROW(g.removeEdge(n2, gtpo::graph<>::weak_node()), gtpo::bad_topology_error );
-    //INFO( "Incorrect removeEdge() calls successfully throw a gtpo::bad_topology_error" );
-    EXPECT_TRUE( g.hasEdge( n2, n4 ) );
-    g.removeEdge(n2, n4);
-    EXPECT_FALSE( g.hasEdge( n2, n4 ) );
-    g.removeEdge(n2, n3);
+    ASSERT_THROW(g.remove_edge(n2, gtpo::graph<>::weak_node_t()), gtpo::bad_topology_error );
+    //INFO( "Incorrect remove_edge() calls successfully throw a gtpo::bad_topology_error" );
+    EXPECT_TRUE( g.has_edge( n2, n4 ) );
+    g.remove_edge(n2, n4);
+    EXPECT_FALSE( g.has_edge( n2, n4 ) );
+    g.remove_edge(n2, n3);
     EXPECT_EQ( node2->getOutDegree(), 0 );
     EXPECT_EQ( node2->getOutEdges().size(), 0 );
     EXPECT_EQ( node2->getOutNodes().size(), 0 );
-    EXPECT_EQ( g.getRootNodeCount(), 3 );
-    EXPECT_TRUE( g.isRootNode( n3 ) );
-    EXPECT_TRUE( g.isRootNode( n4 ) );
+    EXPECT_EQ( g.get_root_node_count(), 3 );
+    EXPECT_TRUE( g.is_root_node( n3 ) );
+    EXPECT_TRUE( g.is_root_node( n4 ) );
 
     g.clear();
 }
 
-TEST(GTpoTopology, removeNodeInOutDegree)
+TEST(GTpoTopology, remove_nodeInOutDegree)
 {
-    // Note: Test GTpo removeNode() method:
+    // Note: Test GTpo remove_node() method:
     //    - Removing a node must also invalidate (ie remove) all its out/in orphants edges.
     gtpo::graph<> g;
-    auto wn1 = g.createNode();
-    auto wn2 = g.createNode();
-    auto wn3 = g.createNode();
-    g.createEdge(wn1, wn2);
-    g.createEdge(wn2, wn3);
+    auto wn1 = g.create_node();
+    auto wn2 = g.create_node();
+    auto wn3 = g.create_node();
+    g.create_edge(wn1, wn2);
+    g.create_edge(wn2, wn3);
     // n1 now has 1 in node and 1 out node
     auto n2 = wn2.lock();
     EXPECT_EQ( n2->getOutDegree(), 1 );
     EXPECT_EQ( n2->getInDegree(), 1 );
 
     // Removing node n2 should also remove all edges
-    g.removeNode( wn2 );
-    EXPECT_EQ( g.getNodeCount(), 2 );
-    EXPECT_EQ( g.getEdgeCount(), 0 );
+    g.remove_node( wn2 );
+    EXPECT_EQ( g.get_node_count(), 2 );
+    EXPECT_EQ( g.get_edge_count(), 0 );
     auto n1 = wn1.lock();
     auto n3 = wn3.lock();
     EXPECT_EQ( n1->getOutDegree(), 0 );

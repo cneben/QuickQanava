@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::node< qan::GraphConfig >{}
+    gtpo::node< qan::Config >{}
 {
     Q_UNUSED(parent)
 }
@@ -59,11 +59,11 @@ Node::~Node()
 }
 
 qan::Graph* Node::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::node< qan::GraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::getGraph() );
 }
 
 const qan::Graph* Node::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::node< qan::GraphConfig >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::getGraph() );
 }
 
 bool    Node::operator==( const qan::Node& right ) const

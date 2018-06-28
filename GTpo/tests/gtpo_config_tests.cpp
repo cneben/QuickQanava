@@ -44,17 +44,17 @@ namespace custom {
 
 class Node;
 
-struct Config final :  public gtpo::config
+struct Config final : public gtpo::config<Config>
 {
     using graph_base = gtpo::empty;
     using node_base  = gtpo::empty;
     using edge_base  = gtpo::empty;
     using group_base = gtpo::empty;
 
-    using final_group_t        = gtpo::group<config>;
+    using final_group_t        = gtpo::group<Config>;
     using final_node_t         = custom::Node;
-    using final_edge_t         = gtpo::edge<config>;
-    using final_group_edge_t   = gtpo::group_edge<config>;
+    using final_edge_t         = gtpo::edge<Config>;
+    using final_group_edge_t   = gtpo::group_edge<Config>;
 
     using final_config = Config;
 };
@@ -75,7 +75,7 @@ TEST(GTpoConcrete, compilation)
     Graph g;
     auto n = std::make_shared<custom::Node>();
     //n->_label = "test";
-    //g.insertNode(n);
+    //g.insert_node(n);
 
     EXPECT_TRUE(true);
 }

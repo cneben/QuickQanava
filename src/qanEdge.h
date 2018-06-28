@@ -51,7 +51,7 @@ class EdgeItem;
 /*!
     \nosubgrouping
  */
-class Edge : public gtpo::edge<qan::GraphConfig>
+class Edge : public gtpo::edge<qan::Config>
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{

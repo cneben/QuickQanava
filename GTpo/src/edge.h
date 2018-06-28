@@ -66,7 +66,7 @@ class group;
  *
  * \nosubgrouping
  */
-template <class config_t = gtpo::config<>>
+template <class config_t = gtpo::default_config>
 class edge : public config_t::edge_base,
                 public std::enable_shared_from_this<typename config_t::final_edge_t>
 {
@@ -76,16 +76,16 @@ class edge : public config_t::edge_base,
 public:
     using graph_t       = graph<config_t>;
 
-    using weak_node     = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node   = std::shared_ptr<typename config_t::final_node_t>;
+    using weak_node_t     = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t   = std::shared_ptr<typename config_t::final_node_t>;
 
-    using weak_edge     = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge   = std::shared_ptr<typename config_t::final_edge_t>;
+    using weak_edge_t     = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_edge_t   = std::shared_ptr<typename config_t::final_edge_t>;
 
     edge() noexcept : config_t::edge_base{} {}
-    explicit edge( const weak_node& src, const weak_node& dst ) :
+    explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
         config_t::edge_base{}, _src{ src }, _dst{ dst } { }
-    explicit edge( const weak_node& src, const weak_edge& hDst ) :
+    explicit edge( const weak_node_t& src, const weak_edge_t& hDst ) :
         config_t::edge_base{}, _src{ src }, _hDst{ hDst } { }
     ~edge() {
         if ( _graph != nullptr )
@@ -123,42 +123,42 @@ private:
     /*! \name Source / Destination Management *///-----------------------------
     //@{
 public:
-    inline auto setSrc( weak_node src ) noexcept -> void { _src = src; }
-    inline auto setDst( weak_node dst ) noexcept -> void { _dst = dst; }
-    inline auto getSrc( ) noexcept -> weak_node& { return _src; }
-    inline auto getSrc( ) const noexcept -> const weak_node& { return _src; }
-    inline auto getDst( ) noexcept -> weak_node& { return _dst; }
-    inline auto getDst( ) const noexcept -> const weak_node& { return _dst; }
+    inline auto setSrc( weak_node_t src ) noexcept -> void { _src = src; }
+    inline auto setDst( weak_node_t dst ) noexcept -> void { _dst = dst; }
+    inline auto getSrc( ) noexcept -> weak_node_t& { return _src; }
+    inline auto getSrc( ) const noexcept -> const weak_node_t& { return _src; }
+    inline auto getDst( ) noexcept -> weak_node_t& { return _dst; }
+    inline auto getDst( ) const noexcept -> const weak_node_t& { return _dst; }
 private:
-    weak_node    _src;
-    weak_node    _dst;
+    weak_node_t    _src;
+    weak_node_t    _dst;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Restricted Hyper Edge Management *///----------------------------
     //@{
 public:
-    using weak_edges     = typename config_t::template edge_container_t< weak_edge >;
-    using weak_nodes     = typename config_t::template node_container_t< weak_node >;
+    using weak_edges_t     = typename config_t::template edge_container_t< weak_edge_t >;
+    using weak_node_ts     = typename config_t::template node_container_t< weak_node_t >;
 
-    inline auto setHDst( weak_edge hDst ) noexcept -> void { _hDst = hDst; }
-    inline auto getHDst() const noexcept -> const weak_edge& { return _hDst; }
-    inline auto getInHEdges() const noexcept -> const weak_edges& { return _inHEdges; }
-    inline auto addInHEdge( weak_edge inHEdge ) -> void;
-    inline auto removeInHEdge( weak_edge inHEdge ) -> void;
+    inline auto setHDst( weak_edge_t hDst ) noexcept -> void { _hDst = hDst; }
+    inline auto getHDst() const noexcept -> const weak_edge_t& { return _hDst; }
+    inline auto getInHEdges() const noexcept -> const weak_edges_t& { return _inHEdges; }
+    inline auto addInHEdge( weak_edge_t inHEdge ) -> void;
+    inline auto removeInHEdge( weak_edge_t inHEdge ) -> void;
     inline auto getInHDegree() const noexcept -> int { return static_cast<int>( _inHEdges.size() ); }
 
-    inline auto getInHNodes() const noexcept -> const weak_nodes& { return _inHNodes; }
+    inline auto getInHNodes() const noexcept -> const weak_node_ts& { return _inHNodes; }
 
 protected:
-    inline auto getInHEdges() noexcept -> weak_edges& { return _inHEdges; }
+    inline auto getInHEdges() noexcept -> weak_edges_t& { return _inHEdges; }
 private:
     //! Restricted hyper edge destination (ie this edge target another edge as destination).
-    weak_edge    _hDst;
+    weak_edge_t    _hDst;
     //! Restricted in hyper edges (ie an in hyper edge with this edge as a destination).
-    weak_edges   _inHEdges;
+    weak_edges_t   _inHEdges;
     //! Restricted hyper in nodes (ie all source node for in restricted hyper edges).
-    weak_nodes   _inHNodes;
+    weak_node_ts   _inHNodes;
     //@}
     //-------------------------------------------------------------------------
 };

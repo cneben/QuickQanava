@@ -134,7 +134,6 @@ struct config
 
 struct default_config : public config<default_config>
 {
-
 };
 
 } // ::gtpo

@@ -73,7 +73,7 @@ class Node;
 class Edge;
 class Group;
 
-struct GraphConfig final : public gtpo::config<GraphConfig>
+struct Config final : public gtpo::config<Config>
 {
     typedef QQuickItem  graph_base;
     typedef QObject     node_base;

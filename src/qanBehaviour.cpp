@@ -45,7 +45,7 @@ namespace qan { // ::qan
 NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
     QObject{ parent }
 {
-    gtpo::dynamic_node_behaviour< qan::GraphConfig >::setName(name);
+    gtpo::dynamic_node_behaviour< qan::Config >::setName(name);
 }
 
 /* Behaviour Host Management *///----------------------------------------------

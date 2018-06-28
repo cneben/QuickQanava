@@ -61,12 +61,12 @@ public:
     node_behaviour( const node_behaviour<config_t>& ) = delete;
     node_behaviour& operator=( const node_behaviour<config_t>& ) = delete;
 
-    using weak_node          = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node        = std::shared_ptr<typename config_t::final_node_t>;
-    using shared_nodes       = typename config_t::template node_container_t< shared_node >;
-    using weak_nodes_search  = typename config_t::template search_container_t< weak_node >;
+    using weak_node_t          = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t        = std::shared_ptr<typename config_t::final_node_t>;
+    using shared_nodes_t       = typename config_t::template node_container_t< shared_node_t >;
+    using weak_node_ts_search  = typename config_t::template search_container_t< weak_node_t >;
 
-    using weak_edge          = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_edge_t          = std::weak_ptr<typename config_t::final_edge_t>;
     //@}
     //-------------------------------------------------------------------------
 
@@ -74,27 +74,27 @@ public:
 public:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
      */
-    void    in_node_inserted( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    void    in_node_inserted( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
     /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
      */
-    void    in_node_removed( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    void    in_node_removed( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
     /*! \brief Called immediatly after an in node has been removed.
      */
-    void    in_node_removed(weak_node& target)  noexcept { static_cast<void>(target); }
+    void    in_node_removed(weak_node_t& target)  noexcept { static_cast<void>(target); }
 
     /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
      */
-    void    out_node_inserted( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    void    out_node_inserted( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
     /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
      */
-    void    out_node_removed( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    void    out_node_removed( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
     /*! \brief Called immediatly after an out-edge has been removed.
      */
-    void    out_node_removed(weak_node& target)  noexcept { static_cast<void>(target); }
+    void    out_node_removed(weak_node_t& target)  noexcept { static_cast<void>(target); }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -113,45 +113,45 @@ public:
     dynamic_node_behaviour( dynamic_node_behaviour<config_t>&& ) = delete;
     dynamic_node_behaviour& operator=( dynamic_node_behaviour<config_t>&& ) = delete;
 
-    using weak_node          = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node        = std::shared_ptr<typename config_t::final_node_t>;
-    using shared_nodes       = typename config_t::template node_container_t< shared_node >;
-    using weak_nodes_search  = typename config_t::template search_container_t< weak_node >;
+    using weak_node_t          = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t        = std::shared_ptr<typename config_t::final_node_t>;
+    using shared_nodes_t       = typename config_t::template node_container_t< shared_node_t >;
+    using weak_node_ts_search  = typename config_t::template search_container_t< weak_node_t >;
 
-    using weak_edge          = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_edge_t          = std::weak_ptr<typename config_t::final_edge_t>;
 
 public:
-    void    in_node_inserted( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { on_in_node_inserted(target, weakInNode, edge); }
-    void    in_node_removed( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { on_in_node_removed(target, weakInNode, edge); }
-    void    in_node_removed( weak_node& target )  noexcept { on_in_node_removed(target); }
-    void    out_node_inserted( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { on_out_node_inserted(target, weakOutNode, edge); }
-    void    out_node_removed( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { on_out_node_removed(target, weakOutNode, edge); }
-    void    out_node_removed( weak_node& target )  noexcept { on_out_node_removed(target); }
+    void    in_node_inserted( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { on_in_node_inserted(target, weakInNode, edge); }
+    void    in_node_removed( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { on_in_node_removed(target, weakInNode, edge); }
+    void    in_node_removed( weak_node_t& target )  noexcept { on_in_node_removed(target); }
+    void    out_node_inserted( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { on_out_node_inserted(target, weakOutNode, edge); }
+    void    out_node_removed( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { on_out_node_removed(target, weakOutNode, edge); }
+    void    out_node_removed( weak_node_t& target )  noexcept { on_out_node_removed(target); }
 
 protected:
     /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
      */
-    virtual void    on_in_node_inserted( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    virtual void    on_in_node_inserted( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
     /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
      */
-    virtual void    on_in_node_removed( weak_node& target, weak_node& weakInNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    virtual void    on_in_node_removed( weak_node_t& target, weak_node_t& weakInNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
     /*! \brief Called immediatly after an in node has been removed.
      */
-    virtual void    on_in_node_removed(weak_node& target)  noexcept { static_cast<void>(target); }
+    virtual void    on_in_node_removed(weak_node_t& target)  noexcept { static_cast<void>(target); }
 
     /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
      */
-    virtual void    on_out_node_inserted( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    virtual void    on_out_node_inserted( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
     /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
      */
-    virtual void    on_out_node_removed( weak_node& target, weak_node& weakOutNode, const weak_edge& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    virtual void    on_out_node_removed( weak_node_t& target, weak_node_t& weakOutNode, const weak_edge_t& edge )  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
     /*! \brief Called immediatly after an out-edge has been removed.
      */
-    virtual void    on_out_node_removed(weak_node& target)  noexcept { static_cast<void>(target); }
+    virtual void    on_out_node_removed(weak_node_t& target)  noexcept { static_cast<void>(target); }
 };
 
 template <class config_t>
@@ -170,37 +170,37 @@ public:
     enable_node_dynamic_behaviour() noexcept : gtpo::node_behaviour<config_t>{} {}
     ~enable_node_dynamic_behaviour() noexcept = default;
 
-    using weak_node = std::weak_ptr<typename config_t::final_node_t>;
-    using weak_edge = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_node_t = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_edge_t = std::weak_ptr<typename config_t::final_edge_t>;
     using base_t    = gtpo::node_behaviour<config_t>;
 
 public:
-    void    in_node_inserted( weak_node target, weak_node weakInNode, const weak_edge& edge )  noexcept {
+    void    in_node_inserted( weak_node_t target, weak_node_t weakInNode, const weak_edge_t& edge )  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::in_node_inserted, target, weakInNode, edge );
     }
-    void    in_node_removed( weak_node target, weak_node weakInNode, const weak_edge& edge )  noexcept {
+    void    in_node_removed( weak_node_t target, weak_node_t weakInNode, const weak_edge_t& edge )  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::in_node_removed, target, weakInNode, edge );
     }
-    void    in_node_removed(weak_node target)  noexcept {
+    void    in_node_removed(weak_node_t target)  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::in_node_removed, target );
     }
-    void    out_node_inserted( weak_node target, weak_node weakOutNode, const weak_edge& edge )  noexcept {
+    void    out_node_inserted( weak_node_t target, weak_node_t weakOutNode, const weak_edge_t& edge )  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::out_node_inserted, target, weakOutNode, edge );
     }
-    void    out_node_removed( weak_node target, weak_node weakOutNode, const weak_edge& edge )  noexcept {
+    void    out_node_removed( weak_node_t target, weak_node_t weakOutNode, const weak_edge_t& edge )  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::out_node_removed, target, weakOutNode, edge );
     }
-    void    out_node_removed(weak_node target)  noexcept {
+    void    out_node_removed(weak_node_t target)  noexcept {
         auto node = target.lock();
         if ( node )
             node->notify_dynamic_behaviours( &gtpo::dynamic_node_behaviour<config_t>::out_node_removed, target );

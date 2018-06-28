@@ -131,8 +131,8 @@ protected:
      *
      * Example use:
      * \code
-     *    // For a given node_behaviour method: auto    notifyNodeModified( weak_node& node ) -> void;
-     *    notify_behaviours< weak_node >( &behaviour::nodeModified, node );
+     *    // For a given node_behaviour method: auto    notifyNodeModified( weak_node_t& node ) -> void;
+     *    notify_behaviours< weak_node_t >( &behaviour::nodeModified, node );
      * \endcode
      */
     template < class T >

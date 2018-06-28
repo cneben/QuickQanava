@@ -78,9 +78,9 @@ class node : public config_t::node_base,
     //@{
 public:
     using graph_t       = gtpo::graph<config_t>;
-    using weak_node     = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node   = std::shared_ptr<typename config_t::final_node_t>;
-    using weak_nodes    = typename config_t::template node_container_t< weak_node >;
+    using weak_node_t     = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t   = std::shared_ptr<typename config_t::final_node_t>;
+    using weak_node_ts    = typename config_t::template node_container_t< weak_node_t >;
 
     //! User friendly shortcut type to this concrete node Behaviourable base type.
     using behaviourable_base = gtpo::behaviourable_node< config_t >;
@@ -108,51 +108,51 @@ public:
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using weak_edge     = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge   = std::shared_ptr<typename config_t::final_edge_t>;
-    using weak_edges    = typename config_t::template edge_container_t< weak_edge >;
+    using weak_edge_t     = std::weak_ptr<typename config_t::final_edge_t>;
+    using shared_edge_t   = std::shared_ptr<typename config_t::final_edge_t>;
+    using weak_edges_t    = typename config_t::template edge_container_t< weak_edge_t >;
 
     /*! \brief Insert edge \c outEdge as an out edge for this node.
      *
      * \note if \c outEdge source node is different from this node, it is set to this node.
      */
-    auto    addOutEdge( weak_edge sharedOutEdge ) noexcept( false ) -> void;
+    auto    addOutEdge( weak_edge_t sharedOutEdge ) noexcept( false ) -> void;
     /*! \brief Insert edge \c inEdge as an in edge for \c node.
      *
      * \note if \c inEdge destination node is different from \c node, it is automatically set to \c node.
      */
-    auto    addInEdge( weak_edge sharedInEdge ) noexcept( false ) -> void;
+    auto    addInEdge( weak_edge_t sharedInEdge ) noexcept( false ) -> void;
     /*! \brief Remove edge \c outEdge from this node out edges.
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    removeOutEdge( const weak_edge outEdge ) noexcept( false ) -> void;
+    auto    removeOutEdge( const weak_edge_t outEdge ) noexcept( false ) -> void;
     /*! \brief Remove edge \c inEdge from this node in edges.
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    removeInEdge( const weak_edge inEdge ) noexcept( false ) -> void;
+    auto    removeInEdge( const weak_edge_t inEdge ) noexcept( false ) -> void;
 
-    inline auto     getInEdges() const noexcept -> const weak_edges& { return _inEdges; }
-    inline auto     getOutEdges() const noexcept -> const weak_edges& { return _outEdges; }
+    inline auto     getInEdges() const noexcept -> const weak_edges_t& { return _inEdges; }
+    inline auto     getOutEdges() const noexcept -> const weak_edges_t& { return _outEdges; }
 
-    inline auto     getInNodes() const noexcept -> const weak_nodes& { return _inNodes; }
-    inline auto     getOutNodes() const noexcept -> const weak_nodes& { return _outNodes; }
+    inline auto     getInNodes() const noexcept -> const weak_node_ts& { return _inNodes; }
+    inline auto     getOutNodes() const noexcept -> const weak_node_ts& { return _outNodes; }
 
     inline auto     getInDegree() const noexcept -> unsigned int { return static_cast<int>( _inEdges.size() ); }
     inline auto     getOutDegree() const noexcept -> unsigned int { return static_cast<int>( _outEdges.size() ); }
 private:
-    weak_edges       _inEdges;
-    weak_edges       _outEdges;
-    weak_nodes       _inNodes;
-    weak_nodes       _outNodes;
+    weak_edges_t       _inEdges;
+    weak_edges_t       _outEdges;
+    weak_node_ts       _inNodes;
+    weak_node_ts       _outNodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    inline auto setGroup( const std::weak_ptr<typename config_t::final_group_t>& group ) noexcept -> void { _group = group; }
+    inline auto set_group( const std::weak_ptr<typename config_t::final_group_t>& group ) noexcept -> void { _group = group; }
     inline auto getGroup( ) noexcept -> std::weak_ptr<typename config_t::final_group_t>& { return _group; }
     inline auto getGroup( ) const noexcept -> const std::weak_ptr<typename config_t::final_group_t>& { return _group; }
 private:

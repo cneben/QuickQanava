@@ -65,15 +65,15 @@ class group : public gtpo::node<config_t>,
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
-    using weak_node         = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node       = std::shared_ptr<typename config_t::final_node_t>;
-    using weak_nodes        = typename config_t::template node_container_t< weak_node >;
+    using weak_node_t         = std::weak_ptr<typename config_t::final_node_t>;
+    using shared_node_t       = std::shared_ptr<typename config_t::final_node_t>;
+    using weak_node_ts        = typename config_t::template node_container_t< weak_node_t >;
 
-    using weak_edge         = std::weak_ptr<typename config_t::final_edge_t>;
-    using weak_edges_search = typename config_t::template search_container_t< weak_edge >;
+    using weak_edge_t         = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_edges_t_search = typename config_t::template search_container_t< weak_edge_t >;
 
-    using weak_group        = std::weak_ptr< typename config_t::final_group_t >;
-    using shared_group      = std::shared_ptr< typename config_t::final_group_t >;
+    using weak_group_t        = std::weak_ptr< typename config_t::final_group_t >;
+    using shared_group_t      = std::shared_ptr< typename config_t::final_group_t >;
 
     group() noexcept : gtpo::node<config_t>() { }
     ~group() { /* Nil */ }
@@ -86,29 +86,29 @@ public:
     //@{
 public:
     //! Return group's nodes.
-    inline auto getNodes() noexcept -> const weak_nodes& { return _nodes; }
+    inline auto getNodes() noexcept -> const weak_node_ts& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        hasNode( const weak_node& node ) const noexcept -> bool;
+    auto        hasNode( const weak_node_t& node ) const noexcept -> bool;
     //! Return group registered node count.
-    inline auto getNodeCount( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
+    inline auto get_node_count( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
 private:
-    weak_nodes   _nodes;
+    weak_node_ts   _nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Adjacent Edges *///----------------------------------------------
     //@{
 public:
-    inline auto     getEdges() noexcept -> weak_edges_search& { return _edges; }
-    inline auto     getEdges() const noexcept -> const weak_edges_search& { return _edges; }
+    inline auto     get_edges() noexcept -> weak_edges_t_search& { return _edges; }
+    inline auto     get_edges() const noexcept -> const weak_edges_t_search& { return _edges; }
 
-    inline auto     getAdjacentEdges() noexcept -> weak_edges_search& { return _adjacentEdges; }
-    inline auto     getAdjacentEdges() const noexcept -> const weak_edges_search& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() noexcept -> weak_edges_t_search& { return _adjacentEdges; }
+    inline auto     getAdjacentEdges() const noexcept -> const weak_edges_t_search& { return _adjacentEdges; }
 
 protected:
-    weak_edges_search _edges;
-    weak_edges_search _adjacentEdges;
+    weak_edges_t_search _edges;
+    weak_edges_t_search _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 };

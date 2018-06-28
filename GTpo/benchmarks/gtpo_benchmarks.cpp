@@ -38,10 +38,6 @@
 
 struct config_raw final :  public gtpo::config<config_raw>
 {
-    using final_group_t        = gtpo::group<config_raw>;
-    using final_node_t         = gtpo::node<config_raw>;
-    using final_edge_t         = gtpo::edge<config_raw>;
-    using final_group_edge_t   = gtpo::group_edge<config_raw>;
 };
 using graph_raw = gtpo::graph<config_raw>;
 
@@ -70,18 +66,18 @@ namespace impl {  // ::impl
 
 template < typename graph_t >
 void    benchmark(graph_t& g) {
-    auto n1 = g.createNode();
-    auto n2 = g.createNode();
-    auto e = g.createEdge( n1, n2 );
+    auto n1 = g.create_node();
+    auto n2 = g.create_node();
+    auto e = g.create_edge( n1, n2 );
 
-    auto g1 = g.createGroup();
-    g.groupNode(n1, g1);
-    g.ungroupNode(n1, g1);
+    auto g1 = g.create_group();
+    g.group_node(n1, g1);
+    g.ungroup_node(n1, g1);
 
-    g.removeGroup(g1);
-    g.removeEdge(e);
-    g.removeNode(n2);
-    g.removeNode(n1);
+    g.remove_group(g1);
+    g.remove_edge(e);
+    g.remove_node(n2);
+    g.remove_node(n1);
 }
 
 } // :impl

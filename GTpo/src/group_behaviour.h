@@ -63,22 +63,22 @@ public:
     group_behaviour( group_behaviour<config_t>&& ) = default;
     group_behaviour& operator=( group_behaviour<config_t>&& ) = default;
 
-    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
-    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
+    using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Group Notification Interface *///--------------------------------
     //@{
     //! Called immediatly after \c weakNode has been inserted into target group.
-    void    node_inserted( weak_node& weakNode ) noexcept { static_cast<void>(weakNode); }
+    void    node_inserted( weak_node_t& weakNode ) noexcept { static_cast<void>(weakNode); }
     //! Called when \c weakNode is about to be removed from target group.
-    void    node_removed( weak_node& weakNode ) noexcept { static_cast<void>(weakNode); }
+    void    node_removed( weak_node_t& weakNode ) noexcept { static_cast<void>(weakNode); }
 
     //! Called immediatly after \c weakGroup group has been inserted into target group.
-    void    group_inserted( weak_group& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    void    group_inserted( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //! Called when \c weakGroup group is about to be removed from target group.
-    void    group_removed( weak_group& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    void    group_removed( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -100,14 +100,14 @@ public:
     dynamic_group_behaviour( dynamic_group_behaviour<config_t>&& ) = default;
     dynamic_group_behaviour& operator=( dynamic_group_behaviour<config_t>&& ) = default;
 
-    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
-    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
+    using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
-    void    node_inserted( weak_node& weakNode ) noexcept { on_node_inserted(weakNode); }
-    void    node_removed( weak_node& weakNode ) noexcept { on_node_removed(weakNode); }
-    void    group_inserted( weak_group& weakGroup ) noexcept { on_group_inserted(weakGroup); }
-    void    group_removed( weak_group& weakGroup ) noexcept { on_group_removed(weakGroup); }
+    void    node_inserted( weak_node_t& weakNode ) noexcept { on_node_inserted(weakNode); }
+    void    node_removed( weak_node_t& weakNode ) noexcept { on_node_removed(weakNode); }
+    void    group_inserted( weak_group_t& weakGroup ) noexcept { on_group_inserted(weakGroup); }
+    void    group_removed( weak_group_t& weakGroup ) noexcept { on_group_removed(weakGroup); }
     //@}
     //-------------------------------------------------------------------------
 
@@ -115,14 +115,14 @@ public:
     //@{
 protected:
     //! Called immediatly after \c weakNode has been inserted into target group.
-    virtual void    on_node_inserted( weak_node& weakNode ) noexcept { static_cast<void>(weakNode); }
+    virtual void    on_node_inserted( weak_node_t& weakNode ) noexcept { static_cast<void>(weakNode); }
     //! Called when \c weakNode is about to be removed from target group.
-    virtual void    on_node_removed( weak_node& weakNode ) noexcept { static_cast<void>(weakNode); }
+    virtual void    on_node_removed( weak_node_t& weakNode ) noexcept { static_cast<void>(weakNode); }
 
     //! Called immediatly after \c weakGroup group has been inserted into target group.
-    virtual void    on_group_inserted( weak_group& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    virtual void    on_group_inserted( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //! Called when \c weakGroup group is about to be removed from target group.
-    virtual void    on_group_removed( weak_group& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    virtual void    on_group_removed( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -145,11 +145,11 @@ public:
     enable_group_dynamic_behaviour( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
     enable_group_dynamic_behaviour& operator=( const enable_graph_dynamic_behaviour<config_t>& ) = delete;
 
-    using weak_node      = std::weak_ptr<typename config_t::final_node_t>;
+    using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
 
-    using weak_edge      = std::weak_ptr<typename config_t::final_edge_t>;
+    using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
 
-    using weak_group     = std::weak_ptr<typename config_t::final_group_t>;
+    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     template < class primitive_t >
@@ -158,7 +158,7 @@ public:
         auto primitive = weak_primitive.lock();
         return ( primitive ? primitive->getGraph() : nullptr );
     }
-    void    node_inserted( weak_node& weakNode ) noexcept {
+    void    node_inserted( weak_node_t& weakNode ) noexcept {
         const auto node = weakNode.lock();
         if (!node)
             return;
@@ -167,7 +167,7 @@ public:
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::node_inserted, weakNode );
     }
-    void    node_removed( weak_node& weakNode ) noexcept {
+    void    node_removed( weak_node_t& weakNode ) noexcept {
         const auto node = weakNode.lock();
         if (!node)
             return;
@@ -176,7 +176,7 @@ public:
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::node_removed, weakNode );
     }
-    void    group_inserted( weak_group& weakGroup ) noexcept {
+    void    group_inserted( weak_group_t& weakGroup ) noexcept {
         const auto group = weakGroup.lock();
         if (!group)
             return;
@@ -185,7 +185,7 @@ public:
         if ( group_behaviourable != nullptr )
             group_behaviourable->notify_dynamic_behaviours( &dynamic_group_behaviour<config_t>::group_inserted, weakGroup );
     }
-    void    group_removed( weak_group& weakGroup ) noexcept {
+    void    group_removed( weak_group_t& weakGroup ) noexcept {
         const auto group = weakGroup.lock();
         if (!group)
             return;
@@ -200,8 +200,8 @@ public:
 /*! \brief Observation interface for gtpo::group.
  *
  * \note notify_node_inserted() and notify_node_removed() are called when a group is
- * inserted into node with gtpo::graph::insertNode(group, node) or
- * gtpo::graph::removeNode(group, node), it has nothing to do with
+ * inserted into node with gtpo::graph::insert_node(group, node) or
+ * gtpo::graph::remove_node(group, node), it has nothing to do with
  * adjacent nodes.
  *
  * \nosubgrouping

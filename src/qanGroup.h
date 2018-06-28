@@ -54,7 +54,7 @@ class GroupItem;
  *
  * \nosubgrouping
  */
-class Group : public gtpo::group<qan::GraphConfig>
+class Group : public gtpo::group<qan::Config>
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
@@ -113,7 +113,7 @@ public:
     /*! \name Group Nodes Management *///--------------------------------------
     //@{
 public:
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::GraphConfig>::hasNode().
+    //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
     //@}
     //-------------------------------------------------------------------------

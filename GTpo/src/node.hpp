@@ -36,7 +36,7 @@ namespace gtpo { // ::gtpo
 
 /* node Edges Management *///-----------------------------------------------
 template < class config_t >
-auto node<config_t>::addOutEdge( weak_edge outEdgePtr ) -> void
+auto node<config_t>::addOutEdge( weak_edge_t outEdgePtr ) -> void
 {
     assert_throw( !outEdgePtr.expired(), "gtpo::node<>::addOutEdge(): Error: out edge is expired." );
     auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
@@ -45,16 +45,16 @@ auto node<config_t>::addOutEdge( weak_edge outEdgePtr ) -> void
     if ( outEdge ) {
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->setSrc( node );
-        config_t::template container_adapter< weak_edges >::insert( outEdgePtr, _outEdges );
+        config_t::template container_adapter< weak_edges_t >::insert( outEdgePtr, _outEdges );
         if ( !outEdge->getDst().expired() ) {
-            config_t::template container_adapter< weak_nodes >::insert( outEdge->getDst(), _outNodes );
-            this->notify_out_node_inserted( weak_node{node}, outEdge->getDst(), weak_edge{outEdge} );
+            config_t::template container_adapter< weak_node_ts >::insert( outEdge->getDst(), _outNodes );
+            this->notify_out_node_inserted( weak_node_t{node}, outEdge->getDst(), weak_edge_t{outEdge} );
         }
     }
 }
 
 template <class config_t>
-auto node<config_t>::addInEdge( weak_edge inEdgePtr ) -> void
+auto node<config_t>::addInEdge( weak_edge_t inEdgePtr ) -> void
 {
     assert_throw( !inEdgePtr.expired(), "gtpo::node<>::addInEdge(): Error: in edge is expired." );
     auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
@@ -64,21 +64,21 @@ auto node<config_t>::addInEdge( weak_edge inEdgePtr ) -> void
         if ( !inEdgeDst ||
              inEdgeDst != node ) // In edge destination should point to target node
             inEdge->setDst( node );
-        config_t::template container_adapter< weak_edges >::insert( inEdgePtr, _inEdges );
+        config_t::template container_adapter< weak_edges_t >::insert( inEdgePtr, _inEdges );
         if ( !inEdge->getSrc().expired() ) {
-            config_t::template container_adapter< weak_nodes >::insert( inEdge->getSrc(), _inNodes );
-            this->notify_in_node_inserted( weak_node{node}, inEdge->getSrc(), inEdgePtr );
+            config_t::template container_adapter< weak_node_ts >::insert( inEdge->getSrc(), _inNodes );
+            this->notify_in_node_inserted( weak_node_t{node}, inEdge->getSrc(), inEdgePtr );
         }
     }
 }
 
 template < class config_t >
-auto node<config_t>::removeOutEdge( const weak_edge outEdge ) -> void
+auto node<config_t>::removeOutEdge( const weak_edge_t outEdge ) -> void
 {
     gtpo::assert_throw( !outEdge.expired(), "gtpo::node<>::removeOutEdge(): Error: Out edge has expired" );
     auto outEdgePtr = outEdge.lock( );
     auto outEdgeSrcPtr = outEdgePtr->getSrc().lock();
-    weak_node node{ std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this()) };
+    weak_node_t node{ std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this()) };
     gtpo::assert_throw( outEdgeSrcPtr != nullptr &&    // Out edge src must be this node
                         outEdgeSrcPtr.get() == this, "gtpo::node<>::removeOutEdge(): Error: Out edge source is expired or different from this node.");
 
@@ -87,18 +87,18 @@ auto node<config_t>::removeOutEdge( const weak_edge outEdge ) -> void
         gtpo::assert_throw( outEdgeDst != nullptr, "gtpo::node<>::removeOutEdge(): Error: Out edge destination is expired." );
         this->notify_out_node_removed( node, outEdgePtr->getDst(), outEdge );
     }
-    config_t::template container_adapter<weak_edges>::remove( outEdge, _outEdges );
-    config_t::template container_adapter<weak_nodes>::remove( outEdgePtr->getDst(), _outNodes );
+    config_t::template container_adapter<weak_edges_t>::remove( outEdge, _outEdges );
+    config_t::template container_adapter<weak_node_ts>::remove( outEdgePtr->getDst(), _outNodes );
     if ( getInDegree() == 0 ) {
         graph_t* graph{ this->getGraph() };
         if ( graph != nullptr )
-            graph->installRootNode( node );
+            graph->install_root_node( node );
     }
     this->notify_out_node_removed( node );
 }
 
 template < class config_t >
-auto node<config_t>::removeInEdge( const weak_edge inEdge ) -> void
+auto node<config_t>::removeInEdge( const weak_edge_t inEdge ) -> void
 {
     gtpo::assert_throw( !inEdge.expired(), "gtpo::node<>::removeInEdge(): Error: In edge has expired" );
     auto nodePtr = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
@@ -109,15 +109,15 @@ auto node<config_t>::removeInEdge( const weak_edge inEdge ) -> void
 
     auto inEdgeSrcPtr = inEdgePtr->getSrc().lock();
     gtpo::assert_throw( inEdgeSrcPtr != nullptr, "gtpo::node<>::removeInEdge(): Error: In edge source is expired." );
-    this->notify_in_node_removed( weak_node{ nodePtr }, inEdgePtr->getSrc(), inEdge );
-    config_t::template container_adapter< weak_edges >::remove( inEdge, _inEdges );
-    config_t::template container_adapter< weak_nodes >::remove( inEdgePtr->getSrc(), _inNodes );
+    this->notify_in_node_removed( weak_node_t{ nodePtr }, inEdgePtr->getSrc(), inEdge );
+    config_t::template container_adapter< weak_edges_t >::remove( inEdge, _inEdges );
+    config_t::template container_adapter< weak_node_ts >::remove( inEdgePtr->getSrc(), _inNodes );
     if ( getInDegree() == 0 ) {
         graph_t* graph{ this->getGraph() };
         if ( graph != nullptr )
-            graph->installRootNode( weak_node{ nodePtr } );
+            graph->install_root_node( weak_node_t{ nodePtr } );
     }
-    this->notify_in_node_removed( weak_node{nodePtr} );
+    this->notify_in_node_removed( weak_node_t{nodePtr} );
 }
 //-----------------------------------------------------------------------------
 

@@ -50,24 +50,24 @@ using testing::AtLeast;
 // GTpo Graph behaviour tests
 //-----------------------------------------------------------------------------
 
-template < class config_t = gtpo::config >
+template < class config_t = gtpo::default_config >
 class GraphBehaviourMock : public gtpo::dynamic_graph_behaviour<config_t>
 {
 public:
     GraphBehaviourMock() { }
     virtual ~GraphBehaviourMock() override { std::cerr << "Deleting mock graph behaviour..."; }
 
-    using weak_node      = std::weak_ptr< typename config_t::final_node_t >;
-    using weak_edge      = std::weak_ptr< typename config_t::final_edge_t >;
-    using weak_group     = std::weak_ptr< typename config_t::final_group_t >;
+    using weak_node_t      = std::weak_ptr< typename config_t::final_node_t >;
+    using weak_edge_t      = std::weak_ptr< typename config_t::final_edge_t >;
+    using weak_group_t     = std::weak_ptr< typename config_t::final_group_t >;
 
 protected:
-    virtual void    on_node_inserted( weak_node& ) noexcept override { std::cerr << "GraphBehaviourMock::on_node_inserted()" << std::endl; mockNodeInserted(); }
-    virtual void    on_node_removed( weak_node& ) noexcept override { std::cerr << "GraphBehaviourMock::on_node_removed()" << std::endl; mockNodeRemoved(); }
-    virtual void    on_edge_inserted( weak_edge& ) noexcept override { std::cerr << "GraphBehaviourMock::on_edge_inserted()" << std::endl; mockEdgeInserted(); }
-    virtual void    on_edge_removed( weak_edge& ) noexcept override { std::cerr << "GraphBehaviourMock::on_edge_removed()" << std::endl; mockEdgeRemoved(); }
-    virtual void    on_group_inserted( weak_group& ) noexcept override { std::cerr << "GraphBehaviourMock::on_group_inserted()" << std::endl; mockGroupInserted(); }
-    virtual void    on_group_removed( weak_group& ) noexcept override { std::cerr << "GraphBehaviourMock::on_group_removed()" << std::endl; mockGroupRemoved(); }
+    virtual void    on_node_inserted( weak_node_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_node_inserted()" << std::endl; mockNodeInserted(); }
+    virtual void    on_node_removed( weak_node_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_node_removed()" << std::endl; mockNodeRemoved(); }
+    virtual void    on_edge_inserted( weak_edge_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_edge_inserted()" << std::endl; mockEdgeInserted(); }
+    virtual void    on_edge_removed( weak_edge_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_edge_removed()" << std::endl; mockEdgeRemoved(); }
+    virtual void    on_group_inserted( weak_group_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_group_inserted()" << std::endl; mockGroupInserted(); }
+    virtual void    on_group_removed( weak_group_t& ) noexcept override { std::cerr << "GraphBehaviourMock::on_group_removed()" << std::endl; mockGroupRemoved(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -105,30 +105,30 @@ TEST(GTpoBehaviour, graphBehaviour)
 
     // node_inserted() notification
     EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(1);
-    auto n = g.createNode();
+    auto n = g.create_node();
     EXPECT_CALL(*mockBehaviour, mockNodeInserted()).Times(AtLeast(1));  // Reset counter...
 
     // node_inserted() notification
     EXPECT_CALL(*mockBehaviour, mockNodeRemoved()).Times(1);
-    g.removeNode( n );
+    g.remove_node( n );
 
     // edge_inserted() notification
-    auto s = g.createNode();
-    auto d = g.createNode();
+    auto s = g.create_node();
+    auto d = g.create_node();
     EXPECT_CALL(*mockBehaviour, mockEdgeInserted()).Times(1);
-    auto e = g.createEdge(s, d);
+    auto e = g.create_edge(s, d);
 
     // edge_removed() notification
     EXPECT_CALL(*mockBehaviour, mockEdgeRemoved()).Times(1);
-    g.removeEdge(e);
+    g.remove_edge(e);
 
     // group_inserted() notification
     EXPECT_CALL(*mockBehaviour, mockGroupInserted()).Times(1);
-    auto gg = g.createGroup();
+    auto gg = g.create_group();
 
     // group_removed() notification
     EXPECT_CALL(*mockBehaviour, mockGroupRemoved()).Times(1);
-    g.removeGroup( gg );
+    g.remove_group( gg );
 
     //delete mockBehaviour;
 }
@@ -137,22 +137,22 @@ TEST(GTpoBehaviour, graphBehaviour)
 // GTpo Group behaviour tests
 //-----------------------------------------------------------------------------
 
-template < class config_t >
+template < class config_t = gtpo::default_config >
 class GroupBehaviourMock : public gtpo::dynamic_group_behaviour< config_t >
 {
 public:
     GroupBehaviourMock() { }
     virtual ~GroupBehaviourMock() { }
 
-    using weak_node      = std::weak_ptr< typename config_t::final_node_t >;
-    using weak_edge      = std::weak_ptr< typename config_t::final_edge_t >;
-    using weak_group     = std::weak_ptr< typename config_t::final_group_t >;
+    using weak_node_t      = std::weak_ptr< typename config_t::final_node_t >;
+    using weak_edge_t      = std::weak_ptr< typename config_t::final_edge_t >;
+    using weak_group_t     = std::weak_ptr< typename config_t::final_group_t >;
 
 protected:
-    virtual void    on_node_inserted( weak_node& ) noexcept override { mockNodeInserted(); }
-    virtual void    on_node_removed( weak_node& ) noexcept override { mockNodeRemoved(); }
-    virtual void    on_group_inserted( weak_group& ) noexcept override { mockGroupInserted(); }
-    virtual void    on_group_removed( weak_group& ) noexcept override { mockGroupRemoved(); }
+    virtual void    on_node_inserted( weak_node_t& ) noexcept override { mockNodeInserted(); }
+    virtual void    on_node_removed( weak_node_t& ) noexcept override { mockNodeRemoved(); }
+    virtual void    on_group_inserted( weak_group_t& ) noexcept override { mockGroupInserted(); }
+    virtual void    on_group_removed( weak_group_t& ) noexcept override { mockGroupRemoved(); }
 
 public:
     MOCK_METHOD0(mockNodeInserted, void(void));
@@ -168,9 +168,9 @@ public:
 TEST(GTpoBehaviour, groupBehaviourNodeInserted)
 {
     gtpo::graph<> g;
-    using MockGroupBehaviour = GroupBehaviourMock< gtpo::graph<>::configuration >;
-    auto group = g.createGroup();
-    auto n = g.createNode();
+    using MockGroupBehaviour = GroupBehaviourMock<>;
+    auto group = g.create_group();
+    auto n = g.create_node();
 
     ASSERT_TRUE(group.lock());
     auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
@@ -178,42 +178,42 @@ TEST(GTpoBehaviour, groupBehaviourNodeInserted)
 
     // node_inserted() notification
     EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(1);
-    g.groupNode(n, group);
+    g.group_node(n, group);
     //EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(0);
 
     // node_removed() notification
     EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(1);
-    g.ungroupNode(n, group);
+    g.ungroup_node(n, group);
     //EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(0);
 
     // When a node is removed from graph, it is automatically ungrouped,
     // we expect the group behaviour to be notified that the node is removed...
     EXPECT_CALL(*groupMockBehaviour, mockNodeInserted()).Times(1);
-    g.groupNode(n, group);
+    g.group_node(n, group);
     EXPECT_CALL(*groupMockBehaviour, mockNodeRemoved()).Times(1);
-    g.removeNode(n);
+    g.remove_node(n);
 }
 
 TEST(GTpoBehaviour, groupBehaviourGroupInserted)
 {
     gtpo::graph<> g;
     using MockGroupBehaviour = GroupBehaviourMock< gtpo::graph<>::configuration >;
-    auto group = g.createGroup();
-    auto n = g.createNode();
+    auto group = g.create_group();
+    auto n = g.create_node();
 
     ASSERT_TRUE(group.lock());
     auto groupMockBehaviour = new MockGroupBehaviour(); // Can't use unique_ptr here because of gmock
     group.lock()->add_dynamic_group_behaviour( std::unique_ptr<MockGroupBehaviour>(groupMockBehaviour) );
 
     // node_inserted() notification
-    using weak_group = gtpo::group<>::weak_group;
-    auto group2 = g.createGroup();
+    using weak_group_t = gtpo::group<>::weak_group_t;
+    auto group2 = g.create_group();
     EXPECT_CALL(*groupMockBehaviour, mockGroupInserted()).Times(1);
-    g.groupNode(weak_group{group2}, group);
+    g.group_node(weak_group_t{group2}, group);
 
     // group_removed() notification
     EXPECT_CALL(*groupMockBehaviour, mockGroupRemoved()).Times(1);
-    g.ungroupNode(weak_group{group2}, group);
+    g.ungroup_node(weak_group_t{group2}, group);
 }
 
 
@@ -228,18 +228,18 @@ public:
     NodeBehaviourMock() { }
     virtual ~NodeBehaviourMock() override { }
 
-    using weak_node      = std::weak_ptr< typename config_t::final_node_t >;
-    using weak_edge      = std::weak_ptr< typename config_t::final_edge_t >;
-    using weak_group     = std::weak_ptr< typename config_t::final_group_t >;
+    using weak_node_t      = std::weak_ptr< typename config_t::final_node_t >;
+    using weak_edge_t      = std::weak_ptr< typename config_t::final_edge_t >;
+    using weak_group_t     = std::weak_ptr< typename config_t::final_group_t >;
 
 protected:
-    virtual void    on_in_node_inserted( weak_node&, weak_node&, const weak_edge& ) noexcept override { mockInNodeInserted(); }
-    virtual void    on_in_node_removed( weak_node&, weak_node&, const weak_edge& ) noexcept override { mockInNodeRemoved(); }
-    virtual void    on_in_node_removed( weak_node& ) noexcept override { mockInNodeRemoved(); }
+    virtual void    on_in_node_inserted( weak_node_t&, weak_node_t&, const weak_edge_t& ) noexcept override { mockInNodeInserted(); }
+    virtual void    on_in_node_removed( weak_node_t&, weak_node_t&, const weak_edge_t& ) noexcept override { mockInNodeRemoved(); }
+    virtual void    on_in_node_removed( weak_node_t& ) noexcept override { mockInNodeRemoved(); }
 
-    virtual void    on_out_node_inserted( weak_node&, weak_node&, const weak_edge& ) noexcept override { mockOutNodeInserted(); }
-    virtual void    on_out_node_removed( weak_node&, weak_node&, const weak_edge& ) noexcept override { mockOutNodeRemoved(); }
-    virtual void    on_out_node_removed( weak_node& ) noexcept override { mockOutNodeRemoved(); }
+    virtual void    on_out_node_inserted( weak_node_t&, weak_node_t&, const weak_edge_t& ) noexcept override { mockOutNodeInserted(); }
+    virtual void    on_out_node_removed( weak_node_t&, weak_node_t&, const weak_edge_t& ) noexcept override { mockOutNodeRemoved(); }
+    virtual void    on_out_node_removed( weak_node_t& ) noexcept override { mockOutNodeRemoved(); }
 
 public:
     MOCK_METHOD0(mockInNodeInserted, void(void));
@@ -253,30 +253,30 @@ TEST(GTpoBehaviour, nodeBehaviour)
     gtpo::graph<> g;
     using MockNodeBehaviour = NodeBehaviourMock< gtpo::graph<>::configuration >;
     auto nodeMockBehaviour = new MockNodeBehaviour{}; // Can't use unique_ptr here because of gmock
-    auto n = g.createNode().lock();
+    auto n = g.create_node().lock();
     ASSERT_TRUE(n);
     n->add_dynamic_node_behaviour( std::unique_ptr<MockNodeBehaviour>{nodeMockBehaviour} );
 
     // in_node_inserted() notification
     EXPECT_CALL(*nodeMockBehaviour, mockInNodeInserted()).Times(1);
-    auto n2 = g.createNode();
-    auto e1 = g.createEdge(n2, n);
+    auto n2 = g.create_node();
+    auto e1 = g.create_edge(n2, n);
     EXPECT_CALL(*nodeMockBehaviour, mockInNodeInserted()).Times(0);
 
     // in_node_removed() notification
     EXPECT_CALL(*nodeMockBehaviour, mockInNodeRemoved()).Times(2); // Expecting two call for in_node_removed(arg1, arg2) just before removal an in_node_removed(void) after removal
-    g.removeEdge(e1);
+    g.remove_edge(e1);
     EXPECT_CALL(*nodeMockBehaviour, mockInNodeRemoved()).Times(0);
 
     // out_node_inserted() notification
     EXPECT_CALL(*nodeMockBehaviour, mockOutNodeInserted()).Times(1);
-    auto n3 = g.createNode();
-    auto e2 = g.createEdge(n, n3);
+    auto n3 = g.create_node();
+    auto e2 = g.create_edge(n, n3);
     EXPECT_CALL(*nodeMockBehaviour, mockOutNodeInserted()).Times(0);
 
     // out_node_removed() notification
     EXPECT_CALL(*nodeMockBehaviour, mockOutNodeRemoved()).Times(2);  // Expecting two call for out_node_removed(arg1, arg2) just before removal an out_node_removed(void) after removal
-    g.removeEdge(e2);
+    g.remove_edge(e2);
     EXPECT_CALL(*nodeMockBehaviour, mockOutNodeRemoved()).Times(0);
 }
 
