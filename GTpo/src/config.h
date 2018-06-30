@@ -80,9 +80,6 @@ class enable_group_dynamic_behaviour;
 template <class config_t>
 class enable_node_dynamic_behaviour;
 
-//template < typename final_config >
-//struct config;
-
 struct default_config;
 
 /*! \brief Default configuration for GTpo primitive, containers and behaviours.

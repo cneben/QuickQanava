@@ -375,7 +375,7 @@ public:
      * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
      * node_inserted() will be called.
      *
-     * \note \c weakNode get_group() will return \c weakGroup if grouping succeed.
+     * \note \c weakNode getGroup() will return \c weakGroup if grouping succeed.
      */
     auto            group_node( weak_node_t weakNode, weak_group_t weakGroup) noexcept(false) -> void
     {
@@ -408,7 +408,7 @@ public:
      * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
      * node_removed() will be called.
      *
-     * \note \c node get_group() will return an expired weak pointer if ungroup succeed.
+     * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
      */
     auto            ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void
     {
@@ -418,7 +418,7 @@ public:
         auto node = weakNode.lock();
         gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
 
-        gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
+        gtpo::assert_throw( node->getGroup().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
 
         config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
         group->notify_node_removed( weakNode );
