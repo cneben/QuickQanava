@@ -73,32 +73,28 @@ class Node;
 class Edge;
 class Group;
 
-class GraphConfig final : public gtpo::GraphConfig
+struct Config final : public gtpo::config<Config>
 {
-public:
-    using GraphBase = QQuickItem;
-    using NodeBase  = QObject;
-    using EdgeBase  = QObject;
-    using GroupBase = QObject;
+    typedef QQuickItem  graph_base;
+    typedef QObject     node_base;
+    typedef QObject     edge_base;
+    typedef QObject     group_base;
 
-    using GraphBehaviours = std::tuple< gtpo::GraphGroupAjacentEdgesBehaviour< qan::GraphConfig > >;
-    using GroupBehaviours = std::tuple< gtpo::GroupAdjacentEdgesBehaviour< qan::GraphConfig > >;
+    typedef qan::Node   final_node_t;
+    typedef qan::Edge   final_edge_t;
+    typedef qan::Group  final_group_t;
 
     template <typename T>
     using container_adapter = qan::ContainerAdapter<T>;
 
-    using FinalNode     = qan::Node;
-    using FinalEdge     = qan::Edge;
-    using FinalGroup    = qan::Group;
+    template <class ...Args>
+    using node_container_t = qcm::Container< QVector, Args... >;
 
     template <class ...Args>
-    using NodeContainer = qcm::Container< QVector, Args... >;
-
-    template <class ...Args>
-    using EdgeContainer = qcm::Container< QVector, Args... >;
+    using edge_container_t = qcm::Container< QVector, Args... >;
 
     template < class ...Args >
-    using SearchContainer = QSet< Args... >;
+    using search_container_t = QSet< Args... >;
 };
 
 } // ::qan

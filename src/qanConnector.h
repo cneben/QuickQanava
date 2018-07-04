@@ -122,20 +122,6 @@ signals:
     void        createDefaultEdgeChanged();
 
 public:
-    //! Enable or disable visual creation of hyper edges (default to \c false).
-    Q_PROPERTY( bool hEdgeEnabled READ getHEdgeEnabled WRITE setHEdgeEnabled NOTIFY hEdgeEnabledChanged FINAL )
-    //! \copydoc hEdgeEnabled
-    auto        getHEdgeEnabled() const noexcept -> bool;
-    //! \copydoc hEdgeEnabled
-    auto        setHEdgeEnabled(bool hEdgeEnabled) noexcept -> void;
-protected:
-    //! \copydoc hEdgeEnabled
-    bool        _hEdgeEnabled{false};
-signals:
-    //! \copydoc hEdgeEnabled
-    void        hEdgeEnabledChanged();
-
-public:
     //! Graphical item used as a draggable destination node selector (initialized and owned from QML).
     Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
     auto    getConnectorItem() noexcept -> QQuickItem*;

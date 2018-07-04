@@ -15,19 +15,19 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.9.4-blue.svg) |
+![](https://img.shields.io/badge/version-0.10.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
++ **CHANGELOG 20180704:** Complete refactoring of QuickQanava internal topology "backend" [GTpo](https://github.com/cneben/QuickQanava/tree/master/GTpo).
 + **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
-+ **CHANGELOG 20180527:** Fix major issues with grouping, see [CHANGELOG](https://github.com/cneben/QuickQanava/blob/master/CHANGELOG.md).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
 QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
-QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
+QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++7 (minimal required Qt version is **Qt 5.10**)
 
 + Project homepage: http://cneben.github.io/QuickQanava/topology/index.html
 
@@ -43,7 +43,7 @@ QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (mini
 
 For any questions, please contact: benoit@destrat.io
 
-QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
+QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background).
 
 ## QuickQanava Showcase
 
@@ -121,23 +121,17 @@ $ cmake --build .
 
 ## Roadmap / Changelog
 
-  - **v0.9.4:**	 
-	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
-		- [X] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-		- [X] Add support for standard library containers.
-		- [X] Increase test coverage.
-    - [X] Fix port remove issues.
-    - [X] Add full CMake support..    
-  - **v0.9.5:**	 
+  - **v0.10.0:**	 
+    - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
+    - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
+  - **v0.11.x:**	 
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-  - **v0.9.6:**
     - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
-  - **v1.0.0: Advanced edge visualization**	 
-    - GTpo (Configurable topology library):
-      - [ ] Redesign using adjacency matrix, immutable and full move semantic support.
-	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
+  - **v1.: Advanced edge visualization**
+    - [ ] Add better support for graph fine grained locking strategies.
+    - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
 
 License

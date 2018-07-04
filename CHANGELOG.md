@@ -1,6 +1,15 @@
 CHANGELOG
 ---------
 
+**20180704:**
+
+- Release 0.10.0 alpha.
+
+**20180628:**
+
+- Upgrade the topology backend to GTpo 3 (a totally refactored GTpo): no major API changes from a user POV.
+- Remove all restricted hyper edge support.
+
 **20180602:**
 
 - DOC: Fix 'grouping nodes' section and add a 'custom group' paragraph.

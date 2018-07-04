@@ -65,12 +65,12 @@ class PortItem;
  *
  * \nosubgrouping
  */
-class Graph : public gtpo::GenGraph< qan::GraphConfig >
+class Graph : public gtpo::graph<qan::Config>
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
 
-    using GTpoGraph = gtpo::GenGraph< qan::GraphConfig >;
+    using gtpo_graph_t = gtpo::graph<qan::Config>;
 
     friend class qan::Selectable;
 
@@ -315,12 +315,12 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
-    using Node              = typename GraphConfig::FinalNode;
-    using WeakNode          = GTpoGraph::WeakNode;
-    using SharedNode        = GTpoGraph::SharedNode;
+    using Node              = typename Config::final_node_t;
+    using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
+    using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
 
     //! Proxy for GTpo graph insertNode().
-    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return GTpoGraph::insertNode(node); }
+    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return gtpo_graph_t::insert_node(node); }
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -347,12 +347,12 @@ public:
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
-    Q_INVOKABLE int         getNodeCount() { return GTpoGraph::getNodeCount(); }
+    Q_INVOKABLE int         getNodeCount() { return gtpo_graph_t::get_node_count(); }
 
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
-    QAbstractItemModel*     getNodesModel() const { return getNodes().model(); }
+    QAbstractItemModel*     getNodesModel() const { return get_nodes().model(); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -374,9 +374,6 @@ public:
 
     //! Shortcut to gtpo::GenGraph<>::insertEdge().
     virtual qan::Edge*      insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent = nullptr );
-
-    //! Shortcut to gtpo::GenGraph<>::insertEdge().
-    virtual qan::Edge*      insertEdge( qan::Node* source, qan::Edge* destination, QQmlComponent* edgeComponent = nullptr );
 
     //! Bind an existing edge source to a visual out port from QML.
     Q_INVOKABLE void        bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort ) noexcept;
@@ -412,17 +409,17 @@ public:
 
 public:
     template < class Edge_t >
-    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr, QQmlComponent* edgeComponent = nullptr );
+    qan::Edge*              insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent = nullptr );
 private:
     /*! \brief Internal utility used to insert an existing edge \c edge to either a destination \c dstNode node OR edge \c dstEdge.
      *
      * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
      */
     bool                    configureEdge( qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
-                                           qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+                                           qan::Node& src, qan::Node* dstNode );
 public:
     template < class Edge_t >
-    qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge = nullptr );
+    qan::Edge*              insertNonVisualEdge( qan::Node& src, qan::Node* dstNode );
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
@@ -437,7 +434,7 @@ public:
 public:
     //! Access the list of edges with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )
-    QAbstractItemModel* getEdgesModel() const { return getEdges().model(); }
+    QAbstractItemModel* getEdgesModel() const { return get_edges().model(); }
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.
@@ -475,7 +472,7 @@ public:
     bool                    hasGroup( qan::Group* group ) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::GenGraph< qan::GraphConfig >::getGroupCount(); }
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::graph<qan::Config>::get_group_count(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
     Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);

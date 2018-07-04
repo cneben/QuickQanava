@@ -35,18 +35,18 @@
 #ifndef GTpo_h
 #define GTpo_h
 
-#include "./gtpoUtils.h"
-#include "./gtpoBehaviour.h"
-#include "./gtpoGenNode.h"
-#include "./gtpoGenGroup.h"
-#include "./gtpoGenEdge.h"
-#include "./gtpoGenGraph.h"
+#include "./utils.h"
+#include "./behaviour.h"
+#include "./node.h"
+#include "./group.h"
+#include "./edge.h"
+#include "./graph.h"
 
-#include "./gtpoGenNode.hpp"
-#include "./gtpoGenGroup.hpp"
-#include "./gtpoGenEdge.hpp"
-#include "./gtpoGenGraph.hpp"
+#include "./node.hpp"
+#include "./group.hpp"
+#include "./edge.hpp"
+#include "./graph.hpp"
 
-#include "./gtpoContainerAdapter.h"
+#include "./container_adapter.h"
 
 #endif // GTpo_h

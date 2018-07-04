@@ -408,6 +408,9 @@ signals:
 QML_DECLARE_TYPE( qan::Style )
 QML_DECLARE_TYPE( qan::NodeStyle )
 QML_DECLARE_TYPE( qan::EdgeStyle )
+Q_DECLARE_METATYPE( qan::NodeStyle::FillType )
+Q_DECLARE_METATYPE( qan::NodeStyle::EffectType )
+Q_DECLARE_METATYPE( qan::EdgeStyle::LineType )
 
 #endif // qanStyle_h
 

@@ -87,7 +87,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
         };
         connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
         node->setItem(nodeItem);
-        GTpoGraph::insertNode( node );
+        gtpo_graph_t::insert_node( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
         return nullptr; // node eventually destroyed by shared_ptr
@@ -109,7 +109,7 @@ qan::Node*  Graph::insertNonVisualNode()
     const auto node = std::make_shared<Node_t>();
     try {
         QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-        GTpoGraph::insertNode( node );
+        gtpo_graph_t::insert_node( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
         return nullptr; // node eventually destroyed by shared_ptr
@@ -124,10 +124,9 @@ qan::Node*  Graph::insertNonVisualNode()
 
 /* Graph Edge Management *///--------------------------------------------------
 template < class Edge_t >
-qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent )
 {
-    if ( dstNode == nullptr &&
-         dstEdge == nullptr )
+    if ( dstNode == nullptr )
         return nullptr;
     if ( edgeComponent == nullptr ) {
         const auto engine = qmlEngine(this);
@@ -150,8 +149,8 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
         auto edge = std::make_shared<Edge_t>();
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
         if ( configureEdge( *edge,  *edgeComponent, *style,
-                            src,    dstNode,        dstEdge ) ) {
-            GTpoGraph::insertEdge( edge );
+                            src,    dstNode ) ) {
+            gtpo_graph_t::insert_edge( edge );
             configuredEdge = edge.get();
         }
     } catch ( gtpo::bad_topology_error e ) {
@@ -165,20 +164,17 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* ds
 }
 
 template < class Edge_t >
-qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode, qan::Edge* dstEdge )
+qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode )
 {
-    if ( dstNode == nullptr &&
-         dstEdge == nullptr )
+    if ( dstNode == nullptr )
         return nullptr;
     auto edge = std::make_shared<Edge_t>();
     try {
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        edge->setSrc( src.shared_from_this() );
+        edge->set_src( src.shared_from_this() );
         if ( dstNode != nullptr )
-            edge->setDst( dstNode->shared_from_this() );
-        else if ( dstEdge != nullptr)
-            edge->setHDst( dstEdge->shared_from_this() );
-        GTpoGraph::insertEdge( edge );
+            edge->set_dst( dstNode->shared_from_this() );
+        gtpo_graph_t::insert_edge( edge );
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
         // FIXME
@@ -221,7 +217,7 @@ qan::Group* Graph::insertGroup()
                 groupItem->setGraph(this);
                 group->setItem(groupItem);
 
-                GTpoGraph::insertGroup( group );
+                gtpo_graph_t::insert_group( group );
 
                 auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
                     if ( groupItem != nullptr && groupItem->getGroup() != nullptr )

@@ -1,75 +1,80 @@
-# GTpo
+GTpo  (C++14 Topology library)
+===========================
 
-GTpo (Generic Topology) is the C++11 graph topology library used in QuickQanava2 graph visualization library. GTpo is available under the 
-MIT licence.
+GTpo is a C++14 directed graphs modelling library available under BSD license. GTpo is highly configurable at compile time, with no runtime cost for not configured features.
 
-GTpo is not a generic library in the Boot Graph Library sense, but rather an highly configurable graph modelling library designed for
-ease of use an maximum performances over "genericity". GTpo heavily rely on C++11/C++17 functionnalities to hide template complexity from the user. GTpo
-root namespace 'gtpo' contains generic code, user not interested in using specific containers could use one of the following namespaces for accessing a 
-"concrete GTpo library" directly:
-    
-* 'stpo': Direct use of GTpo with C++ standard library.
-* 'qtpo': Direct use of GTpo for Qt (used as a demonstration for using custom containers with GTpo).
-* QuickQanava2: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: ![QuickQanava2](https://github.com/cneben/QuickQanava)
 
-![GTpo data model schema](https://github.com/cneben/GTpo/blob/master/doc/graph-datamodel.png)
++ Project homepage: https://github.com/cneben/QuickQanava/GTpo    
+
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
 
 GTpo is **highly** alpha.
 
-+ Project homepage: http://www.qanava.org/
-+ Reference documentation: http://www.delia-strategie.fr/doc/gtpo/index.html
-+ Developper manual: https://github.com/cneben/GTpo/blob/master/doc/manual/manual.md
+* QuickQanava2: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: https://github.com/cneben/QuickQanava
 
-## Dependencies:
-* Protocol Buffer v3: https://developers.google.com/protocol-buffers/ and https://github.com/google/protobuf
-* Googletest: https://github.com/google/googletest/ 
-* PugiXML: https://github.com/zeux/pugixml
-	GTpo include code from PugiXML distributed under the MIT licence, copyright (c) 2006-2015 Arseny Kapoulkine.
-
-## Roadmap:
-
-- [X] Basic directed graph topology support with custom containers and property support.
-- [X] Topology serialization using Protocol Buffer v3.
-- [X] Basic GraphML support (OUT).
-- [X] Virtual behaviours/layouts/observers support.
-- [ ] Gephi GEXF file format IN/OUT support.
-- [ ] Complete asynchronous graph access with a read/write graph view MUTEX protection.
-- [ ] Advanced asynchronous graph access with Intel TBD thread safe containers.
-- [X] Static behaviours/layouts/observers support (C++14 only).
-- [ ] Graph search algorithms (Djikstra/A-Star).
+Installation
+------------------
 
 ## Installation:
-GTpo use _qmake_ as its main build configuration system, dependencies are configured in the root directory _common.pri_ file:
 
-~~~~~~~~~~~~~{.cpp}
-# Comment if you do not intent to serialize graph to Protocol Buffer
-DEFINES     += "GTPO_HAVE_PROTOCOL_BUFFER"
+GTpo is header only, and can be used with either _qmake_ or _CMake_.
 
-INCLUDEPATH += c:/path/to/protobuf3/src
-PROTOCOL_BUFFER_LIBDIR_RELEASE = C:/path/to/protobuf3/cmake/build/Release
-PROTOCOL_BUFFER_LIBDIR_DEBUG = C:/path/to/protobuf3/cmake/build/Debug
-~~~~~~~~~~~~~
-
-The simplest way of using GTpo is to statically integrate the library as a GIT subtree in your own project:
-
-~~~~~~~~~~~~~{.cpp}
-// Install GTpo as a remote repository:
-git remote add GTpo https://github.com/cneben/GTpo
-
-// Then in your project root, use the following command:
-git subtree add --prefix=./GTpo --squash GTpo master 
-~~~~~~~~~~~~~
-
-Once GIT has download the whole subtree, GTpo could be included directly in your main
+The recommended way of using GTpo is to statically integrate the library as a GIT submodule in your own project. GTpo could then be included directly in your main
 qmake .pro file:
 
 ~~~~~~~~~~~~~{.cpp}
-# in your project main .pro qmake configuration file
-include(./GTpo/common.pri)
+# project main .pro qmake configuration file
 include(./GTpo/src/gtpo.pri)
 ~~~~~~~~~~~~~
 
-## Screenshots:
-![GTpo in QuickQanava2](https://github.com/cneben/QuickQanava/blob/master/doc/samples/topology.png)
+## Dependencies
 
+* **googletest / googlemock** (only for building tests): https://github.com/google/googletest/ 
+
+Data model
+------------------
+
+## Adjacency lists
+
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
+
+  Memory in GTpo is managed with `std::shared_ptr` and `std::weak_ptr`, using/typedef definitions in graph types are prefixed with either *shared_* or *weak_* according
+to the underlying concrete container.
+
+## Graph static configuration
+
+
+
+Behaviours
+-------------
+
+  Behaviour in GTpo are the preferred way to observe changes in graph topology. Behaviours could be either *static* or *dynamic*, static behaviours are defined at compile time by modifying `gtpo::config` definition, wheras dynamic behaviours could be added or removed at runtime (with a virtual cost).
+
++ **Static behaviours**: Static behaviour 
+
++ **Dynamic behaviours**: FIXME.
+
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-behaviours-class.png)
+
+
+ Behaviours could be disabled by calling `gtpo::behaviour<>::disable()` method, disabling all behaviours might be usefull before calling `gtpo::Graph<>::clear()` method or before serializing the graph in or out.
+ 
+ 
+## Group topology
+
+Edges and adjacent edges of a group could be searched with `gtpo::group<>::get_edges()` and `gtpo::group<>::get_adjacent_edges()`. Adjacent edge set won't be initialized until the `gtpo::graph_group_adjacent_edges_behaviour` and `gtpo::group_adjacent_edges_behaviour` static behaviour has been configured in `gtpo::config`.
+
+For example: edges = **{** *e4*, *e5* **}**  and adjacent_edges = **{** *e2*, *e3*, *e4*, *e5* **}** :
+
+![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-topo-group_adjacent_edges.png)
+
+Minimum static behaviour configuration to enable group adjacent edge support is the following (enabled in gtpo::default_config): 
+
+~~~~~~~~~~~~~{.cpp}
+struct my_config : public gtpo::config<my_config>
+{
+    using graph_behaviours = std::tuple< gtpo::graph_group_adjacent_edges_behaviour<my_config> >; 
+    using group_behaviours = std::tuple< gtpo::group_adjacent_edges_behaviour<my_config> >; 
+};
+~~~~~~~~~~~~~
 

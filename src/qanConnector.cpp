@@ -104,14 +104,12 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
 
     const auto dstNodeItem = qobject_cast<qan::NodeItem*>(target);
     const auto dstPortItem = qobject_cast<qan::PortItem*>(target);
-    const auto dstEdgeItem = qobject_cast<qan::EdgeItem*>(target);
 
     const auto srcPortItem = _sourcePort;
     const auto srcNode = _sourceNode ? _sourceNode.data() :
                                        _sourcePort ? _sourcePort->getNode() : nullptr;
     const auto dstNode = dstNodeItem ? dstNodeItem->getNode() :
                                        dstPortItem ? dstPortItem->getNode() : nullptr;
-    const auto dstEdge = dstEdgeItem ? dstEdgeItem->getEdge() : nullptr;
 
     qan::Edge* createdEdge = nullptr;   // Result created edge
     if ( srcNode != nullptr &&          //// Regular edge node to node connection //////////
@@ -151,14 +149,6 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
             }
         } else
             emit requestEdgeCreation(srcNode, dstNode);
-    } else if ( srcNode != nullptr &&   //// Hyper edge node to edge connection ///////////
-                dstEdge != nullptr &&
-                getHEdgeEnabled() ) {
-        if ( !dstEdgeItem->isHyperEdge() ) {            // Do not create an hyper edge on an hyper edge
-            if ( getCreateDefaultEdge() )
-                createdEdge = _graph->insertEdge( srcNode, dstEdge );
-            else emit requestEdgeCreation(srcNode, dstEdge);
-        }
     }
     if ( createdEdge ) // Notify user of the edge creation
         emit edgeInserted( createdEdge );
@@ -183,15 +173,6 @@ auto    Connector::setCreateDefaultEdge(bool createDefaultEdge) noexcept -> void
     if ( createDefaultEdge != _createDefaultEdge ) {
         _createDefaultEdge = createDefaultEdge;
         emit createDefaultEdgeChanged();
-    }
-}
-
-auto    Connector::getHEdgeEnabled() const noexcept -> bool { return _hEdgeEnabled; }
-auto    Connector::setHEdgeEnabled(bool hEdgeEnabled) noexcept -> void
-{
-    if ( hEdgeEnabled != _hEdgeEnabled ) {
-        _hEdgeEnabled = hEdgeEnabled;
-        emit hEdgeEnabledChanged();
     }
 }
 

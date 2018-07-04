@@ -87,8 +87,6 @@ auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void {
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
-bool    EdgeItem::isHyperEdge() const noexcept { return ( _edge ? _edge->getHDst().lock() != nullptr : false ); }
-
 auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
 {
     if ( source == nullptr )
@@ -137,14 +135,6 @@ auto    EdgeItem::setDestinationItem( qan::NodeItem* destination ) -> void
     configureDestinationItem( destination );
     _destinationItem = destination;
     emit destinationItemChanged();
-    updateItem();
-}
-
-void    EdgeItem::setDestinationEdge( qan::EdgeItem* destination )
-{
-    configureDestinationItem( destination );
-    _destinationEdge = destination;
-    emit destinationEdgeChanged();
     updateItem();
 }
 
@@ -231,7 +221,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         // _destinationItem and _destinationEdge can't be _both_ nullptr
     if ( !_sourceItem )
         return EdgeItem::GeometryCache{};
-    if ( !_sourceItem && !_destinationEdge )
+    if ( !_sourceItem )
         return EdgeItem::GeometryCache{};
 
     EdgeItem::GeometryCache cache{};
@@ -253,7 +243,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     if(  srcItem != nullptr ) {
         const auto srcNode = static_cast<qan::Node*>(_sourceItem->getNode());
         if ( srcNode != nullptr ) {
-            const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->getGroup().lock().get());
+            const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group().lock().get());
             if ( srcNodeGroup != nullptr )
                 srcGroupItem = srcNodeGroup->getItem();
         }
@@ -262,7 +252,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     qan::NodeItem*  dstNodeItem = qobject_cast<qan::NodeItem*>(_destinationItem);
     if ( dstNodeItem == nullptr &&
          _edge ) {
-        qan::Node*  dstNode = static_cast< qan::Node* >( _edge->getDst().lock().get() );
+        qan::Node*  dstNode = static_cast< qan::Node* >( _edge->get_dst().lock().get() );
         if ( dstNode != nullptr )
             dstNodeItem = dstNode->getItem();
     }
@@ -271,18 +261,13 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     qan::GroupItem* dstGroupItem = nullptr;
     if ( dstNodeItem != nullptr &&
          dstNodeItem->getNode() != nullptr ) {
-        auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->getGroup().lock().get() );
+        auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->get_group().lock().get() );
         if ( dstNodeGroup )
             dstGroupItem = dstNodeGroup->getItem();
     }
 
-    // Initialize dstEdgeItem
-    qan::EdgeItem*  dstEdgeItem = _edge &&
-                                  _edge->getHDst().lock() ? qobject_cast<qan::EdgeItem*>(_edge->getHDst().lock().get()) : nullptr;
-
     // Finally, generate dstItem wich either dstNodeItem or dstEdgeItem
-    const QQuickItem* dstItem = ( dstNodeItem != nullptr ? qobject_cast<QQuickItem*>(dstNodeItem) :
-                                                           qobject_cast<QQuickItem*>(dstEdgeItem) );
+    const QQuickItem* dstItem = dstNodeItem;
 
     // Check that we have a valid source and destination Quick Item
     if ( srcItem == nullptr || dstItem == nullptr )
@@ -305,9 +290,6 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
             int p = 0;
             for ( const auto& point: dstNodeItem->getBoundingShape() )
                 cache.dstBs[p++] = dstNodeItem->mapToItem( graphContainerItem, point );
-        } else if ( dstEdgeItem != nullptr ) {
-            // FIXME: generate a dump polygon around destination edge center
-            qWarning() << "FIXME: edge does not support destination edge";
         }
     }
 
@@ -881,7 +863,8 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
 {
     if ( style != _style ) {
         if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, 0, this, 0 );
+            QObject::disconnect( _style, nullptr,
+                                 this,   nullptr );
         _style = style;
         if ( _style ) {
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction

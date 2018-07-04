@@ -169,5 +169,7 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::PortItem )
+Q_DECLARE_METATYPE( qan::PortItem::Type )
+Q_DECLARE_METATYPE( qan::PortItem::Multiplicity )
 
 #endif // qanPortItem_h

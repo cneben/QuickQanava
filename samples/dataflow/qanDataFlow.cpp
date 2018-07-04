@@ -40,6 +40,7 @@ namespace qan { // ::qan
 
 void    FlowNodeBehaviour::inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept
 {
+    Q_UNUSED(edge);
     const auto inFlowNode = qobject_cast<qan::FlowNode*>(&inNode);
     const auto flowNodeHost = qobject_cast<qan::FlowNode*>(getHost());
     if ( inFlowNode != nullptr &&
@@ -53,7 +54,7 @@ void    FlowNodeBehaviour::inNodeInserted( qan::Node& inNode, qan::Edge& edge ) 
 
 void    FlowNodeBehaviour::inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) noexcept
 {
-
+    Q_UNUSED(inNode); Q_UNUSED(edge);
 }
 
 QQmlComponent*  FlowNode::delegate(QQmlEngine& engine) noexcept
@@ -104,7 +105,7 @@ void    OperationNode::inNodeOutputChanged()
     FlowNode::inNodeOutputChanged();
     qreal o{0.}; // For the example sake we do not deal with overflow
     bool oIsInitialized{false};
-    for ( const auto& inNode : getInNodes() ) {
+    for ( const auto& inNode : get_in_nodes() ) {
         const auto inFlowNode = qobject_cast<qan::FlowNode*>(inNode.lock().get());
         if ( inFlowNode == nullptr ||
              !inFlowNode->getOutput().isValid())
@@ -171,14 +172,14 @@ void    TintNode::inNodeOutputChanged()
 {
     FlowNode::inNodeOutputChanged();
     qDebug() << "TintNode::inNodeOutputValueChanged()";
-    if ( getInNodes().size() != 3 )
+    if ( get_in_nodes().size() != 3 )
         return;
 
     // FIXME: Do not find port item by index, but by id with qan::NodeItem::findPort()...
 
-    const auto inFactorNode = qobject_cast<qan::FlowNode*>(getInNodes().at(0).lock().get());
-    const auto inColorNode = qobject_cast<qan::FlowNode*>(getInNodes().at(1).lock().get());
-    const auto inImageNode = qobject_cast<qan::FlowNode*>(getInNodes().at(2).lock().get());
+    const auto inFactorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(0).lock().get());
+    const auto inColorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(1).lock().get());
+    const auto inImageNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(2).lock().get());
     qDebug() << "inFactorNode=" << inFactorNode << "\tinColorNode=" << inColorNode << "\tinImageNode=" << inImageNode;
     if ( inFactorNode == nullptr ||
          inColorNode == nullptr ||

@@ -32,8 +32,7 @@
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanNode_h
-#define qanNode_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -62,7 +61,7 @@ class PortItem;
  *
  * \nosubgrouping
 */
-class Node : public gtpo::GenNode< qan::GraphConfig >
+class Node : public gtpo::node<qan::Config>
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
@@ -75,7 +74,7 @@ public:
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
-    //! Shortcut to gtpo::GenNode<>::getGraph().
+    //! Shortcut to gtpo::node<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
@@ -119,17 +118,17 @@ public:
 public:
     //! Read-only abstract item model of this node in nodes.
     Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
-    QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( getInNodes().model() ) ); }
+    QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( get_in_nodes().model() ) ); }
 
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( getOutNodes().model() ) ); }
+    QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( get_out_nodes().model() ) ); }
 
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::GenNode< qan::GraphConfig >::getOutEdges().model() ) ); }
+    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) ); }
     //@}
     //-------------------------------------------------------------------------
 
@@ -156,9 +155,9 @@ signals:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::Group* group READ qmlGetGroup FINAL )
+    Q_PROPERTY( qan::Group* group READ getGroup FINAL )
 protected:
-    inline qan::Group*  qmlGetGroup() noexcept { return getGroup().lock().get(); }
+    inline qan::Group*  getGroup() noexcept { return get_group().lock().get(); }
     //@}
     //-------------------------------------------------------------------------
 };
@@ -166,5 +165,3 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Node )
-
-#endif // qanNode_h
