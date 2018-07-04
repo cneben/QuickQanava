@@ -370,24 +370,24 @@ public:
     //! Graph main edges container.
     inline auto     get_groups() const noexcept -> const shared_groups_t& { return _groups; }
 
-    /*! \brief Insert an existing node \c weakNode in group \c weakGroup.
+    /*! \brief Insert an existing node \c node in group \c group.
      *
-     * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
+     * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
      * node_inserted() will be called.
      *
-     * \note \c weakNode getGroup() will return \c weakGroup if grouping succeed.
+     * \note \c weakNode get_group() will return \c group if grouping succeed.
      */
-    auto            group_node( weak_node_t weakNode, weak_group_t weakGroup) noexcept(false) -> void
+    auto            group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void
     {
-        auto group = weakGroup.lock();
-        gtpo::assert_throw( group != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a node into an expired group." );
+        auto group_ptr = group.lock();
+        gtpo::assert_throw( group_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a node into an expired group." );
 
-        auto node = weakNode.lock();
-        gtpo::assert_throw( node != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
+        auto node_ptr = node.lock();
+        gtpo::assert_throw( node_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
 
-        node->set_group( weakGroup );
-        config_t::template container_adapter<weak_nodes_t>::insert( weakNode, group->_nodes );
-        group->notify_node_inserted( weakNode );
+        node_ptr->set_group( group );
+        config_t::template container_adapter<weak_nodes_t>::insert( node, group_ptr->_nodes );
+        group_ptr->notify_node_inserted( node );
     }
     //! \copydoc group_node()
     auto            group_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void
@@ -405,7 +405,7 @@ public:
 
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *
-     * \note If a behaviour has been installed with gtpo::group::addgroup_behaviour(), behaviour's
+     * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
      * node_removed() will be called.
      *
      * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
@@ -418,7 +418,7 @@ public:
         auto node = weakNode.lock();
         gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
 
-        gtpo::assert_throw( node->getGroup().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
+        gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
 
         config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
         group->notify_node_removed( weakNode );
