@@ -17,6 +17,7 @@ set (gtpo_header_files
     src/group_behaviour.hpp
     src/group.h
     src/group.hpp
+    src/GTpo
     src/GTpo.h
     src/node_behaviour.h
     src/node_behaviour.hpp
