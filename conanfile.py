@@ -10,7 +10,7 @@ class QuickQanavaConan(ConanFile):
     license = "BSD License 2.0, Copyright (c) 2018 Karl Wallner <kwallner@mail.de>"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    description = "Date & Time Flow: Utilities Library"
+    description = "QuickQanava: display graphs and relational content in a Qt application"
     author = "Karl Wallner <kwallner@mail.de>"
     url = 'https://github.com/kwallner/QuickQanava'
     scm = {
