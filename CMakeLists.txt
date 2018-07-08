@@ -1,7 +1,16 @@
-
 cmake_minimum_required(VERSION 3.5.0)
 
 project(QuickQanava VERSION 0.9.4 LANGUAGES CXX)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Conan.io
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Qml REQUIRED)
+find_package(Qt5Quick REQUIRED)
+find_package(Qt5QuickControls2 REQUIRED)
 
 add_subdirectory(GTpo)
 add_subdirectory(QuickContainers)
@@ -22,3 +31,5 @@ if (${BUILD_SAMPLES})
     #add_subdirectory(samples/dataflow)
     #add_subdirectory(samples/topology)
 endif()
+
+add_subdirectory(exports)
