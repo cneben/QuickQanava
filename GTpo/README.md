@@ -1,7 +1,9 @@
 GTpo  (C++14 Topology library)
 ===========================
 
-GTpo is a C++14 directed graphs modelling library available under BSD license. GTpo is highly configurable at compile time, with no runtime cost for not configured features.
+**This page is WIP, GTpo is used internally in QuickQanava and is not ready for general use**
+
+GTpo is a C++14 directed graphs modelling library available under BSD license. GTpo is highly configurable at compile time, with no runtime cost for unconfigured features.
 
 
 + Project homepage: https://github.com/cneben/QuickQanava/GTpo    
@@ -14,8 +16,6 @@ GTpo is **highly** alpha.
 
 Installation
 ------------------
-
-## Installation:
 
 GTpo is header only, and can be used with either _qmake_ or _CMake_.
 
@@ -44,6 +44,35 @@ to the underlying concrete container.
 ## Graph static configuration
 
 
+Traversal (`gtpo/algorithm.h`)
+-------------
+
+```cpp
+#include <GTpo>
+
+gtpo::graph<> g;
+g.insert_node();
+for (const auto n : g) { /* ... */ }
+//or
+for (auto n : g) { /* ... */ }
+```
+
+**Note:** _all_ recursive functions are postfixed with *'_rec'*, there is no overflow protection for large deep graphs. Alternative non recursive stack based implementation are available for most functions (no postfix).
+
+- `gtpo::depth_rec()`: Return graph depth.
+- `gtpo::linearize_dfs_rec()`: Return a vector of graph nodes linearized in DFS order.
+- `gtpo::levelize_dfs_rec()`: Return a vector of graph nodes ordered level by level in DFS order. Returned vector size equal graph depth, with a vector of ordered nodes for each level.
+
+These traversal functions are specialized for trees:
+
+- `gtpo::tree_depth_rec()`: Return tree depth.
+- `gtpo::linearize_tree_dfs()` / `gtpo::linearize_tree_dfs_rec()`: Return a vector of tree nodes linearized in DFS order.
+- `gtpo::levelize_tree_dfs_rec()`: Return a vector of tree nodes ordered level by level in DFS order. Returned vector size equal tree depth, with a vector of ordered nodes for each level.
+
+Calling a *'_tree'* method is often faster, but using it against a non-tree graph might lead to overflow or infinite recursion. Following methods could be used to check specific graph topological properties:
+
+- `gtp::is_dag_rec()` / `gtp::is_dag()`  (O(N)): Return true if graph is a directed acyclic graph.
+- `gtp::is_tree_rec()` / `gtp::is_tree()` (O(N)): Return true if graph is a tree (or a forest).
 
 Behaviours
 -------------

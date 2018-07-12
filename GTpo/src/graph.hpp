@@ -386,6 +386,65 @@ auto    graph<config_t>::has_group( const weak_group_t& group ) const -> bool
                                         [=](const weak_group_t& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
     return groupIter != _groups.end();
 }
+
+template < class config_t >
+auto    graph<config_t>::group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void
+{
+    auto group_ptr = group.lock();
+    gtpo::assert_throw( group_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a node into an expired group." );
+
+    auto node_ptr = node.lock();
+    gtpo::assert_throw( node_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
+
+    node_ptr->set_group( group );
+    config_t::template container_adapter<weak_nodes_t>::insert( node, group_ptr->_nodes );
+    group_ptr->notify_node_inserted( node );
+}
+
+template < class config_t >
+auto    graph<config_t>::group_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void
+{
+    auto group{ weakGroup.lock() };
+    gtpo::assert_throw( group != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a group into an expired group." );
+
+    auto subGroup{ weakGroupNode.lock() };
+    gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired group into a group." );
+
+    shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
+    group_node( weak_node_t{subGroupNode}, weakGroup );
+    group->notify_group_inserted( weakGroupNode );
+}
+
+template < class config_t >
+auto    graph<config_t>::ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void
+{
+    auto group = weakGroup.lock();
+    gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
+
+    auto node = weakNode.lock();
+    gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
+
+    gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
+
+    config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
+    group->notify_node_removed( weakNode );
+    node->set_group( weak_group_t{} );  // Warning: group must remain valid while notify_node_removed() is called
+}
+
+template < class config_t >
+auto    graph<config_t>::ungroup_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void
+{
+    auto group{ weakGroup.lock() };
+    gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
+
+    auto subGroup{ weakGroupNode.lock() };
+    gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired group from a group." );
+
+    shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
+    group->notify_group_removed( weakGroupNode );
+    ungroup_node( weak_node_t{subGroupNode}, weakGroup );
+}
+
 //-----------------------------------------------------------------------------
 
 } // ::gtpo

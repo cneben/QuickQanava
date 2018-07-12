@@ -39,39 +39,487 @@
 
 // GTpo headers
 #include <GTpo>
+#include <../src/algorithm.h>
 
 // Google Test
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+
 //-----------------------------------------------------------------------------
-// Graph DFS linearization
+// Graph is_dag()
 //-----------------------------------------------------------------------------
 
-TEST(GTpoGraph, linearize_dfs_rec)
+TEST(GTpoGraph, is_dag_rec)
 {
-    // Inserting a node should increase node count and root node count
-    gtpo::graph<> g;
-    auto nc = g.get_node_count();
-    auto rnc = g.get_root_node_count();
-    EXPECT_EQ( nc, 0);
-    EXPECT_EQ( rnc, 0);
-    g.create_node();
-    EXPECT_EQ( g.get_node_count(), nc + 1 );
-    EXPECT_EQ( g.get_root_node_count(), rnc + 1 );
-    g.clear();
+    { // Basic positive tree test (empty graph)
+        gtpo::graph<> g;
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+
+        auto n1 = g.create_node();
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+
+        g.clear();
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+    }
+
+    { // Basic positive test
+        // g = { [n1, n2, n3], [(n1 -> n2), (n1 -> n3)] }
+        // Expect: true
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n1, n2);
+        g.create_edge(n1, n3);
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+    }
+
+    {   // g = { [n1, n2, n3], [(n1 -> n3), (n2 -> n3)] }
+        // Expect: true
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n1, n3);
+        g.create_edge(n2, n3);
+        EXPECT_TRUE(gtpo::is_dag_rec(g));
+    }
+
+    { // Circuit == non DAG
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        g.create_edge(n2, n1);
+        EXPECT_FALSE(gtpo::is_tree_rec(g));
+    }
 }
 
-TEST(GTpoGraph, levelize_dfs_rec)
+
+//-----------------------------------------------------------------------------
+// Graph is_tree()
+//-----------------------------------------------------------------------------
+
+TEST(GTpoGraph, is_tree_rec)
 {
-    // Inserting a node should increase node count and root node count
-    gtpo::graph<> g;
-    auto nc = g.get_node_count();
-    auto rnc = g.get_root_node_count();
-    EXPECT_EQ( nc, 0);
-    EXPECT_EQ( rnc, 0);
-    g.create_node();
-    EXPECT_EQ( g.get_node_count(), nc + 1 );
-    EXPECT_EQ( g.get_root_node_count(), rnc + 1 );
-    g.clear();
+    { // Basic positive tree test (empty graph)
+        gtpo::graph<> g;
+        EXPECT_TRUE(gtpo::is_tree_rec(g));
+
+        auto n1 = g.create_node();
+        EXPECT_TRUE(gtpo::is_tree_rec(g));
+
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        EXPECT_TRUE(gtpo::is_tree_rec(g));
+
+        g.clear();
+        EXPECT_TRUE(gtpo::is_tree_rec(g));
+    }
+
+    { // Basic positive test
+        // g = { [n1, n2, n3], [(n1 -> n2), (n1 -> n3)] }
+        // Expect: true
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n1, n2);
+        g.create_edge(n1, n3);
+        EXPECT_TRUE(gtpo::is_tree_rec(g));
+    }
+
+    { // Basic negative test (n
+        // g = { [n1, n2, n3], [(n1 -> n3), (n2 -> n3)] }
+        // Expect: false since n3 in degree is > 1
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n1, n3);
+        g.create_edge(n2, n3);
+        EXPECT_FALSE(gtpo::is_tree_rec(g));
+    }
+
+    { // Basic negative test (graph with degree 0 and more circuits)
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        g.create_edge(n2, n1);
+        EXPECT_FALSE(gtpo::is_tree_rec(g));
+    }
 }
+
+//-----------------------------------------------------------------------------
+// Graph recursive traversal algorithms
+//-----------------------------------------------------------------------------
+
+TEST(GTpoGraph, tree_depth_rec)
+{
+    gtpo::graph<> g;
+    EXPECT_EQ(gtpo::tree_depth_rec(g), 0);
+
+    auto n1 = g.create_node();
+    EXPECT_EQ(gtpo::tree_depth_rec(g), 1);
+
+    auto n2 = g.create_node();
+    g.create_edge(n1, n2);
+    EXPECT_EQ(gtpo::tree_depth_rec(g), 2);
+
+    g.clear();
+    EXPECT_EQ(gtpo::tree_depth_rec(g), 0);
+}
+
+TEST(GTpoGraph, linearize_tree_dfs_rec)
+{
+    {
+        gtpo::graph<> g;
+        auto r = linearize_tree_dfs_rec(g);
+        EXPECT_EQ(r.size(), 0);
+    }
+
+    {
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto r = linearize_tree_dfs_rec(g);
+        EXPECT_EQ(r.size(), 1);
+    }
+
+    {
+        gtpo::graph<> g;
+        // g = {n1, (n2 -> n3)}
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n2, n3);
+        auto r = linearize_tree_dfs_rec(g);
+        ASSERT_EQ(r.size(), 3);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n2.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n3.lock().get());
+    }
+
+    {
+        gtpo::graph<> g;
+        // g = {(n1 -> n3), (n4 -> n2)}
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n3);
+        g.create_edge(n4, n2);
+        auto r = linearize_tree_dfs_rec(g);
+        ASSERT_EQ(r.size(), 4);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n3.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n4.lock().get());
+        EXPECT_EQ(r[3].lock().get(), n2.lock().get());
+    }
+}
+
+TEST(GTpoGraph, levelize_tree_dfs_rec)
+{
+    {   // Test empty graph, expecting empty result vector
+            // g = {[], []}
+            // Expect: r = []
+        gtpo::graph<> g;
+        auto r = gtpo::levelize_tree_dfs_rec(g);
+        EXPECT_EQ( r.size(), 0);
+    }
+
+    {   // Test with one node (level 1) graph
+            // g = {[n1], []}
+            // Expect: r = [ [n1] ]
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto r = gtpo::levelize_tree_dfs_rec(g);
+        ASSERT_EQ( r.size(), 1);
+        ASSERT_EQ( r[0].size(), 1);
+        EXPECT_EQ( r[0][0].lock().get(), n1.lock().get());
+    }
+
+    {   // Test with level 1 graph with multiple nodes
+            // g = {[n1, n2, n3], []}
+            // Expect: r = [ [ n1, n2, n3] ]
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto r = gtpo::levelize_tree_dfs_rec(g);
+        ASSERT_EQ( r.size(), 1);
+        ASSERT_EQ( r[0].size(), 3);
+        EXPECT_EQ( r[0][0].lock().get(), n1.lock().get());
+        EXPECT_EQ( r[0][1].lock().get(), n2.lock().get());
+        EXPECT_EQ( r[0][2].lock().get(), n3.lock().get());
+    }
+
+    {   // Test with level 2 graph with 2 nodes
+            // g = {[n1, n2], [(n1 -> n2)]}
+            // Expect: r = [ [n1], [n2] ]
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        auto r = gtpo::levelize_tree_dfs_rec(g);
+        ASSERT_EQ( r.size(), 2);
+        ASSERT_EQ( r[0].size(), 1);
+        ASSERT_EQ( r[1].size(), 1);
+        EXPECT_EQ( r[0][0].lock().get(), n1.lock().get());
+        EXPECT_EQ( r[1][0].lock().get(), n2.lock().get());
+    }
+
+    {   // Test with level 2 graph with multiple nodes
+            // g = {[n1, n3, n4, n2], [(n3 -> n4)]}
+            // Expect: r = [ [n1, n3, n2], [n4] ]
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        auto n2 = g.create_node();
+        g.create_edge(n3, n4);
+        auto r = gtpo::levelize_tree_dfs_rec(g);
+        ASSERT_EQ( r.size(), 2);
+        ASSERT_EQ( r[0].size(), 3);
+        ASSERT_EQ( r[1].size(), 1);
+        EXPECT_EQ( r[0][1].lock().get(), n3.lock().get());
+        EXPECT_EQ( r[1][0].lock().get(), n4.lock().get());
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+// Graph (iterative) BFS iterator
+//-----------------------------------------------------------------------------
+
+TEST(GTpoGraph, linearize_dfs)
+{
+    {
+        gtpo::graph<> g;
+        auto r = linearize_dfs(g);
+        EXPECT_EQ(r.size(), 0);
+    }
+
+    {
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto r = linearize_dfs(g);
+        EXPECT_EQ(r.size(), 1);
+    }
+
+    {
+        gtpo::graph<> g;
+        // g = {[n1, n2, n3], [(n2 -> n3)] }
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n2, n3);
+        auto r = linearize_dfs(g);
+        ASSERT_EQ(r.size(), 3);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n2.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n3.lock().get());
+    }
+
+    {
+        gtpo::graph<> g;
+        // g = {[n1, n2, n3, n4], [(n1 -> n3), (n4 -> n2)]}
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n3);
+        g.create_edge(n4, n2);
+        auto r = linearize_dfs(g);
+        ASSERT_EQ(r.size(), 4);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n3.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n4.lock().get());
+        EXPECT_EQ(r[3].lock().get(), n2.lock().get());
+    }
+
+    {
+        // Depth first ...
+        // g = {[n1, n2, n3, n4],
+        //      [(n1 -> n2), (n2 -> n3), (n1, n4)]}
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n4);
+        g.create_edge(n1, n2);
+        g.create_edge(n2, n3);
+        auto r = linearize_dfs(g);
+        ASSERT_TRUE(r.size() == 4);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n2.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n3.lock().get());
+        EXPECT_EQ(r[3].lock().get(), n4.lock().get());
+    }
+}
+
+TEST(GTpoGraph, begin_end_dfs)
+{
+    {
+        gtpo::graph<> g;
+        auto it = gtpo::begin_dfs(g);
+        auto it_end = gtpo::end_dfs(g);
+
+        // begoin_dfs() has been called on an empty graph: it should be an end() iterator and equals gtpo::end_dfs()...
+        EXPECT_TRUE(it == it_end);
+        EXPECT_FALSE(it != it_end);
+    }
+
+    {
+        gtpo::graph<> g;
+        g.create_node();
+        auto it = gtpo::begin_dfs(g);
+        auto it_end = gtpo::end_dfs(g);
+
+        // begin iterator should not equal end iterator since graph is not empty...
+        EXPECT_FALSE(it == it_end);
+        EXPECT_TRUE(it != it_end);
+    }
+}
+
+TEST(GTpoGraph, dfs_iterator)
+{
+    {
+        gtpo::graph<> g;
+        auto n = g.create_node();
+        auto it = gtpo::begin_dfs(g);
+
+        auto ni = *it;
+        EXPECT_EQ(ni.lock().get(), n.lock().get());
+
+        auto it_end = gtpo::end_dfs(g);
+        EXPECT_TRUE(it != it_end);
+        ++it;
+        EXPECT_TRUE(it == it_end);
+    }
+
+    using weak_nodes_t = std::vector<typename gtpo::graph<>::weak_node_t>;
+    const auto iterate_dfs = [](auto& graph) -> weak_nodes_t {
+        weak_nodes_t r;
+        for ( auto dfs_iter = gtpo::begin_dfs(graph);
+              dfs_iter != gtpo::end_dfs(graph);
+              ++dfs_iter ) {
+            r.push_back(*dfs_iter);
+        }
+        return r;
+    };
+
+    const auto compare_vector_of_weak = [](auto& a, auto& b) -> bool {
+        if ( a.size() != b.size() )
+            return false;
+        auto bit = b.begin();
+        for ( const auto& ait : a ) {
+            const auto a_ptr = ait.lock();
+            const auto b_ptr = (*bit).lock();
+            if ( a_ptr.get() != b_ptr.get() )
+                return false;
+            ++bit;
+        }
+        return true;
+    };
+
+    {   // Linear graph
+        // g = {[n1, n2, n3], []}
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto r = linearize_dfs(g);
+        auto r2 = iterate_dfs(g);
+        ASSERT_TRUE(compare_vector_of_weak(r, r2));
+    }
+
+    {   // Simple tree
+        // g = {[n1, n2], [(n1 -> n2)] }
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        g.create_edge(n1, n2);
+        auto r = linearize_dfs(g);
+        auto r2 = iterate_dfs(g);
+        ASSERT_TRUE(compare_vector_of_weak(r, r2));
+    }
+
+    {   // Simple forest
+        // g = {[n1, n2, n3], [(n2 -> n3)] }
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        g.create_edge(n2, n3);
+        auto r = linearize_dfs(g);
+        auto r2 = iterate_dfs(g);
+        ASSERT_TRUE(compare_vector_of_weak(r, r2));
+    }
+
+    {
+        // "Complex" forest
+        // g = {[n1, n2, n3, n4], [(n1 -> n3), (n4 -> n2)]}
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n3);
+        g.create_edge(n4, n2);
+        auto r = linearize_dfs(g);
+        auto r2 = iterate_dfs(g);
+        EXPECT_TRUE(compare_vector_of_weak(r, r2));
+    }
+
+    {
+        // Depth first ...
+        // g = {[n1, n2, n3, n4],
+        //      [(n1 -> n2), (n2 -> n3), (n1, n4)]}
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n4);
+        g.create_edge(n1, n2);
+        g.create_edge(n2, n3);
+        auto r = iterate_dfs(g);
+        ASSERT_TRUE(r.size() == 4);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n2.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n3.lock().get());
+        EXPECT_EQ(r[3].lock().get(), n4.lock().get());
+    }
+
+    {
+        // DAG
+        // g = {[n1, n2, n3, n4],
+        //      [(n1 -> n2), (n1 -> n3), (n2, n4), (n3, n4), (n1, n4)]}
+        gtpo::graph<> g;
+        auto n1 = g.create_node();
+        auto n2 = g.create_node();
+        auto n3 = g.create_node();
+        auto n4 = g.create_node();
+        g.create_edge(n1, n2);
+        g.create_edge(n1, n4);
+        g.create_edge(n1, n3);
+        g.create_edge(n2, n4);
+        g.create_edge(n3, n4);
+        auto r = iterate_dfs(g);
+        ASSERT_TRUE(r.size() == 4);
+        EXPECT_EQ(r[0].lock().get(), n1.lock().get());
+        EXPECT_EQ(r[1].lock().get(), n3.lock().get());
+        EXPECT_EQ(r[2].lock().get(), n4.lock().get());
+        EXPECT_EQ(r[3].lock().get(), n2.lock().get());
+    }
+
+    // FIXME: Test a non DAG...
+}
+
