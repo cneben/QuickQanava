@@ -1,7 +1,7 @@
 GTpo  (C++14 Topology library)
 ===========================
 
-**This page is WIP, GTpo is used internally in QuickQanava and is not ready for general use**
+:heavy_exclamation_mark: **This page is WIP, GTpo is used internally in QuickQanava and is not ready for general use** :heavy_exclamation_mark:
 
 GTpo is a C++14 directed graphs modelling library available under BSD license. GTpo is highly configurable at compile time, with no runtime cost for unconfigured features.
 
@@ -27,25 +27,43 @@ qmake .pro file:
 include(./GTpo/src/gtpo.pri)
 ~~~~~~~~~~~~~
 
-## Dependencies
+### Dependencies
 
 * **googletest / googlemock** (only for building tests): https://github.com/google/googletest/ 
 
 Data model
 ------------------
 
-## Adjacency lists
+### Adjacency lists
 
 ![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
 
   Memory in GTpo is managed with `std::shared_ptr` and `std::weak_ptr`, using/typedef definitions in graph types are prefixed with either *shared_* or *weak_* according
 to the underlying concrete container.
 
-## Graph static configuration
-
-
-Traversal (`gtpo/algorithm.h`)
+Static graph configuration
 -------------
+
+### Behaviours
+
+  Behaviour in GTpo are the preferred way to observe changes in graph topology. Behaviours could be either *static* or *dynamic*, static behaviours are defined at compile time by modifying `gtpo::config` definition, wheras dynamic behaviours could be added or removed at runtime (with a virtual cost).
+
++ **Static behaviours**: Static behaviour 
+
++ **Dynamic behaviours**: FIXME.
+
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-behaviours-class.png)
+
+
+ Behaviours could be disabled by calling `gtpo::behaviour<>::disable()` method, disabling all behaviours might be usefull before calling `gtpo::Graph<>::clear()` method or before serializing the graph in or out.
+ 
+ 
+Topology
+-------------
+
+### Iterators (`gtpo/algorithm.h`)
+
+Header: [<gtpo/algorithm.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/algorithm.h)
 
 ```cpp
 #include <GTpo>
@@ -56,6 +74,8 @@ for (const auto n : g) { /* ... */ }
 //or
 for (auto n : g) { /* ... */ }
 ```
+
+### Traversal algorithms (`gtpo/algorithm.h`)
 
 **Note:** _all_ recursive functions are postfixed with *'_rec'*, there is no overflow protection for large deep graphs. Alternative non recursive stack based implementation are available for most functions (no postfix).
 
@@ -74,22 +94,23 @@ Calling a *'_tree'* method is often faster, but using it against a non-tree grap
 - `gtp::is_dag_rec()` / `gtp::is_dag()`  (O(N)): Return true if graph is a directed acyclic graph.
 - `gtp::is_tree_rec()` / `gtp::is_tree()` (O(N)): Return true if graph is a tree (or a forest).
 
-Behaviours
--------------
 
-  Behaviour in GTpo are the preferred way to observe changes in graph topology. Behaviours could be either *static* or *dynamic*, static behaviours are defined at compile time by modifying `gtpo::config` definition, wheras dynamic behaviours could be added or removed at runtime (with a virtual cost).
+### Generators
 
-+ **Static behaviours**: Static behaviour 
+Header: [<gtpo/generator.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/generator.h)
 
-+ **Dynamic behaviours**: FIXME.
+Graph generation functions interface is similar to [NetworkX](https://networkx.github.io/) generators.
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-behaviours-class.png)
+- `gtpo::complete_graph()`: Return a fully connected graph.
+
+- Random GNP graphs:
+  - `gtpo::gnp_random_graph()`:
+  - `gtpo::erdos_renyi_graph()`: .
+  
+- `gtpo::complete_tree()`: 
 
 
- Behaviours could be disabled by calling `gtpo::behaviour<>::disable()` method, disabling all behaviours might be usefull before calling `gtpo::Graph<>::clear()` method or before serializing the graph in or out.
- 
- 
-## Group topology
+### Group topology
 
 Edges and adjacent edges of a group could be searched with `gtpo::group<>::get_edges()` and `gtpo::group<>::get_adjacent_edges()`. Adjacent edge set won't be initialized until the `gtpo::graph_group_adjacent_edges_behaviour` and `gtpo::group_adjacent_edges_behaviour` static behaviour has been configured in `gtpo::config`.
 

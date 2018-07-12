@@ -17,6 +17,7 @@ HEADERS +=  $$PWD/utils.h                \
             $$PWD/graph_property.h       \
             $$PWD/algorithm.h            \
             $$PWD/algorithm.hpp          \
+            $$PWD/generator.h            \
             $$PWD/behaviour.h            \
             $$PWD/behaviourable.h        \
             $$PWD/behaviourable.hpp      \
