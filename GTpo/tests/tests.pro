@@ -19,7 +19,7 @@ SOURCES	+=  ./gtpo_tests.cpp            \
             #./gtpo_config_tests.cpp     \
             #./gtpo_containers_tests.cpp \
             #./gtpo_groups_tests.cpp     \
-            #./gtpo_algorithm_tests.cpp  \
+            ./gtpo_algorithm_tests.cpp  \
             ./gtpo_generator_tests.cpp
 
 HEADERS	+=  

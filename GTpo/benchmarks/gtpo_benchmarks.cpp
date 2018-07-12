@@ -32,9 +32,20 @@
 
 // GTpo headers
 #include <GTpo>
+#include "../src/algorithm.h"
+#include "../src/generator.h"
 
 // Google Benchmark
 #include <benchmark/benchmark.h>
+
+/*
+ * Available benchmarks:
+ * --benchmark_report_aggregates_only={true|false}
+ *
+ *
+ *
+ */
+
 
 struct config_raw final :  public gtpo::config<config_raw>
 {
@@ -120,5 +131,46 @@ BENCHMARK(BM_GraphAdjacent);
 BENCHMARK(BM_GraphNoDynamic);
 BENCHMARK(BM_GraphComplete);
 
-BENCHMARK_MAIN()
+
+static std::vector<std::unique_ptr<gtpo::graph<>>>  bin_trees;
+
+static void BM_linearize_dfs_on_tree(benchmark::State& state)
+{
+    const auto g = bin_trees[state.range(0)].get();
+    for (auto _ : state) {
+        auto r = gtpo::linearize_dfs(*g);
+    }
+}
+static void BM_linearize_tree_dfs_rec(benchmark::State& state)
+{
+    const auto g = bin_trees[state.range(0)].get();
+    for (auto _ : state) {
+        auto r = gtpo::linearize_tree_dfs_rec(*g);
+    }
+}
+BENCHMARK(BM_linearize_dfs_on_tree)->ComputeStatistics("max", [](const std::vector<double>& v) -> double {
+    return *(std::max_element(std::begin(v), std::end(v)));
+  })->ComputeStatistics("min", [](const std::vector<double>& v) -> double {
+    return *(std::min_element(std::begin(v), std::end(v)));
+  })->DenseRange(0, 14, 1);
+BENCHMARK(BM_linearize_tree_dfs_rec)->ComputeStatistics("max", [](const std::vector<double>& v) -> double {
+    return *(std::max_element(std::begin(v), std::end(v)));
+  })->ComputeStatistics("min", [](const std::vector<double>& v) -> double {
+    return *(std::min_element(std::begin(v), std::end(v)));
+  })->DenseRange(0, 14, 1);
+
+int main(int argc, char** argv) {
+    // Generate CSV with following command:
+    // ./gtpo_benchmarks --benchmark_filter=BM_linearize  --benchmark_report_aggregates_only=true --benchmark_repetitions=4 --benchmark_out_format=csv  --benchmark_out=linearize_dfs_tree.csv
+
+    // Generate candidate trees
+    for ( int depth = 0; depth < 15; depth++ ) {
+        auto t = std::make_unique<gtpo::graph<>>();
+        gtpo::complete_tree_rec(*t, depth, 2);
+        bin_trees.emplace_back(std::move(t));
+    }
+
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
+}
 

@@ -95,7 +95,7 @@ Calling a *'_tree'* method is often faster, but using it against a non-tree grap
 - `gtp::is_tree_rec()` / `gtp::is_tree()` (O(N)): Return true if graph is a tree (or a forest).
 
 
-### Generators
+### Generators (`gtpo/generator.h`)
 
 Header: [<gtpo/generator.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/generator.h)
 
@@ -127,4 +127,13 @@ struct my_config : public gtpo::config<my_config>
     using group_behaviours = std::tuple< gtpo::group_adjacent_edges_behaviour<my_config> >; 
 };
 ~~~~~~~~~~~~~
+
+
+
+Benchmarks
+-------------
+
+### Specialized tree functions vs general graph functions
+
+![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/linearize_dfs_tree.png)
 

@@ -22,3 +22,9 @@ CONFIG(debug, debug|release) {
     win32-g++*:     LIBS	+= -L../build/ -lgtpod
 }
 
+CONFIG(release, debug|release) {
+    linux-g++*:     LIBS	+= -L../build/ -lbenchmark -lprotobuf
+    #win32-msvc*:    PRE_TARGETDEPS +=  ../build/gtpod.lib
+    #win32-msvc*:    LIBS	+= ../build/gtpod.lib $$GBENCHMARK_DIR/src/Debug/benchmark.lib Shlwapi.lib $$PROTOCOL_BUFFER_LIBDIR_DEBUG/libprotobufd.lib
+    win32-g++*:     LIBS	+= -L../build/ -lgtpod
+}

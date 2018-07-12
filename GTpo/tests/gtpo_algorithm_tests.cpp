@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpo_graph_tests.cpp
+// \file	gtpo_algorithm_tests.cpp
 // \author	benoit@qanava.org
 // \date	2018 06 19
 //-----------------------------------------------------------------------------
