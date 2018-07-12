@@ -27,21 +27,15 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	generator.h
+// \file	generator.hpp
 // \author	benoit@destrat.io
 // \date	2018 07 12
 //-----------------------------------------------------------------------------
-
-#ifndef gtpo_generator_h
-#define gtpo_generator_h
 
 // STD headers
 #include <list>
 #include <unordered_set>
 #include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
-#include <iterator>         // std::forward_iterator_tag
-
-#include <stack>        // FIXME: move to .hpp...
 
 // GTpo headers
 #include "./utils.h"
@@ -52,52 +46,71 @@
 
 namespace gtpo { // ::gtpo
 
-/*
- * Some generation code here is inspired from NetworkX distributed under a BSD licence.
- *
- * https://github.com/networkx/networkx/blob/master/networkx/generators/random_graphs.py
- *
- */
-
-template <class config_t>
-class graph;
-
 /* Tree Generation Algorithms *///---------------------------------------------
-/*! \brief Generate a tree where all nodes have \c degree out degree and a regular depth of \c detph.
- *
- * \note example: complete_tree_rec(2, 1) -> { [n0, n1, n2], [ (n0->n1), (n0->n2 )] }.
- */
+namespace impl { // ::gtpo::impl
+
+template <class graph_t, class node_t>
+auto complete_tree_impl_rec(graph_t& tree, node_t& node, const int depth, const int degree) -> void
+{
+    for ( int d = 0; d < degree; ++d ) {
+        auto sub_tree = tree.create_node();
+        tree.create_edge(node, sub_tree);
+
+        if ( depth - 1 > 0 )   // Stop recursion condition
+           complete_tree_impl_rec(tree, sub_tree, depth - 1, degree);
+    }
+}
+
+} // ::gtpo::impl
+
 template <class graph_t>
-auto complete_tree_rec(graph_t& graph, const int depth, const int degree = 2) -> void;
+auto complete_tree_rec(graph_t& graph, const int depth, const int degree) -> void
+{
+    // PRECONDITIONS:
+        // graph must be empty.
+        // depth must be >= 0.
+        // degree must be >= 1.
+    if (!graph.get_node_count() == 0) {
+        std::cerr << "gtpo::complete_tree_rec<>(): graph must be empty." << std::endl;
+        return;
+    }
+    if (depth < 0 ) {
+        std::cerr << "gtpo::complete_tree_rec<>(): depth should be positive." << std::endl;
+        return;
+    }
+    if (degree < 1 ) {
+        std::cerr << "gtpo::complete_tree_rec<>(): degree must be >= 1." << std::endl;
+        return;
+    }
+
+    auto root = graph.create_node();   // Create root node
+    if ( depth == 0 )
+        return;                     // A tree with only one root node has depth 0...
+    for ( int d = 0; d < degree; ++d) {
+        auto sub_tree = graph.create_node();
+        graph.create_edge(root, sub_tree);
+        if ( depth - 1 > 0 )
+            impl::complete_tree_impl_rec(graph, sub_tree, depth - 1, degree);
+    }
+}
 //-----------------------------------------------------------------------------
 
 
 /* Graph Generation Algorithms *///--------------------------------------------
-/*! \brief Generate a fully connected directed graph.
- *
- * \note Circuit will be created between every edges, ie: complete_graph(2) -> { [n0, n1], [ (n0->n1), (n1->n0 )] }.
- */
 template <class graph_t>
-auto    complete_graph(const int n) noexcept -> graph_t;
+auto    complete_graph(const int n) noexcept -> graph_t
+{
+    static_cast<void>(n);
+}
 
-/*! \brief Generate a random graph with \c n nodes using Erdos-Renyi random graph model.
- *
- * \param n total number of nodes.
- * \param p Probability that an edge should be created between every possible node permutation.
- */
 template <class graph_t>
-auto    gnp_random_graph(const int n, const double p) noexcept -> graph_t;
-
-/*! \brief Shortcut to gnp_random_graph() generation function.
- *
- */
-template <class graph_t>
-auto    erdos_renyi_graph(const int n, const double p) noexcept -> graph_t { return gnp_random_graph<graph_t>(n, p); }
+auto    gnp_random_graph(const int n, const double p) noexcept -> graph_t
+{
+    static_cast<void>(n);
+    static_cast<void>(p);
+}
 //-----------------------------------------------------------------------------
 
 } // ::gtpo
 
-#include "./generator.hpp"
-
-#endif // gtpo_generator_h
 

@@ -101,20 +101,20 @@ Header: [<gtpo/generator.h>](https://github.com/cneben/QuickQanava/blob/master/G
 
 Graph generation functions interface is similar to [NetworkX](https://networkx.github.io/) generators.
 
-- `gtpo::complete_graph()`: Return a fully connected graph.
+- `gtpo::complete_graph()`: Return a fully connected directed graph. Complexity O(n<sup>2</sup>).
 
 - Random GNP graphs:
-  - `gtpo::gnp_random_graph()`:
-  - `gtpo::erdos_renyi_graph()`: .
-  
-- `gtpo::complete_tree()`:    O(n<sup>2</sup>).
+  - `gtpo::gnp_random_graph()`: *TBD*. Complexity O(n<sup>2</sup>).
+  - `gtpo::erdos_renyi_graph()`: *TBD*. Complexity O(n<sup>2</sup>).
+
+- `gtpo::complete_tree_rec()`:  *TBD*.
 
 
 ### Group topology
 
-Edges and adjacent edges of a group could be searched with `gtpo::group<>::get_edges()` and `gtpo::group<>::get_adjacent_edges()`. Adjacent edge set won't be initialized until the `gtpo::graph_group_adjacent_edges_behaviour` and `gtpo::group_adjacent_edges_behaviour` static behaviour has been configured in `gtpo::config`.
+Edges and adjacent edges of a group could be searched with `gtpo::group<>::get_edges()` and `gtpo::group<>::get_adjacent_edges()`. Adjacent edge set won't be initialized until the `gtpo::graph_group_adjacent_edges_behaviour` and `gtpo::group_adjacent_edges_behaviour` static behaviour are configured in `gtpo::config`.
 
-For example: edges = **{** *e4*, *e5* **}**  and adjacent_edges = **{** *e2*, *e3*, *e4*, *e5* **}** :
+For example: edges = **[** *e4*, *e5* **]**  and adjacent_edges = **[** *e2*, *e3*, *e4*, *e5* **]** :
 
 ![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-topo-group_adjacent_edges.png)
 

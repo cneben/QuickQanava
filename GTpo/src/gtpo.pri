@@ -18,6 +18,7 @@ HEADERS +=  $$PWD/utils.h                \
             $$PWD/algorithm.h            \
             $$PWD/algorithm.hpp          \
             $$PWD/generator.h            \
+            $$PWD/generator.hpp          \
             $$PWD/behaviour.h            \
             $$PWD/behaviourable.h        \
             $$PWD/behaviourable.hpp      \

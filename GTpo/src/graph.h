@@ -129,6 +129,12 @@ public:
      * changes when clearing the graph, disable all behaviours before calling clear().
      */
     void    clear() noexcept;
+
+    /*! \brief Test if this graph is empty, and empty graph has no nodes.
+     *
+     * \return true if the graph is empty, false otherwise.
+     */
+    auto    is_empty() noexcept -> bool { return get_node_count() == 0; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -185,9 +191,9 @@ public:
     auto    remove_node( weak_node_t weakNode ) noexcept( false ) -> void;
 
     //! Return the number of nodes actually registered in graph.
-    auto    get_node_count() const -> size_type { return _nodes.size(); }
+    inline auto get_node_count() const -> size_type { return _nodes.size(); }
     //! Return the number of root nodes (actually registered in graph)ie nodes with a zero in degree).
-    auto    get_root_node_count() const -> size_type { return _root_nodes.size(); }
+    inline auto get_root_node_count() const -> size_type { return _root_nodes.size(); }
 
     /*! \brief Install a given \c node in the root node cache.
      *
