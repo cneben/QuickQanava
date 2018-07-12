@@ -6,7 +6,7 @@ GTpo  (C++14 Topology library)
 GTpo is a C++14 directed graphs modelling library available under BSD license. GTpo is highly configurable at compile time, with no runtime cost for unconfigured features.
 
 
-+ Project homepage: https://github.com/cneben/QuickQanava/GTpo    
++ Project homepage: https://github.com/cneben/QuickQanava/tree/master/GTpo
 
 ![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
 
