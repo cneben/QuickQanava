@@ -107,7 +107,7 @@ Graph generation functions interface is similar to [NetworkX](https://networkx.g
   - `gtpo::gnp_random_graph()`:
   - `gtpo::erdos_renyi_graph()`: .
   
-- `gtpo::complete_tree()`:    $O(n^2)$.
+- `gtpo::complete_tree()`:    O(n<sup>2</sup>).
 
 
 ### Group topology
