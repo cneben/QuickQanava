@@ -207,9 +207,17 @@ void    GroupItem::groupMoved()
 
 void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition )
 {
+    // PRECONDITIONS:
+        // nodeItem can't be nullptr
+        // A 'container' must have been configured
     if ( nodeItem == nullptr ||
          getContainer() == nullptr )   // A container must have configured in concrete QML group component
         return;
+
+    // If the container is not visible, the group is probably collapsed, accept the
+    if ( !getContainer()->isVisible() )     // drop, but emit a warning...
+        qWarning() << "qan::GroupItem::groupNodeItem(): Warning: grouping a node item while the group is collapsed.";
+
     if ( transformPosition )
         nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
     nodeItem->setParentItem( getContainer() );
