@@ -198,9 +198,8 @@ void    GroupItem::groupMoved()
         for ( auto weakEdge : _group->get_adjacent_edges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&
-                 edge->getItem() != nullptr &&
-                 edge->getItem()->isVisible() )
-                edge->getItem()->updateItem();
+                 edge->getItem() != nullptr )
+                edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility
         }
     }
 }
