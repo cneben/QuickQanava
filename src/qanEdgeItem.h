@@ -118,7 +118,7 @@ protected:
     /*! \name Edge Drawing Management *///-------------------------------------
     //@{
 public:
-    /*! Hidden is set to true when the edge \i should not be shown, it is up to the user to use thie property to eventually hide the item.
+    /*! Hidden is set to true when the edge \i should not be shown, it is up to the user to use this property to eventually hide the item.
      *
      *  \c hidden property is automatically set to true when either the edge is inside source or destination bounding box or the line is
      *  too short to be drawn.

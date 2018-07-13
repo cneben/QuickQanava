@@ -57,8 +57,8 @@ public:
     behaviour() noexcept { }
     ~behaviour() noexcept { }
 
-   behaviour( const behaviour& rhs ) noexcept = default;
-   behaviour& operator=( const behaviour& rhs ) noexcept = default;
+   behaviour( const behaviour& rhs ) = default;
+   behaviour& operator=( const behaviour& rhs ) = default;
    behaviour( behaviour&& rhs ) noexcept = default;
    behaviour& operator=( behaviour&& rhs ) noexcept = default;
 
