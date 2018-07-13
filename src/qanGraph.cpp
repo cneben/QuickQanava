@@ -931,7 +931,8 @@ bool    selectPrimitiveImpl( Primitive_t& primitive,
 
     if ( primitive.getItem()->getSelected() ) {
         if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
-            graph.removeFromSelection( primitive );
+            primitive.getItem()->setSelected(false);
+            // Note: graph.removeFromSelection() is called from primitive.selected()
     } else {
         switch ( graph.getSelectionPolicy() ) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
@@ -985,11 +986,14 @@ void    removeFromSelectionImpl( Primitive_t& primitive,
 
 void    Graph::removeFromSelection( qan::Node& node ) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
 void    Graph::removeFromSelection( qan::Group& group ) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
+
+// Note: Called from
 void    Graph::removeFromSelection( QQuickItem* item ) {
     const auto nodeItem = qobject_cast<qan::NodeItem*>(item);
     if ( nodeItem != nullptr &&
          nodeItem->getNode() != nullptr ) {
         _selectedNodes.removeAll(nodeItem->getNode());
+        //nodeItem->setSelected(false);
     } else {
         const auto groupItem = qobject_cast<qan::GroupItem*>(item);
         if ( groupItem != nullptr &&

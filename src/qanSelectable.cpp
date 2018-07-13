@@ -103,6 +103,7 @@ void    Selectable::setSelectionItem( QQuickItem* selectionItem ) noexcept
             _selectionItem->setVisible(false);      // immediately destroyed or garbage collected
             if ( QQmlEngine::objectOwnership(_selectionItem.data()) == QQmlEngine::CppOwnership )
                 _selectionItem->deleteLater();
+            qWarning() << "qan::Selectable::setSelectionItem(): destroying existing selection item...";
         }
 
         if ( selectionItem ) {
