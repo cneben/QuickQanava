@@ -8,25 +8,26 @@ GTpo is a C++14 directed graphs modelling library available under BSD license. G
 
 + Project homepage: https://github.com/cneben/QuickQanava/tree/master/GTpo
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/gtpo-datamodel.png)
 
 GTpo is **highly** alpha.
 
-- Example use:
-  * QuickQanava: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: https://github.com/cneben/QuickQanava
+- Example use: QuickQanava - Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: https://github.com/cneben/QuickQanava
 
 **ROADMAP**:
   - **v0.1.0:**
-    - [X] Push test coverage to 100% (ie increase coverage for subgroups).
+    - [X] Push test coverage to 100%.
     - [ ] Clean the copy and move semantic requirements on topology primitives (and document it).
+    - [ ] Clean operator= and operator== semantic requirements on topology primitives (and document it).
     - [ ] Write complete documentation for static graph configuration.
+    - [ ] Clean management of groups (with regular nodes and specific utility edges...).    
     - [ ] Add complete support for static properties.
     - [ ] Add generic utilities to ease JSON graph serialization.
     - [ ] Fork from QuickQanava, release in a dedicated GH repository.
   - **v0.2.x:**
-    - [ ] Add a naive chinese whisper clustering algorithm.
+    - [ ] Add a naive chinese whispers clustering algorithm (See [Wikipedia description](https://en.wikipedia.org/wiki/Chinese_Whispers_(clustering_method)) and [Dlib implementation](http://dlib.net/dlib/clustering/chinese_whispers_abstract.h.html)).
   - **v0.3.x:**
-    - [ ] Port [cjgdev](https://github.com/cjgdev/aho_corasick) Aho Corasick implementation sto GTpo.
+    - [ ] Port [cjgdev](https://github.com/cjgdev/aho_corasick) Aho Corasick implementation to GTpo.
   - **v0.4.x:**
     - [ ] Add basic naive (iterative) support for major social network metrics (HITS, PR, etc.)
 
@@ -52,7 +53,7 @@ Data model
 
 ### Adjacency lists
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-datamodel.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/gtpo-datamodel.png)
 
   Memory in GTpo is managed with `std::shared_ptr` and `std::weak_ptr`, using/typedef definitions in graph types are prefixed with either *shared_* or *weak_* according
 to the underlying concrete container.
@@ -62,7 +63,25 @@ Static graph configuration
 
 GTpo use "curiously recurring template pattern" [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) to allow complete configuration of graph topology at compile time using a single static configuration definition based on `gtpo::config<>` template.
 
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/gtpo-datamodel-static_configuration.png)
 
+Available options:
+
+- `gtpo::config::graph_base`: Base class for `gtpo::graph<>`.
+- `gtpo::config::node_base`: Base class for `gtpo::node<>`.
+- `gtpo::config::edge_base`: Base class for `gtpo::edge<>`.
+- `gtpo::config::group_base`: Base class for `gtpo::group<>`.
+
+- `gtpo::config::final_node_t`: Final concrete node type.
+- `gtpo::config::final_edge_t`: Final concrete edge type.
+- `gtpo::config::final_group_t`: Final concrete group type.
+
+- `gtpo::config::container_adapter`: Generic adapter to insert and remove item in a container.
+- `gtpo::config::node_container_t`: Main node container (default to `std::vector`).
+- `gtpo::config::edge_container_t`: Main node container (default to `std::vector`).
+- `gtpo::config::search_container_t`: Container with an `insert()` and `find()` interface used when fast lookup is necessary, mainly used for internal edge caches (default to `std::unordered_set`).
+
+All options have working default values, for example it is usually not necessary to redefine `container_adapter`, since there is support for all standard and Qt containers.
 
 ### Behaviours
 
@@ -72,7 +91,7 @@ GTpo use "curiously recurring template pattern" [CRTP](https://en.wikipedia.org/
 
 + **Dynamic behaviours**: FIXME.
 
-![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-behaviours-class.png)
+![GTpo data model schema](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/gtpo-behaviours-class.png)
 
 
  Behaviours could be disabled by calling `gtpo::behaviour<>::disable()` method, disabling all behaviours might be usefull before calling `gtpo::Graph<>::clear()` method or before serializing the graph in or out.
@@ -90,11 +109,11 @@ Graph nodes could be traversed with c++11 range for loops (usually in node inser
 ```cpp
 #include <GTpo>
 // ...
-  gtpo::graph<> g;
-  g.insert_node();
-  for (const auto n : g) { /* ... */ }
-  //or
-  for (auto n : g) { /* ... */ }
+gtpo::graph<> g;
+g.insert_node();
+for (const auto n : g) { /* ... */ }
+// Or
+for (auto n : g) { /* ... */ }
 ```
 
 GTpo also offer a DFS iterator to allow inspection of a graph with DFS ordered nodes (with no temporaries):
@@ -105,7 +124,7 @@ auto n = g.create_node();
 // Iterating in DFS order in a one vertex graph:
 auto it = gtpo::begin_dfs(g);
 auto ni = *it;
-  // We have: ni.lock().get() == n.lock().get())
+  // With: ni.lock().get() == n.lock().get())
 auto it_end = gtpo::end_dfs(g);
 
 // Or with for loop:
@@ -115,6 +134,8 @@ for ( auto it = gtpo::begin_dfs(g); it != gtpo::end_dfs(g); it++ ) {
 ```
 
 ### Traversal algorithms (`gtpo/algorithm.h`)
+
+Header: [<gtpo/algorithm.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/algorithm.h)
 
 **Note:** _all_ recursive functions are postfixed with *'_rec'*, there is no overflow protection for large deep graphs. Alternative non recursive stack based implementation are available for most functions (no postfix).
 
@@ -243,7 +264,7 @@ Edges and adjacent edges of a group could be searched with `gtpo::group<>::get_e
 
 For example: edges = **[** *e4*, *e5* **]**  and adjacent_edges = **[** *e2*, *e3*, *e4*, *e5* **]** :
 
-![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/gtpo-topo-group_adjacent_edges.png)
+![](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/gtpo-topo-group_adjacent_edges.png)
 
 Minimum static behaviour configuration to enable group adjacent edge support is the following (enabled in gtpo::default_config): 
 
@@ -262,5 +283,5 @@ Benchmarks
 
 ### Specialized tree functions vs general graph functions
 
-![](https://github.com/cneben/QuickQanava/blob/develop/GTpo/doc/linearize_dfs_tree.png)
+![](https://github.com/cneben/QuickQanava/blob/master/GTpo/doc/linearize_dfs_tree.png)
 
