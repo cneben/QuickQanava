@@ -37,7 +37,7 @@ namespace qan { // ::qan
 
 /* Graph Factories *///--------------------------------------------------------
 template < class Node_t >
-qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
+qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle)
 {
     if ( nodeComponent == nullptr ) {
         const auto engine = qmlEngine(this);
@@ -57,7 +57,8 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent)
     const auto node = std::make_shared<Node_t>();
     try {
         QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
-        qan::NodeStyle* nodeStyle = Node_t::style();
+        if (nodeStyle == nullptr )
+            nodeStyle = Node_t::style();
         if ( nodeStyle == nullptr )
             throw qan::Error{"style() factory has returned a nullptr style."};
         _styleManager.setStyleComponent(nodeStyle, nodeComponent);
@@ -171,9 +172,9 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode )
     auto edge = std::make_shared<Edge_t>();
     try {
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        edge->set_src( src.shared_from_this() );
+        edge->set_src( std::static_pointer_cast<Config::final_node_t>(src.shared_from_this()) );
         if ( dstNode != nullptr )
-            edge->set_dst( dstNode->shared_from_this() );
+            edge->set_dst( std::static_pointer_cast<Config::final_node_t>(dstNode->shared_from_this()) );
         gtpo_graph_t::insert_edge( edge );
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();

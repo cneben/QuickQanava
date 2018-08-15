@@ -132,6 +132,8 @@ public:
 
     /*! \brief Test if this graph is empty, and empty graph has no nodes.
      *
+     * // FIXME: groups are not taken into account.
+     *
      * \return true if the graph is empty, false otherwise.
      */
     auto    is_empty() noexcept -> bool { return get_node_count() == 0; }

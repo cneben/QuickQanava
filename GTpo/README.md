@@ -65,14 +65,33 @@ Topology
 
 Header: [<gtpo/algorithm.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/algorithm.h)
 
+Graph nodes could be traversed with c++11 range for loops (usually in node insertion order, but it may vary following what containers have been defined in user static graph configuration):
+
 ```cpp
 #include <GTpo>
+// ...
+  gtpo::graph<> g;
+  g.insert_node();
+  for (const auto n : g) { /* ... */ }
+  //or
+  for (auto n : g) { /* ... */ }
+```
 
+GTpo also offer a DFS iterator to allow inspection of a graph with DFS ordered nodes (with no temporaries):
+```cpp
 gtpo::graph<> g;
-g.insert_node();
-for (const auto n : g) { /* ... */ }
-//or
-for (auto n : g) { /* ... */ }
+auto n = g.create_node();
+
+// Iterating in DFS order in a one vertex graph:
+auto it = gtpo::begin_dfs(g);
+auto ni = *it;
+  // We have: ni.lock().get() == n.lock().get())
+auto it_end = gtpo::end_dfs(g);
+
+// Or with for loop:
+for ( auto it = gtpo::begin_dfs(g); it != gtpo::end_dfs(g); it++ ) {
+    // Do something with *it, which is a gtpo::graph_t::weak_node_t (ie a weak_ptr on a concreate shared_ptr node).
+}
 ```
 
 ### Traversal algorithms (`gtpo/algorithm.h`)
@@ -91,9 +110,78 @@ These traversal functions are specialized for trees:
 
 Calling a *'_tree'* method is often faster, but using it against a non-tree graph might lead to overflow or infinite recursion. Following methods could be used to check specific graph topological properties:
 
-- `gtp::is_dag_rec()` / `gtp::is_dag()`  (O(N)): Return true if graph is a directed acyclic graph.
+- `gtp::is_dag_rec()` / `gtp::is_dag()`  (O(N)): Return true if graph is a directed acyclic graph. **FIXME 20180815** There is actually a bug in is_dag_rec() implementation, see the failing test in 'gtpo_lgorithm_tests.cpp' and use with care...
 - `gtp::is_tree_rec()` / `gtp::is_tree()` (O(N)): Return true if graph is a tree (or a forest).
 
+### Functionnals (`gtpo/algorithm.h`)
+
+- `gtp::copy()` (O(N)): Copy a source graph to a destination graph.
+  - Signature: `template <> auto copy(src_graph_t& src, dst_graph_t& dst) -> bool`
+  - Precondition (return false if not met): destination graph must be empty.
+  - Note: source and destination may be of different types.
+  - Limitations (20180815): Groups are not taken into account.
+  - Throw: May throw std::bad_alloc
+
+```cpp
+#include <GTpo>
+#include "GTpo/functional.h"
+// ...
+gtpo::graph<> src, dst;
+auto n1 = src.create_node();
+auto n2 = src.create_node();
+src.create_edge(n1, n2);
+auto r = gtpo::copy(src, dst);
+// r is true.
+// dst.get_node_count() is 2, dst.get_edge_count() is 1, src and dst are isomorph.
+```
+
+- `gtp::filter()`: Apply a user defined unary functor to filter nodes from a source graph before copying the subset of source graph topology to a destination graph.
+  - Signature: `template <> auto filter(src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool`
+  - Precondition (return false if not met): destination graph must be empty.
+  - Note: source and destination may be of different types.
+  - Limitations (20180815): Groups are not taken into account.
+  - Throw: May throw std::bad_alloc
+
+```cpp
+#include <GTpo>
+#include "GTpo/functional.h"
+// ...
+gtpo::graph<> src, dst;
+src.create_node();
+const auto f = [](auto& node) -> bool { return false; };
+auto r = gtpo::filter<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+// dst graph is now a filtered version of src graph
+
+// Modern compilers could usually infer template arguments type, following syntax should be preferred:
+gtpo::graph<> dst2;
+auto r2 = gtpo::filter<>(src, dst2, f);
+```
+
+User could filter a specific set of subnode, the subset of topology involving theses nodes will be preserved by filtering:
+
+```cpp
+gtpo::graph<> src, dst;
+auto n1 = src.create_node().lock();
+auto n2 = src.create_node().lock();
+auto n3 = src.create_node();
+  
+src.create_edge(n1, n2);
+src.create_edge(n1, n3);
+src.create_edge(n3, n2);
+
+// SOURCE GRAPH:  { [n1, n2, n3], [ n1 -> n2, n1 -> n3, n3 -> n2 ] },
+
+const auto f = [n1, n2](auto& node) -> bool {
+  return node == n1 || node == n2;        // Filtering all nodes but n1 and n2
+};
+gtpo::filter<>(src, dst, f);
+  
+// FILTERED DESTINATION GRAPH:  { [n1, n2], [ n1 -> n2 ] },
+```
+
+*Help wanted*:
+- Create an "inplace" version for `gtpo::filter`, where input graph is filtered inplace without a copy to a destination graph.
+- Create a version `gtpo::filter` and `gtpo::copy` where destination (or result) graph is returned directly using RVO and not taken as a function argument.
 
 ### Generators (`gtpo/generator.h`)
 
