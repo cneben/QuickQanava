@@ -34,6 +34,9 @@ set (gtpo_header_files
     ${CMAKE_CURRENT_SOURCE_DIR}/src/node_behaviour.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/node.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/node.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/functional.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/qt_container_adapter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.h
 )

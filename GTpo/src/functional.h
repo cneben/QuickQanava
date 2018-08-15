@@ -119,8 +119,6 @@ auto    filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -
             // 2.2 To create an edge in dst, map source src and dst nodes to destination graph, then create edge.
 
     std::unordered_set<typename src_graph_t::weak_node_t> selected_src_nodes;
-    //std::unordered_map<typename src_graph_t::weak_node_t,
-    //                   typename dst_graph_t::final_config_t::final_node_t> src_to_dst_nodes;
     std::unordered_map<typename src_graph_t::weak_node_t,
                        typename dst_graph_t::weak_node_t> src_to_dst_nodes;
     // 1.
