@@ -566,7 +566,7 @@ TEST(GTpoGraph, copy)
 TEST(GTpoGraph, filterPrecond)
 {
     gtpo::graph<> src;
-    const auto f = [](auto& node) -> bool { static_cast<void>(node); return false; };
+    const auto f = [](const auto& node) -> bool { static_cast<void>(node); return false; };
     gtpo::graph<> dst;
     dst.create_node();
     auto r = gtpo::filter<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
@@ -578,7 +578,7 @@ TEST(GTpoGraph, filter)
     { // Test filter with all nodes filtered
         gtpo::graph<> src;
         src.create_node();
-        const auto f = [](auto& node) -> bool { static_cast<void>(node); return false; };
+        const auto f = [](const auto& node) -> bool { static_cast<void>(node); return false; };
         gtpo::graph<> dst;
         gtpo::filter<>(src, dst, f);
         EXPECT_EQ(dst.get_nodes().size(), 0);   // Filter functor always filter node, we should end up with no nodes
@@ -588,7 +588,7 @@ TEST(GTpoGraph, filter)
         gtpo::graph<> src;
         src.create_node();
         src.create_node();
-        const auto f = [](auto& node) -> bool {
+        const auto f = [](const auto& node) -> bool {
             static_cast<void>(node);
             static int i = 0;
             return (i++ % 2) == 0;  // Select only even nodes
@@ -606,7 +606,7 @@ TEST(GTpoGraph, filter)
         src.create_edge(n1, n2);
         src.create_edge(n1, n3);
         src.create_edge(n3, n2);
-        const auto f = [n1, n2](auto& node) -> bool {
+        const auto f = [n1, n2](const auto& node) -> bool {
             return node == n1 || node == n2;
         };
         gtpo::graph<> dst;

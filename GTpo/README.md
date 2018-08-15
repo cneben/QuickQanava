@@ -116,7 +116,7 @@ Calling a *'_tree'* method is often faster, but using it against a non-tree grap
 ### Functionnals (`gtpo/algorithm.h`)
 
 - `gtp::copy()` (O(N)): Copy a source graph to a destination graph.
-  - Signature: `template <> auto copy(src_graph_t& src, dst_graph_t& dst) -> bool`
+  - Signature: `template <> auto copy(const src_graph_t& src, dst_graph_t& dst) -> bool`
   - Precondition (return false if not met): destination graph must be empty.
   - Note: source and destination may be of different types.
   - Limitations (20180815): Groups are not taken into account.
@@ -130,13 +130,13 @@ gtpo::graph<> src, dst;
 auto n1 = src.create_node();
 auto n2 = src.create_node();
 src.create_edge(n1, n2);
-auto r = gtpo::copy(src, dst);
-// r is true.
+const auto ok = gtpo::copy(src, dst);
+// ok is true.
 // dst.get_node_count() is 2, dst.get_edge_count() is 1, src and dst are isomorph.
 ```
 
 - `gtp::filter()`: Apply a user defined unary functor to filter nodes from a source graph before copying the subset of source graph topology to a destination graph.
-  - Signature: `template <> auto filter(src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool`
+  - Signature: `template <> auto filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool`
   - Precondition (return false if not met): destination graph must be empty.
   - Note: source and destination may be of different types.
   - Limitations (20180815): Groups are not taken into account.
@@ -148,13 +148,13 @@ auto r = gtpo::copy(src, dst);
 // ...
 gtpo::graph<> src, dst;
 src.create_node();
-const auto f = [](auto& node) -> bool { return false; };
-auto r = gtpo::filter<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+const auto f = [](const auto& node) -> bool { return false; };
+auto ok = gtpo::filter<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
 // dst graph is now a filtered version of src graph
 
 // Modern compilers could usually infer template arguments type, following syntax should be preferred:
 gtpo::graph<> dst2;
-auto r2 = gtpo::filter<>(src, dst2, f);
+ok = gtpo::filter<>(src, dst2, f);
 ```
 
 User could filter a specific set of subnode, the subset of topology involving theses nodes will be preserved by filtering:

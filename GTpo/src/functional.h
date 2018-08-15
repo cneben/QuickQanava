@@ -61,7 +61,7 @@ class graph;
  * \note May throw std::bad_alloc
  */
 template <typename src_graph_t, typename dst_graph_t>
-auto    copy(src_graph_t& src, dst_graph_t& dst) -> bool
+auto    copy(const src_graph_t& src, dst_graph_t& dst) -> bool
 {
     // PRECONDITIONS:
         // dst must be empty.
@@ -103,7 +103,7 @@ auto    copy(src_graph_t& src, dst_graph_t& dst) -> bool
  * \return true is \c src has been succesfully copied to \c dst.
  */
 template <typename src_graph_t, typename dst_graph_t, typename filter_node_func_t>
-auto    filter(src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool
+auto    filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool
 {
     // PRECONDITIONS:
         // dst must be empty
@@ -119,10 +119,12 @@ auto    filter(src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool
             // 2.2 To create an edge in dst, map source src and dst nodes to destination graph, then create edge.
 
     std::unordered_set<typename src_graph_t::weak_node_t> selected_src_nodes;
+    //std::unordered_map<typename src_graph_t::weak_node_t,
+    //                   typename dst_graph_t::final_config_t::final_node_t> src_to_dst_nodes;
     std::unordered_map<typename src_graph_t::weak_node_t,
                        typename dst_graph_t::weak_node_t> src_to_dst_nodes;
     // 1.
-    for ( auto& src_node : src.get_nodes() ) {
+    for ( const auto& src_node : src.get_nodes() ) {
         if (f(src_node)) {
             auto dst_node = dst.create_node();
             if (dst_node.expired())
@@ -136,7 +138,7 @@ auto    filter(src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool
     }
 
     // 2.
-    for ( auto& src_edge : src.get_edges() ) {
+    for ( const auto& src_edge : src.get_edges() ) {
         if (!src_edge)
             return false;
         // 2.1

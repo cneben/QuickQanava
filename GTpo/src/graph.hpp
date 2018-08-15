@@ -162,57 +162,30 @@ auto    graph<config_t>::contains( weak_node_t node ) const noexcept -> bool
 
 /* Graph Edge Management *///--------------------------------------------------
 template < class config_t >
-template < class Edge_t >
+//template < class Edge_t >
 auto    graph< config_t >::create_edge( weak_node_t source, weak_node_t destination ) -> weak_edge_t
 {
-    auto sourcePtr = source.lock();
-    auto destinationPtr = destination.lock();
-    if ( !sourcePtr ||
-         !destinationPtr )
+    auto source_ptr = source.lock();
+    auto destination_ptr = destination.lock();
+    if ( !source_ptr ||
+         !destination_ptr )
         throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, either source or destination nodes are expired." );
 
-    auto edge = std::make_shared<Edge_t>();
+    auto edge = std::make_shared<typename config_t::final_edge_t>();
     edge->set_graph( this );
     config_t::template container_adapter< shared_edges_t >::insert( edge, _edges );
     config_t::template container_adapter< weak_edges_search_t >::insert( edge, _edges_search );
     edge->set_src( source );
     edge->set_dst( destination );
     try {
-        sourcePtr->add_out_edge( edge );
-        destinationPtr->add_in_edge( edge );
-        if ( sourcePtr.get() != destinationPtr.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
+        source_ptr->add_out_edge( edge );
+        destination_ptr->add_in_edge( edge );
+        if ( source_ptr.get() != destination_ptr.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
             config_t::template container_adapter<weak_nodes_t>::remove( destination, _root_nodes );    // Otherwise destination is no longer a root node
-        auto weakEdge = weak_edge_t{edge};
-        behaviourable_base::notify_edge_inserted( weakEdge );
+        auto weak_edge = weak_edge_t{edge};
+        behaviourable_base::notify_edge_inserted( weak_edge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, source or destination nodes topology can't be modified." );
-    }
-    return edge;
-}
-
-template < class config_t >
-auto    graph<config_t>::create_edge( weak_node_t source, weak_edge_t destination ) -> weak_edge_t
-{
-    auto sourcePtr = source.lock();
-    auto destinationPtr = destination.lock();
-    if ( !sourcePtr ||
-         !destinationPtr )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Edge): Insertion of edge failed, either source node and/or destination edge is expired." );
-
-    auto edge = std::make_shared< typename config_t::final_edge_t >();
-    edge->_graph = this;
-    config_t::template container_adapter< shared_edges_t >::insert( edge, _edges );
-    config_t::template container_adapter< weak_edges_search_t >::insert( edge, _edges_search );
-    edge->set_src( source );
-    edge->setHDst( destination );
-    try {
-        sourcePtr->add_out_edge( edge );
-        destinationPtr->addInHEdge( edge );
-        // Note: hEdge does not modify root nodes.
-        auto weakEdge = weak_edge_t{edge};
-        behaviourable_base::notify_edge_inserted( weakEdge );
-    } catch ( ... ) {
-        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Edge): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
     return edge;
 }
@@ -236,8 +209,8 @@ auto    graph<config_t>::insert_edge( shared_edge_t edge ) -> weak_edge_t
             if ( source.get() != destination.get() ) // If edge define is a trivial circuit, do not remove destination from root nodes
                 config_t::template container_adapter<weak_nodes_t>::remove( destination, _root_nodes );    // Otherwise destination is no longer a root node
         }
-        auto weakEdge = weak_edge_t(edge);
-        behaviourable_base::notify_edge_inserted( weakEdge );
+        auto weak_edge = weak_edge_t(edge);
+        behaviourable_base::notify_edge_inserted( weak_edge );
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
     }
