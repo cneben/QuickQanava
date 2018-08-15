@@ -198,18 +198,25 @@ void    GroupItem::groupMoved()
         for ( auto weakEdge : _group->get_adjacent_edges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&
-                 edge->getItem() != nullptr &&
-                 edge->getItem()->isVisible() )
-                edge->getItem()->updateItem();
+                 edge->getItem() != nullptr )
+                edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility
         }
     }
 }
 
 void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition )
 {
+    // PRECONDITIONS:
+        // nodeItem can't be nullptr
+        // A 'container' must have been configured
     if ( nodeItem == nullptr ||
          getContainer() == nullptr )   // A container must have configured in concrete QML group component
         return;
+
+    // If the container is not visible, the group is probably collapsed, accept the
+    if ( !getContainer()->isVisible() )     // drop, but emit a warning...
+        qWarning() << "qan::GroupItem::groupNodeItem(): Warning: grouping a node item while the group is collapsed.";
+
     if ( transformPosition )
         nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
     nodeItem->setParentItem( getContainer() );

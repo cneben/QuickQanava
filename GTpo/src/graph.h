@@ -65,9 +65,9 @@ class graph_group_adjacent_edges_behaviour;
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *
- * \image html graph-datamodel.png
- *
- * \param BaseClass Optional base class for this graph class
+ * \note Root nodes could be considered as "mother vertices" as described in graph theory of directed graphs ... but
+ * the actual implementation in GTpo has no protection for more than 0 degree cycles... When graph has cycles with
+ * degree > 1, we could actually have strongly connected components ... with no root nodes !
  *
  * \note See http://en.cppreference.com/w/cpp/language/dependent_name for
  *       typename X::template T c++11 syntax and using Nodes = typename config_t::template node_container_t< Node* >;
@@ -129,6 +129,12 @@ public:
      * changes when clearing the graph, disable all behaviours before calling clear().
      */
     void    clear() noexcept;
+
+    /*! \brief Test if this graph is empty, and empty graph has no nodes.
+     *
+     * \return true if the graph is empty, false otherwise.
+     */
+    auto    is_empty() noexcept -> bool { return get_node_count() == 0; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -185,9 +191,9 @@ public:
     auto    remove_node( weak_node_t weakNode ) noexcept( false ) -> void;
 
     //! Return the number of nodes actually registered in graph.
-    auto    get_node_count() const -> size_type { return _nodes.size(); }
+    inline auto get_node_count() const -> size_type { return _nodes.size(); }
     //! Return the number of root nodes (actually registered in graph)ie nodes with a zero in degree).
-    auto    get_root_node_count() const -> size_type { return _root_nodes.size(); }
+    inline auto get_root_node_count() const -> size_type { return _root_nodes.size(); }
 
     /*! \brief Install a given \c node in the root node cache.
      *
@@ -375,33 +381,12 @@ public:
      * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
      * node_inserted() will be called.
      *
-     * \note \c weakNode get_group() will return \c group if grouping succeed.
+     * \note \c node get_group() will return \c group if grouping succeed.
      */
-    auto            group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void
-    {
-        auto group_ptr = group.lock();
-        gtpo::assert_throw( group_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a node into an expired group." );
+    auto            group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void;
 
-        auto node_ptr = node.lock();
-        gtpo::assert_throw( node_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
-
-        node_ptr->set_group( group );
-        config_t::template container_adapter<weak_nodes_t>::insert( node, group_ptr->_nodes );
-        group_ptr->notify_node_inserted( node );
-    }
     //! \copydoc group_node()
-    auto            group_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void
-    {
-        auto group{ weakGroup.lock() };
-        gtpo::assert_throw( group != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a group into an expired group." );
-
-        auto subGroup{ weakGroupNode.lock() };
-        gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired group into a group." );
-
-        shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
-        group_node( weak_node_t{subGroupNode}, weakGroup );
-        group->notify_group_inserted( weakGroupNode );
-    }
+    auto            group_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void;
 
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *
@@ -410,34 +395,10 @@ public:
      *
      * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
      */
-    auto            ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void
-    {
-        auto group = weakGroup.lock();
-        gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
+    auto            ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void;
 
-        auto node = weakNode.lock();
-        gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
-
-        gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
-
-        config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
-        group->notify_node_removed( weakNode );
-        node->set_group( weak_group_t{} );  // Warning: group must remain valid while notify_node_removed() is called
-    }
     //! \copydoc ungroup_node()
-    auto            ungroup_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void
-    {
-        auto group{ weakGroup.lock() };
-        gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
-
-        auto subGroup{ weakGroupNode.lock() };
-        gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired group from a group." );
-
-        shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
-        group->notify_group_removed( weakGroupNode );
-        ungroup_node( weak_node_t{subGroupNode}, weakGroup );
-    }
-
+    auto            ungroup_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void;
 private:
     shared_groups_t    _groups;
     //@}
@@ -446,5 +407,5 @@ private:
 
 } // ::gtpo
 
-#endif // gtpo_raph_h
+#endif // gtpo_graph_h
 

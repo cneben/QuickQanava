@@ -259,8 +259,11 @@ void    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection )
             const auto pos = _targetItem->position();
             qan::Group* group = graph->groupAt( pos, { _targetItem->width(), _targetItem->height() } );
             if ( group != nullptr &&
-                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  // Do not drop a group in itself
-                graph->groupNode( group, _target.data() );
+                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
+                if ( group->getItem() != nullptr &&        // Do not allow grouping a node in a collapsed
+                     !group->getItem()->getCollapsed() )    // group item
+                    graph->groupNode( group, _target.data() );
+            }
         }
         _targetItem->setDragged(false);
 

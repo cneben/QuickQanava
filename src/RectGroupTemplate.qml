@@ -59,6 +59,7 @@ Item {
         anchors.fill: parent
         x: 0; y: 0; z: 3
         visible: !groupItem.collapsed
+        enabled: !groupItem.collapsed
     }
     RectSolidBackground {        // Node background and shadow with backOpacity and backRadius support
         id: groupBackground

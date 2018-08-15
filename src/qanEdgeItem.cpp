@@ -275,6 +275,15 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     cache.srcItem = srcItem;
     cache.dstItem = dstItem;
 
+    // If the edge "src" or "dst" is inside a collapsed group, generate invalid cache, it will automatically be
+    // hidden
+    if ( srcGroupItem != nullptr &&
+         srcGroupItem->getCollapsed() )
+        return cache;   // Return invalid cache
+    if ( dstGroupItem != nullptr &&
+         dstGroupItem->getCollapsed() )
+        return cache;   // Return invalid cache
+
     // Generate bounding shapes for source and destination in global CS
     {
         if ( _sourceItem != nullptr ) {        // Generate source bounding shape polygon
