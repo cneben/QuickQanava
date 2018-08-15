@@ -615,3 +615,13 @@ TEST(GTpoGraph, filter)
         EXPECT_EQ(dst.get_edges().size(), 1);   // Edges involving n3 should have been filtered too
     }
 }
+
+TEST(GTpoGraph, mapPrecond)
+{
+    gtpo::graph<> src;
+    const auto f = [](const auto& src_node, auto& dst_node) -> void { static_cast<void>(src_node); static_cast<void>(dst_node); };
+    gtpo::graph<> dst;
+    dst.create_node();
+    auto r = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+    EXPECT_FALSE(r);    // dst is non empty, gtpo::filter should check that precondition and return false.
+}

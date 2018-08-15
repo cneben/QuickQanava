@@ -94,7 +94,7 @@ auto    copy(const src_graph_t& src, dst_graph_t& dst) -> bool
 }
 
 
-/*! \brief Filter a source graph to a destination graph using a functor.
+/*! \brief Filter a source graph to a destination graph using a functor (keep the node when functor return true).
  *
  * \note Precondition: \c dst must be empty (return false if precondition is not met).
  * \note When false is returned, destination is left in an undefined state (destination may be half
@@ -152,6 +152,64 @@ auto    filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -
             auto dst_dst_node = src_to_dst_nodes[src_dst_node];
             dst.create_edge(dst_src_node, dst_dst_node);
         }
+    }
+
+    return true;
+}
+
+
+/*! \brief Map source graph nodes to a destination graph nodes using a transformation functor.
+ *
+ * \note Precondition: \c dst must be empty (return false if precondition is not met).
+ * \note When false is returned, destination is left in an undefined state (destination may be half
+ * created).
+ * \note May throw std::bad_alloc
+ * \return true is \c src has been succesfully copied to \c dst.
+ */
+template <typename src_graph_t, typename dst_graph_t, typename map_node_func_t>
+auto    map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool
+{
+    // PRECONDITIONS:
+        // dst must be empty
+    if (!dst.is_empty())
+        return false;
+
+    // ALGORITHM:
+        // 1. Iterate over all source nodes:
+        //   1.1 Apply map_node_func_t on source node.
+        //   1.2 Keep a mapping from source node to destination node.
+        // 2. Iterate over all edges:
+        //    2.1 Copy source topology to destination using mapping from source to destination nodes.
+
+    std::unordered_map<typename src_graph_t::weak_node_t,
+                       typename dst_graph_t::weak_node_t> src_to_dst_nodes;
+    // 1.
+    for ( const auto& src_node : src.get_nodes() ) {
+        auto dst_node = dst.create_node();
+        if (dst_node.expired())
+            return false;
+        // 1.1
+        f(src_node, dst_node);
+
+        // 1.2
+        src_to_dst_nodes.insert( {src_node, dst_node} );
+    } // for all source graph nodes
+
+    // 2.
+    for ( const auto& src_edge : src.get_edges() ) {
+        if (!src_edge)
+            return false;
+        // 2.1
+        auto src_src_node = src_edge->get_src().lock();
+        auto src_dst_node = src_edge->get_dst().lock();
+        if ( !src_src_node ||
+             !src_dst_node )
+            return false;
+
+        // 2.1
+        auto dst_src_node = src_to_dst_nodes[src_src_node];
+        auto dst_dst_node = src_to_dst_nodes[src_dst_node];
+        dst.create_edge(dst_src_node, dst_dst_node);
     }
 
     return true;

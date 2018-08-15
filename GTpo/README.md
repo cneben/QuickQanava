@@ -12,7 +12,23 @@ GTpo is a C++14 directed graphs modelling library available under BSD license. G
 
 GTpo is **highly** alpha.
 
-* QuickQanava2: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: https://github.com/cneben/QuickQanava
+- Example use:
+  * QuickQanava: Concrete implementation of all GTpo features for QT/QML with complete graph visualization, see: https://github.com/cneben/QuickQanava
+
+**ROADMAP**:
+  - **v0.1.0:**
+    - [X] Push test coverage to 100% (ie increase coverage for subgroups).
+    - [ ] Clean the copy and move semantic requirements on topology primitives (and document it).
+    - [ ] Write complete documentation for static graph configuration.
+    - [ ] Add complete support for static properties.
+    - [ ] Add generic utilities to ease JSON graph serialization.
+    - [ ] Fork from QuickQanava, release in a dedicated GH repository.
+  - **v0.2.x:**
+    - [ ] Add a naive chinese whisper clustering algorithm.
+  - **v0.3.x:**
+    - [ ] Port [cjgdev](https://github.com/cjgdev/aho_corasick) Aho Corasick implementation sto GTpo.
+  - **v0.4.x:**
+    - [ ] Add basic naive (iterative) support for major social network metrics (HITS, PR, etc.)
 
 Installation
 ------------------
@@ -43,6 +59,10 @@ to the underlying concrete container.
 
 Static graph configuration
 -------------
+
+GTpo use "curiously recurring template pattern" [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) to allow complete configuration of graph topology at compile time using a single static configuration definition based on `gtpo::config<>` template.
+
+
 
 ### Behaviours
 
@@ -115,6 +135,8 @@ Calling a *'_tree'* method is often faster, but using it against a non-tree grap
 
 ### Functionnals (`gtpo/algorithm.h`)
 
+Header: [<gtpo/functional.h>](https://github.com/cneben/QuickQanava/blob/master/GTpo/src/functional.h)
+
 - `gtp::copy()` (O(N)): Copy a source graph to a destination graph.
   - Signature: `template <> auto copy(const src_graph_t& src, dst_graph_t& dst) -> bool`
   - Precondition (return false if not met): destination graph must be empty.
@@ -179,6 +201,23 @@ gtpo::filter<>(src, dst, f);
 // FILTERED DESTINATION GRAPH:  { [n1, n2], [ n1 -> n2 ] },
 ```
 
+
+- `gtp::map()`: Map source graph nodes to a destination graph nodes using a transformation functor.
+  - Signature: `template <> auto map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool`
+  - Precondition (return false if not met): destination graph must be empty.
+  - Note: source and destination may be of different types.
+  - Limitations (20180815): Groups are not taken into account.
+  - Throw: May throw std::bad_alloc
+
+```cpp
+    gtpo::graph<> src;
+    const auto f = [](const auto& src_node, auto& dst_node) -> void { /* Do something to map src_node to dst_node, for example use copyctor */ };
+    gtpo::graph<> dst;
+    dst.create_node();
+    const auto ok = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+```
+
+  
 *Help wanted*:
 - Create an "inplace" version for `gtpo::filter`, where input graph is filtered inplace without a copy to a destination graph.
 - Create a version `gtpo::filter` and `gtpo::copy` where destination (or result) graph is returned directly using RVO and not taken as a function argument.
