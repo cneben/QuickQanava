@@ -521,9 +521,9 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
 //-----------------------------------------------------------------------------
 
 /* Graph Factories *///--------------------------------------------------------
-qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent )
+qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle )
 {
-    return insertNode<qan::Node>(nodeComponent);
+    return insertNode<qan::Node>(nodeComponent, nodeStyle);
 }
 
 void    Graph::removeNode( qan::Node* node )

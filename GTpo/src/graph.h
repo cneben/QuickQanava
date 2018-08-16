@@ -83,7 +83,7 @@ public:
     using graph_t           = graph<config_t>;
 
     // Shortcut for user access to graph configuration.
-    using configuration     = config_t;
+    using final_config_t      = config_t;
 
     using shared_node_t       = typename std::shared_ptr<typename config_t::final_node_t>;
     using weak_node_t         = typename std::weak_ptr<typename config_t::final_node_t>;
@@ -131,6 +131,8 @@ public:
     void    clear() noexcept;
 
     /*! \brief Test if this graph is empty, and empty graph has no nodes.
+     *
+     * // FIXME: groups are not taken into account.
      *
      * \return true if the graph is empty, false otherwise.
      */
@@ -247,16 +249,8 @@ public:
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
-    template < class Edge_t = edge<config_t> >
+    //template < class edge_t = typename config_t::final_edge_t >
     auto        create_edge( weak_node_t source, weak_node_t destination ) noexcept(false) -> weak_edge_t;
-
-    /*! \brief Create a directed hyper edge between \c source node and \c destination edge, then insert it into the graph.
-     *
-     * Complexity is O(1).
-     * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
-     */
-    auto        create_edge( weak_node_t source, weak_edge_t destination ) noexcept(false) -> weak_edge_t;
 
     /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *

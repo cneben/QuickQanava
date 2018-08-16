@@ -17,12 +17,14 @@ set (gtpo_header_files
     src/group_behaviour.hpp
     src/group.h
     src/group.hpp
-    src/GTpo
     src/GTpo.h
     src/node_behaviour.h
     src/node_behaviour.hpp
     src/node.h
     src/node.hpp
+    src/algorithm.h
+    src/algorithm.hpp
+    src/functional.h
     src/qt_container_adapter.h
     src/utils.h
 )
@@ -31,7 +33,7 @@ add_library(GTpo INTERFACE)
 
 target_include_directories(GTpo
     INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<BUILD_INTERFACE:src>
         $<INSTALL_INTERFACE:include>
     )
     

@@ -40,6 +40,7 @@
 #include <unordered_set>
 #include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
 #include <iterator>         // std::forward_iterator_tag
+#include <unordered_map>
 
 #include <stack>        // FIXME: move to .hpp...
 
@@ -187,7 +188,7 @@ public:
             return *this;
         }
 
-        // FUCK FUCK FUCK !!!!!!
+        // FIXME FIXME FIXME !!!!!!
             // N'enregistrer que lorsque on a mark.insert, il peut y avoir plusieurs
             // node identiques dans la stack....
         bool node_found = false;

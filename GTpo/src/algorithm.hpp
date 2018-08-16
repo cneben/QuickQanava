@@ -139,7 +139,7 @@ auto    is_dag_rec(const graph_t& graph) noexcept -> bool
     using mark_t = std::unordered_set<typename graph_t::weak_node_t>;
     mark_t marks;
     for ( const auto& node : graph.get_nodes()) {
-        if ( marks.find(node) != marks.end() &&
+        if ( marks.find(node) == marks.end() &&
              !impl::is_dag_impl_rec(marks, typename graph_t::weak_node_t{node}))
             return false;
     }

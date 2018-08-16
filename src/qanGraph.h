@@ -332,11 +332,11 @@ public:
      *
      * \note graph keep ownership of the returned node.
      */
-    Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr );
+    Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr );
 
-    //! Insert a node using Node_t::delegate() and Node_t::style(), it no delegate is defined, default on graph \c nodeDelegate.
+    //! Insert a node using Node_t::delegate() and Node_t::style(), if no delegate is defined, default on graph \c nodeDelegate.
     template < class Node_t >
-    qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr );
+    qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 
     //! Same semantic than insertNode<>() but for non visual nodes.
     template < class Node_t >
