@@ -29,7 +29,7 @@ QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQa
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++7 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://cneben.github.io/QuickQanava/topology/index.html
++ Project homepage: http://cneben.github.io/QuickQanava/index.html
 
 + [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
 + [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html)
