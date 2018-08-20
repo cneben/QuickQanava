@@ -1,30 +1,29 @@
 <RCC>
-    <qresource prefix="/">
-        <file alias="QuickQanava/NavigablePreview.qml">NavigablePreview.qml</file>
-        <file alias="QuickQanava/PointGrid.qml">PointGrid.qml</file>
-        <file alias="QuickQanava/LineGrid.qml">LineGrid.qml</file>
-        <file alias="QuickQanava/Edge.qml">Edge.qml</file>
-        <file alias="QuickQanava/EdgeTemplate.qml">EdgeTemplate.qml</file>
-        <file alias="QuickQanava/GraphView.qml">GraphView.qml</file>
-        <file alias="QuickQanava/Node.qml">Node.qml</file>
-        <file alias="QuickQanava/Port.qml">Port.qml</file>
-        <file alias="QuickQanava/VerticalDock.qml">VerticalDock.qml</file>
-        <file alias="QuickQanava/HorizontalDock.qml">HorizontalDock.qml</file>
-        <file alias="QuickQanava/Group.qml">Group.qml</file>
-        <file alias="QuickQanava/RectGroupTemplate.qml">RectGroupTemplate.qml</file>
-        <file alias="QuickQanava/CanvasNodeTemplate.qml">CanvasNodeTemplate.qml</file>
-        <file alias="QuickQanava/RectNodeTemplate.qml">RectNodeTemplate.qml</file>
-        <file alias="QuickQanava/RectSolidBackground.qml">RectSolidBackground.qml</file>
-        <file alias="QuickQanava/RectSolidShadowBackground.qml">RectSolidShadowBackground.qml</file>
-        <file alias="QuickQanava/RectSolidGlowBackground.qml">RectSolidGlowBackground.qml</file>
-        <file alias="QuickQanava/RectGradientBackground.qml">RectGradientBackground.qml</file>
-        <file alias="QuickQanava/RectGradientShadowBackground.qml">RectGradientShadowBackground.qml</file>
-        <file alias="QuickQanava/RectGradientGlowBackground.qml">RectGradientGlowBackground.qml</file>
-        <file alias="QuickQanava/SelectionItem.qml">SelectionItem.qml</file>
-        <file alias="QuickQanava/StyleListView.qml">StyleListView.qml</file>
-        <file alias="QuickQanava/StyleEditor.qml">StyleEditor.qml</file>
-        <file alias="QuickQanava/VisualConnector.qml">VisualConnector.qml</file>
-        <file alias="QuickQanava/LabelEditor.qml">LabelEditor.qml</file>
-        <file alias="QuickQanava/qmldir">qmldir</file>
+    <qresource prefix="/QuickQanava">
+        <file>NavigablePreview.qml</file>
+        <file>PointGrid.qml</file>
+        <file>LineGrid.qml</file>
+        <file>Edge.qml</file>
+        <file>EdgeTemplate.qml</file>
+        <file>GraphView.qml</file>
+        <file>Node.qml</file>
+        <file>Port.qml</file>
+        <file>VerticalDock.qml</file>
+        <file>HorizontalDock.qml</file>
+        <file>Group.qml</file>
+        <file>RectGroupTemplate.qml</file>
+        <file>CanvasNodeTemplate.qml</file>
+        <file>RectNodeTemplate.qml</file>
+        <file>RectSolidBackground.qml</file>
+        <file>RectSolidShadowBackground.qml</file>
+        <file>RectSolidGlowBackground.qml</file>
+        <file>RectGradientBackground.qml</file>
+        <file>RectGradientShadowBackground.qml</file>
+        <file>RectGradientGlowBackground.qml</file>
+        <file>SelectionItem.qml</file>
+        <file>StyleListView.qml</file>
+        <file>StyleEditor.qml</file>
+        <file>VisualConnector.qml</file>
+        <file>LabelEditor.qml</file>
     </qresource>
 </RCC>

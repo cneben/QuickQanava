@@ -39,7 +39,7 @@
 #include "GTpo.h"
 
 // QuickContainers headers
-#include "../QuickContainers/src/QuickContainers.h"
+#include <QuickContainers>
 
 // Qt header
 #include <QQmlEngine>
