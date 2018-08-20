@@ -30,7 +30,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_nodes ${source_files} nodes.qrc)
 target_include_directories(sample_nodes PUBLIC QuickQanava Qt5::QuickControls2)
-target_link_libraries(sample_nodes QuickQanava)
+target_link_libraries(sample_nodes Qt5::Core Qt5::Gui Qt5::QuickControls2)
 
 if(WIN32 AND DEPLOY)
     find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
@@ -39,7 +39,3 @@ if(WIN32 AND DEPLOY)
     add_custom_command(TARGET sample_nodes POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_nodes>)
 endif()
-
-
-
-

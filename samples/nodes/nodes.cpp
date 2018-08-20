@@ -38,9 +38,9 @@
 #include <QQuickStyle>
 
 // QuickQanava headers
-#include <QuickQanava.h>
+//#include <QuickQanava.h>
 
-using namespace qan;
+//using namespace qan;
 
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
@@ -48,7 +48,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    QuickQanava::initialize(&engine);
+    //QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/nodes.qml"));
     return app.exec();
 }
