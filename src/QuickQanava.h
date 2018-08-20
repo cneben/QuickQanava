@@ -36,7 +36,7 @@
 #define QuickQanava_h
 
 // GTpo headers
-#include "GTpo.h"
+#include <GTpo.h>
 
 // QuickContainers headers
 #include <QuickContainers>

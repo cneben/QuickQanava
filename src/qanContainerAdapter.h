@@ -45,7 +45,7 @@
 #include "qt_container_adapter.h"
 
 // QuickContainers headers
-#include "qcmContainer.h"
+#include <qcmContainer.h>
 
 namespace qan { // ::qan
 

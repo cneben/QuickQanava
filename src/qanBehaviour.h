@@ -39,7 +39,7 @@
 #include <QQuickItem>
 
 // GTpo headers
-#include "node_behaviour.h"
+#include <GTpo.h>
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
