@@ -19,7 +19,6 @@
 
 import QtQuick 2.7
 
-import "qrc:/QuickQanava" as Qan
 import QuickQanava 2.0 as Qan
 
 /*! \brief Concrete component for qan::NavigablePreview interface.

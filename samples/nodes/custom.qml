@@ -30,8 +30,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 import QtQuick.Controls          1.4 as QC1
 import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "." as Qan
+import "."
 
 QC1.SplitView {
     anchors.fill: parent

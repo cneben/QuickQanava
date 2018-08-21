@@ -24,4 +24,29 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "./QuickContainers.h"
+//-----------------------------------------------------------------------------
+// This file is a part of the QuickContainers library.
+//
+// \file    QuickContainer.h
+// \author	benoit@destrat.io
+// \date	2012 02 08
+//-----------------------------------------------------------------------------
+
+#ifndef QuickContainers_h
+#define QuickContainers_h
+
+// Qt headers
+// Nil
+
+// QuickContainers headers
+#include "qcmAbstractContainer.h"
+#include "qcmContainer.h"
+
+struct QuickContainers {
+    static void initialize() {
+        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
+    }
+};
+
+#endif // QuickContainers_h
+

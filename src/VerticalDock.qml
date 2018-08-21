@@ -27,7 +27,6 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.1
 
 import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
 
 ColumnLayout {
     id: root

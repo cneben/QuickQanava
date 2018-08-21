@@ -37,7 +37,6 @@ import QtQuick.Layouts  1.3
 import QtQuick.Controls 2.0
 
 import QuickQanava      2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
 
 /*! \brief Show a selectable list of style with a live style preview.
  *

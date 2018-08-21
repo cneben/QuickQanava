@@ -40,9 +40,9 @@
 #include <QAbstractListModel>
 
 // QuickContainers headers
-#include "./qcmAbstractContainer.h"
-#include "./qcmAdapter.h"
-#include "./qcmContainerModel.h"
+#include "qcmAbstractContainer.h"
+#include "qcmAdapter.h"
+#include "qcmContainerModel.h"
 
 // Std headers
 #include <memory>       // shared_ptr, weak_ptr
