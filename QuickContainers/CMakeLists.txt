@@ -28,7 +28,7 @@ set (qcm_header_files
 )
 
 set (qcm_plugin_files
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/qcmPlugin.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/qcmPlugin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/qcmPlugin.h
 )
 
@@ -48,9 +48,14 @@ target_link_libraries(${PLUGIN_TARGET} QuickContainers)
 # Deployment
 set(URI QuickContainers)
 string(REPLACE "." "/" TARGETPATH ${URI})
-execute_process(COMMAND qmake -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
-string(REPLACE "\n" "" QT_INSTALL_QML ${QT_INSTALL_QML_RAW})
+message("QT_QMAKE_EXECUTABLE=" ${QT_QMAKE_EXECUTABLE})
+execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
+message("QT_INSTALL_QML_RAW=" ${QT_INSTALL_QML_RAW})
+#string(REPLACE "\n" "" ${QT_INSTALL_QML} ${QT_INSTALL_QML_RAW})
+string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
+message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
+message("DESTDIR=" ${DESTDIR})
 install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
 # During plugin searching Qt will be looking for 'qmldir' file
