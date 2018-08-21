@@ -1,42 +1,47 @@
+cmake_minimum_required(VERSION 3.1.0)
+project(GTpo)
+
 set (gtpo_header_files
-    src/adjacent_behaviour.h                                                              
-    src/adjacent_behaviour.hpp                                                                            
-    src/behaviourable.h                                                                                   
-    src/behaviourable.hpp                                                                                 
-    src/behaviour.h                                                                                       
-    src/config.h                                                                                          
-    src/container_adapter.h                                                                               
-    src/edge.h                                                                                            
-    src/edge.hpp                                                                                          
-    src/graph_behaviour.h
-    src/graph_behaviour.hpp
-    src/graph.h
-    src/graph.hpp
-    src/graph_property.h
-    src/group_behaviour.h
-    src/group_behaviour.hpp
-    src/group.h
-    src/group.hpp
-    src/GTpo.h
-    src/node_behaviour.h
-    src/node_behaviour.hpp
-    src/node.h
-    src/node.hpp
-    src/algorithm.h
-    src/algorithm.hpp
-    src/functional.h
-    src/qt_container_adapter.h
-    src/utils.h
+    src/gtpo/adjacent_behaviour.h
+    src/gtpo/adjacent_behaviour.hpp
+    src/gtpo/behaviourable.h
+    src/gtpo/behaviourable.hpp
+    src/gtpo/behaviour.h
+    src/gtpo/config.h
+    src/gtpo/container_adapter.h
+    src/gtpo/edge.h
+    src/gtpo/edge.hpp
+    src/gtpo/graph_behaviour.h
+    src/gtpo/graph_behaviour.hpp
+    src/gtpo/graph.h
+    src/gtpo/graph.hpp
+    src/gtpo/graph_property.h
+    src/gtpo/group_behaviour.h
+    src/gtpo/group_behaviour.hpp
+    src/gtpo/group.h
+    src/gtpo/group.hpp
+    src/gtpo/GTpo
+    src/gtpo/GTpo.h
+    src/gtpo/node_behaviour.h
+    src/gtpo/node_behaviour.hpp
+    src/gtpo/node.h
+    src/gtpo/node.hpp
+    src/gtpo/algorithm.h
+    src/gtpo/algorithm.hpp
+    src/gtpo/functional.h
+    src/gtpo/qt_container_adapter.h
+    src/gtpo/utils.h
 )
 
 add_library(GTpo INTERFACE)
 
 target_include_directories(GTpo
     INTERFACE
-        $<BUILD_INTERFACE:src>
-        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/gtpo>
+        $<INSTALL_INTERFACE:include/gtpo>
     )
     
+# Require C++14
 target_compile_features(GTpo
     INTERFACE
         cxx_std_14
@@ -44,10 +49,10 @@ target_compile_features(GTpo
 
 install(FILES
     ${gtpo_header_files}
-    DESTINATION include
+    DESTINATION include/gtpo
     )
     
 install(TARGETS GTpo
     EXPORT Targets
-    INCLUDES DESTINATION include
+    INCLUDES DESTINATION include/gtpo
     )

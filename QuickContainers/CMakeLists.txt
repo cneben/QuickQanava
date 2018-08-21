@@ -38,8 +38,8 @@ add_library(QuickContainers STATIC ${qcm_header_files} ${qcm_source_files})
 set_target_properties(QuickContainers PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(QuickContainers
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/quickcontainers>
     )
 
 target_compile_features(QuickContainers
@@ -49,15 +49,14 @@ target_compile_features(QuickContainers
 
 install(FILES
     ${qcm_header_files}
-    DESTINATION include
+    DESTINATION include/quickcontainers
     )
 
 install(TARGETS QuickContainers
     EXPORT Targets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
+    INCLUDES DESTINATION include/quickcontainers
     )
 
 # Configure QML QuickContainers plugin ########################################
@@ -67,7 +66,7 @@ add_library(${PLUGIN_TARGET} SHARED ${qcm_plugin_files})
 target_link_libraries(QuickContainers Qt5::Core Qt5::Qml)
 target_link_libraries(${PLUGIN_TARGET} QuickContainers)
 
-# Deployment
+# QML module deployment
 set(URI QuickContainers)
 string(REPLACE "." "/" TARGETPATH ${URI})
 execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
@@ -79,8 +78,7 @@ message("QT_QMAKE_EXECUTABLE=" ${QT_QMAKE_EXECUTABLE})
 message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 message("DESTDIR=" ${DESTDIR})
 
-# During plugin searching Qt will be looking for 'qmldir' file
-# So we should place it next to our plugin lib.
+# Install QML module qmldir file
 add_custom_command(
     TARGET ${PLUGIN_TARGET}
     POST_BUILD

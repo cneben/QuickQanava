@@ -49,7 +49,7 @@
 #include <GTpo>
 
 // QuickContainers headers
-#include <qcmContainer.h>
+#include "qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanNavigable.h"
