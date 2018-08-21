@@ -84,7 +84,7 @@ target_compile_features(QuickQanava
 
 install(FILES
     ${qan_header_files}
-    DESTINATION include
+    DESTINATION include/quickqanava
     )
 
 install(TARGETS QuickQanava
@@ -92,7 +92,7 @@ install(TARGETS QuickQanava
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
+    INCLUDES DESTINATION include/quickqanava
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
