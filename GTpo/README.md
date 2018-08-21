@@ -19,7 +19,7 @@ GTpo is **highly** alpha.
     - [X] Push test coverage to 100%.
     - [ ] Clean the copy and move semantic requirements on topology primitives (and document it).
     - [ ] Clean operator= and operator== semantic requirements on topology primitives (and document it).
-    - [ ] Write complete documentation for static graph configuration.
+    - [X] Write complete documentation for static graph configuration.
     - [ ] Clean management of groups (with regular nodes and specific utility edges...).    
     - [ ] Add complete support for static properties.
     - [ ] Add generic utilities to ease JSON graph serialization.
@@ -223,7 +223,7 @@ gtpo::filter<>(src, dst, f);
 ```
 
 
-- `gtp::map()`: Map source graph nodes to a destination graph nodes using a transformation functor.
+- `gtp::map()`: Map source graph nodes to a destination graph nodes using a factory/transformation functor.
   - Signature: `template <> auto map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool`
   - Precondition (return false if not met): destination graph must be empty.
   - Note: source and destination may be of different types.
@@ -231,11 +231,14 @@ gtpo::filter<>(src, dst, f);
   - Throw: May throw std::bad_alloc
 
 ```cpp
-    gtpo::graph<> src;
-    const auto f = [](const auto& src_node, auto& dst_node) -> void { /* Do something to map src_node to dst_node, for example use copyctor */ };
-    gtpo::graph<> dst;
-    dst.create_node();
-    const auto ok = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+gtpo::graph<> src;
+const auto f = [](const auto& src_node) -> gtpo::graph<>::shared_node_t {
+  static_cast<void>(src_node);
+    return std::make_shared<typename gtpo::graph<>::node_t>();
+};
+gtpo::graph<> dst;
+dst.create_node();
+const auto ok = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
 ```
 
   

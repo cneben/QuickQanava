@@ -185,11 +185,12 @@ auto    map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool
                        typename dst_graph_t::weak_node_t> src_to_dst_nodes;
     // 1.
     for ( const auto& src_node : src.get_nodes() ) {
-        auto dst_node = dst.create_node();
-        if (dst_node.expired())
-            return false;
+        //auto dst_node = dst.create_node();
         // 1.1
-        f(src_node, dst_node);
+        auto dst_node = f(src_node);
+        if (!dst_node)
+            return false;
+        dst.insert_node(dst_node);
 
         // 1.2
         src_to_dst_nodes.insert( {src_node, dst_node} );
@@ -213,6 +214,31 @@ auto    map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool
     }
 
     return true;
+}
+
+
+/*! \brief Default mapping functor used to define gtpo::copy() function in term of mapping: map every source node to a new destination node.
+ *
+ * \warning Default copy "map" functor does not handle polymorphism, created node will always be destination_graph_t::shared_node_t.
+ */
+template <typename src_node_t, typename dst_node_t>
+struct copy_map_node_func_t
+{
+    std::shared_ptr<dst_node_t> operator()(const src_node_t& src_node) {
+        // FIXME: Use copy ctor...
+        return std::make_shared<dst_node_t>();
+    }
+};
+
+template <typename src_graph_t,
+          typename dst_graph_t,
+          typename map_node_func_t = copy_map_node_func_t<typename src_graph_t::shared_node_t,
+                                                          typename dst_graph_t::node_t>
+          >
+auto    copy2(const src_graph_t& src, dst_graph_t& dst,
+              map_node_func_t f = map_node_func_t{}) -> bool
+{
+    return gtpo::map(src, dst, f);
 }
 //-----------------------------------------------------------------------------
 
