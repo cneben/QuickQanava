@@ -4,7 +4,8 @@ QuickContainers
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-`QuickContainers` expose a container as with a unique "Qt style" interface.
+`QuickContainers` expose a generic container (QVector or std::vector) of items to an observale Qt item model.
+
  
 `QuickContainers` support to following containers with a unique interface:
   - Qt containers: QVector, QList and QSet.
@@ -18,9 +19,28 @@ With any combinations of:
   - Any pod type.
 
 *Note:* Using containers with non pointer QObject is not well supported (for example an std::vector<QObjectSub> with QObjectSub having a user defined 
-copy constructor).
+copy constructor). 
 
 
+Interface:
+reserve(QList<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
+
+- append():
+- insert():
+- remove():
+- removeAll():
+- contains():
+- indexOf():
+
+
+```cpp
+// 
+qcm::adapter<QVector, int> container;
+container.insert(42);
+
+```
+    
+    
 ## Roadmap
 
   - [] Add better support for move semantic.
@@ -35,4 +55,4 @@ License
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017 Delia Stratégie
+Copyright (c) 2018 BA
