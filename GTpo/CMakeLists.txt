@@ -1,46 +1,53 @@
-
-cmake_minimum_required(VERSION 3.1.0)
-
-project(GTpo)
-
-# Configure Qt
-find_package(Qt5Core)
-
-# Require C++14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set (gtpo_header_files
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/adjacent_behaviour.h                                                              
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/adjacent_behaviour.hpp                                                                            
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/behaviourable.h                                                                                   
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/behaviourable.hpp                                                                                 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/behaviour.h                                                                                       
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h                                                                                          
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/container_adapter.h                                                                               
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/edge.h                                                                                            
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/edge.hpp                                                                                          
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/graph_behaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/graph_behaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/graph.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/graph.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/graph_property.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/group_behaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/group_behaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/group.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/group.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/GTpo.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_behaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_behaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/node.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/node.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/algorithm.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/functional.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/qt_container_adapter.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/utils.h
+    src/adjacent_behaviour.h                                                              
+    src/adjacent_behaviour.hpp                                                                            
+    src/behaviourable.h                                                                                   
+    src/behaviourable.hpp                                                                                 
+    src/behaviour.h                                                                                       
+    src/config.h                                                                                          
+    src/container_adapter.h                                                                               
+    src/edge.h                                                                                            
+    src/edge.hpp                                                                                          
+    src/graph_behaviour.h
+    src/graph_behaviour.hpp
+    src/graph.h
+    src/graph.hpp
+    src/graph_property.h
+    src/group_behaviour.h
+    src/group_behaviour.hpp
+    src/group.h
+    src/group.hpp
+    src/GTpo.h
+    src/node_behaviour.h
+    src/node_behaviour.hpp
+    src/node.h
+    src/node.hpp
+    src/algorithm.h
+    src/algorithm.hpp
+    src/functional.h
+    src/qt_container_adapter.h
+    src/utils.h
 )
 
 add_library(GTpo INTERFACE)
-target_include_directories(GTpo INTERFACE src)
-target_sources(GTpo INTERFACE ${gtpo_header_files})
+
+target_include_directories(GTpo
+    INTERFACE
+        $<BUILD_INTERFACE:src>
+        $<INSTALL_INTERFACE:include>
+    )
+    
+target_compile_features(GTpo
+    INTERFACE
+        cxx_std_14
+    )
+
+install(FILES
+    ${gtpo_header_files}
+    DESTINATION include
+    )
+    
+install(TARGETS GTpo
+    EXPORT Targets
+    INCLUDES DESTINATION include
+    )
