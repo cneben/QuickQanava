@@ -36,7 +36,7 @@
 #define qanGraphView_h
 
 // GTpo headers
-#include <GTpo>
+#include <gtpo/GTpo>
 
 // QuickQanava headers
 #include "./qanGraph.h"
@@ -62,7 +62,7 @@ class GraphView : public qan::Navigable
 public:
     //! GraphView default constructor.
     explicit GraphView( QQuickItem* parent = nullptr );
-    virtual ~GraphView( ) { }
+    virtual ~GraphView( ) override { }
     GraphView( const GraphView& ) = delete;
 
 public:

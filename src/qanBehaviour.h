@@ -39,7 +39,7 @@
 #include <QQuickItem>
 
 // GTpo headers
-#include "node_behaviour.h"
+#include "gtpo/node_behaviour.h"
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
@@ -65,7 +65,7 @@ class NodeBehaviour : public QObject,
     Q_OBJECT
 public:
     explicit NodeBehaviour( const std::string& name, QObject* parent = nullptr );
-    virtual ~NodeBehaviour() { }
+    virtual ~NodeBehaviour() override { }
     NodeBehaviour( const NodeBehaviour& ) = delete;
 
     /*! \name Behaviour Host Management *///-----------------------------------

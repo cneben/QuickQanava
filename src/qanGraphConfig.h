@@ -46,7 +46,7 @@
 #include <QQuickItem>
 
 // GTpo headers
-#include <GTpo>
+#include <gtpo/GTpo>
 
 // QuickContainers headers
 #include "qcmContainer.h"

@@ -42,7 +42,7 @@
 #include <QSet>
 
 // GTpo headers
-#include "qt_container_adapter.h"
+#include "gtpo/qt_container_adapter.h"
 
 // QuickContainers headers
 #include "qcmContainer.h"

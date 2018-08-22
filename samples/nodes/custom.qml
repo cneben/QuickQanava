@@ -30,6 +30,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 
 import QuickQanava 2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 Qan.GraphView {
     anchors.fill: parent

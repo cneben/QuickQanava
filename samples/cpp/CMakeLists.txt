@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.1.0)
+
 set( source_files
     cpp_sample.cpp
 )
