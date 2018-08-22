@@ -84,7 +84,7 @@ target_compile_features(QuickQanava
 
 install(FILES
     ${qan_header_files}
-    DESTINATION include
+    DESTINATION include/quickqanava
     )
 
 install(TARGETS QuickQanava
@@ -92,7 +92,7 @@ install(TARGETS QuickQanava
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
+    INCLUDES DESTINATION include/quickqanava
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -107,6 +107,9 @@ target_link_libraries(${PLUGIN_TARGET} QuickQanava)
 # QML module deployment
 set(URI QuickQanava)
 string(REPLACE "." "/" TARGETPATH ${URI})
+if (NOT DEFINED QT_QMAKE_EXECUTABLE)
+    set(QT_QMAKE_EXECUTABLE "qmake")
+endif()
 execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
 string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
