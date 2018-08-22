@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/QuickQanava">
+        <file>NavigablePreview.qml</file>
+        <file>PointGrid.qml</file>
+        <file>LineGrid.qml</file>
+        <file>Edge.qml</file>
+        <file>EdgeTemplate.qml</file>
+        <file>GraphView.qml</file>
+        <file>Node.qml</file>
+        <file>Port.qml</file>
+        <file>VerticalDock.qml</file>
+        <file>HorizontalDock.qml</file>
+        <file>Group.qml</file>
+        <file>RectGroupTemplate.qml</file>
+        <file>CanvasNodeTemplate.qml</file>
+        <file>RectNodeTemplate.qml</file>
+        <file>RectSolidBackground.qml</file>
+        <file>RectSolidShadowBackground.qml</file>
+        <file>RectSolidGlowBackground.qml</file>
+        <file>RectGradientBackground.qml</file>
+        <file>RectGradientShadowBackground.qml</file>
+        <file>RectGradientGlowBackground.qml</file>
+        <file>SelectionItem.qml</file>
+        <file>StyleListView.qml</file>
+        <file>StyleEditor.qml</file>
+        <file>VisualConnector.qml</file>
+        <file>LabelEditor.qml</file>
+        <file alias="qmldir">qmldir_static</file>
+    </qresource>
+</RCC>

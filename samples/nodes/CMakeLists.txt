@@ -26,6 +26,8 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../GTpo/src" )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../QuickContainers/include" )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_nodes ${source_files} nodes.qrc)

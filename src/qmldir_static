@@ -1,6 +1,4 @@
 module QuickQanava
-plugin quickqanavaplugin
-classname QuickQanavaPlugin
 
 LineGrid            2.0 LineGrid.qml
 PointGrid           2.0 PointGrid.qml

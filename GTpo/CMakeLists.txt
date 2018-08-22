@@ -37,10 +37,10 @@ add_library(GTpo INTERFACE)
 
 target_include_directories(GTpo
     INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/gtpo>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:include/gtpo>
     )
-    
+
 # Require C++14
 target_compile_features(GTpo
     INTERFACE

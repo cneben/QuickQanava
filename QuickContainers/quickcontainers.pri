@@ -2,7 +2,7 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/include
 
 HEADERS +=  $$PWD/include/qcmContainerModel.h       \
             $$PWD/include/qcmAbstractContainer.h    \

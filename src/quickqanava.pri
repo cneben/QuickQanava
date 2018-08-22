@@ -2,12 +2,14 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
-include(../GTpo/src/gtpo.pri)
+include(../GTpo/gtpo.pri)
 include(../QuickContainers/quickcontainers.pri)
 
+# With .pri inclusion, try to statically link all QML files in Qt ressource, do not
+DEFINES         += QUICKQANAVA_STATIC   # use QML module (calling QuickQanava::initialize() is mandatory...
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
-RESOURCES       += $$PWD/QuickQanava.qrc
+RESOURCES       += $$PWD/QuickQanava_static.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanUtils.h                \
@@ -84,7 +86,8 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/StyleListView.qml             \
                 $$PWD/StyleEditor.qml               \
                 $$PWD/VisualConnector.qml           \
-                $$PWD/LabelEditor.qml
+                $$PWD/LabelEditor.qml               \
+                $$PWD/qmldir_static
 
 #CONFIG      += use_graphviz
 use_graphviz {

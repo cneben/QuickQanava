@@ -30,13 +30,13 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 
 import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+//import "qrc:/QuickQanava"   as Qan
 import MyModule             1.0        // Our custom topology is defined in MyModule
 
 ApplicationWindow {
     id: window
     visible: true
-    width: 1280; height: 720    // MPEG - 2 HD 720p - 1280 x 720 16:9
+    width: 1280; height: 720
 
     title: "QuickQanava cpp API"
 
@@ -49,9 +49,7 @@ ApplicationWindow {
             objectName: "graph"
             anchors.fill: parent
             clip: true
-            //enableConnectorDropNode: true
-            Component.onCompleted: {
-            }
+            Component.onCompleted: { }
             onNodeRightClicked: { }
             onEdgeRightClicked: { }
         } // Qan.Graph: graph
