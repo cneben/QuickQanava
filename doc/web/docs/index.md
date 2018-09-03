@@ -44,22 +44,17 @@ Please refer to [Installation](installation.md) manual and [Graph](graph.md), [N
 
 ## Roadmap
 
-  - **v0.9.4:**	 
-	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
-		- [X] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-		- [X] Add support for standard library containers.
-		- [X] Increase test coverage.
-    - [X] Fix port remove issues.
-    - [X] Add full CMake support..    
-  - **v0.9.5:**
+  - **v0.11.x:**
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v0.12.x:**
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-  - **v0.9.6:**
     - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
-  - **v1.0.0: Advanced edge visualization**	 
-    - GTpo (Configurable topology library):
-        - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
+  - **v1.x.x:**
+    - [ ] Add better support for graph fine grained locking strategies.
+    - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
+
 
 

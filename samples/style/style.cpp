@@ -47,12 +47,13 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
 
-    qmlRegisterType< CustomRectNode >( "QuickQanava", 2, 0, "CustomRectNode");
-    qmlRegisterType< CustomRoundNode >( "QuickQanava", 2, 0, "CustomRoundNode");
-    qmlRegisterType< CustomGraph >( "QuickQanava", 2, 0, "CustomGraph");
-    qmlRegisterType< CustomEdge >( "QuickQanava", 2, 0, "AbstractCustomEdge");
+    qmlRegisterType< CustomRectNode >( "StyleSample", 1, 0, "CustomRectNode");
+    qmlRegisterType< CustomRoundNode >( "StyleSample", 1, 0, "CustomRoundNode");
+    qmlRegisterType< CustomGraph >( "StyleSample", 1, 0, "CustomGraph");
+    qmlRegisterType< CustomEdge >( "StyleSample", 1, 0, "AbstractCustomEdge");
 
     QQmlApplicationEngine engine;
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/style.qml"));
     return app.exec();

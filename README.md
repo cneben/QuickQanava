@@ -98,7 +98,7 @@ QuickQanava could be used with either _qmake_ or _CMake_ build configuration sys
 
 2. Select a kit, build and launch samples.
 
-or (CMake > 3.5)
+or (CMake >= 3.5)
 
 1. Open _CMakeLists.txt_ in QtCreator.
 
@@ -124,7 +124,9 @@ $ cmake --build .
   - **v0.10.0:**	 
     - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
     - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
-  - **v0.11.x:**	 
+  - **v0.11.x:**
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v0.12.x:**
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.

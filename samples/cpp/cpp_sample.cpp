@@ -118,7 +118,8 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addPluginPath("../../src"); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    QuickQanava::initialize(&engine);
 
     qmlRegisterType<CustomGroup>("MyModule", 1, 0, "CustomGroup");
     qmlRegisterType<CustomNode>("MyModule", 1, 0, "CustomNode");
