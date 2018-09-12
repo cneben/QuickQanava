@@ -65,7 +65,7 @@ set (qan_plugin_files
 set(CMAKE_AUTOMOC ON)
 qt5_wrap_cpp(qan_source_files, qan_header_files)
 set(CMAKE_AUTORCC ON)
-list(APPEND RESOURCES QuickQanava.qrc)
+list(APPEND RESOURCES QuickQanava_plugin.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -115,7 +115,7 @@ string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
 install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
-message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
+#message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 
 # Install qmldir file
 add_custom_command(
@@ -123,7 +123,7 @@ add_custom_command(
     POST_BUILD
     COMMAND
         ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/qmldir
+        ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
         ${DESTDIR}/qmldir
 )
 

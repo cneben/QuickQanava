@@ -92,13 +92,28 @@ git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
 ```
 
+Or install as a Git submodule:
+
+```sh
+$ git submodule add https://github.com/cneben/QuickQanava
+$ git submodule update
+```
+
 QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
+
+| qmake                | cmake             | 
+| :---:                | :---:             | 
+| Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed | 
+
+
+Using qmake:
 
 1. Open _quickqanava.pro_ in QtCreator.
 
 2. Select a kit, build and launch samples.
 
-or (CMake >= 3.5)
+
+or with (CMake >= 3.5) and Qt Creator:
 
 1. Open _CMakeLists.txt_ in QtCreator.
 
@@ -106,18 +121,35 @@ or (CMake >= 3.5)
 
 3. Select a kit, build and launch samples.
 
-Or manually using CMake:
+Or manually in command line using CMake:
 
 ```sh
-$ git submodule add https://github.com/cneben/QuickQanava
-$ git submodule update
 $ cd QuickQanava
 $ mkdir build
 $ cd build
+
+# IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
 $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE ..
+
+# IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE ../QuickQanava/
+
 $ cmake --build .
-# Then run the samples
+# Then run the samples in ./samples
+
+# Eventually make install
 ```
+
+Detailled instructions:  [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
+
+Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:
+
+```
+QQmlApplicationEngine failed to load component
+qrc:/nodes.qml:33 module "QuickQanava" plugin "quickqanavaplugin" not found
+```
+
+QuickQanava and QuickContainers plugins directories could be removed manually from `$QTDIR\..\qml` to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').
 
 ## Roadmap / Changelog
 
@@ -135,6 +167,13 @@ $ cmake --build .
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
+
+Contributors
+=======
+
+ - @kwallner / Conan.io and CMake configuration
+ - @Letrab / Edge configuration
+ - @machinekoder / QML plugin and CMake configuration
 
 License
 =======

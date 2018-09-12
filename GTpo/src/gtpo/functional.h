@@ -94,6 +94,14 @@ auto    copy(const src_graph_t& src, dst_graph_t& dst) -> bool
 }
 
 
+template <typename src_node_t, typename dst_node_t>
+struct clone_node_func_t
+{
+    std::shared_ptr<dst_node_t> operator()(const src_node_t& src_node) {
+        return std::make_shared<dst_node_t>(src_node);
+    }
+};
+
 /*! \brief Filter a source graph to a destination graph using a functor (keep the node when functor return true).
  *
  * \note Precondition: \c dst must be empty (return false if precondition is not met).
@@ -102,8 +110,13 @@ auto    copy(const src_graph_t& src, dst_graph_t& dst) -> bool
  * \note May throw std::bad_alloc
  * \return true is \c src has been succesfully copied to \c dst.
  */
-template <typename src_graph_t, typename dst_graph_t, typename filter_node_func_t>
-auto    filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -> bool
+template <typename src_graph_t, typename dst_graph_t,
+          typename filter_node_func_t,
+          typename filter_clone_node_func_t = clone_node_func_t<typename src_graph_t::shared_node_t,
+                                                                typename dst_graph_t::node_t>>
+auto    filter(const src_graph_t& src, dst_graph_t& dst,
+               filter_node_func_t filter_func,
+               filter_clone_node_func_t clone_node = filter_clone_node_func_t{}) -> bool
 {
     // PRECONDITIONS:
         // dst must be empty
@@ -123,10 +136,12 @@ auto    filter(const src_graph_t& src, dst_graph_t& dst, filter_node_func_t f) -
                        typename dst_graph_t::weak_node_t> src_to_dst_nodes;
     // 1.
     for ( const auto& src_node : src.get_nodes() ) {
-        if (f(src_node)) {
-            auto dst_node = dst.create_node();
-            if (dst_node.expired())
+        if (filter_func(src_node)) {
+            auto dst_node = clone_node(src_node);
+            if (!dst_node)
                 return false;
+            dst.insert_node(dst_node);
+
             // 1.1
             selected_src_nodes.insert(src_node);
 
@@ -185,7 +200,6 @@ auto    map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool
                        typename dst_graph_t::weak_node_t> src_to_dst_nodes;
     // 1.
     for ( const auto& src_node : src.get_nodes() ) {
-        //auto dst_node = dst.create_node();
         // 1.1
         auto dst_node = f(src_node);
         if (!dst_node)
@@ -225,8 +239,7 @@ template <typename src_node_t, typename dst_node_t>
 struct copy_map_node_func_t
 {
     std::shared_ptr<dst_node_t> operator()(const src_node_t& src_node) {
-        // FIXME: Use copy ctor...
-        return std::make_shared<dst_node_t>();
+        return std::make_shared<dst_node_t>(src_node);
     }
 };
 

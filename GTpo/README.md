@@ -26,8 +26,6 @@ GTpo is **highly** alpha.
     - [ ] Fork from QuickQanava, release in a dedicated GH repository.
   - **v0.2.x:**
     - [ ] Add a naive chinese whispers clustering algorithm (See [Wikipedia description](https://en.wikipedia.org/wiki/Chinese_Whispers_(clustering_method)) and [Dlib implementation](http://dlib.net/dlib/clustering/chinese_whispers_abstract.h.html)).
-  - **v0.3.x:**
-    - [ ] Port [cjgdev](https://github.com/cjgdev/aho_corasick) Aho Corasick implementation to GTpo.
   - **v0.4.x:**
     - [ ] Add basic naive (iterative) support for major social network metrics (HITS, PR, etc.)
 
@@ -200,7 +198,7 @@ gtpo::graph<> dst2;
 ok = gtpo::filter<>(src, dst2, f);
 ```
 
-User could filter a specific set of subnode, the subset of topology involving theses nodes will be preserved by filtering:
+User could filter a specific set of subnodes, theses nodes adjacent edges will be preserved by filtering:
 
 ```cpp
 gtpo::graph<> src, dst;

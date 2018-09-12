@@ -77,10 +77,6 @@ string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
 install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
-message("QT_QMAKE_EXECUTABLE=" ${QT_QMAKE_EXECUTABLE})
-message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
-message("DESTDIR=" ${DESTDIR})
-
 # Install QML module qmldir file
 add_custom_command(
     TARGET ${PLUGIN_TARGET}

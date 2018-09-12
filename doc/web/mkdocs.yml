@@ -72,3 +72,4 @@ pages:
   - 'Samples': 'samples.md'
   - 'API Reference': 'reference.md'
   - 'Licence': 'licence.md'
+  - 'Internals/Contributors': 'internals.md'

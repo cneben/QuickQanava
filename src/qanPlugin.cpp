@@ -55,7 +55,7 @@
 
 static void initResources()
 {
-    Q_INIT_RESOURCE(QuickQanava);
+    Q_INIT_RESOURCE(QuickQanava_plugin);
 }
 
 static const struct {
