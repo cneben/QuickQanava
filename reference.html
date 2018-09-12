@@ -10,10 +10,10 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       
-        <meta name="description" content="C+11/Qt/QML graph visualization library">
+        <meta name="description" content="Graph topology library for C++14">
       
       
-        <link rel="canonical" href="http://cneben.github.io/QuickQanava/index.html">
+        <link rel="canonical" href="http://cneben.github.io/QuickQanava/reference.html">
       
       
         <meta name="author" content="Destrat.io">
@@ -42,7 +42,7 @@
     
     
       
-        <title>QuickQanava</title>
+        <title>API Reference - QuickQanava C++ graph visualization library</title>
       
     
     
@@ -104,7 +104,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#introduction" tabindex="1" class="md-skip">
+      <a href="#api-reference" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -130,7 +130,7 @@
                 QuickQanava C++ graph visualization library
               </span>
               <span class="md-header-nav__topic">
-                QuickQanava
+                API Reference
               </span>
             
           
@@ -245,59 +245,11 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        QuickQanava
-      </label>
-    
-    <a href="index.html" title="QuickQanava" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="index.html" title="QuickQanava" class="md-nav__link">
       QuickQanava
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#gallery" title="Gallery" class="md-nav__link">
-    Gallery
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap" title="Roadmap" class="md-nav__link">
-    Roadmap
-  </a>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
     
@@ -401,11 +353,45 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="reference.html" title="API Reference" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        API Reference
+      </label>
+    
+    <a href="reference.html" title="API Reference" class="md-nav__link md-nav__link--active">
       API Reference
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" title="API Reference" class="md-nav__link">
+    API Reference
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
     
@@ -452,22 +438,8 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#introduction" title="Introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#gallery" title="Gallery" class="md-nav__link">
-    Gallery
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#roadmap" title="Roadmap" class="md-nav__link">
-    Roadmap
+  <a href="#api-reference" title="API Reference" class="md-nav__link">
+    API Reference
   </a>
   
 </li>
@@ -489,69 +461,10 @@
               
                 
                 
-                  <h1>QuickQanava</h1>
+                  <h1>API Reference</h1>
                 
-                <p><img alt="home" src="images/home.png" /></p>
-<p><a href="https://travis-ci.org/cneben/QuickQanava"><img alt="Build Status" src="https://travis-ci.org/cneben/QuickQanava.svg?branch=master" /></a>  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9)</p>
-<p><a href="https://ci.appveyor.com/project/cneben/quickqanava"><img alt="Build status" src="https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true" /></a> (Windows MSVC 2015 x64/Qt5.9)</p>
-<p><a href="http://www.destrat.io/quickqanava/doc"><img alt="Documentation" src="https://img.shields.io/badge/docs-doxygen-blue.svg" /></a>
-<a href="https://opensource.org/licenses/BSD-3-Clause"><img alt="License" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" /></a>
-<a href="https://twitter.com/QuickQanava"><img alt="Twitter URL" src="https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&amp;label=Follow%20%40QuickQanava" /></a></p>
-<div class="admonition warning">
-<p class="admonition-title">QuickQanava is alpha, interface may change before 1.0.0 release, but QuickQanava is already used extensively in production code.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">QuickQanava is licensed under BSD-3, specific features or support is available on demand: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#98;&#101;&#110;&#111;&#105;&#116;&#64;&#100;&#101;&#115;&#116;&#114;&#97;&#116;&#46;&#105;&#111;">&#98;&#101;&#110;&#111;&#105;&#116;&#64;&#100;&#101;&#115;&#116;&#114;&#97;&#116;&#46;&#105;&#111;</a></p>
-</div>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite">QuickQanava</code> is a C++14 library designed to display graphs and relational content in a QtQuick application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content in advanced dynamic user interfaces (with DnD support, resizable content, visual connection of nodes).</p>
-<p>QuickQanava main repository is hosted on GitHub: <a href="https://github.com/cneben/quickqanava">https://github.com/cneben/quickqanava</a></p>
-<p>QuickQanava is primarily developed with Qt &gt;= 5.10 with MSVC2015 and g++7. minimal required Qt version is <strong>Qt 5.10</strong>.</p>
-<ul>
-<li>Project homepage: <a href="http://cneben.github.io/QuickQanava/index.html">http://cneben.github.io/QuickQanava/index.html</a></li>
-</ul>
-<p>Please refer to <a href="installation.html">Installation</a> manual and <a href="graph.html">Graph</a>, <a href="nodes.html">Nodes</a> and <a href="edges.html">Graph</a> sections for more information about installing and using QuickQanava.</p>
-<h2 id="gallery">Gallery<a class="headerlink" href="#gallery" title="Permanent link">&para;</a></h2>
-<p><a href="samples.html">QuickQanava samples</a></p>
-<table>
-<thead>
-<tr>
-<th align="center">Node Grouping</th>
-<th align="center">Visual Connection of Nodes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center"><img alt="groups" src="nodes/sample-groups.gif" /></td>
-<td align="center"><img alt="connector" src="images/sample-nodes.gif" /></td>
-</tr>
-<tr>
-<td align="center"><img alt="connector" src="images/sample-dataflow-short.gif" /></td>
-<td align="center"><img alt="styles" src="images/sample-styles.gif" /></td>
-</tr>
-</tbody>
-</table>
-<p><img alt="styles" src="samples/topology.png" /></p>
-<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>v0.11.x:</strong><ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Rewrite CMake configuration, add install step, use QML plugins.</li>
-</ul>
-</li>
-<li><strong>v0.12.x:</strong><ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add support for direct visual dragging of port items.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add full support for groups inside group (ie subgraphs).</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Fix current qan::PointGrid bugs and add "snap to grid" support.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add more configuration options to qan::Edge (source and destination arrow configuration).</li>
-</ul>
-</li>
-<li><strong>v1.x.x:</strong><ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add better support for graph fine grained locking strategies.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add simple layout algorithms (force directed, tree).</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).</li>
-</ul>
-</li>
-</ul>
+                <h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>API reference is no longer available online, please run <code class="codehilite">doxygen</code> (&gt;= 1.8) command in <code class="codehilite">docs/reference</code> folder to generate your local copy (<code class="codehilite">dot</code> tools must be isntalled).</p>
                 
                   
                 
@@ -572,14 +485,28 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
+          <a href="samples.html" title="Samples" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Samples
+              </span>
+            </div>
+          </a>
         
-          <a href="installation.html" title="Installation" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+        
+          <a href="licence.html" title="Licence" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Installation
+                Licence
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
