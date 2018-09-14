@@ -50,6 +50,7 @@ int	main( int argc, char** argv )
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/edges.qml"));
     return app.exec();

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,15 +32,14 @@
 // \date	2016 04 04
 //-----------------------------------------------------------------------------
 
-#ifndef qanBehaviour_h
-#define qanBehaviour_h
+#pragma once
 
 // Qt headers
 #include <QObject>
 #include <QQuickItem>
 
 // GTpo headers
-#include "../GTpo/src/gtpoNodeBehaviour.h"
+#include "gtpo/node_behaviour.h"
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
@@ -48,7 +47,7 @@
 
 namespace qan { // ::qan
 
-/*! \brief Define node behaviour interface to react to node topology events (QuickQanava adapter for gtpo::NodeBehaviour<>).
+/*! \brief Define node behaviour interface to react to node topology events (QuickQanava adapter for gtpo::dynamic_node_nehaviour<>).
  *
  * Use qan::Node::installBehaviour() method to install a custom behaviour on a host node to be notified
  * and react to topological changes.
@@ -61,12 +60,12 @@ namespace qan { // ::qan
  *  \nosubgrouping
  */
 class NodeBehaviour : public QObject,
-                      public gtpo::NodeBehaviour< qan::GraphConfig >
+                      public gtpo::dynamic_node_behaviour< qan::Config >
 {
     Q_OBJECT
 public:
     explicit NodeBehaviour( const std::string& name, QObject* parent = nullptr );
-    virtual ~NodeBehaviour() { }
+    virtual ~NodeBehaviour() override { }
     NodeBehaviour( const NodeBehaviour& ) = delete;
 
     /*! \name Behaviour Host Management *///-----------------------------------
@@ -97,22 +96,22 @@ signals:
     /*! \name Notification Interface *///--------------------------------------
     //@{
 public:
-    using WeakNode  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakNode;
-    using WeakEdge  = gtpo::NodeBehaviour< qan::GraphConfig >::WeakEdge;
+    using WeakNode  = gtpo::dynamic_node_behaviour< qan::Config >::weak_node_t;
+    using WeakEdge  = gtpo::dynamic_node_behaviour< qan::Config >::weak_edge_t;
 
-    //! \copydoc gtpo::NodeBehaviour::inNodeInserted()
-    virtual void    inNodeInserted( WeakNode& weakInNode, const WeakEdge& edge ) noexcept override;
-    //! \copydoc gtpo::NodeBehaviour::inNodeRemoved()
-    virtual void    inNodeRemoved( WeakNode& weakInNode, const WeakEdge& edge ) noexcept override;
-    //! \copydoc gtpo::NodeBehaviour::inNodeRemoved()
-    virtual void    inNodeRemoved() noexcept override { }
+    //! \copydoc gtpo::dynamic_node_nehaviour::inNodeInserted()
+    virtual void    on_in_node_inserted(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
+    //! \copydoc gtpo::dynamic_node_nehaviour::inNodeRemoved()
+    virtual void    on_in_node_removed(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
+    //! \copydoc gtpo::dynamic_node_nehaviour::inNodeRemoved()
+    virtual void    on_in_node_removed(WeakNode& target) noexcept override { Q_UNUSED(target); }
 
-    //! \copydoc gtpo::NodeBehaviour::outNodeInserted()
-    virtual void    outNodeInserted( WeakNode& weakOutNode, const WeakEdge& edge  ) noexcept override;
-    //! \copydoc gtpo::NodeBehaviour::outNodeRemoved()
-    virtual void    outNodeRemoved( WeakNode& weakOutNode, const WeakEdge& edge  ) noexcept override;
-    //! \copydoc gtpo::NodeBehaviour::outNodeRemoved()
-    virtual void    outNodeRemoved() noexcept override { }
+    //! \copydoc gtpo::dynamic_node_nehaviour::outNodeInserted()
+    virtual void    on_out_node_inserted(WeakNode& target, WeakNode& weakOutNode, const WeakEdge& edge) noexcept override;
+    //! \copydoc gtpo::dynamic_node_nehaviour::outNodeRemoved()
+    virtual void    on_out_node_removed(WeakNode& target, WeakNode& weakOutNode, const WeakEdge& edge) noexcept override;
+    //! \copydoc gtpo::dynamic_node_nehaviour::outNodeRemoved()
+    virtual void    on_out_node_removed(WeakNode& target) noexcept override { Q_UNUSED(target); }
 
 protected:
     virtual void    inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept { Q_UNUSED( inNode ); Q_UNUSED(edge); }
@@ -128,4 +127,3 @@ protected:
 
 QML_DECLARE_TYPE( qan::NodeBehaviour )
 
-#endif // qanBehaviour_h

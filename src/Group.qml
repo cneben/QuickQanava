@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -36,37 +36,29 @@ import QtQuick              2.7
 import QtQuick.Layouts      1.3
 import QtGraphicalEffects   1.0
 
-import QuickQanava  2.0 as Qan
-import "."          as Qan
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
 Qan.GroupItem {
     id: groupItem
-    x: 0;   y: 0; z:0
-    width: template.content.width;
-    height: template.content.height
-    Layout.preferredWidth: 150
-    Layout.preferredHeight:  80
 
     default property alias children : template
     container: template.content   // See qan::GroupItem::container property documentation
+
+    //! Show or hide group top left label editor (default to visible).
+    property alias labelEditorVisible : template.labelEditorVisible
+
+    //! Show or hide group top left expand button (default to visible).
+    property alias expandButtonVisible : template.expandButtonVisible
 
     Qan.RectGroupTemplate {
         id: template
         anchors.fill: parent
         groupItem: parent
-        Qan.BottomRightResizer {
-            id: groupResizer
-            x: 0; y: 0; z: 3
-            visible: !groupItem.collapsed
-            target: template.content
-            minimumTargetSize: Qt.size( Math.max( groupItem.Layout.preferredWidth, template.content.childrenRect.x + template.content.childrenRect.width + 10 ),
-                                        Math.max( groupItem.Layout.preferredHeight, template.content.childrenRect.y + template.content.childrenRect.height + 10 ) )
-
-        }
     }
 
-    // Emitted by qan::Group when node dragging start
+    // Emitted by qan::GroupItem when node dragging start
     onNodeDragEnter: { template.onNodeDragEnter() }
-    // Emitted by qan::Group when node dragging ends
+    // Emitted by qan::GroupItem when node dragging ends
     onNodeDragLeave: { template.onNodeDragLeave() }
 }

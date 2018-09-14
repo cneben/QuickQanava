@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -96,6 +96,18 @@ auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
 }
 auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
 auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+
+auto    NodeItem::setRect(const QRectF& r) noexcept -> void
+{
+    // PRECONDITIONS:
+        // r rect must be valid
+    if (!r.isValid())
+        return;
+    setX(r.left());
+    setY(r.top());
+    setWidth(r.width());
+    setHeight(r.height());
+}
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------

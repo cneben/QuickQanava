@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -92,8 +92,6 @@ private:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_INVOKABLE bool        isHyperEdge() const noexcept;
-public:
     Q_PROPERTY( qan::NodeItem* sourceItem READ getSourceItem WRITE setSourceItem NOTIFY sourceItemChanged FINAL )
     qan::NodeItem*          getSourceItem( ) { return _sourceItem.data(); }
     void                    setSourceItem( qan::NodeItem* source );
@@ -111,14 +109,6 @@ private:
 signals:
     void                    destinationItemChanged( );
 
-public:
-    Q_PROPERTY( qan::EdgeItem* destinationEdge READ getDestinationEdge() WRITE setDestinationEdge NOTIFY destinationEdgeChanged FINAL )
-    qan::EdgeItem*  getDestinationEdge() noexcept { return _destinationEdge.data(); }
-    void            setDestinationEdge( qan::EdgeItem* destination );
-signals:
-    void            destinationEdgeChanged( );
-private:
-    QPointer<qan::EdgeItem> _destinationEdge;
 protected:
     //! Configure either a node or an edge (for hyper edges) item.
     void            configureDestinationItem( QQuickItem* item );
@@ -128,7 +118,7 @@ protected:
     /*! \name Edge Drawing Management *///-------------------------------------
     //@{
 public:
-    /*! Hidden is set to true when the edge \i should not be shown, it is up to the user to use thie property to eventually hide the item.
+    /*! Hidden is set to true when the edge \i should not be shown, it is up to the user to use this property to eventually hide the item.
      *
      *  \c hidden property is automatically set to true when either the edge is inside source or destination bounding box or the line is
      *  too short to be drawn.

@@ -9,31 +9,41 @@ QuickQanava
 [Roadmap](#Roadmap) |
 [License](#license)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++6/Qt5.10 - OSX/Clang/Qt5.9)
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.10.1 - OSX / Clang 8.1 / Qt 5.11.1 CMake)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows/MSVC 2015 x64/Qt5.10/qmake)
+[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows / MSVC 2015 x64 / Qt5.10.1 / qmake)
 
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc) |
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.9.4-blue.svg) |
+![](https://img.shields.io/badge/version-0.10.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-**CHANGELOG 20180326:** Add style support for gradient fill and glow effect. Reactivate style management (see style sample).
+**There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
+
++ **CHANGELOG 20180704:** Complete refactoring of QuickQanava internal topology "backend" [GTpo](https://github.com/cneben/QuickQanava/tree/master/GTpo).
++ **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
-QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
+QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
-QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++5.4 (minimal required Qt version is **Qt 5.10**)
+QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++7 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://www.destrat.io/quickqanava (**updated 20171213**)
-+ Reference documentation: http://www.destrat.io/quickqanava/doc/index.html (**updated 20171213**)
++ Project homepage: http://cneben.github.io/QuickQanava/index.html
+
++ [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
++ [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html)
+  + [Ports and Docks](http://cneben.github.io/QuickQanava/nodes/index.html#docks-and-ports)
+  + [Visual node connection](http://cneben.github.io/QuickQanava/edges/index.html#visual-creation-of-edges)
+  + [Selection](http://cneben.github.io/QuickQanava/nodes/index.html#selection)
+  + [Groups](http://cneben.github.io/QuickQanava/nodes/index.html#grouping-nodes)
++ [Styling](http://cneben.github.io/QuickQanava/styles/index.html#node-style)
++ [Advanced use, custom topology](http://cneben.github.io/QuickQanava/advanced/index.html)
+
 
 For any questions, please contact: benoit@destrat.io
 
-QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background), if you are looking for a pure C++/QGraphicsView solution, have a look to: [NodeEditor](https://github.com/paceholder/nodeeditor)
-
-Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/visual-programming-and-d3ne-efcd49690703)
+QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background).
 
 ## QuickQanava Showcase
 
@@ -47,26 +57,26 @@ Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/
 | :---:       |
 | ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif) |
 
-  - User Doc:  [QuickStart - Custom Nodes](http://www.destrat.io/quickqanava/advanced/index.html#defining-custom-topology)
+  - User Doc:  [QuickStart - Custom Nodes](http://cneben.github.io/QuickQanava/topology/index.html#displaying-custom-nodes)
 
 | Visual Connector       |   
 | :---:                  | 
 ![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-dataflow-short.gif) |
 
-  - User Doc:  [QuickStart - Visual Connector](http://www.destrat.io/quickqanava/topology/index.html#visual-connection-of-nodes)
-  - Reference documentation: [qan::Connector interface](http://www.destrat.io/quickqanava/doc/classqan_1_1_connector.html) and [Qan.VisualConnector component](http://www.destrat.io/quickqanava/doc/class_visual_connector.html)
+  - User Doc:  [QuickStart - Visual Connector](http://cneben.github.io/QuickQanava/topology/index.html#visual-connection-of-nodes)
+  - Reference documentation: qan::Connector interface and Qan.VisualConnector component
 
 | Groups       | 
 | :---:        | 
-| ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-groups.gif) |
+| ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/nodes/sample-groups.gif) |
 
-  - User Doc:  [QuickStart - Using Groups](http://www.destrat.io/quickqanava/topology/index.html#using-groups)
+  - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
 
 | Styles       |
 | :---:        | 
 | ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
 
-  - User Doc:  [QuickStart - Using Styles](http://www.destrat.io/quickqanava/styles/index.html#introduction)
+  - User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles/index.html)
 
 ## Dependencies
 
@@ -75,33 +85,95 @@ Why visual programming does matter: [Medium @ni55an](https://medium.com/@ni55an/
 
 ## Building
 
+Get the latest QuickQanava sources:
+
 ```sh
 git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
 ```
-1. Open quickqanava.pro in QtCreator
+
+Or install as a Git submodule:
+
+```sh
+$ git submodule add https://github.com/cneben/QuickQanava
+$ git submodule update
+```
+
+QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
+
+| qmake                | cmake             | 
+| :---:                | :---:             | 
+| Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed | 
+
+
+Using qmake:
+
+1. Open _quickqanava.pro_ in QtCreator.
 
 2. Select a kit, build and launch samples.
 
-3. Building 'tests' (_optional_): Tests will not compile without a working Google Test installation: for Windows, modify win32-msvc*:GMOCK_DIR and win32-msvc*:GTEST_DIR in `tests.pro` with path containing a valid build directory. On Linux, no configuration is required, just install the '-dev' package for theses libraries.
-  
+
+or with (CMake >= 3.5) and Qt Creator:
+
+1. Open _CMakeLists.txt_ in QtCreator.
+
+2. In 'Projects' panel, set DBUILD_SAMPLES option to true in CMake configuration panel.
+
+3. Select a kit, build and launch samples.
+
+Or manually in command line using CMake:
+
+```sh
+$ cd QuickQanava
+$ mkdir build
+$ cd build
+
+# IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
+$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE ..
+
+# IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE ../QuickQanava/
+
+$ cmake --build .
+# Then run the samples in ./samples
+
+# Eventually make install
+```
+
+Detailled instructions:  [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
+
+Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:
+
+```
+QQmlApplicationEngine failed to load component
+qrc:/nodes.qml:33 module "QuickQanava" plugin "quickqanavaplugin" not found
+```
+
+QuickQanava and QuickContainers plugins directories could be removed manually from `$QTDIR\..\qml` to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').
+
 ## Roadmap / Changelog
 
-  - **v0.9.4:**	 
-	- QuickContainers (Qt/QML observable adapter for STL or Qt containers):
-		- [X] Redesign QuickContainers: qcm::ContainerModel<> memory footprint is too high (inheritance from QAbstractItemModel comes with a strong virtual and signals/slots overhead)
-		- [X] Add support for standard library containers.
-		- [X] Increase test coverage.
-    - [X] Fix port remove issues.
-    - [X] Add full CMake support..    
-  - **v0.9.5:**	 
+  - **v0.10.0:**	 
+    - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
+    - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
+  - **v0.11.x:**
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v0.12.x:**
+    - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-  - **v1.0.0: Advanced edge visualization**	 
-    - GTpo (Configurable topology library):
-      - [ ] Redesign using adjacency matrix, immutable and full move semantic support.
-	  - [ ] Push test coverage to 100% (ie increase coverage for subgroups).- [80%] Redesign qan::Graph interface for creating content.
+    - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
+  - **v1.: Advanced edge visualization**
+    - [ ] Add better support for graph fine grained locking strategies.
+    - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
+
+Contributors
+=======
+
+ - @kwallner / Conan.io and CMake configuration
+ - @Letrab / Edge configuration
+ - @machinekoder / QML plugin and CMake configuration
 
 License
 =======

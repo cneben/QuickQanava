@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -128,11 +128,13 @@ public:
      * handler visibility (or set it's opacity to a given value).
      */
     Q_PROPERTY( QSizeF handlerSize READ getHandlerSize WRITE setHandlerSize NOTIFY handlerSizeChanged FINAL )
-    void        setHandlerSize( QSizeF handlerSize );
+    void        setHandlerSize( const QSizeF& handlerSize );
     QSizeF      getHandlerSize( ) const { return _handlerSize; }
 signals:
     void        handlerSizeChanged();
 private:
+    //! Internally used to force handler width value despite previous value set.
+    void        forceHandlerSize( const QSizeF& handlerSize );
     QSizeF      _handlerSize{ 9.0, 9.0 };
 
 public:
@@ -158,6 +160,8 @@ public:
 signals:
     void        handlerRadiusChanged();
 private:
+    //! Internally used to force handler width value despite previous value set.
+    void        forceHandlerRadius( qreal handlerRadius );
     qreal       _handlerRadius{ 4.0 };
 
 public:
@@ -169,6 +173,8 @@ public:
 signals:
     void        handlerWidthChanged();
 private:
+    //! Internally used to force handler width value despite previous value set.
+    void        forceHandlerWidth( qreal handlerWidth );
     qreal       _handlerWidth{ 4.0 };
 
 public:

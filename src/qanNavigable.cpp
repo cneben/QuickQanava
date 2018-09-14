@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -384,7 +384,8 @@ void    Navigable::setGrid( qan::Grid* grid ) noexcept
     if ( grid != _grid ) {
         if ( _grid ) {                      // Hide previous grid
             _grid->setVisible(false);
-            disconnect(_grid, 0, this, 0);  // Disconnect every update signals from grid to this navigable
+            disconnect( _grid, nullptr,
+                        this, nullptr );  // Disconnect every update signals from grid to this navigable
         }
 
         _grid = grid;                       // Configure new grid

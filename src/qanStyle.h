@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -408,6 +408,9 @@ signals:
 QML_DECLARE_TYPE( qan::Style )
 QML_DECLARE_TYPE( qan::NodeStyle )
 QML_DECLARE_TYPE( qan::EdgeStyle )
+Q_DECLARE_METATYPE( qan::NodeStyle::FillType )
+Q_DECLARE_METATYPE( qan::NodeStyle::EffectType )
+Q_DECLARE_METATYPE( qan::EdgeStyle::LineType )
 
 #endif // qanStyle_h
 

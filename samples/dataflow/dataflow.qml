@@ -137,5 +137,11 @@ ApplicationWindow {
             }
         }
     }
+    Label {
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        text: "When creating new processing nodes, connect output to input from top to bottom \n this is just a code sample, not a ful fledged flow engine"
+        color: "red"
+    }
 }
 

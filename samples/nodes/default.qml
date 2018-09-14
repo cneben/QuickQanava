@@ -31,7 +31,6 @@ import QtQuick.Layouts           1.3
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-import "." as Qan
 
 Qan.GraphView {
     id: graphView

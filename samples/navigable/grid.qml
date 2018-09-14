@@ -45,7 +45,8 @@ Item {
     RowLayout {
         CheckBox {
             text: "Grid Visible"
-            checked: navigable.grid.visible
+            enabled: navigable.grid
+            checked: navigable.grid ? navigable.grid.visible : false
             onCheckedChanged: navigable.grid.visible = checked
         }
         Label { text: "Grid Type:" }
@@ -55,10 +56,15 @@ Item {
             model: ListModel {
                 ListElement { key: "Lines";  value: 25 }
                 ListElement { key: "Points"; value: 50 }
+                ListElement { key: "None"; value: 50 }
             }
             currentIndex: 0 // Default to "Lines"
             onActivated: {
-                navigable.grid = currentIndex == 0 ? lineGrid : pointGrid
+                switch ( currentIndex ) {
+                case 0: navigable.grid = lineGrid; break;
+                case 1: navigable.grid = pointGrid; break;
+                case 2: navigable.grid = null; break;
+                }
             }
         }
         Label { text: "Grid Scale:" }
@@ -80,14 +86,16 @@ Item {
         Label { Layout.leftMargin: 25; text: "Grid Major:" }
         SpinBox {
             from: 1;    to: 10
-            value: navigable.grid.gridMajor
-            onValueChanged: navigable.grid.gridMajor = value
+            enabled: navigable.grid
+            value: navigable.grid ? navigable.grid.gridMajor : 0
+            onValueModified: navigable.grid.gridMajor = value
         }
         Label { Layout.leftMargin: 25; text: "Point size:" }
         SpinBox {
             from: 1;    to: 10
-            value: navigable.grid.gridWidth
-            onValueChanged: navigable.grid.gridWidth = value
+            enabled: navigable.grid
+            value: navigable.grid ? navigable.grid.gridWidth : 0
+            onValueModified: navigable.grid.gridWidth = value
         }
     }
 }

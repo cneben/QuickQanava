@@ -87,11 +87,10 @@ Qan.NodeItem {
         smooth: true
         source: faceNodeItem.node.image
         onSourceSizeChanged: {
-            console.info("onSourceSizeChanged(): w=" + sourceSize.width + "  h=" + sourceSize.height)
             if ( sourceSize.width > 0 &&
                  sourceSize.height > 0 ) {
                 faceNodeItem.ratio = sourceSize.width / sourceSize.height;
-                console.info("ratio=" + faceNodeItem.ratio)
+                // FIXME: generate a clean initial size here
             } else
                 faceNodeItem.ratio = -1.;
         }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -46,7 +46,7 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge() :
-    gtpo::GenEdge< qan::GraphConfig >{}
+    gtpo::edge< qan::Config >{}
 {
 }
 
@@ -57,11 +57,11 @@ Edge::~Edge()
 }
 
 qan::Graph* Edge::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
+    return qobject_cast< qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
 }
 
 const qan::Graph* Edge::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::GenEdge< qan::GraphConfig >::getGraph() );
+    return qobject_cast< const qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
 }
 
 qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
@@ -97,20 +97,13 @@ qan::EdgeStyle* Edge::style() noexcept
 /*! \name Edge Topology Management *///------------------------------------
 qan::Node*  Edge::getSource() noexcept
 {
-    return qobject_cast<qan::Node*>(getSrc().lock().get());
+    return qobject_cast<qan::Node*>(get_src().lock().get());
 }
 
 qan::Node*  Edge::getDestination() noexcept
 {
-    return qobject_cast<qan::Node*>(getDst().lock().get());
+    return qobject_cast<qan::Node*>(get_dst().lock().get());
 }
-
-qan::Edge*  Edge::getHDestination() noexcept
-{
-    return qobject_cast<qan::Edge*>(getHDst().lock().get());
-}
-
-QAbstractItemModel* Edge::getInHNodesModel() const { return getInHNodes().model(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------

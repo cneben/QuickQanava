@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -36,7 +36,7 @@
 #define qanGraphView_h
 
 // GTpo headers
-#include <GTpo>
+#include <gtpo/GTpo>
 
 // QuickQanava headers
 #include "./qanGraph.h"
@@ -62,7 +62,7 @@ class GraphView : public qan::Navigable
 public:
     //! GraphView default constructor.
     explicit GraphView( QQuickItem* parent = nullptr );
-    virtual ~GraphView( ) { }
+    virtual ~GraphView( ) override { }
     GraphView( const GraphView& ) = delete;
 
 public:

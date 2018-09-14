@@ -1,40 +1,58 @@
-
 cmake_minimum_required(VERSION 3.1.0)
-
 project(GTpo)
 
-# Configure Qt
-find_package(Qt5Core)
-
-# Require C++14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set (gtpo_header_files
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoUtils.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGraphConfig.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenEdge.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenEdge.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenNode.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenNode.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenGroup.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenGroup.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenGraph.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGenGraph.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoBehaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoBehaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGraphBehaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGraphBehaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoNodeBehaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoNodeBehaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGroupBehaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoGroupBehaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoAdjacentBehaviour.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoAdjacentBehaviour.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gtpoContainerAdapter.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/GTpo.h
+    src/gtpo/adjacent_behaviour.h
+    src/gtpo/adjacent_behaviour.hpp
+    src/gtpo/behaviourable.h
+    src/gtpo/behaviourable.hpp
+    src/gtpo/behaviour.h
+    src/gtpo/config.h
+    src/gtpo/container_adapter.h
+    src/gtpo/edge.h
+    src/gtpo/edge.hpp
+    src/gtpo/graph_behaviour.h
+    src/gtpo/graph_behaviour.hpp
+    src/gtpo/graph.h
+    src/gtpo/graph.hpp
+    src/gtpo/graph_property.h
+    src/gtpo/group_behaviour.h
+    src/gtpo/group_behaviour.hpp
+    src/gtpo/group.h
+    src/gtpo/group.hpp
+    src/gtpo/GTpo
+    src/gtpo/GTpo.h
+    src/gtpo/node_behaviour.h
+    src/gtpo/node_behaviour.hpp
+    src/gtpo/node.h
+    src/gtpo/node.hpp
+    src/gtpo/algorithm.h
+    src/gtpo/algorithm.hpp
+    src/gtpo/functional.h
+    src/gtpo/qt_container_adapter.h
+    src/gtpo/utils.h
 )
 
 add_library(GTpo INTERFACE)
-target_include_directories(GTpo INTERFACE src)
-target_sources(GTpo INTERFACE ${gtpo_header_files})
+
+target_include_directories(GTpo
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<INSTALL_INTERFACE:include/gtpo>
+    )
+
+# Require C++14
+target_compile_features(GTpo
+    INTERFACE
+        cxx_std_14
+    )
+
+install(FILES
+    ${gtpo_header_files}
+    DESTINATION include/gtpo
+    )
+    
+install(TARGETS GTpo
+    EXPORT Targets
+    INCLUDES DESTINATION include/gtpo
+    )

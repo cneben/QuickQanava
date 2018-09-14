@@ -52,7 +52,6 @@ Qan.NodeItem {
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 4
                 Label {
-                    anchors.fill: parent; anchors.margins: 5
                     text: "Node with controls"
                     color: "lightgray"
                     font.bold: true

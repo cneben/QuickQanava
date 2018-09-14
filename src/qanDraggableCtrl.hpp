@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -185,7 +185,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::beginDragMove( const QPointF& dragIni
                 if ( primitive != nullptr &&
                      primitive->getItem() != nullptr &&
                      static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
-                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                     primitive->get_group().expired() )       // Do not drag nodes that are inside a group
                     primitive->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
             };
             std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), beginDragMoveSelected);
@@ -201,8 +201,8 @@ void    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
     if ( _target &&
          _targetItem &&
          graph != nullptr ) {
-        if ( _target->getGroup().lock() ) {
-            graph->ungroupNode(_target->getGroup().lock().get(), _target );
+        if ( _target->get_group().lock() ) {
+            graph->ungroupNode(_target,_target->get_group().lock().get());
             _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Reset position cache since the node has changed parent and
                                                          // thus position (same scene pos but different local pos)
             _dragInitialPos = _targetItem->parentItem() != nullptr ? _targetItem->parentItem()->mapToScene( _targetItem->position() ) :
@@ -219,7 +219,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::dragMove( const QPointF& dragInitialM
                 if ( primitive != nullptr &&
                      primitive->getItem() != nullptr &&
                      static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
-                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                     primitive->get_group().expired() )       // Do not drag nodes that are inside a group
                     primitive->getItem()->draggableCtrl().dragMove( dragInitialMousePos, delta, false );
             };
             std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
@@ -259,8 +259,11 @@ void    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection )
             const auto pos = _targetItem->position();
             qan::Group* group = graph->groupAt( pos, { _targetItem->width(), _targetItem->height() } );
             if ( group != nullptr &&
-                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  // Do not drop a group in itself
-                graph->groupNode( group, _target.data() );
+                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
+                if ( group->getItem() != nullptr &&        // Do not allow grouping a node in a collapsed
+                     !group->getItem()->getCollapsed() )    // group item
+                    graph->groupNode( group, _target.data() );
+            }
         }
         _targetItem->setDragged(false);
 
@@ -271,7 +274,7 @@ void    DraggableCtrl<Node_t, NodeItem_t>::endDragMove( bool dragSelection )
                 if ( primitive != nullptr &&
                      primitive->getItem() != nullptr &&
                      static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
-                     primitive->getGroup().expired() )       // Do not drag nodes that are inside a group
+                     primitive->get_group().expired() )       // Do not drag nodes that are inside a group
                     primitive->getItem()->draggableCtrl().endDragMove( false );
             };
             std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);

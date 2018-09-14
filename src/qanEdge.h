@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,7 @@
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanEdge_h
-#define qanEdge_h
+#pragma once
 
 // Qt headers
 
@@ -51,7 +50,7 @@ class EdgeItem;
 /*!
     \nosubgrouping
  */
-class Edge : public gtpo::GenEdge< qan::GraphConfig >
+class Edge : public gtpo::edge<qan::Config>
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
@@ -64,7 +63,7 @@ public:
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
-    //! Shortcut to gtpo::GenEdge<>::getGraph().
+    //! Shortcut to gtpo::edge<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
@@ -103,11 +102,6 @@ public:
 public:
     Q_INVOKABLE qan::Node* getSource() noexcept;
     Q_INVOKABLE qan::Node* getDestination() noexcept;
-    Q_INVOKABLE qan::Edge* getHDestination() noexcept;
-
-    //! Read-only abstract item model for this edge "in hyper nodes".
-    Q_PROPERTY( QAbstractItemModel* inHNodes READ getInHNodesModel CONSTANT FINAL )
-    QAbstractItemModel* getInHNodesModel() const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -141,5 +135,3 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Edge )
-
-#endif // qanEdge_h

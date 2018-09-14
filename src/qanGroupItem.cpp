@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -72,6 +72,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 
     setStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
+
+    setWidth(200); setHeight(150);
 }
 
 GroupItem::~GroupItem() { /* Nil */ }
@@ -95,14 +97,45 @@ auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
 }
 auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
 auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+
+auto    GroupItem::setRect(const QRectF& r) noexcept -> void
+{
+    // PRECONDITIONS:
+        // r rect must be valid
+    if (!r.isValid())
+        return;
+    setX(r.left());
+    setY(r.top());
+    setWidth(r.width());
+    setHeight(r.height());
+}
 //-----------------------------------------------------------------------------
+
+
+/* Selection and Sizing Management *///----------------------------------------
+void    GroupItem::setMinimumSize(QSizeF minimumSize) noexcept
+{
+    _minimumSize = minimumSize;
+    emit minimumSizeChanged( );
+}
+
+void    GroupItem::setResizable( bool resizable ) noexcept
+{
+    if ( resizable != _resizable ) {
+        _resizable = resizable;
+        emit resizableChanged();
+    }
+}
+//-----------------------------------------------------------------------------
+
 
 /* Style Management *///-------------------------------------------------------
 void    GroupItem::setStyle( qan::Style* style ) noexcept
 {
     if ( style != _style ) {
         if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, 0, this, 0 );
+            QObject::disconnect( _style, nullptr,
+                                 this,   nullptr );
         _style = style;
         if ( _style )
             connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
@@ -138,7 +171,7 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
     if ( _group &&
          collapsed != _collapsed ) {
         _collapsed = collapsed;
-        for ( auto weakEdge : _group->getAdjacentEdges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
+        for ( auto weakEdge : _group->get_adjacent_edges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
             const auto edge = weakEdge.lock() ;
             if ( edge &&
                  edge->getItem() != nullptr )
@@ -162,21 +195,28 @@ void    GroupItem::groupMoved()
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
-        for ( auto weakEdge : _group->getAdjacentEdges() ) {
+        for ( auto weakEdge : _group->get_adjacent_edges() ) {
             qan::Edge* edge = weakEdge.lock().get();
             if ( edge != nullptr &&
-                 edge->getItem() != nullptr &&
-                 edge->getItem()->isVisible() )
-                edge->getItem()->updateItem();
+                 edge->getItem() != nullptr )
+                edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility
         }
     }
 }
 
 void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition )
 {
+    // PRECONDITIONS:
+        // nodeItem can't be nullptr
+        // A 'container' must have been configured
     if ( nodeItem == nullptr ||
          getContainer() == nullptr )   // A container must have configured in concrete QML group component
         return;
+
+    // If the container is not visible, the group is probably collapsed, accept the
+    if ( !getContainer()->isVisible() )     // drop, but emit a warning...
+        qWarning() << "qan::GroupItem::groupNodeItem(): Warning: grouping a node item while the group is collapsed.";
+
     if ( transformPosition )
         nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
     nodeItem->setParentItem( getContainer() );

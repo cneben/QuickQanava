@@ -1,8 +1,6 @@
 TEMPLATE    =   subdirs
 CONFIG      +=  ordered
 
-include (./gtpo-common.pri)
-
 gtpo.file    = src/gtpo.pro
 
 sample-basic.subdir   = samples/basic

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -97,6 +97,10 @@ protected:
     auto    getGraph() noexcept -> qan::Graph*;
 private:
     QPointer<qan::Graph>    _graph;
+
+public:
+    //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
+    auto            setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 
@@ -119,8 +123,35 @@ private slots:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Selection Management *///----------------------------------------
+    /*! \name Selection and Sizing Management *///-----------------------------
     //@{
+public:
+    //! Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
+    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
+    //! \copydoc minimumSize
+    inline const QSizeF&  getMinimumSize() const noexcept { return _minimumSize; }
+    //! \copydoc minimumSize
+    void            setMinimumSize(QSizeF minimumSize) noexcept;
+private:
+    QSizeF          _minimumSize{150., 100};
+signals:
+    //! \internal
+    void            minimumSizeChanged();
+
+public:
+    //! Enable or disable group resizing (default to true, ie group is resizable).
+    Q_PROPERTY( bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL )
+    //! \copydoc resizable
+    inline bool     getResizable() const noexcept { return _resizable; }
+    //! \copydoc resizable
+    void            setResizable( bool resizable ) noexcept;
+protected:
+    //! \copydoc resizable
+    bool            _resizable{true};
+signals:
+    //! \copydoc resizable
+    void            resizableChanged();
+
 public:
     //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
     Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
@@ -155,7 +186,7 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Draggable Management *///----------------------------------------
+    /*! \name Dragging Support Management *///---------------------------------
     //@{
 public:
     //! \copydoc qan::Draggable::_draggable
@@ -210,20 +241,17 @@ public:
      *      id: content
      *      // ...
      *  }
-     *  // ...
-     *  Component.onCompleted: {
-     *      container = content
-     *  }
+     *  container = content
      * }
      * \endcode
      */
-    Q_PROPERTY( QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL )
-    void            setContainer( QQuickItem* container ) { _container = container; emit containerChanged( ); }
-    QQuickItem*     getContainer( ) { return _container; }
+    Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
+    void                    setContainer(QQuickItem* container) noexcept { _container = container; emit containerChanged( ); }
+    inline QQuickItem*      getContainer() noexcept { return _container; }
 protected:
-    QQuickItem*     _container = nullptr;
+    QPointer<QQuickItem>    _container = nullptr;
 signals:
-    void            containerChanged( );
+    void                    containerChanged();
 
 signals:
     //! Emmited whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).
