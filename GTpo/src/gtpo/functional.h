@@ -54,48 +54,10 @@ class graph;
 
 /* Graph Copy & Filter *///----------------------------------------------------
 
-/*! \brief Copy a source graph to destination.
- *
- * \note Precondition: \c dst must be empty (return false if precondition is not met).
- * \note source and destination may be of different types.
- * \note May throw std::bad_alloc
+/*! \brief Default node clone functor, create a destination node with std::make_shared and use copy ctor from \c src_node to destination node.
  */
-template <typename src_graph_t, typename dst_graph_t>
-auto    copy(const src_graph_t& src, dst_graph_t& dst) -> bool
-{
-    // PRECONDITIONS:
-        // dst must be empty.
-    if (!dst.is_empty())
-        return false;
-
-    // ALGORITHM:
-        // 1. Copy all nodes from src to dst.
-        //  1.1 Maintain a mapping between src and dst nodes.
-        // 2. Iterate over all edges
-        //  2.1 Create edge in dst, mapping source edge source and destination nodes to dst
-
-    // 1.
-    std::unordered_map<typename src_graph_t::weak_node_t,
-                       typename dst_graph_t::weak_node_t> src_to_dst_nodes;
-    for (const auto& src_node : src.get_nodes()) {
-        auto dst_node = dst.create_node();
-        src_to_dst_nodes.insert( {src_node, dst_node} );    // 1.1
-    }
-
-    // 2.
-    for (const auto src_edge : src.get_edges()) {
-        if (!src_edge)
-            return false;
-        auto dst_src_node = src_to_dst_nodes[src_edge->get_src()];
-        auto dst_dst_node = src_to_dst_nodes[src_edge->get_dst()];
-        dst.create_edge(dst_src_node, dst_dst_node);
-    }
-    return true;
-}
-
-
 template <typename src_node_t, typename dst_node_t>
-struct clone_node_func_t
+struct default_clone_node_func_t
 {
     std::shared_ptr<dst_node_t> operator()(const src_node_t& src_node) {
         return std::make_shared<dst_node_t>(src_node);
@@ -112,11 +74,11 @@ struct clone_node_func_t
  */
 template <typename src_graph_t, typename dst_graph_t,
           typename filter_node_func_t,
-          typename filter_clone_node_func_t = clone_node_func_t<typename src_graph_t::shared_node_t,
-                                                                typename dst_graph_t::node_t>>
+          typename clone_node_func_t = default_clone_node_func_t<typename src_graph_t::shared_node_t,
+                                                                 typename dst_graph_t::node_t>>
 auto    filter(const src_graph_t& src, dst_graph_t& dst,
                filter_node_func_t filter_func,
-               filter_clone_node_func_t clone_node = filter_clone_node_func_t{}) -> bool
+               clone_node_func_t clone_node = clone_node_func_t{}) -> bool
 {
     // PRECONDITIONS:
         // dst must be empty
@@ -236,23 +198,105 @@ auto    map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool
  * \warning Default copy "map" functor does not handle polymorphism, created node will always be destination_graph_t::shared_node_t.
  */
 template <typename src_node_t, typename dst_node_t>
-struct copy_map_node_func_t
+struct copy_node_func_t
 {
     std::shared_ptr<dst_node_t> operator()(const src_node_t& src_node) {
         return std::make_shared<dst_node_t>(src_node);
     }
 };
 
+
+/*! \brief Copy a source graph to destination.
+ *
+ * \note Precondition: \c dst must be empty (return false if precondition is not met).
+ * \note source and destination may be of different types.
+ * \note May throw std::bad_alloc
+ */
 template <typename src_graph_t,
           typename dst_graph_t,
-          typename map_node_func_t = copy_map_node_func_t<typename src_graph_t::shared_node_t,
-                                                          typename dst_graph_t::node_t>
+          typename copy_node_func_t = copy_node_func_t<typename src_graph_t::shared_node_t,
+                                                       typename dst_graph_t::node_t>
           >
-auto    copy2(const src_graph_t& src, dst_graph_t& dst,
-              map_node_func_t f = map_node_func_t{}) -> bool
+auto    copy(const src_graph_t& src, dst_graph_t& dst,
+             copy_node_func_t f = copy_node_func_t{}) -> bool
 {
     return gtpo::map(src, dst, f);
 }
+
+
+/*! \brief Filter a source graph to a destination graph using a functor then map all selected nodes to a new graph with no temporaries.
+ *
+ * Equivalent to a call to gtpo::filter(), then gtpo::map(), but more efficient.
+ *
+ * \note Precondition: \c dst must be empty (return false if precondition is not met).
+ * \note When false is returned, destination is left in an undefined state (destination may be half
+ * created).
+ * \note May throw std::bad_alloc
+ * \return true is \c src has been succesfully copied to \c dst.
+ */
+template <typename src_graph_t, typename dst_graph_t,
+          typename filter_node_func_t,
+          typename map_node_func_t = default_clone_node_func_t<typename src_graph_t::shared_node_t,
+                                                               typename dst_graph_t::node_t>>
+auto    filter_map( const src_graph_t& src, dst_graph_t& dst,
+                    filter_node_func_t filter_node_func,
+                    map_node_func_t map_node_func = map_node_func_t{} ) -> bool
+{
+    // PRECONDITIONS:
+        // dst must be empty
+    if (!dst.is_empty())
+        return false;
+
+    // ALGORITHM:
+        // 1. Copy all nodes from src to dst if filter_node_func(src_node) is true.
+            // 1.1 If a node is selected (filtered), map it to a new node using map_node_func functor.
+            // 1.2 Maintain a searchable container of all selected source nodes.
+            // 1.3 Maintain a mapping from source to destination nodes.
+        // 2. Iterate over source edges, recreate a subset of topology containing only selected nodes
+            // 2.1 If source edge source and destination nodes are selected, create an edge in destination graph.
+            // 2.2 To create an edge in dst, map source src and dst nodes to destination graph, then create edge.
+    std::unordered_set<typename src_graph_t::weak_node_t> selected_src_nodes;
+    std::unordered_map<typename src_graph_t::weak_node_t,
+                       typename dst_graph_t::weak_node_t> src_to_dst_nodes;
+    // 1.
+    for ( const auto& src_node : src.get_nodes() ) {
+        if (filter_node_func(src_node)) {
+            // 1.1
+            auto dst_node = map_node_func(src_node);
+            if (!dst_node)
+                return false;
+            dst.insert_node(dst_node);
+
+            // 1.2
+            selected_src_nodes.insert(src_node);
+
+            // 1.3
+            src_to_dst_nodes.insert( {src_node, dst_node} );
+        }
+    }
+
+    // 2.
+    for ( const auto& src_edge : src.get_edges() ) {
+        if (!src_edge)
+            return false;
+        // 2.1
+        auto src_src_node = src_edge->get_src().lock();
+        auto src_dst_node = src_edge->get_dst().lock();
+        if ( !src_src_node ||
+             !src_dst_node )
+            return false;
+        if (selected_src_nodes.find(src_src_node) != selected_src_nodes.end() &&
+            selected_src_nodes.find(src_dst_node) != selected_src_nodes.end() ) {
+            // 2.2
+            auto dst_src_node = src_to_dst_nodes[src_src_node];
+            auto dst_dst_node = src_to_dst_nodes[src_dst_node];
+            dst.create_edge(dst_src_node, dst_dst_node);
+        }
+    }
+
+    return true;
+}
+
 //-----------------------------------------------------------------------------
 
 } // ::gtpo
