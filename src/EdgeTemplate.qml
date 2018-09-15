@@ -45,23 +45,119 @@ Item {
     property color color: edgeItem &&
                           edgeItem.style ? edgeItem.style.lineColor : Qt.rgba(0.,0.,0.,1.)
     Shape {
-        id: edgeCap
         transformOrigin: Item.TopLeft
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
-        visible: edgeItem.visible && !edgeItem.hidden
+        visible: ((edgeItem.dstType === Qan.EdgeItem.Arrow) || (edgeItem.dstType === Qan.EdgeItem.ArrowOpen))
+                 && edgeItem.visible && !edgeItem.hidden
         ShapePath {
-            id: cap
             strokeColor: edgeTemplate.color
-            fillColor: edgeTemplate.color
+            fillColor: edgeItem.dstType === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
             PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
             PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
             PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
         }
-    } // edgeCap
+    }
+    Shape {
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.dstAngle
+        x: edgeItem.p2.x
+        y: edgeItem.p2.y
+        visible: ((edgeItem.dstType === Qan.EdgeItem.Circle) || (edgeItem.dstType === Qan.EdgeItem.CircleOpen))
+                 && edgeItem.visible && !edgeItem.hidden
+        ShapePath {
+            strokeColor: edgeTemplate.color
+            fillColor: edgeItem.dstType === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            strokeWidth: 2
+            startX: 0;   startY: 0
+            PathArc {
+                relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+            }
+            PathArc {
+                relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+            }
+        }
+    }
+    Shape {
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.dstAngle
+        x: edgeItem.p2.x
+        y: edgeItem.p2.y
+        visible: ((edgeItem.dstType === Qan.EdgeItem.Rect) || (edgeItem.dstType === Qan.EdgeItem.RectOpen))
+                 && edgeItem.visible && !edgeItem.hidden
+        ShapePath {
+            strokeColor: edgeTemplate.color
+            fillColor: edgeItem.dstType === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            strokeWidth: 2
+            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
+            PathLine { x: 0.;               y: 0.               }
+            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
+            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
+            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
+        }
+    }
+    Shape {
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.srcAngle
+        x: edgeItem.p1.x
+        y: edgeItem.p1.y
+        visible: ((edgeItem.srcType === Qan.EdgeItem.Arrow) || (edgeItem.srcType === Qan.EdgeItem.ArrowOpen))
+                 && edgeItem.visible && !edgeItem.hidden
+        ShapePath {
+            strokeColor: edgeTemplate.color
+            fillColor: edgeItem.srcType === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
+            strokeWidth: 2
+            startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
+            PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
+            PathLine { x: edgeItem.srcA2.x; y: edgeItem.srcA2.y }
+            PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
+        }
+    }
+    Shape {
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.srcAngle
+        x: edgeItem.p1.x
+        y: edgeItem.p1.y
+        visible: ((edgeItem.srcType === Qan.EdgeItem.Circle) || (edgeItem.srcType === Qan.EdgeItem.CircleOpen))
+                 && edgeItem.visible && !edgeItem.hidden
+        ShapePath {
+            strokeColor: edgeTemplate.color
+            fillColor: edgeItem.srcType === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            strokeWidth: 2
+            startX: 0;   startY: 0
+            PathArc {
+                relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+            }
+            PathArc {
+                relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+            }
+        }
+    }
+    Shape {
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.srcAngle
+        x: edgeItem.p1.x
+        y: edgeItem.p1.y
+        visible: ((edgeItem.srcType === Qan.EdgeItem.Rect) || (edgeItem.srcType === Qan.EdgeItem.RectOpen))
+                 && edgeItem.visible && !edgeItem.hidden
+        ShapePath {
+            strokeColor: edgeTemplate.color
+            fillColor: edgeItem.srcType === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            strokeWidth: 2
+            startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
+            PathLine { x: 0.;               y: 0.               }
+            PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
+            PathLine { x: edgeItem.srcA2.x; y: edgeItem.srcA2.y }
+            PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
+        }
+    }
     Component {
         id: straightShapePath
         ShapePath {
