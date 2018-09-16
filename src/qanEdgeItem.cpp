@@ -59,8 +59,6 @@ EdgeItem::EdgeItem( QQuickItem* parent ) :
     setObjectName( QStringLiteral("qan::EdgeItem") );
 }
 
-EdgeItem::~EdgeItem() { /* Nil */ }
-
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
 auto    EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.data(); }
 auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
@@ -536,7 +534,7 @@ void    EdgeItem::generateArrowAngle(QPointF* p1, QPointF* p2, QPointF* c1, QPoi
         //               have very sharp orientation, average tangent at curve end AND line angle to avoid
         //               arrow orientation that does not fit the average curve angle.
         static constexpr auto averageDstAngleFactor = 4.0;
-        if ( line.length() > averageDstAngleFactor * arrowLength )         // General case
+        if ( line.length() > averageDstAngleFactor * arrowLength )      // General case
             *angle = cubicCurveAngleAt(0.99, *p1, *p2, *c1, *c2);
         else {                                                          // Special case
             *angle = ( 0.4 * cubicCurveAngleAt(0.99, *p1, *p2, *c1, *c2) +

@@ -64,7 +64,7 @@ class EdgeItem : public QQuickItem
     Q_OBJECT
 public:
     explicit EdgeItem(QQuickItem* parent = nullptr);
-    virtual ~EdgeItem();
+    virtual ~EdgeItem() override = default;
     EdgeItem( const EdgeItem& ) = delete;
 
 public:
