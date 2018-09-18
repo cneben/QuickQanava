@@ -53,7 +53,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
             PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
@@ -70,7 +70,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.CircleOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: 0;   startY: 0
             PathArc {
@@ -92,7 +92,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.RectOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
             PathLine { x: 0.;               y: 0.               }
@@ -110,7 +110,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
             PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
@@ -127,7 +127,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.CircleOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: 0;   startY: 0
             PathArc {
@@ -149,7 +149,7 @@ Item {
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.RectOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
             PathLine { x: 0.;               y: 0.               }

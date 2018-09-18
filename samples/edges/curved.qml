@@ -248,6 +248,33 @@ Item {
             } // RowLayout: edgeType
             RowLayout {
                 Layout.margins: 2
+                Label { text:"Src Shape:" }
+                Item { Layout.fillWidth: true }
+                ComboBox {
+                    model: ["None", "Arrow", "Open Arrow", "Rect", "Open Rect", "Circle", "Open Circle"]
+                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        var shape = [Qan.EdgeItem.None, Qan.EdgeItem.Arrow, Qan.EdgeItem.ArrowOpen, Qan.EdgeItem.Circle, Qan.EdgeItem.CircleOpen, Qan.EdgeItem.Rect, Qan.EdgeItem.RectOpen]
+                        console.warn("shape=" + shape[index])
+                        defaultEdgeStyle.srcShape = shape[index]
+                    }
+                }
+            } // RowLayout: srcShape
+            RowLayout {
+                Layout.margins: 2
+                Label { text:"Dst shape:" }
+                Item { Layout.fillWidth: true }
+                ComboBox {
+                    model: ["None", "Arrow", "Open Arrow", "Rect", "Open Rect", "Circle", "Open Circle"]
+                    currentIndex: 1
+                    onActivated: {
+                        var shape = [Qan.EdgeItem.None, Qan.EdgeItem.Arrow, Qan.EdgeItem.ArrowOpen, Qan.EdgeItem.Circle, Qan.EdgeItem.CircleOpen, Qan.EdgeItem.Rect, Qan.EdgeItem.RectOpen]
+                        defaultEdgeStyle.dstShape = shape[index]
+                    }
+                }
+            } // RowLayout: dstShape
+            RowLayout {
+                Layout.margins: 2
                 Label { text:"Line color:" }
                 Item { Layout.fillWidth: true }
                 Rectangle {

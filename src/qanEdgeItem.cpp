@@ -193,6 +193,7 @@ auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> void
     if ( _srcShape != srcShape ) {
         _srcShape = srcShape;
         emit srcShapeChanged();
+        updateItem();
     }
 }
 
@@ -201,6 +202,7 @@ auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> void
     if ( _dstShape != dstShape ) {
         _dstShape = dstShape;
         emit dstShapeChanged();
+        updateItem();
     }
 }
 
