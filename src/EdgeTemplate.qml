@@ -131,12 +131,12 @@ Item {
             strokeWidth: 2
             startX: 0;   startY: 0
             PathArc {
-                relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
-                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+                relativeX: edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
+                radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
             }
             PathArc {
-                relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
-                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+                relativeX: -edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
+                radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
             }
         }
     }

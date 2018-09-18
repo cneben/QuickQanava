@@ -490,7 +490,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     generateArrowAngle(cache.p2, cache.p1, cache.srcAngle,
                        cache.c2, cache.c1,
                        cache.lineType,
-                       getDstShape(),
+                       getSrcShape(),
                        arrowLength);
 
     // Update destination arrow cache points
@@ -517,7 +517,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
                        cache.lineType,
                        getDstShape(),
                        arrowLength);
-
 }
 
 void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
@@ -532,7 +531,7 @@ void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
     if ( lineType == qan::EdgeStyle::LineType::Straight ) {
         if ( line.length() > MinLength &&       // Protect line.length() DIV0
              arrowShape != ArrowShape::None)    // Do not correct edge extremity by arrowLength if there is not arrow
-            p2 = line.pointAt( 1.0 - (arrowLength/line.length()) );
+            p2 = line.pointAt( 1.0 - (arrowLength / line.length()) );
         angle = lineAngle(line);
     } else if ( lineType == qan::EdgeStyle::LineType::Curved ) {
         // Generate arrow orientation:
@@ -554,7 +553,7 @@ void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
             QVector2D dstVector{ QPointF{c2.x() - p2.x(), c2.y() - p2.y()} };
             dstVector.normalize();
             dstVector *= static_cast<float>(arrowLength);
-            p2 = p2 + dstVector.toPointF();
+            p2 = QPointF{p2} + dstVector.toPointF();
         }
     }
 }
