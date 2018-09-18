@@ -336,7 +336,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
 void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
 {
     // PRECONDITIONS:
-        // edGeometry should be valid
+        // cache should be valid
         // cache srcBs and dstBs must not be empty (valid bounding shapes are necessary)
     if ( !cache.isValid() )
         return;
@@ -354,12 +354,12 @@ void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
     const QPointF dstBrCenter = dstBr.center();
     cache.srcBr = srcBr;
     cache.dstBr = dstBr;
-    cache.srcBrCenter = srcBr.center();
-    cache.dstBrCenter = dstBr.center();
+    cache.srcBrCenter = srcBrCenter;
+    cache.dstBrCenter = dstBrCenter;
 
     const QLineF line = getLineIntersection( srcBrCenter, dstBrCenter, cache.srcBs, cache.dstBs );
 
-    // Update hidden
+    // Update hidden: Edge is hidden if it's size is less than the src/dst shape size sum
     {
         {
             const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
@@ -415,7 +415,7 @@ void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
                         c = QPointF{p.x() > brCenter.x() ? br.right() : br.left(), brCenter.y()};
                     break;
                 }
-             } else {    // qan::EdgeStyle::LineType::Curved, for curved line, do not intersection, generate point according to port type.
+             } else {    // qan::EdgeStyle::LineType::Curved, for curved line, do not intersect ports, generate point according to port type.
                 switch ( dockType ) {
                     case qan::NodeItem::Dock::Left:
                         c = QPointF{br.left(), brCenter.y() };
@@ -461,6 +461,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     QPointF arrowA1      = QPointF{ 0.,          -arrowSize   };
     QPointF arrowA3      = QPointF{ 0.,           arrowSize   };
 
+    // FIXME: Do not compute for all shapes...
     QPointF circleRectA1 = QPointF{ arrowLength/2., -arrowLength/2. };
     QPointF circleRectA3 = QPointF{ arrowLength/2.,  arrowLength/2. };
 
@@ -490,43 +491,57 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
             break;
     }
     // Generate source arrow angle (p2 <-> p1 and c2 <-> c1)
-    generateArrowAngle(&cache.p2, &cache.p1, &cache.c2, &cache.c1, &cache.srcAngle, cache.lineType, arrowLength);
+    generateArrowAngle(cache.p2, cache.p1, cache.srcAngle,
+                       cache.c2, cache.c1,
+                       cache.lineType,
+                       getDstShape(),
+                       arrowLength);
 
     // Update destination arrow cache points
     switch (getDstShape()) {
-        case qan::EdgeItem::ArrowShape::Arrow:
+        case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;
             cache.dstA3 = arrowA3;
             break;
-        case qan::EdgeItem::ArrowShape::Rect:
-        case qan::EdgeItem::ArrowShape::RectOpen:
-        case qan::EdgeItem::ArrowShape::Circle:
+        case qan::EdgeItem::ArrowShape::Rect:       // [[fallthrough]]
+        case qan::EdgeItem::ArrowShape::RectOpen:   // [[fallthrough]]
+        case qan::EdgeItem::ArrowShape::Circle:     // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::CircleOpen:
             cache.dstA1 = circleRectA1;
             cache.dstA3 = circleRectA3;
             break;
         case qan::EdgeItem::ArrowShape::None:
-        default:
+            break;
+        /*default:
             cache.dstA1 = point0;
             cache.dstA2 = point0;
             cache.dstA3 = point0;
-            break;
+            break;*/
+        // No default
     }
     // Generate destination arrow angle
-    generateArrowAngle(&cache.p1, &cache.p2, &cache.c1, &cache.c2, &cache.dstAngle, cache.lineType, arrowLength);
+    generateArrowAngle(cache.p1, cache.p2, cache.dstAngle,
+                       cache.c1, cache.c2,
+                       cache.lineType,
+                       getDstShape(),
+                       arrowLength);
 
 }
 
-void    EdgeItem::generateArrowAngle(QPointF* p1, QPointF* p2, QPointF* c1, QPointF* c2, qreal* angle, qan::EdgeStyle::LineType lineType, const qreal &arrowLength) const noexcept
+void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
+                                     const QPointF& c1, const QPointF& c2,
+                                     const qan::EdgeStyle::LineType lineType,
+                                     const qan::EdgeItem::ArrowShape arrowShape,
+                                     const qreal arrowLength) const noexcept
 {
     static constexpr    qreal MinLength = 0.00001;          // Correct line dst point to take into account the arrow geometry
 
-    const QLineF line{*p1, *p2};    // Generate dst arrow line angle
+    const QLineF line{p1, p2};    // Generate dst arrow line angle
     if ( lineType == qan::EdgeStyle::LineType::Straight ) {
         if ( line.length() > MinLength )    // Protect line.length() DIV0
-            *p2 = line.pointAt( 1.0 - (arrowLength/line.length()) );
-        *angle = lineAngle(line);
+            p2 = line.pointAt( 1.0 - (arrowLength/line.length()) );
+        angle = lineAngle(line);
     } else if ( lineType == qan::EdgeStyle::LineType::Curved ) {
         // Generate arrow orientation:
         // General case: get cubic tangent at line end.
@@ -535,18 +550,18 @@ void    EdgeItem::generateArrowAngle(QPointF* p1, QPointF* p2, QPointF* c1, QPoi
         //               arrow orientation that does not fit the average curve angle.
         static constexpr auto averageDstAngleFactor = 4.0;
         if ( line.length() > averageDstAngleFactor * arrowLength )      // General case
-            *angle = cubicCurveAngleAt(0.99, *p1, *p2, *c1, *c2);
+            angle = cubicCurveAngleAt(0.99, p1, p2, c1, c2);
         else {                                                          // Special case
-            *angle = ( 0.4 * cubicCurveAngleAt(0.99, *p1, *p2, *c1, *c2) +
+            angle = ( 0.4 * cubicCurveAngleAt(0.99, p1, p2, c1, c2) +
                                0.6 * lineAngle(line) );
         }
 
         // Use dst angle to generate an end point translated by -arrowLength...
         // Build a (P2, C2) vector
-        QVector2D dstVector( QPointF{c2->x() - p2->x(), c2->y() - p2->y()} );
+        QVector2D dstVector( QPointF{c2.x() - p2.x(), c2.y() - p2.y()} );
         dstVector.normalize();
         dstVector *= static_cast<float>(arrowLength);
-        *p2 = *p2 + dstVector.toPointF();
+        p2 = p2 + dstVector.toPointF();
     }
 }
 

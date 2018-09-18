@@ -187,9 +187,9 @@ public:
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
      */
     virtual void        updateItem() noexcept;
-protected:
 
-     /*! FIXME document that
+protected:
+     /*! Cache current edge geometry state.
       *
       * \note Edge geometry cache is expressed in _graph global coordinate system_. Projection into
       * a local CS occurs only in projectGeometry(), until this method is called all internal qan::EdgeItem
@@ -235,26 +235,19 @@ protected:
         bool hidden{false};
         QPolygonF   srcBs;
         QPolygonF   dstBs;
-        QRectF      srcBr;
-        QRectF      dstBr;
+        QRectF      srcBr, dstBr;
         QPointF     srcBrCenter;
         QPointF     dstBrCenter;
 
-        QPointF p1;
-        QPointF p2;
+        QPointF p1, p2;
 
-        QPointF dstA1;
-        QPointF dstA2;
-        QPointF dstA3;
+        QPointF dstA1, dstA2, dstA3;
         qreal   dstAngle{0.};
 
-        QPointF srcA1;
-        QPointF srcA2;
-        QPointF srcA3;
+        QPointF srcA1, srcA2, srcA3;
         qreal   srcAngle{0.};
 
-        QPointF c1;
-        QPointF c2;
+        QPointF c1, c2;
 
         QPointF labelPosition;
     };
@@ -270,7 +263,11 @@ protected:
     inline void             generateArrowGeometry(GeometryCache& cache) const noexcept;
 
     //! Generate arrow angle an update points.
-    inline void             generateArrowAngle(QPointF* p1, QPointF* p2, QPointF* c1, QPointF* c2, qreal* angle, qan::EdgeStyle::LineType lineType, const qreal &arrowLength) const noexcept;
+    inline void             generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
+                                               const QPointF& c1, const QPointF& c2,
+                                               const qan::EdgeStyle::LineType lineType,
+                                               const qan::EdgeItem::ArrowShape arrowShape,
+                                               const qreal arrowLength) const noexcept;
 
     //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
     inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
