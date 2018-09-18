@@ -58,8 +58,8 @@ Qan.GraphView {
             var d1 = graph.insertNode()
             d1.label = "DST"; d1.item.x = x + 200; d1.item.y = y + 50
             var e = graph.insertEdge(s1, d1);
-            e.item.srcType = Qan.EdgeItem.None
-            e.item.dstType = endingType
+            e.item.srcShape = Qan.EdgeItem.None
+            e.item.dstShape = endingType
             items.push(e.item)
 
             var s2 = graph.insertNode()
@@ -67,8 +67,8 @@ Qan.GraphView {
             var d2 = graph.insertNode()
             d2.label = "DST"; d2.item.x = x + 600; d2.item.y = y + 50
             e = graph.insertEdge(s2, d2);
-            e.item.srcType = endingType
-            e.item.dstType = Qan.EdgeItem.None
+            e.item.srcShape = endingType
+            e.item.dstShape = Qan.EdgeItem.None
             items.push(e.item)
 
             var s3 = graph.insertNode()
@@ -76,8 +76,8 @@ Qan.GraphView {
             var d3 = graph.insertNode()
             d3.label = "DST"; d3.item.x = x + 1000; d3.item.y = y + 50
             e = graph.insertEdge(s3, d3);
-            e.item.srcType = endingType
-            e.item.dstType = endingType
+            e.item.srcShape = endingType
+            e.item.dstShape = endingType
             items.push(e.item)
             return items
         }

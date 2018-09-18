@@ -188,19 +188,19 @@ void    EdgeItem::setHidden(bool hidden) noexcept
     }
 }
 
-auto    EdgeItem::setSrcType(ArrowType srcType) noexcept -> void
+auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> void
 {
-    if ( _srcType != srcType ) {
-        _srcType = srcType;
-        emit srcTypeChanged();
+    if ( _srcShape != srcShape ) {
+        _srcShape = srcShape;
+        emit srcShapeChanged();
     }
 }
 
-auto    EdgeItem::setDstType(ArrowType dstType) noexcept -> void
+auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> void
 {
-    if ( _dstType != dstType ) {
-        _dstType = dstType;
-        emit dstTypeChanged();
+    if ( _dstShape != dstShape ) {
+        _dstShape = dstShape;
+        emit dstShapeChanged();
     }
 }
 
@@ -461,28 +461,28 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     QPointF arrowA1      = QPointF{ 0.,          -arrowSize   };
     QPointF arrowA3      = QPointF{ 0.,           arrowSize   };
 
-    QPointF circleRectA1 = QPointF{ arrowLength/2, -arrowLength/2 };
-    QPointF circleRectA3 = QPointF{ arrowLength/2,  arrowLength/2 };
+    QPointF circleRectA1 = QPointF{ arrowLength/2., -arrowLength/2. };
+    QPointF circleRectA3 = QPointF{ arrowLength/2.,  arrowLength/2. };
 
     // Point A2 is the same for all arrow shapes
     cache.srcA2 = pointA2;
     cache.dstA2 = pointA2;
 
     // Update source arrow cache points
-    switch (getSrcType()) {
-        case qan::EdgeItem::ArrowType::Arrow:
-        case qan::EdgeItem::ArrowType::ArrowOpen:
+    switch (getSrcShape()) {
+        case qan::EdgeItem::ArrowShape::Arrow:
+        case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
             cache.srcA3 = arrowA3;
             break;
-        case qan::EdgeItem::ArrowType::Circle:
-        case qan::EdgeItem::ArrowType::CircleOpen:
-        case qan::EdgeItem::ArrowType::Rect:
-        case qan::EdgeItem::ArrowType::RectOpen:
+        case qan::EdgeItem::ArrowShape::Circle:
+        case qan::EdgeItem::ArrowShape::CircleOpen:
+        case qan::EdgeItem::ArrowShape::Rect:
+        case qan::EdgeItem::ArrowShape::RectOpen:
             cache.srcA1 = circleRectA1;
             cache.srcA3 = circleRectA3;
             break;
-        case qan::EdgeItem::ArrowType::None:
+        case qan::EdgeItem::ArrowShape::None:
         default:
             cache.srcA1 = point0;
             cache.srcA2 = point0;
@@ -493,20 +493,20 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     generateArrowAngle(&cache.p2, &cache.p1, &cache.c2, &cache.c1, &cache.srcAngle, cache.lineType, arrowLength);
 
     // Update destination arrow cache points
-    switch (getDstType()) {
-        case qan::EdgeItem::ArrowType::Arrow:
-        case qan::EdgeItem::ArrowType::ArrowOpen:
+    switch (getDstShape()) {
+        case qan::EdgeItem::ArrowShape::Arrow:
+        case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;
             cache.dstA3 = arrowA3;
             break;
-        case qan::EdgeItem::ArrowType::Rect:
-        case qan::EdgeItem::ArrowType::RectOpen:
-        case qan::EdgeItem::ArrowType::Circle:
-        case qan::EdgeItem::ArrowType::CircleOpen:
+        case qan::EdgeItem::ArrowShape::Rect:
+        case qan::EdgeItem::ArrowShape::RectOpen:
+        case qan::EdgeItem::ArrowShape::Circle:
+        case qan::EdgeItem::ArrowShape::CircleOpen:
             cache.dstA1 = circleRectA1;
             cache.dstA3 = circleRectA3;
             break;
-        case qan::EdgeItem::ArrowType::None:
+        case qan::EdgeItem::ArrowShape::None:
         default:
             cache.dstA1 = point0;
             cache.dstA2 = point0;

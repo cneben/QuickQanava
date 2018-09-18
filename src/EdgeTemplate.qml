@@ -49,11 +49,11 @@ Item {
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
-        visible: ((edgeItem.dstType === Qan.EdgeItem.Arrow) || (edgeItem.dstType === Qan.EdgeItem.ArrowOpen))
+        visible: ((edgeItem.dstShape === Qan.EdgeItem.Arrow) || (edgeItem.dstShape === Qan.EdgeItem.ArrowOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstType === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
             PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
@@ -66,11 +66,11 @@ Item {
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
-        visible: ((edgeItem.dstType === Qan.EdgeItem.Circle) || (edgeItem.dstType === Qan.EdgeItem.CircleOpen))
+        visible: ((edgeItem.dstShape === Qan.EdgeItem.Circle) || (edgeItem.dstShape === Qan.EdgeItem.CircleOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstType === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: 0;   startY: 0
             PathArc {
@@ -88,11 +88,11 @@ Item {
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
-        visible: ((edgeItem.dstType === Qan.EdgeItem.Rect) || (edgeItem.dstType === Qan.EdgeItem.RectOpen))
+        visible: ((edgeItem.dstShape === Qan.EdgeItem.Rect) || (edgeItem.dstShape === Qan.EdgeItem.RectOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstType === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.dstShape === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
             PathLine { x: 0.;               y: 0.               }
@@ -106,11 +106,11 @@ Item {
         rotation: edgeItem.srcAngle
         x: edgeItem.p1.x
         y: edgeItem.p1.y
-        visible: ((edgeItem.srcType === Qan.EdgeItem.Arrow) || (edgeItem.srcType === Qan.EdgeItem.ArrowOpen))
+        visible: ((edgeItem.srcShape === Qan.EdgeItem.Arrow) || (edgeItem.srcShape === Qan.EdgeItem.ArrowOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcType === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.ArrowOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
             PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
@@ -123,11 +123,11 @@ Item {
         rotation: edgeItem.srcAngle
         x: edgeItem.p1.x
         y: edgeItem.p1.y
-        visible: ((edgeItem.srcType === Qan.EdgeItem.Circle) || (edgeItem.srcType === Qan.EdgeItem.CircleOpen))
+        visible: ((edgeItem.srcShape === Qan.EdgeItem.Circle) || (edgeItem.srcShape === Qan.EdgeItem.CircleOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcType === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.CircleOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: 0;   startY: 0
             PathArc {
@@ -145,11 +145,11 @@ Item {
         rotation: edgeItem.srcAngle
         x: edgeItem.p1.x
         y: edgeItem.p1.y
-        visible: ((edgeItem.srcType === Qan.EdgeItem.Rect) || (edgeItem.srcType === Qan.EdgeItem.RectOpen))
+        visible: ((edgeItem.srcShape === Qan.EdgeItem.Rect) || (edgeItem.srcShape === Qan.EdgeItem.RectOpen))
                  && edgeItem.visible && !edgeItem.hidden
         ShapePath {
             strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcType === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
+            fillColor: edgeItem.srcShape === Qan.EdgeItem.RectOpen ? "transparent" : edgeTemplate.color
             strokeWidth: 2
             startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
             PathLine { x: 0.;               y: 0.               }

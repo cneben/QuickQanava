@@ -133,7 +133,7 @@ private:
 
 public:
     //! End type drawing configuration
-    enum class ArrowType {
+    enum class ArrowShape {
         //! Do not draw an end.
         None,
         //! End shape is an arrow.
@@ -149,33 +149,33 @@ public:
         //! End shape is a open rectangle.
         RectOpen
     };
-    Q_ENUM(ArrowType)
+    Q_ENUM(ArrowShape)
 
 public:
     //! \copydoc Define shape of source arrow, default None.
-    Q_PROPERTY( ArrowType srcType READ getSrcType WRITE setSrcType NOTIFY srcTypeChanged FINAL )
-    //! \copydoc srcType
-    inline ArrowType getSrcType() const noexcept { return _srcType; }
-    //! \copydoc srcType
-    auto             setSrcType(ArrowType srcType) noexcept -> void;
+    Q_PROPERTY( ArrowShape srcShape READ getSrcShape WRITE setSrcShape NOTIFY srcShapeChanged FINAL )
+    //! \copydoc srcShape
+    inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
+    //! \copydoc srcShape
+    auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
 private:
-    //! \copydoc srcType
-    ArrowType         _srcType{ArrowType::None};
+    //! \copydoc srcShape
+    ArrowShape          _srcShape{ArrowShape::None};
 signals:
-    void             srcTypeChanged();
+    void                srcShapeChanged();
 
 public:
     //! \copydoc Define shape of destination arrow, default arrow.
-    Q_PROPERTY( ArrowType dstType READ getDstType WRITE setDstType NOTIFY dstTypeChanged FINAL )
-    //! \copydoc dstType
-    inline ArrowType getDstType() const noexcept { return _dstType; }
-    //! \copydoc dstType
-    auto             setDstType(ArrowType dstType) noexcept -> void;
+    Q_PROPERTY( ArrowShape dstShape READ getDstShape WRITE setDstShape NOTIFY dstShapeChanged FINAL )
+    //! \copydoc dstShape
+    inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
+    //! \copydoc dstShape
+    auto                setDstShape(ArrowShape dstShape) noexcept -> void;
 private:
-    //! \copydoc dstType
-    ArrowType        _dstType{ArrowType::Arrow};
+    //! \copydoc dstShape
+    ArrowShape          _dstShape{ArrowShape::Arrow};
 signals:
-    void             dstTypeChanged();
+    void                dstShapeChanged();
 
 public slots:
     //! Call updateItem() (override updateItem() to an empty method for invisible edges).
@@ -495,6 +495,6 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::EdgeItem )
-Q_DECLARE_METATYPE( qan::EdgeItem::ArrowType )
+Q_DECLARE_METATYPE( qan::EdgeItem::ArrowShape )
 
 #endif // qanEdgeItem_h
