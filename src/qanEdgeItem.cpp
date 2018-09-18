@@ -461,7 +461,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     QPointF arrowA1      = QPointF{ 0.,          -arrowSize   };
     QPointF arrowA3      = QPointF{ 0.,           arrowSize   };
 
-    // FIXME: Do not compute for all shapes...
     QPointF circleRectA1 = QPointF{ arrowLength/2., -arrowLength/2. };
     QPointF circleRectA3 = QPointF{ arrowLength/2.,  arrowLength/2. };
 
@@ -471,24 +470,21 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
 
     // Update source arrow cache points
     switch (getSrcShape()) {
-        case qan::EdgeItem::ArrowShape::Arrow:
+        case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
             cache.srcA3 = arrowA3;
             break;
-        case qan::EdgeItem::ArrowShape::Circle:
-        case qan::EdgeItem::ArrowShape::CircleOpen:
-        case qan::EdgeItem::ArrowShape::Rect:
+        case qan::EdgeItem::ArrowShape::Circle:     // [[fallthrough]]
+        case qan::EdgeItem::ArrowShape::CircleOpen: // [[fallthrough]]
+        case qan::EdgeItem::ArrowShape::Rect:       // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::RectOpen:
             cache.srcA1 = circleRectA1;
             cache.srcA3 = circleRectA3;
             break;
         case qan::EdgeItem::ArrowShape::None:
-        default:
-            cache.srcA1 = point0;
-            cache.srcA2 = point0;
-            cache.srcA3 = point0;
             break;
+        // No default, anyway the cache will be invalid
     }
     // Generate source arrow angle (p2 <-> p1 and c2 <-> c1)
     generateArrowAngle(cache.p2, cache.p1, cache.srcAngle,
@@ -513,12 +509,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
             break;
         case qan::EdgeItem::ArrowShape::None:
             break;
-        /*default:
-            cache.dstA1 = point0;
-            cache.dstA2 = point0;
-            cache.dstA3 = point0;
-            break;*/
-        // No default
+        // No default, anyway the cache will be invalid
     }
     // Generate destination arrow angle
     generateArrowAngle(cache.p1, cache.p2, cache.dstAngle,
@@ -539,7 +530,8 @@ void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
 
     const QLineF line{p1, p2};    // Generate dst arrow line angle
     if ( lineType == qan::EdgeStyle::LineType::Straight ) {
-        if ( line.length() > MinLength )    // Protect line.length() DIV0
+        if ( line.length() > MinLength &&       // Protect line.length() DIV0
+             arrowShape != ArrowShape::None)    // Do not correct edge extremity by arrowLength if there is not arrow
             p2 = line.pointAt( 1.0 - (arrowLength/line.length()) );
         angle = lineAngle(line);
     } else if ( lineType == qan::EdgeStyle::LineType::Curved ) {
@@ -556,12 +548,14 @@ void    EdgeItem::generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
                                0.6 * lineAngle(line) );
         }
 
-        // Use dst angle to generate an end point translated by -arrowLength...
+        // Use dst angle to generate an end point translated by -arrowLength except if there is no end shape
         // Build a (P2, C2) vector
-        QVector2D dstVector( QPointF{c2.x() - p2.x(), c2.y() - p2.y()} );
-        dstVector.normalize();
-        dstVector *= static_cast<float>(arrowLength);
-        p2 = p2 + dstVector.toPointF();
+        if (arrowShape != ArrowShape::None) {
+            QVector2D dstVector{ QPointF{c2.x() - p2.x(), c2.y() - p2.y()} };
+            dstVector.normalize();
+            dstVector *= static_cast<float>(arrowLength);
+            p2 = p2 + dstVector.toPointF();
+        }
     }
 }
 
