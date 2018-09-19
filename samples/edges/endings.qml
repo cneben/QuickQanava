@@ -49,6 +49,81 @@ Qan.GraphView {
             edgeItems.push(generateGeom(20, 350, Qan.EdgeStyle.CircleOpen))
             edgeItems.push(generateGeom(20, 450, Qan.EdgeStyle.Rect))
             edgeItems.push(generateGeom(20, 550, Qan.EdgeStyle.RectOpen))
+
+            // Insert edge/ports tests
+            var n1 = graph.insertNode()
+            n1.label = "N1"; n1.item.x = 20; n1.item.y = 750
+            n1.item.width = 45; n1.item.height = 200
+            var n1p1 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p2 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p3 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p4 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p5 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p6 = graph.insertPort(n1, Qan.NodeItem.Right);
+            var n1p7 = graph.insertPort(n1, Qan.NodeItem.Right);
+            n1p1.label = "OUT #1"
+
+            var n2 = graph.insertNode()
+            n2.label = "N2"; n2.item.x = 300; n2.item.y = 800
+            n2.item.width = 45; n2.item.height = 200
+            var n2p1 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p2 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p3 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p4 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p5 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p6 = graph.insertPort(n2, Qan.NodeItem.Left);
+            var n2p7 = graph.insertPort(n2, Qan.NodeItem.Left);
+            n2p1.label = "IN #1"
+
+            var e1 = graph.insertEdge(n1, n2);
+            var e2 = graph.insertEdge(n1, n2);
+            var e3 = graph.insertEdge(n1, n2);
+            var e4 = graph.insertEdge(n1, n2);
+            var e5 = graph.insertEdge(n1, n2);
+            var e6 = graph.insertEdge(n1, n2);
+            var e7 = graph.insertEdge(n1, n2);
+
+            e1.item.srcShape = Qan.EdgeStyle.None
+            e1.item.dstShape = Qan.EdgeStyle.None
+
+            e2.item.srcShape = Qan.EdgeStyle.Arrow
+            e2.item.dstShape = Qan.EdgeStyle.Arrow
+
+            e3.item.srcShape = Qan.EdgeStyle.ArrowOpen
+            e3.item.dstShape = Qan.EdgeStyle.ArrowOpen
+
+            e4.item.srcShape = Qan.EdgeStyle.Circle
+            e4.item.dstShape = Qan.EdgeStyle.Circle
+
+            e5.item.srcShape = Qan.EdgeStyle.CircleOpen
+            e5.item.dstShape = Qan.EdgeStyle.CircleOpen
+
+            e6.item.srcShape = Qan.EdgeStyle.Rect
+            e6.item.dstShape = Qan.EdgeStyle.Rect
+
+            e7.item.srcShape = Qan.EdgeStyle.RectOpen
+            e7.item.dstShape = Qan.EdgeStyle.RectOpen
+
+            graph.bindEdgeSource(e1, n1p1)
+            graph.bindEdgeDestination(e1, n2p1)
+
+            graph.bindEdgeSource(e2, n1p2)
+            graph.bindEdgeDestination(e2, n2p2)
+
+            graph.bindEdgeSource(e3, n1p3)
+            graph.bindEdgeDestination(e3, n2p3)
+
+            graph.bindEdgeSource(e4, n1p4)
+            graph.bindEdgeDestination(e4, n2p4)
+
+            graph.bindEdgeSource(e5, n1p5)
+            graph.bindEdgeDestination(e5, n2p5)
+
+            graph.bindEdgeSource(e6, n1p6)
+            graph.bindEdgeDestination(e6, n2p6)
+
+            graph.bindEdgeSource(e7, n1p7)
+            graph.bindEdgeDestination(e7, n2p7)
         } // Qan.Graph.Component.onCompleted()
 
         function generateGeom(x, y, endingType) {
