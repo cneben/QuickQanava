@@ -328,6 +328,25 @@ signals:
     void            styleModified();
 
 public:
+    //! End type drawing configuration
+    enum class ArrowShape {
+        //! Do not draw an end.
+        None,
+        //! End shape is an arrow.
+        Arrow,
+        //! End shape is an open arrow.
+        ArrowOpen,
+        //! End shape is a filled circle.
+        Circle,
+        //! End shape is an open circle.
+        CircleOpen,
+        //! End shape is a filled rectangle.
+        Rect,
+        //! End shape is a open rectangle.
+        RectOpen
+    };
+    Q_ENUM(ArrowShape)
+
     //! Define edge style: either straight (drawn with a line) or curved (drawn with a cubic path).
     enum class LineType : unsigned int {
         Straight    = 0,
@@ -373,6 +392,34 @@ signals:
     void            arrowSizeChanged();
 
 public:
+
+    //! \copydoc Define shape of source arrow, default None.
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape srcShape READ getSrcShape WRITE setSrcShape NOTIFY srcShapeChanged FINAL )
+    //! \copydoc srcShape
+    inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
+    //! \copydoc srcShape
+    auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
+private:
+    //! \copydoc srcShape
+    ArrowShape          _srcShape{ArrowShape::None};
+signals:
+    void                srcShapeChanged();
+
+public:
+    //! \copydoc Define shape of destination arrow, default arrow.
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape dstShape READ getDstShape WRITE setDstShape NOTIFY dstShapeChanged FINAL )
+
+    //! \copydoc dstShape
+    inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
+    //! \copydoc dstShape
+    auto                setDstShape(ArrowShape dstShape) noexcept -> void;
+private:
+    //! \copydoc dstShape
+    ArrowShape          _dstShape{ArrowShape::Arrow};
+signals:
+    void                dstShapeChanged();
+
+public:
     //! Draw edge with dashed line (default to false), when set to true \c dashPattern is active.
     Q_PROPERTY( bool dashed READ getDashed WRITE setDashed NOTIFY dashedChanged FINAL )
     //! \copydoc dashed
@@ -406,11 +453,14 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Style )
+
 QML_DECLARE_TYPE( qan::NodeStyle )
-QML_DECLARE_TYPE( qan::EdgeStyle )
 Q_DECLARE_METATYPE( qan::NodeStyle::FillType )
 Q_DECLARE_METATYPE( qan::NodeStyle::EffectType )
+
+QML_DECLARE_TYPE( qan::EdgeStyle )
 Q_DECLARE_METATYPE( qan::EdgeStyle::LineType )
+Q_DECLARE_METATYPE( qan::EdgeStyle::ArrowShape )
 
 #endif // qanStyle_h
 

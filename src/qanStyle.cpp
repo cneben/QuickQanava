@@ -223,6 +223,24 @@ void    EdgeStyle::setArrowSize( qreal arrowSize ) noexcept
     }
 }
 
+auto    EdgeStyle::setSrcShape(ArrowShape srcShape) noexcept -> void
+{
+    if ( _srcShape != srcShape ) {
+        _srcShape = srcShape;
+        emit srcShapeChanged();
+        emit styleModified();
+    }
+}
+
+auto    EdgeStyle::setDstShape(ArrowShape dstShape) noexcept -> void
+{
+    if ( _dstShape != dstShape ) {
+        _dstShape = dstShape;
+        emit dstShapeChanged();
+        emit styleModified();
+    }
+}
+
 void    EdgeStyle::setDashed( bool dashed ) noexcept
 {
     if ( dashed != _dashed ) {

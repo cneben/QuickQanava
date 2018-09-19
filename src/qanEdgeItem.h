@@ -132,28 +132,19 @@ private:
     bool        _hidden{false};
 
 public:
-    //! End type drawing configuration
-    enum class ArrowShape {
-        //! Do not draw an end.
-        None,
-        //! End shape is an arrow.
-        Arrow,
-        //! End shape is an open arrow.
-        ArrowOpen,
-        //! End shape is a filled circle.
-        Circle,
-        //! End shape is an open circle.
-        CircleOpen,
-        //! End shape is a filled rectangle.
-        Rect,
-        //! End shape is a open rectangle.
-        RectOpen
-    };
-    Q_ENUM(ArrowShape)
+    Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL )
+    void            setArrowSize( qreal arrowSize ) noexcept;
+    inline qreal    getArrowSize() const noexcept { return _arrowSize; }
+protected:
+    qreal           _arrowSize = 4.0;
+signals:
+    void            arrowSizeChanged();
 
 public:
+    using ArrowShape = qan::EdgeStyle::ArrowShape;
+
     //! \copydoc Define shape of source arrow, default None.
-    Q_PROPERTY( ArrowShape srcShape READ getSrcShape WRITE setSrcShape NOTIFY srcShapeChanged FINAL )
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape srcShape READ getSrcShape WRITE setSrcShape NOTIFY srcShapeChanged FINAL )
     //! \copydoc srcShape
     inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
     //! \copydoc srcShape
@@ -166,7 +157,8 @@ signals:
 
 public:
     //! \copydoc Define shape of destination arrow, default arrow.
-    Q_PROPERTY( ArrowShape dstShape READ getDstShape WRITE setDstShape NOTIFY dstShapeChanged FINAL )
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape dstShape READ getDstShape WRITE setDstShape NOTIFY dstShapeChanged FINAL )
+
     //! \copydoc dstShape
     inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
     //! \copydoc dstShape
@@ -266,7 +258,7 @@ protected:
     inline void             generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
                                                const QPointF& c1, const QPointF& c2,
                                                const qan::EdgeStyle::LineType lineType,
-                                               const qan::EdgeItem::ArrowShape arrowShape,
+                                               const qan::EdgeStyle::ArrowShape arrowShape,
                                                const qreal arrowLength) const noexcept;
 
     //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
@@ -446,6 +438,8 @@ signals:
 private slots:
     //! Called when the style associed to this edge is destroyed.
     void            styleDestroyed( QObject* style );
+
+    void            styleModified();
     //@}
     //-------------------------------------------------------------------------
 
@@ -492,6 +486,5 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::EdgeItem )
-Q_DECLARE_METATYPE( qan::EdgeItem::ArrowShape )
 
 #endif // qanEdgeItem_h

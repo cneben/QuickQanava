@@ -188,6 +188,15 @@ void    EdgeItem::setHidden(bool hidden) noexcept
     }
 }
 
+void    EdgeItem::setArrowSize( qreal arrowSize ) noexcept
+{
+    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+        _arrowSize = arrowSize;
+        emit arrowSizeChanged();
+        updateItem();
+    }
+}
+
 auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> void
 {
     if ( _srcShape != srcShape ) {
@@ -364,7 +373,7 @@ void    EdgeItem::generateLineGeometry(GeometryCache& cache) const noexcept
     // Update hidden: Edge is hidden if it's size is less than the src/dst shape size sum
     {
         {
-            const auto arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
+            const auto arrowSize = getArrowSize();
             const auto arrowLength = arrowSize * 3.;
             if ( line.length() < 2.0 + arrowLength )
                 cache.hidden = true;
@@ -453,11 +462,11 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     if ( !cache.isValid() )
         return;
 
-    const qreal arrowSize = getStyle() != nullptr ? getStyle()->getArrowSize() : 4.0;
+    const qreal arrowSize = getArrowSize();
     const qreal arrowLength = arrowSize * 3.;
 
     // Prepare points and helper variables
-    QPointF point0       = QPointF{ 0.,           0.          }; // Point zero
+    //QPointF point0       = QPointF{ 0.,           0.          }; // Point zero
     QPointF pointA2      = QPointF{ arrowLength,  0.          }; // A2 is the same for all shapes
 
     QPointF arrowA1      = QPointF{ 0.,          -arrowSize   };
@@ -471,7 +480,8 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     cache.dstA2 = pointA2;
 
     // Update source arrow cache points
-    switch (getSrcShape()) {
+    const auto srcShape = getSrcShape();
+    switch (srcShape) {
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
@@ -492,11 +502,12 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     generateArrowAngle(cache.p2, cache.p1, cache.srcAngle,
                        cache.c2, cache.c1,
                        cache.lineType,
-                       getSrcShape(),
+                       srcShape,
                        arrowLength);
 
     // Update destination arrow cache points
-    switch (getDstShape()) {
+    const auto dstShape = getDstShape();
+    switch (dstShape) {
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;
@@ -517,7 +528,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     generateArrowAngle(cache.p1, cache.p2, cache.dstAngle,
                        cache.c1, cache.c2,
                        cache.lineType,
-                       getDstShape(),
+                       dstShape,
                        arrowLength);
 }
 
@@ -977,9 +988,13 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
             // from edge delegate). Since arrowSize affect concrete edge geometry, bind it manually to
             // updateItem().
             connect( _style,    &qan::EdgeStyle::arrowSizeChanged,
-                     this,      &EdgeItem::updateItem );
+                     this,      &EdgeItem::styleModified );
             connect( _style,    &qan::EdgeStyle::lineTypeChanged,
-                     this,      &EdgeItem::updateItem );
+                     this,      &EdgeItem::styleModified );
+            connect( _style,    &qan::EdgeStyle::srcShapeChanged,   // FIXME: Add intelligent updating
+                     this,      &EdgeItem::styleModified );
+            connect( _style,    &qan::EdgeStyle::dstShapeChanged,   // FIXME: Add intelligent updating
+                     this,      &EdgeItem::styleModified );
         }
         emit styleChanged( );
     }
@@ -989,6 +1004,15 @@ void    EdgeItem::styleDestroyed( QObject* style )
 {
     if ( style != nullptr )
         setStyle( nullptr );
+}
+
+void    EdgeItem::styleModified()
+{
+    if ( getStyle() != nullptr ) {
+        setArrowSize(getStyle()->getArrowSize());
+        setSrcShape(getStyle()->getSrcShape());
+        setDstShape(getStyle()->getDstShape());
+    }
 }
 //-----------------------------------------------------------------------------
 

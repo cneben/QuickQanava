@@ -43,12 +43,12 @@ Qan.GraphView {
         id: graph
         connectorEnabled: true
         Component.onCompleted: {
-            edgeItems.push(generateGeom(20, 50, Qan.EdgeItem.Arrow))
-            edgeItems.push(generateGeom(20, 150, Qan.EdgeItem.ArrowOpen))
-            edgeItems.push(generateGeom(20, 250, Qan.EdgeItem.Circle))
-            edgeItems.push(generateGeom(20, 350, Qan.EdgeItem.CircleOpen))
-            edgeItems.push(generateGeom(20, 450, Qan.EdgeItem.Rect))
-            edgeItems.push(generateGeom(20, 550, Qan.EdgeItem.RectOpen))
+            edgeItems.push(generateGeom(20, 50, Qan.EdgeStyle.Arrow))
+            edgeItems.push(generateGeom(20, 150, Qan.EdgeStyle.ArrowOpen))
+            edgeItems.push(generateGeom(20, 250, Qan.EdgeStyle.Circle))
+            edgeItems.push(generateGeom(20, 350, Qan.EdgeStyle.CircleOpen))
+            edgeItems.push(generateGeom(20, 450, Qan.EdgeStyle.Rect))
+            edgeItems.push(generateGeom(20, 550, Qan.EdgeStyle.RectOpen))
         } // Qan.Graph.Component.onCompleted()
 
         function generateGeom(x, y, endingType) {
@@ -58,7 +58,8 @@ Qan.GraphView {
             var d1 = graph.insertNode()
             d1.label = "DST"; d1.item.x = x + 200; d1.item.y = y + 50
             var e = graph.insertEdge(s1, d1);
-            e.item.srcShape = Qan.EdgeItem.None
+            e.item.style = null                     // NOTE: Remove binding with default_edge_style
+            e.item.srcShape = Qan.EdgeStyle.None
             e.item.dstShape = endingType
             items.push(e.item)
 
@@ -67,8 +68,9 @@ Qan.GraphView {
             var d2 = graph.insertNode()
             d2.label = "DST"; d2.item.x = x + 600; d2.item.y = y + 50
             e = graph.insertEdge(s2, d2);
+            e.item.style = null
             e.item.srcShape = endingType
-            e.item.dstShape = Qan.EdgeItem.None
+            e.item.dstShape = Qan.EdgeStyle.None
             items.push(e.item)
 
             var s3 = graph.insertNode()
@@ -76,6 +78,7 @@ Qan.GraphView {
             var d3 = graph.insertNode()
             d3.label = "DST"; d3.item.x = x + 1000; d3.item.y = y + 50
             e = graph.insertEdge(s3, d3);
+            e.item.style = null
             e.item.srcShape = endingType
             e.item.dstShape = endingType
             items.push(e.item)
@@ -88,10 +91,8 @@ Qan.GraphView {
         anchors.right: parent.right
         value: 4
         onValueModified: {
-            /*
             for (var e=0; e < edgeItems.length; e++)
                 edgeItems[e].arrowSize = value
-            */
         }
     }
 }  // Qan.GraphView

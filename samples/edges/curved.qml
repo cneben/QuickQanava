@@ -251,11 +251,10 @@ Item {
                 Label { text:"Src Shape:" }
                 Item { Layout.fillWidth: true }
                 ComboBox {
-                    model: ["None", "Arrow", "Open Arrow", "Rect", "Open Rect", "Circle", "Open Circle"]
+                    model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
                     currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
                     onActivated: {
-                        var shape = [Qan.EdgeItem.None, Qan.EdgeItem.Arrow, Qan.EdgeItem.ArrowOpen, Qan.EdgeItem.Circle, Qan.EdgeItem.CircleOpen, Qan.EdgeItem.Rect, Qan.EdgeItem.RectOpen]
-                        console.warn("shape=" + shape[index])
+                        var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
                         defaultEdgeStyle.srcShape = shape[index]
                     }
                 }
@@ -265,10 +264,10 @@ Item {
                 Label { text:"Dst shape:" }
                 Item { Layout.fillWidth: true }
                 ComboBox {
-                    model: ["None", "Arrow", "Open Arrow", "Rect", "Open Rect", "Circle", "Open Circle"]
+                    model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
                     currentIndex: 1
                     onActivated: {
-                        var shape = [Qan.EdgeItem.None, Qan.EdgeItem.Arrow, Qan.EdgeItem.ArrowOpen, Qan.EdgeItem.Circle, Qan.EdgeItem.CircleOpen, Qan.EdgeItem.Rect, Qan.EdgeItem.RectOpen]
+                        var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
                         defaultEdgeStyle.dstShape = shape[index]
                     }
                 }
@@ -298,6 +297,15 @@ Item {
                     value: defaultEdgeStyle.lineWidth
                     from: 1; to: 7
                     onValueModified: defaultEdgeStyle.lineWidth = value
+                }
+            } // RowLayout: lineWidth
+            ColumnLayout {
+                Layout.margins: 2
+                Label { text:"Arrow size:" }
+                SpinBox {
+                    value: defaultEdgeStyle.arrowSize
+                    from: 1; to: 7
+                    onValueModified: defaultEdgeStyle.arrowSize = value
                 }
             } // RowLayout: lineWidth
 
