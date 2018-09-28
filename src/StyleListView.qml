@@ -67,7 +67,7 @@ ListView {
         if ( styleManager ) {
             model = styleManager.styles
             if ( model &&               // Select the first "properties" when a new model is sets
-                 model.itemCount > 0 )
+                 model.length > 0 )
                 currentIndex = 0
         } else model = null
     }

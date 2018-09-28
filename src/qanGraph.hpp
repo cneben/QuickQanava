@@ -178,11 +178,9 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode )
         gtpo_graph_t::insert_edge( edge );
     } catch ( gtpo::bad_topology_error e ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
-        // FIXME
     }
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
-        // FIXME
     }
     return edge.get();
 }

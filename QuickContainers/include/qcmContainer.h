@@ -117,11 +117,6 @@ namespace qcm { // ::qcm
  * for QSharedPointer and QWeakPointer is not planned (but easy to implement) since they are conceptually equivalent
  * to existing standard smart pointers: std::shared_ptr and std::weak_ptr.
  *
- * \note In data intensive application, delay calls to getListReference() (and access to \c listReference property from
- * QML) until your model is fully initialized: \c listReference interface is created on the fly at first
- * getListReference() call and until this object is created, there is no modifications notifications sent trought signals
- * or virtualized calls (still some signals are sent from QAbstractListModel internally).
- *
  * \warning Depending of your build configuration: method indexOf() specialization is O(n) for containers of std::weak_ptr (with
  * n the number of items in the underlining container, even if it is a sorted container defining fast lookup methods). Note
  * 20161125: There is actually a qobjectfriend == operator defined for weak_ptr in ... Qt namespace, be aware of it since it could

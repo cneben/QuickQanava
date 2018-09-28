@@ -40,10 +40,15 @@ import QuickQanava      2.0 as Qan
 
 Item {
     id: edgeTemplate
-
+    antialiasing: true
     property var edgeItem: undefined
+
     property color color: edgeItem &&
                           edgeItem.style ? edgeItem.style.lineColor : Qt.rgba(0.,0.,0.,1.)
+    // Allow direct bypass of lstyle
+    property var    lineType: edgeItem.style ? edgeItem.style.lineType : Qan.EdgeStyle.Straight
+    property var    dashed  : edgeItem.style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+
     Shape {
         transformOrigin: Item.TopLeft
         rotation: edgeItem.dstAngle
@@ -167,7 +172,7 @@ Item {
             capStyle: ShapePath.FlatCap
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeTemplate.color
-            strokeStyle: style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+            strokeStyle: edgeTemplate.dashed
             dashPattern: style ? style.dashPattern : [4, 2]
             fillColor: Qt.rgba(0,0,0,0)
             PathLine {
@@ -185,7 +190,7 @@ Item {
             capStyle: ShapePath.FlatCap
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeTemplate.color
-            strokeStyle: edgeItem.style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+            strokeStyle: edgeTemplate.dashed
             dashPattern: edgeItem.style ? style.dashPattern : [4, 2]
             fillColor: Qt.rgba(0,0,0,0)
             PathCubic {
@@ -204,10 +209,11 @@ Item {
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
         //asynchronous: true    // FIXME: Benchmark that
+        antialiasing: true
         smooth: true
-        property var lineType : edgeItem.style ? edgeItem.style.lineType : Qan.EdgeStyle.Straight
         property var curvedLine : undefined
         property var straightLine : undefined
+        property var lineType: edgeTemplate.lineType
         onLineTypeChanged: {
             if ( lineType === Qan.EdgeStyle.Straight ) {
                 if ( curvedLine )

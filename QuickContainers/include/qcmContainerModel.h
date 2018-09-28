@@ -137,7 +137,7 @@ struct ItemDispatcher<std::weak_ptr<Item_type>>  : public ItemDispatcherBase {
  * \code
  * Button {
  *   text: "remove"
- *   onClicked: { testModel.listReference.insert(object) }
+ *   onClicked: { testModel.insert(object) }
  * }
  * ListView {
  *   id: testList
@@ -214,7 +214,8 @@ protected slots:
             if ( itemIndex.isValid( ) )
                 emit dataChanged( itemIndex, itemIndex );
         } else
-            disconnect( qItem, 0, this, 0 );    // Do not disconnect if getListReference() or qItem is nullptr !
+            disconnect( qItem,  nullptr,
+                        this,   nullptr );
     }
     //-------------------------------------------------------------------------
 
