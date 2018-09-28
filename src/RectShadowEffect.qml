@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software. Copyright 2017 Benoit AUTHEMAN.
 //
-// \file	RectSolidShadowBackground.qml
+// \file	RectShadowEffect.qml
 // \author	benoit@destrat.io
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
@@ -41,20 +41,59 @@ import QuickQanava          2.0 as Qan
  *
  */
 Item {
-    id: background
-
     // Public:
     property var    nodeItem: undefined
 
-    //! Back color property, default to style.backColor, but available for user overidde.
-    property color  backColor: nodeItem.style.backColor
+    // private:
+    // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
+    property real   borderWidth  : nodeItem.style.borderWidth
+    property real   borderWidth2 : borderWidth / 2.
+    property real   shadowOffset : nodeItem.style.effectOffset
+    property real   shadowRadius : nodeItem.style.effectRadius
+    property color  shadowColor  : nodeItem.style.effectColor
 
-    RectShadowEffect {
-        anchors.fill: parent
-        nodeItem: parent.nodeItem
+    Item {
+        id: effectBackground
+        x: 0; y: 0
+        //z: -1   // Effect should be behind edges , docks and connectors...
+        width: nodeItem.width + shadowOffset + shadowRadius
+        height: nodeItem.height + shadowOffset + shadowRadius
+        visible: false
+        Rectangle {
+            x: borderWidth2; y: borderWidth2
+            width: nodeItem.width - borderWidth         // avoid aliasing artifacts at high scales.
+            height: nodeItem.height - borderWidth
+            radius: nodeItem.style.backRadius
+            color: Qt.rgba(0, 0, 0, 1)
+            antialiasing: true
+            layer.enabled: true
+            layer.effect: DropShadow {
+                horizontalOffset: shadowOffset; verticalOffset: shadowOffset
+                radius: shadowRadius; samples: 8
+                color: shadowColor
+                visible: nodeItem.style.effectEnabled
+                transparentBorder: true
+                cached: false
+            }
+        }
     }
-    RectSolidBackground {
-        anchors.fill: parent
-        nodeItem: background.nodeItem
+
+    Item {
+        id: backgroundMask
+        anchors.fill: effectBackground
+        visible: false
+        Rectangle {
+            x: 0; y: 0
+            width: nodeItem.width - borderWidth2
+            height: nodeItem.height - borderWidth2
+            radius: nodeItem.style.backRadius
+            color: Qt.rgba(1, 0, 0, 1)
+        }
+    }
+    OpacityMask {
+        anchors.fill: effectBackground
+        source: effectBackground
+        maskSource: backgroundMask
+        invert: true
     }
 }

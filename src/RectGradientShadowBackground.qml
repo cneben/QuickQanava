@@ -49,58 +49,10 @@ Item {
     //! Back color property, default to style.backColor, but available for user overidde.
     property color  backColor: nodeItem.style.backColor
 
-    // private:
-    // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    property real   shadowOffset : nodeItem && nodeItem.style ? nodeItem.style.effectOffset : 4
-    property real   shadowRadius : nodeItem && nodeItem.style ? nodeItem.style.effectRadius : 4
-    property color  shadowColor  : nodeItem && nodeItem.style ? nodeItem.style.effectColor : Qt.rgba(0.1, 0.1, 0.1)
-    property real   shadowMargin : (shadowRadius + shadowOffset) * 2
-
-    Item {
-        z: -1   // Effect should be behind edges , docks and connectors...
-        id: effectBackground
-        anchors.centerIn: parent
-        width: nodeItem.width + shadowMargin; height: nodeItem.height + shadowMargin
-        visible: false
-        Rectangle {
-            anchors.centerIn: parent
-            width: nodeItem.width - 1.0;  height: nodeItem.height - 2.0 // Reduce rectangle used to generate shadow/glow to
-            radius: nodeItem.style.backRadius                           // avoid aliasing artifacts at high scales.
-            color: Qt.rgba(0, 0, 0, 1)
-            antialiasing: true
-            visible: false
-            layer.enabled: true
-            layer.effect: DropShadow {
-                horizontalOffset: shadowOffset; verticalOffset: shadowOffset
-                radius: shadowRadius; samples: 8
-                color: shadowColor
-                visible: nodeItem.style.effectEnabled
-                transparentBorder: true
-                cached: false
-            }
-        }
+    RectShadowEffect {
+        anchors.fill: parent
+        nodeItem: parent.nodeItem
     }
-    Item {
-        id: backgroundMask
-        anchors.centerIn: parent
-        width: parent.width + shadowMargin; height: parent.height + shadowMargin
-        visible: false
-        Rectangle {
-            anchors.centerIn: parent
-            width: nodeItem.width - 0.5;  height: nodeItem.height - 0.5
-            radius: nodeItem.style.backRadius
-            color: Qt.rgba(0, 0, 0, 1)
-            antialiasing: true
-        }
-    }
-    OpacityMask {
-        anchors.centerIn: parent
-        width: parent.width + shadowMargin; height: parent.height + shadowMargin
-        source: ShaderEffectSource { sourceItem: effectBackground; hideSource: false }
-        maskSource: ShaderEffectSource { format: ShaderEffectSource.Alpha; sourceItem: backgroundMask; hideSource: false }
-        invert: true
-    }
-
     RectGradientBackground {
         anchors.fill: parent
         nodeItem: background.nodeItem

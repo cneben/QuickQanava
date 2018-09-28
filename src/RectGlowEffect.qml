@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software. Copyright 2017 Benoit AUTHEMAN.
 //
-// \file	RectSolidGlowBackground.qml
+// \file	RectGlowEffect.qml
 // \author	benoit@destrat.io
 // \date	2018 03 23
 //-----------------------------------------------------------------------------
@@ -41,20 +41,60 @@ import QuickQanava          2.0 as Qan
  *
  */
 Item {
-    id: background
+    id: glowEffect
 
     // Public:
     property var    nodeItem: undefined
 
-    //! Back color property, default to style.backColor, but available for user overidde.
-    property color  backColor: nodeItem.style.backColor
+    // private:
+    // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
+    property real   glowRadius:     nodeItem.style.effectRadius
+    property color  glowColor:      nodeItem.style.effectColor
+    property real   effectMargin:   glowRadius * 2
+    property real   borderWidth:    nodeItem.style.borderWidth
+    property real   borderWidth2:   borderWidth / 2.
 
-    RectGlowEffect {
-        //anchors.fill: parent
-        nodeItem: background.nodeItem
+    Item {
+        id: effectBackground
+        z: -1   // Effect should be behind edges , docks and connectors...
+        x: -effectMargin; y: -effectMargin
+        width: nodeItem.width + effectMargin * 2; height: nodeItem.height + effectMargin * 2
+        visible: false
+        Rectangle {
+            x: effectMargin
+            y: effectMargin
+            width: nodeItem.width       // Avoid aliasing artifacts for mask at high scales.
+            height: nodeItem.height
+            radius: nodeItem.style.backRadius
+            border.width: borderWidth
+            color: Qt.rgba(0, 0, 0, 1)
+            antialiasing: true
+            layer.enabled: true
+            layer.effect: Glow {
+                color: glowEffect.glowColor
+                radius: glowEffect.glowRadius;     samples: Math.min( 16, glowEffect.glowRadius)
+                spread: 0.25;   transparentBorder: true;    cached: false
+                visible: nodeItem.style.effectEnabled
+            }
+        }
     }
-    RectSolidBackground {
-        anchors.fill: parent
-        nodeItem: background.nodeItem
+    Item {
+        id: backgroundMask
+        anchors.fill: effectBackground
+        visible: false
+        Rectangle {
+            x: effectMargin + borderWidth2
+            y: effectMargin + borderWidth2
+            width: nodeItem.width - borderWidth;  height: nodeItem.height - borderWidth
+            radius: nodeItem.style.backRadius
+            color: Qt.rgba(0,0,0,1)
+            antialiasing: true
+        }
+    }
+    OpacityMask {
+        anchors.fill: effectBackground
+        source: effectBackground
+        maskSource: backgroundMask
+        invert: true
     }
 }

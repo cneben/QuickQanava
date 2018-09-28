@@ -16,7 +16,9 @@
         <file>RectNodeTemplate.qml</file>
         <file>RectSolidBackground.qml</file>
         <file>RectSolidShadowBackground.qml</file>
+        <file>RectShadowEffect.qml</file>
         <file>RectSolidGlowBackground.qml</file>
+        <file>RectGlowEffect.qml</file>
         <file>RectGradientBackground.qml</file>
         <file>RectGradientShadowBackground.qml</file>
         <file>RectGradientGlowBackground.qml</file>

@@ -68,7 +68,9 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/RectNodeTemplate.qml          \
                 $$PWD/RectSolidBackground.qml       \
                 $$PWD/RectSolidShadowBackground.qml \
+                $$PWD/RectShadowEffect.qml          \
                 $$PWD/RectSolidGlowBackground.qml   \
+                $$PWD/RectGlowEffect.qml            \
                 $$PWD/RectGradientBackground.qml        \
                 $$PWD/RectGradientShadowBackground.qml  \
                 $$PWD/RectGradientGlowBackground.qml    \
