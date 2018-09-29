@@ -15,11 +15,14 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.10.0-blue.svg) |
+![](https://img.shields.io/badge/version-0.11.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
++ **CHANGELOG 20180930:** 
+    + Add support for more edge end/start geometry, add support for orthogonal edge layout.
+    + v0.11.0 pre1 CMake support is broken on Windows, please use qmake builds.
 + **CHANGELOG 20180704:** Complete refactoring of QuickQanava internal topology "backend" [GTpo](https://github.com/cneben/QuickQanava/tree/master/GTpo).
 + **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
 
@@ -157,12 +160,12 @@ QuickQanava and QuickContainers plugins directories could be removed manually fr
     - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
     - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
   - **v0.11.x:**
+    - [X] Add more configuration options to qan::Edge (source and destination arrow configuration).
     - [ ] Rewrite CMake configuration, add install step, use QML plugins.
   - **v0.12.x:**
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-    - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
   - **v1.: Advanced edge visualization**
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
