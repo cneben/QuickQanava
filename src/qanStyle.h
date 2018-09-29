@@ -350,7 +350,8 @@ public:
     //! Define edge style: either straight (drawn with a line) or curved (drawn with a cubic path).
     enum class LineType : unsigned int {
         Straight    = 0,
-        Curved      = 1
+        Curved      = 1,
+        Ortho       = 2
     };
     Q_ENUM(LineType)
 

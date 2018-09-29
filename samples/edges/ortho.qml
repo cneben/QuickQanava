@@ -28,36 +28,42 @@ import QtQuick                   2.8
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
-import QtQuick.Dialogs           1.3
+import QtQuick.Dialogs           1.2
 import QtQuick.Shapes            1.0
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
-ApplicationWindow {
-    id: window
-    visible: true
-    width: 1280; height: 720
-    title: "Edges sample"
+Qan.GraphView {
+    id: graphView
+    anchors.fill: parent
+    navigable   : true
+    property var edgeItems: []
+    graph: Qan.Graph {
+        id: graph
+        connectorEnabled: true
+        Component.onCompleted: {
+            var s1 = graph.insertNode();
+            s1.label = "S1"; s1.item.x = 50; s1.item.y = 50
+            var d1 = graph.insertNode();
+            d1.label = "D1"; d1.item.x = 200; d1.item.y = 50
+            var e1 = graph.insertEdge(s1, d1); //e1.style = null; e1.lineType = Qan.EdgeStyle.Ortho
 
-    Pane { anchors.fill: parent }
-    ColumnLayout {
-        anchors.fill: parent
-        TabBar {
-            id: tabBar
-            Layout.preferredWidth: 450; Layout.fillHeight: false
-            TabButton { text: qsTr("Curved Edges") }
-            TabButton { text: qsTr("Edge Endings") }
-            TabButton { text: qsTr("Ortho Edges") }
-        }
-        StackLayout {
-            clip: true
-            Layout.fillWidth: true; Layout.fillHeight: true
-            currentIndex: tabBar.currentIndex
-            Item { Loader { anchors.fill: parent; source: "qrc:/curved.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/endings.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/ortho.qml"} }
+            var s2 = graph.insertNode();
+            s2.label = "S2"; s2.item.x = 350; s2.item.y = 50
+            var d2 = graph.insertNode();
+            d2.label = "D2"; d2.item.x = 350; d2.item.y = 250            
+            var e2 = graph.insertEdge(s2, d2); //e2.style = null; e2.lineType = Qan.EdgeStyle.Ortho
+        } // Qan.Graph.Component.onCompleted()
+    } // Qan.Graph
+    CheckBox {
+        anchors.top: parent.top; anchors.topMargin: 4
+        anchors.right: parent.right; anchors.rightMargin: 2
+        id: dashed
+        text: "Ortho"
+        checked: defaultEdgeStyle.lineType === Qan.EdgeStyle.Ortho
+        onClicked: {
+            defaultEdgeStyle.lineType = !checked ? Qan.EdgeStyle.Straight : Qan.EdgeStyle.Ortho
         }
     }
-}
-
+}  // Qan.GraphView

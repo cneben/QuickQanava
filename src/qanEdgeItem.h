@@ -246,7 +246,10 @@ protected:
     inline GeometryCache    generateGeometryCache() const noexcept;
 
     /*! \brief Generate edge line source and destination points (GeometryCache::p1 and GeometryCache::p2). */
-    inline void             generateLineGeometry(GeometryCache& cache) const noexcept;
+    inline void             generateStraightEnds(GeometryCache& cache) const noexcept;
+
+    //! \brief Generate P1 and P2 for ortho edge style.
+    void                    generateOrthoEnds(GeometryCache& cache) const noexcept;
 
     /*! \brief FIXME
      *
@@ -254,15 +257,19 @@ protected:
      */
     inline void             generateArrowGeometry(GeometryCache& cache) const noexcept;
 
-    //! Generate arrow angle an update points.
-    inline void             generateArrowAngle(QPointF& p1, QPointF& p2, qreal& angle,
-                                               const QPointF& c1, const QPointF& c2,
-                                               const qan::EdgeStyle::LineType lineType,
-                                               const qan::EdgeStyle::ArrowShape arrowShape,
-                                               const qreal arrowLength) const noexcept;
+    //! Generate arrow angle for a curved edge points.
+    inline qreal            generateStraightArrowAngle(QPointF& p1, QPointF& p2,
+                                                       const qan::EdgeStyle::ArrowShape arrowShape,
+                                                       const qreal arrowLength) const noexcept;
+
+    //! Generate arrow angle for a curved edge points.
+    inline qreal            generateCurvedArrowAngle(QPointF& p1, QPointF& p2,
+                                                     const QPointF& c1, const QPointF& c2,
+                                                     const qan::EdgeStyle::ArrowShape arrowShape,
+                                                     const qreal arrowLength) const noexcept;
 
     //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
-    inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
+    inline void             generateCurvedControlPoints(GeometryCache& cache) const noexcept;
 
     //! Generate edge line label position.
     inline void             generateLabelPosition(GeometryCache& cache) const noexcept;
