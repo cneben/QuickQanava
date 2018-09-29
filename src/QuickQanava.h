@@ -36,10 +36,10 @@
 #define QuickQanava_h
 
 // GTpo headers
-#include "GTpo.h"
+#include <gtpo/GTpo.h>
 
 // QuickContainers headers
-#include "../QuickContainers/src/QuickContainers.h"
+#include <QuickContainers>
 
 // Qt header
 #include <QQmlEngine>
@@ -65,7 +65,8 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-        Q_INIT_RESOURCE(QuickQanava);
+#ifdef QUICKQANAVA_STATIC   // Initialization is done in QuickQanavaPlugin when QUICKQANAVA_STATIC is not defined
+        Q_INIT_RESOURCE(QuickQanava_static);
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
         qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
 #endif
@@ -97,6 +98,7 @@ struct QuickQanava {
         qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");
         qmlRegisterType< qan::StyleManager >( "QuickQanava", 2, 0, "StyleManager");
         qmlRegisterType< qan::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
+#endif // QUICKQANAVA_STATIC
     }
 };
 

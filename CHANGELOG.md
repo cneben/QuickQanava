@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+**20180930:** 
+- Release v0.11.0 pre1.
+- Fix a sever rendering bug on Windows/OSX (OGL issue).
+- Add support for more edge end/start geometry, add support for orthogonal edge layout.
+- CMake support is broken on Windows, use qmake builds.
+    
 **20180704:**
 
 - Release 0.10.0 alpha.

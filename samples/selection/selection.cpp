@@ -49,6 +49,7 @@ int	main( int argc, char** argv )
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
     QuickQanava::initialize(&engine);
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     engine.load(QUrl("qrc:/selection.qml"));
     return app.exec();
 }

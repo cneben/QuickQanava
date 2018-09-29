@@ -15,11 +15,14 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.10.0-blue.svg) |
+![](https://img.shields.io/badge/version-0.11.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
++ **CHANGELOG 20180930:** 
+    + Add support for more edge end/start geometry, add support for orthogonal edge layout.
+    + v0.11.0 pre1 CMake support is broken on Windows, please use qmake builds.
 + **CHANGELOG 20180704:** Complete refactoring of QuickQanava internal topology "backend" [GTpo](https://github.com/cneben/QuickQanava/tree/master/GTpo).
 + **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
 
@@ -29,7 +32,7 @@ QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQa
 
 QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++7 (minimal required Qt version is **Qt 5.10**)
 
-+ Project homepage: http://cneben.github.io/QuickQanava/topology/index.html
++ Project homepage: http://cneben.github.io/QuickQanava/index.html
 
 + [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
 + [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html)
@@ -92,13 +95,28 @@ git clone https://github.com/cneben/QuickQanava
 cd QuickQanava
 ```
 
+Or install as a Git submodule:
+
+```sh
+$ git submodule add https://github.com/cneben/QuickQanava
+$ git submodule update
+```
+
 QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
+
+| qmake                | cmake             | 
+| :---:                | :---:             | 
+| Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed | 
+
+
+Using qmake:
 
 1. Open _quickqanava.pro_ in QtCreator.
 
 2. Select a kit, build and launch samples.
 
-or (CMake > 3.5)
+
+or with (CMake >= 3.5) and Qt Creator:
 
 1. Open _CMakeLists.txt_ in QtCreator.
 
@@ -106,33 +124,59 @@ or (CMake > 3.5)
 
 3. Select a kit, build and launch samples.
 
-Or manually using CMake:
+Or manually in command line using CMake:
 
 ```sh
-$ git submodule add https://github.com/cneben/QuickQanava
-$ git submodule update
 $ cd QuickQanava
 $ mkdir build
 $ cd build
+
+# IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
 $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE ..
+
+# IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE ../QuickQanava/
+
 $ cmake --build .
-# Then run the samples
+# Then run the samples in ./samples
+
+# Eventually make install
 ```
+
+Detailled instructions:  [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
+
+Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:
+
+```
+QQmlApplicationEngine failed to load component
+qrc:/nodes.qml:33 module "QuickQanava" plugin "quickqanavaplugin" not found
+```
+
+QuickQanava and QuickContainers plugins directories could be removed manually from `$QTDIR\..\qml` to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').
 
 ## Roadmap / Changelog
 
   - **v0.10.0:**	 
     - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
     - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
-  - **v0.11.x:**	 
+  - **v0.11.x:**
+    - [X] Add more configuration options to qan::Edge (source and destination arrow configuration).
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v0.12.x:**
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-    - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
   - **v1.: Advanced edge visualization**
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
+
+Contributors
+=======
+
+ - @kwallner / Conan.io and CMake configuration
+ - @Letrab / Edge configuration
+ - @machinekoder / QML plugin and CMake configuration
 
 License
 =======

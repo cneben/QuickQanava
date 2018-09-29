@@ -85,6 +85,7 @@ public:
     // Shortcut for user access to graph configuration.
     using final_config_t      = config_t;
 
+    using node_t              = typename config_t::final_node_t;
     using shared_node_t       = typename std::shared_ptr<typename config_t::final_node_t>;
     using weak_node_t         = typename std::weak_ptr<typename config_t::final_node_t>;
     using shared_nodes_t      = typename config_t::template node_container_t< shared_node_t >;

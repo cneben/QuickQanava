@@ -1,7 +1,7 @@
 /*
     This file is part of QuickQanava library.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+    Copyright (c) 2008-2018 Benoit AUTHEMAN
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.1
 
 import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
 
 ColumnLayout {
     id: root

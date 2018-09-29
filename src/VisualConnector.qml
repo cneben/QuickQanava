@@ -26,8 +26,8 @@
 
 import QtQuick 2.7
 
+import QuickQanava        2.0 as Qan
 import "qrc:/QuickQanava" as Qan
-import QuickQanava 2.0 as Qan
 
 /*! \brief Droppable node control that allow direct mouse/touch edge creation between nodes.
  *

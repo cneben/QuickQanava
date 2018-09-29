@@ -41,8 +41,7 @@
 #include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
 #include <iterator>         // std::forward_iterator_tag
 #include <unordered_map>
-
-#include <stack>        // FIXME: move to .hpp...
+#include <stack>
 
 // GTpo headers
 #include "./utils.h"

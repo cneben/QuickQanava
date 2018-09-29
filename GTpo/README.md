@@ -19,15 +19,13 @@ GTpo is **highly** alpha.
     - [X] Push test coverage to 100%.
     - [ ] Clean the copy and move semantic requirements on topology primitives (and document it).
     - [ ] Clean operator= and operator== semantic requirements on topology primitives (and document it).
-    - [ ] Write complete documentation for static graph configuration.
+    - [X] Write complete documentation for static graph configuration.
     - [ ] Clean management of groups (with regular nodes and specific utility edges...).    
     - [ ] Add complete support for static properties.
     - [ ] Add generic utilities to ease JSON graph serialization.
     - [ ] Fork from QuickQanava, release in a dedicated GH repository.
   - **v0.2.x:**
     - [ ] Add a naive chinese whispers clustering algorithm (See [Wikipedia description](https://en.wikipedia.org/wiki/Chinese_Whispers_(clustering_method)) and [Dlib implementation](http://dlib.net/dlib/clustering/chinese_whispers_abstract.h.html)).
-  - **v0.3.x:**
-    - [ ] Port [cjgdev](https://github.com/cjgdev/aho_corasick) Aho Corasick implementation to GTpo.
   - **v0.4.x:**
     - [ ] Add basic naive (iterative) support for major social network metrics (HITS, PR, etc.)
 
@@ -200,7 +198,7 @@ gtpo::graph<> dst2;
 ok = gtpo::filter<>(src, dst2, f);
 ```
 
-User could filter a specific set of subnode, the subset of topology involving theses nodes will be preserved by filtering:
+User could filter a specific set of subnodes, theses nodes adjacent edges will be preserved by filtering:
 
 ```cpp
 gtpo::graph<> src, dst;
@@ -223,7 +221,7 @@ gtpo::filter<>(src, dst, f);
 ```
 
 
-- `gtp::map()`: Map source graph nodes to a destination graph nodes using a transformation functor.
+- `gtp::map()`: Map source graph nodes to a destination graph nodes using a factory/transformation functor.
   - Signature: `template <> auto map(const src_graph_t& src, dst_graph_t& dst, map_node_func_t f) -> bool`
   - Precondition (return false if not met): destination graph must be empty.
   - Note: source and destination may be of different types.
@@ -231,11 +229,14 @@ gtpo::filter<>(src, dst, f);
   - Throw: May throw std::bad_alloc
 
 ```cpp
-    gtpo::graph<> src;
-    const auto f = [](const auto& src_node, auto& dst_node) -> void { /* Do something to map src_node to dst_node, for example use copyctor */ };
-    gtpo::graph<> dst;
-    dst.create_node();
-    const auto ok = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
+gtpo::graph<> src;
+const auto f = [](const auto& src_node) -> gtpo::graph<>::shared_node_t {
+  static_cast<void>(src_node);
+    return std::make_shared<typename gtpo::graph<>::node_t>();
+};
+gtpo::graph<> dst;
+dst.create_node();
+const auto ok = gtpo::map<gtpo::graph<>, gtpo::graph<>, decltype(f)>(src, dst, f);
 ```
 
   

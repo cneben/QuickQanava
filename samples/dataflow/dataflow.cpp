@@ -51,6 +51,7 @@ int	main( int argc, char** argv )
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     QuickQanava::initialize(&engine);
     qmlRegisterType< qan::FlowNode >( "QuickQanava.Samples", 1, 0, "FlowNode");
     qmlRegisterType< qan::OperationNode >( "QuickQanava.Samples", 1, 0, "OperationNode");

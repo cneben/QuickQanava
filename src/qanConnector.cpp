@@ -137,7 +137,6 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
         else if ( srcPortItem &&
                   dstPortItem == nullptr )
             create = _graph->isEdgeSourceBindable(*srcPortItem);
-        qDebug() << "edge can be created=" << create;
         if ( getCreateDefaultEdge() ) {
             if ( create )
                 createdEdge = _graph->insertEdge( srcNode, dstNode );

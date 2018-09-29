@@ -30,7 +30,8 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 
-import QuickQanava 2.0 as Qan
+import QuickQanava      2.0 as Qan
+import TopologySample   1.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 ApplicationWindow {

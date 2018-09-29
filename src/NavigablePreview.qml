@@ -1,7 +1,7 @@
 /*
     This file is part of QuickQanava library.
 
-    Copyright (C) 2008-2017 Benoit AUTHEMAN
+    Copyright (c) 2008-2018 Benoit AUTHEMAN
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 import QtQuick 2.7
 
-import "qrc:/QuickQanava" as Qan
 import QuickQanava 2.0 as Qan
 
 /*! \brief Concrete component for qan::NavigablePreview interface.

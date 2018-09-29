@@ -25,28 +25,26 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file    QuickContainer.h
-// \author	benoit@destrat.io
-// \date	2012 02 08
+// \file	qanPlugin.cpp
+// \author	alexander @machinekoder
+// \date	2018 08 19
 //-----------------------------------------------------------------------------
 
-#ifndef QuickContainers_h
-#define QuickContainers_h
+#pragma once
 
-// Qt headers
-// Nil
+#include <QQmlExtensionPlugin>
 
-// QuickContainers headers
-#include "./qcmAbstractContainer.h"
-#include "./qcmContainer.h"
+class QuickQanavaPlugin : public QQmlExtensionPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
-struct QuickContainers {
-    static void initialize() {
-        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
-    }
+public:
+    void registerTypes(const char *uri);
+    void initializeEngine(QQmlEngine *engine, const char *uri);
+private:
+    QString fileLocation() const;
+    bool isLoadedFromResource() const;
 };
-
-#endif // QuickContainers_h
-

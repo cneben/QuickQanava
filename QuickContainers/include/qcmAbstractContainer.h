@@ -43,7 +43,7 @@
 #include <QPointer>
 
 // QuickContainers headers
-#include "./qcmContainerModel.h"
+#include "qcmContainerModel.h"
 
 namespace qcm { // ::qcm
 

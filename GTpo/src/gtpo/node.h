@@ -94,7 +94,16 @@ public:
         }
         this->_graph = nullptr;
     }
-    node(const node& node ) = delete;
+    /*! \brief Default copy constructor does _nothing_.
+     *
+     * \note Node topology is not copied since a node identity from a topology point of
+     * view is it's pointer adress. Copy constructor is defined to allow copying node
+     * properties, topology (in/out edges and group membership is not copied), see documentation
+     * for a more detailled description of restrictions on move and copy.
+     */
+    node(const node& node ) {
+        static_cast<void>(node);
+    }
     node& operator=( node const& ) = delete;
 
     inline auto     add_dynamic_node_behaviour( std::unique_ptr<gtpo::dynamic_node_behaviour<config_t>> behaviour ) -> void {

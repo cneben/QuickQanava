@@ -64,7 +64,7 @@ class EdgeItem : public QQuickItem
     Q_OBJECT
 public:
     explicit EdgeItem(QQuickItem* parent = nullptr);
-    virtual ~EdgeItem();
+    virtual ~EdgeItem() override = default;
     EdgeItem( const EdgeItem& ) = delete;
 
 public:
@@ -131,6 +131,44 @@ signals:
 private:
     bool        _hidden{false};
 
+public:
+    Q_PROPERTY( qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL )
+    void            setArrowSize( qreal arrowSize ) noexcept;
+    inline qreal    getArrowSize() const noexcept { return _arrowSize; }
+protected:
+    qreal           _arrowSize = 4.0;
+signals:
+    void            arrowSizeChanged();
+
+public:
+    using ArrowShape = qan::EdgeStyle::ArrowShape;
+
+    //! \copydoc Define shape of source arrow, default None.
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape srcShape READ getSrcShape WRITE setSrcShape NOTIFY srcShapeChanged FINAL )
+    //! \copydoc srcShape
+    inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
+    //! \copydoc srcShape
+    auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
+private:
+    //! \copydoc srcShape
+    ArrowShape          _srcShape{ArrowShape::None};
+signals:
+    void                srcShapeChanged();
+
+public:
+    //! \copydoc Define shape of destination arrow, default arrow.
+    Q_PROPERTY( qan::EdgeStyle::ArrowShape dstShape READ getDstShape WRITE setDstShape NOTIFY dstShapeChanged FINAL )
+
+    //! \copydoc dstShape
+    inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
+    //! \copydoc dstShape
+    auto                setDstShape(ArrowShape dstShape) noexcept -> void;
+private:
+    //! \copydoc dstShape
+    ArrowShape          _dstShape{ArrowShape::Arrow};
+signals:
+    void                dstShapeChanged();
+
 public slots:
     //! Call updateItem() (override updateItem() to an empty method for invisible edges).
     virtual void        updateItemSlot( ) { updateItem(); }
@@ -141,9 +179,9 @@ public:
      * \note Override to an empty method with no base class calls for an edge with no graphics content.
      */
     virtual void        updateItem() noexcept;
-protected:
 
-     /*! FIXME document that
+protected:
+     /*! Cache current edge geometry state.
       *
       * \note Edge geometry cache is expressed in _graph global coordinate system_. Projection into
       * a local CS occurs only in projectGeometry(), until this method is called all internal qan::EdgeItem
@@ -166,6 +204,10 @@ protected:
             dstA2{std::move(rha.dstA2)},
             dstA3{std::move(rha.dstA3)},
             dstAngle{rha.dstAngle},
+            srcA1{std::move(rha.srcA1)},
+            srcA2{std::move(rha.srcA2)},
+            srcA3{std::move(rha.srcA3)},
+            srcAngle{rha.srcAngle},
             c1{std::move(rha.c1)},          c2{std::move(rha.c2)},
             labelPosition{std::move(rha.labelPosition)}
         {
@@ -185,28 +227,29 @@ protected:
         bool hidden{false};
         QPolygonF   srcBs;
         QPolygonF   dstBs;
-        QRectF      srcBr;
-        QRectF      dstBr;
+        QRectF      srcBr, dstBr;
         QPointF     srcBrCenter;
         QPointF     dstBrCenter;
 
-        QPointF p1;
-        QPointF p2;
+        QPointF p1, p2;
 
-        QPointF dstA1;
-        QPointF dstA2;
-        QPointF dstA3;
+        QPointF dstA1, dstA2, dstA3;
         qreal   dstAngle{0.};
 
-        QPointF c1;
-        QPointF c2;
+        QPointF srcA1, srcA2, srcA3;
+        qreal   srcAngle{0.};
+
+        QPointF c1, c2;
 
         QPointF labelPosition;
     };
     inline GeometryCache    generateGeometryCache() const noexcept;
 
     /*! \brief Generate edge line source and destination points (GeometryCache::p1 and GeometryCache::p2). */
-    inline void             generateLineGeometry(GeometryCache& cache) const noexcept;
+    inline void             generateStraightEnds(GeometryCache& cache) const noexcept;
+
+    //! \brief Generate P1 and P2 for ortho edge style.
+    void                    generateOrthoEnds(GeometryCache& cache) const noexcept;
 
     /*! \brief FIXME
      *
@@ -214,8 +257,19 @@ protected:
      */
     inline void             generateArrowGeometry(GeometryCache& cache) const noexcept;
 
+    //! Generate arrow angle for a curved edge points.
+    inline qreal            generateStraightArrowAngle(QPointF& p1, QPointF& p2,
+                                                       const qan::EdgeStyle::ArrowShape arrowShape,
+                                                       const qreal arrowLength) const noexcept;
+
+    //! Generate arrow angle for a curved edge points.
+    inline qreal            generateCurvedArrowAngle(QPointF& p1, QPointF& p2,
+                                                     const QPointF& c1, const QPointF& c2,
+                                                     const qan::EdgeStyle::ArrowShape arrowShape,
+                                                     const qreal arrowLength) const noexcept;
+
     //! Generate edge line control points when edge has curved style (GeometryCache::c1 and GeometryCache::c2).
-    inline void             generateLineControlPoints(GeometryCache& cache) const noexcept;
+    inline void             generateCurvedControlPoints(GeometryCache& cache) const noexcept;
 
     //! Generate edge line label position.
     inline void             generateLabelPosition(GeometryCache& cache) const noexcept;
@@ -289,6 +343,29 @@ signals:
     void            dstAngleChanged();
 
 public:
+    /*! \brief Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
+     *
+     * \note Destination arrow geometry is updated with a single dstArrowGeometryChanged() to avoid unecessary binding: all points
+     * geometry must be changed at the same time.
+     */
+    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY dstArrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA1() const noexcept -> const QPointF& { return _dstA1; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY dstArrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA2() const noexcept -> const QPointF& { return _dstA2; }
+    //! \copydoc dstA1
+    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY dstArrowGeometryChanged FINAL )
+    //! \copydoc dstA1
+    inline  auto    getDstA3() const noexcept -> const QPointF& { return _dstA3; }
+private:
+    //! \copydoc dstA1
+    QPointF         _dstA1, _dstA2, _dstA3;
+signals:
+    void            dstArrowGeometryChanged();
+
+public:
     //! Source edge arrow angle.
     Q_PROPERTY( qreal srcAngle READ getSrcAngle() NOTIFY srcAngleChanged FINAL )
     //! \copydoc srcAngle
@@ -301,27 +378,27 @@ signals:
     void            srcAngleChanged();
 
 public:
-    /*! \brief Edge destination arrow control points (\c dstA1 is top corner, \c dstA2 is tip, \c dstA3 is bottom corner).
+    /*! \brief Edge source arrow control points (\c srcA1 is top corner, \c srcA2 is tip, \c srcA3 is bottom corner).
      *
-     * \note Arrow geometry is updated with a single arrowGeometryChanged() to avoid unecessary binding: all points
+     * \note Source arrow geometry is updated with a single srcArrowGeometryChanged() to avoid unecessary binding: all points
      * geometry must be changed at the same time.
      */
-    Q_PROPERTY( QPointF dstA1 READ getDstA1() NOTIFY arrowGeometryChanged FINAL )
-    //! \copydoc dstA1
-    inline  auto    getDstA1() const noexcept -> const QPointF& { return _dstA1; }
-    //! \copydoc dstA1
-    Q_PROPERTY( QPointF dstA2 READ getDstA2() NOTIFY arrowGeometryChanged FINAL )
-    //! \copydoc dstA1
-    inline  auto    getDstA2() const noexcept -> const QPointF& { return _dstA2; }
-    //! \copydoc dstA1
-    Q_PROPERTY( QPointF dstA3 READ getDstA3() NOTIFY arrowGeometryChanged FINAL )
-    //! \copydoc dstA1
-    inline  auto    getDstA3() const noexcept -> const QPointF& { return _dstA3; }
+    Q_PROPERTY( QPointF srcA1 READ getSrcA1() NOTIFY srcArrowGeometryChanged FINAL )
+    //! \copydoc srcA1
+    inline  auto    getSrcA1() const noexcept -> const QPointF& { return _srcA1; }
+    //! \copydoc srcA1
+    Q_PROPERTY( QPointF srcA2 READ getSrcA2() NOTIFY srcArrowGeometryChanged FINAL )
+    //! \copydoc srcA1
+    inline  auto    getSrcA2() const noexcept -> const QPointF& { return _srcA2; }
+    //! \copydoc srcA1
+    Q_PROPERTY( QPointF srcA3 READ getSrcA3() NOTIFY srcArrowGeometryChanged FINAL )
+    //! \copydoc srcA1
+    inline  auto    getSrcA3() const noexcept -> const QPointF& { return _srcA3; }
 private:
-    //! \copydoc dstA1
-    QPointF         _dstA1, _dstA2, _dstA3;
+    //! \copydoc srcA1
+    QPointF         _srcA1, _srcA2, _srcA3;
 signals:
-    void            arrowGeometryChanged();
+    void            srcArrowGeometryChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -368,6 +445,8 @@ signals:
 private slots:
     //! Called when the style associed to this edge is destroyed.
     void            styleDestroyed( QObject* style );
+
+    void            styleModified();
     //@}
     //-------------------------------------------------------------------------
 
