@@ -42,7 +42,7 @@
     
     
       
-        <title>Nodes - QuickQanava C++ graph visualization library</title>
+        <title>Nodes/Groups - QuickQanava C++ graph visualization library</title>
       
     
     
@@ -130,7 +130,7 @@
                 QuickQanava C++ graph visualization library
               </span>
               <span class="md-header-nav__topic">
-                Nodes
+                Nodes/Groups
               </span>
             
           
@@ -292,11 +292,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Nodes
+        Nodes/Groups
       </label>
     
-    <a href="nodes.html" title="Nodes" class="md-nav__link md-nav__link--active">
-      Nodes
+    <a href="nodes.html" title="Nodes/Groups" class="md-nav__link md-nav__link--active">
+      Nodes/Groups
     </a>
     
       
@@ -820,7 +820,7 @@
 <p>Note that signal <code class="codehilite">requestUpdateBoundingShape</code> won't be emitted for non complex bounding shape. Optionally, you could choose to set complexBoundingShape to false and override <code class="codehilite">generateDefaultBoundingShape()</code> method.</p>
 <h2 id="grouping-nodes">Grouping Nodes<a class="headerlink" href="#grouping-nodes" title="Permanent link">&para;</a></h2>
 <h3 id="default-groups">Default Groups<a class="headerlink" href="#default-groups" title="Permanent link">&para;</a></h3>
-<p>Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using <code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertGroup</span><span class="p">()</span></code> method. Nodes are ususally inserted inside existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using <code class="codehilite">qan::Graph::groupNode()</code> and <code class="codehilite">qan::Graph::ungroupNode()</code> API.</p>
+<p>Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using <code class="codehilite"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">insertGroup</span><span class="p">()</span></code> method. Nodes are ususally inserted into existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using <code class="codehilite">qan::Graph::groupNode()</code> and <code class="codehilite">qan::Graph::ungroupNode()</code> API.</p>
 <p>Group visual item (<code class="codehilite">Qan.GroupItem</code>) is accessible from <code class="codehilite">Qan.Group.item</code> property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be collapsed visually using the <code class="codehilite">Qan.GroupItem.collapsed</code> property.</p>
 <p><img alt="Groups" src="nodes/sample-groups.gif" /></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
@@ -841,22 +841,30 @@
 16
 17
 18
-19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span> <span class="p">{</span>
   <span class="nl">id</span><span class="p">:</span> <span class="n">graph</span>
   <span class="nl">objectName</span><span class="p">:</span> <span class="s">&quot;graph&quot;</span>
   <span class="n">anchors</span><span class="p">.</span><span class="nl">fill</span><span class="p">:</span> <span class="n">parent</span>
 
   <span class="n">Component</span><span class="p">.</span><span class="nl">onCompleted</span><span class="p">:</span> <span class="p">{</span>
-    <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">(</span> <span class="p">)</span>
+    <span class="n">var</span> <span class="n">n1</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
     <span class="n">n1</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;N1&quot;</span>
-    <span class="n">var</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">(</span> <span class="p">)</span>
+    <span class="n">var</span> <span class="n">n2</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
     <span class="n">n2</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;N2&quot;</span>
-    <span class="n">var</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">(</span> <span class="p">)</span>
+    <span class="n">var</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
     <span class="n">n3</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;N3&quot;</span>
-    <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="p">)</span>
-    <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span> <span class="n">n2</span><span class="p">,</span> <span class="n">n3</span> <span class="p">)</span>
+    <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">)</span>
+    <span class="n">graph</span><span class="p">.</span><span class="n">insertEdge</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">n3</span><span class="p">)</span>
 
     <span class="n">var</span> <span class="n">gg</span> <span class="o">=</span> <span class="n">graph</span><span class="p">.</span><span class="n">insertGroup</span><span class="p">();</span>
+    <span class="n">gg</span><span class="p">.</span><span class="n">preferredGroupWidth</span> <span class="o">=</span> <span class="mf">300.</span>
+    <span class="n">gg</span><span class="p">.</span><span class="n">preferredGroupHeight</span> <span class="o">=</span> <span class="mf">250.</span>
+    <span class="n">gg</span><span class="p">.</span><span class="n">minimumGroupWidth</span> <span class="o">=</span> <span class="mf">200.</span>
+    <span class="n">gg</span><span class="p">.</span><span class="n">minimumGroupHeight</span> <span class="o">=</span> <span class="mf">150.</span>
     <span class="n">gg</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Group&quot;</span>
   <span class="p">}</span>
 <span class="p">}</span> <span class="c1">// Qan.Graph: graph</span>
@@ -869,7 +877,11 @@
 <li><code class="codehilite">Group.labelEditorVisible (QML only)</code>: Show or hide the group label visualization and edition visual component (label is editable by default).</li>
 <li><code class="codehilite">Group.expandButtonVisible (QML only)</code>: Show or hide the group default delegate expand/collapse button (button is visible by default).</li>
 </ul>
-<p>Group size could be modified directly trough standard <code class="codehilite">Qan.GroupItem</code> quick items <code class="codehilite">width</code> and <code class="codehilite">height</code> properties, if no size is specified <code class="codehilite">minimumSize</code> property will be used.</p>
+<p>Group sizing is managed automatically by the framework to prevent resizing group below it's content <code class="codehilite">contentsRect</code>. Group size <strong>should not</strong> be modified directly trough standard quick items <code class="codehilite">width</code> and <code class="codehilite">height</code> properties, instead use:</p>
+<ul>
+<li><code class="codehilite">GroupItem.preferredGroupWidth</code> / <code class="codehilite">GroupItem.preferredGroupHeight</code>: Initial group size (should be used instead of setting group item width/height directly), default to (250x200).</li>
+<li><code class="codehilite">GroupItem.minimumGroupWidth</code> / <code class="codehilite">GroupItem.minimumGroupHeight</code>: Group can't be resized below specified width/height, default to (150x100).</li>
+</ul>
 <p>Refer to <a href="https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml">Group Sample</a> for more detailled informations.</p>
 <h3 id="custom-groups">Custom Groups<a class="headerlink" href="#custom-groups" title="Permanent link">&para;</a></h3>
 <p><code class="codehilite">GroupItem</code> is build using <code class="codehilite">Qan.RectGroupTemplate</code> template, a custom group delegate with full selection/resizing and styling support could easily be built using this template, see the <a href="https://github.com/cneben/QuickQanava/blob/425f1de0c75e1be85f51b90de517d75612978485/src/Group.qml#L42">Qan.Group</a> component implementation for a demonstration.</p>

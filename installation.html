@@ -335,8 +335,8 @@
 
 
   <li class="md-nav__item">
-    <a href="nodes.html" title="Nodes" class="md-nav__link">
-      Nodes
+    <a href="nodes.html" title="Nodes/Groups" class="md-nav__link">
+      Nodes/Groups
     </a>
   </li>
 
@@ -533,6 +533,22 @@
 </td></tr></table>
 
 <p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system.</p>
+<p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system.</p>
+<table>
+<thead>
+<tr>
+<th align="center">qmake</th>
+<th align="center">cmake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Static build, no QML module, all resources are linked statically trough QRC</td>
+<td align="center">Installable or embedable, QuickQanava is loaded using a QML module that need to be installed</td>
+</tr>
+</tbody>
+</table>
+<p>Using qmake:</p>
 <ol>
 <li>
 <p>Open <em>quickqanava.pro</em> in QtCreator.</p>
@@ -554,24 +570,44 @@
 </li>
 </ol>
 <p>Or manually using CMake:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6
-7
-8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>$ git submodule add https://github.com/cneben/QuickQanava
-$ git submodule update
-$ <span class="nb">cd</span> QuickQanava
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>$ <span class="nb">cd</span> QuickQanava
 $ mkdir build
 $ <span class="nb">cd</span> build
+
+<span class="c1"># IF QT_DIR IS CONFIGURED AND QMAKE IN PATH</span>
 $ cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DBUILD_SAMPLES<span class="o">=</span>TRUE ..
+
+<span class="c1"># IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY</span>
+$ cmake -DCMAKE_PREFIX_PATH<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.11.0/gcc_64&quot;</span> -DQT_QMAKE_EXECUTABLE<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.11.0/gcc_64/bin/qmake&quot;</span>  -DBUILD_SAMPLES<span class="o">=</span>TRUE ../QuickQanava/
+
 $ cmake --build .
-<span class="c1"># Then run the samples</span>
+<span class="c1"># Then run the samples in ./samples</span>
+
+<span class="c1"># Eventually make install</span>
 </pre></div>
 </td></tr></table>
 
+<p>Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span>QQmlApplicationEngine failed to load component
+qrc:/nodes.qml:33 module &quot;QuickQanava&quot; plugin &quot;quickqanavaplugin&quot; not found
+</pre></div>
+</td></tr></table>
+
+<p>QuickQanava and QuickContainers plugins directories could be removed manually from <code class="codehilite">$QTDIR\..\qml</code> to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').</p>
 <h2 id="using-from-external-projects">Using from external projects<a class="headerlink" href="#using-from-external-projects" title="Permanent link">&para;</a></h2>
 <p>The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
