@@ -32,8 +32,6 @@
 // \date	2016 03 22
 //-----------------------------------------------------------------------------
 
-// Qt headers
-
 // QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanGroupItem.h"
@@ -72,11 +70,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 
     setStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
-
-    setWidth(200); setHeight(150);
+    // Note: Do not set width and height
 }
-
-GroupItem::~GroupItem() { /* Nil */ }
 
 qan::AbstractDraggableCtrl& GroupItem::draggableCtrl() { Q_ASSERT(_draggableCtrl != nullptr); return *_draggableCtrl; }
 
@@ -106,17 +101,35 @@ auto    GroupItem::setRect(const QRectF& r) noexcept -> void
         return;
     setX(r.left());
     setY(r.top());
-    setWidth(r.width());
-    setHeight(r.height());
+    setPreferredGroupWidth(r.width());
+    setPreferredGroupHeight(r.height());
 }
 //-----------------------------------------------------------------------------
 
 
 /* Selection and Sizing Management *///----------------------------------------
-void    GroupItem::setMinimumSize(QSizeF minimumSize) noexcept
+void    GroupItem::setPreferredGroupWidth(qreal preferredGroupWidth) noexcept
 {
-    _minimumSize = minimumSize;
-    emit minimumSizeChanged( );
+    _preferredGroupWidth = preferredGroupWidth;
+    emit preferredGroupWidthChanged();
+}
+
+void    GroupItem::setPreferredGroupHeight(qreal preferredGroupHeight) noexcept
+{
+    _preferredGroupHeight = preferredGroupHeight;
+    emit preferredGroupHeightChanged();
+}
+
+void    GroupItem::setMinimumGroupWidth(qreal minimumGroupWidth) noexcept
+{
+    _minimumGroupWidth = minimumGroupWidth;
+    emit minimumGroupWidthChanged();
+}
+
+void    GroupItem::setMinimumGroupHeight(qreal minimumGroupHeight) noexcept
+{
+    _minimumGroupHeight = minimumGroupHeight;
+    emit minimumGroupHeightChanged();
 }
 
 void    GroupItem::setResizable( bool resizable ) noexcept

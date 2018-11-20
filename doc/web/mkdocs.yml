@@ -61,15 +61,15 @@ markdown_extensions:
   - pymdownx.tilde
 
 pages:
-  - 'QuickQanava': 'index.md'
+  - 'QuickQanava':  'index.md'
   - 'Installation': 'installation.md'
-  - 'Graph': 'graph.md'
-  - 'Nodes': 'nodes.md'
-  - 'Edges': 'edges.md'
-  - 'Styles': 'styles.md'
-  - 'Utilities': 'utilities.md'
+  - 'Graph':        'graph.md'
+  - 'Nodes/Groups': 'nodes.md'
+  - 'Edges':        'edges.md'
+  - 'Styles':       'styles.md'
+  - 'Utilities':    'utilities.md'
   - 'Advanced use (C++)': 'advanced.md'
-  - 'Samples': 'samples.md'
+  - 'Samples':      'samples.md'
   - 'API Reference': 'reference.md'
-  - 'Licence': 'licence.md'
+  - 'Licence':      'licence.md'
   - 'Internals/Contributors': 'internals.md'

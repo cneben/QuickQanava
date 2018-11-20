@@ -81,7 +81,9 @@ NodeItem::~NodeItem()
 }
 
 qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!=nullptr); return *_draggableCtrl; }
+//-----------------------------------------------------------------------------
 
+/* Topology Management *///----------------------------------------------------
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
 auto    NodeItem::setNode(qan::Node* node) noexcept -> void {

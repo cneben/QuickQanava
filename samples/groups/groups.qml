@@ -79,7 +79,8 @@ ApplicationWindow {
                 var g1 = topology.insertGroup()
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80
-                g1.item.width = 250; g1.item.height = 270
+
+                //g1.item.width = 250; g1.item.height = 270
                 //topology.insertEdge( n2, g1 )
             }
             onGroupClicked: {
@@ -140,11 +141,13 @@ ApplicationWindow {
             id: groupEditor
             property var group: undefined
             onGroupChanged: groupItem = group ? group.item : undefined
+
             property var groupItem: undefined
             anchors.bottom: parent.bottom; anchors.bottomMargin: 15
             anchors.right: parent.right; anchors.rightMargin: 15
+
             width: 220; height: 385; padding: 0
-            Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
+            Pane { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
             ColumnLayout {
                 Label {
                     text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."

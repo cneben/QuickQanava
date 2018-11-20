@@ -87,6 +87,5 @@ Reference documentation: [qan::Connector interface](https://github.com/cneben/Qu
 
 Default connector component `Qan.Graph.connector` could be replaced by a user defined `Qan.VisualConnector` to customize connector behavior in more depth. It is possible to add multiple visuals connectors on the same node, using a connector to generate specific topologies (create edges with different concrete types) or select targets visually. Such an advanced use of custom connectors is demonstrated in 'connector' sample: [https://github.com/cneben/QuickQanava/tree/master/samples/connector](https://github.com/cneben/QuickQanava/tree/master/samples/connector)
 
-![Visual connectors](images/sample-connector.gif)
 
 

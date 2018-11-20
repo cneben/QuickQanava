@@ -55,7 +55,7 @@ At this point, any modification should be done:
 
 - Synchronously before application event loop is started using app.exec().
 - In signals handlers reacting to `qan::Graph` or `qan::GraphView` events such as `nodeClicked()` or `groupClicked()` and so on (See [qan::Graph](https://github.com/cneben/QuickQanava/blob/master/src/qanGraph.h) and [qan::GraphView](https://github.com/cneben/QuickQanava/blob/master/src/qanGraphView.h) signals).
-- Using behavior observers (See [Behaviors section](advanced.qml#observation-of-topological-modifications)).
+- Using behavior observers (See [Behaviors section](advanced.md#observation-of-topological-modifications)).
 
 Please refer to the [cpp sample](https://github.com/cneben/QuickQanava/tree/master/samples/cpp) and more specifically [cpp_sample.cpp](https://github.com/cneben/QuickQanava/blob/master/samples/cpp/cpp_sample.cpp) for a sample about using `qan::Graph` topology related methods.
 

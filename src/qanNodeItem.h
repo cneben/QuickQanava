@@ -101,7 +101,11 @@ public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
 private:
     std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Topology Management *///-----------------------------------------
+    //@{
 public:
     Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
     auto        getNode() noexcept -> qan::Node*;

@@ -452,6 +452,10 @@ signals:
      *  \sa nodeDoubleClicked()
      */
     void            edgeDoubleClicked( qan::Edge* edge, QPointF pos );
+
+    /*! \brief Emitted _after_ an edge has been inserted (usually with insertEdge()).
+     */
+    void            edgeInserted(qan::Edge* edge);
     //@}
     //-------------------------------------------------------------------------
 

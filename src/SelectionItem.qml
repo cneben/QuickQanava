@@ -30,7 +30,7 @@
 // \file	SelectionItem.qml
 // \author	benoit@destrat.io
 // \date	2015 06 16
-// Contributed by Márk BARTOS 20170930
+// Contributed by @Jackneill 20170930
 //-----------------------------------------------------------------------------
 
 import QtQuick  2.7

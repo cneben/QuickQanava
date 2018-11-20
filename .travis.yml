@@ -12,14 +12,14 @@ matrix:
         apt: 
             sources: 
                 - ubuntu-toolchain-r-test
-                - sourceline: "ppa:beineri/opt-qt-5.10.1-trusty"
+                - sourceline: "ppa:beineri/opt-qt-5.11.1-xenial"
             packages: 
                 - cmake
                 - g++-6
-                - qt510base
-                - qt510declarative
-                - qt510graphicaleffects
-                - qt510quickcontrols2
+                - qt511base
+                - qt511declarative
+                - qt511graphicaleffects
+                - qt511quickcontrols2
     - os: osx
       compiler: clang
 

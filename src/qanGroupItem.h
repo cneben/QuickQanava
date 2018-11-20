@@ -71,14 +71,18 @@ class GroupItem : public QQuickItem,
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
-    virtual ~GroupItem();
+    virtual ~GroupItem() override = default;
     GroupItem( const GroupItem& ) = delete;
 
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
 private:
     std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+    //@}
+    //-------------------------------------------------------------------------
 
+    /*! \name Topology Management *///-----------------------------------------
+    //@{
 public:
     Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
     auto        getGroup() noexcept -> qan::Group*;
@@ -126,17 +130,60 @@ private slots:
     /*! \name Selection and Sizing Management *///-----------------------------
     //@{
 public:
-    //! Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
-    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
-    //! \copydoc minimumSize
-    inline const QSizeF&  getMinimumSize() const noexcept { return _minimumSize; }
-    //! \copydoc minimumSize
-    void            setMinimumSize(QSizeF minimumSize) noexcept;
+    //! \brief Group preferred initial size, default to "200 x 150".
+    Q_PROPERTY( qreal preferredGroupWidth READ getPreferredGroupWidth WRITE setPreferredGroupWidth NOTIFY preferredGroupWidthChanged FINAL )
+    //! \copydoc preferredGroupWidth
+    inline qreal    getPreferredGroupWidth() const noexcept { return _preferredGroupWidth; }
+    //! \copydoc preferredGroupWidth
+    void            setPreferredGroupWidth(qreal preferredGroupWidth) noexcept;
 private:
-    QSizeF          _minimumSize{150., 100};
+    //! \copydoc preferredGroupWidth
+    qreal           _preferredGroupWidth = 250;
 signals:
-    //! \internal
-    void            minimumSizeChanged();
+    //! \copydoc preferredGroupWidth
+    void            preferredGroupWidthChanged();
+
+public:
+    //! \brief Group preferred initial size, default to "200 x 150".
+    Q_PROPERTY( qreal preferredGroupHeight READ getPreferredGroupHeight WRITE setPreferredGroupHeight NOTIFY preferredGroupHeightChanged FINAL )
+    //! \copydoc preferredGroupHeight
+    inline qreal    getPreferredGroupHeight() const noexcept { return _preferredGroupHeight; }
+    //! \copydoc preferredGroupHeight
+    void            setPreferredGroupHeight(qreal preferredGroupHeight) noexcept;
+private:
+    //! \copydoc preferredGroupHeight
+    qreal           _preferredGroupHeight = 200;
+signals:
+    //! \copydoc preferredGroupHeight
+    void            preferredGroupHeightChanged();
+
+public:
+    //! \brief Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
+    Q_PROPERTY( qreal minimumGroupWidth READ getMinimumGroupWidth WRITE setMinimumGroupWidth NOTIFY minimumGroupWidthChanged FINAL )
+    //! \copydoc minimumGroupWidth
+    inline qreal    getMinimumGroupWidth() const noexcept { return _minimumGroupWidth; }
+    //! \copydoc minimumGroupWidth
+    void            setMinimumGroupWidth(qreal minimumGroupWidth) noexcept;
+private:
+    //! \copydoc minimumGroupWidth
+    qreal           _minimumGroupWidth = 150;
+signals:
+    //! \copydoc minimumGroupWidth
+    void            minimumGroupWidthChanged();
+
+public:
+    //! \brief Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
+    Q_PROPERTY( qreal minimumGroupHeight READ getMinimumGroupHeight WRITE setMinimumGroupHeight NOTIFY minimumGroupHeightChanged FINAL )
+    //! \copydoc minimumGroupHeight
+    inline qreal    getMinimumGroupHeight() const noexcept { return _minimumGroupHeight; }
+    //! \copydoc minimumGroupHeight
+    void            setMinimumGroupHeight(qreal minimumGroupHeight) noexcept;
+private:
+    //! \copydoc minimumGroupHeight
+    qreal           _minimumGroupHeight = 100.;
+signals:
+    //! \copydoc minimumGroupHeight
+    void            minimumGroupHeightChanged();
 
 public:
     //! Enable or disable group resizing (default to true, ie group is resizable).

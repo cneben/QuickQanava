@@ -161,6 +161,8 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error.";
         // Note: edge is cleaned automatically if it has still not been inserted to graph
     }
+    if (configuredEdge != nullptr)
+        emit edgeInserted(configuredEdge);
     return configuredEdge;
 }
 

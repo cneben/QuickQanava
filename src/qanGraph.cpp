@@ -543,12 +543,15 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
 {
     auto sourceNode = qobject_cast<qan::Node*>(source);
     if ( sourceNode != nullptr ) {
+            qan::Edge* edge = nullptr;
             if ( qobject_cast<qan::Node*>(destination) != nullptr )
-                return insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
+                edge = insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
             else if ( qobject_cast<qan::Group*>(destination) != nullptr )
-                return insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
+                edge = insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
-                return insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+                edge = insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+            if (edge != nullptr)
+                emit edgeInserted(edge);
     }
     qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
     return nullptr;

@@ -67,7 +67,6 @@ struct ItemDispatcherBase {
     inline static constexpr auto debug_type() -> const char* { return "unsupported"; }
 };
 
-// FIXME: Use c++14 template using instead of traits here....
 template <>
 inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::non_ptr_type>() -> const char* { return "non_ptr_type"; }
 

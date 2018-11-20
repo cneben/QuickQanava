@@ -48,19 +48,23 @@ Item {
     property var    groupItem: undefined
 
     //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : labelEditorControl.visible
+    property alias  labelEditorVisible : labelEditorControl.visible
 
     //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : collapser.visible
+    property alias  expandButtonVisible : collapser.visible
+
+    property real   preferredGroupWidth: 200
+    property real   preferredGroupHeight: 150
 
     Item {
         id: content
-        anchors.fill: parent
         x: 0; y: 0; z: 3
+        width: preferredGroupWidth
+        height: preferredGroupHeight
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
     }
-    RectSolidBackground {        // Node background and shadow with backOpacity and backRadius support
+    RectSolidBackground {       // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
         anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
         nodeItem: template.groupItem

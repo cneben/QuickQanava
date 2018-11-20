@@ -181,7 +181,7 @@ Grouping Nodes
 
 ### Default Groups
 
-Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using `#!js Qan.Graph.insertGroup()` method. Nodes are ususally inserted inside existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using `qan::Graph::groupNode()` and `qan::Graph::ungroupNode()` API.
+Groups are a specific kind of nodes that can contains mutliple regular nodes. Groups are created using `#!js Qan.Graph.insertGroup()` method. Nodes are ususally inserted into existing groups visually by dragging and dropping a node inside a group. Group topology could also be modified from C++ using `qan::Graph::groupNode()` and `qan::Graph::ungroupNode()` API.
 
 Group visual item (`Qan.GroupItem`) is accessible from `Qan.Group.item` property, the API is fully consistent with nodes. A group could have a custom label (editable directly from the default delegate using Quick Controls 2 text input) and could be collapsed visually using the `Qan.GroupItem.collapsed` property.
 
@@ -194,16 +194,20 @@ Qan.Graph {
   anchors.fill: parent
 
   Component.onCompleted: {
-    var n1 = graph.insertNode( )
+    var n1 = graph.insertNode()
     n1.label = "N1"
-    var n2 = graph.insertNode( )
+    var n2 = graph.insertNode()
     n2.label = "N2"
-    var n3 = graph.insertNode( )
+    var n3 = graph.insertNode()
     n3.label = "N3"
-    graph.insertEdge( n1, n2 )
-    graph.insertEdge( n2, n3 )
+    graph.insertEdge(n1, n2)
+    graph.insertEdge(n2, n3)
 
     var gg = graph.insertGroup();
+    gg.preferredGroupWidth = 300.
+    gg.preferredGroupHeight = 250.
+    gg.minimumGroupWidth = 200.
+    gg.minimumGroupHeight = 150.
     gg.label = "Group"
   }
 } // Qan.Graph: graph
@@ -215,7 +219,10 @@ The following configuration options are available for `Qan.Group`:
 - `Group.labelEditorVisible (QML only)`: Show or hide the group label visualization and edition visual component (label is editable by default).
 - `Group.expandButtonVisible (QML only)`: Show or hide the group default delegate expand/collapse button (button is visible by default).
 
-Group size could be modified directly trough standard `Qan.GroupItem` quick items `width` and `height` properties, if no size is specified `minimumSize` property will be used.
+Group sizing is managed automatically by the framework to prevent resizing group below it's content `contentsRect`. Group size **should not** be modified directly trough standard quick items `width` and `height` properties, instead use:
+
+- `GroupItem.preferredGroupWidth` / `GroupItem.preferredGroupHeight`: Initial group size (should be used instead of setting group item width/height directly), default to (250x200).
+- `GroupItem.minimumGroupWidth` / `GroupItem.minimumGroupHeight`: Group can't be resized below specified width/height, default to (150x100).
 
 Refer to [Group Sample](https://github.com/cneben/QuickQanava/blob/master/samples/groups/groups.qml) for more detailled informations.
 

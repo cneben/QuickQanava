@@ -192,32 +192,34 @@ Qan.AbstractGraphView {
     onGroupClicked: {
         sendGroupToTop(group)
 
-        // FIXME: fast exit on incorrect argument...
-        if ( !graph )
-            return
-        if ( !group || !(group.item) )
-            return
-        if ( !group.item.container ) {
-            console.error("Qan.GraphView.onGroupClicked(): Trying to add a bottom right resizer to a group with invalid container property")
-            return
-        }
+        if ( graph &&
+             group && group.item &&
+                group.item.container ) {
+            if ( group.item.resizable ) {
+                groupResizer.parent = group.item
+                groupResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
 
-        if ( group.item.resizable ) {
-            groupResizer.parent = group.item
-            groupResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
-            groupResizer.minimumTargetSize = Qt.binding( function() {
-                return Qt.size( Math.max( group.item.minimumSize.width, group.item.container.childrenRect.x + group.item.container.childrenRect.width + 10 ),
-                                Math.max( group.item.minimumSize.height, group.item.container.childrenRect.y + group.item.container.childrenRect.height + 10 ) )
-            } )
-            groupResizer.target = group.item
-            // Do not show resizer when group is collapsed
-            groupResizer.visible = Qt.binding( function() { return (!groupResizer.target.collapsed) && groupResizer.target.resizable; } )
-            groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
-            groupResizer.preserveRatio = false
+                groupResizer.minimumTargetSize = Qt.binding( function() {
+                    return Qt.size( Math.max( group.item.minimumGroupWidth, group.item.container.childrenRect.width + 10 ),
+                                   Math.max( group.item.minimumGroupHeight, group.item.container.childrenRect.height + 10 ) )
+                } )
+                groupResizer.target = Qt.binding( function() { return group.item.container } )
+
+                // Do not show resizer when group is collapsed
+                groupResizer.visible = Qt.binding( function() { // Resizer is visible :
+                    return group && group.item      &&  // If group and group.item are valid
+                            (!group.item.collapsed)  &&  // And if group is not collapsed
+                            group.item.resizable;       // And if group is resizeable
+                } )
+                groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
+                groupResizer.preserveRatio = false
+            } else {
+                groupResizer.target = null
+                groupResizer.visible = false
+            } // group.item.resizable
         } else {
-            groupResizer.target = null
-            groupResizer.visible = false
-        } // group.item.resizable
+            console.error("Qan.GraphView.onGroupClicked(): Invalid group container, can't configure resizer")
+        }
     }
 
     onGroupRightClicked: sendGroupToTop(group)

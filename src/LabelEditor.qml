@@ -98,6 +98,7 @@ Loader {
         TextField {
             id: labelTextField
             anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+            enabled: text !== ''    // Do not allow edition for empty labels (label editor used instead)
             text: target ? target.label : ""
             font.bold: labelEditorLoader.bold
             font.pointSize: labelEditorLoader.pointSize

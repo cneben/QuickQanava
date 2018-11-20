@@ -32,8 +32,8 @@
 // \date	2015 07 19
 //-----------------------------------------------------------------------------
 
-#ifndef canNavigable_h
-#define canNavigable_h
+#ifndef qanNavigable_h
+#define qanNavigable_h
 
 // Qt headers
 #include <QQuickItem>
@@ -97,7 +97,7 @@ class Navigable : public QQuickItem
 Q_OBJECT
 public:
     explicit Navigable( QQuickItem* parent = nullptr );
-    virtual ~Navigable() { }
+    virtual ~Navigable() override = default;
     Navigable( const Navigable& ) = delete;
     //@}
     //-------------------------------------------------------------------------

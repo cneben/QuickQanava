@@ -1120,7 +1120,8 @@ void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
             connect( _style,    &qan::EdgeStyle::dstShapeChanged,   // FIXME: Add intelligent updating
                      this,      &EdgeItem::styleModified );
         }
-        emit styleChanged( );
+        emit styleChanged();
+        updateItem();   // Force initial style settings
     }
 }
 
