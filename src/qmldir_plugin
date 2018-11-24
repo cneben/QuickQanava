@@ -11,7 +11,6 @@ GraphView           2.0 GraphView.qml
 Group               2.0 Group.qml
 RectNodeTemplate    2.0 RectNodeTemplate.qml
 RectSolidBackground 2.0 RectSolidBackground.qml
-RectShadowEffect    2.0 RectShadowEffect.qml
 RectGroupTemplate   2.0 RectGroupTemplate.qml
 CanvasNodeTemplate  2.0 CanvasNodeTemplate.qml
 VisualConnector     2.0 VisualConnector.qml
