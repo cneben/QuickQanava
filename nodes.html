@@ -338,6 +338,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#observing-topology" title="Observing Topology" class="md-nav__link">
+    Observing Topology
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -540,6 +547,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#observing-topology" title="Observing Topology" class="md-nav__link">
+    Observing Topology
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -717,6 +731,19 @@
 <li><code class="codehilite">resizeHandlerColor</code> (color): Color of the visual drop node component (could be set to Material.accent for example)</li>
 </ul>
 <p>Node defining custom delegate resizing will be handled automatically by the framework. Complete customization of the resizing behaviour of custom nodes is possible using the <code class="codehilite">Qan.BottomRightResizer</code> component directly from custom delegates (See <a href="utilities.html">Bottom Right Resizer</a>). </p>
+<h3 id="observing-topology">Observing Topology<a class="headerlink" href="#observing-topology" title="Permanent link">&para;</a></h3>
+<p>Node related topology changes could be observed at graph or node level in the following ways:</p>
+<ul>
+<li>Overloading dedicated methods in <code class="codehilite">qan::Graph</code>: <code class="codehilite">onNodeInserted()</code>, <code class="codehilite">onNodeRemoved()</code>, default implementation is empty.</li>
+<li>Binding to properties: <ul>
+<li><code class="codehilite">qan::Graph::nodes::length</code>: Number of node actually registered in graph (observable QML property).</li>
+<li><code class="codehilite">qan::Node::inDegree</code>/ <code class="codehilite">qan::Node::outDegree</code>: In/out degree of a node updated in real-time, binded to a Qt Quick property useable from QML.</li>
+<li><code class="codehilite">qan::Node::inNodes</code>/ <code class="codehilite">qan::Node::outNodes</code>: Observable container of in/out nodes (in/out degree is inNodes.length/outNodes.length).</li>
+</ul>
+</li>
+<li>Binding to signals <code class="codehilite">qan::Graph::nodeInserted()</code> and <code class="codehilite">qan::Graph::nodeRemoved()</code>.</li>
+</ul>
+<p><img alt="Observing Topology" src="nodes/topology_observation-class.png" /></p>
 <h2 id="selection">Selection<a class="headerlink" href="#selection" title="Permanent link">&para;</a></h2>
 <p>Selection can be modified at graph level just by changing the graph selection policy property <code class="codehilite">Qan.Graph.selectionPolicy</code>:</p>
 <ul>
