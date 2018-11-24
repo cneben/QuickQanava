@@ -100,6 +100,17 @@ Node defining custom delegate resizing will be handled automatically by the fram
 
 ### Observing Topology
 
+Node related topology changes could be observed at graph or node level in the following ways:
+
+- Overloading dedicated methods in `qan::Graph`: `onNodeInserted()`, `onNodeRemoved()`, default implementation is empty.
+- Binding to properties: 
+    - `qan::Graph::nodes::length`: Number of node actually registered in graph (observable QML property).
+    - `qan::Node::inDegree`/ `qan::Node::outDegree`: In/out degree of a node updated in real-time, binded to a Qt Quick property useable from QML.
+    - `qan::Node::inNodes`/ `qan::Node::outNodes`: Observable container of in/out nodes (in/out degree is inNodes.length/outNodes.length).
+- Binding to signals `qan::Graph::nodeInserted()` and `qan::Graph::nodeRemoved()`.
+
+
+![Observing Topology](nodes/topology_observation-class.png)
 
 
 Selection
