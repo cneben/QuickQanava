@@ -50,6 +50,16 @@ Node::Node(QObject* parent) :
     gtpo::node< qan::Config >{}
 {
     Q_UNUSED(parent)
+
+    // Bind in/out nodes model lengthChanged() signal to in/ou degree modified signal.
+    const auto inNodesModel = get_in_nodes().model();
+    if (inNodesModel != nullptr)
+        connect( inNodesModel, &qcm::ContainerModel::lengthChanged,
+                 this,         &qan::Node::inDegreeChanged);
+    const auto outNodesModel = get_out_nodes().model();
+    if (outNodesModel != nullptr)
+        connect( outNodesModel, &qcm::ContainerModel::lengthChanged,
+                 this,          &qan::Node::outDegreeChanged);
 }
 
 Node::~Node()
@@ -99,6 +109,35 @@ qan::NodeStyle* Node::style() noexcept
     if ( !qan_Node_style )
         qan_Node_style = std::make_unique<qan::NodeStyle>();
     return qan_Node_style.get();
+}
+//-----------------------------------------------------------------------------
+
+/* Topology Interface *///-----------------------------------------------------
+QAbstractItemModel* Node::qmlGetInNodes( ) const
+{
+    return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( get_in_nodes().model() ) );
+}
+
+int     Node::getInDegree() const
+{
+    const auto model = get_in_nodes().model();
+    return model != nullptr ? model->getLength() : -1;
+}
+
+QAbstractItemModel* Node::qmlGetOutNodes() const
+{
+    return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( get_out_nodes().model() ) );
+}
+
+int     Node::getOutDegree() const
+{
+    const auto model = get_out_nodes().model();
+    return model != nullptr ? model->getLength() : -1;
+}
+
+QAbstractItemModel* Node::qmlGetOutEdges() const
+{
+    return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) );
 }
 //-----------------------------------------------------------------------------
 

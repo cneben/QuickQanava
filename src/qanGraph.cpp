@@ -59,12 +59,10 @@ namespace qan { // ::qan
 Graph::Graph( QQuickItem* parent ) noexcept :
     gtpo::graph< qan::Config >( parent )
 {
-    setContainerItem( this );
-    setAntialiasing( true );
-    setSmooth( true );
+    setContainerItem(this);
+    setAntialiasing(true);
+    setSmooth(true);
 }
-
-Graph::~Graph() { /* Nil */ }
 
 void    Graph::classBegin()
 {
@@ -521,6 +519,17 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
 //-----------------------------------------------------------------------------
 
 /* Graph Factories *///--------------------------------------------------------
+auto    Graph::insertNode( SharedNode node ) noexcept(false) -> WeakNode
+{
+    auto weakNode = gtpo_graph_t::insert_node(node);
+    auto insertedNode = weakNode.lock();
+    if (insertedNode) {
+        onNodeInserted(*insertedNode);
+        emit nodeInserted(insertedNode.get());
+    }
+    return weakNode;
+}
+
 qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle )
 {
     return insertNode<qan::Node>(nodeComponent, nodeStyle);
@@ -528,33 +537,47 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent, qan::NodeStyle* nod
 
 void    Graph::removeNode( qan::Node* node )
 {
+    // PRECONDITIONS:
+        // node can't be nullptr
     if ( node == nullptr )
         return;
     try {
+        onNodeRemoved(*node);
+        emit nodeRemoved(node);
         if ( _selectedNodes.contains(node) )
             _selectedNodes.removeAll(node);
         gtpo_graph_t::remove_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()) );
-    } catch ( std::bad_weak_ptr ) { return; }
+    } catch ( std::bad_weak_ptr ) {
+        qWarning() << "qan::Graph::removeNode(): Internal error for node " << node;
+        return;
+    }
 }
+
+int     Graph::getNodeCount() const noexcept { return gtpo_graph_t::get_node_count(); }
+
+void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node); /* Nil */ }
+
+void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node); /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
 qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent )
 {
     auto sourceNode = qobject_cast<qan::Node*>(source);
+    qan::Edge* edge = nullptr;
     if ( sourceNode != nullptr ) {
-            qan::Edge* edge = nullptr;
             if ( qobject_cast<qan::Node*>(destination) != nullptr )
                 edge = insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
             else if ( qobject_cast<qan::Group*>(destination) != nullptr )
                 edge = insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
             else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
                 edge = insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
-            if (edge != nullptr)
-                emit edgeInserted(edge);
     }
-    qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
-    return nullptr;
+    if (edge != nullptr)
+        emit edgeInserted(edge);
+    if (edge == nullptr)
+        qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    return edge;
 }
 
 qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )

@@ -84,7 +84,7 @@ public:
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
-    virtual ~Graph() override;
+    virtual ~Graph() override = default;
     Graph( const Graph& ) = delete;
     Graph& operator=( const Graph& ) = delete;
     Graph( Graph&& ) = delete;
@@ -319,8 +319,11 @@ public:
     using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
     using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
 
-    //! Proxy for GTpo graph insertNode().
-    auto    insertNode( SharedNode node ) noexcept( false ) -> WeakNode { return gtpo_graph_t::insert_node(node); }
+    /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
+     *
+     * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
+     */
+    auto    insertNode( SharedNode node ) noexcept(false) -> WeakNode;
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -330,15 +333,22 @@ public:
      * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
      * Qan.Graph is used, with a rectangular node delegate for default node.
      *
+     * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      * \note graph keep ownership of the returned node.
      */
     Q_INVOKABLE qan::Node*  insertNode( QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr );
 
-    //! Insert a node using Node_t::delegate() and Node_t::style(), if no delegate is defined, default on graph \c nodeDelegate.
+    /*! \brief Insert a node using Node_t::delegate() and Node_t::style(), if no delegate is defined, default on graph \c nodeDelegate.
+     *
+     * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
+     */
     template < class Node_t >
     qan::Node*              insertNode( QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 
-    //! Same semantic than insertNode<>() but for non visual nodes.
+    /*! \brief Same semantic than insertNode<>() but for non visual nodes.
+     *
+     * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
+     */
     template < class Node_t >
     qan::Node*              insertNonVisualNode();
 
@@ -347,12 +357,36 @@ public:
     Q_INVOKABLE void        removeNode( qan::Node* node );
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
-    Q_INVOKABLE int         getNodeCount() { return gtpo_graph_t::get_node_count(); }
+    Q_INVOKABLE int         getNodeCount() const noexcept;
 
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL )
     QAbstractItemModel*     getNodesModel() const { return get_nodes().model(); }
+
+protected:
+
+    /*! \brief Notify user immediately after a new node \c node has been inserted in graph.
+     *
+     * \note Signal nodeInserted() is emitted at the same time.
+     * \note Default implementation is empty.
+     */
+    virtual void    onNodeInserted(qan::Node& node);
+
+    /*! \brief Notify user immediately before a node \c node is removed.
+     *
+     * \note Signal nodeRemoved() is emitted at the same time.
+     * \note Default implementation is empty.
+     */
+    virtual void    onNodeRemoved(qan::Node& node);
+
+signals:
+
+    //! \copydoc onNodeInserted()
+    void            nodeInserted(qan::Node* node);
+
+    //! \copydoc onNodeRemoved()
+    void            nodeRemoved(qan::Node* node);
 
 signals:
     /*! \brief Emitted whenever a node registered in this graph is clicked.

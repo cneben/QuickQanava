@@ -101,6 +101,11 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         qWarning() << "qan::Graph::insertNode(): Error: Topology error.";
         return nullptr; // node eventually destroyed by shared_ptr
     }
+    const auto nodePtr = node.get();
+    if (nodePtr != nullptr) {       // Notify user.
+        onNodeInserted(*nodePtr);
+        emit nodeInserted(nodePtr);
+    }
     return node.get();
 }
 
@@ -118,6 +123,11 @@ qan::Node*  Graph::insertNonVisualNode()
     catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error.";
         return nullptr; // node eventually destroyed by share_ptr
+    }
+    const auto nodePtr = node.get();
+    if (nodePtr != nullptr) {       // Notify user.
+        onNodeInserted(*nodePtr);
+        emit nodeInserted(nodePtr);
     }
     return node.get();
 }

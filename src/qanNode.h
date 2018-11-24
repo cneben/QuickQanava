@@ -118,17 +118,29 @@ public:
 public:
     //! Read-only abstract item model of this node in nodes.
     Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
-    QAbstractItemModel* qmlGetInNodes( ) const { return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( get_in_nodes().model() ) ); }
+    QAbstractItemModel* qmlGetInNodes( ) const;
+
+public:
+    Q_PROPERTY(int  inDegree READ getInDegree NOTIFY inDegreeChanged FINAL)
+    int     getInDegree() const;
+signals:
+    void    inDegreeChanged();
 
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutNodes() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( get_out_nodes().model() ) ); }
+    QAbstractItemModel* qmlGetOutNodes() const;
+
+public:
+    Q_PROPERTY(int  outDegree READ getOutDegree NOTIFY outDegreeChanged FINAL)
+    int     getOutDegree() const;
+signals:
+    void    outDegreeChanged();
 
 public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
-    QAbstractItemModel* qmlGetOutEdges() const { return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) ); }
+    QAbstractItemModel* qmlGetOutEdges() const;
     //@}
     //-------------------------------------------------------------------------
 

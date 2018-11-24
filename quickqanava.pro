@@ -16,7 +16,7 @@ test-cpp.subdir         = samples/cpp
 #test-40k.depends    = quickqanava
 
 #SUBDIRS +=  test-resizer
-SUBDIRS +=  test-navigable
+#SUBDIRS +=  test-navigable
 SUBDIRS +=  test-nodes
 SUBDIRS +=  test-edges
 SUBDIRS +=  test-connector

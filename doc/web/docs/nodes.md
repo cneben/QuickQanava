@@ -69,6 +69,7 @@ Component.onCompleted: {	// Qan.Graph.Component.onCompleted()
 
 Docks could be fully customized using QML delegates and custom node items, refer to [customdocks.qml](https://github.com/cneben/QuickQanava/blob/master/samples/connector/customdocks.qml) example in connector sample.
 
+
 ### Node Resizing
 
 Node resizing behaviour could be configured with the following Qan.NodeItem (or qan::NodeItem) properties:
@@ -95,6 +96,11 @@ Default resizer color could be configured in `Qan.GraphView` using the following
 - `resizeHandlerColor` (color): Color of the visual drop node component (could be set to Material.accent for example)
 
 Node defining custom delegate resizing will be handled automatically by the framework. Complete customization of the resizing behaviour of custom nodes is possible using the `Qan.BottomRightResizer` component directly from custom delegates (See [Bottom Right Resizer](utilities.md)). 
+
+
+### Observing Topology
+
+
 
 Selection
 ------------------
