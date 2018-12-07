@@ -87,8 +87,8 @@ public:
 
     node() noexcept : config_t::node_base{} { }
     ~node() noexcept {
-        _inEdges.clear(); _outEdges.clear();
-        _inNodes.clear(); _outNodes.clear();
+        _in_edges.clear(); _out_edges.clear();
+        _in_nodes.clear(); _out_nodes.clear();
         if ( this->_graph != nullptr ) {
             std::cerr << "gtpo::node<>::~node(): Warning: Node has been destroyed before beeing removed from the graph." << std::endl;
         }
@@ -142,30 +142,72 @@ public:
      */
     auto    remove_in_edge( const weak_edge_t inEdge ) noexcept( false ) -> void;
 
-    inline auto     get_in_edges() const noexcept -> const weak_edges_t& { return _inEdges; }
-    inline auto     get_out_edges() const noexcept -> const weak_edges_t& { return _outEdges; }
+    inline auto     get_in_edges() const noexcept -> const weak_edges_t& { return _in_edges; }
+    inline auto     get_out_edges() const noexcept -> const weak_edges_t& { return _out_edges; }
 
-    inline auto     get_in_nodes() const noexcept -> const weak_nodes_t& { return _inNodes; }
-    inline auto     get_out_nodes() const noexcept -> const weak_nodes_t& { return _outNodes; }
+    inline auto     get_in_nodes() const noexcept -> const weak_nodes_t& { return _in_nodes; }
+    inline auto     get_out_nodes() const noexcept -> const weak_nodes_t& { return _out_nodes; }
 
-    inline auto     get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _inEdges.size() ); }
-    inline auto     get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _outEdges.size() ); }
+    inline auto     get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _in_edges.size() ); }
+    inline auto     get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _out_edges.size() ); }
 private:
-    weak_edges_t       _inEdges;
-    weak_edges_t       _outEdges;
-    weak_nodes_t       _inNodes;
-    weak_nodes_t       _outNodes;
+    weak_edges_t       _in_edges;
+    weak_edges_t       _out_edges;
+    weak_nodes_t       _in_nodes;
+    weak_nodes_t       _out_nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    inline auto set_group( const std::weak_ptr<typename config_t::final_group_t>& group ) noexcept -> void { _group = group; }
-    inline auto get_group( ) noexcept -> std::weak_ptr<typename config_t::final_group_t>& { return _group; }
-    inline auto get_group( ) const noexcept -> const std::weak_ptr<typename config_t::final_group_t>& { return _group; }
+    using weak_group_t  = typename std::weak_ptr<typename config_t::final_group_t>;
+
+    inline auto set_group(const weak_group_t& group) noexcept -> void { _group = group; }
+    inline auto get_group() noexcept -> weak_group_t& { return _group; }
+    inline auto get_group() const noexcept -> const weak_group_t& { return _group; }
 private:
-    std::weak_ptr<typename config_t::final_group_t> _group;
+    weak_group_t    _group;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Group-node Support *///------------------------------------------
+    //@{
+public:
+    inline auto is_group() const noexcept -> bool { return _is_group; }
+
+    //! Return group's nodes.
+    inline auto get_nodes() noexcept -> const weak_nodes_t& { return _nodes; }
+
+    //! Return true if group contains \c node.
+    auto        has_node( const weak_node_t& node ) const noexcept -> bool;
+
+    //! Return group registered node count.
+    inline auto get_node_count( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
+
+protected:
+    inline  auto set_is_group(bool is_group) noexcept -> void { _is_group = is_group; }
+
+private:
+    bool            _is_group = false;
+    weak_nodes_t   _nodes;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Adjacent Edges *///----------------------------------------------
+    //@{
+public:
+    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
+
+    inline auto     get_edges() noexcept -> weak_edges_search_t& { return _edges; }
+    inline auto     get_edges() const noexcept -> const weak_edges_search_t& { return _edges; }
+
+    inline auto     get_adjacent_edges() noexcept -> weak_edges_search_t& { return _adjacentEdges; }
+    inline auto     get_adjacent_edges() const noexcept -> const weak_edges_search_t& { return _adjacentEdges; }
+
+protected:
+    weak_edges_search_t _edges;
+    weak_edges_search_t _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 };

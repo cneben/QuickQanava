@@ -57,7 +57,8 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node_t& wea
 {
     auto node = weakNode.lock();
     if ( node ) {
-        auto group = std::static_pointer_cast<gtpo::group<config_t>>(node->get_group().lock());
+        //auto group = std::static_pointer_cast<gtpo::group<config_t>>(node->get_group().lock());
+        auto group = node->get_group().lock();
         if ( group ) {
             // Remove all node in/out edges from group adjacent edge set
             // Except if this edge "other" src or dst is still part of the group
@@ -84,6 +85,7 @@ void    group_adjacent_edges_behaviour<config_t>::node_removed( weak_node_t& wea
         }
     }
 }
+
 //-----------------------------------------------------------------------------
 
 /* Graph Group Edge Set behaviour *///-----------------------------------------

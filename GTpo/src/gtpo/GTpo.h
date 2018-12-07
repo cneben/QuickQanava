@@ -38,12 +38,10 @@
 #include "./utils.h"
 #include "./behaviour.h"
 #include "./node.h"
-#include "./group.h"
 #include "./edge.h"
 #include "./graph.h"
 
 #include "./node.hpp"
-#include "./group.hpp"
 #include "./edge.hpp"
 #include "./graph.hpp"
 

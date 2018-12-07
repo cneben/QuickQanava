@@ -36,8 +36,10 @@
 
 // GTpo headers
 #include "./graph_behaviour.h"
-#include "./group.h"
-#include "./group_behaviour.h"
+
+// FIXME groups
+//#include "./group.h"
+//#include "./group_behaviour.h"
 
 namespace gtpo { // ::gtpo
 
@@ -46,11 +48,10 @@ namespace gtpo { // ::gtpo
  *  This behaviour should be used with graph_group_adjacent_edges_behaviour.
  */
 template <class config_t>
-class group_adjacent_edges_behaviour : public group_behaviour<config_t>
+class group_adjacent_edges_behaviour : public graph_behaviour<config_t>
 {
     /* Group Edge Set behaviour *///-------------------------------------------
 public:
-    //group_adjacent_edges_behaviour() noexcept = default;
     group_adjacent_edges_behaviour() = default;
     ~group_adjacent_edges_behaviour() noexcept = default;
     group_adjacent_edges_behaviour( const group_adjacent_edges_behaviour& ) = delete;
@@ -85,7 +86,7 @@ public:
     graph_group_adjacent_edges_behaviour& operator=( const graph_group_adjacent_edges_behaviour& ) = delete;
 
     using weak_edge_t         = std::weak_ptr<typename config_t::final_edge_t>;
-    using group_t           = typename config_t::final_group_t;
+    using group_t             = typename config_t::final_group_t;
     using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
 public:

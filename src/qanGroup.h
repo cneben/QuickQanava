@@ -54,7 +54,7 @@ class GroupItem;
  *
  * \nosubgrouping
  */
-class Group : public gtpo::group<qan::Config>
+class Group : public qan::Node
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
@@ -65,8 +65,10 @@ public:
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
-    virtual ~Group();
+    virtual ~Group() override;
     Group( const Group& ) = delete;
+
+    using gtpo_node_t = gtpo::node<qan::Config>;
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
     //! Shortcut to gtpo::group<>::getGraph().
@@ -77,12 +79,9 @@ public:
 public:
     friend class qan::GroupItem;
 
-    Q_PROPERTY( qan::GroupItem* item READ getItem CONSTANT FINAL )
-    qan::GroupItem*         getItem() noexcept;
-    const qan::GroupItem*   getItem() const noexcept;
-    void                    setItem(qan::GroupItem* item) noexcept;
-private:
-    QPointer<qan::GroupItem> _item;
+    qan::GroupItem*         getGroupItem() noexcept;
+    const qan::GroupItem*   getGroupItem() const noexcept;
+    virtual void            setItem(qan::NodeItem* item) noexcept override;
 
 public:
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.

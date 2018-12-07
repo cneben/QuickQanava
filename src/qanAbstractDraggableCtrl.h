@@ -50,6 +50,8 @@ namespace qan { // ::qan
 class AbstractDraggableCtrl
 {
 public:
+    virtual ~AbstractDraggableCtrl() = default;
+
     //! \c dragInitialMousePos in window coordinate system.
     virtual void    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) = 0;
     //! \c delta in scene coordinate system.

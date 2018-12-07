@@ -279,7 +279,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         if ( srcNode != nullptr ) {
             const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group().lock().get());
             if ( srcNodeGroup != nullptr )
-                srcGroupItem = srcNodeGroup->getItem();
+                srcGroupItem = srcNodeGroup->getGroupItem();
         }
     }
 
@@ -297,7 +297,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
          dstNodeItem->getNode() != nullptr ) {
         auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->get_group().lock().get() );
         if ( dstNodeGroup )
-            dstGroupItem = dstNodeGroup->getItem();
+            dstGroupItem = dstNodeGroup->getGroupItem();
     }
 
     // Finally, generate dstItem wich either dstNodeItem or dstEdgeItem

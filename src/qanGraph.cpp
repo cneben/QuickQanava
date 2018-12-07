@@ -163,16 +163,54 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
     return nullptr;
 }
 
-qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s ) const
+qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem* except ) const
 {
-    for ( const auto& group : get_groups() )
+    // PRECONDITIONS:
+        // s must be valid
+    if (!s.isValid())
+        return nullptr;
+
+    // Algorithm:
+        // 1. Copy internal group list
+        // 2. Order the container of group from maximum to minimum z
+        // 3. Return the first group containing rect(p,s)
+
+    // 1.
+    std::vector<qan::Group*> groups;
+    groups.reserve(static_cast<unsigned int>(get_groups().size()));
+    for (const auto& group_ptr : qAsConst(get_groups().getContainer())) {
+        const auto group = group_ptr.lock();
+        if (group)
+            groups.push_back(group.get());
+    }
+
+    // 2.
+    std::sort(groups.begin(), groups.end(), [](const auto g1, const auto g2) -> bool {
+        if (g1 == nullptr || g2 == nullptr)
+            return false;
+        const auto g1Item = g1->getItem();
+        const auto g2Item = g2->getItem();
+        if (g1Item == nullptr ||
+            g2Item == nullptr)
+            return false;
+        const auto g1GlobalZ = g1Item->parentItem() != nullptr ? g1Item->parentItem()->z() + g1Item->z() :
+                                                                 g1Item->z();
+        const auto g2GlobalZ = g2Item->parentItem() != nullptr ? g2Item->parentItem()->z() + g2Item->z() :
+                                                                 g2Item->z();
+        return g1GlobalZ > g2GlobalZ;
+    });
+
+    // 3.
+    for ( const auto group : qAsConst(groups) ) {
         if ( group &&
-             group->getItem() != nullptr ) {
+             group->getItem() != nullptr &&
+             group->getItem() != except) {
             const auto groupItem = group->getItem();
              if ( QRectF{ groupItem->position(),
                   QSizeF{ groupItem->width(), groupItem->height() } }.contains( QRectF{ p, s } ) )
-                 return group.get();
+                 return group;
         }
+    } // for all groups
     return nullptr;
 }
 
@@ -419,7 +457,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
                     finalPrimitive->getItem()->setSelectionItem(this->createSelectionItem(finalPrimitive->getItem()));
         };
         auto updateGroupSelectionItem = [this]( auto& primitive ) -> void {
-            auto finalPrimitive = qobject_cast<qan::Group*>(primitive.get());
+            auto finalPrimitive = qobject_cast<qan::Group*>(primitive.lock().get());
             if ( finalPrimitive != nullptr &&
                  finalPrimitive->getItem() &&
                  finalPrimitive->getItem()->getSelectionItem() != nullptr )   // Replace only existing selection items
@@ -827,19 +865,22 @@ void    Graph::removeGroup( qan::Group* group )
     // otherwise all child iems get destructed too
     for ( auto& node : group->get_nodes() ) {
         const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
-        if (qanNode != nullptr)
-            group->getItem()->ungroupNodeItem(qanNode->getItem());
+        if (qanNode != nullptr &&
+            qanNode->getItem() != nullptr &&
+            group->getGroupItem() != nullptr )
+            group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
     }
-    // FIXME: don't like that dynamic cast, probably not necessary
-    gtpo_graph_t::remove_group( weak_group_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
+    gtpo_graph_t::remove_group(gtpo_graph_t::shared_group_t{group});
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
+    // FIXME REMOVE THAT FIXME !
     // FIXME: don't like that dynamic cast, probably not necessary
-    return gtpo_graph_t::has_group( weak_group_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
+    //return gtpo_graph_t::has_group( weak_node_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
+    return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
 }
 
 void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transformPosition ) noexcept(false)
@@ -851,13 +892,12 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
         return;
 
     try {
-        //std::static_pointer_cast<Config::final_node_t>(
         gtpo_graph_t::group_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                  std::static_pointer_cast<Group>(group->shared_from_this()) );
         if ( node->get_group().lock().get() == group &&  // Check that group insertion succeed
-             group->getItem() != nullptr &&
+             group->getGroupItem() != nullptr &&
              node->getItem() != nullptr ) {
-            group->getItem()->groupNodeItem(node->getItem(), transformPosition);
+            group->getGroupItem()->groupNodeItem(node->getItem(), transformPosition);
         }
     } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
 }
@@ -881,8 +921,8 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept(false)
     if ( group != nullptr &&
          node != nullptr ) {
         try {
-            if ( group->getItem() )
-                 group->getItem()->ungroupNodeItem(node->getItem());
+            if ( group->getGroupItem() )
+                 group->getGroupItem()->ungroupNodeItem(node->getItem());
             gtpo_graph_t::ungroup_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                        std::static_pointer_cast<Group>(group->shared_from_this()) );
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }

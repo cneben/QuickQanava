@@ -45,9 +45,9 @@ auto node<config_t>::add_out_edge( weak_edge_t outEdgePtr ) -> void
     if ( outEdge ) {
         if ( !outEdgeSrc || outEdgeSrc != node )  // Out edge source should point to target node
             outEdge->set_src( node );
-        config_t::template container_adapter< weak_edges_t >::insert( outEdgePtr, _outEdges );
+        config_t::template container_adapter< weak_edges_t >::insert( outEdgePtr, _out_edges );
         if ( !outEdge->get_dst().expired() ) {
-            config_t::template container_adapter< weak_nodes_t >::insert( outEdge->get_dst(), _outNodes );
+            config_t::template container_adapter< weak_nodes_t >::insert( outEdge->get_dst(), _out_nodes );
             this->notify_out_node_inserted( weak_node_t{node}, outEdge->get_dst(), weak_edge_t{outEdge} );
         }
     }
@@ -64,9 +64,9 @@ auto node<config_t>::add_in_edge( weak_edge_t inEdgePtr ) -> void
         if ( !inEdgeDst ||
              inEdgeDst != node ) // In edge destination should point to target node
             inEdge->set_dst( node );
-        config_t::template container_adapter< weak_edges_t >::insert( inEdgePtr, _inEdges );
+        config_t::template container_adapter< weak_edges_t >::insert( inEdgePtr, _in_edges );
         if ( !inEdge->get_src().expired() ) {
-            config_t::template container_adapter< weak_nodes_t >::insert( inEdge->get_src(), _inNodes );
+            config_t::template container_adapter< weak_nodes_t >::insert( inEdge->get_src(), _in_nodes );
             this->notify_in_node_inserted( weak_node_t{node}, inEdge->get_src(), inEdgePtr );
         }
     }
@@ -87,8 +87,8 @@ auto node<config_t>::remove_out_edge( const weak_edge_t outEdge ) -> void
         gtpo::assert_throw( outEdgeDst != nullptr, "gtpo::node<>::remove_out_edge(): Error: Out edge destination is expired." );
         this->notify_out_node_removed( node, outEdgePtr->get_dst(), outEdge );
     }
-    config_t::template container_adapter<weak_edges_t>::remove( outEdge, _outEdges );
-    config_t::template container_adapter<weak_nodes_t>::remove( outEdgePtr->get_dst(), _outNodes );
+    config_t::template container_adapter<weak_edges_t>::remove( outEdge, _out_edges );
+    config_t::template container_adapter<weak_nodes_t>::remove( outEdgePtr->get_dst(), _out_nodes );
     if ( get_in_degree() == 0 ) {
         graph_t* graph{ this->get_graph() };
         if ( graph != nullptr )
@@ -110,14 +110,29 @@ auto node<config_t>::remove_in_edge( const weak_edge_t inEdge ) -> void
     auto inEdgeSrcPtr = inEdgePtr->get_src().lock();
     gtpo::assert_throw( inEdgeSrcPtr != nullptr, "gtpo::node<>::remove_in_edge(): Error: In edge source is expired." );
     this->notify_in_node_removed( weak_node_t{ nodePtr }, inEdgePtr->get_src(), inEdge );
-    config_t::template container_adapter< weak_edges_t >::remove( inEdge, _inEdges );
-    config_t::template container_adapter< weak_nodes_t >::remove( inEdgePtr->get_src(), _inNodes );
+    config_t::template container_adapter< weak_edges_t >::remove( inEdge, _in_edges );
+    config_t::template container_adapter< weak_nodes_t >::remove( inEdgePtr->get_src(), _in_nodes );
     if ( get_in_degree() == 0 ) {
         graph_t* graph{ this->get_graph() };
         if ( graph != nullptr )
             graph->install_root_node( weak_node_t{ nodePtr } );
     }
     this->notify_in_node_removed( weak_node_t{nodePtr} );
+}
+//-----------------------------------------------------------------------------
+
+/* Group Nodes Management *///-------------------------------------------------
+template < class config_t >
+auto node<config_t>::has_node( const weak_node_t& node ) const noexcept -> bool
+{
+    if ( node.expired() )
+        return false;
+    shared_node_t group_node = node.lock();
+    if ( !group_node )
+        return false;
+    auto group_nodeIter = std::find_if( _nodes.begin(), _nodes.end(),
+                                        [=](const weak_node_t& group_node ){ return ( compare_weak_ptr<>( node, group_node ) ); } );
+    return group_nodeIter != _nodes.end();
 }
 //-----------------------------------------------------------------------------
 

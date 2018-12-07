@@ -47,14 +47,8 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.Connector {
     id: visualConnector
-    width: radius * 2;  height: radius * 2
-    x: parent.width + connectorMargin;  y: topMargin
 
-    visible: false
-    selectable: false
-    clip: false; antialiasing: true
-
-    // Public
+    // Public /////////////////////////////////////////////////////////////////
     //! Edge color (default to black).
     property color  edgeColor: Qt.rgba(0,0,0,1)
 
@@ -85,7 +79,13 @@ Qan.Connector {
             edgeItem.color = edgeColor
     }
 
-    // Private properties
+    // Private ////////////////////////////////////////////////////////////////
+    width: radius * 2;  height: radius * 2
+    x: parent.width + connectorMargin;  y: topMargin
+
+    visible: false
+    selectable: false
+    clip: false; antialiasing: true
 
     /*! \brief Internally used to reset correct connector position according to current node
      *  or port configuration, also restore position bindings to source.
@@ -132,6 +132,7 @@ Qan.Connector {
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
+        console.error("Drag.target=" + Drag.target)
         if ( Drag.target ) {
             visualConnector.z = Drag.target.z + 1
             if ( connectorItem )
@@ -145,12 +146,13 @@ Qan.Connector {
                  sourceNode.item &&
                  Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
                  connectorItem.state = "NORMAL"
-            } else if ( ( Drag.target.node &&
-                          ( Drag.target.connectable === Qan.NodeItem.Connectable ||
-                            Drag.target.connectable === Qan.NodeItem.InConnectable    ) ) ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
-                        ( hEdgeEnabled && Drag.target.edge ) )
-            {
-                connectorItem.state = "HILIGHT"
+            } else {
+                // Potentially, we have a valid node or group target
+                var target = Drag.target.group ? Drag.target.group : Drag.target.node
+                var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
+                                  Drag.target.connectable === Qan.NodeItem.InConnectable
+                if ( target && connectable )
+                    connectorItem.state = "HILIGHT"
             }
         }
     }

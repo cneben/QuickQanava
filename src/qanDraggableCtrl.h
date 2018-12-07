@@ -54,7 +54,6 @@ namespace qan { // ::qan
  *
  * \nosubgrouping
  */
-template < class Node_t, class NodeItem_t >
 class DraggableCtrl : public qan::AbstractDraggableCtrl
 {
     /*! \name Node Object Management *///--------------------------------------
@@ -62,22 +61,22 @@ class DraggableCtrl : public qan::AbstractDraggableCtrl
 public:
     //! DraggableCtrl constructor.
     explicit DraggableCtrl();
-    virtual ~DraggableCtrl();
+    virtual ~DraggableCtrl() override = default;
     DraggableCtrl( const DraggableCtrl& ) = delete;
 
 public:
-    inline auto getTarget() noexcept -> Node_t* { return _target.data(); }
-    inline auto getTarget() const noexcept -> const Node_t* { return _target.data(); }
-    inline auto setTarget(Node_t* target) noexcept { _target = target; }
+    inline auto getTarget() noexcept -> qan::Node* { return _target.data(); }
+    inline auto getTarget() const noexcept -> const qan::Node* { return _target.data(); }
+    inline auto setTarget(qan::Node* target) noexcept { _target = target; }
 private:
-    QPointer<Node_t>    _target{nullptr};
+    QPointer<qan::Node>    _target{nullptr};
 
 public:
-    inline auto getTargetItem() noexcept -> NodeItem_t* { return _targetItem.data(); }
-    inline auto getTargetItem() const noexcept -> const NodeItem_t* { return _targetItem.data(); }
-    inline auto setTargetItem(NodeItem_t* targetItem) noexcept { _targetItem = targetItem; }
+    inline auto getTargetItem() noexcept -> qan::NodeItem* { return _targetItem.data(); }
+    inline auto getTargetItem() const noexcept -> const qan::NodeItem* { return _targetItem.data(); }
+    inline auto setTargetItem(qan::NodeItem* targetItem) noexcept { _targetItem = targetItem; }
 private:
-    QPointer<NodeItem_t>    _targetItem{nullptr};
+    QPointer<qan::NodeItem>    _targetItem{nullptr};
 
 protected:
     inline qan::Graph*  getGraph() noexcept { return _target ? _target->getGraph() : nullptr; }
@@ -116,7 +115,5 @@ private:
 };
 
 } // ::qan
-
-#include "./qanDraggableCtrl.hpp"
 
 #endif // qanDraggableCtrl_h

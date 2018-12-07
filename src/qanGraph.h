@@ -114,8 +114,9 @@ public:
 
     /*! \brief Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
      *
+     * \arg except Return every compatible group except \c except (can be nullptr).
      */
-    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s ) const;
+    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s, const QQuickItem* except = nullptr) const;
 
 public:
     /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
@@ -510,13 +511,10 @@ public:
     bool                    hasGroup( qan::Group* group ) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::graph<qan::Config>::get_group_count(); }
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo_graph_t::get_group_count(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
     Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);
-
-    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
-    void                    groupNode( qan::Group*, qan::Group* ) noexcept(false) { }
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
     Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept(false);

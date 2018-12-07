@@ -47,46 +47,51 @@ namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
 Group::Group( QObject* parent ) :
-    gtpo::group< qan::Config >{}
+    qan::Node{parent}
 {
-    Q_UNUSED(parent);
+    set_is_group(true);
 }
 
 Group::~Group() {
-    if ( _item )
+    // FIXME GROUPS default ctor...
+/*    if ( _item )
         _item->deleteLater();
+        */
 }
 
 qan::Graph*         Group::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::group< qan::Config >::get_graph() );
+    return qobject_cast< qan::Graph* >( gtpo_node_t::get_graph() );
 }
 
 const qan::Graph*   Group::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::group< qan::Config >::get_graph() );
+    return qobject_cast< const qan::Graph* >( gtpo_node_t::get_graph() );
 }
 
-qan::GroupItem*  Group::getItem() noexcept { return _item.data(); }
-const qan::GroupItem*   Group::getItem() const noexcept { return _item.data(); }
+qan::GroupItem* Group::getGroupItem() noexcept { return qobject_cast<qan::GroupItem*>(getItem()); }
+const qan::GroupItem*   Group::getGroupItem() const noexcept { return qobject_cast<const qan::GroupItem*>(getItem()); }
 
-void    Group::setItem(qan::GroupItem* item) noexcept
+void    Group::setItem(qan::NodeItem* item) noexcept
 {
-    if ( item != nullptr ) {
-        _item = item;
-        if ( item->getGroup() != this )
-            item->setGroup(this);
+    qan::Node::setItem(item);
+    const auto groupItem = qobject_cast<qan::GroupItem*>(item);
+    if ( groupItem != nullptr ) {
+        if ( groupItem->getGroup() != this )
+            groupItem->setGroup(this);
     }
 }
 
 void    Group::itemProposeNodeDrop()
 {
-    if ( _item )
-        _item->proposeNodeDrop();
+    const auto groupItem = getGroupItem();
+    if ( groupItem )
+        groupItem->proposeNodeDrop();
 }
 
 void    Group::itemEndProposeNodeDrop()
 {
-    if ( _item )
-        _item->endProposeNodeDrop();
+    const auto groupItem = getGroupItem();
+    if ( groupItem )
+        groupItem->endProposeNodeDrop();
 }
 //-----------------------------------------------------------------------------
 
@@ -120,7 +125,7 @@ bool    Group::hasNode( qan::Node* node ) const
         return false;
     try {
         auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
-        return gtpo::group< qan::Config >::has_node( weakNode );
+        return gtpo_node_t::has_node(weakNode);
     } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
     return false;
 }

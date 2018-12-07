@@ -54,8 +54,6 @@ void    Draggable::setDraggable( bool draggable ) noexcept
         _draggable = draggable;
         if ( !draggable ) {
             setDragged(false);
-            // FIXME QAN3
-            //endDragMove();
         }
         emitDraggableChanged();
     }
