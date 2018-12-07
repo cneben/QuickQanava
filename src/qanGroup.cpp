@@ -37,6 +37,9 @@
 #include <QPainter>
 #include <QPainterPath>
 
+// GTpo headers
+#include "gtpo/algorithm.h"
+
 // QuickQanava headers
 #include "./qanNode.h"
 #include "./qanGroup.h"
@@ -58,6 +61,31 @@ qan::Graph*         Group::getGraph() noexcept {
 
 const qan::Graph*   Group::getGraph() const noexcept {
     return qobject_cast< const qan::Graph* >( gtpo_node_t::get_graph() );
+}
+
+std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
+{
+    std::unordered_set<qan::Edge*> edges = collectAdjacentEdges0();
+    if (is_group()) {
+        for (const auto& group_node_ptr: qAsConst(group_nodes())) {
+            const auto group_node = group_node_ptr.lock();
+            if (group_node) {
+                const auto qanGroupNode = qobject_cast<qan::Group*>(group_node.get());
+                if (qanGroupNode != nullptr) {
+                    const auto groupNodeEdges = qanGroupNode->collectAdjacentEdges();
+                    edges.insert(groupNodeEdges.begin(),
+                                 groupNodeEdges.end());
+                } else {
+                    auto qanNode = qobject_cast<qan::Node*>(group_node.get());
+                    if (qanNode != nullptr) {
+                        auto nodeEdges = qanNode->collectAdjacentEdges0();
+                        edges.insert(nodeEdges.begin(), nodeEdges.end());
+                    }
+                }
+            }
+        }
+    }
+    return edges;
 }
 
 qan::GroupItem* Group::getGroupItem() noexcept { return qobject_cast<qan::GroupItem*>(getItem()); }

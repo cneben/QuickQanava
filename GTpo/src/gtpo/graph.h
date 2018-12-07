@@ -49,8 +49,6 @@
 #include "./edge.h"
 #include "./node.h"
 #include "./graph_behaviour.h"
-#include "./adjacent_behaviour.h"
-//#include "./group_behaviour.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -58,9 +56,6 @@ namespace gtpo { // ::gtpo
 
 template <class config_t>
 class graph;
-
-template <class config_t>
-class graph_group_adjacent_edges_behaviour;
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *

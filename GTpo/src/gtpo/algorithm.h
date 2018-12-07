@@ -48,12 +48,26 @@
 #include "./config.h"
 #include "./edge.h"
 #include "./node.h"
-#include "./group.h"
 
 namespace gtpo { // ::gtpo
 
 template <class config_t>
 class graph;
+
+
+/* Adjacent Edges Collection *///----------------------------------------------
+/*! \brief Return an unordered set of all adjacents to a given node, taking group into account.
+ *
+ * For ungrouped nodes, adjacent edges of a simple is just the set containing node in_nodes and out_nodes.
+ *
+ * When a node is a group (is_group() return true), adjacent_edges of grouped nodes are
+ * also returned recursively.
+ *
+ */
+template <class graph_t>
+auto    collect_adjacent_edges(const typename graph_t::weak_node_t& node) noexcept -> std::unordered_set<typename graph_t::weak_node_t>;
+//-----------------------------------------------------------------------------
+
 
 /* Iterative Graph Traversal Algorithms *///-----------------------------------
 /*! \brief Return a linearized DFS ordered version of a given tree.

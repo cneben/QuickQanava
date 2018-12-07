@@ -76,6 +76,11 @@ public:
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
 
+    /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
+     *
+     */
+    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
+
 public:
     friend class qan::GroupItem;
 

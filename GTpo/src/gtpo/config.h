@@ -60,16 +60,7 @@ template <class config_t>
 class edge;
 
 template <class config_t>
-class group_edge;
-
-template <class config_t>
 class group;
-
-template <class config_t>
-class graph_group_adjacent_edges_behaviour;
-
-template <class config_t>
-class group_adjacent_edges_behaviour;
 
 template <class config_t>
 class enable_graph_dynamic_behaviour;
@@ -100,14 +91,11 @@ struct config
     typedef gtpo::group<final_config>       final_group_t;
     typedef gtpo::node<final_config>        final_node_t;
     typedef gtpo::edge<final_config>        final_edge_t;
-    typedef gtpo::group_edge<final_config>  final_group_edge_t;
 
-    using graph_behaviours = std::tuple< gtpo::graph_group_adjacent_edges_behaviour<final_config>,
-                                         gtpo::enable_graph_dynamic_behaviour<final_config>
+    using graph_behaviours = std::tuple< gtpo::enable_graph_dynamic_behaviour<final_config>
                                        >; // std::tuple
 
-    using group_behaviours = std::tuple< gtpo::group_adjacent_edges_behaviour<final_config>,
-                                         gtpo::enable_group_dynamic_behaviour<final_config>
+    using group_behaviours = std::tuple< gtpo::enable_group_dynamic_behaviour<final_config>
                                        >; // std::tuple
 
     using node_behaviours = std::tuple< gtpo::enable_node_dynamic_behaviour<final_config>

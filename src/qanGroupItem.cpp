@@ -126,8 +126,9 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
     if ( _group &&
          collapsed != _collapsed ) {
         _collapsed = collapsed;
-        for ( auto weakEdge : _group->get_adjacent_edges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
-            const auto edge = weakEdge.lock() ;
+
+        const auto adjacentEdges = _group->collectAdjacentEdges();
+        for (auto edge : adjacentEdges) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
             if ( edge &&
                  edge->getItem() != nullptr )
                 edge->getItem()->setVisible( !collapsed );
@@ -135,7 +136,7 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
         if ( qan::Selectable::getSelectionItem() )              // Hide selection item when group is collapsed
             qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
 
-        if ( !collapsed )
+        if (!collapsed)
             groupMoved();   // Force update of all adjacent edges
         emit collapsedChanged();
     }
@@ -147,11 +148,12 @@ void    GroupItem::groupMoved()
 {
     if ( _collapsed )   // Do not update edges when the group is collapsed
         return;
+
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
-        for ( auto weakEdge : _group->get_adjacent_edges() ) {
-            qan::Edge* edge = weakEdge.lock().get();
+        auto adjacentEdges = _group->collectAdjacentEdges();
+        for ( auto edge : adjacentEdges ) {
             if ( edge != nullptr &&
                  edge->getItem() != nullptr )
                 edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility

@@ -188,26 +188,10 @@ public:
 protected:
     inline  auto set_is_group(bool is_group) noexcept -> void { _is_group = is_group; }
 
+    inline  auto group_nodes() const noexcept -> const weak_nodes_t& { return _nodes; }
 private:
     bool            _is_group = false;
     weak_nodes_t   _nodes;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Adjacent Edges *///----------------------------------------------
-    //@{
-public:
-    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
-
-    inline auto     get_edges() noexcept -> weak_edges_search_t& { return _edges; }
-    inline auto     get_edges() const noexcept -> const weak_edges_search_t& { return _edges; }
-
-    inline auto     get_adjacent_edges() noexcept -> weak_edges_search_t& { return _adjacentEdges; }
-    inline auto     get_adjacent_edges() const noexcept -> const weak_edges_search_t& { return _adjacentEdges; }
-
-protected:
-    weak_edges_search_t _edges;
-    weak_edges_search_t _adjacentEdges;
     //@}
     //-------------------------------------------------------------------------
 };

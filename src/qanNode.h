@@ -44,7 +44,6 @@
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
-//#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -141,6 +140,10 @@ public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
     QAbstractItemModel* qmlGetOutEdges() const;
+
+public:
+    //! Get this node level 0 adjacent edges (ie sum of node in edges and out edges).
+    std::unordered_set<qan::Edge*>  collectAdjacentEdges0() const;
     //@}
     //-------------------------------------------------------------------------
 

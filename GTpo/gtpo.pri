@@ -25,8 +25,6 @@ HEADERS +=  $$PWD/src/gtpo/utils.h                \
             $$PWD/src/gtpo/graph_behaviour.hpp    \
             $$PWD/src/gtpo/node_behaviour.h       \
             $$PWD/src/gtpo/node_behaviour.hpp     \
-            $$PWD/src/gtpo/adjacent_behaviour.h   \
-            $$PWD/src/gtpo/adjacent_behaviour.hpp \
             $$PWD/src/gtpo/container_adapter.h    \
             $$PWD/src/gtpo/GTpo.h
 

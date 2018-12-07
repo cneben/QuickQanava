@@ -132,7 +132,6 @@ Qan.Connector {
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
-        console.error("Drag.target=" + Drag.target)
         if ( Drag.target ) {
             visualConnector.z = Drag.target.z + 1
             if ( connectorItem )
@@ -141,16 +140,21 @@ Qan.Connector {
         if ( !Drag.target &&
              connectorItem ) {
             connectorItem.state = "NORMAL"
-        } else {
-            if ( sourceNode &&
-                 sourceNode.item &&
-                 Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
-                 connectorItem.state = "NORMAL"
+            return;
+        }
+        // Drag.target is valid, trying to find a valid target
+        if (sourceNode && sourceNode.item) {
+            if ( Drag.target === sourceNode.item ) { // Prevent creation of a circuit on source node
+                connectorItem.state = "NORMAL"
+            } else if ( sourceNode.group &&
+                        sourceNode.group.item &&
+                        Drag.target === sourceNode.group.item ) { // Prevent creation of an edge from source node to it's own group
+                connectorItem.state = "NORMAL"
             } else {
                 // Potentially, we have a valid node or group target
                 var target = Drag.target.group ? Drag.target.group : Drag.target.node
                 var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
-                                  Drag.target.connectable === Qan.NodeItem.InConnectable
+                        Drag.target.connectable === Qan.NodeItem.InConnectable
                 if ( target && connectable )
                     connectorItem.state = "HILIGHT"
             }
