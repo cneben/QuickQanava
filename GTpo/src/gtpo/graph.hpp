@@ -56,11 +56,8 @@ void    graph<config_t>::clear() noexcept
     _nodes_search.clear();
     _nodes.clear();
 
-    // Clearing groups and behaviours
-    // FIXME GROUPS
-    /*for ( auto& group: _groups )
-        group->set_graph(nullptr);
-    _groups.clear();*/
+    // Clearing groups and behaviours (Not: group->_graph is resetted with nodes)
+    _groups.clear();
     behaviourable_base::clear();
 }
 //-----------------------------------------------------------------------------
@@ -312,18 +309,6 @@ auto    graph<config_t>::contains( weak_edge_t edge ) const noexcept -> bool
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
-// FIXME GROUPS REMOVE
-/*template < class config_t >
-auto graph<config_t>::create_group() -> weak_node_t
-{
-    weak_node_t weakGroup;
-    try {
-        auto group = std::make_shared< typename config_t::final_group_t >();
-        weakGroup = insert_group( group );
-    } catch (...) { gtpo::assert_throw( false, "gtpo::graph<>::create_group(): Error: can't insert group in graph." ); }
-    return weakGroup;
-}*/
-
 template < class config_t >
 auto    graph<config_t>::insert_group( shared_group_t group ) noexcept( false ) -> weak_group_t
 {
@@ -386,23 +371,6 @@ auto    graph<config_t>::group_node( weak_node_t node, weak_group_t group) noexc
     //group_ptr->notify_node_inserted( node );
 }
 
-// FIXME GROUPS
-/*
-template < class config_t >
-auto    graph<config_t>::group_node( weak_node_t weakGroupNode, weak_node_t weakGroup ) noexcept(false) -> void
-{
-    auto group{ weakGroup.lock() };
-    gtpo::assert_throw( group != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a group into an expired group." );
-
-    auto subGroup{ weakGroupNode.lock() };
-    gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired group into a group." );
-
-    shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
-    group_node( weak_node_t{subGroupNode}, weakGroup );
-    group->notify_group_inserted( weakGroupNode );
-}
-*/
-
 template < class config_t >
 auto    graph<config_t>::ungroup_node( weak_node_t weakNode, weak_node_t weakGroup ) noexcept(false) -> void
 {
@@ -419,23 +387,6 @@ auto    graph<config_t>::ungroup_node( weak_node_t weakNode, weak_node_t weakGro
     //group->notify_node_removed( weakNode );
     node->set_group( weak_group_t{} );  // Warning: group must remain valid while notify_node_removed() is called
 }
-
-// FIXME GROUPS
-/*
-template < class config_t >
-auto    graph<config_t>::ungroup_node( weak_node_t weakGroupNode, weak_node_t weakGroup ) noexcept(false) -> void
-{
-    auto group{ weakGroup.lock() };
-    gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
-
-    auto subGroup{ weakGroupNode.lock() };
-    gtpo::assert_throw( subGroup != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired group from a group." );
-
-    shared_node_t subGroupNode = std::static_pointer_cast<node<config_t>>(subGroup);
-    group->notify_group_removed( weakGroupNode );
-    ungroup_node( weak_node_t{subGroupNode}, weakGroup );
-}
-*/
 //-----------------------------------------------------------------------------
 
 } // ::gtpo

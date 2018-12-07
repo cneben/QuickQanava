@@ -86,7 +86,6 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/EdgeTemplate.qml              \
                 $$PWD/SelectionItem.qml             \
                 $$PWD/StyleListView.qml             \
-                $$PWD/StyleEditor.qml               \
                 $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml               \
                 $$PWD/qmldir_static

@@ -67,7 +67,7 @@ class Connector : public qan::NodeItem
     Q_OBJECT
 public:
     explicit Connector( QQuickItem* parent = nullptr );
-    virtual ~Connector();
+    virtual ~Connector() override = default;
     Connector(const Connector&) = delete;
     Connector& operator=(const Connector&) = delete;
     Connector(Connector&&) = delete;

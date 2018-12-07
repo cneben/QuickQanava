@@ -37,10 +37,6 @@
 // GTpo headers
 #include "./graph_behaviour.h"
 
-// FIXME groups
-//#include "./group.h"
-//#include "./group_behaviour.h"
-
 namespace gtpo { // ::gtpo
 
 /*! \brief Collect and maintain a group adjacent edge set when a node is removed or inserted in a group.

@@ -65,7 +65,7 @@ public:
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
-    virtual ~Group() override;
+    virtual ~Group() override = default;
     Group( const Group& ) = delete;
 
     using gtpo_node_t = gtpo::node<qan::Config>;

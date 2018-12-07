@@ -59,7 +59,6 @@ namespace gtpo { // ::gtpo
 template <class config_t>
 class graph;
 
-// FIXME GROUPS
 template <class config_t>
 class graph_group_adjacent_edges_behaviour;
 
@@ -98,11 +97,9 @@ public:
     using shared_edges_t      = typename config_t::template edge_container_t< shared_edge_t >;
     using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
-    // FIXME GROUPS
     using shared_group_t      = typename std::shared_ptr<typename config_t::final_group_t>;
     using weak_group_t        = typename std::weak_ptr<typename config_t::final_group_t>;
     using weak_groups_t       = typename config_t::template node_container_t<weak_group_t>;
-    //using shared_groups_t     = typename config_t::template node_container_t< shared_node_t >;
 
     //! User friendly shortcut to this concrete graph behaviour.
     using behaviour = graph_behaviour< config_t >;
@@ -337,15 +334,6 @@ private:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    /*! \brief Create a new group node, insert it into the graph and return it
-     *
-     * Complexity is O(1).
-     * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if insertion fails.
-     */
-    // FIXME GROUPS method probably no longer usefull. REMOVE.
-    //auto            create_group() noexcept( false ) -> weak_group_t;
-
     /*! \brief Insert a node group into the graph.
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.

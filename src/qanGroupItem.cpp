@@ -49,9 +49,6 @@ GroupItem::GroupItem( QQuickItem* parent ) :
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
-    //_draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<GroupDraggableCtrl>()};
-    //const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    //groupDraggableCtrl->setTargetItem(this);
 
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
@@ -63,14 +60,7 @@ GroupItem::GroupItem( QQuickItem* parent ) :
     // Update adjacent edges z when group item z is modified.
     connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
 
-    // FIXME GROUPS: already done in qan::NodeItem ctor.
-/*    connect( this, &qan::GroupItem::widthChanged,
-             this, &qan::GroupItem::onWidthChanged );
-    connect( this, &qan::GroupItem::heightChanged,
-             this, &qan::GroupItem::onHeightChanged );
-*/
-    // FIXME !
-//    setStyle( qan::Node::style() );
+    setItemStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
     // Note: Do not set width and height
 }

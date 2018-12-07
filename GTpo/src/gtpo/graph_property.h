@@ -53,9 +53,6 @@ template<class graph_t>
 class graph_property_impl
 {
 public:
-    // FIXME: it is actually not working with gcc, set_graph() call from
-    // gtpo::graph is not allowed when set_graph() is protected...
-
     friend graph_t;   // graph need access to graph_property_impl<>::set_graph()
 
     graph_property_impl() noexcept = default;

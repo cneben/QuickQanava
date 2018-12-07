@@ -52,8 +52,6 @@ Connector::Connector(QQuickItem* parent) :
     setVisible(false);
 }
 
-Connector::~Connector() { /* Nil */ }
-
 auto    Connector::setGraph(qan::Graph* graph) noexcept -> void
 {
     if ( graph != _graph.data() ) {

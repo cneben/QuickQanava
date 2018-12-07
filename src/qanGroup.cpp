@@ -52,13 +52,6 @@ Group::Group( QObject* parent ) :
     set_is_group(true);
 }
 
-Group::~Group() {
-    // FIXME GROUPS default ctor...
-/*    if ( _item )
-        _item->deleteLater();
-        */
-}
-
 qan::Graph*         Group::getGraph() noexcept {
     return qobject_cast< qan::Graph* >( gtpo_node_t::get_graph() );
 }

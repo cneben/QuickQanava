@@ -120,7 +120,7 @@ void    Graph::qmlClearGraph() noexcept
 void    Graph::clear() noexcept
 {
     _selectedNodes.clear();
-    gtpo::graph< qan::Config >::clear();
+    gtpo::graph<qan::Config>::clear();
     _styleManager.clear();
 }
 
@@ -877,9 +877,6 @@ bool    Graph::hasGroup( qan::Group* group ) const
 {
     if ( group == nullptr )
         return false;
-    // FIXME REMOVE THAT FIXME !
-    // FIXME: don't like that dynamic cast, probably not necessary
-    //return gtpo_graph_t::has_group( weak_node_t{std::dynamic_pointer_cast<Group>(group->shared_from_this())} );
     return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
 }
 

@@ -95,8 +95,6 @@ public:
 
     using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
-    // FIXME GROUPS
-    //using weak_node_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     void    node_inserted( weak_node_t& weakNode ) noexcept { on_node_inserted(weakNode); }
@@ -146,8 +144,6 @@ public:
 
     using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
-    // FIXME GROUPS
-    //using weak_node_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     template < class primitive_t >
