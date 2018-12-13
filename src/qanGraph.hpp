@@ -41,10 +41,9 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
 {
     if ( nodeComponent == nullptr ) {
         const auto engine = qmlEngine(this);
-        if ( engine != nullptr )
-            nodeComponent = Node_t::delegate(*engine);     // If no delegate component is specified, try the node type delegate() factory
-        if ( nodeComponent == nullptr )
-            nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
+        nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the node type delegate() factory
+        if ( nodeComponent == nullptr && engine != nullptr ) // Otherwise, use default node delegate component
+                nodeComponent = Node_t::delegate(*engine);
     }
     if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
         qWarning() << "Can't find a valid node delegate component.";
