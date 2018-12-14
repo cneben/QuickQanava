@@ -98,16 +98,17 @@ public:
 
 public:
     //! \c dragInitialMousePos in window coordinate system.
-    virtual void    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) override;
+    virtual void    beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection = true) override;
     //! \c delta in scene coordinate system.
-    virtual void    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) override;
-    virtual void    endDragMove( bool dragSelection = true ) override;
+    virtual void    dragMove(const QPointF& delta, bool dragSelection = true) override;
+    virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
     //! Initial global mouse position at the beginning of a node drag operation.
-    QPointF                 _dragInitialMousePos{ 0., 0. };
+    //QPointF                 _dragInitialMousePos{ 0., 0. };
     //! Node position at the beginning of a node drag.
-    QPointF                 _dragInitialPos{ 0., 0. };
+    //QPointF                 _dragInitialPos{ 0., 0. };
+    QPointF                 _dragLastPos{ 0., 0. };
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer<qan::Group>    _lastProposedGroup{ nullptr };
     //@}

@@ -114,35 +114,26 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event )
 {
     if ( event->buttons().testFlag(Qt::NoButton) )
         return false;
-    if ( _targetItem != nullptr &&
+    const auto rootItem = getGraph()->getContainerItem();
+    if ( rootItem != nullptr &&
+         _targetItem != nullptr &&
          _targetItem->getDraggable() &&      // Dragging management
          event->buttons().testFlag(Qt::LeftButton)) {
+        const auto globalPos = rootItem->mapFromGlobal(event->globalPos());
         if ( !_targetItem->getDragged() ) {
-            beginDragMove( event->windowPos(), _targetItem->getSelected() );
+            beginDragMove(globalPos, _targetItem->getSelected() );
             return true;
         } else {
-            // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
-            // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
-            // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
-            // BTW, this code is probably buggy for deep quick item hierarchy.
-            QPointF startLocalPos;
-            QPointF curLocalPos;
-            if ( _targetItem->parentItem() != nullptr ) {
-                startLocalPos = _targetItem->parentItem()->mapFromScene( _dragInitialMousePos );
-                curLocalPos = _targetItem->parentItem()->mapFromScene( event->windowPos() );
-            } else {
-                startLocalPos = _dragInitialMousePos;
-                curLocalPos = event->windowPos();
-            }
-            QPointF delta( curLocalPos - startLocalPos );
-            dragMove( event->windowPos(), delta, _targetItem->getSelected() );
+            const auto delta = globalPos - _dragLastPos;
+            _dragLastPos = globalPos;
+            dragMove(delta, _targetItem->getSelected());
             return true;
         }
     }
     return false;
 }
 
-void    DraggableCtrl::handleMousePressEvent( QMouseEvent* event )
+void    DraggableCtrl::handleMousePressEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
 }
@@ -161,9 +152,7 @@ void    DraggableCtrl::beginDragMove( const QPointF& dragInitialMousePos, bool d
         return;
 
     _targetItem->setDragged( true );
-    _dragInitialMousePos = dragInitialMousePos;
-    _dragInitialPos = _targetItem->parentItem() != nullptr ? _targetItem->parentItem()->mapToScene( _targetItem->position() ) :
-                                                             _targetItem->position();
+    _dragLastPos = dragInitialMousePos;
 
     // If there is a selection, keep start position for all selected nodes.
     if ( dragSelection ) {
@@ -183,59 +172,83 @@ void    DraggableCtrl::beginDragMove( const QPointF& dragInitialMousePos, bool d
     }
 }
 
-void    DraggableCtrl::dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection )
+void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
 {
+    // PRECONDITIONS:
+        // _target and _targetItem must be configured (true)
+        // _graph must be configured (non nullptr)
     const auto graph = getGraph();
-    if ( _target &&
-         _targetItem &&
-         graph != nullptr ) {
-        if ( _target->get_group().lock() ) {
+    if (graph == nullptr)
+        return;
+    if (!_target ||
+        !_targetItem)
+        return;
+
+    // Algorithm:
+        // 1. For grouped node (node insed a group), check if the drag move occurs inside the group.
+            // 1.1 For inside
+            // 2.1 For outside groups
+        // 2. For ungrouped nodes, perform the drag using scene coords.
+        // 3. If the node is ungroupped and the drag is not an inside group dragging, propose
+        //    the node for grouping (ie just hilight the potential target group item).
+
+    const auto targetGroup = _target->get_group().lock();
+    auto movedInsideGroup = false;
+    if (targetGroup &&
+        targetGroup->getItem() != nullptr) {
+        const QRectF targetRect{_targetItem->position() + delta,
+                                QSizeF{ _targetItem->width(), _targetItem->height() }};
+        const QRectF groupRect{QPointF{0., 0.},
+                               QSizeF{ targetGroup->getItem()->width(), targetGroup->getItem()->height() }};
+
+        movedInsideGroup = groupRect.contains(targetRect);
+        if (!movedInsideGroup) {
             graph->ungroupNode(_target,_target->get_group().lock().get());
-            _dragInitialMousePos = dragInitialMousePos;  // Note 20160811: Reset position cache since the node has changed parent and
-                                                         // thus position (same scene pos but different local pos)
-            _dragInitialPos = _targetItem->parentItem() != nullptr ? _targetItem->parentItem()->mapToScene( _targetItem->position() ) :
-                                                                     _targetItem->position();
         }
+    }
 
-        QPointF startPos = _targetItem->parentItem() != nullptr ? _targetItem->parentItem()->mapFromScene( _dragInitialPos ) :
-                                                                  _dragInitialPos;
-        _targetItem->setX( startPos.x() + delta.x() );
-        _targetItem->setY( startPos.y() + delta.y() );
+    const auto localPos = _targetItem->position();
+    _targetItem->setPosition(localPos + delta);
 
-        if ( dragSelection ) {
-            auto dragMoveSelected = [this, &dragInitialMousePos, &delta] (auto primitive) { // Call dragMove() on a given node or group
-                if ( primitive != nullptr &&
-                     primitive->getItem() != nullptr &&
-                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
-                     primitive->get_group().expired() )       // Do not drag nodes that are inside a group
-                    primitive->getItem()->draggableCtrl().dragMove( dragInitialMousePos, delta, false );
-            };
-            std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
-            std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), dragMoveSelected);
-        }
+    if ( dragSelection ) {
+        auto dragMoveSelected = [this, &delta] (auto primitive) { // Call dragMove() on a given node or group
+            if ( primitive != nullptr &&
+                 primitive->getItem() != nullptr &&
+                 static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
+                 primitive->get_group().expired() )       // Do not drag nodes that are inside a group
+                primitive->getItem()->draggableCtrl().dragMove(delta, false);
+        };
+        std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
+        std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), dragMoveSelected);
+    }
 
-        // Eventually, propose a node group drop after move
-        if ( _targetItem->getDroppable() ) {
-            qan::Group* group = graph->groupAt( _targetItem->position(), { _targetItem->width(), _targetItem->height() }, _targetItem );
-            if ( group != nullptr &&
-                 group->getItem() != nullptr &&
-                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  { // Do not drop a group in itself
-                group->itemProposeNodeDrop();
-                _lastProposedGroup = group;
-            } else if ( group == nullptr &&
-                        _lastProposedGroup != nullptr &&
-                        _lastProposedGroup->getItem() != nullptr ) {
+    // Eventually, propose a node group drop after move
+    if ( !movedInsideGroup &&
+         _targetItem->getDroppable() ) {
+        qan::Group* group = graph->groupAt( _targetItem->mapToGlobal(QPointF{0., 0.}), { _targetItem->width(), _targetItem->height() },
+                                            _targetItem /* except _targetItem */ );
+        if ( group != nullptr &&
+             group->getItem() != nullptr &&
+             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) )  { // Do not drop a group in itself
+            group->itemProposeNodeDrop();
+
+            if ( _lastProposedGroup &&              // When a node is already beeing proposed in a group (ie _lastProposedGroup is non nullptr), it
+                 _lastProposedGroup->getItem() != nullptr &&    // might also end up beeing dragged over a sub group of _lastProposedGroup, so
+                 group != _lastProposedGroup )                  // notify endProposeNodeDrop() for last proposed group
                 _lastProposedGroup->itemEndProposeNodeDrop();
-                _lastProposedGroup = nullptr;
-            }
+            _lastProposedGroup = group;
+        } else if ( group == nullptr &&
+                    _lastProposedGroup != nullptr &&
+                    _lastProposedGroup->getItem() != nullptr ) {
+            _lastProposedGroup->itemEndProposeNodeDrop();
+            _lastProposedGroup = nullptr;
         }
     }
 }
 
 void    DraggableCtrl::endDragMove( bool dragSelection )
 {
-    _dragInitialMousePos = { 0., 0. };  // Invalid all cached coordinates when drag ends
-    _dragInitialPos = { 0., 0. };
+    _dragLastPos = { 0., 0. };  // Invalid all cached coordinates when drag ends
     _lastProposedGroup = nullptr;
 
     const auto graph = getGraph();
@@ -243,8 +256,8 @@ void    DraggableCtrl::endDragMove( bool dragSelection )
         if ( _targetItem->getDroppable() &&
              graph != nullptr &&
              _target ) {
-            const auto pos = _targetItem->position();
-            qan::Group* group = graph->groupAt( pos, { _targetItem->width(), _targetItem->height() }, _targetItem );
+            const auto targetGlobalPos = _targetItem->mapToGlobal(QPointF{0., 0.});
+            qan::Group* group = graph->groupAt(targetGlobalPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
             if ( group != nullptr &&
                  static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
                 if ( group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed

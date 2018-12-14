@@ -153,15 +153,23 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
 
 void    Connector::connectorPressed() noexcept
 {
-    if ( _graph != nullptr &&
-         _edgeItem != nullptr ) {
-        _edgeItem->setGraph(_graph);    // Eventually, configure edge item
-        const auto srcItem = _sourcePort ? _sourcePort :
-                                           _sourceNode ? _sourceNode->getItem() : nullptr;
-        _edgeItem->setSourceItem(srcItem);
-        _edgeItem->setDestinationItem(this);
-        _edgeItem->setVisible(true);
-    }
+    // PRECONDITIONS:
+        // _graph can't be nullptr
+        // _edgeItem can't be nullptr
+    if (_graph == nullptr)
+        return;
+    if (_edgeItem == nullptr)
+        return;
+
+    _edgeItem->setGraph(_graph);    // Eventually, configure edge item
+    const auto srcItem = _sourcePort ? _sourcePort :
+                                       _sourceNode ? _sourceNode->getItem() : nullptr;
+    _edgeItem->setSourceItem(srcItem);
+    _edgeItem->setDestinationItem(this);
+    _edgeItem->setVisible(true);
+
+    if (_sourceNode)
+        _graph->selectNode(*_sourceNode);
 }
 
 auto    Connector::getCreateDefaultEdge() const noexcept -> bool { return _createDefaultEdge; }

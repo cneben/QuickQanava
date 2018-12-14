@@ -171,16 +171,6 @@ private:
     QColor          _connectorColor{30, 144, 255};  // dodgerblue=rgb(30, 144, 255)
 
 public:
-    //! Alias to VisualConnector::hEdgeEnabled (default to false).
-    Q_PROPERTY( bool connectorHEdgeEnabled READ getConnectorHEdgeEnabled WRITE setConnectorHEdgeEnabled NOTIFY connectorHEdgeEnabledChanged FINAL )
-    inline bool     getConnectorHEdgeEnabled() const noexcept { return _connectorHEdgeEnabled; }
-    void            setConnectorHEdgeEnabled( bool connectorHEdgeEnabled ) noexcept;
-signals:
-    void            connectorHEdgeEnabledChanged();
-private:
-    bool            _connectorHEdgeEnabled{false};
-
-public:
     //! Alias to VisualConnector::createDefaultEdge (default to true).
     Q_PROPERTY( bool connectorCreateDefaultEdge READ getConnectorCreateDefaultEdge WRITE setConnectorCreateDefaultEdge NOTIFY connectorCreateDefaultEdgeChanged FINAL )
     inline bool     getConnectorCreateDefaultEdge() const noexcept { return _connectorCreateDefaultEdge; }
@@ -514,13 +504,10 @@ public:
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo_graph_t::get_group_count(); }
 
     //! \copydoc gtpo::GenGraph::groupNode()
-    Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);
+    Q_INVOKABLE void        groupNode(qan::Group* group, qan::Node* node) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
-    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept(false);
-
-    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
-    void                    ungroupNode( qan::Group*, qan::Group* ) noexcept(false) { }
+    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept;
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
@@ -601,10 +588,10 @@ public:
      * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
      * method will always return false.
      */
-    bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
+    bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers = Qt::NoModifier );
 
     //! Similar to selectNode() for qan::Group (internally group is a node).
-    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers );
+    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     /*! \brief Add a node in the current selection.
      */

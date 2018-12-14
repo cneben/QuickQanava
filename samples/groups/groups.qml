@@ -136,6 +136,16 @@ ApplicationWindow {
                         topology.ungroupNode(node)
                 }
             }
+            // Note: QQmlEngine::retranslate() is often use to force applications using QuickQanava to
+            // reevaluate all qsTr() bindings: unfortunately all application bindings are actually reevaluated,
+            // sometime leading to unexpected behaviours for custom groups.
+            ToolButton {
+                id: retranslate
+                text: "Retranslate"
+                onClicked: {
+                    ;
+                }
+            }
         }
         Control {
             id: groupEditor

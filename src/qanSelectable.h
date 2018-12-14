@@ -32,8 +32,7 @@
 // \date	2017 03 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanSelectable_h
-#define qanSelectable_h
+#pragma once
 
 // Std headers
 #include <memory>
@@ -125,5 +124,3 @@ Q_DECLARE_INTERFACE(
     qan::Selectable,
     "com.destrat.io.QuickQanava.Selectable/3.0"
 )
-
-#endif // qanSelectable_h

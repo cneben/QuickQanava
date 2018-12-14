@@ -32,8 +32,7 @@
 // \date	2017 03 10
 //-----------------------------------------------------------------------------
 
-#ifndef qanConnector_h
-#define qanConnector_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -188,5 +187,3 @@ private slots:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::Connector)
-
-#endif // qanConnector_h

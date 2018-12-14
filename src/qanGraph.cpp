@@ -98,7 +98,6 @@ void    Graph::componentComplete()
                     _connector->setVisible(false);
                     _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
                     _connector->setProperty( "connectorColor", getConnectorColor() );
-                    _connector->setProperty( "hEdgeEnabled", getConnectorHEdgeEnabled() );
                     _connector->setProperty( "createDefaultEdge", getConnectorCreateDefaultEdge() );
                     if ( getConnectorItem() != nullptr )
                         _connector->setConnectorItem( getConnectorItem() );
@@ -167,6 +166,7 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
 {
     // PRECONDITIONS:
         // s must be valid
+        // except can be nullptr
     if (!s.isValid())
         return nullptr;
 
@@ -185,7 +185,16 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
     }
 
     // 2.
-    std::sort(groups.begin(), groups.end(), [](const auto g1, const auto g2) -> bool {
+    const auto getItemGlobalZ_rec = [](const QQuickItem* item) -> qreal {
+        const auto impl = [](const QQuickItem* item, const auto& self) -> qreal {
+            if (item == nullptr)
+                return 0.;
+            return item->z() + self(item->parentItem(), self);
+        };
+        return impl(item, impl);
+    };
+
+    std::sort(groups.begin(), groups.end(), [&getItemGlobalZ_rec](const auto g1, const auto g2) -> bool {
         if (g1 == nullptr || g2 == nullptr)
             return false;
         const auto g1Item = g1->getItem();
@@ -193,10 +202,8 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
         if (g1Item == nullptr ||
             g2Item == nullptr)
             return false;
-        const auto g1GlobalZ = g1Item->parentItem() != nullptr ? g1Item->parentItem()->z() + g1Item->z() :
-                                                                 g1Item->z();
-        const auto g2GlobalZ = g2Item->parentItem() != nullptr ? g2Item->parentItem()->z() + g2Item->z() :
-                                                                 g2Item->z();
+        const auto g1GlobalZ = getItemGlobalZ_rec(g1Item);
+        const auto g2GlobalZ = getItemGlobalZ_rec(g2Item);
         return g1GlobalZ > g2GlobalZ;
     });
 
@@ -206,8 +213,9 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
              group->getItem() != nullptr &&
              group->getItem() != except) {
             const auto groupItem = group->getItem();
-             if ( QRectF{ groupItem->position(),
-                  QSizeF{ groupItem->width(), groupItem->height() } }.contains( QRectF{ p, s } ) )
+            const auto groupRect = QRectF{ groupItem->mapToGlobal(QPointF{0., 0.}),
+                    QSizeF{ groupItem->width(), groupItem->height() } };
+            if ( groupRect.contains( QRectF{ p, s } ) )
                  return group;
         }
     } // for all groups
@@ -252,16 +260,6 @@ void    Graph::setConnectorColor( QColor connectorColor ) noexcept
         _connectorColor = connectorColor;
         if ( _connector )
             _connector->setProperty( "connectorColor", connectorColor );
-        emit connectorColorChanged();
-    }
-}
-
-void    Graph::setConnectorHEdgeEnabled( bool connectorHEdgeEnabled ) noexcept
-{
-    if ( connectorHEdgeEnabled != _connectorHEdgeEnabled ) {
-        _connectorHEdgeEnabled = connectorHEdgeEnabled;
-        if ( _connector )
-            _connector->setProperty( "hEdgeEnabled", connectorHEdgeEnabled );
         emit connectorColorChanged();
     }
 }
@@ -880,7 +878,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
     return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
 }
 
-void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transformPosition ) noexcept(false)
+void    qan::Graph::groupNode( qan::Group* group, qan::Node* node) noexcept
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
@@ -894,12 +892,12 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transfor
         if ( node->get_group().lock().get() == group &&  // Check that group insertion succeed
              group->getGroupItem() != nullptr &&
              node->getItem() != nullptr ) {
-            group->getGroupItem()->groupNodeItem(node->getItem(), transformPosition);
+            group->getGroupItem()->groupNodeItem(node->getItem());
         }
     } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
 }
 
-void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept(false)
+void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
 {
     // PRECONDITIONS:
         // node can't be nullptr

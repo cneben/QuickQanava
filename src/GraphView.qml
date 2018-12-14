@@ -153,7 +153,7 @@ Qan.AbstractGraphView {
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
                    node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
                 graph.connector.sourceNode = node
-                // FIXME: connector remove that....
+                // Connector should be half on top of node
                 graph.connector.y = -graph.connector.height / 2
             }
             if ( node.item.resizable ) {
