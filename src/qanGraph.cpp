@@ -185,16 +185,7 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
     }
 
     // 2.
-    const auto getItemGlobalZ_rec = [](const QQuickItem* item) -> qreal {
-        const auto impl = [](const QQuickItem* item, const auto& self) -> qreal {
-            if (item == nullptr)
-                return 0.;
-            return item->z() + self(item->parentItem(), self);
-        };
-        return impl(item, impl);
-    };
-
-    std::sort(groups.begin(), groups.end(), [&getItemGlobalZ_rec](const auto g1, const auto g2) -> bool {
+    std::sort(groups.begin(), groups.end(), [](const auto g1, const auto g2) -> bool {
         if (g1 == nullptr || g2 == nullptr)
             return false;
         const auto g1Item = g1->getItem();
@@ -202,8 +193,8 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
         if (g1Item == nullptr ||
             g2Item == nullptr)
             return false;
-        const auto g1GlobalZ = getItemGlobalZ_rec(g1Item);
-        const auto g2GlobalZ = getItemGlobalZ_rec(g2Item);
+        const auto g1GlobalZ = qan::getItemGlobalZ_rec(g1Item);
+        const auto g2GlobalZ = qan::getItemGlobalZ_rec(g2Item);
         return g1GlobalZ > g2GlobalZ;
     });
 

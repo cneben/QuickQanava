@@ -42,13 +42,6 @@
 
 namespace qan { // ::qan
 
-/* Node Object Management *///-------------------------------------------------
-DraggableCtrl::DraggableCtrl()
-{
-}
-//-----------------------------------------------------------------------------
-
-
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    DraggableCtrl::handleDragEnterEvent( QDragEnterEvent* event )
 {
@@ -112,6 +105,12 @@ void    DraggableCtrl::handleMouseDoubleClickEvent(QMouseEvent* event )
 
 bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event )
 {
+    // PRECONDITIONS:
+        // graph must be non nullptr (configured).
+    const auto graph = getGraph();
+    if (graph == nullptr)
+        return false;
+
     if ( event->buttons().testFlag(Qt::NoButton) )
         return false;
     const auto rootItem = getGraph()->getContainerItem();

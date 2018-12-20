@@ -60,7 +60,7 @@ class DraggableCtrl : public qan::AbstractDraggableCtrl
     //@{
 public:
     //! DraggableCtrl constructor.
-    explicit DraggableCtrl();
+    explicit DraggableCtrl() = default;
     virtual ~DraggableCtrl() override = default;
     DraggableCtrl( const DraggableCtrl& ) = delete;
 

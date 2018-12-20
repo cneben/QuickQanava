@@ -37,6 +37,7 @@
 #include <QPainter>
 
 // QuickQanava headers
+#include "./qanUtils.h"
 #include "./qanEdgeItem.h"
 #include "./qanNodeItem.h"      // Resolve forward declaration
 #include "./qanGroupItem.h"
@@ -344,8 +345,8 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     }
 
     // Generate edge geometry Z according to actual src and dst z
-    const qreal srcZ = srcGroupItem != nullptr ? srcGroupItem->z() + 1 /*srcItem->z()*/ : srcItem->z();
-    const qreal dstZ = dstGroupItem != nullptr ? dstGroupItem->z() + 1 /*dstItem->z()*/ : dstItem->z();
+    const qreal srcZ = qan::getItemGlobalZ_rec(srcItem);
+    const qreal dstZ = qan::getItemGlobalZ_rec(dstItem);
     cache.z = qMax(srcZ, dstZ) - 0.1;   // Edge z value should be less than src/dst value to ensure port item and selection is on top of edge
 
     if ( _style )
