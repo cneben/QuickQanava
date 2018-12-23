@@ -746,6 +746,43 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Stacking Management *///-----------------------------------------
+    //@{
+public:
+    /*! \brief Send a graphic item (either a node or a group) to top.
+     *
+     * \note When item is a group, the node is moved to top inside it's group, and group is also send
+     * to top.
+     * \note Method is non const as it might affect \c maxZ property.
+     */
+    Q_INVOKABLE void    sendToFront(QQuickItem* item);
+
+    /*! \brief Iterate over all graph container items and update the maxZ property.
+     *
+     * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
+     * maxZ after in serialization for example).
+     */
+    Q_INVOKABLE void    updateMaxZ() noexcept;
+
+    /*! \brief Maximum global z for nodes and groups.
+     *
+     * \note By global we mean that z value for a node parented to a group is parent(s) group(s)
+     * a plus item z.
+     */
+    Q_PROPERTY( qreal   maxZ READ getMaxZ CONSTANT FINAL )
+    inline qreal        getMaxZ() const noexcept { return _maxZ; }
+private:
+    qreal               _maxZ = 0.;
+
+protected:
+    /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.
+     *
+     * \return 0. if there is no child, maximum child z value otherwise.
+     */
+    auto                maxChildsZ(QQuickItem* item) const noexcept -> qreal;
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Node auto-positioning *///----------------------------------------
     //@{
 public:

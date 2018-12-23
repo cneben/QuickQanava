@@ -55,8 +55,6 @@ ApplicationWindow {
             var graphNodeCenter = window.contentItem.mapToItem( containerItem, windowCenter.x, windowCenter.y )
             item.x = graphNodeCenter.x
             item.y = graphNodeCenter.y
-            item.z = graphView.maxZ
-            graphView.maxZ += 1.
         }
         graph: Qan.Graph {
             id: topology

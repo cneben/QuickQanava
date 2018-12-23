@@ -176,8 +176,12 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     // PRECONDITIONS:
         // _target and _targetItem must be configured (true)
         // _graph must be configured (non nullptr)
+        // _graph must have a container item for coordinate mapping
     const auto graph = getGraph();
     if (graph == nullptr)
+        return;
+    const auto graphContainerItem = graph->getContainerItem();
+    if (graphContainerItem == nullptr)
         return;
     if (!_target ||
         !_targetItem)
@@ -224,7 +228,8 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     // Eventually, propose a node group drop after move
     if ( !movedInsideGroup &&
          _targetItem->getDroppable() ) {
-        qan::Group* group = graph->groupAt( _targetItem->mapToGlobal(QPointF{0., 0.}), { _targetItem->width(), _targetItem->height() },
+        qan::Group* group = graph->groupAt( _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.}),
+                                            { _targetItem->width(), _targetItem->height() },
                                             _targetItem /* except _targetItem */ );
         if ( group != nullptr &&
              group->getItem() != nullptr &&
@@ -250,13 +255,23 @@ void    DraggableCtrl::endDragMove( bool dragSelection )
     _dragLastPos = { 0., 0. };  // Invalid all cached coordinates when drag ends
     _lastProposedGroup = nullptr;
 
+    // PRECONDITIONS:
+        // _target and _targetItem must be configured (true)
+        // _graph must be configured (non nullptr)
+        // _graph must have a container item for coordinate mapping
     const auto graph = getGraph();
+    if (graph == nullptr)
+        return;
+    const auto graphContainerItem = graph->getContainerItem();
+    if (graphContainerItem == nullptr)
+        return;
+
     if ( _targetItem ) {
         if ( _targetItem->getDroppable() &&
              graph != nullptr &&
              _target ) {
-            const auto targetGlobalPos = _targetItem->mapToGlobal(QPointF{0., 0.});
-            qan::Group* group = graph->groupAt(targetGlobalPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
+            const auto targetContainerPos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
+            qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
             if ( group != nullptr &&
                  static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
                 if ( group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed

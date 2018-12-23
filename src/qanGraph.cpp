@@ -70,7 +70,9 @@ void    Graph::classBegin()
     setHorizontalDockDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
     setVerticalDockDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
     setGroupDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Group.qml")));
-    setNodeDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Node.qml")));
+    // Note: Do not set a default node delegate, otherwise it would be used instead
+    //  of qan::Node::delegate(), just let the user specify one.
+        //Ie setNodeDelegate(nullpr);
     setEdgeDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Edge.qml")));
     setSelectionDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml")));
 
@@ -199,13 +201,16 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
     });
 
     // 3.
+    if (getContainerItem() == nullptr)
+            return nullptr;
     for ( const auto group : qAsConst(groups) ) {
         if ( group &&
              group->getItem() != nullptr &&
              group->getItem() != except) {
             const auto groupItem = group->getItem();
-            const auto groupRect = QRectF{ groupItem->mapToGlobal(QPointF{0., 0.}),
-                    QSizeF{ groupItem->width(), groupItem->height() } };
+
+            const auto groupRect =  QRectF{ groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
+                                            QSizeF{ groupItem->width(), groupItem->height() } };
             if ( groupRect.contains( QRectF{ p, s } ) )
                  return group;
         }
@@ -911,6 +916,12 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
                  group->getGroupItem()->ungroupNodeItem(node->getItem());
             gtpo_graph_t::ungroup_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                        std::static_pointer_cast<Group>(group->shared_from_this()) );
+            if (node != nullptr &&
+                node->getItem() != nullptr) {
+                // Update node z to maxZ: otherwise an undroupped node might be behind it's host group.
+                _maxZ += 1.0;
+                node->getItem()->setZ(_maxZ);
+            }
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
 }
@@ -1253,6 +1264,104 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
     }
     return QPointer<QQuickItem>{nullptr};
 }
+//-----------------------------------------------------------------------------
+
+/* Stacking Management *///----------------------------------------------------
+void    Graph::sendToFront(QQuickItem* item)
+{
+    if (item == nullptr)
+        return;
+
+    qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
+    qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
+    if (nodeItem == nullptr)
+        return;     // item must be a nodeItem or a groupItem
+
+    // Algorithm:
+        // 1. If item is an ungrouped node OR a root group: update maxZ and set item.z to maxZ.
+        // 2. If item is a group (or is a node inside a group):
+            // 2.1 Collect all parents groups.
+            // 2.2 For all parents groups: get group parent item childs maximum (local) z, update group z to maximum value + 1.
+
+    // Return a vector groups ordered from the outer group to the root group
+    const auto collectGroups_rec = [](qan::GroupItem* groupItem) -> std::vector<qan::GroupItem*> {
+
+        const auto impl = [](std::vector<qan::GroupItem*>& groups,      // Recursive implementation
+                             qan::GroupItem* groupItem,
+                             const auto& self) -> void {
+            if (groupItem == nullptr)
+                return;
+            groups.push_back(groupItem);
+            const auto parentGroup = groupItem->getGroup() != nullptr ? groupItem->getGroup()->getGroup() :
+                                                                        nullptr;
+            auto parentGroupItem = parentGroup != nullptr ? parentGroup->getGroupItem() : nullptr;
+            if (parentGroupItem != nullptr)
+                self(groups, parentGroupItem, self);
+        };
+
+        std::vector<qan::GroupItem*> groups;
+
+        // PRECONDITIONS:
+            // groupItem can't be nullptr
+        if (groupItem == nullptr)
+            return groups;
+        impl(groups, groupItem, impl);
+        return groups;
+    };
+
+    const auto graphContainerItem = getContainerItem();
+    if (graphContainerItem == nullptr) {
+        qWarning() << "qan::Graph::sendToFront(): Can't sent an item to front in a graph with no container item.";
+        return;
+    }
+
+    if (nodeItem != nullptr &&      // 1. If item is an ungrouped node OR a root group: update maxZ and set item.z to maxZ.
+        groupItem == nullptr) {
+        _maxZ += 1.;
+        nodeItem->setZ(_maxZ);
+    } else if (groupItem != nullptr &&      // 1.
+               groupItem->parentItem() == graphContainerItem ) {
+        _maxZ += 1.;
+        groupItem->setZ(_maxZ);
+    } else if (groupItem != nullptr) {
+        // 2. If item is a group (or is a node inside a group)
+        const auto groups = collectGroups_rec(groupItem);       // 2.1 Collect all parents groups.
+        for ( const auto groupItem : groups ) {
+            if (groupItem == nullptr)
+                continue;
+            const auto groupParentItem = groupItem->parentItem();
+            if (groupParentItem == nullptr)
+                continue;       // Should not happen, a group necessary have a parent item.
+            if (groupParentItem == graphContainerItem) {        // 2.2.1 We have root group, use global graph maxZ property
+                _maxZ += 1.;
+                groupItem->setZ(_maxZ);
+            } else {
+                const auto maxZ = maxChildsZ(groupParentItem);  // 2.2.2
+                groupItem->setZ(maxZ + 1.);
+            }
+        } // For all group items
+    }
+}
+
+void    Graph::updateMaxZ() noexcept
+{
+    _maxZ = maxChildsZ(getContainerItem());
+}
+
+auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
+    if (item == nullptr)
+        return 0.;
+    qreal maxZ = std::numeric_limits<qreal>::min();
+    bool hasChild = false;
+    const auto childs = item->childItems();
+    for (const auto childItem : qAsConst(childs)) {
+        if (childItem != nullptr) {
+            hasChild = true;
+            maxZ = std::max(maxZ, childItem->z());
+        }
+    }
+    return hasChild ? maxZ : 0.;
+};
 //-----------------------------------------------------------------------------
 
 /* Node auto-positioning *///--------------------------------------------------

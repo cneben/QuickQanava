@@ -61,9 +61,9 @@ class GraphView : public qan::Navigable
     //@{
 public:
     //! GraphView default constructor.
-    explicit GraphView( QQuickItem* parent = nullptr );
-    virtual ~GraphView( ) override { }
-    GraphView( const GraphView& ) = delete;
+    explicit GraphView(QQuickItem* parent = nullptr);
+    virtual ~GraphView() override = default;
+    GraphView(const GraphView&) = delete;
 
 public:
     //! Graph that should be displayed in this graph view.

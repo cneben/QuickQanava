@@ -107,7 +107,7 @@ Qan.AbstractGraphView {
         if ( graph &&
              port ) {
             if (port.node)    // Force port host node on top
-                sendToTop(port.node)
+                graph.sendToFront(port.node.item)
             if (graph.connector &&
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
@@ -118,16 +118,6 @@ Qan.AbstractGraphView {
     onPortRightClicked: { }
 
     // Node management ////////////////////////////////////////////////////////
-    function    sendToTop(node) {
-        if (node) {
-            if (node.item) {
-                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-                node.item.z = maxZ + 1;
-            }
-            if ( node.group )
-                sendGroupToTop(node.group)
-        }
-    }
 
     // Dynamically handle currently selected node item onRatioChanged() signal
     Connections { // and update nodeResizer ratio policy (selected node is nodeResizer target)
@@ -147,7 +137,7 @@ Qan.AbstractGraphView {
         if ( graph &&
              node &&
              node.item ) {
-            sendToTop(node)
+            graph.sendToFront(node.item)
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
@@ -182,15 +172,9 @@ Qan.AbstractGraphView {
     }
 
     // Group management ///////////////////////////////////////////////////////
-    function sendGroupToTop(group) {
-        if ( group && group.item ) {
-            maxZ = Math.max( group.item.z + 1, maxZ + 1 )
-            group.item.z = maxZ + 1;
-        }
-    }
-
     onGroupClicked: {
-        sendGroupToTop(group)
+        if ( group && graph )
+            graph.sendToFront(group.item)
 
         if ( graph &&
              group && group.item &&

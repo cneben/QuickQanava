@@ -171,8 +171,8 @@ signals:
     //@{
 public:
     Q_PROPERTY( qan::Group* group READ getGroup FINAL )
-protected:
-    inline qan::Group*  getGroup() noexcept { return get_group().lock().get(); }
+    inline const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
+    inline qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
     //@}
     //-------------------------------------------------------------------------
 };

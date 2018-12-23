@@ -87,6 +87,10 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         };
         connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
         node->setItem(nodeItem);
+        {   // Send item to front
+            _maxZ += 1;
+            nodeItem->setZ(_maxZ);
+        }
         gtpo_graph_t::insert_node( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
@@ -246,6 +250,11 @@ qan::Group* Graph::insertGroup()
                         emit this->groupDoubleClicked(groupItem->getGroup(), p);
                 };
                 connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+
+                { // Send group item to front
+                    _maxZ += 1.0;
+                    groupItem->setZ(_maxZ);
+                }
             } else
                 qWarning() << "qan::Graph::insertGroup<>(): Warning: Group delegate from QML component creation failed.";
         } else qWarning() << "qan::Graph::insertGroup<>(): Error: style() factory has returned a nullptr style.";
