@@ -884,7 +884,7 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
         return;
 
     if ( cache.hidden ) {    // Apply hidden property
-        setVisible(false);
+        // Note: Do not call setVisible(false), visibility management is left up to the user
         setHidden(true);
         return;
     }
@@ -939,7 +939,7 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
     }
 
     // Edge item geometry is now valid, set the item visibility to true and "unhide" it
-    setVisible(true);
+    //setVisible(true);
     setHidden(false);
 }
 

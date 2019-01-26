@@ -315,7 +315,6 @@ auto    graph<config_t>::insert_group( shared_group_t group ) noexcept( false ) 
     assert_throw( group != nullptr, "gtpo::graph<>::insert_group(): Error: trying to insert a nullptr shared_node_t" );
     weak_node_t group_node_ptr = insert_node(group);
     try {
-        //group_node_ptr = group;
         group->set_graph( this );
         config_t::template container_adapter<weak_groups_t>::insert( group, _groups );
 
@@ -324,8 +323,6 @@ auto    graph<config_t>::insert_group( shared_group_t group ) noexcept( false ) 
     } catch (...) {
         throw gtpo::bad_topology_error( "gtpo::graph<>::insert_group(): Insertion of group failed" );
     }
-    // Cast the weak_node_t weak pointer to it's
-//    return std::static_pointer_cast<weak_group_t>(group.lock());
     return group;
 }
 

@@ -46,7 +46,7 @@ namespace qan { // ::qan
 
 /* Connector Object Management *///--------------------------------------------
 Connector::Connector(QQuickItem* parent) :
-    qan::NodeItem( parent )
+    qan::NodeItem{parent}
 {
     setAcceptDrops(false);
     setVisible(false);
@@ -91,12 +91,14 @@ qan::NodeStyle* Connector::style() noexcept
 /* Connector Configuration *///------------------------------------------------
 void    Connector::connectorReleased(QQuickItem* target) noexcept
 {
+    qWarning() << "connectorReleased...";
     // Restore original position
     if ( _connectorItem )
         _connectorItem->setState("NORMAL");
 
     if ( _edgeItem )    // Hide connector "transcient" edge item
         _edgeItem->setVisible(false);
+
     if ( !_graph )
         return;
 
@@ -185,8 +187,12 @@ auto    Connector::getConnectorItem() noexcept -> QQuickItem* { return _connecto
 auto    Connector::setConnectorItem(QQuickItem* connectorItem) noexcept -> void
 {
     if ( _connectorItem != connectorItem ) {
-        if ( _connectorItem )
+        if ( _connectorItem ) {
+            disconnect(_connectorItem.data(), nullptr,
+                       this, nullptr);
             _connectorItem->deleteLater();
+        }
+
         _connectorItem = connectorItem;
         if ( _connectorItem ) {
             _connectorItem->setParentItem(this);

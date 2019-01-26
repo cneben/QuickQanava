@@ -161,7 +161,7 @@ void    GroupItem::groupMoved()
     }
 }
 
-void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem)
+void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
@@ -174,8 +174,11 @@ void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem)
     if ( !getContainer()->isVisible() )     // drop, but emit a warning...
         qWarning() << "qan::GroupItem::groupNodeItem(): Warning: grouping a node item while the group is collapsed.";
 
-    const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
-    const auto groupPos = getContainer()->mapFromGlobal(globalPos);
+    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
+    if (transform) {
+        const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
+        groupPos = getContainer()->mapFromGlobal(globalPos);
+    }
     nodeItem->setPosition(groupPos);
     nodeItem->setParentItem(getContainer());
     groupMoved();           // Force call to groupMoved() to update group adjacent edges

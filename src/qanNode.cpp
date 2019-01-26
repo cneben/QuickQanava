@@ -177,6 +177,15 @@ void    Node::setLabel( const QString& label ) noexcept
         emit labelChanged();
     }
 }
+
+void    Node::setLocked(bool locked) noexcept
+{
+    if (locked != _locked) {
+        _locked = locked;
+        emit lockedChanged();
+    }
+}
+
 //-----------------------------------------------------------------------------
 
 /* Dock Management *///--------------------------------------------------------

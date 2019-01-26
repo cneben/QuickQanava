@@ -98,7 +98,6 @@ Loader {
         TextField {
             id: labelTextField
             anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-            enabled: text !== ''    // Do not allow edition for empty labels (label editor used instead)
             text: target ? target.label : ""
             font.bold: labelEditorLoader.bold
             font.pointSize: labelEditorLoader.pointSize
@@ -114,6 +113,10 @@ Loader {
                      text !== target.label )  // Ensure that last edition text is removed
                     text = target.label       // for exemple if edition has been interrupted in a focus change
             }
+            Keys.onEscapePressed: {
+                // Cancel edition on escape
+                labelEditorLoader.visible = false;
+            }
         }
     }
-}
+} // Loader

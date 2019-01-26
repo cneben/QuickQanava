@@ -92,6 +92,7 @@ public:
     using shared_edges_t      = typename config_t::template edge_container_t< shared_edge_t >;
     using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
+    using group_t             = typename config_t::final_group_t;
     using shared_group_t      = typename std::shared_ptr<typename config_t::final_group_t>;
     using weak_group_t        = typename std::weak_ptr<typename config_t::final_group_t>;
     using weak_groups_t       = typename config_t::template node_container_t<weak_group_t>;

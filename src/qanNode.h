@@ -164,6 +164,21 @@ private:
     QString         _label{ QStringLiteral("") };
 signals:
     void            labelChanged( );
+
+public:
+    /*! \brief A locked node can't be selected / dragged by user (node are unlocked by default).
+     *
+     * Might be usefull to prevent user inputs when the node is laid out automatically.
+     *
+     * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
+     */
+    Q_PROPERTY( bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL )
+    void            setLocked(bool locked) noexcept;
+    bool            getLocked() const noexcept { return _locked; }
+private:
+    bool            _locked{false};
+signals:
+    void            lockedChanged( );
     //@}
     //-------------------------------------------------------------------------
 

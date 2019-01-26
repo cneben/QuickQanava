@@ -32,6 +32,9 @@
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
+// Std headers
+#include <memory>
+
 // Qt headers
 #include <QQmlProperty>
 #include <QVariant>
@@ -864,7 +867,9 @@ void    Graph::removeGroup( qan::Group* group )
             group->getGroupItem() != nullptr )
             group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
     }
-    gtpo_graph_t::remove_group(gtpo_graph_t::shared_group_t{group});
+    auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());
+    gtpo_graph_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
+    gtpo_graph_t::remove_group(weakNodeGroupPtr);
 }
 
 bool    Graph::hasGroup( qan::Group* group ) const
@@ -874,7 +879,7 @@ bool    Graph::hasGroup( qan::Group* group ) const
     return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
 }
 
-void    qan::Graph::groupNode( qan::Group* group, qan::Node* node) noexcept
+void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transform) noexcept
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
@@ -888,7 +893,7 @@ void    qan::Graph::groupNode( qan::Group* group, qan::Node* node) noexcept
         if ( node->get_group().lock().get() == group &&  // Check that group insertion succeed
              group->getGroupItem() != nullptr &&
              node->getItem() != nullptr ) {
-            group->getGroupItem()->groupNodeItem(node->getItem());
+            group->getGroupItem()->groupNodeItem(node->getItem(), transform);
         }
     } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
 }

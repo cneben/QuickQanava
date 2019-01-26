@@ -503,8 +503,14 @@ public:
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
     Q_INVOKABLE int         getGroupCount( ) const { return gtpo_graph_t::get_group_count(); }
 
-    //! \copydoc gtpo::GenGraph::groupNode()
-    Q_INVOKABLE void        groupNode(qan::Group* group, qan::Node* node) noexcept;
+    /*! \brief Group a node  \c node inside \c group group.
+     *
+     * To disable node item coordinates transformation to group item, set transform to false then
+     * manually position node item.
+     *
+     * \sa gtpo::GenGraph::groupNode()
+     */
+    Q_INVOKABLE void        groupNode(qan::Group* group, qan::Node* node, bool transform = true) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
     Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept;

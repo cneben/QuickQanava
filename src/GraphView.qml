@@ -98,6 +98,13 @@ Qan.AbstractGraphView {
         groupResizer.target = null
         groupResizer.visible = false
 
+        // Hide the default visual edge connector
+        if (graph &&
+            graph.connectorEnabled &&
+            graph.connector &&
+            graph.connector.visible)
+            graph.connector.visible = false
+
         graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
     }
     onRightClicked: graphView.focus = true
@@ -138,10 +145,13 @@ Qan.AbstractGraphView {
              node &&
              node.item ) {
             graph.sendToFront(node.item)
+            if (node.locked)                // Do not show any connector for locked node/groups
+                return;
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
                    node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
+                graph.connector.visible = true
                 graph.connector.sourceNode = node
                 // Connector should be half on top of node
                 graph.connector.y = -graph.connector.height / 2
@@ -206,7 +216,7 @@ Qan.AbstractGraphView {
         }
     }
 
-    onGroupRightClicked: sendGroupToTop(group)
-    onGroupDoubleClicked: sendGroupToTop(group)
+    onGroupRightClicked: graph.sendToFront(group)
+    onGroupDoubleClicked: graph.sendToFront(group)
 } // Qan.GraphView
 

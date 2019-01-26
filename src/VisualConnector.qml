@@ -127,6 +127,9 @@ Qan.Connector {
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
         if ( connectorItem )
             connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
+
+        if (edgeItem && !visible)       // Force hiding the connector edge item
+            edgeItem.visible = false
     }
 
     Drag.active: dropDestArea.drag.active
@@ -200,15 +203,21 @@ Qan.Connector {
         onReleased: {
             if ( connectorItem.state === "HILIGHT" ) {
                 connectorReleased(visualConnector.Drag.target)
-                configureConnectorPosition()
-            } else {
-                edgeItem.visible = false
-                configureConnectorPosition()
             }
+            configureConnectorPosition()
+            if (edgeItem)       // Hide the edgeItem after a mouse release or it could
+                edgeItem.visible = false    // be visible on non rectangular nodes.
         }
         onPressed : {
+            console.error("onPressed")
+            console.error("PRE edgeItem.visible=" + edgeItem.visible)
+            console.error("PRE edgeItem.hidden=" + edgeItem.hidden)
             mouse.accepted = true
             connectorPressed()
+            if (edgeItem)
+                edgeItem.visible = true
+            console.error("POST edgeItem.visible=" + edgeItem.visible)
+            console.error("POST edgeItem.hidden=" + edgeItem.hidden)
         }
     } // MouseArea: dropDestArea
 }

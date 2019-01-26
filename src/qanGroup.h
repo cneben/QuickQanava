@@ -122,19 +122,6 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Appearance Management *///---------------------------------------
-    //@{
-public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
-    QString     getLabel( ) const { return _label; }
-private:
-    QString     _label = QString{ "" };
-signals:
-    void        labelChanged( );
-    //@}
-    //-------------------------------------------------------------------------
-
     /*! \name Group DnD Management *///----------------------------------------
     //@{
 public:
