@@ -359,6 +359,7 @@ protected:
 
     /*! \brief Notify user immediately after a new node \c node has been inserted in graph.
      *
+     * \warning Since groups are node, onNodeInserted() is also emitted when insertGroup() is called.
      * \note Signal nodeInserted() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -366,6 +367,7 @@ protected:
 
     /*! \brief Notify user immediately before a node \c node is removed.
      *
+     * \warning Since groups are node, onNodeInserted() is also emitted when removeGroup() is called.
      * \note Signal nodeRemoved() is emitted at the same time.
      * \note Default implementation is empty.
      */

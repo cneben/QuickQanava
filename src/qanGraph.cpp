@@ -867,6 +867,10 @@ void    Graph::removeGroup( qan::Group* group )
             group->getGroupItem() != nullptr )
             group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
     }
+
+    onNodeRemoved(*group);      // group are node, notify group
+    emit nodeRemoved(group);    // removed as a node
+
     auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());
     gtpo_graph_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
     gtpo_graph_t::remove_group(weakNodeGroupPtr);

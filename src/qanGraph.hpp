@@ -258,7 +258,12 @@ qan::Group* Graph::insertGroup()
             } else
                 qWarning() << "qan::Graph::insertGroup<>(): Warning: Group delegate from QML component creation failed.";
         } else qWarning() << "qan::Graph::insertGroup<>(): Error: style() factory has returned a nullptr style.";
-    }
+        if (group) {       // Notify user.
+            onNodeInserted(*group);
+            emit nodeInserted(group.get());
+        }
+    } // group is not nullptr
+
     return group.get();
 
 }

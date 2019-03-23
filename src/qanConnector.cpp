@@ -214,7 +214,8 @@ auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> vo
             const auto context = qmlContext(this);
             if ( context != nullptr ) {
                 const auto edgeObject = _edgeComponent->create(context);    // Create a new edge
-                _edgeItem = qobject_cast<qan::EdgeItem*>(edgeObject);
+
+                _edgeItem.reset(qobject_cast<qan::EdgeItem*>(edgeObject));  // Any existing edge item is destroyed
                 if ( _edgeItem &&
                      !_edgeComponent->isError() ) {
                     QQmlEngine::setObjectOwnership( _edgeItem.data(), QQmlEngine::CppOwnership );

@@ -158,12 +158,13 @@ void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
         event->setAccepted(false);
+        QQuickItem::dragEnterEvent(event);
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     if ( !draggableCtrl->handleDragEnterEvent(event) )
         event->ignore();
-    QQuickItem::dragEnterEvent( event );
+    QQuickItem::dragEnterEvent(event);
 }
 
 void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
@@ -171,11 +172,12 @@ void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
         event->setAccepted(false);
+        QQuickItem::dragMoveEvent(event);
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleDragMoveEvent(event);
-    QQuickItem::dragMoveEvent( event );
+    QQuickItem::dragMoveEvent(event);
 }
 
 void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
@@ -183,11 +185,12 @@ void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
         event->setAccepted(false);
+        QQuickItem::dragLeaveEvent(event);
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleDragLeaveEvent(event);
-    QQuickItem::dragLeaveEvent( event );
+    QQuickItem::dragLeaveEvent(event);
 }
 
 void    NodeItem::dropEvent( QDropEvent* event )
@@ -208,8 +211,10 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
 void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 {
     if (getNode() != nullptr &&
-        getNode()->getLocked())
+        getNode()->getLocked()) {
+        QQuickItem::mouseMoveEvent(event);
         return;
+    }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     if ( draggableCtrl->handleMouseMoveEvent(event) )
         event->accept();
@@ -219,12 +224,6 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event )
 
 void    NodeItem::mousePressEvent( QMouseEvent* event )
 {
-    // FIXME comments
-    /*if (getNode() != nullptr &&
-        getNode()->getLocked()) {
-        event->setAccepted(false);
-        return;
-    }*/
     bool accepted = isInsideBoundingShape( event->localPos() );
     if ( accepted ) {
         forceActiveFocus();

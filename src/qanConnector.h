@@ -145,7 +145,7 @@ public:
 signals:
     void    edgeItemChanged();
 protected:
-    QPointer<qan::EdgeItem>  _edgeItem;
+    QScopedPointer<qan::EdgeItem>  _edgeItem;
 
 public:
     /*! \brief Connector source port item (ie host node port item for the visual draggable connector item).
