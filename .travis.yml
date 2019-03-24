@@ -1,6 +1,6 @@
 sudo: required
 language: cpp
-dist: trusty
+dist: xenial
 
 matrix:
   include:
@@ -12,7 +12,7 @@ matrix:
         apt: 
             sources: 
                 - ubuntu-toolchain-r-test
-                - sourceline: "ppa:beineri/opt-qt-5.11.1-xenial"
+                - sourceline: "ppa:beineri/opt-qt-5.12.1-xenial"
             packages: 
                 - cmake
                 - g++-6
@@ -32,7 +32,7 @@ before_install:
 install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90;
-      source /opt/qt510/bin/qt510-env.sh;
+      source /opt/qt512/bin/qt512-env.sh;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew update;
@@ -44,7 +44,7 @@ install:
 
 before_script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      export PATH=$PATH:/opt/qt58/bin;
+      export PATH=$PATH:/opt/qt512/bin;
     fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       export PATH=/usr/local/opt/qt/bin:$PATH; 
