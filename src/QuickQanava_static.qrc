@@ -24,7 +24,6 @@
         <file>RectGradientGlowBackground.qml</file>
         <file>SelectionItem.qml</file>
         <file>StyleListView.qml</file>
-        <file>StyleEditor.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
         <file alias="qmldir">qmldir_static</file>

@@ -55,8 +55,6 @@ ApplicationWindow {
             var graphNodeCenter = window.contentItem.mapToItem( containerItem, windowCenter.x, windowCenter.y )
             item.x = graphNodeCenter.x
             item.y = graphNodeCenter.y
-            item.z = graphView.maxZ
-            graphView.maxZ += 1.
         }
         graph: Qan.Graph {
             id: topology
@@ -134,6 +132,16 @@ ApplicationWindow {
                     console.info("node.group=" + node.group)
                     if ( node && node.group )
                         topology.ungroupNode(node)
+                }
+            }
+            // Note: QQmlEngine::retranslate() is often use to force applications using QuickQanava to
+            // reevaluate all qsTr() bindings: unfortunately all application bindings are actually reevaluated,
+            // sometime leading to unexpected behaviours for custom groups.
+            ToolButton {
+                id: retranslate
+                text: "Retranslate"
+                onClicked: {
+                    ;
                 }
             }
         }

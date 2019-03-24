@@ -47,7 +47,7 @@
 
 namespace qcm { // ::qcm
 
-/*! \brief FIXME
+/*! \brief Expose a consistent QAbstractModel for all QCM containers.
  *
  * \nosubgrouping
  */

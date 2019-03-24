@@ -56,6 +56,8 @@ Item {
     property real   preferredGroupWidth: 200
     property real   preferredGroupHeight: 150
 
+    property alias  header: headerLayout
+
     Item {
         id: content
         x: 0; y: 0; z: 3

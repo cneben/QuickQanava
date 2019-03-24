@@ -44,7 +44,6 @@
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
-//#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -89,7 +88,7 @@ public:
     Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
     qan::NodeItem*          getItem() noexcept;
     const qan::NodeItem*    getItem() const noexcept;
-    void                    setItem(qan::NodeItem* nodeItem) noexcept;
+    virtual void            setItem(qan::NodeItem* nodeItem) noexcept;
 protected:
     QPointer<qan::NodeItem> _item;
     //@}
@@ -141,6 +140,10 @@ public:
     //! Read-only abstract item model of this node out nodes.
     Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
     QAbstractItemModel* qmlGetOutEdges() const;
+
+public:
+    //! Get this node level 0 adjacent edges (ie sum of node in edges and out edges).
+    std::unordered_set<qan::Edge*>  collectAdjacentEdges0() const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -161,6 +164,21 @@ private:
     QString         _label{ QStringLiteral("") };
 signals:
     void            labelChanged( );
+
+public:
+    /*! \brief A locked node can't be selected / dragged by user (node are unlocked by default).
+     *
+     * Might be usefull to prevent user inputs when the node is laid out automatically.
+     *
+     * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
+     */
+    Q_PROPERTY( bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL )
+    void            setLocked(bool locked) noexcept;
+    bool            getLocked() const noexcept { return _locked; }
+private:
+    bool            _locked{false};
+signals:
+    void            lockedChanged( );
     //@}
     //-------------------------------------------------------------------------
 
@@ -168,8 +186,8 @@ signals:
     //@{
 public:
     Q_PROPERTY( qan::Group* group READ getGroup FINAL )
-protected:
-    inline qan::Group*  getGroup() noexcept { return get_group().lock().get(); }
+    inline const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
+    inline qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
     //@}
     //-------------------------------------------------------------------------
 };

@@ -32,8 +32,7 @@
 // \date	2017 03 10
 //-----------------------------------------------------------------------------
 
-#ifndef qanConnector_h
-#define qanConnector_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -67,7 +66,7 @@ class Connector : public qan::NodeItem
     Q_OBJECT
 public:
     explicit Connector( QQuickItem* parent = nullptr );
-    virtual ~Connector();
+    virtual ~Connector() override = default;
     Connector(const Connector&) = delete;
     Connector& operator=(const Connector&) = delete;
     Connector(Connector&&) = delete;
@@ -146,7 +145,7 @@ public:
 signals:
     void    edgeItemChanged();
 protected:
-    QPointer<qan::EdgeItem>  _edgeItem;
+    QScopedPointer<qan::EdgeItem>  _edgeItem;
 
 public:
     /*! \brief Connector source port item (ie host node port item for the visual draggable connector item).
@@ -188,5 +187,3 @@ private slots:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::Connector)
-
-#endif // qanConnector_h

@@ -41,10 +41,9 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
 {
     if ( nodeComponent == nullptr ) {
         const auto engine = qmlEngine(this);
-        if ( engine != nullptr )
-            nodeComponent = Node_t::delegate(*engine);     // If no delegate component is specified, try the node type delegate() factory
-        if ( nodeComponent == nullptr )
-            nodeComponent = _nodeDelegate.get();    // Otherwise, use default node delegate component
+        nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the node type delegate() factory
+        if ( nodeComponent == nullptr && engine != nullptr ) // Otherwise, use default node delegate component
+                nodeComponent = Node_t::delegate(*engine);
     }
     if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
         qWarning() << "Can't find a valid node delegate component.";
@@ -88,6 +87,10 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         };
         connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
         node->setItem(nodeItem);
+        {   // Send item to front
+            _maxZ += 1;
+            nodeItem->setZ(_maxZ);
+        }
         gtpo_graph_t::insert_node( node );
     } catch ( const gtpo::bad_topology_error& e ) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
@@ -247,10 +250,20 @@ qan::Group* Graph::insertGroup()
                         emit this->groupDoubleClicked(groupItem->getGroup(), p);
                 };
                 connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+
+                { // Send group item to front
+                    _maxZ += 1.0;
+                    groupItem->setZ(_maxZ);
+                }
             } else
                 qWarning() << "qan::Graph::insertGroup<>(): Warning: Group delegate from QML component creation failed.";
         } else qWarning() << "qan::Graph::insertGroup<>(): Error: style() factory has returned a nullptr style.";
-    }
+        if (group) {       // Notify user.
+            onNodeInserted(*group);
+            emit nodeInserted(group.get());
+        }
+    } // group is not nullptr
+
     return group.get();
 
 }

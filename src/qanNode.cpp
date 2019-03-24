@@ -139,6 +139,22 @@ QAbstractItemModel* Node::qmlGetOutEdges() const
 {
     return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) );
 }
+
+std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges0() const
+{
+    std::unordered_set<qan::Edge*> edges;
+    for (const auto& in_edge_ptr: qAsConst(get_in_edges())) {
+        const auto in_edge = in_edge_ptr.lock();
+        if (in_edge)
+            edges.insert(in_edge.get());
+    }
+    for (const auto& out_edge_ptr: qAsConst(get_out_edges())) {
+        const auto out_edge = out_edge_ptr.lock();
+        if (out_edge)
+            edges.insert(out_edge.get());
+    }
+    return edges;
+}
 //-----------------------------------------------------------------------------
 
 /* Behaviours Management *///--------------------------------------------------
@@ -161,6 +177,15 @@ void    Node::setLabel( const QString& label ) noexcept
         emit labelChanged();
     }
 }
+
+void    Node::setLocked(bool locked) noexcept
+{
+    if (locked != _locked) {
+        _locked = locked;
+        emit lockedChanged();
+    }
+}
+
 //-----------------------------------------------------------------------------
 
 /* Dock Management *///--------------------------------------------------------

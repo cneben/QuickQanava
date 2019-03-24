@@ -10,8 +10,6 @@ HEADERS +=  $$PWD/src/gtpo/utils.h                \
             $$PWD/src/gtpo/edge.hpp               \
             $$PWD/src/gtpo/node.h                 \
             $$PWD/src/gtpo/node.hpp               \
-            $$PWD/src/gtpo/group.h                \
-            $$PWD/src/gtpo/group.hpp              \
             $$PWD/src/gtpo/graph.h                \
             $$PWD/src/gtpo/graph.hpp              \
             $$PWD/src/gtpo/graph_property.h       \
@@ -27,10 +25,6 @@ HEADERS +=  $$PWD/src/gtpo/utils.h                \
             $$PWD/src/gtpo/graph_behaviour.hpp    \
             $$PWD/src/gtpo/node_behaviour.h       \
             $$PWD/src/gtpo/node_behaviour.hpp     \
-            $$PWD/src/gtpo/group_behaviour.h      \
-            $$PWD/src/gtpo/group_behaviour.hpp    \
-            $$PWD/src/gtpo/adjacent_behaviour.h   \
-            $$PWD/src/gtpo/adjacent_behaviour.hpp \
             $$PWD/src/gtpo/container_adapter.h    \
             $$PWD/src/gtpo/GTpo.h
 

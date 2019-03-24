@@ -100,11 +100,6 @@ Qan.GraphView {
                 onClicked: graph.connectorEnabled = checked
             }
             CheckBox {
-                text: qsTr("hEdge Enabled")
-                checked: graph.connectorHEdgeEnabled
-                onClicked: graph.connectorHEdgeEnabled = checked
-            }
-            CheckBox {
                 text: qsTr("Create Default Edge")
                 checked: graph.connectorCreateDefaultEdge
                 onClicked: graph.connectorCreateDefaultEdge = checked

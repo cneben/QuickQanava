@@ -46,6 +46,7 @@
 #include "./qanDraggable.h"
 #include "./qanAbstractDraggableCtrl.h"
 #include "./qanNode.h"
+#include "./qanNodeItem.h"
 #include "./qanGroup.h"
 
 namespace qan { // ::qan
@@ -59,25 +60,18 @@ class Graph;
  *
  * \nosubgrouping
  */
-class GroupItem : public QQuickItem,
-                  public qan::Selectable,
-                  public qan::Draggable
+class GroupItem : public qan::NodeItem
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
-    Q_INTERFACES(qan::Selectable)
-    Q_INTERFACES(qan::Draggable)
+    //Q_INTERFACES(qan::Selectable)
+    //Q_INTERFACES(qan::Draggable)
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
     virtual ~GroupItem() override = default;
     GroupItem( const GroupItem& ) = delete;
-
-public:
-    qan::AbstractDraggableCtrl&                 draggableCtrl();
-private:
-    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
 
@@ -92,40 +86,11 @@ private:
     QPointer<qan::Group> _group{nullptr};
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph FINAL )
-    auto    setGraph(qan::Graph* graph) noexcept -> void;
-protected:
-    //! Secure shortcut to getGroup().getGraph().
-    auto    getGraph() const noexcept -> const qan::Graph*;
-    //! \copydoc getGraph()
-    auto    getGraph() noexcept -> qan::Graph*;
-private:
-    QPointer<qan::Graph>    _graph;
-
-public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
     auto            setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Style Management *///--------------------------------------------
-    //@{
-public:
-    //! Group style object (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::Style* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void                    setStyle( qan::Style* style ) noexcept;
-    //! Generic interface for qan::DraggableCtrl<>::handleDropEvent().
-    void                    setItemStyle( qan::Style* style ) noexcept;
-    inline qan::Style*      getStyle() const noexcept { return _style.data(); }
-private:
-    QPointer<qan::Style>    _style;
-signals:
-    void                    styleChanged();
-private slots:
-    //! Called when the style associed to this group is destroyed.
-    void                    styleDestroyed( QObject* style );
-    //@}
-    //-------------------------------------------------------------------------
 
     /*! \name Selection and Sizing Management *///-----------------------------
     //@{
@@ -184,45 +149,13 @@ private:
 signals:
     //! \copydoc minimumGroupHeight
     void            minimumGroupHeightChanged();
-
-public:
-    //! Enable or disable group resizing (default to true, ie group is resizable).
-    Q_PROPERTY( bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL )
-    //! \copydoc resizable
-    inline bool     getResizable() const noexcept { return _resizable; }
-    //! \copydoc resizable
-    void            setResizable( bool resizable ) noexcept;
-protected:
-    //! \copydoc resizable
-    bool            _resizable{true};
-signals:
-    //! \copydoc resizable
-    void            resizableChanged();
-
-public:
-    //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
-    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
-    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
-    //! \brief Item used to hilight selection (usually a Rectangle quick item).
-    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
-protected:
-    virtual void    emitSelectableChanged() override { emit selectableChanged(); }
-    virtual void    emitSelectedChanged() override { emit selectedChanged(); }
-    virtual void    emitSelectionItemChanged() override { emit selectionItemChanged(); }
-signals:
-    void            selectableChanged();
-    void            selectedChanged();
-    void            selectionItemChanged();
-
-protected slots:
-    virtual void    onWidthChanged();
-    virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Collapse Management *///-----------------------------------------
     //@{
 public:
+    // FIXME document me
     Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
     inline bool getCollapsed() const noexcept { return _collapsed; }
     void        setCollapsed( bool collapsed ) noexcept;
@@ -235,35 +168,14 @@ signals:
 
     /*! \name Dragging Support Management *///---------------------------------
     //@{
-public:
-    //! \copydoc qan::Draggable::_draggable
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    //! \copydoc qan::Draggable::_dragged
-    Q_PROPERTY( bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL )
-    //! \copydoc qan::Draggable::_dropable
-    Q_PROPERTY( bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL )
-    //! \copydoc qan::Draggable::_acceptDrops
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
-protected:
-    virtual void    emitDraggableChanged() override { emit draggableChanged(); }
-    virtual void    emitDraggedChanged() override { emit draggedChanged(); }
-    virtual void    emitAcceptDropsChanged() override { emit acceptDropsChanged(); }
-    virtual void    emitDroppableChanged() override { emit droppableChanged(); }
-signals:
-    void            draggableChanged();
-    void            draggedChanged();
-    void            droppableChanged();
-    void            acceptDropsChanged();
-
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
     void            groupMoved();
 
 public:
-    /*! Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
-     * \param transformPosition set to false to avoid mapping of item position to group coordinate system (usefull for serialization).
+    /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
      */
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition = true);
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);
@@ -307,26 +219,15 @@ signals:
     void            nodeDragLeave( );
 
 protected:
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
-    //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
-    //! Internally used to accept style drops.
-    virtual void    dropEvent( QDropEvent* event ) override;
-
     virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
-    virtual void    mouseMoveEvent(QMouseEvent* event ) override;
     virtual void    mousePressEvent(QMouseEvent* event ) override;
-    virtual void    mouseReleaseEvent(QMouseEvent* event ) override;
 
 signals:
-    //! Emmited whenever the group is clicked (even at the start of a dragging operation).
+    //! Emitted whenever the group is clicked (even at the start of a dragging operation).
     void    groupClicked( qan::GroupItem* group, QPointF p );
-    //! Emmited whenever the group is double clicked.
+    //! Emitted whenever the group is double clicked.
     void    groupDoubleClicked( qan::GroupItem* group, QPointF p );
-    //! Emmited whenever the group is right clicked.
+    //! Emitted whenever the group is right clicked.
     void    groupRightClicked( qan::GroupItem* group, QPointF p );
     //@}
     //-------------------------------------------------------------------------

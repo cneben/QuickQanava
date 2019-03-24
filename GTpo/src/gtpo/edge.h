@@ -134,12 +134,6 @@ private:
     //-------------------------------------------------------------------------
 };
 
-template <class config_t = gtpo::config<>>
-class group_edge : public gtpo::edge<config_t>
-{
-
-};
-
 } // ::gtpo
 
 #endif // gtpo_edge_h

@@ -37,6 +37,7 @@
 #include <QPainter>
 
 // QuickQanava headers
+#include "./qanUtils.h"
 #include "./qanEdgeItem.h"
 #include "./qanNodeItem.h"      // Resolve forward declaration
 #include "./qanGroupItem.h"
@@ -279,7 +280,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         if ( srcNode != nullptr ) {
             const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group().lock().get());
             if ( srcNodeGroup != nullptr )
-                srcGroupItem = srcNodeGroup->getItem();
+                srcGroupItem = srcNodeGroup->getGroupItem();
         }
     }
 
@@ -297,7 +298,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
          dstNodeItem->getNode() != nullptr ) {
         auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->get_group().lock().get() );
         if ( dstNodeGroup )
-            dstGroupItem = dstNodeGroup->getItem();
+            dstGroupItem = dstNodeGroup->getGroupItem();
     }
 
     // Finally, generate dstItem wich either dstNodeItem or dstEdgeItem
@@ -344,8 +345,8 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     }
 
     // Generate edge geometry Z according to actual src and dst z
-    const qreal srcZ = srcGroupItem != nullptr ? srcGroupItem->z() + srcItem->z() : srcItem->z();
-    const qreal dstZ = dstGroupItem != nullptr ? dstGroupItem->z() + dstItem->z() : dstItem->z();
+    const qreal srcZ = qan::getItemGlobalZ_rec(srcItem);
+    const qreal dstZ = qan::getItemGlobalZ_rec(dstItem);
     cache.z = qMax(srcZ, dstZ) - 0.1;   // Edge z value should be less than src/dst value to ensure port item and selection is on top of edge
 
     if ( _style )
@@ -883,7 +884,7 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
         return;
 
     if ( cache.hidden ) {    // Apply hidden property
-        setVisible(false);
+        // Note: Do not call setVisible(false), visibility management is left up to the user
         setHidden(true);
         return;
     }
@@ -938,7 +939,7 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
     }
 
     // Edge item geometry is now valid, set the item visibility to true and "unhide" it
-    setVisible(true);
+    //setVisible(true);
     setHidden(false);
 }
 

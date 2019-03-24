@@ -48,10 +48,7 @@
 #include "./config.h"
 #include "./edge.h"
 #include "./node.h"
-#include "./group.h"
 #include "./graph_behaviour.h"
-#include "./adjacent_behaviour.h"
-#include "./group_behaviour.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -59,9 +56,6 @@ namespace gtpo { // ::gtpo
 
 template <class config_t>
 class graph;
-
-template <class config_t>
-class graph_group_adjacent_edges_behaviour;
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *
@@ -98,9 +92,10 @@ public:
     using shared_edges_t      = typename config_t::template edge_container_t< shared_edge_t >;
     using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
 
+    using group_t             = typename config_t::final_group_t;
     using shared_group_t      = typename std::shared_ptr<typename config_t::final_group_t>;
     using weak_group_t        = typename std::weak_ptr<typename config_t::final_group_t>;
-    using shared_groups_t     = typename config_t::template node_container_t< shared_group_t >;
+    using weak_groups_t       = typename config_t::template node_container_t<weak_group_t>;
 
     //! User friendly shortcut to this concrete graph behaviour.
     using behaviour = graph_behaviour< config_t >;
@@ -131,13 +126,11 @@ public:
      */
     void    clear() noexcept;
 
-    /*! \brief Test if this graph is empty, and empty graph has no nodes.
-     *
-     * // FIXME: groups are not taken into account.
+    /*! \brief Test if this graph is empty, and empty graph has no nodes nor groups.
      *
      * \return true if the graph is empty, false otherwise.
      */
-    auto    is_empty() noexcept -> bool { return get_node_count() == 0; }
+    auto    is_empty() const noexcept -> bool { return get_node_count() == 0 && get_group_count() == 0; }
     //@}
     //-------------------------------------------------------------------------
 
@@ -337,15 +330,6 @@ private:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    /*! \brief Create a new node group with class name \c className and insert it into the graph.
-     *
-     * Complexity is O(1).
-     * \arg className desired class name for the create node group (default to gtpo::Group).
-     * \return the inserted group (if an error occurs a gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if insertion fails.
-     */
-    auto            create_group() noexcept( false ) -> weak_group_t;
-
     /*! \brief Insert a node group into the graph.
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
@@ -369,7 +353,7 @@ public:
     inline auto     get_group_count() const noexcept -> int { return static_cast<int>( _groups.size() ); }
 
     //! Graph main edges container.
-    inline auto     get_groups() const noexcept -> const shared_groups_t& { return _groups; }
+    inline auto     get_groups() const noexcept -> const weak_groups_t& { return _groups; }
 
     /*! \brief Insert an existing node \c node in group \c group.
      *
@@ -380,9 +364,6 @@ public:
      */
     auto            group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void;
 
-    //! \copydoc group_node()
-    auto            group_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void;
-
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *
      * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
@@ -390,12 +371,10 @@ public:
      *
      * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
      */
-    auto            ungroup_node( weak_node_t weakNode, weak_group_t weakGroup ) noexcept(false) -> void;
+    auto            ungroup_node( weak_node_t weakNode, weak_node_t weakGroup ) noexcept(false) -> void;
 
-    //! \copydoc ungroup_node()
-    auto            ungroup_node( weak_group_t weakGroupNode, weak_group_t weakGroup ) noexcept(false) -> void;
 private:
-    shared_groups_t    _groups;
+    weak_groups_t   _groups;
     //@}
     //-------------------------------------------------------------------------
 };

@@ -114,8 +114,9 @@ public:
 
     /*! \brief Similar to QQuickItem::childAt() method, except that it only take groups into account (and is hence faster, but still O(n)).
      *
+     * \arg except Return every compatible group except \c except (can be nullptr).
      */
-    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s ) const;
+    Q_INVOKABLE qan::Group* groupAt( const QPointF& p, const QSizeF& s, const QQuickItem* except = nullptr) const;
 
 public:
     /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
@@ -168,16 +169,6 @@ signals:
     void            connectorColorChanged();
 private:
     QColor          _connectorColor{30, 144, 255};  // dodgerblue=rgb(30, 144, 255)
-
-public:
-    //! Alias to VisualConnector::hEdgeEnabled (default to false).
-    Q_PROPERTY( bool connectorHEdgeEnabled READ getConnectorHEdgeEnabled WRITE setConnectorHEdgeEnabled NOTIFY connectorHEdgeEnabledChanged FINAL )
-    inline bool     getConnectorHEdgeEnabled() const noexcept { return _connectorHEdgeEnabled; }
-    void            setConnectorHEdgeEnabled( bool connectorHEdgeEnabled ) noexcept;
-signals:
-    void            connectorHEdgeEnabledChanged();
-private:
-    bool            _connectorHEdgeEnabled{false};
 
 public:
     //! Alias to VisualConnector::createDefaultEdge (default to true).
@@ -368,6 +359,7 @@ protected:
 
     /*! \brief Notify user immediately after a new node \c node has been inserted in graph.
      *
+     * \warning Since groups are node, onNodeInserted() is also emitted when insertGroup() is called.
      * \note Signal nodeInserted() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -375,6 +367,7 @@ protected:
 
     /*! \brief Notify user immediately before a node \c node is removed.
      *
+     * \warning Since groups are node, onNodeInserted() is also emitted when removeGroup() is called.
      * \note Signal nodeRemoved() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -510,19 +503,19 @@ public:
     bool                    hasGroup( qan::Group* group ) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo::graph<qan::Config>::get_group_count(); }
+    Q_INVOKABLE int         getGroupCount( ) const { return gtpo_graph_t::get_group_count(); }
 
-    //! \copydoc gtpo::GenGraph::groupNode()
-    Q_INVOKABLE void        groupNode( qan::Group* group, qan::Node* node, bool transformPosition = true ) noexcept(false);
-
-    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
-    void                    groupNode( qan::Group*, qan::Group* ) noexcept(false) { }
+    /*! \brief Group a node  \c node inside \c group group.
+     *
+     * To disable node item coordinates transformation to group item, set transform to false then
+     * manually position node item.
+     *
+     * \sa gtpo::GenGraph::groupNode()
+     */
+    Q_INVOKABLE void        groupNode(qan::Group* group, qan::Node* node, bool transform = true) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
-    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept(false);
-
-    //! Empty, defined to provide a compatible interface for qan::DraggableCtrl<>.
-    void                    ungroupNode( qan::Group*, qan::Group* ) noexcept(false) { }
+    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept;
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
@@ -603,10 +596,10 @@ public:
      * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
      * method will always return false.
      */
-    bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers );
+    bool            selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers = Qt::NoModifier );
 
     //! Similar to selectNode() for qan::Group (internally group is a node).
-    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers );
+    bool            selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     /*! \brief Add a node in the current selection.
      */
@@ -758,6 +751,43 @@ private:
 protected:
     //! Create a dock item from an existing dock item delegate.
     QPointer<QQuickItem>     createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Stacking Management *///-----------------------------------------
+    //@{
+public:
+    /*! \brief Send a graphic item (either a node or a group) to top.
+     *
+     * \note When item is a group, the node is moved to top inside it's group, and group is also send
+     * to top.
+     * \note Method is non const as it might affect \c maxZ property.
+     */
+    Q_INVOKABLE void    sendToFront(QQuickItem* item);
+
+    /*! \brief Iterate over all graph container items and update the maxZ property.
+     *
+     * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
+     * maxZ after in serialization for example).
+     */
+    Q_INVOKABLE void    updateMaxZ() noexcept;
+
+    /*! \brief Maximum global z for nodes and groups.
+     *
+     * \note By global we mean that z value for a node parented to a group is parent(s) group(s)
+     * a plus item z.
+     */
+    Q_PROPERTY( qreal   maxZ READ getMaxZ CONSTANT FINAL )
+    inline qreal        getMaxZ() const noexcept { return _maxZ; }
+private:
+    qreal               _maxZ = 0.;
+
+protected:
+    /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.
+     *
+     * \return 0. if there is no child, maximum child z value otherwise.
+     */
+    auto                maxChildsZ(QQuickItem* item) const noexcept -> qreal;
     //@}
     //-------------------------------------------------------------------------
 

@@ -99,7 +99,7 @@ public:
 
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
-private:
+protected:
     std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
@@ -278,6 +278,7 @@ protected:
     virtual void    mouseReleaseEvent(QMouseEvent* event) override;
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Style Management *///--------------------------------------------
     //@{

@@ -40,6 +40,17 @@
 
 namespace gtpo { // ::gtpo
 
+/* Adjacent Edges Collection *///----------------------------------------------
+template <class graph_t>
+auto    collect_adjacent_edges(const typename graph_t::weak_node_t& node) noexcept -> std::unordered_set<typename graph_t::weak_node_t>
+{
+    std::unordered_set<typename graph_t::weak_node_t> edges;
+
+    return edges;   // RVO
+}
+//-----------------------------------------------------------------------------
+
+
 /* Iterative Graph Traversal Algorithms *///-----------------------------------
 namespace impl { // ::gtpo::impl
 

@@ -41,17 +41,14 @@
 
 namespace qan { // ::qan
 
-using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
+//using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
 
 /* Group Object Management *///------------------------------------------------
 GroupItem::GroupItem( QQuickItem* parent ) :
-    QQuickItem{ parent }
+    qan::NodeItem{ parent }
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
-    _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<GroupDraggableCtrl>()};
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->setTargetItem(this);
 
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
@@ -63,35 +60,24 @@ GroupItem::GroupItem( QQuickItem* parent ) :
     // Update adjacent edges z when group item z is modified.
     connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
 
-    connect( this, &qan::GroupItem::widthChanged,
-             this, &qan::GroupItem::onWidthChanged );
-    connect( this, &qan::GroupItem::heightChanged,
-             this, &qan::GroupItem::onHeightChanged );
-
-    setStyle( qan::Group::style() );
+    setItemStyle( qan::Group::style() );
     setObjectName( QStringLiteral("qan::GroupItem") );
     // Note: Do not set width and height
 }
 
-qan::AbstractDraggableCtrl& GroupItem::draggableCtrl() { Q_ASSERT(_draggableCtrl != nullptr); return *_draggableCtrl; }
-
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-auto    GroupItem::setGroup(qan::Group* group) noexcept -> void {
+auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
+{
+    // DraggableCtrl configuration is done in setNode()
+    qan::NodeItem::setNode(static_cast<qan::Node*>(group));
+
+    // Configuration specific to group
     _group = group;
     if ( group != nullptr &&            // Warning: Do that after having set _group
          group->getItem() != this )
         group->setItem(this);
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->setTarget(group);
 }
-
-auto    GroupItem::setGraph(qan::Graph* graph) noexcept -> void {
-    _graph = graph;
-    qan::Selectable::configure( this, graph );
-}
-auto    GroupItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
-auto    GroupItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
 
 auto    GroupItem::setRect(const QRectF& r) noexcept -> void
 {
@@ -131,52 +117,8 @@ void    GroupItem::setMinimumGroupHeight(qreal minimumGroupHeight) noexcept
     _minimumGroupHeight = minimumGroupHeight;
     emit minimumGroupHeightChanged();
 }
-
-void    GroupItem::setResizable( bool resizable ) noexcept
-{
-    if ( resizable != _resizable ) {
-        _resizable = resizable;
-        emit resizableChanged();
-    }
-}
 //-----------------------------------------------------------------------------
 
-
-/* Style Management *///-------------------------------------------------------
-void    GroupItem::setStyle( qan::Style* style ) noexcept
-{
-    if ( style != _style ) {
-        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, nullptr,
-                                 this,   nullptr );
-        _style = style;
-        if ( _style )
-            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
-                     this,      &GroupItem::styleDestroyed );
-        emit styleChanged( );
-    }
-}
-
-void    GroupItem::setItemStyle( qan::Style* style ) noexcept { setStyle( style ); }
-
-void    GroupItem::styleDestroyed( QObject* style )
-{
-    if ( style != nullptr )
-        setStyle( nullptr );   // Set default style when current style is destroyed
-}
-//-----------------------------------------------------------------------------
-
-/* Selection Management *///---------------------------------------------------
-void    GroupItem::onWidthChanged()
-{
-    qan::Selectable::configureSelectionItem();
-}
-
-void    GroupItem::onHeightChanged()
-{
-    qan::Selectable::configureSelectionItem();
-}
-//-----------------------------------------------------------------------------
 
 /* Collapse Management *///----------------------------------------------------
 void    GroupItem::setCollapsed( bool collapsed ) noexcept
@@ -184,8 +126,9 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
     if ( _group &&
          collapsed != _collapsed ) {
         _collapsed = collapsed;
-        for ( auto weakEdge : _group->get_adjacent_edges() ) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
-            const auto edge = weakEdge.lock() ;
+
+        const auto adjacentEdges = _group->collectAdjacentEdges();
+        for (auto edge : adjacentEdges) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
             if ( edge &&
                  edge->getItem() != nullptr )
                 edge->getItem()->setVisible( !collapsed );
@@ -193,7 +136,7 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
         if ( qan::Selectable::getSelectionItem() )              // Hide selection item when group is collapsed
             qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
 
-        if ( !collapsed )
+        if (!collapsed)
             groupMoved();   // Force update of all adjacent edges
         emit collapsedChanged();
     }
@@ -205,11 +148,12 @@ void    GroupItem::groupMoved()
 {
     if ( _collapsed )   // Do not update edges when the group is collapsed
         return;
+
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
     if ( _group ) {
-        for ( auto weakEdge : _group->get_adjacent_edges() ) {
-            qan::Edge* edge = weakEdge.lock().get();
+        auto adjacentEdges = _group->collectAdjacentEdges();
+        for ( auto edge : adjacentEdges ) {
             if ( edge != nullptr &&
                  edge->getItem() != nullptr )
                 edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility
@@ -217,7 +161,7 @@ void    GroupItem::groupMoved()
     }
 }
 
-void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition )
+void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
@@ -230,10 +174,14 @@ void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transformPosition
     if ( !getContainer()->isVisible() )     // drop, but emit a warning...
         qWarning() << "qan::GroupItem::groupNodeItem(): Warning: grouping a node item while the group is collapsed.";
 
-    if ( transformPosition )
-        nodeItem->setPosition( nodeItem->mapToItem( getContainer(), QPointF{0., 0.} ) );
-    nodeItem->setParentItem( getContainer() );
-    groupMoved(); // Force call to groupMoved() to update group adjacent edges
+    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
+    if (transform) {
+        const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
+        groupPos = getContainer()->mapFromGlobal(globalPos);
+    }
+    nodeItem->setPosition(groupPos);
+    nodeItem->setParentItem(getContainer());
+    groupMoved();           // Force call to groupMoved() to update group adjacent edges
     endProposeNodeDrop();
 }
 
@@ -252,75 +200,29 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
     }
 }
 
-void    GroupItem::dragEnterEvent( QDragEnterEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    if ( ! groupDraggableCtrl->handleDragEnterEvent(event) )
-        event->ignore();
-    QQuickItem::dragEnterEvent( event );
-}
-
-void	GroupItem::dragMoveEvent( QDragMoveEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleDragMoveEvent(event);
-    QQuickItem::dragMoveEvent( event );
-}
-
-void	GroupItem::dragLeaveEvent( QDragLeaveEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleDragLeaveEvent(event);
-    QQuickItem::dragLeaveEvent( event );
-}
-
-void    GroupItem::dropEvent( QDropEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleDropEvent(event);
-    QQuickItem::dropEvent( event );
-}
-
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleMouseDoubleClickEvent(event);
-
+    qan::NodeItem::mouseDoubleClickEvent(event);
     if ( event->button() == Qt::LeftButton )
         emit groupDoubleClicked( this, event->localPos() );
 }
 
-void    GroupItem::mouseMoveEvent(QMouseEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleMouseMoveEvent(event);
-    QQuickItem::mouseMoveEvent(event);
-}
-
 void    GroupItem::mousePressEvent( QMouseEvent* event )
 {
-    forceActiveFocus();
+    qan::NodeItem::mouseDoubleClickEvent(event);
 
     // Selection management
     if ( event->button() == Qt::LeftButton &&
          getGroup() &&
          isSelectable() ) {
-        if ( _graph )
-            _graph->selectGroup( *getGroup(), event->modifiers() );
+        if ( getGraph() )
+            getGraph()->selectGroup( *getGroup(), event->modifiers() );
     }
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleMousePressEvent(event);
 
     if ( event->button() == Qt::LeftButton )
         emit groupClicked( this, event->localPos() );
     else if ( event->button() == Qt::RightButton )
         emit groupRightClicked( this, event->localPos() );
-}
-
-void    GroupItem::mouseReleaseEvent( QMouseEvent* event )
-{
-    const auto groupDraggableCtrl = static_cast<GroupDraggableCtrl*>(_draggableCtrl.get());
-    groupDraggableCtrl->handleMouseReleaseEvent(event);
 }
 //-----------------------------------------------------------------------------
 

@@ -38,7 +38,6 @@
 #include "./behaviour.h"
 #include "./node.h"
 #include "./edge.h"
-#include "./group.h"
 
 namespace gtpo { // ::gtpo
 
@@ -56,7 +55,6 @@ public:
 
     using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
-    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
 
     /*! \name Graph Notification Interface *///--------------------------------
     //@{
@@ -68,9 +66,9 @@ public:
 
 public:
     //! Called immediatly after group \c weakGroup has been inserted in graph.
-    void    group_inserted( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    void    group_inserted( weak_node_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //! Called immediatly before group \c weakGroup is removed from graph.
-    void    group_removed( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    void    group_removed( weak_node_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
 
 public:
     //! Called immediatly after \c weakEdge has been inserted.
@@ -97,13 +95,12 @@ public:
 
     using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
-    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     void    node_inserted( weak_node_t& weakNode ) noexcept { on_node_inserted(weakNode); }
     void    node_removed( weak_node_t& weakNode) noexcept { on_node_removed(weakNode); }
-    void    group_inserted( weak_group_t& weakGroup ) noexcept { on_group_inserted(weakGroup); }
-    void    group_removed( weak_group_t& weakGroup ) noexcept { on_group_removed(weakGroup); }
+    void    group_inserted( weak_node_t& weakGroup ) noexcept { on_group_inserted(weakGroup); }
+    void    group_removed( weak_node_t& weakGroup ) noexcept { on_group_removed(weakGroup); }
     void    edge_inserted( weak_edge_t& weakEdge ) noexcept { on_edge_inserted(weakEdge); }
     void    edge_removed( weak_edge_t& weakEdge ) noexcept { on_edge_removed(weakEdge); }
 
@@ -116,9 +113,9 @@ protected:
     virtual void    on_node_removed( weak_node_t& weakNode) noexcept { static_cast<void>(weakNode); }
 
     //! Called immediatly after group \c weakGroup has been inserted in graph.
-    virtual void    on_group_inserted( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    virtual void    on_group_inserted( weak_node_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
     //! Called immediatly before group \c weakGroup is removed from graph.
-    virtual void    on_group_removed( weak_group_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
+    virtual void    on_group_removed( weak_node_t& weakGroup ) noexcept { static_cast<void>(weakGroup); }
 
 protected:
     //! Called immediatly after \c weakEdge has been inserted.
@@ -147,7 +144,6 @@ public:
 
     using weak_node_t      = std::weak_ptr<typename config_t::final_node_t>;
     using weak_edge_t      = std::weak_ptr<typename config_t::final_edge_t>;
-    using weak_group_t     = std::weak_ptr<typename config_t::final_group_t>;
 
 public:
     template < class primitive_t >
@@ -167,12 +163,12 @@ public:
         if ( graph != nullptr )
             graph->notify_dynamic_behaviours( &dynamic_graph_behaviour<config_t>::node_removed, weakNode );
     }
-    void    group_inserted( weak_group_t& weakGroup ) noexcept {
+    void    group_inserted( weak_node_t& weakGroup ) noexcept {
         const auto graph = get_primitive_graph(weakGroup);
         if ( graph != nullptr )
             graph->notify_dynamic_behaviours( &dynamic_graph_behaviour<config_t>::group_inserted, weakGroup );
     }
-    void    group_removed( weak_group_t& weakGroup ) noexcept {
+    void    group_removed( weak_node_t& weakGroup ) noexcept {
         const auto graph = get_primitive_graph(weakGroup);
         if ( graph != nullptr )
             graph->notify_dynamic_behaviours( &dynamic_graph_behaviour<config_t>::group_removed, weakGroup );

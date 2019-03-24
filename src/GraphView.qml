@@ -98,6 +98,13 @@ Qan.AbstractGraphView {
         groupResizer.target = null
         groupResizer.visible = false
 
+        // Hide the default visual edge connector
+        if (graph &&
+            graph.connectorEnabled &&
+            graph.connector &&
+            graph.connector.visible)
+            graph.connector.visible = false
+
         graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
     }
     onRightClicked: graphView.focus = true
@@ -107,7 +114,7 @@ Qan.AbstractGraphView {
         if ( graph &&
              port ) {
             if (port.node)    // Force port host node on top
-                sendToTop(port.node)
+                graph.sendToFront(port.node.item)
             if (graph.connector &&
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
@@ -118,16 +125,6 @@ Qan.AbstractGraphView {
     onPortRightClicked: { }
 
     // Node management ////////////////////////////////////////////////////////
-    function    sendToTop(node) {
-        if (node) {
-            if (node.item) {
-                maxZ = Math.max( node.item.z + 1, maxZ + 1 )
-                node.item.z = maxZ + 1;
-            }
-            if ( node.group )
-                sendGroupToTop(node.group)
-        }
-    }
 
     // Dynamically handle currently selected node item onRatioChanged() signal
     Connections { // and update nodeResizer ratio policy (selected node is nodeResizer target)
@@ -147,13 +144,16 @@ Qan.AbstractGraphView {
         if ( graph &&
              node &&
              node.item ) {
-            sendToTop(node)
+            graph.sendToFront(node.item)
+            if (node.locked)                // Do not show any connector for locked node/groups
+                return;
             if ( graph.connector &&
                  graph.connectorEnabled &&
                  ( node.item.connectable === Qan.NodeItem.Connectable ||
                    node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
+                graph.connector.visible = true
                 graph.connector.sourceNode = node
-                // FIXME: connector remove that....
+                // Connector should be half on top of node
                 graph.connector.y = -graph.connector.height / 2
             }
             if ( node.item.resizable ) {
@@ -182,15 +182,9 @@ Qan.AbstractGraphView {
     }
 
     // Group management ///////////////////////////////////////////////////////
-    function sendGroupToTop(group) {
-        if ( group && group.item ) {
-            maxZ = Math.max( group.item.z + 1, maxZ + 1 )
-            group.item.z = maxZ + 1;
-        }
-    }
-
     onGroupClicked: {
-        sendGroupToTop(group)
+        if ( group && graph )
+            graph.sendToFront(group.item)
 
         if ( graph &&
              group && group.item &&
@@ -222,7 +216,7 @@ Qan.AbstractGraphView {
         }
     }
 
-    onGroupRightClicked: sendGroupToTop(group)
-    onGroupDoubleClicked: sendGroupToTop(group)
+    onGroupRightClicked: graph.sendToFront(group)
+    onGroupDoubleClicked: graph.sendToFront(group)
 } // Qan.GraphView
 

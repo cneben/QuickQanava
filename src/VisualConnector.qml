@@ -47,14 +47,8 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.Connector {
     id: visualConnector
-    width: radius * 2;  height: radius * 2
-    x: parent.width + connectorMargin;  y: topMargin
 
-    visible: false
-    selectable: false
-    clip: false; antialiasing: true
-
-    // Public
+    // Public /////////////////////////////////////////////////////////////////
     //! Edge color (default to black).
     property color  edgeColor: Qt.rgba(0,0,0,1)
 
@@ -85,7 +79,13 @@ Qan.Connector {
             edgeItem.color = edgeColor
     }
 
-    // Private properties
+    // Private ////////////////////////////////////////////////////////////////
+    width: radius * 2;  height: radius * 2
+    x: parent.width + connectorMargin;  y: topMargin
+
+    visible: false
+    selectable: false
+    clip: false; antialiasing: true
 
     /*! \brief Internally used to reset correct connector position according to current node
      *  or port configuration, also restore position bindings to source.
@@ -127,6 +127,9 @@ Qan.Connector {
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
         if ( connectorItem )
             connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
+
+        if (edgeItem && !visible)       // Force hiding the connector edge item
+            edgeItem.visible = false
     }
 
     Drag.active: dropDestArea.drag.active
@@ -140,17 +143,23 @@ Qan.Connector {
         if ( !Drag.target &&
              connectorItem ) {
             connectorItem.state = "NORMAL"
-        } else {
-            if ( sourceNode &&
-                 sourceNode.item &&
-                 Drag.target === sourceNode.item ) {    // Do not create a circuit on source node
-                 connectorItem.state = "NORMAL"
-            } else if ( ( Drag.target.node &&
-                          ( Drag.target.connectable === Qan.NodeItem.Connectable ||
-                            Drag.target.connectable === Qan.NodeItem.InConnectable    ) ) ||             // Hilight only on a node target OR an edge target IF hyper edge creation is enabled
-                        ( hEdgeEnabled && Drag.target.edge ) )
-            {
-                connectorItem.state = "HILIGHT"
+            return;
+        }
+        // Drag.target is valid, trying to find a valid target
+        if (sourceNode && sourceNode.item) {
+            if ( Drag.target === sourceNode.item ) { // Prevent creation of a circuit on source node
+                connectorItem.state = "NORMAL"
+            } else if ( sourceNode.group &&
+                        sourceNode.group.item &&
+                        Drag.target === sourceNode.group.item ) { // Prevent creation of an edge from source node to it's own group
+                connectorItem.state = "NORMAL"
+            } else {
+                // Potentially, we have a valid node or group target
+                var target = Drag.target.group ? Drag.target.group : Drag.target.node
+                var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
+                        Drag.target.connectable === Qan.NodeItem.InConnectable
+                if ( target && connectable )
+                    connectorItem.state = "HILIGHT"
             }
         }
     }
@@ -194,15 +203,21 @@ Qan.Connector {
         onReleased: {
             if ( connectorItem.state === "HILIGHT" ) {
                 connectorReleased(visualConnector.Drag.target)
-                configureConnectorPosition()
-            } else {
-                edgeItem.visible = false
-                configureConnectorPosition()
             }
+            configureConnectorPosition()
+            if (edgeItem)       // Hide the edgeItem after a mouse release or it could
+                edgeItem.visible = false    // be visible on non rectangular nodes.
         }
         onPressed : {
+            console.error("onPressed")
+            console.error("PRE edgeItem.visible=" + edgeItem.visible)
+            console.error("PRE edgeItem.hidden=" + edgeItem.hidden)
             mouse.accepted = true
             connectorPressed()
+            if (edgeItem)
+                edgeItem.visible = true
+            console.error("POST edgeItem.visible=" + edgeItem.visible)
+            console.error("POST edgeItem.hidden=" + edgeItem.hidden)
         }
     } // MouseArea: dropDestArea
 }

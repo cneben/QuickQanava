@@ -51,8 +51,6 @@ Qan.NodeItem {
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent
-        ColumnLayout {
-            anchors.fill: parent
             Image {
                 anchors.fill: parent; anchors.margins: 2
                 source: node.source
@@ -61,6 +59,5 @@ Qan.NodeItem {
                     color: node.tintColor
                 }
             }
-        }
     }
 }

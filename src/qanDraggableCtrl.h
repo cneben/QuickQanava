@@ -54,30 +54,29 @@ namespace qan { // ::qan
  *
  * \nosubgrouping
  */
-template < class Node_t, class NodeItem_t >
 class DraggableCtrl : public qan::AbstractDraggableCtrl
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
 public:
     //! DraggableCtrl constructor.
-    explicit DraggableCtrl();
-    virtual ~DraggableCtrl();
+    explicit DraggableCtrl() = default;
+    virtual ~DraggableCtrl() override = default;
     DraggableCtrl( const DraggableCtrl& ) = delete;
 
 public:
-    inline auto getTarget() noexcept -> Node_t* { return _target.data(); }
-    inline auto getTarget() const noexcept -> const Node_t* { return _target.data(); }
-    inline auto setTarget(Node_t* target) noexcept { _target = target; }
+    inline auto getTarget() noexcept -> qan::Node* { return _target.data(); }
+    inline auto getTarget() const noexcept -> const qan::Node* { return _target.data(); }
+    inline auto setTarget(qan::Node* target) noexcept { _target = target; }
 private:
-    QPointer<Node_t>    _target{nullptr};
+    QPointer<qan::Node>    _target{nullptr};
 
 public:
-    inline auto getTargetItem() noexcept -> NodeItem_t* { return _targetItem.data(); }
-    inline auto getTargetItem() const noexcept -> const NodeItem_t* { return _targetItem.data(); }
-    inline auto setTargetItem(NodeItem_t* targetItem) noexcept { _targetItem = targetItem; }
+    inline auto getTargetItem() noexcept -> qan::NodeItem* { return _targetItem.data(); }
+    inline auto getTargetItem() const noexcept -> const qan::NodeItem* { return _targetItem.data(); }
+    inline auto setTargetItem(qan::NodeItem* targetItem) noexcept { _targetItem = targetItem; }
 private:
-    QPointer<NodeItem_t>    _targetItem{nullptr};
+    QPointer<qan::NodeItem>    _targetItem{nullptr};
 
 protected:
     inline qan::Graph*  getGraph() noexcept { return _target ? _target->getGraph() : nullptr; }
@@ -99,16 +98,17 @@ public:
 
 public:
     //! \c dragInitialMousePos in window coordinate system.
-    virtual void    beginDragMove( const QPointF& dragInitialMousePos, bool dragSelection = true ) override;
+    virtual void    beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection = true) override;
     //! \c delta in scene coordinate system.
-    virtual void    dragMove( const QPointF& dragInitialMousePos, const QPointF& delta, bool dragSelection = true ) override;
-    virtual void    endDragMove( bool dragSelection = true ) override;
+    virtual void    dragMove(const QPointF& delta, bool dragSelection = true) override;
+    virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
     //! Initial global mouse position at the beginning of a node drag operation.
-    QPointF                 _dragInitialMousePos{ 0., 0. };
+    //QPointF                 _dragInitialMousePos{ 0., 0. };
     //! Node position at the beginning of a node drag.
-    QPointF                 _dragInitialPos{ 0., 0. };
+    //QPointF                 _dragInitialPos{ 0., 0. };
+    QPointF                 _dragLastPos{ 0., 0. };
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer<qan::Group>    _lastProposedGroup{ nullptr };
     //@}
@@ -116,7 +116,5 @@ private:
 };
 
 } // ::qan
-
-#include "./qanDraggableCtrl.hpp"
 
 #endif // qanDraggableCtrl_h

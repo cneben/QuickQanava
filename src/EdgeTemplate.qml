@@ -268,7 +268,7 @@ Item {
             }
         }
     }
-    // Debug control points display code. FIXME: remove that for final release
+    // Debug control points display code.
     /*
     Rectangle {
         width: 8; height: 8

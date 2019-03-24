@@ -54,7 +54,7 @@ class GroupItem;
  *
  * \nosubgrouping
  */
-class Group : public gtpo::group<qan::Config>
+class Group : public qan::Node
 {
     /*! \name Group Object Management *///-------------------------------------
     //@{
@@ -65,8 +65,10 @@ public:
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
-    virtual ~Group();
+    virtual ~Group() override = default;
     Group( const Group& ) = delete;
+
+    using gtpo_node_t = gtpo::node<qan::Config>;
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
     //! Shortcut to gtpo::group<>::getGraph().
@@ -74,15 +76,17 @@ public:
     //! \copydoc getGraph()
     const qan::Graph*   getGraph() const noexcept;
 
+    /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
+     *
+     */
+    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
+
 public:
     friend class qan::GroupItem;
 
-    Q_PROPERTY( qan::GroupItem* item READ getItem CONSTANT FINAL )
-    qan::GroupItem*         getItem() noexcept;
-    const qan::GroupItem*   getItem() const noexcept;
-    void                    setItem(qan::GroupItem* item) noexcept;
-private:
-    QPointer<qan::GroupItem> _item;
+    qan::GroupItem*         getGroupItem() noexcept;
+    const qan::GroupItem*   getGroupItem() const noexcept;
+    virtual void            setItem(qan::NodeItem* item) noexcept override;
 
 public:
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
@@ -115,19 +119,6 @@ public:
 public:
     //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Appearance Management *///---------------------------------------
-    //@{
-public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    void        setLabel( const QString& label ) { _label = label; emit labelChanged( ); }
-    QString     getLabel( ) const { return _label; }
-private:
-    QString     _label = QString{ "" };
-signals:
-    void        labelChanged( );
     //@}
     //-------------------------------------------------------------------------
 
