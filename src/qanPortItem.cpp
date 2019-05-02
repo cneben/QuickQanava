@@ -53,7 +53,16 @@ PortItem::PortItem(QQuickItem* parent) :
     setType(Type::InOut);
 }
 
-PortItem::~PortItem() { /* Nil */ }
+PortItem::~PortItem() {
+//    for(auto inEdge : _inEdgeItems) {
+//        if (inEdge && inEdge->parent() == Q_NULLPTR)
+//            inEdge->deleteLater();
+//    }
+//    for(auto outEdge : _outEdgeItems){
+//        if (outEdge && outEdge->parent() == Q_NULLPTR)
+//            outEdge->deleteLater();
+//    }
+}
 //-----------------------------------------------------------------------------
 
 /* Port Properties Management *///---------------------------------------------

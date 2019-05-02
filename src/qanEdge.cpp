@@ -52,8 +52,30 @@ Edge::Edge() :
 
 Edge::~Edge()
 {
-    if ( _item )
+    //qDebug() << "Edge::~Edge():: deleting edge";
+    if ( _item ) {
+        NodeItem* sourceItem = _item->getSourceItem();
+        if (sourceItem) {
+            PortItem* sourcePortItem = dynamic_cast<PortItem*>(sourceItem);
+            if (sourcePortItem) {
+                if (sourcePortItem->getOutEdgeItems().removeAll(_item.data())) {
+                    //qDebug() << "Edge::~Edge():: removed sourcePortItem!";
+                }
+            }
+        }
+
+        NodeItem* destinationItem = _item->getDestinationItem();
+        if (destinationItem) {
+            PortItem* destinationPortItem = dynamic_cast<PortItem*>(destinationItem);
+            if (destinationPortItem) {
+                if (destinationPortItem->getInEdgeItems().removeAll(_item.data())) {
+                    //qDebug() << "Edge::~Edge():: removed destinationPortItem!";
+                }
+            }
+        }
+
         _item->deleteLater();
+    }
 }
 
 qan::Graph* Edge::getGraph() noexcept {
