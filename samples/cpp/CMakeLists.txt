@@ -13,7 +13,6 @@ set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(cpp_sample ${source_files} cpp_sample.qrc)
 target_link_libraries(cpp_sample PUBLIC QuickQanava Qt5::QuickControls2)
 
@@ -24,7 +23,4 @@ if(WIN32 AND DEPLOY)
     add_custom_command(TARGET sample_nodes POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_nodes>)
 endif()
-
-
-
 
