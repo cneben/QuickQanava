@@ -54,7 +54,6 @@ set (qan_header_files
 source_group("Headers" FILES ${qan_header_files})
 source_group("Sources" FILES ${qan_source_files})
 
-file (GLOB qan_qml_files ${CMAKE_CURRENT_SOURCE_DIR}/*.qml)
 set (qan_plugin_files
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.h
@@ -117,22 +116,16 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 #message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 
 # Install qmldir file
-add_custom_command(
-    TARGET ${PLUGIN_TARGET}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
-        ${DESTDIR}/qmldir
+install(
+	FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/qmldir_plugin
+	DESTINATION ${DESTDIR}
+	RENAME qmldir
 )
 
 # Install source QML files to ease debugging
-add_custom_command(
-    TARGET ${PLUGIN_TARGET}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy
-        ${qan_qml_files}
-        ${DESTDIR}
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DESTINATION ${DESTDIR}
+	FILES_MATCHING PATTERN "*.qml"
 )
 
