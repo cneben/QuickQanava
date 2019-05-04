@@ -37,7 +37,6 @@ set (qan_header_files
         qanDraggable.h
         qanAbstractDraggableCtrl.h
         qanDraggableCtrl.h
-        qanDraggableCtrl.hpp
         qanConnector.h
         qanBehaviour.h
         qanGroup.h
