@@ -79,11 +79,8 @@ NodeItem::~NodeItem()
 
     // Delete all ports
     for (auto& port : _ports) {
-        if ( port ) {
-            if (port->parent() == Q_NULLPTR) {
-                port->deleteLater();
-            }
-        }
+        if ( port && port->parent() == nullptr)
+            port->deleteLater();
     }
 }
 

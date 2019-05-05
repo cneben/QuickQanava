@@ -871,6 +871,9 @@ void    Graph::removeGroup( qan::Group* group )
     onNodeRemoved(*group);      // group are node, notify group
     emit nodeRemoved(group);    // removed as a node
 
+    if ( _selectedNodes.contains(group) )
+        _selectedNodes.removeAll(group);
+
     auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());
     gtpo_graph_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
     gtpo_graph_t::remove_group(weakNodeGroupPtr);
@@ -1140,6 +1143,7 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
     const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
     if ( nodeStyle ) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
+        // Note 20190501: CppOwnership is set in createFromComponen()
         if ( portItem != nullptr ) {
             portItem->setType(portType);
             portItem->setLabel(label);
