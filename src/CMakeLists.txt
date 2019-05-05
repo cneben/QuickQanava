@@ -1,61 +1,60 @@
 
 set( qan_source_files
-    qanGraphView.cpp
-    qanUtils.cpp
-    qanEdge.cpp
-    qanEdgeItem.cpp
-    qanNode.cpp
-    qanNodeItem.cpp
-    qanPortItem.cpp
-    qanSelectable.cpp
-    qanDraggable.cpp
-    qanConnector.cpp
-    qanBehaviour.cpp
-    qanGraph.cpp
-    qanGroup.cpp
-    qanGroupItem.cpp
-    qanStyle.cpp
-    qanStyleManager.cpp
-    qanNavigable.cpp
-    qanNavigablePreview.cpp
-    qanGrid.cpp
-    qanBottomRightResizer.cpp
+
+	qanBehaviour.cpp
+	qanBottomRightResizer.cpp
+	qanConnector.cpp
+	qanDraggable.cpp
+	qanDraggableCtrl.cpp
+	qanEdge.cpp
+	qanEdgeItem.cpp
+	qanGraph.cpp
+	qanGraphView.cpp
+	qanGrid.cpp
+	qanGroup.cpp
+	qanGroupItem.cpp
+	qanNavigable.cpp
+	qanNavigablePreview.cpp
+	qanNode.cpp
+	qanNodeItem.cpp
+	qanPortItem.cpp
+	qanSelectable.cpp
+	qanStyle.cpp
+	qanStyleManager.cpp
+	qanUtils.cpp
 )
 
-set (qan_header_files 
-        QuickQanava
-        QuickQanava.h
-        qanUtils.h
-        qanGraphConfig.h
-        qanGraphView.h
-        qanEdge.h
-        qanEdgeItem.h
-        qanNode.h
-        qanNodeItem.h
-        qanPortItem.h
-        qanSelectable.h
-        qanDraggable.h
-        qanAbstractDraggableCtrl.h
-        qanDraggableCtrl.h
-        qanDraggableCtrl.hpp
-        qanConnector.h
-        qanBehaviour.h
-        qanGroup.h
-        qanGroupItem.h
-        qanGraph.h
-        qanGraph.hpp
-        qanStyle.h
-        qanStyleManager.h
-        qanNavigable.h
-        qanNavigablePreview.h
-        qanGrid.h
-        qanContainerAdapter.h
-        qanBottomRightResizer.h
+set (qan_header_files
+
+	qanAbstractDraggableCtrl.h
+	qanBehaviour.h
+	qanBottomRightResizer.h
+	qanConnector.h
+	qanContainerAdapter.h
+	qanDraggableCtrl.h
+	qanDraggable.h
+	qanEdge.h
+	qanEdgeItem.h
+	qanGraphConfig.h
+	qanGraph.h
+	qanGraphView.h
+	qanGrid.h
+	qanGroup.h
+	qanGroupItem.h
+	qanNavigable.h
+	qanNavigablePreview.h
+	qanNode.h
+	qanNodeItem.h
+	qanPortItem.h
+	qanSelectable.h
+	qanStyle.h
+	qanStyleManager.h
+	qanUtils.h
+	QuickQanava.h
 )
 source_group("Headers" FILES ${qan_header_files})
 source_group("Sources" FILES ${qan_source_files})
 
-file (GLOB qan_qml_files ${CMAKE_CURRENT_SOURCE_DIR}/*.qml)
 set (qan_plugin_files
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.h
@@ -118,22 +117,16 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 #message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 
 # Install qmldir file
-add_custom_command(
-    TARGET ${PLUGIN_TARGET}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
-        ${DESTDIR}/qmldir
+install(
+	FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/qmldir_plugin
+	DESTINATION ${DESTDIR}
+	RENAME qmldir
 )
 
 # Install source QML files to ease debugging
-add_custom_command(
-    TARGET ${PLUGIN_TARGET}
-    POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy
-        ${qan_qml_files}
-        ${DESTDIR}
+install(
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DESTINATION ${DESTDIR}
+	FILES_MATCHING PATTERN "*.qml"
 )
 

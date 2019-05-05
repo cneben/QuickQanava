@@ -77,7 +77,6 @@ static const struct {
     { "LabelEditor",  2, 0 },
     { "SelectionItem",  2, 0 },
     { "StyleListView",  2, 0 },
-    { "StyleEditor",  2, 0 },
     { "HorizontalDock",  2, 0 },
     { "VerticalDock",  2, 0 },
     { "Port",  2, 0 },

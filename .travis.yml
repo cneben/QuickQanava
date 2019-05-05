@@ -20,6 +20,7 @@ matrix:
                 - qt512declarative
                 - qt512graphicaleffects
                 - qt512quickcontrols2
+                - mesa-common-dev
     - os: osx
       compiler: clang
 
