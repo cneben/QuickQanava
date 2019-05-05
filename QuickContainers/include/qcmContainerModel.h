@@ -152,7 +152,7 @@ class ContainerModel : public QAbstractListModel
     Q_OBJECT
 public:
     ContainerModel() : QAbstractListModel{nullptr} {}
-    virtual ~ContainerModel() override {}
+    virtual ~ContainerModel() override = default;
     ContainerModel(const ContainerModel&) = delete;
     ContainerModel& operator=(const ContainerModel&) = delete;
     ContainerModel(ContainerModel&&) = delete;
@@ -197,13 +197,13 @@ public:
      * }
      * \endcode
      */
-    void        setItemDisplayRole( QString displayRoleProperty ) { _displayRoleProperty = displayRoleProperty; }
+    void            setItemDisplayRole(const QString& displayRoleProperty) noexcept { _displayRoleProperty = displayRoleProperty; }
 protected:
-    QString     getItemDisplayRole( ) const { return _displayRoleProperty; }
+    const QString&  getItemDisplayRole() const { return _displayRoleProperty; }
 private:
-    QString     _displayRoleProperty{QStringLiteral("label")};
+    QString         _displayRoleProperty{QStringLiteral("label")};
 protected slots:
-    void    itemDisplayPropertyChanged() {
+    void            itemDisplayPropertyChanged() {
         QObject* qItem = sender();
         if ( qItem == nullptr )
             return;

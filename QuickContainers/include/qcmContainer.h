@@ -288,12 +288,6 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
         if ( item != nullptr ) {
-            /*connect( item, &QObject::destroyed,
-                     [this](auto o) {
-                        if (this->contains(qobject_cast<T>(o))) // Do not remove if item is no longer contained
-                            this->removeAll(qobject_cast<T>(o));
-                        } );
-                        */
             if ( _modelImpl  )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
         }
@@ -418,7 +412,7 @@ private:
     inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_type ) -> void {
         if ( deleteContent ) {
             for ( const auto& p: qAsConst(_container) )
-                delete p;   // FIXME: deleteLater() ????
+                delete p;
         }
     }
     inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_qobject_type ) -> void {
@@ -439,7 +433,6 @@ public:
     inline auto    indexOf( T item ) const noexcept -> size_t { return qcm::adapter<C, T>::indexOf( _container, item ); }
 
 private:
-    // FIXME: a using with C<T,...> would be better...
     C<T>                _container;
 public:
     //! The preffered way of accessing internal list is to use cast operator with static_cast<const Container<T>>( Container ).

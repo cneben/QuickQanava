@@ -63,7 +63,7 @@ class PortItem : public qan::NodeItem
 public:
     //! PortItem constructor.
     explicit PortItem( QQuickItem* parent = nullptr );
-    virtual ~PortItem();
+    virtual ~PortItem() override = default;
     PortItem( const PortItem& ) = delete;
     PortItem& operator=(const PortItem&) = delete;
     PortItem( PortItem&& ) = delete;
@@ -144,10 +144,6 @@ private:
     QString         _id{QStringLiteral("")};
 
 public:
-    /* Note: qcm::ContainerModel automatically monitor contained
-     * object for destruction, just delete an item with deleteLater() to
-     * remove it.
-     */
     using EdgeItems =   qcm::Container<QVector, qan::EdgeItem*>;
 
     void                addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
@@ -162,6 +158,9 @@ public:
 protected:
     EdgeItems           _inEdgeItems;
     EdgeItems           _outEdgeItems;
+
+    //! Used internally to automatically monitor in/out edges items destruction.
+    void                onEdgeItemDestroyed(QObject* obj);
     //@}
     //-------------------------------------------------------------------------
 };

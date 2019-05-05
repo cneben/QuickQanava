@@ -116,7 +116,7 @@ void    Graph::componentComplete()
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
 }
 
-void    Graph::qmlClearGraph() noexcept
+void    Graph::clearGraph() noexcept
 {
     qan::Graph::clear();
 }

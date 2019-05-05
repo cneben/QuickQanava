@@ -51,7 +51,7 @@ ApplicationWindow {
         property var targetEdge: undefined
         MenuItem {
             text: "Clear Graph"
-            onTriggered: topology.clear()
+            onTriggered: topology.clearGraph()
         }
         MenuItem {
             text: "Insert Node"
@@ -60,11 +60,6 @@ ApplicationWindow {
                 centerItem(n.item)
                 n.label = "Node #" + topology.getNodeCount()
             }
-        }
-        MenuItem {
-            text: "Insert Face Node"
-            // FIXME
-            //onTriggered: { openImageDialog.targetGraph = topology; openImageDialog.open() }
         }
         MenuItem {
             text: "Remove node"
