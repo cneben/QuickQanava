@@ -76,6 +76,15 @@ NodeItem::~NodeItem()
         if ( dockItem )
             dockItem->deleteLater();
     }
+
+    // Delete all ports
+    for (auto& port : _ports) {
+        if ( port ) {
+            if (port->parent() == Q_NULLPTR) {
+                port->deleteLater();
+            }
+        }
+    }
 }
 
 qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!=nullptr); return *_draggableCtrl; }
