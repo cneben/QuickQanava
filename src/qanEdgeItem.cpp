@@ -1150,8 +1150,24 @@ void    EdgeItem::styleModified()
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    EdgeItem::contains( const QPointF& point ) const
 {
+    const auto lineType = _style ? _style->getLineType() : qan::EdgeStyle::LineType::Straight;
+    bool r = false;
     const qreal d = distanceFromLine( point, QLineF{_p1, _p2} );
-    return ( d > 0. && d < 5. );
+    switch (lineType) {
+    case qan::EdgeStyle::LineType::Straight:
+        r = ( d > 0. && d < 5. );
+        break;
+    case qan::EdgeStyle::LineType::Curved:
+        break;
+    case qan::EdgeStyle::LineType::Ortho:
+        r = ( d > 0. && d < 5. );
+        if (!r) {
+            const qreal d2 = distanceFromLine( point, QLineF{_p2, _c1});
+            r = ( d2 > 0. && d2 < 5. );
+        }
+        break;
+    }
+    return r;
 }
 
 void    EdgeItem::dragEnterEvent( QDragEnterEvent* event )

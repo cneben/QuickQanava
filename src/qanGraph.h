@@ -99,7 +99,13 @@ public:
     /*! \brief Clear this graph topology and styles.
      *
      */
-    Q_INVOKABLE virtual void    qmlClearGraph() noexcept;
+    Q_INVOKABLE virtual void    clearGraph() noexcept;
+
+    /*! \brief If unsure, use clearGraph() to clear the graph.
+     *
+     * Warning: clear() is not virtual, ensure you are calling clear() after a correct cast to the terminal
+     * graph type you are targetting.
+     */
     void                        clear() noexcept;
 
 public:
