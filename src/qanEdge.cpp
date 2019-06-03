@@ -52,9 +52,8 @@ Edge::Edge() :
 
 Edge::~Edge()
 {
-    if ( _item ) {
+    if ( _item )
         _item->deleteLater();
-    }
 }
 
 qan::Graph* Edge::getGraph() noexcept {

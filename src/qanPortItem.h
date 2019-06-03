@@ -146,7 +146,6 @@ private:
 public:
     using EdgeItems =   qcm::Container<QVector, qan::EdgeItem*>;
 
-
     void                addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
     void                addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept;
 

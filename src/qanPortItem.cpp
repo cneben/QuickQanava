@@ -52,7 +52,6 @@ PortItem::PortItem(QQuickItem* parent) :
 
     setType(Type::InOut);
 }
-
 //-----------------------------------------------------------------------------
 
 /* Port Properties Management *///---------------------------------------------

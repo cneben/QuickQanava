@@ -741,8 +741,6 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
     if ( isEdgeDestinationBindable(inPort) ) {
         edgeItem->setDestinationItem(&inPort);
         inPort.getInEdgeItems().append(edgeItem);
-        //qDebug() << "bindEdgeDestination() number of out edge items: " << inPort.getInEdgeItems().size();
-
     }
 
     /*
