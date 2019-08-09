@@ -570,6 +570,82 @@ qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent, qan::NodeStyle* nod
     return insertNode<qan::Node>(nodeComponent, nodeStyle);
 }
 
+bool    Graph::insertNode(const SharedNode& node, QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle)
+{
+    // PRECONDITIONS:
+        // node must be dereferencable
+        // nodeComponent and nodeStyle can be nullptr
+    if (!node)
+        return false;
+
+    if ( nodeComponent == nullptr ) {
+        nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the default node delegate
+    }
+    if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
+        qWarning() << "qan::Graph::insertNode(SharedNode): Can't find a valid node delegate component.";
+        return false;
+    }
+    if ( nodeComponent->isError() ) {
+        qWarning() << "qan::Graph::insertNode(SharedNode): Component error: " << nodeComponent->errors();
+        return false;
+    }
+    try {
+        QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
+        qan::NodeItem* nodeItem = nullptr;
+        if (nodeStyle != nullptr ) {
+            _styleManager.setStyleComponent(nodeStyle, nodeComponent);
+            nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
+                                                                         *nodeStyle,
+                                                                         node.get() ) );
+        }
+        if ( nodeItem  == nullptr )
+            throw qan::Error{"Node item creation failed."};
+        nodeItem->setNode(node.get());
+        nodeItem->setGraph(this);
+        node->setItem(nodeItem);
+        auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
+
+        auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeRightClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+
+        auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
+        node->setItem(nodeItem);
+        {   // Send item to front
+            _maxZ += 1;
+            nodeItem->setZ(_maxZ);
+        }
+        gtpo_graph_t::insert_node( node );
+    } catch ( const gtpo::bad_topology_error& e ) {
+        qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
+        return false; // node eventually destroyed by shared_ptr
+    }
+    catch ( const qan::Error& e ) {
+        qWarning() << "qan::Graph::insertNode(): Error: " << e.getMsg();
+        return false; // node eventually destroyed by shared_ptr
+    }
+    catch ( ... ) {
+        qWarning() << "qan::Graph::insertNode(): Error: Topology error.";
+        return false; // node eventually destroyed by shared_ptr
+    }
+    const auto nodePtr = node.get();
+    if (nodePtr != nullptr) {       // Notify user.
+        onNodeInserted(*nodePtr);
+        emit nodeInserted(nodePtr);
+    }
+    return node.get();
+}
+
 void    Graph::removeNode( qan::Node* node )
 {
     // PRECONDITIONS:

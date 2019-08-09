@@ -349,9 +349,17 @@ public:
     template < class Node_t >
     qan::Node*              insertNonVisualNode();
 
+    /*! \brief Insert and existing node with a specific delegate component and a custom style.
+     *
+     * \warning \c node ownership is set to Cpp in current QmlEngine.
+     *
+     * \return true if \c node has been successfully inserted.
+     */
+    bool                    insertNode(const SharedNode& node, QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
+
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
-    Q_INVOKABLE void        removeNode( qan::Node* node );
+    Q_INVOKABLE void        removeNode(qan::Node* node);
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount() const noexcept;

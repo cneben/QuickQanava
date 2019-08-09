@@ -158,14 +158,14 @@ std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges0() const
 //-----------------------------------------------------------------------------
 
 /* Behaviours Management *///--------------------------------------------------
-void    Node::installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour )
+void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
 {
     // PRECONDITIONS:
         // behaviour can't be nullptr
     if ( !behaviour )
         return;
     behaviour->setHost(this);
-    add_dynamic_node_behaviour( std::move(behaviour) );
+    add_dynamic_node_behaviour(std::move(behaviour));
 }
 //-----------------------------------------------------------------------------
 
