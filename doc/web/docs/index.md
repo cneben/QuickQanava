@@ -6,9 +6,9 @@ weight: 0
 ---
 ![home](images/home.png)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++5/Qt5.8 - OSX/Clang/Qt5.9)
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux/g++6/Qt5.12.1 - OSX/Clang/Qt5.12.1)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows MSVC 2015 x64/Qt5.9)
+[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows MSVC 2015 x64/Qt5.10.1)
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -25,7 +25,7 @@ weight: 0
 
 QuickQanava main repository is hosted on GitHub: https://github.com/cneben/quickqanava
 
-QuickQanava is primarily developed with Qt >= 5.10 with MSVC2015 and g++7. minimal required Qt version is **Qt 5.10**.
+QuickQanava is primarily developed with Qt >= 5.13 with MSVC2015 and g++7. minimal required Qt version is **Qt 5.10**.
 
 + Project homepage: [http://cneben.github.io/QuickQanava/index.html](http://cneben.github.io/QuickQanava/index.html)
 
@@ -44,17 +44,17 @@ Please refer to [Installation](installation.md) manual and [Graph](graph.md), [N
 
 ## Roadmap
 
-  - **v0.11.x:**
-    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
-  - **v0.12.x:**
+  - **v0.15.x:**
+    - [X] Add full support for groups inside group (ie subgraphs).
+    - [ ] Update geometry creation interface and delegate management.
+  - **v0.16.x:**
     - [ ] Add support for direct visual dragging of port items.
-    - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
-    - [ ] Add more configuration options to qan::Edge (source and destination arrow configuration).
-  - **v1.x.x:**
+  - **v0.17.x:**
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v1.: Advanced edge visualization**
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
-
 
 

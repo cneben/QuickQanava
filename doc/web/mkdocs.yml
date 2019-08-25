@@ -37,8 +37,8 @@ markdown_extensions:
       linenums: true
   - footnotes
   - meta
-  - toc(permalink=true)
-  - pymdownx.tasklist(custom_checkbox=true)
+  - toc:
+      permalink: true
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
