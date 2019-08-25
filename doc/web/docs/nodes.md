@@ -221,10 +221,10 @@ Qan.Graph {
     graph.insertEdge(n2, n3)
 
     var gg = graph.insertGroup();
-    gg.preferredGroupWidth = 300.
-    gg.preferredGroupHeight = 250.
-    gg.minimumGroupWidth = 200.
-    gg.minimumGroupHeight = 150.
+    gg.item.preferredGroupWidth = 300.
+    gg.item.preferredGroupHeight = 250.
+    gg.item.minimumGroupWidth = 200.
+    gg.item.minimumGroupHeight = 150.
     gg.label = "Group"
   }
 } // Qan.Graph: graph

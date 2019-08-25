@@ -6,7 +6,7 @@ repo_name: 'GitHub'
 repo_url: 'https://github.com/cneben/QuickQanava'
 edit_uri: ""
 
-copyright: 'Copyright &copy; 2018 BA'
+copyright: 'Copyright &copy; 2019 BA'
 use_directory_urls: false
 
 theme: 
@@ -22,7 +22,7 @@ theme:
     code: 'Roboto Mono'
     
 extra:
-  version: '0.9.4'
+  version: '0.14.0'
   author:
     github: 'cneben'
   social:
@@ -33,7 +33,8 @@ extra:
 
 markdown_extensions:
   - admonition
-  - codehilite(linenums=true)
+  - codehilite:
+      linenums: true
   - footnotes
   - meta
   - toc(permalink=true)

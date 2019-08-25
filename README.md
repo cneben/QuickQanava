@@ -9,7 +9,7 @@ QuickQanava
 [Roadmap](#Roadmap) |
 [License](#license)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.10.1 - OSX / Clang 8.1 / Qt 5.11.1 CMake)
+[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.12.1 - OSX / Clang 8.1 / Qt 5.12.1 CMake)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows / MSVC 2015 x64 / Qt5.10.1 / qmake)
 
@@ -20,11 +20,10 @@ QuickQanava
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
++ **CHANGELOG 20190825:** Maintenance release, add more flexible content creation methods in qan::Graph.
 + **CHANGELOG 20180930:** 
     + Add support for more edge end/start geometry, add support for orthogonal edge layout.
     + v0.11.0 pre1 CMake support is broken on Windows, please use qmake builds.
-+ **CHANGELOG 20180704:** Complete refactoring of QuickQanava internal topology "backend" [GTpo](https://github.com/cneben/QuickQanava/tree/master/GTpo).
-+ **CHANGELOG 20180602:** Major documentation update (see [Custom Groups](http://cneben.github.io/QuickQanava/nodes/index.html#custom-groups) and [Graph View](http://cneben.github.io/QuickQanava/graph/index.html#graph-view) and [Using from C++](http://cneben.github.io/QuickQanava/advanced/index.html#using-from-c).
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
@@ -156,16 +155,14 @@ QuickQanava and QuickContainers plugins directories could be removed manually fr
 
 ## Roadmap / Changelog
 
-  - **v0.10.0:**	 
-    - [X] Redesign GTpo (add complete support for static/dynamic behaviours).
-    - [X] Push GTpo test coverage to 100% (ie increase coverage for subgroups).
-  - **v0.11.x:**
-    - [X] Add more configuration options to qan::Edge (source and destination arrow configuration).
-    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
-  - **v0.12.x:**
+  - **v0.15.x:**
+    - [X] Add full support for groups inside group (ie subgraphs).
+    - [ ] Update geometry creation interface and delegate management.
+  - **v0.16.x:**
     - [ ] Add support for direct visual dragging of port items.
-    - [ ] Add full support for groups inside group (ie subgraphs).
     - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+  - **v0.17.x:**
+    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
   - **v1.: Advanced edge visualization**
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
@@ -183,5 +180,5 @@ License
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017 BA
+Copyright (c) 2017-2019 BA
 
