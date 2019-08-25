@@ -554,7 +554,7 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
 //-----------------------------------------------------------------------------
 
 /* Graph Factories *///--------------------------------------------------------
-auto    Graph::insertNode( SharedNode node ) noexcept(false) -> WeakNode
+auto    Graph::insertNonVisualNode( SharedNode node ) noexcept(false) -> WeakNode
 {
     auto weakNode = gtpo_graph_t::insert_node(node);
     auto insertedNode = weakNode.lock();
@@ -777,33 +777,6 @@ void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcep
         edgeItem->setSourceItem(&outPort);
         outPort.getOutEdgeItems().append(edgeItem);
     }
-
-    /*
-    // PRECONDITION:
-        // outPort must be an Out or InOut port
-        // edge must have an associed item
-    if ( outPort.getType() != qan::PortItem::Type::Out &&
-         outPort.getType() != qan::PortItem::Type::InOut )
-        return;
-    auto edgeItem = edge.getItem();
-    if ( edgeItem != nullptr ) {
-        // Do not connect an edge to a port that has Single multiplicity and
-        // already has an in edge
-        const auto outPortInDegree = outPort.getOutEdgeItems().size();
-        switch ( outPort.getMultiplicity() ) {
-        case qan::PortItem::Multiplicity::Single:
-            if ( outPortInDegree == 0 ) {
-                edgeItem->setSourceItem(&outPort);
-                outPort.getOutEdgeItems().append(edgeItem);
-            }
-            break;
-        case qan::PortItem::Multiplicity::Multiple:
-            edgeItem->setSourceItem(&outPort);
-            outPort.getOutEdgeItems().append(edgeItem);
-            break;
-        }
-    }
-    */
 }
 
 void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
@@ -818,32 +791,6 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
         edgeItem->setDestinationItem(&inPort);
         inPort.getInEdgeItems().append(edgeItem);
     }
-
-    /*
-    // PRECONDITION:
-        // inPort must be an In or InOut port
-        // edge must have an associed item
-    if ( inPort.getType() != qan::PortItem::Type::In &&
-         inPort.getType() != qan::PortItem::Type::InOut )
-        return;
-    auto edgeItem = edge.getItem();
-    if ( edgeItem != nullptr ) {
-        // Do not connect an edge to a port that has Single multiplicity and
-        // already has an in edge
-        const auto inPortInDegree = inPort.getInEdgeItems().size();
-        switch ( inPort.getMultiplicity() ) {
-        case qan::PortItem::Multiplicity::Single:
-            if ( inPortInDegree == 0 ) {
-                edgeItem->setDestinationItem(&inPort);
-                inPort.getInEdgeItems().append(edgeItem);
-            }
-            break;
-        case qan::PortItem::Multiplicity::Multiple:
-            edgeItem->setDestinationItem(&inPort);
-            inPort.getInEdgeItems().append(edgeItem);
-            break;
-        }
-    }*/
 }
 
 bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
@@ -927,6 +874,76 @@ bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
 qan::Group* Graph::insertGroup()
 {
     return insertGroup<qan::Group>();
+}
+
+bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
+{
+    // PRECONDITIONS:
+        // group must be dereferencable
+        // groupComponent and groupStyle can be nullptr
+    if (!group)
+        return false;
+    QQmlEngine::setObjectOwnership(group.get(), QQmlEngine::CppOwnership);
+
+    qan::GroupItem* groupItem = nullptr;
+    if ( groupComponent == nullptr )
+        groupComponent = _groupDelegate.get();
+
+    if (groupStyle == nullptr)
+        groupStyle = qobject_cast<qan::NodeStyle*>(qan::Group::style());
+    if (groupStyle != nullptr &&
+        groupComponent != nullptr) {
+        // FIXME: Group styles are still not well supported (20170317)
+        //_styleManager.setStyleComponent(style, edgeComponent);
+        groupItem = static_cast<qan::GroupItem*>(createFromComponent(groupComponent,
+                                                                     *groupStyle,
+                                                                     nullptr,
+                                                                     nullptr, group.get()));
+    }
+
+    // Insertion strategy:
+        // If group delegate (groupItem) failed, insert a non visual node.
+        // Otherwise, insert a visual item.
+    if (groupItem == nullptr) {
+        gtpo_graph_t::insert_group( group );
+        return true;
+    }
+    if (groupItem == nullptr) {
+        qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
+        return false;
+    }
+    gtpo_graph_t::insert_group( group );
+    groupItem->setGroup(group.get());
+    groupItem->setGraph(this);
+    group->setItem(groupItem);
+
+    auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            emit this->groupClicked(groupItem->getGroup(), p);
+    };
+    connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
+
+    auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            emit this->groupRightClicked(groupItem->getGroup(), p);
+    };
+    connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
+
+    auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            emit this->groupDoubleClicked(groupItem->getGroup(), p);
+    };
+    connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+
+    { // Send group item to front
+        _maxZ += 1.0;
+        groupItem->setZ(_maxZ);
+    }
+    if (group) {       // Notify user.
+        onNodeInserted(*group);
+        emit nodeInserted(group.get());
+    }
+    return true;
 }
 
 void    Graph::removeGroup( qan::Group* group )

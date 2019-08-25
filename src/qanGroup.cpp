@@ -152,4 +152,16 @@ bool    Group::hasNode( qan::Node* node ) const
 }
 //-----------------------------------------------------------------------------
 
+/*! \name Group DnD Management *///----------------------------------------
+void    Group::setDraggable(bool draggable) noexcept
+{
+    if (draggable != _draggable) {
+        _draggable = draggable;
+        emit draggableChanged();
+    }
+}
+
+bool    Group::getDraggable() const noexcept { return _draggable; }
+
+
 } // ::qan

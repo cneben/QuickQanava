@@ -27,13 +27,12 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanGroupItem.h
-// \author	benoit@destrat.io
-// \date	2017 03 02
+// \file    qanGroupItem.h
+// \author  benoit@destrat.io
+// \date    2017 03 02
 //-----------------------------------------------------------------------------
 
-#ifndef qanGroupItem_h
-#define qanGroupItem_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -205,18 +204,19 @@ public:
      * \endcode
      */
     Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
-    void                    setContainer(QQuickItem* container) noexcept { _container = container; emit containerChanged( ); }
-    inline QQuickItem*      getContainer() noexcept { return _container; }
+    void                    setContainer(QQuickItem* container) noexcept;
+    QQuickItem*             getContainer() noexcept;
+    const QQuickItem*       getContainer() const noexcept;
 protected:
     QPointer<QQuickItem>    _container = nullptr;
 signals:
     void                    containerChanged();
 
 signals:
-    //! Emmited whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragEnter( );
-    //! Emmited whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragLeave( );
+    //! Emitted whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).
+    void            nodeDragEnter();
+    //! Emitted whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
+    void            nodeDragLeave();
 
 protected:
     virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
@@ -236,5 +236,3 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::GroupItem )
-
-#endif // qanGroupItem_h

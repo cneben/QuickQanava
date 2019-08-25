@@ -199,6 +199,16 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
         nodeItem->setDroppable( true );
     }
 }
+void    GroupItem::setContainer(QQuickItem* container) noexcept
+{
+    // PRECONDITIONS: None, container can be nullptr
+    if (container != _container) {
+        _container = container;
+        emit containerChanged();
+    }
+}
+QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
+const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }
 
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
 {

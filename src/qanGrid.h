@@ -250,7 +250,7 @@ private:
     //! \copydoc gridShape
     QPointer< QObject > _gridShape{nullptr};
 signals:
-    //! Emmited when a new line should be inserted in the grid internall Shape (Qt Quick Shapes) view.
+    //! Emitted when a new line should be inserted in the grid internall Shape (Qt Quick Shapes) view.
     void                addLine(QObject* line);
 
 public:

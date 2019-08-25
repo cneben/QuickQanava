@@ -318,13 +318,15 @@ public:
 
     /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
      *
+     * \warning This method is mainly for tests purposes since inserted node delegate and style is
+     * left unconfigured. HAndle with a lot of care only to insert "pure topology" non visual nodes.
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
-    auto    insertNode( SharedNode node ) noexcept(false) -> WeakNode;
+    auto    insertNonVisualNode(SharedNode node) noexcept(false) -> WeakNode;
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
-     * A gtpo::bad_topology_error could be thrown if insertion in base graph fails.
+     * gtpo::bad_topology_error is thrown if node insertion fails.
      *
      * A default node delegate must have been registered with registerNodeDelegate() if
      * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
@@ -428,7 +430,7 @@ public:
     /*! \brief Test if an edge source is actually bindable to a given port.
      *
      * This method could be used to check if an edge is bindable to a given port
-     * _before_ actually creating the edge and calling bindEdgeSource(). Port \c multiplicity
+     * _before_ creating the edge and calling bindEdgeSource(). Port \c multiplicity
      * and \c connectable properties are taken into account to return a result.
      *
      * Example: for an out port with \c Single \c multiplicity where an out edge already
@@ -482,17 +484,17 @@ signals:
      *
      *  \sa nodeClicked()
      */
-    void            edgeClicked( qan::Edge* edge, QPointF pos );
+    void            edgeClicked(qan::Edge* edge, QPointF pos);
     /*! \brief Emitted whenever a node registered in this graph is right clicked.
      *
      *  \sa nodeRightClicked()
      */
-    void            edgeRightClicked( qan::Edge* edge, QPointF pos );
+    void            edgeRightClicked(qan::Edge* edge, QPointF pos);
     /*! \brief Emitted whenever a node registered in this graph is double clicked.
      *
      *  \sa nodeDoubleClicked()
      */
-    void            edgeDoubleClicked( qan::Edge* edge, QPointF pos );
+    void            edgeDoubleClicked(qan::Edge* edge, QPointF pos);
 
     /*! \brief Emitted _after_ an edge has been inserted (usually with insertEdge()).
      */
@@ -503,21 +505,39 @@ signals:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
+    using Group             = typename Config::final_group_t;
+    using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
+
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE qan::Group* insertGroup();
 
+    /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
+     *
+     * **FIXME**
+     * gtpo::bad_topology_error is thrown if group insertion fails.
+     *
+     * **FIXME**
+     * A default node delegate must have been registered with registerNodeDelegate() if
+     * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
+     * Qan.Graph is used, with a rectangular node delegate for default node.
+     *
+     * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
+     * \note graph keep ownership of the returned node.
+     */
+    bool                    insertGroup(const SharedGroup& group, QQmlComponent* groupComponent = nullptr, qan::NodeStyle* groupStyle = nullptr);
+
     //! Insert a group using its static delegate() and style() factories.
-    template < class Group_t >
+    template <class Group_t>
     qan::Group*             insertGroup();
 
     //! Shortcut to gtpo::GenGraph<>::removeGroup().
-    Q_INVOKABLE void        removeGroup( qan::Group* group );
+    Q_INVOKABLE void        removeGroup(qan::Group* group);
 
     //! Return true if \c group is registered in graph.
-    bool                    hasGroup( qan::Group* group ) const;
+    bool                    hasGroup(qan::Group* group) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount( ) const { return gtpo_graph_t::get_group_count(); }
+    Q_INVOKABLE int         getGroupCount() const { return gtpo_graph_t::get_group_count(); }
 
     /*! \brief Group a node  \c node inside \c group group.
      *
@@ -529,18 +549,18 @@ public:
     Q_INVOKABLE void        groupNode(qan::Group* group, qan::Node* node, bool transform = true) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
-    Q_INVOKABLE void        ungroupNode( qan::Node* node, qan::Group* group = nullptr) noexcept;
+    Q_INVOKABLE void        ungroupNode(qan::Node* node, qan::Group* group = nullptr) noexcept;
 
 signals:
     /*! \brief Emitted when a group registered in this graph is clicked.
      */
-    void            groupClicked( qan::Group* group, QPointF pos );
+    void            groupClicked(qan::Group* group, QPointF pos);
     /*! \brief Emitted when a group registered in this graph is right clicked.
      */
-    void            groupRightClicked( qan::Group* group, QPointF pos );
+    void            groupRightClicked(qan::Group* group, QPointF pos);
     /*! \brief Emitted when a group registered in this graph is double clicked.
      */
-    void            groupDoubleClicked( qan::Group* group, QPointF pos );
+    void            groupDoubleClicked(qan::Group* group, QPointF pos);
     //@}
     //-------------------------------------------------------------------------
 
