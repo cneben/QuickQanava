@@ -1171,6 +1171,17 @@ void    Graph::removeFromSelection( QQuickItem* item ) {
     }
 }
 
+void    Graph::removeSelection()
+{
+    const auto& selectedNodes = getSelectedNodes();
+    for (const auto node: qAsConst(selectedNodes))
+        removeNode(node);
+    const auto& selectedGroups = getSelectedGroups();
+    for (const auto group: qAsConst(selectedGroups))
+        removeGroup(group);
+    clearSelection();
+}
+
 void    Graph::clearSelection()
 {
     // Note: getItem()->setSelected() actually _modify_ content

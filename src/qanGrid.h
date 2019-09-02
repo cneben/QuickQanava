@@ -32,8 +32,7 @@
 // \date	2017 01 29
 //-----------------------------------------------------------------------------
 
-#ifndef qanPointGrid_h
-#define qanPointGrid_h
+#pragma once
 
 // Qt headers
 #include <QtQml>
@@ -53,9 +52,9 @@ class Grid : public QQuickItem
     //@{
     Q_OBJECT
 public:
-    explicit Grid( QQuickItem* parent = nullptr );
-    virtual ~Grid() { }
-    Grid( const Grid& ) = delete;
+    explicit Grid(QQuickItem* parent = nullptr);
+    virtual ~Grid() override = default;
+    Grid(const Grid&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -64,15 +63,20 @@ public:
 public:
     /*! \brief Update the grid for a given \c viewRect in \c container coordinate system and project to \c navigable CS.
      *
-     * Base method should be called in concrete implementation, a \c false return value means
-     * incorrect arguments or grid configuration.
+     * Default implementation return false and should _not_ be called in concrete
+     * implementation
+     *
+     * \return \c false return value for incorrect arguments or grid configuration.
      */
     virtual bool    updateGrid(const QRectF& viewRect,
                                const QQuickItem& container,
-                               const QQuickItem& navigable ) noexcept = 0;
+                               const QQuickItem& navigable ) noexcept;
 protected:
-    //! Update the grid using cached settings when a grid property change.
-    virtual bool    updateGrid() noexcept = 0;
+    /*!\brief  Update the grid using cached settings when a grid property change.
+     *
+     * Default implementation return false, do not call base in overridden members.
+     */
+    virtual bool    updateGrid() noexcept;
 
 public:
     //! Color for major thicks (usually a point with qan::PointGrid), default to \c lightgrey.
@@ -131,9 +135,9 @@ class OrthoGrid : public Grid
     //@{
     Q_OBJECT
 public:
-    explicit OrthoGrid( QQuickItem* parent = nullptr );
-    virtual ~OrthoGrid();
-    OrthoGrid( const OrthoGrid& ) = delete;
+    explicit OrthoGrid(QQuickItem* parent = nullptr);
+    virtual ~OrthoGrid() override;
+    OrthoGrid(const OrthoGrid&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -191,9 +195,9 @@ class PointGrid : public OrthoGrid
     //@{
     Q_OBJECT
 public:
-    explicit PointGrid( QQuickItem* parent = nullptr );
-    virtual ~PointGrid();
-    PointGrid( const PointGrid& ) = delete;
+    explicit PointGrid(QQuickItem* parent = nullptr);
+    virtual ~PointGrid() override;
+    PointGrid(const PointGrid&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -229,7 +233,7 @@ class LineGrid : public OrthoGrid
     Q_OBJECT
 public:
     explicit LineGrid( QQuickItem* parent = nullptr );
-    virtual ~LineGrid();
+    virtual ~LineGrid() override;
     LineGrid( const LineGrid& ) = delete;
     //@}
     //-------------------------------------------------------------------------
@@ -266,10 +270,7 @@ private:
 
 }  // ::qan
 
+QML_DECLARE_TYPE( qan::Grid );
 QML_DECLARE_TYPE( qan::OrthoGrid );
 QML_DECLARE_TYPE( qan::PointGrid );
 QML_DECLARE_TYPE( qan::LineGrid );
-
-#endif // qanPointGrid_h
-
-

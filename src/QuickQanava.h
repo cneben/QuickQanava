@@ -90,6 +90,7 @@ struct QuickQanava {
         qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
         qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
+        qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "AbstractGrid");
         qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
         qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
         qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");

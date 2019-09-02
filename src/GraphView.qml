@@ -53,7 +53,7 @@ Qan.AbstractGraphView {
     Qan.LineGrid { id: lineGrid }
     grid: lineGrid
 
-    property real maxZ: -1.    // Node management ////////////////////////////////////////////////////////
+    property real   maxZ: -1.    // Node management ////////////////////////////////////////////////////////
 
     property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
     onGridThickColorChanged: {
@@ -216,7 +216,7 @@ Qan.AbstractGraphView {
         }
     }
 
-    onGroupRightClicked: graph.sendToFront(group)
-    onGroupDoubleClicked: graph.sendToFront(group)
+    onGroupRightClicked: graph.sendToFront(group.item)
+    onGroupDoubleClicked: graph.sendToFront(group.item)
 } // Qan.GraphView
 

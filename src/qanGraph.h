@@ -32,8 +32,7 @@
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanGraph_h
-#define qanGraph_h
+#pragma once
 
 // GTpo headers
 #include <gtpo/GTpo>
@@ -85,10 +84,10 @@ public:
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
     virtual ~Graph() override = default;
-    Graph( const Graph& ) = delete;
-    Graph& operator=( const Graph& ) = delete;
-    Graph( Graph&& ) = delete;
-    Graph& operator=( Graph&& ) = delete;
+    Graph(const Graph&) = delete;
+    Graph& operator=(const Graph&) = delete;
+    Graph(Graph&&) = delete;
+    Graph& operator=(Graph&&) = delete;
 public:
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
     virtual void    componentComplete() override;
@@ -648,8 +647,11 @@ public:
     //! \copydoc removeFromSelection
     void            removeFromSelection( QQuickItem* item );
 
+    //! Remove all selected nodes and groups and clear selection.
+    Q_INVOKABLE void    removeSelection();
+
     //! Clear the current selection.
-    void            clearSelection();
+    Q_INVOKABLE void    clearSelection();
 
     //! Return true if multiple node are selected.
     inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
@@ -840,5 +842,4 @@ public:
 
 QML_DECLARE_TYPE( qan::Graph::WeakNode )
 
-#endif // qanGraph_h
 

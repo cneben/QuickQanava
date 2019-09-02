@@ -351,6 +351,8 @@ private:
     void                updateGrid() noexcept;
     //! \copydoc grid
     QPointer<qan::Grid> _grid;
+
+    std::unique_ptr<qan::Grid>   _defaultGrid;
 signals:
     //! \copydoc grid
     void                gridChanged( );

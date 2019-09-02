@@ -56,6 +56,9 @@ Navigable::Navigable( QQuickItem* parent ) :
     });
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
+
+    _defaultGrid = std::make_unique<qan::Grid>();
+    setGrid(_defaultGrid.get());
 }
 //-----------------------------------------------------------------------------
 
@@ -382,7 +385,7 @@ void    Navigable::wheelEvent( QWheelEvent* event )
 void    Navigable::setGrid( qan::Grid* grid ) noexcept
 {
     if ( grid != _grid ) {
-        if ( _grid ) {                      // Hide previous grid
+        if ( _grid ) {                    // Hide previous grid
             _grid->setVisible(false);
             disconnect( _grid, nullptr,
                         this, nullptr );  // Disconnect every update signals from grid to this navigable
@@ -396,6 +399,8 @@ void    Navigable::setGrid( qan::Grid* grid ) noexcept
                      this, &Navigable::updateGrid );    // take into account any grid property change while grid was hidden.
             _grid->setVisible(true);
         }
+        if ( !_grid)
+            _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"
         updateGrid();
         emit gridChanged();
     }

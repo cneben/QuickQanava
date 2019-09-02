@@ -49,6 +49,18 @@ Grid::Grid( QQuickItem* parent ) : QQuickItem{parent}
 {
     setEnabled(false);  // Prevent event stealing, grids are not interactive
 }
+
+bool    Grid::updateGrid(const QRectF& viewRect,
+                         const QQuickItem& container,
+                         const QQuickItem& navigable ) noexcept
+{
+    Q_UNUSED(viewRect);
+    Q_UNUSED(container);
+    Q_UNUSED(navigable);
+    return false;
+}
+
+bool    Grid::updateGrid() noexcept { return false; }
 //-----------------------------------------------------------------------------
 
 /* Grid Management *///--------------------------------------------------------
