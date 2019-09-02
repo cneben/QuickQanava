@@ -344,7 +344,8 @@ public:
      */
     Q_PROPERTY( qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL )
     //! \copydoc grid
-    inline qan::Grid*   getGrid() noexcept { return _grid.data(); }
+    qan::Grid*          getGrid() noexcept { return _grid.data(); }
+    const qan::Grid*    getGrid() const noexcept { return _grid.data(); }
     void                setGrid(qan::Grid* grid) noexcept;
 private:
     //! Force update of grid.

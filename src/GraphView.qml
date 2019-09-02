@@ -50,7 +50,9 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.AbstractGraphView {
     id: graphView
-    Qan.LineGrid { id: lineGrid }
+    Qan.LineGrid {
+        id: lineGrid
+    }
     grid: lineGrid
 
     property real   maxZ: -1.    // Node management ////////////////////////////////////////////////////////

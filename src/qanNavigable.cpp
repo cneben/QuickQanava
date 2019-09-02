@@ -386,7 +386,6 @@ void    Navigable::setGrid( qan::Grid* grid ) noexcept
 {
     if ( grid != _grid ) {
         if ( _grid ) {                    // Hide previous grid
-            _grid->setVisible(false);
             disconnect( _grid, nullptr,
                         this, nullptr );  // Disconnect every update signals from grid to this navigable
         }
@@ -397,9 +396,8 @@ void    Navigable::setGrid( qan::Grid* grid ) noexcept
             _grid->setZ( -1.0 );
             connect( grid, &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
                      this, &Navigable::updateGrid );    // take into account any grid property change while grid was hidden.
-            _grid->setVisible(true);
         }
-        if ( !_grid)
+        if (!_grid)
             _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"
         updateGrid();
         emit gridChanged();

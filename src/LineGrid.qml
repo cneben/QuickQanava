@@ -38,12 +38,14 @@ import QtQuick.Shapes   1.0
 import QuickQanava      2.0 as Qan
 
 Qan.AbstractLineGrid {
+    id: lineGrid
     opacity: 0.9
     gridShape : lineGridShape
     Shape {
         id: lineGridShape
         anchors.fill: parent
         smooth: false
+        visible: lineGrid.visible
     }
     gridScale: 25
     geometryComponent: Component {

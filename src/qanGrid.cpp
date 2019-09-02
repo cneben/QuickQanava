@@ -317,6 +317,11 @@ bool    LineGrid::updateGrid( const QRectF& viewRect,
         return false;
     if ( !getGridShape() )
         return false;
+    if (!isVisible()) {
+        for ( const auto l : _lines)
+            if ( l != nullptr )
+                l->setProperty( "visible", QVariant{false});
+    }
 
     const unsigned int  gridMajor{static_cast<unsigned int>(getGridMajor())}; // On major thick every 10 minor thicks
     const qreal gridScale{getGridScale()};
