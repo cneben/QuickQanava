@@ -8,7 +8,6 @@ import "qrc:/QuickQanava"   as Qan
 
 Item {
     Qan.LineGrid { id: lineGrid }
-    Qan.PointGrid { id: pointGrid }
 
     Qan.Navigable {
         id: navigable
@@ -55,14 +54,12 @@ Item {
             textRole: "key"
             model: ListModel {
                 ListElement { key: "Lines";  value: 25 }
-                ListElement { key: "Points"; value: 50 }
                 ListElement { key: "None"; value: 50 }
             }
             currentIndex: 0 // Default to "Lines"
             onActivated: {
                 switch ( currentIndex ) {
                 case 0: navigable.grid = lineGrid; break;
-                case 1: navigable.grid = pointGrid; break;
                 case 2: navigable.grid = null; break;
                 }
             }

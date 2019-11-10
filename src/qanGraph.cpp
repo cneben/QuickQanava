@@ -1209,7 +1209,7 @@ void    Graph::clearSelection()
     _selectedGroups.clear();
 }
 
-void    Graph::mousePressEvent( QMouseEvent* event )
+void    Graph::mousePressEvent(QMouseEvent* event)
 {
     if ( event->button() == Qt::LeftButton ) {
         clearSelection();

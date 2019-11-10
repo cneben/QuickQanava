@@ -57,6 +57,8 @@ Qan.GraphView {
         }
         onNodeRightClicked: { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
         onNodeDoubleClicked: { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
+
+        onNodeMoved: notifyUser("Node <b>" + node.label + "</b> moved")
     }
     ToolTip { id: toolTip; timeout: 2500 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }

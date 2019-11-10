@@ -40,16 +40,19 @@
 // QuickQanava headers
 #include "../../src/qanNavigable.h"
 #include "../../src/qanNavigablePreview.h"
+#include "../../src/qanLineGrid.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
-    /*qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-    qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
-    qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
-    qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");*/
+
+    qmlRegisterType<qan::Navigable>("QuickQanava", 2, 0, "Navigable");
+    qmlRegisterType<qan::NavigablePreview >("QuickQanava", 2, 0, "AbstractNavigablePreview");
+    qmlRegisterType<qan::OrthoGrid>("QuickQanava", 2, 0, "OrthoGrid");
+    qmlRegisterType<qan::impl::GridLine>("QuickQanava", 2, 0, "GridLine");
+    qmlRegisterType<qan::LineGrid>("QuickQanava", 2, 0, "AbstractLineGrid");
+
     QQmlApplicationEngine engine;
     engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );

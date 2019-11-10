@@ -32,8 +32,7 @@
 // \date	2017 03 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanDraggableCtrl_h
-#define qanDraggableCtrl_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -62,7 +61,7 @@ public:
     //! DraggableCtrl constructor.
     explicit DraggableCtrl() = default;
     virtual ~DraggableCtrl() override = default;
-    DraggableCtrl( const DraggableCtrl& ) = delete;
+    DraggableCtrl(const DraggableCtrl&) = delete;
 
 public:
     inline auto getTarget() noexcept -> qan::Node* { return _target.data(); }
@@ -104,10 +103,7 @@ public:
     virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
-    //! Initial global mouse position at the beginning of a node drag operation.
-    //QPointF                 _dragInitialMousePos{ 0., 0. };
-    //! Node position at the beginning of a node drag.
-    //QPointF                 _dragInitialPos{ 0., 0. };
+    //! Internal position cache.
     QPointF                 _dragLastPos{ 0., 0. };
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer<qan::Group>    _lastProposedGroup{ nullptr };
@@ -116,5 +112,3 @@ private:
 };
 
 } // ::qan
-
-#endif // qanDraggableCtrl_h

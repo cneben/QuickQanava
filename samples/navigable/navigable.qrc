@@ -6,7 +6,6 @@
         <file>image.jpg</file>
         <file>qtquickcontrols2.conf</file>
         <file alias="QuickQanava/NavigablePreview.qml">../../src/NavigablePreview.qml</file>
-        <file alias="QuickQanava/PointGrid.qml">../../src/PointGrid.qml</file>
         <file alias="QuickQanava/LineGrid.qml">../../src/LineGrid.qml</file>
     </qresource>
 </RCC>

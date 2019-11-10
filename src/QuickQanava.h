@@ -57,6 +57,7 @@
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanGrid.h"
+#include "./qanLineGrid.h"
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
@@ -72,33 +73,35 @@ struct QuickQanava {
 #endif
         QuickContainers::initialize();
 
-        qmlRegisterType< qan::Node >( "QuickQanava", 2, 0, "AbstractNode");
+        qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");
         if ( engine ) {
-            engine->rootContext()->setContextProperty( "defaultNodeStyle", QVariant::fromValue(qan::Node::style()) );
-            engine->rootContext()->setContextProperty( "defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()) );
-            engine->rootContext()->setContextProperty( "defaultGroupStyle", QVariant::fromValue(qan::Group::style()) );
+            engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
+            engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
+            engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
         }
-        qmlRegisterType< qan::NodeItem >( "QuickQanava", 2, 0, "NodeItem");
-        qmlRegisterType< qan::PortItem >( "QuickQanava", 2, 0, "PortItem");
-        qmlRegisterType< qan::Edge >( "QuickQanava", 2, 0, "AbstractEdge");
-        qmlRegisterType< qan::EdgeItem >( "QuickQanava", 2, 0, "EdgeItem");
-        qmlRegisterType< qan::Group >( "QuickQanava", 2, 0, "AbstractGroup");
-        qmlRegisterType< qan::GroupItem >( "QuickQanava", 2, 0, "GroupItem");
-        qmlRegisterType< qan::Connector >( "QuickQanava", 2, 0, "Connector");
+        qmlRegisterType<qan::NodeItem>("QuickQanava", 2, 0, "NodeItem");
+        qmlRegisterType<qan::PortItem>("QuickQanava", 2, 0, "PortItem");
+        qmlRegisterType<qan::Edge>("QuickQanava", 2, 0, "AbstractEdge");
+        qmlRegisterType<qan::EdgeItem>("QuickQanava", 2, 0, "EdgeItem");
+        qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
+        qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
+        qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
 
-        qmlRegisterType< qan::Graph >( "QuickQanava", 2, 0, "Graph");
-        qmlRegisterType< qan::GraphView >( "QuickQanava", 2, 0, "AbstractGraphView");
-        qmlRegisterType< qan::Navigable >( "QuickQanava", 2, 0, "Navigable");
-        qmlRegisterType< qan::NavigablePreview >( "QuickQanava", 2, 0, "AbstractNavigablePreview");
-        qmlRegisterType< qan::Grid >( "QuickQanava", 2, 0, "AbstractGrid");
-        qmlRegisterType< qan::OrthoGrid >( "QuickQanava", 2, 0, "OrthoGrid");
-        qmlRegisterType< qan::PointGrid >( "QuickQanava", 2, 0, "AbstractPointGrid");
-        qmlRegisterType< qan::LineGrid >( "QuickQanava", 2, 0, "AbstractLineGrid");
-        qmlRegisterType< qan::Style >( "QuickQanava", 2, 0, "Style");
-        qmlRegisterType< qan::NodeStyle >( "QuickQanava", 2, 0, "NodeStyle");
-        qmlRegisterType< qan::EdgeStyle >( "QuickQanava", 2, 0, "EdgeStyle");
-        qmlRegisterType< qan::StyleManager >( "QuickQanava", 2, 0, "StyleManager");
-        qmlRegisterType< qan::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
+        qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");
+        qmlRegisterType<qan::GraphView>("QuickQanava", 2, 0, "AbstractGraphView");
+        qmlRegisterType<qan::Navigable>("QuickQanava", 2, 0, "Navigable");
+        qmlRegisterType<qan::NavigablePreview>("QuickQanava", 2, 0, "AbstractNavigablePreview");
+
+        qmlRegisterType<qan::Grid>("QuickQanava", 2, 0, "AbstractGrid");
+        qmlRegisterType<qan::OrthoGrid>("QuickQanava", 2, 0, "OrthoGrid");
+        qmlRegisterType<qan::LineGrid>("QuickQanava", 2, 0, "AbstractLineGrid");
+        qmlRegisterType<qan::impl::GridLine>("QuickQanava", 2, 0, "GridLine");
+
+        qmlRegisterType<qan::Style>("QuickQanava", 2, 0, "Style");
+        qmlRegisterType<qan::NodeStyle>("QuickQanava", 2, 0, "NodeStyle");
+        qmlRegisterType<qan::EdgeStyle>("QuickQanava", 2, 0, "EdgeStyle");
+        qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
+        qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer" );
 #endif // QUICKQANAVA_STATIC
     }
 };

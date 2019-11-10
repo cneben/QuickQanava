@@ -1,7 +1,6 @@
 module QuickQanava
 
 LineGrid            2.0 LineGrid.qml
-PointGrid           2.0 PointGrid.qml
 Edge                2.0 Edge.qml
 EdgeTemplate        2.0 EdgeTemplate.qml
 Node                2.0 Node.qml

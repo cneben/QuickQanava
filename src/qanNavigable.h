@@ -32,8 +32,7 @@
 // \date	2015 07 19
 //-----------------------------------------------------------------------------
 
-#ifndef qanNavigable_h
-#define qanNavigable_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -363,7 +362,5 @@ signals:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Navigable )
-
-#endif // qanNavigable_h
+QML_DECLARE_TYPE(qan::Navigable)
 

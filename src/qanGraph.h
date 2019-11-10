@@ -406,6 +406,11 @@ signals:
     /*! \brief Emitted whenever a node registered in this graph is double clicked.
      */
     void            nodeDoubleClicked( qan::Node* node, QPointF pos );
+
+signals:
+    /*! \brief Emitted _after_ a node has been moved.
+     */
+    void            nodeMoved(qan::Node* node);
     //-------------------------------------------------------------------------
 
     /*! \name Graph Edge Management *///---------------------------------------
