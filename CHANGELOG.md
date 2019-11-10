@@ -1,6 +1,17 @@
 CHANGELOG
 ---------
 
+**20191110:** 
++ Complete rewrite of LineGrid, various cosmetic fixes and bugfixes (update to v0.15.0).
++ Breaking change: Qan.PointGrid support removed.
+
+**20190825:** 
++ Maintenance release, add more flexible content creation methods in qan::Graph.
+
+**20180930:** 
++ Add support for more edge end/start geometry, add support for orthogonal edge layout.
++ v0.11.0 pre1 CMake support is broken on Windows, please use qmake builds.
+    
 **20180930:** 
 - Release v0.11.0 pre1.
 - Fix a sever rendering bug on Windows/OSX (OGL issue).

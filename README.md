@@ -22,9 +22,8 @@ QuickQanava
 
 + **CHANGELOG 20191110:** Complete rewrite of LineGrid, various cosmetic fixes and bugfixes (update to v0.15.0).
 + **CHANGELOG 20190825:** Maintenance release, add more flexible content creation methods in qan::Graph.
-+ **CHANGELOG 20180930:** 
-    + Add support for more edge end/start geometry, add support for orthogonal edge layout.
-    + v0.11.0 pre1 CMake support is broken on Windows, please use qmake builds.
++ [CHANGELOG.md](CHANGELOG.md)
+
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
@@ -34,8 +33,8 @@ QuickQanava is primarily developed with Qt 5.10 with MSVC2015U3 and g++7 (minima
 
 + Project homepage: http://cneben.github.io/QuickQanava/index.html
 
-+ [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
-+ [Graph Data Model](http://cneben.github.io/QuickQanava/graph/index.html)
++ [Installation](http://cneben.github.io/QuickQanava/installation.html)
++ [Graph Data Model](http://cneben.github.io/QuickQanava/graph.html#data-model)
   + [Ports and Docks](http://cneben.github.io/QuickQanava/nodes/index.html#docks-and-ports)
   + [Visual node connection](http://cneben.github.io/QuickQanava/edges/index.html#visual-creation-of-edges)
   + [Selection](http://cneben.github.io/QuickQanava/nodes/index.html#selection)
