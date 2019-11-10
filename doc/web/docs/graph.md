@@ -88,7 +88,7 @@ For a more detailed description, see [Material Styling](styles.md#material)
 Grid
 ------------------
 
-Grid could be configured with `Qan.GraphView.grid` property, either a point or line grid could be used (`Qan.PointGrid` and `Qan.LineGrid` components), default grid is drawn with orthogonal lines.
+Grid could be configured with `Qan.GraphView.grid` property, only line grid is supported (see `Qan.LineGrid` component, `Qan.PointGrid` has been deprecated in 0.15.0), default grid is drawn with orthogonal lines.
 
 ``` cpp hl_lines="5"
 import QuickQanava          2.0 as Qan
@@ -103,10 +103,7 @@ Qan.GraphView {
         gridScale: 50
         gridMajor: 5
       }
-      // or 
-      //grid: Qan.PointGrid{
-      //}
-    } // Qan.Graph: topology
+    } // Qan.Graph: graph
 } // Qan.GraphView
 ```
 
@@ -117,7 +114,7 @@ Grid appearance is configurable using the following abstract interface working f
 - `gridWidth`: size in points, either grid points or line width.
 - `thickColor`: Color for points or lines.
 
-| Qan.PointGrid                                       |Qan.LineGrid                                       |
+| Qan.PointGrid *(deprecated)*                        |Qan.LineGrid                                       |
 | ---                                                 | :---:                                             | 
 | ![Qan.GraphView properties](graph/grid_points.png)  | ![Qan.GraphView properties](graph/grid_lines.png) | 
 

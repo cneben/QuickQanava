@@ -49,7 +49,8 @@ Please refer to [Installation](installation.md) manual and [Graph](graph.md), [N
     - [ ] Update geometry creation interface and delegate management.
   - **v0.16.x:**
     - [ ] Add support for direct visual dragging of port items.
-    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+    - [X] Fix current qan::LineGrid bugs
+    - [ ] Add "snap to grid" support.
   - **v0.17.x:**
     - [ ] Rewrite CMake configuration, add install step, use QML plugins.
   - **v1.: Advanced edge visualization**
