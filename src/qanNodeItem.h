@@ -305,11 +305,11 @@ private slots:
     /*! \name Intersection Shape Management *///-------------------------------
     //@{
 signals:
-    //! Emmited whenever the node is clicked (even at the start of a dragging operation).
+    //! Emitted whenever the node is clicked (even at the start of a dragging operation).
     void    nodeClicked( qan::NodeItem* node, QPointF p );
-    //! Emmited whenever the node is double clicked.
+    //! Emitted whenever the node is double clicked.
     void    nodeDoubleClicked( qan::NodeItem* node, QPointF p );
-    //! Emmited whenever the node is right clicked.
+    //! Emitted whenever the node is right clicked.
     void    nodeRightClicked( qan::NodeItem* node, QPointF p );
 
 public:
@@ -335,7 +335,7 @@ public:
     void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
 signals:
     void                boundingShapeChanged();
-    //! signal is emmited when the bounding shape become invalid and should be regenerated from QML.
+    //! signal is Emitted when the bounding shape become invalid and should be regenerated from QML.
     void                requestUpdateBoundingShape();
 protected:
     QPolygonF           generateDefaultBoundingShape() const;

@@ -56,6 +56,9 @@ Navigable::Navigable( QQuickItem* parent ) :
     });
     setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
     setTransformOrigin( TransformOrigin::TopLeft );
+
+    _defaultGrid = std::make_unique<qan::Grid>();
+    setGrid(_defaultGrid.get());
 }
 //-----------------------------------------------------------------------------
 
@@ -90,9 +93,6 @@ void    Navigable::centerOn( QQuickItem* item )
 
 void    Navigable::fitInView( )
 {
-    //qDebug() << "qan::Navigable::fitInView()...";
-    //qDebug( ) << "\tcontainer pos=" << _containerItem->x( ) << " " << _containerItem->y();
-    //qDebug( ) << "\tcontainer br=" << _containerItem->childrenRect( );
     QRectF content = _containerItem->childrenRect();
     if ( !content.isEmpty() ) { // Protect against div/0, can't fit if there is no content...
         qreal viewWidth = width();
@@ -102,13 +102,10 @@ void    Navigable::fitInView( )
         qreal fitHeightZoom = 1.0;
         fitWidthZoom = viewWidth / content.width();
         fitHeightZoom = viewHeight / content.height( );
-        //qDebug( ) << "\tviewWidth=" << viewWidth << "  viewHeight=" << viewHeight;
-        //qDebug( ) << "\tfitWidthZoom=" << fitWidthZoom << "  fitHeightZoom=" << fitHeightZoom;
 
         qreal fitZoom = fitWidthZoom;
         if ( content.height() * fitWidthZoom > viewHeight )
             fitZoom = fitHeightZoom;
-        //qDebug( ) << "\tfitZoom=" << fitZoom;
 
         QPointF contentPos{0., 0.};
         if ( content.width() * fitZoom < viewWidth ) {  // Center zoomed content horizontally
@@ -135,7 +132,8 @@ void    Navigable::fitInView( )
 
 void    Navigable::setAutoFitMode( AutoFitMode autoFitMode )
 {
-    if ( _autoFitMode != AutoFit && autoFitMode == AutoFit )
+    if ( _autoFitMode != AutoFit &&
+         autoFitMode == AutoFit )
         fitInView();    // When going to auto fit mode from another mode, force fitInView()
 
     _autoFitMode = autoFitMode;
@@ -382,8 +380,7 @@ void    Navigable::wheelEvent( QWheelEvent* event )
 void    Navigable::setGrid( qan::Grid* grid ) noexcept
 {
     if ( grid != _grid ) {
-        if ( _grid ) {                      // Hide previous grid
-            _grid->setVisible(false);
+        if ( _grid ) {                    // Hide previous grid
             disconnect( _grid, nullptr,
                         this, nullptr );  // Disconnect every update signals from grid to this navigable
         }
@@ -392,10 +389,13 @@ void    Navigable::setGrid( qan::Grid* grid ) noexcept
         if ( _grid ) {
             _grid->setParentItem( this );
             _grid->setZ( -1.0 );
-            connect( grid, &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
-                     this, &Navigable::updateGrid );    // take into account any grid property change while grid was hidden.
-            _grid->setVisible(true);
+            _grid->setAntialiasing(false);
+            _grid->setScale(1.0);
+            connect(grid,   &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
+                    this,   &Navigable::updateGrid);    // take into account any grid property change while grid was hidden.
         }
+        if (!_grid)
+            _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"
         updateGrid();
         emit gridChanged();
     }
@@ -408,7 +408,8 @@ void    Navigable::updateGrid() noexcept
         // Generate a view rect to update grid
         QRectF viewRect{ _containerItem->mapFromItem(this, {0.,0.}),
                          _containerItem->mapFromItem(this, {width(), height()}) };
-        _grid->updateGrid(viewRect, *_containerItem, *this );
+        if (!viewRect.isEmpty())
+            _grid->updateGrid(viewRect, *_containerItem, *this );
     }
 }
 //-----------------------------------------------------------------------------

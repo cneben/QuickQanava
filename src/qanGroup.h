@@ -27,13 +27,12 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanGroup.h
-// \author	benoit@destrat.io
-// \date	2016 03 22
+// \file    qanGroup.h
+// \author  benoit@destrat.io
+// \date    2016 03 22
 //-----------------------------------------------------------------------------
 
-#ifndef qanGroup_h
-#define qanGroup_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -127,17 +126,18 @@ public:
 public:
     /*! \brief Define if the group could actually be dragged by mouse.
      *
-     * Set this property to true if you want to allow this group to be moved by mouse (if false, the node position is
+     * Set to true to allow this group to be moved by mouse drag (if false, the node position is
      * fixed and should be changed programmatically).
-     * Default to true.
+     *
+     * Default to true (ie group is draggable by mouse).
      */
     Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void            setDraggable( bool draggable ) { _draggable = draggable; emit draggableChanged( ); }
-    bool            getDraggable( ) { return _draggable; }
+    void            setDraggable(bool draggable) noexcept;
+    bool            getDraggable() const noexcept;
 private:
     bool            _draggable = true;
 signals:
-    void            draggableChanged( );
+    void            draggableChanged();
     //@}
     //-------------------------------------------------------------------------
 };
@@ -145,5 +145,3 @@ signals:
 } // ::qan
 
 QML_DECLARE_TYPE( qan::Group )
-
-#endif // qanGroup_h

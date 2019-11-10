@@ -95,7 +95,7 @@ public:
 signals:
     //! Emitted when \c createDefaultEdge is set to false to request creation of an edge after the visual connector has been dropped on a destination node or edge.
     void    requestEdgeCreation(qan::Node* src, QObject* dst);
-    //! Emmited after an edge has been created to allow user configuration (not emmited when \c createDefaultEdge is set to false).
+    //! Emitted after an edge has been created to allow user configuration (not Emitted when \c createDefaultEdge is set to false).
     void    edgeInserted(qan::Edge* edge);
 
 protected:
@@ -106,7 +106,7 @@ protected:
 
 public:
     /*! \brief When set to true, connector use qan::Graph::createEdge() to generate edges, when set to false, signal
-        requestEdgeCreation() is emmited instead to allow user to create custom edges (default to \c true).
+        requestEdgeCreation() is Emitted instead to allow user to create custom edges (default to \c true).
     */
     Q_PROPERTY( bool createDefaultEdge READ getCreateDefaultEdge WRITE setCreateDefaultEdge NOTIFY createDefaultEdgeChanged FINAL )
     //! \copydoc createDefaultEdge

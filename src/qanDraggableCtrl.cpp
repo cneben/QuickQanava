@@ -259,41 +259,40 @@ void    DraggableCtrl::endDragMove( bool dragSelection )
         // _target and _targetItem must be configured (true)
         // _graph must be configured (non nullptr)
         // _graph must have a container item for coordinate mapping
+    if (!_target ||
+        !_targetItem)
+        return;
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
     const auto graphContainerItem = graph->getContainerItem();
     if (graphContainerItem == nullptr)
         return;
+    emit graph->nodeMoved(_target);
 
-    if ( _targetItem ) {
-        if ( _targetItem->getDroppable() &&
-             graph != nullptr &&
-             _target ) {
-            const auto targetContainerPos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
-            qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
-            if ( group != nullptr &&
-                 static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
-                if ( group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
-                     !group->getGroupItem()->getCollapsed() )    // group item
-                    graph->groupNode( group, _target.data() );
-            }
+    if (_targetItem->getDroppable()) {
+        const auto targetContainerPos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
+        qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
+        if ( group != nullptr &&
+             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
+            if ( group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
+                 !group->getGroupItem()->getCollapsed() )    // group item
+                graph->groupNode( group, _target.data() );
         }
-        _targetItem->setDragged(false);
+    }
+    _targetItem->setDragged(false);
 
-        if ( dragSelection &&               // If there is a selection, end drag for the whole selection
-             graph != nullptr &&
-             graph->hasMultipleSelection()) {
-            auto enDragMoveSelected = [this] (auto primitive) { // Call dragMove() on a given node or group
-                if ( primitive != nullptr &&
-                     primitive->getItem() != nullptr &&
-                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
-                     primitive->get_group().expired() )       // Do not drag nodes that are inside a group
-                    primitive->getItem()->draggableCtrl().endDragMove( false );
-            };
-            std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);
-            std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), enDragMoveSelected);
-        }
+    if (dragSelection &&               // If there is a selection, end drag for the whole selection
+        graph->hasMultipleSelection()) {
+        auto enDragMoveSelected = [this] (auto primitive) { // Call dragMove() on a given node or group
+            if ( primitive != nullptr &&
+                 primitive->getItem() != nullptr &&
+                 static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
+                 primitive->get_group().expired() )       // Do not drag nodes that are inside a group
+                primitive->getItem()->draggableCtrl().endDragMove( false );
+        };
+        std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);
+        std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), enDragMoveSelected);
     }
 }
 //-----------------------------------------------------------------------------

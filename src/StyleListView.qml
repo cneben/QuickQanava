@@ -94,9 +94,9 @@ ListView {
         }
     }
 
-    //! Emmited whenever a style is clicked by the user.
+    //! Emitted whenever a style is clicked by the user.
     signal  styleClicked( var style )
-    //! Emmited whenever a style is double clicked by the user.
+    //! Emitted whenever a style is double clicked by the user.
     signal  styleDoubleClicked( var style )
 
     // Private:

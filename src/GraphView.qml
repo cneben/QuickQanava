@@ -50,10 +50,12 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.AbstractGraphView {
     id: graphView
-    Qan.LineGrid { id: lineGrid }
+    Qan.LineGrid {
+        id: lineGrid
+    }
     grid: lineGrid
 
-    property real maxZ: -1.    // Node management ////////////////////////////////////////////////////////
+    property real   maxZ: -1.    // Node management ////////////////////////////////////////////////////////
 
     property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
     onGridThickColorChanged: {
@@ -217,14 +219,12 @@ Qan.AbstractGraphView {
     }
 
     onGroupRightClicked: {
-        if (group.item) {
-            graph.sendToFront(group.item);
-		}
+        if (group && group.item)
+            graph.sendToFront(group.item)
     }
     onGroupDoubleClicked: {
-        if (group.item) {
-            graph.sendToFront(group.item);
-		}
+        if (group && group.itm)
+            graph.sendToFront(group.item)
     }
 } // Qan.GraphView
 

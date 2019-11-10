@@ -185,9 +185,16 @@ signals:
     /*! \name Node Group Management *///---------------------------------------
     //@{
 public:
+    /*! \brief Node (or group) parent group.
+     *
+     * \note nullptr if group or node is ungrouped.
+     */
     Q_PROPERTY( qan::Group* group READ getGroup FINAL )
-    inline const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
-    inline qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
+    const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
+    qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
+
+    //! Shortcut to base is_group() (ie return true if this node is a group and castable to qan::Group)..
+    Q_INVOKABLE bool     isGroup() const noexcept { return gtpo::node<qan::Config>::is_group(); }
     //@}
     //-------------------------------------------------------------------------
 };

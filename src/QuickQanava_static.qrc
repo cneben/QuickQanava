@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/QuickQanava">
         <file>NavigablePreview.qml</file>
-        <file>PointGrid.qml</file>
         <file>LineGrid.qml</file>
         <file>Edge.qml</file>
         <file>EdgeTemplate.qml</file>

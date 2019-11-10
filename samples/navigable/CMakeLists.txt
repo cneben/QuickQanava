@@ -19,6 +19,7 @@ set( source_files
     ../../src/qanNavigable.cpp
     ../../src/qanNavigablePreview.cpp
     ../../src/qanGrid.cpp
+    ../../src/qanLineGrid.cpp
 )
 
 set (header_files )

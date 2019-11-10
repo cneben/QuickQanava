@@ -33,32 +33,57 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
-import QtQuick.Shapes   1.0
-
 import QuickQanava      2.0 as Qan
 
 Qan.AbstractLineGrid {
+    id: lineGrid
     opacity: 0.9
-    gridShape : lineGridShape
-    Shape {
-        id: lineGridShape
+    anchors.fill: parent
+
+    property int minorLineToDrawCount: 0
+    property int majorLineToDrawCount: 0
+    onRedrawLines: {
+        lineGrid.minorLineToDrawCount = minorLineToDrawCount
+        lineGrid.majorLineToDrawCount = majorLineToDrawCount
+        gridCanvas.requestPaint()
+    }
+
+    Canvas {
+        id: gridCanvas
         anchors.fill: parent
-        smooth: false
-    }
-    gridScale: 25
-    geometryComponent: Component {
-        ShapePath {
-            property alias endX: line.x
-            property alias endY: line.y
-            property bool visible: false
-            startX: 0; startY: 0
-            capStyle: ShapePath.FlatCap
-            strokeWidth: 1
-            strokeColor: visible ? lineGrid.thickColor : Qt.rgba(0,0,0,0)
-            strokeStyle: ShapePath.SolidLine
-            fillColor: Qt.rgba(0,0,0,0)
-            PathLine { id: line; x: 0; y: 0 }
+        visible: lineGrid.visible
+        onPaint: {
+            var ctx = gridCanvas.getContext('2d')
+            ctx.reset();
+            ctx.strokeStyle = lineGrid.thickColor
+
+            // iterate over minor lines...
+            if (minorLineToDrawCount <= lineGrid.minorLines.length) {
+                ctx.lineWidth = 1.
+                context.beginPath();
+                for (let l = 0; l < minorLineToDrawCount; l++) {
+                    let line = lineGrid.minorLines[l];
+                    if (!line)
+                        break;
+                    ctx.moveTo(line.p1.x, line.p1.y)
+                    ctx.lineTo(line.p2.x, line.p2.y)
+                }
+                context.stroke();
+            }
+
+            // iterate over major lines...
+            if (majorLineToDrawCount <= lineGrid.majorLines.length) {
+                ctx.lineWidth = 2.
+                context.beginPath();
+                for (let l = 0; l < majorLineToDrawCount; l++) {
+                    let line = lineGrid.majorLines[l];
+                    if (!line)
+                        break;
+                    ctx.moveTo(line.p1.x, line.p1.y)
+                    ctx.lineTo(line.p2.x, line.p2.y)
+                }
+                context.stroke();
+            }
         }
-    }
-    onAddLine: lineGridShape.data.push(line);
-}
+    } // Canvas gridCanvas
+} // Qan.AbstractLineGrid2

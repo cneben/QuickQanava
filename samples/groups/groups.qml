@@ -90,6 +90,10 @@ ApplicationWindow {
             onNodeClicked: {
                 ungroupNodeButton.node = node
             }
+            onNodeMoved: {
+                if (node && node.isGroup)
+                    window.notifyUser("Group <b>" + node.label + "</b> moved")
+            }
         } // Qan.Graph: graph
 
         onClicked: {

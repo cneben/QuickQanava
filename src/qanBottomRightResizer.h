@@ -226,9 +226,9 @@ private:
     /*! \name Resizer Management *///------------------------------------------
     //@{
 signals:
-    //! Emmited immediately before a resize operation start, \c targetSize is target item current size.
+    //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
     void    resizeStart(QSizeF targetSize );
-    //! Emmited immediately after a resize operation, \c targetSize is target item size after resize.
+    //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd( QSizeF targetSize );
 protected:
     //virtual bool    childMouseEventFilter(QQuickItem *item, QEvent *event) override;
