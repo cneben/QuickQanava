@@ -11,6 +11,7 @@ set( qan_source_files
 	qanGraph.cpp
 	qanGraphView.cpp
 	qanGrid.cpp
+	qanLineGrid.cpp
 	qanGroup.cpp
 	qanGroupItem.cpp
 	qanNavigable.cpp
@@ -38,6 +39,7 @@ set (qan_header_files
 	qanGraphConfig.h
 	qanGraph.h
 	qanGraphView.h
+	qanGrid.h
 	qanGrid.h
 	qanGroup.h
 	qanGroupItem.h
