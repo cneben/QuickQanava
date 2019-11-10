@@ -218,7 +218,13 @@ Qan.AbstractGraphView {
         }
     }
 
-    onGroupRightClicked: graph.sendToFront(group.item)
-    onGroupDoubleClicked: graph.sendToFront(group.item)
+    onGroupRightClicked: {
+        if (group && group.item)
+            graph.sendToFront(group.item)
+    }
+    onGroupDoubleClicked: {
+        if (group && group.itm)
+            graph.sendToFront(group.item)
+    }
 } // Qan.GraphView
 

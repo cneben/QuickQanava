@@ -15,11 +15,12 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.11.0-blue.svg) |
+![](https://img.shields.io/badge/version-0.15.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
++ **CHANGELOG 20191110:** Complete rewrite of LineGrid, various cosmetic fixes and bugfixes (update to v0.15.0).
 + **CHANGELOG 20190825:** Maintenance release, add more flexible content creation methods in qan::Graph.
 + **CHANGELOG 20180930:** 
     + Add support for more edge end/start geometry, add support for orthogonal edge layout.
@@ -108,12 +109,14 @@ QuickQanava could be used with either _qmake_ or _CMake_ build configuration sys
 | Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed | 
 
 
-Using qmake:
+Using qmake (**preferred and supported way of integrating QuickQanava**):
 
 1. Open _quickqanava.pro_ in QtCreator.
 
 2. Select a kit, build and launch samples.
 
+
+:warning: CMake support is "community maintained"
 
 or with (CMake >= 3.5) and Qt Creator:
 
@@ -160,7 +163,8 @@ QuickQanava and QuickContainers plugins directories could be removed manually fr
     - [ ] Update geometry creation interface and delegate management.
   - **v0.16.x:**
     - [ ] Add support for direct visual dragging of port items.
-    - [ ] Fix current qan::PointGrid bugs and add "snap to grid" support.
+    - [X] Fix current qan::LineGrid bugs
+    - [ ] Add "snap to grid" support.
   - **v0.17.x:**
     - [ ] Rewrite CMake configuration, add install step, use QML plugins.
   - **v1.: Advanced edge visualization**
@@ -174,6 +178,7 @@ Contributors
  - @kwallner / Conan.io and CMake configuration
  - @Letrab / Edge configuration
  - @machinekoder / QML plugin and CMake configuration
+ - @NielsBillen / Ports support and stability fixes
 
 License
 =======
