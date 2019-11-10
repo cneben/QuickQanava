@@ -47,6 +47,7 @@
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanGrid.h"
+#include "./qanLineGrid.h"
 #include "./qanGraphView.h"
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
@@ -63,7 +64,6 @@ static const struct {
     int major, minor;
 } qmldir [] = {
     { "LineGrid", 2, 0 },
-    { "PointGrid", 2, 0 },
     { "Edge", 2, 0 },
     { "EdgeTemplate", 2, 0 },
     { "Node", 2, 0 },
@@ -100,9 +100,12 @@ void QuickQanavaPlugin::registerTypes(const char *uri)
     qmlRegisterType< qan::GraphView >( uri, 2, 0, "AbstractGraphView");
     qmlRegisterType< qan::Navigable >( uri, 2, 0, "Navigable");
     qmlRegisterType< qan::NavigablePreview >( uri, 2, 0, "AbstractNavigablePreview");
-    qmlRegisterType< qan::OrthoGrid >( uri, 2, 0, "OrthoGrid");
-    qmlRegisterType< qan::PointGrid >( uri, 2, 0, "AbstractPointGrid");
-    qmlRegisterType< qan::LineGrid >( uri, 2, 0, "AbstractLineGrid");
+    
+    qmlRegisterType<qan::Grid>(uri, 2, 0, "AbstractGrid");
+    qmlRegisterType<qan::OrthoGrid>(uri, 2, 0, "OrthoGrid");
+    qmlRegisterType<qan::LineGrid>(uri, 2, 0, "AbstractLineGrid");
+    qmlRegisterType<qan::impl::GridLine>(uri, 2, 0, "GridLine");
+
     qmlRegisterType< qan::Style >( uri, 2, 0, "Style");
     qmlRegisterType< qan::NodeStyle >( uri, 2, 0, "NodeStyle");
     qmlRegisterType< qan::EdgeStyle >( uri, 2, 0, "EdgeStyle");
