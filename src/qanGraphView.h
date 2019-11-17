@@ -32,8 +32,7 @@
 // \date	2016 08 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanGraphView_h
-#define qanGraphView_h
+#pragma once
 
 // GTpo headers
 #include <gtpo/GTpo>
@@ -107,5 +106,4 @@ signals:
 
 QML_DECLARE_TYPE( qan::GraphView )
 
-#endif // qanGraphView_h
 

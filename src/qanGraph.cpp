@@ -65,6 +65,8 @@ Graph::Graph( QQuickItem* parent ) noexcept :
     setContainerItem(this);
     setAntialiasing(true);
     setSmooth(true);
+    // Note: do not accept mouse buttons, mouse events are captured in
+    // GraphView containerItem.
 }
 
 void    Graph::classBegin()
@@ -221,7 +223,7 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
     return nullptr;
 }
 
-void    Graph::setContainerItem( QQuickItem* containerItem )
+void    Graph::setContainerItem(QQuickItem* containerItem)
 {
     if ( containerItem != nullptr &&
          containerItem != _containerItem.data() ) {
@@ -1207,19 +1209,6 @@ void    Graph::clearSelection()
              group->getItem() != nullptr )
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
-}
-
-void    Graph::mousePressEvent(QMouseEvent* event)
-{
-    if ( event->button() == Qt::LeftButton ) {
-        clearSelection();
-        forceActiveFocus();
-    } else if ( event->button() == Qt::RightButton ) {
-        qDebug() << "qan::Graph::rightClicked()";
-        emit rightClicked(event->pos());
-    }
-    event->ignore();
-    qan::Config::graph_base::mousePressEvent(event);
 }
 //-----------------------------------------------------------------------------
 

@@ -241,8 +241,7 @@ void    Navigable::setDragActive( bool dragActive ) noexcept
 
 void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
 {
-    //qDebug() << "qan::Navigable::geometryChanged(): newGeometry=" << newGeometry << "\toldGeometry=" << oldGeometry;
-    if ( getNavigable() ) {
+    if (getNavigable()) {
         // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
         if ( _autoFitMode == AutoFit &&
              ( !_panModified || !_zoomModified ) ) {
@@ -266,11 +265,11 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
                      contentBr.right() < newGeometry.right() )
                     centerWidth = true;
             }
-            if ( centerWidth ) {
+            if (centerWidth) {
                 qreal cx = ( newGeometry.width() - contentBr.width() ) / 2.;
                 _containerItem->setX( cx );
             }
-            if ( centerHeight ) {
+            if (centerHeight) {
                 qreal cy = ( newGeometry.height() - contentBr.height() ) / 2.;
                 _containerItem->setY( cy );
             }
@@ -346,7 +345,7 @@ void    Navigable::mousePressEvent( QMouseEvent* event )
 
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
-    if ( getNavigable() ) {
+    if (getNavigable()) {
         if ( event->button() == Qt::LeftButton &&
              !_dragActive ) {       // Do not emit clicked when dragging occurs
             emit clicked( event->localPos() );

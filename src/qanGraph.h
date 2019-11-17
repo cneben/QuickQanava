@@ -679,12 +679,6 @@ public:
 private:
     SelectedNodes       _selectedNodes;
     SelectedGroups      _selectedGroups;
-
-protected:
-    virtual void        mousePressEvent(QMouseEvent* event ) override;
-
-signals:
-    void                rightClicked(QPointF pos);
     //@}
     //-------------------------------------------------------------------------
 

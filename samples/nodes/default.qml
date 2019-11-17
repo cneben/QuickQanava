@@ -59,7 +59,40 @@ Qan.GraphView {
         onNodeDoubleClicked: { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
 
         onNodeMoved: notifyUser("Node <b>" + node.label + "</b> moved")
+    } // Qan.Graph
+
+    Menu {      // Context menu demonstration
+        id: contextMenu
+        property var node: undefined
+        MenuItem {
+            text: "Insert Node"
+            onClicked: {
+                let n = graph.insertNode()
+                n.label = 'New Node'
+                n.item.x = contextMenu.x
+                n.item.y = contextMenu.y
+            }
+        }
+        MenuItem {
+            text: "Remove node"
+            enabled: contextMenu.node !== undefined
+            onClicked: {
+                graph.removeNode(contextMenu.node)
+                contextMenu.node = undefined
+            }
+        }
+        onClosed: { // Clean internal state when context menu us closed
+            contextMenu.node = undefined
+        }
+    } // Menu
+
+    onRightClicked: {
+        console.error("OnRightClicked(): pos=" + pos)
+        contextMenu.x = pos.x
+        contextMenu.y = pos.y
+        contextMenu.open()
     }
+
     ToolTip { id: toolTip; timeout: 2500 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
     Label {

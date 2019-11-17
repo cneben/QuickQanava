@@ -40,6 +40,7 @@ Qan.AbstractLineGrid {
     opacity: 0.9
     anchors.fill: parent
 
+    gridScale: 25
     property int minorLineToDrawCount: 0
     property int majorLineToDrawCount: 0
     onRedrawLines: {
@@ -52,6 +53,7 @@ Qan.AbstractLineGrid {
         id: gridCanvas
         anchors.fill: parent
         visible: lineGrid.visible
+        enabled: false  // Disable mouse event catching
         onPaint: {
             var ctx = gridCanvas.getContext('2d')
             ctx.reset();

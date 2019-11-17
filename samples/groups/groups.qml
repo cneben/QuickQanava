@@ -86,9 +86,33 @@ ApplicationWindow {
                 groupEditor.group = group
             }
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
+            onGroupRightClicked: {
+                window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
+                contextMenu.group = group
+
+                if (!window.contentItem ||
+                    !group.item)
+                    return;
+                let globalPos = window.contentItem.mapFromItem(group.item, pos.x, pos.y);
+                contextMenu.x = globalPos.x
+                contextMenu.y = globalPos.y
+                contextMenu.open()
+            }
             onNodeClicked: {
                 ungroupNodeButton.node = node
+                contextMenu.node = node
+            }
+            onNodeRightClicked: {
+                ungroupNodeButton.node = node
+                contextMenu.node = node
+
+                if (!window.contentItem ||
+                    !node.item)
+                    return;
+                let globalPos = window.contentItem.mapFromItem(node.item, pos.x, pos.y);
+                contextMenu.x = globalPos.x
+                contextMenu.y = globalPos.y
+                contextMenu.open()
             }
             onNodeMoved: {
                 if (node && node.isGroup)
@@ -99,8 +123,43 @@ ApplicationWindow {
         onClicked: {
             ungroupNodeButton.node = undefined
             groupEditor.group = undefined
+            contextMenu.node = undefined
+        }
+        onRightClicked: {
+            contextMenu.x = pos.x
+            contextMenu.y = pos.y
+            contextMenu.open()
         }
 
+        Menu {      // Context menu demonstration
+            id: contextMenu
+            property var node: undefined
+            property var group: undefined
+            MenuItem {
+                text: "Insert Node"
+                enabled: contextMenu.node === undefined
+                onClicked: {
+                    let n = topology.insertNode()
+                    n.label = 'New Node'
+                    n.item.x = contextMenu.x
+                    n.item.y = contextMenu.y
+                    if (contextMenu.group)
+                        topology.groupNode(contextMenu.group, n)
+                }
+            }
+            MenuItem {
+                text: "Remove node"
+                enabled: contextMenu.node !== undefined
+                onClicked: {
+                    topology.removeNode(contextMenu.node)
+                    contextMenu.node = undefined
+                }
+            }
+            onClosed: { // Clean internal state when context menu us closed
+                contextMenu.node = undefined
+                contextMenu.group = undefined
+            }
+        } // Menu
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15

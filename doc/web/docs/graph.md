@@ -57,7 +57,7 @@ Qan.Graph {
 Graph View
 ------------------
 
-A `Qan.Graph` or `#!js qan::Graph` is actually a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the `Qan.GraphView.graph` property:
+A `Qan.Graph` or `#!js qan::Graph` is a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the `Qan.GraphView.graph` property:
 
 ``` cpp hl_lines="5"
 Qan.GraphView {
