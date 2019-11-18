@@ -55,6 +55,10 @@ Qan.GraphView {
             d2.label = "D2"; d2.item.x = 350; d2.item.y = 250            
             var e2 = graph.insertEdge(s2, d2); //e2.style = null; e2.lineType = Qan.EdgeStyle.Ortho
         } // Qan.Graph.Component.onCompleted()
+        onEdgeRightClicked: {
+            console.error('edge=' + edge)
+            console.error('pos=' + pos)
+        }
     } // Qan.Graph
     CheckBox {
         anchors.top: parent.top; anchors.topMargin: 4

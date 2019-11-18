@@ -87,7 +87,6 @@ Qan.GraphView {
     } // Menu
 
     onRightClicked: {
-        console.error("OnRightClicked(): pos=" + pos)
         contextMenu.x = pos.x
         contextMenu.y = pos.y
         contextMenu.open()
