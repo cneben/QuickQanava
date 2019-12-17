@@ -1,28 +1,39 @@
-sudo: required
 language: cpp
-dist: xenial
+
+dist: bionic
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - BUILD_STATIC_QRC=ON
+  - BUILD_STATIC_QRC=OFF
+
+addons:
+  apt:
+    sources:
+      - sourceline: "ppa:beineri/opt-qt-5.12.6-bionic"
+    packages:
+      - cmake
+      - qt512base
+      - qt512declarative
+      - qt512graphicaleffects
+      - qt512quickcontrols2
+      - mesa-common-dev
+      - libgl1-mesa-dev
+  homebrew:
+    update: true
+    packages:
+      - qt5
 
 matrix:
-  include:
-    - os: linux
-      compiler: gcc
-      env: 
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-      addons:
-        apt: 
-            sources: 
-                - ubuntu-toolchain-r-test
-                - sourceline: "ppa:beineri/opt-qt-5.12.1-xenial"
-            packages: 
-                - cmake
-                - g++-6
-                - qt512base
-                - qt512declarative
-                - qt512graphicaleffects
-                - qt512quickcontrols2
-                - mesa-common-dev
+  exclude:
     - os: osx
-      compiler: clang
+      compiler: gcc
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -31,14 +42,6 @@ before_install:
     fi
 
 install:
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90;
-      source /opt/qt512/bin/qt512-env.sh;
-    fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew update;
-      brew install qt5;
-    fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
       brew link qt5 --force;
     fi
@@ -56,9 +59,9 @@ script:
   - qmake --version
   - g++ --version
   - cmake --version
-  - mkdir build
-  - cd build
-  - cmake .. && make -j
+  - mkdir build && cd build
+  - cmake .. -DBUILD_STATIC_QRC=${BUILD_STATIC_QRC}
+  - make
 
 notifications:
   email: false
