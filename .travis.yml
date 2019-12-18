@@ -61,7 +61,7 @@ script:
   - cmake --version
   - mkdir build && cd build
   - cmake .. -DBUILD_STATIC_QRC=${BUILD_STATIC_QRC}
-  - make
+  - make VERBOSE=1
 
 notifications:
   email: false
