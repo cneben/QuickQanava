@@ -130,14 +130,14 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
 # Install qmldir file
 install(
-	FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/qmldir_plugin
+	FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
 	DESTINATION ${DESTDIR}
 	RENAME qmldir
 )
 
 # Install source QML files to ease debugging
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
 	DESTINATION ${DESTDIR}
 	FILES_MATCHING PATTERN "*.qml"
 )
