@@ -123,7 +123,7 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
 # Install qmldir file
 install(
-	FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/qmldir_plugin
+	FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
 	DESTINATION ${DESTDIR}
 	RENAME qmldir
 )
