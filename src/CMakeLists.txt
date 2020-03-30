@@ -129,11 +129,21 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 #message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
 
 # Install qmldir file
-install(
-	FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
-	DESTINATION ${DESTDIR}
-	RENAME qmldir
-)
+
+if(BUILD_STATIC_QRC)
+	install(
+		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_static
+		DESTINATION ${DESTDIR}
+		RENAME qmldir
+	)
+else()
+	install(
+		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
+		DESTINATION ${DESTDIR}
+		RENAME qmldir
+	)
+endif(BUILD_STATIC_QRC)
+
 
 # Install source QML files to ease debugging
 install(
