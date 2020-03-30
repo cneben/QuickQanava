@@ -56,7 +56,9 @@
 
 static void initResources()
 {
+#ifndef QUICKQANAVA_STATIC
     Q_INIT_RESOURCE(QuickQanava_plugin);
+#endif
 }
 
 static const struct {
