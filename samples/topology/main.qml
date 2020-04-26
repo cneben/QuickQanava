@@ -179,9 +179,9 @@ ApplicationWindow {
                 menu.open()
             }
             onEdgeRightClicked: {
-                if (!edge)
+                if (!edge || !edge.item)
                     return
-                var globalPos = edge.mapToItem(topology, pos.x, pos.y)
+                var globalPos = edge.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetEdge = edge
@@ -506,10 +506,12 @@ ApplicationWindow {
                 flickableDirection: Flickable.VerticalFlick
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
+                    visible: nodesListView.currentItem !== undefined &&
+                             nodesListView.currentItem !== null
                     x: 0
-                    y: nodesListView.currentItem.y
+                    y: nodesListView.currentItem ? nodesListView.currentItem.y : 0
                     width: nodesListView.width
-                    height: nodesListView.currentItem.height
+                    height: nodesListView.currentItem ? nodesListView.currentItem.height : 0
                     color: Material.accent
                     opacity: 0.7
                     radius: 3
@@ -582,12 +584,13 @@ ApplicationWindow {
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
                     x: 0
-                    y: portsListView.currentItem.y
+                    y: portsListView.currentItem ? portsListView.currentItem.y : 0
                     width: portsListView.width
-                    height: portsListView.currentItem.height
+                    height: portsListView.currentItem ? portsListView.currentItem.height : 0
                     color: Material.accent
                     opacity: 0.7
                     radius: 3
+                    visible: portsListView.currentItem !== undefined && portsListView.currentItem !== null
                     Behavior on y {
                         SpringAnimation {
                             duration: 200
@@ -614,18 +617,6 @@ ApplicationWindow {
             }
         }
     } // portList
-
-    Button {
-        id: autoPosButton
-        anchors.top: portList.bottom
-        anchors.topMargin: 15
-        anchors.left: portList.left
-        width: 110
-        height: 50
-        text: "AutoPos"
-        onClicked: topology.autoPositionNodes()
-        visible: showDebugControls.checked
-    }
 
     ColorDialog {
         id: selectionColorDialog

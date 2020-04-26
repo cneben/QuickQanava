@@ -38,13 +38,11 @@
 
 namespace qan { // ::qan
 
-FaceNode::FaceNode( QQuickItem* parent ) :
-    qan::Node( parent )
+FaceNode::FaceNode(QQuickItem* parent) :
+    qan::Node{parent}
 {
 
 }
-
-FaceNode::~FaceNode() { /* Nil */ }
 
 QQmlComponent*  FaceNode::delegate(QQmlEngine& engine) noexcept
 {
@@ -62,4 +60,5 @@ void    FaceNode::setImage(QUrl image) noexcept
         emit imageChanged();
     }
 }
+
 } // ::qan

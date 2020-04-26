@@ -673,8 +673,8 @@ public:
     using SelectedGroups = qcm::Container< QVector, qan::Group* > ;
 
     //! Read-only list model of currently selected nodes.
-    Q_PROPERTY( QAbstractListModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL )
-    QAbstractListModel* getSelectedNodesModel() { return qobject_cast<QAbstractListModel*>( &_selectedNodes ); }
+    Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)
+    QAbstractItemModel* getSelectedNodesModel() { return qobject_cast<QAbstractItemModel*>(&_selectedNodes); }
 
     inline auto         getSelectedNodes() noexcept -> SelectedNodes& { return _selectedNodes; }
     inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
@@ -877,4 +877,7 @@ private:
 
 #include "./qanGraph.hpp"
 
-QML_DECLARE_TYPE( qan::Graph::WeakNode )
+Q_DECLARE_METATYPE(QAbstractItemModel*)
+Q_DECLARE_METATYPE(QAbstractListModel*)
+QML_DECLARE_TYPE(qan::Graph)
+QML_DECLARE_TYPE(qan::Graph::WeakNode)

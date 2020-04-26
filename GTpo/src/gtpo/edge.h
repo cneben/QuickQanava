@@ -85,13 +85,13 @@ public:
     edge() noexcept : config_t::edge_base{} {}
     explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
         config_t::edge_base{}, _src{ src }, _dst{ dst } { }
-    ~edge() {
+    virtual ~edge() {
         if ( _graph != nullptr )
             std::cerr << "gtpo::edge<>::~edge(): Warning: an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
         _graph = nullptr;
     }
-    edge(const edge& ) = delete;
+    edge(const edge&) = delete;
 
 public:
     inline graph_t*         get_graph() noexcept { return _graph; }

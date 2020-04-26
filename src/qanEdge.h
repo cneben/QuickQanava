@@ -58,8 +58,8 @@ class Edge : public gtpo::edge<qan::Config>
 public:
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge();
-    Edge( const Edge& ) = delete;
-    virtual ~Edge();
+    Edge(const Edge&) = delete;
+    virtual ~Edge() override;
 
 public:
     Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )

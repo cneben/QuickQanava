@@ -46,13 +46,14 @@ namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 Edge::Edge() :
-    gtpo::edge< qan::Config >{}
+    gtpo::edge<qan::Config>{}
 {
 }
 
 Edge::~Edge()
 {
-    if ( _item )
+    qWarning() << "~Edge(): this=" << this;
+    if (_item)
         _item->deleteLater();
 }
 

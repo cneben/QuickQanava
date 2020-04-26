@@ -670,21 +670,23 @@ void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node) /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Graph Edge Management *///--------------------------------------------------
-qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlComponent* edgeComponent)
 {
-    auto sourceNode = qobject_cast<qan::Node*>(source);
     qan::Edge* edge = nullptr;
-    if ( sourceNode != nullptr ) {
-            if ( qobject_cast<qan::Node*>(destination) != nullptr )
-                edge = insertEdge( sourceNode, qobject_cast<qan::Node*>( destination ), edgeComponent );
-            else if ( qobject_cast<qan::Group*>(destination) != nullptr )
-                edge = insertEdge( sourceNode, qobject_cast<qan::Group*>( destination ), edgeComponent );
-            else if ( qobject_cast<qan::Edge*>(destination) != nullptr )
-                edge = insertEdge( sourceNode, qobject_cast<qan::Edge*>( destination ), edgeComponent );
+    auto sourceNode = qobject_cast<qan::Node*>(source);
+    if (sourceNode != nullptr) {
+        const auto destNode = qobject_cast<qan::Node*>(destination);
+        if (destNode != nullptr)
+            edge = insertEdge(sourceNode, destNode, edgeComponent);
+        else if (qobject_cast<qan::Group*>(destination) != nullptr)
+            edge = insertEdge(sourceNode, qobject_cast<qan::Group*>(destination), edgeComponent);
+        else if (qobject_cast<qan::Edge*>(destination) != nullptr)
+            edge = insertEdge(sourceNode, qobject_cast<qan::Edge*>(destination), edgeComponent);
     }
-    if (edge != nullptr)
+    if (edge != nullptr) {
+        QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
         emit edgeInserted(edge);
-    if (edge == nullptr)
+    } else
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
     return edge;
 }
@@ -1199,9 +1201,9 @@ void    Graph::clearSelection()
     std::copy( _selectedNodes.cbegin(),
                 _selectedNodes.cend(),
                 std::back_inserter(selectedNodesCopy) );
-    for ( auto node : selectedNodesCopy )
-        if ( node != nullptr &&
-             node->getItem() != nullptr )
+    for (auto node : selectedNodesCopy)
+        if (node != nullptr &&
+            node->getItem() != nullptr)
             node->getItem()->setSelected(false);
     _selectedNodes.clear();
 
