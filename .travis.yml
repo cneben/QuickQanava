@@ -1,0 +1,64 @@
+sudo: required
+language: cpp
+dist: xenial
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: 
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+      addons:
+        apt: 
+            sources: 
+                - ubuntu-toolchain-r-test
+                - sourceline: "ppa:beineri/opt-qt-5.12.1-xenial"
+            packages: 
+                - cmake
+                - g++-6
+                - qt512base
+                - qt512declarative
+                - qt512graphicaleffects
+                - qt512quickcontrols2
+                - mesa-common-dev
+    - os: osx
+      compiler: clang
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake;
+    fi
+
+install:
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90;
+      source /opt/qt512/bin/qt512-env.sh;
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew update;
+      brew install qt5;
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew link qt5 --force;
+    fi
+
+before_script:
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      export PATH=$PATH:/opt/qt512/bin;
+    fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      export PATH=/usr/local/opt/qt/bin:$PATH; 
+    fi
+
+script:
+  - which qmake
+  - qmake --version
+  - g++ --version
+  - cmake --version
+  - mkdir build
+  - cd build
+  - cmake .. && make -j
+
+notifications:
+  email: false
