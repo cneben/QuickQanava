@@ -1547,6 +1547,54 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
     qWarning() << "qan::Graph::isAncestor(): Not implemented.";
     return false;
 }
+
+std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const noexcept
+{
+    std::vector<const qan::Node*> parents;
+    std::unordered_set<const qan::Node*> marks;
+    if (collectGroup &&
+        node.isGroup()) {
+        // Collect all nodes in a group
+        const auto group = qobject_cast<const qan::Group*>(&node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }
+    // Collect the parent group of a node
+    const auto nodeGroup = node.getGroup();
+    if (nodeGroup != nullptr)
+        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    for (const auto& inNode : node.get_in_nodes())
+        collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+    return parents;
+}
+
+void    Graph::collectAncestorsDfsRec(const qan::Node* node,
+                             std::unordered_set<const qan::Node*>& marks,
+                             std::vector<const qan::Node*>& parents,
+                             bool collectGroup) const noexcept
+{
+    if (node == nullptr)
+        return;
+    if (marks.find(node) != marks.end())    // Do not collect on already visited
+        return;                             // branchs
+    marks.insert(node);
+    parents.push_back(node);
+    if (collectGroup &&
+        node->isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }
+    const auto nodeGroup = node->getGroup();
+    if (nodeGroup != nullptr)
+        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    for (const auto& inNode : node->get_in_nodes())
+        collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+}
 //-----------------------------------------------------------------------------
 
 

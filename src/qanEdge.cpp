@@ -52,7 +52,6 @@ Edge::Edge() :
 
 Edge::~Edge()
 {
-    qWarning() << "~Edge(): this=" << this;
     if (_item)
         _item->deleteLater();
 }

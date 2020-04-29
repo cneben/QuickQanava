@@ -64,8 +64,6 @@ class GroupItem : public qan::NodeItem
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
-    //Q_INTERFACES(qan::Selectable)
-    //Q_INTERFACES(qan::Draggable)
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
@@ -162,6 +160,9 @@ private:
     bool        _collapsed{false};
 signals:
     void        collapsedChanged();
+
+public:
+    Q_INVOKABLE void    collapseAncestors(bool collapsed = true);
     //@}
     //-------------------------------------------------------------------------
 

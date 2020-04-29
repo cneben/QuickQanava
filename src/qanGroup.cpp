@@ -140,12 +140,12 @@ qan::Style*     Group::style() noexcept
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
-bool    Group::hasNode( qan::Node* node ) const
+bool    Group::hasNode(const qan::Node* node) const
 {
     if ( node == nullptr )
         return false;
     try {
-        auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
+        auto weakNode = std::static_pointer_cast<qan::Node>(const_cast<qan::Node*>(node)->shared_from_this());
         return gtpo_node_t::has_node(weakNode);
     } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
     return false;

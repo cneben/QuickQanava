@@ -32,8 +32,7 @@
 // \date	2016 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef qanNodeItem_h
-#define qanNodeItem_h
+#pragma once
 
 // Std headers
 #include <cstddef>  // std::size_t
@@ -470,5 +469,3 @@ private:
 QML_DECLARE_TYPE(qan::NodeItem)
 Q_DECLARE_METATYPE(qan::NodeItem::Connectable)
 Q_DECLARE_METATYPE(qan::NodeItem::Dock)
-
-#endif // qanNodeItem_h

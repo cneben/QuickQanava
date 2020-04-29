@@ -117,7 +117,7 @@ public:
     //@{
 public:
     //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
-    Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
+    Q_INVOKABLE bool    hasNode(const qan::Node* node) const;
     //@}
     //-------------------------------------------------------------------------
 

@@ -842,7 +842,7 @@ public:
      */
     std::vector<QPointer<const qan::Node>>   collectRootNodes() const noexcept;
 
-    /*! \brief Synchronously collect all sub-nodes of \c node using DFS.
+    /*! \brief Synchronously collect all sub-nodes of graph root nodes using DFS.
      *
      * \warning this method is synchronous and recursive.
      */
@@ -856,6 +856,21 @@ public:
      */
     std::vector<const qan::Node*>   collectDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
+private:
+    void                    collectDfsRec(const qan::Node*,
+                                          std::unordered_set<const qan::Node*>& marks,
+                                          std::vector<const qan::Node*>& childs,
+                                          bool collectGroup) const noexcept;
+
+public:
+    /*! \brief Synchronously collect all parent nodes of \c node using DFS.
+     *
+     * \note \c node is automatically added to the result and returned as the first
+     * node of the return set.
+     * \warning this method is synchronous and recursive.
+     */
+    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
+
     /*! \brief Return true if \c candidate node is an ancestor of given \c node.
      *
      * \warning this method is synchronous and recursive.
@@ -865,10 +880,10 @@ public:
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
 
 private:
-    void                    collectDfsRec(const qan::Node*,
-                                          std::unordered_set<const qan::Node*>& marks,
-                                          std::vector<const qan::Node*>& childs,
-                                          bool collectGroup) const noexcept;
+    void                    collectAncestorsDfsRec(const qan::Node*,
+                                                   std::unordered_set<const qan::Node*>& marks,
+                                                   std::vector<const qan::Node*>& parents,
+                                                   bool collectGroup) const noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

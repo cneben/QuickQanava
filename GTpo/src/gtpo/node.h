@@ -180,10 +180,10 @@ public:
     inline auto get_nodes() const noexcept -> const weak_nodes_t& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        has_node( const weak_node_t& node ) const noexcept -> bool;
+    auto        has_node(const weak_node_t& node) const noexcept -> bool;
 
     //! Return group registered node count.
-    inline auto get_node_count( ) const noexcept -> int { return static_cast< int >( _nodes.size() ); }
+    inline auto get_node_count() const noexcept -> int { return static_cast< int >( _nodes.size() ); }
 
 protected:
     inline  auto set_is_group(bool is_group) noexcept -> void { _is_group = is_group; }
