@@ -88,32 +88,32 @@ ApplicationWindow {
             MenuItem {
                 text: "Align Horizontal Center"
                 icon.name: 'ink-align-horizontal-center-symbolic'
-                enabled: menu.targetNode !== undefined
-                //onTriggered:
+                enabled: (topology.selectedNodes.length + topology.selectedGroups.length) > 1
+                onTriggered: topology.alignSelectionHorizontalCenter()
             }
             MenuItem {
                 text: "Align Left"
                 icon.name: 'ink-align-horizontal-left-symbolic'
-                enabled: menu.targetNode !== undefined
-                //onTriggered:
+                enabled: (topology.selectedNodes.length + topology.selectedGroups.length) > 1
+                onTriggered: topology.alignSelectionLeft()
             }
             MenuItem {
                 text: "Align Right"
                 icon.name: 'ink-align-horizontal-right-symbolic'
-                enabled: menu.targetNode !== undefined
-                //onTriggered:
+                enabled: (topology.selectedNodes.length + topology.selectedGroups.length) > 1
+                onTriggered: topology.alignSelectionRight()
             }
             MenuItem {
                 text: "Align Top"
                 icon.name: 'ink-align-vertical-top-symbolic'
-                enabled: menu.targetNode !== undefined
-                //onTriggered:
+                enabled: (topology.selectedNodes.length + topology.selectedGroups.length) > 1
+                onTriggered: topology.alignSelectionTop()
             }
             MenuItem {
                 text: "Align Bottom"
                 icon.name: 'ink-align-vertical-bottom-symbolic'
-                enabled: menu.targetNode !== undefined
-                //onTriggered:
+                enabled: (topology.selectedNodes.length + topology.selectedGroups.length) > 1
+                onTriggered: topology.alignSelectionBottom()
             }
         } // Menu: align
         Menu {

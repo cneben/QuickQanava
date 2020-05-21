@@ -669,23 +669,63 @@ public:
     inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
 
 public:
-    using SelectedNodes = qcm::Container< QVector, qan::Node* > ;
-    using SelectedGroups = qcm::Container< QVector, qan::Group* > ;
+    using SelectedNodes = qcm::Container<QVector, qan::Node*>;
 
     //! Read-only list model of currently selected nodes.
-    Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)
-    QAbstractItemModel* getSelectedNodesModel() { return qobject_cast<QAbstractItemModel*>(&_selectedNodes); }
+    Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)  // In fact non-notifiable, avoid QML warning
+    QAbstractItemModel* getSelectedNodesModel() { return qobject_cast<QAbstractItemModel*>(_selectedNodes.model()); }
 
     inline auto         getSelectedNodes() noexcept -> SelectedNodes& { return _selectedNodes; }
     inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
+private:
+    SelectedNodes       _selectedNodes;
 signals:
     void                selectedNodesChanged();
+
 public:
+    using SelectedGroups = qcm::Container<QVector, qan::Group*>;
+
+    //! Read-only list model of currently selected groups.
+    Q_PROPERTY(QAbstractItemModel* selectedGroups READ getSelectedGroupsModel NOTIFY selectedGroupsChanged FINAL)   // In fact non-notifiable, avoid QML warning
+    QAbstractItemModel* getSelectedGroupsModel() { return qobject_cast<QAbstractItemModel*>(_selectedGroups.model()); }
+
     inline auto         getSelectedGroups() noexcept -> SelectedGroups& { return _selectedGroups; }
     inline auto         getSelectedGroups() const noexcept -> const SelectedGroups& { return _selectedGroups; }
 private:
-    SelectedNodes       _selectedNodes;
     SelectedGroups      _selectedGroups;
+signals:
+    void                selectedGroupsChanged();
+
+protected:
+    //! \brief Return a vector of currently selected nodes/groups items.
+    std::vector<QQuickItem*>    getSelectedItems() const;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Alignment Management *///----------------------------------------
+    //@{
+public:
+    //! \brief Align selected nodes/groups items horizontal center.
+    Q_INVOKABLE void    alignSelectionHorizontalCenter();
+    //! \brief Align selected nodes/groups items right.
+    Q_INVOKABLE void    alignSelectionRight();
+    //! \brief Align selected nodes/groups items left.
+    Q_INVOKABLE void    alignSelectionLeft();
+    //! \brief Align selected nodes/groups items top.
+    Q_INVOKABLE void    alignSelectionTop();
+    //! \brief Align selected nodes/groups items bottom.
+    Q_INVOKABLE void    alignSelectionBottom();
+protected:
+    //! \brief Align \c items horizontal center.
+    void    alignHorizontalCenter(std::vector<QQuickItem*>&& items);
+    //! \brief Align \c items right.
+    void    alignRight(std::vector<QQuickItem*>&& items);
+    //! \brief Align \c items left.
+    void    alignLeft(std::vector<QQuickItem*>&& items);
+    //! \brief Align \c items top.
+    void    alignTop(std::vector<QQuickItem*>&& items);
+    //! \brief Align \c items bottom.
+    void    alignBottom(std::vector<QQuickItem*>&& items);
     //@}
     //-------------------------------------------------------------------------
 

@@ -1224,6 +1224,72 @@ void    Graph::clearSelection()
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
 }
+
+std::vector<QQuickItem*>    Graph::getSelectedItems() const
+{
+    using item_vector_t = std::vector<QQuickItem*>;
+    item_vector_t items;
+    items.reserve(static_cast<item_vector_t::size_type>(_selectedNodes.size() + _selectedGroups.size()));
+    for (const auto& selectedNode: _selectedNodes) {
+        if (selectedNode->getItem() != nullptr)
+            items.push_back(selectedNode->getItem());
+    }
+    for (const auto& selectedGroup: _selectedGroups) {
+        if (selectedGroup->getItem() != nullptr)
+            items.push_back(selectedGroup->getItem());
+    }
+    return items;   // Expect RVA
+}
+//-----------------------------------------------------------------------------
+
+
+/* Alignment Management *///---------------------------------------------------
+void    Graph::alignSelectionHorizontalCenter() { alignHorizontalCenter(getSelectedItems()); }
+
+void    Graph::alignSelectionRight() { alignRight(getSelectedItems()); }
+
+void    Graph::alignSelectionLeft() { alignLeft(getSelectedItems()); }
+
+void    Graph::alignSelectionTop() { alignTop(getSelectedItems()); }
+
+void    Graph::alignSelectionBottom() { alignBottom(getSelectedItems()); }
+
+void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
+{
+
+}
+
+void    Graph::alignRight(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal maxRight = std::numeric_limits<qreal>::min();
+    for (const auto item: items)
+        maxRight = std::max(maxRight, item->x() + item->width());
+    for (auto item: items)
+        item->setX(maxRight - item->width());
+}
+
+void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal minLeft = std::numeric_limits<qreal>::max();
+    for (const auto item: items)
+        minLeft = std::min(minLeft, item->x());
+    for (auto item: items)
+        item->setX(minLeft);
+}
+
+void    Graph::alignTop(std::vector<QQuickItem*>&& items)
+{
+
+}
+
+void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
+{
+
+}
 //-----------------------------------------------------------------------------
 
 
