@@ -798,39 +798,53 @@ ApplicationWindow {
             }
         }
     } // selectionView
-    RowLayout {
+
+    Control {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        CheckBox {
-            text: qsTr("Dark")
-            checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
-            onClicked: ApplicationWindow.contentItem.Material.theme
-                       = checked ? Material.Dark : Material.Light
+
+        width: 470
+        height: 50
+        padding: 0
+
+        Pane {
+            anchors.fill: parent
+            opacity: 0.55
         }
         RowLayout {
-            Layout.margins: 2
-            Label {
-                text: "Edge type:"
-            }
-            Item {
-                Layout.fillWidth: true
-            }
-            ComboBox {
-                model: ["Straight", "Curved"]
-                enabled: defaultEdgeStyle !== undefined
-                currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                onActivated: {
-                    if (index == 0)
-                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
-                    else if (index == 1)
-                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
-                }
-            }
+            anchors.fill: parent
+            anchors.margins: 0
             CheckBox {
-                id: showDebugControls
-                text: "Show Debug controls"
-                checked: true
+                text: qsTr("Dark")
+                checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
+                onClicked: ApplicationWindow.contentItem.Material.theme
+                           = checked ? Material.Dark : Material.Light
             }
-        } // RowLayout: edgeType
+            RowLayout {
+                Layout.margins: 2
+                Label {
+                    text: "Edge type:"
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                ComboBox {
+                    model: ["Straight", "Curved"]
+                    enabled: defaultEdgeStyle !== undefined
+                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                    onActivated: {
+                        if (index == 0)
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+                        else if (index == 1)
+                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+                    }
+                }
+                CheckBox {
+                    id: showDebugControls
+                    text: "Show Debug controls"
+                    checked: false
+                }
+            } // RowLayout: edgeType
+        }
     }
 }
