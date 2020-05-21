@@ -23,10 +23,10 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
+import QtQuick 2.13
+import QtQuick.Controls 2.13
+import QtQuick.Layouts  1.3
+import QtQuick.Dialogs  1.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 
@@ -49,10 +49,6 @@ ApplicationWindow {
         title: "Main Menu"
         property var targetNode: undefined
         property var targetEdge: undefined
-        MenuItem {
-            text: "Clear Graph"
-            onTriggered: topology.clearGraph()
-        }
         MenuItem {
             text: "Insert Node"
             onTriggered: {
@@ -87,34 +83,75 @@ ApplicationWindow {
                 n.label = "Group #" + topology.getGroupCount()
             }
         }
-        MenuItem {
-            text: "Add Left port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: {
-                var inPort = topology.insertPort(menu.targetNode,
-                                                 Qan.NodeItem.Left)
-                inPort.label = "LPORT"
+        Menu {
+            title: "Align"
+            MenuItem {
+                text: "Align Horizontal Center"
+                icon.name: 'ink-align-horizontal-center-symbolic'
+                enabled: menu.targetNode !== undefined
+                //onTriggered:
             }
-        }
+            MenuItem {
+                text: "Align Left"
+                icon.name: 'ink-align-horizontal-left-symbolic'
+                enabled: menu.targetNode !== undefined
+                //onTriggered:
+            }
+            MenuItem {
+                text: "Align Right"
+                icon.name: 'ink-align-horizontal-right-symbolic'
+                enabled: menu.targetNode !== undefined
+                //onTriggered:
+            }
+            MenuItem {
+                text: "Align Top"
+                icon.name: 'ink-align-vertical-top-symbolic'
+                enabled: menu.targetNode !== undefined
+                //onTriggered:
+            }
+            MenuItem {
+                text: "Align Bottom"
+                icon.name: 'ink-align-vertical-bottom-symbolic'
+                enabled: menu.targetNode !== undefined
+                //onTriggered:
+            }
+        } // Menu: align
+        Menu {
+            title: "Ports"
+            MenuItem {
+                text: "Add Left port"
+                enabled: menu.targetNode !== undefined
+                onTriggered: {
+                    var inPort = topology.insertPort(menu.targetNode,
+                                                     Qan.NodeItem.Left)
+                    inPort.label = "LPORT"
+                }
+            }
+            MenuItem {
+                text: "Add Top port"
+                enabled: menu.targetNode !== undefined
+                onTriggered: topology.insertPort(menu.targetNode,
+                                                 Qan.NodeItem.Top, "IN")
+            }
+            MenuItem {
+                text: "Add Right port"
+                enabled: menu.targetNode !== undefined
+                onTriggered: topology.insertPort(menu.targetNode,
+                                                 Qan.NodeItem.Right, "RPORT")
+            }
+            MenuItem {
+                text: "Add Bottom port"
+                enabled: menu.targetNode !== undefined
+                onTriggered: topology.insertPort(menu.targetNode,
+                                                 Qan.NodeItem.Bottom, "IN")
+            }
+        } // Menu: ports
+        MenuSeparator { }
         MenuItem {
-            text: "Add Top port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Top, "IN")
+            text: "Clear Graph"
+            onTriggered: topology.clearGraph()
         }
-        MenuItem {
-            text: "Add Right port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Right, "RPORT")
-        }
-        MenuItem {
-            text: "Add Bottom port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Bottom, "IN")
-        }
-    }
+    } // Menu: menu
 
     Menu {
         id: menuRmPort

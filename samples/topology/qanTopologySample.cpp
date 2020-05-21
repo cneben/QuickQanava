@@ -48,9 +48,14 @@ using namespace qan;
 int	main( int argc, char** argv )
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app( argc, argv );
-    app.setQuitOnLastWindowClosed( true );
+    QGuiApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
+    QStringList themePaths; themePaths << "qrc:/icons"
+                                       << "qrc:/icons/Qan";
+    QIcon::setFallbackSearchPaths(QIcon::fallbackSearchPaths() << themePaths);
+    QIcon::setThemeSearchPaths(QIcon::themeSearchPaths() << themePaths);
+    QIcon::setThemeName(QStringLiteral("Qan"));
 
     QQmlApplicationEngine engine;
     engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
