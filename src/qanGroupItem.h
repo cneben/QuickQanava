@@ -162,7 +162,7 @@ signals:
     void        collapsedChanged();
 
 public:
-    Q_INVOKABLE void    collapseAncestors(bool collapsed = true);
+    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
     //@}
     //-------------------------------------------------------------------------
 

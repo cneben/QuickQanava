@@ -120,7 +120,7 @@ Item {
                     onDoubleClicked: labelEditor.visible = true
                 }
             }
-        }
+        } // labelEditor Item
     } // RowLayout: collapser + label
 
     // Emitted by qan::GroupItem when node dragging start

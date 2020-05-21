@@ -49,7 +49,7 @@
 namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
-Group::Group( QObject* parent ) :
+Group::Group(QObject* parent) :
     qan::Node{parent}
 {
     set_is_group(true);
@@ -117,19 +117,20 @@ void    Group::itemEndProposeNodeDrop()
 //-----------------------------------------------------------------------------
 
 /* Group Static Factories *///-------------------------------------------------
-QQmlComponent*  Group::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml",
+                                                   QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
 }
 
-qan::Style*     Group::style() noexcept
+qan::Style*     Group::style(QObject* parent) noexcept
 {
     static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
     if ( !qan_Group_style ) {
-        qan_Group_style = std::make_unique<qan::NodeStyle>();
+        qan_Group_style = std::make_unique<qan::NodeStyle>(parent);
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
         qan_Group_style->setBorderWidth(2.);

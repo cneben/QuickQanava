@@ -60,8 +60,8 @@ GroupItem::GroupItem( QQuickItem* parent ) :
     // Update adjacent edges z when group item z is modified.
     connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
 
-    setItemStyle( qan::Group::style() );
-    setObjectName( QStringLiteral("qan::GroupItem") );
+    setItemStyle(qan::Group::style(parent));
+    setObjectName(QStringLiteral("qan::GroupItem"));
     // Note: Do not set width and height
 }
 
@@ -149,6 +149,7 @@ void    GroupItem::setCollapsed( bool collapsed ) noexcept
 
 void    GroupItem::collapseAncestors(bool collapsed)
 {
+    // Do not call base
     // PRECONDITIONS:
         // getNode() can't return nullptr
         // getGraph() can't return nullptr

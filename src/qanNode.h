@@ -102,13 +102,13 @@ public:
      *  \arg engine QML engine used to create delegate component.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Node component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Node.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default node style will be used).
      */
-    static  qan::NodeStyle*     style() noexcept;
+    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 

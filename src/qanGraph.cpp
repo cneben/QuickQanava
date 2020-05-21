@@ -86,13 +86,15 @@ void    Graph::classBegin()
 
 void    Graph::componentComplete()
 {
+    if (_connector)     // Initialize _connector just once, it looks like this method could be called multiple times (Qt 5.15...)
+        return;
     const auto engine = qmlEngine(this);
-    if ( engine ) {
+    if (engine != nullptr) {
         // Visual connector initialization
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
-        if ( connectorComponent ) {
-            qan::Style* style = qan::Connector::style();
-            if ( style != nullptr ) {
+        if (connectorComponent) {
+            qan::Style* style = qan::Connector::style(this);
+            if (style != nullptr) {
                 _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
                 emit connectorChanged();
                 if (_connector) {
@@ -350,18 +352,23 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                                         qan::Edge* edge,
                                         qan::Group* group ) noexcept
 {
-    if ( component == nullptr ) {
+    //qWarning() << "Graph::createFromComponent(): node=" << node << "  edge=" << edge << "  group=" << group;
+    if (component == nullptr) {
         qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
     try {
-        if ( !component->isReady() )
+        if (!component->isReady())
             throw qan::Error{ "Error delegate component is not ready." };
 
         const auto rootContext = qmlContext(this);
+        //qWarning() << "Graph::createComComponent(): rootContext=" << rootContext;
+        //qWarning() << "   rootContext.thread=" << rootContext->thread();
         if ( rootContext == nullptr )
             throw qan::Error{ "Error can't access to local QML context." };
+        //qWarning() << "   component.thread=" << component->thread();
+        //qWarning() << "   this.thread=" << this->thread();
         QObject* object = component->beginCreate(rootContext);
         if ( object == nullptr ||
              component->isError() ) {
@@ -698,7 +705,7 @@ qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCo
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
-    return insertEdge<qan::Edge>(*source, destination, edgeComponent );
+    return insertEdge<qan::Edge>(*source, destination, edgeComponent);
 }
 
 void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
@@ -901,14 +908,14 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
         // If group delegate (groupItem) failed, insert a non visual node.
         // Otherwise, insert a visual item.
     if (groupItem == nullptr) {
-        gtpo_graph_t::insert_group( group );
+        gtpo_graph_t::insert_group(group);
         return true;
     }
     if (groupItem == nullptr) {
         qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
         return false;
     }
-    gtpo_graph_t::insert_group( group );
+    gtpo_graph_t::insert_group(group);
     groupItem->setGroup(group.get());
     groupItem->setGraph(this);
     group->setItem(groupItem);
@@ -942,7 +949,7 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
     return true;
 }
 
-void    Graph::removeGroup( qan::Group* group )
+void    Graph::removeGroup(qan::Group* group)
 {
     if ( group == nullptr )
         return;
@@ -1562,9 +1569,11 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
         }
     }
     // Collect the parent group of a node
-    const auto nodeGroup = node.getGroup();
-    if (nodeGroup != nullptr)
-        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    /*if (collectGroup) {
+        const auto nodeGroup = node.getGroup();
+        if (nodeGroup != nullptr)
+            collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    }*/
     for (const auto& inNode : node.get_in_nodes())
         collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
     return parents;

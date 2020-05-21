@@ -140,6 +140,12 @@ signals:
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
     auto            setRect(const QRectF& r) noexcept -> void;
+
+public:
+    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
+    //@}
+    //-------------------------------------------------------------------------
+
     //@}
     //-------------------------------------------------------------------------
 

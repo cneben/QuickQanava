@@ -56,7 +56,7 @@ EdgeItem::EdgeItem( QQuickItem* parent ) :
     setAcceptDrops( true );
     setVisible(false);  // Invisible until there is a valid src/dst
 
-    setStyle( qan::Edge::style() );
+    setStyle(qan::Edge::style(parent));
     setObjectName( QStringLiteral("qan::EdgeItem") );
 }
 

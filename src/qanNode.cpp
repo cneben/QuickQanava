@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::node< qan::Config >{}
+    gtpo::node<qan::Config>{parent}
 {
     Q_UNUSED(parent)
 
@@ -95,19 +95,20 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-QQmlComponent*  Node::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  Node::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml",
+                                                   QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
 }
 
-qan::NodeStyle* Node::style() noexcept
+qan::NodeStyle* Node::style(QObject* parent) noexcept
 {
     static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
     if ( !qan_Node_style )
-        qan_Node_style = std::make_unique<qan::NodeStyle>();
+        qan_Node_style = std::make_unique<qan::NodeStyle>(parent);
     return qan_Node_style.get();
 }
 //-----------------------------------------------------------------------------

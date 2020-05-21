@@ -32,8 +32,7 @@
 // \date    2015 06 05
 //-----------------------------------------------------------------------------
 
-#ifndef qanStyle_h
-#define qanStyle_h
+#pragma once
 
 // Qt headers
 #include <QColor>
@@ -66,9 +65,10 @@ class Style : public QObject
 public:
     /*! \brief Style constructor with style name initialisation.
      */
-    explicit Style( QString name = "", QObject* parent = nullptr );
-    virtual ~Style( ) { }
-    Style( const Style& ) = delete;
+    Style(QObject* parent = nullptr);
+    explicit Style(QString name, QObject* parent = nullptr);
+    virtual ~Style() = default;
+    Style(const Style&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -98,9 +98,10 @@ public:
      * Style \c metaTarget is "qan::Node". NodeStyle objects are usually created
      * with qan:StyleManager::createNodeStyle() factory method.
      */
-    explicit NodeStyle( QString name = "", QObject* parent = nullptr );
+    NodeStyle(QObject* parent = nullptr);
+    explicit NodeStyle(QString name, QObject* parent = nullptr);
     virtual ~NodeStyle( ) { }
-    NodeStyle( const NodeStyle& ) = delete;
+    NodeStyle(const NodeStyle&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -316,9 +317,10 @@ public:
     /*! \brief Edge style constructor with style \c name and \c target initialisation.
      *
      */
-    explicit EdgeStyle( QString name = "", QObject* parent = nullptr );
-    virtual ~EdgeStyle( ) { }
-    EdgeStyle( const EdgeStyle& ) = delete;
+    EdgeStyle(QObject* parent = nullptr);
+    explicit EdgeStyle(QString name, QObject* parent = nullptr);
+    virtual ~EdgeStyle() override = default;
+    EdgeStyle(const EdgeStyle&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -453,15 +455,12 @@ signals:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Style )
+QML_DECLARE_TYPE(qan::Style)
 
-QML_DECLARE_TYPE( qan::NodeStyle )
-Q_DECLARE_METATYPE( qan::NodeStyle::FillType )
-Q_DECLARE_METATYPE( qan::NodeStyle::EffectType )
+QML_DECLARE_TYPE(qan::NodeStyle)
+Q_DECLARE_METATYPE(qan::NodeStyle::FillType)
+Q_DECLARE_METATYPE(qan::NodeStyle::EffectType)
 
-QML_DECLARE_TYPE( qan::EdgeStyle )
-Q_DECLARE_METATYPE( qan::EdgeStyle::LineType )
-Q_DECLARE_METATYPE( qan::EdgeStyle::ArrowShape )
-
-#endif // qanStyle_h
-
+QML_DECLARE_TYPE(qan::EdgeStyle)
+Q_DECLARE_METATYPE(qan::EdgeStyle::LineType)
+Q_DECLARE_METATYPE(qan::EdgeStyle::ArrowShape)

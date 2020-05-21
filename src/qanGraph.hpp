@@ -58,7 +58,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         if (nodeComponent != nullptr) {
             QQmlEngine::setObjectOwnership(node.get(), QQmlEngine::CppOwnership);
             if (nodeStyle == nullptr)
-                nodeStyle = Node_t::style();
+                nodeStyle = Node_t::style(this);
             if (nodeStyle == nullptr)
                 throw qan::Error{"style() factory has returned a nullptr style."};
             _styleManager.setStyleComponent(nodeStyle, nodeComponent);      // nullptr nodeComponent is ok
@@ -155,14 +155,14 @@ qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent
         qWarning() << "qan::Graph::insertEdge<>(): Error: Can't find a valid edge delegate component.";
         return nullptr;
     }
-    const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style());
+    const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style(this));
     if ( style == nullptr ) {
         qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
         return nullptr;
     }
     qan::Edge* configuredEdge = nullptr;
     try {
-        auto edge = std::make_shared<Edge_t>();
+        auto edge = std::make_shared<Edge_t>(this);
         QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
         if ( configureEdge( *edge,  *edgeComponent, *style,
                             src,    dstNode ) ) {
@@ -210,7 +210,7 @@ qan::Group* Graph::insertGroup()
     const auto engine = qmlEngine(this);
     QQmlComponent* groupComponent = nullptr;
     if ( engine != nullptr )
-        groupComponent = Group_t::delegate(*engine);
+        groupComponent = Group_t::delegate(*engine, this);
     if ( groupComponent == nullptr )
         groupComponent = _groupDelegate.get();
     auto group = std::make_shared<Group_t>();

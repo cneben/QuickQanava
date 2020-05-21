@@ -57,7 +57,7 @@ class Edge : public gtpo::edge<qan::Config>
     Q_OBJECT
 public:
     //! Edge constructor with source, destination and weight initialization.
-    explicit Edge();
+    explicit Edge(QObject* parent = nullptr);
     Edge(const Edge&) = delete;
     virtual ~Edge() override;
 
@@ -87,13 +87,13 @@ public:
      *  \arg engine QML engine used to create delegate component.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Edge component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Edge.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default edge style will be used).
      */
-    static  qan::EdgeStyle*     style() noexcept;
+    static  qan::EdgeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 

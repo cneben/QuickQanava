@@ -85,8 +85,8 @@ public:
     //! User friendly shortcut type to this concrete node Behaviourable base type.
     using behaviourable_base = gtpo::behaviourable_node< config_t >;
 
-    node() noexcept : config_t::node_base{} { }
-    ~node() noexcept {
+    node(typename config_t::node_base* parent = nullptr) noexcept : config_t::node_base{parent} { }
+    virtual ~node() noexcept {
         _in_edges.clear(); _out_edges.clear();
         _in_nodes.clear(); _out_nodes.clear();
         if ( this->_graph != nullptr ) {

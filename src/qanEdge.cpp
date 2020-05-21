@@ -45,8 +45,8 @@
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
-Edge::Edge() :
-    gtpo::edge<qan::Config>{}
+Edge::Edge(QObject* parent) :
+    gtpo::edge<qan::Config>{parent}
 {
 }
 
@@ -77,19 +77,20 @@ void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 //-----------------------------------------------------------------------------
 
 /* Edge Static Factories *///--------------------------------------------------
-QQmlComponent*  Edge::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  Edge::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Edge.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Edge.qml",
+                                                   QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
 }
 
-qan::EdgeStyle* Edge::style() noexcept
+qan::EdgeStyle* Edge::style(QObject* parent) noexcept
 {
     static std::unique_ptr<qan::EdgeStyle>  qan_Edge_style;
-    if ( !qan_Edge_style )
-        qan_Edge_style = std::make_unique<qan::EdgeStyle>();
+    if (!qan_Edge_style)
+        qan_Edge_style = std::make_unique<qan::EdgeStyle>(parent);
     return qan_Edge_style.get();
 }
 //-----------------------------------------------------------------------------

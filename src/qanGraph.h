@@ -77,7 +77,7 @@ class Graph : public gtpo::graph<qan::Config>
     //@{
 public:
     //! Graph default constructor.
-    explicit Graph( QQuickItem* parent = nullptr ) noexcept;
+    explicit Graph(QQuickItem* parent = nullptr) noexcept;
     /*! \brief Graph default destructor.
      *
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
@@ -518,7 +518,7 @@ public:
     using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
 
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
-    Q_INVOKABLE qan::Group* insertGroup();
+    Q_INVOKABLE virtual qan::Group* insertGroup();
 
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *

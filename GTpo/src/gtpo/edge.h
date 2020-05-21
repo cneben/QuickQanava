@@ -82,7 +82,7 @@ public:
     using weak_edge_t   = std::weak_ptr<typename config_t::final_edge_t>;
     using shared_edge_t = std::shared_ptr<typename config_t::final_edge_t>;
 
-    edge() noexcept : config_t::edge_base{} {}
+    edge(typename config_t::node_base* parent = nullptr) noexcept : config_t::edge_base{parent} {}
     explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
         config_t::edge_base{}, _src{ src }, _dst{ dst } { }
     virtual ~edge() {

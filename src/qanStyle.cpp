@@ -42,19 +42,17 @@
 namespace qan { // ::qan
 
 /* Style Object Management *///------------------------------------------------
-Style::Style( QString name, QObject* parent ) :
-    QObject{ parent },
-    _name{ name }
-{
+Style::Style(QObject* parent) :
+    QObject{parent} { /* Nil */ }
 
-}
+Style::Style(QString name, QObject* parent) :
+    QObject{parent},
+    _name{name} { /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Node Style Object Management *///-------------------------------------------
-NodeStyle::NodeStyle( QString name, QObject* parent ) :
-    qan::Style( name, parent )
-{
-}
+NodeStyle::NodeStyle(QString name, QObject* parent) : qan::Style(name, parent) { /* Nil */ }
+NodeStyle::NodeStyle(QObject* parent) : qan::Style(parent) { /* Nil */ }
 //-----------------------------------------------------------------------------
 
 /* Node Style Properties *///--------------------------------------------------
@@ -182,10 +180,9 @@ void    NodeStyle::setFontBold( bool fontBold ) noexcept
 
 
 /* Edge Style Object Management *///-------------------------------------------
-EdgeStyle::EdgeStyle( QString name, QObject* parent ) :
-    qan::Style( name, parent )
-{
-}
+EdgeStyle::EdgeStyle(QString name, QObject* parent) : qan::Style(name, parent) { /* Nil */ }
+
+EdgeStyle::EdgeStyle(QObject* parent) : qan::Style(parent) { /* Nil */ }
 
 void    EdgeStyle::setLineType( LineType lineType ) noexcept
 {
