@@ -1256,7 +1256,23 @@ void    Graph::alignSelectionBottom() { alignBottom(getSelectedItems()); }
 
 void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
 {
+    if (items.size() <= 1)
+        return;
 
+    // ALGORITHM:
+        // Get min left and max right.
+        // Compute center of min left and max right
+        // Align all items on this center
+    qreal maxRight = std::numeric_limits<qreal>::min();
+    qreal minLeft = std::numeric_limits<qreal>::max();
+    for (const auto item: items) {
+        maxRight = std::max(maxRight, item->x() + item->width());
+        minLeft = std::min(minLeft, item->x());
+    }
+
+    qreal center = minLeft + (maxRight - minLeft) / 2.;
+    for (auto item: items)
+        item->setX(center - (item->width() / 2.));
 }
 
 void    Graph::alignRight(std::vector<QQuickItem*>&& items)
@@ -1283,12 +1299,24 @@ void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
 
 void    Graph::alignTop(std::vector<QQuickItem*>&& items)
 {
-
+    if (items.size() <= 1)
+        return;
+    qreal minTop = std::numeric_limits<qreal>::max();
+    for (const auto item: items)
+        minTop = std::min(minTop, item->y());
+    for (auto item: items)
+        item->setY(minTop);
 }
 
 void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
 {
-
+    if (items.size() <= 1)
+        return;
+    qreal maxBottom = std::numeric_limits<qreal>::min();
+    for (const auto item: items)
+        maxBottom = std::max(maxBottom, item->y() + item->height());
+    for (auto item: items)
+        item->setY(maxBottom - item->height());
 }
 //-----------------------------------------------------------------------------
 
