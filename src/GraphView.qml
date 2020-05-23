@@ -160,13 +160,13 @@ Qan.AbstractGraphView {
                 // Connector should be half on top of node
                 graph.connector.y = -graph.connector.height / 2
             }
-            if ( node.item.resizable ) {
+            if (node.item.resizable) {
                 nodeItemRatioWatcher.target = node.item
                 nodeResizer.parent = node.item
                 nodeResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
-                nodeResizer.minimumTargetSize = node.item.minimumSize   // to avoid old target beeing eventually resized to new target min size...
+                nodeResizer.minimumTargetSize = Qt.binding(function() { return node.item.minimumSize; })   // to avoid old target beeing eventually resized to new target min size...
                 nodeResizer.target = node.item
-                nodeResizer.visible = Qt.binding( function() { return nodeResizer.target.resizable; } )
+                nodeResizer.visible = Qt.binding(function() { return nodeResizer.target.resizable; })
                 nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 nodeResizer.preserveRatio = (node.item.ratio > 0.)
                 if (node.item.ratio > 0. ) {

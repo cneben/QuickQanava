@@ -126,11 +126,11 @@ private:
 
 public:
     //! Node minimum size, default to "100 x 45" (node could not be visually resized below this size if \c resizable property is true).
-    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
+    Q_PROPERTY(QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL)
     //! \copydoc minimumSize
     const QSizeF&   getMinimumSize() const noexcept { return _minimumSize; }
     //! \copydoc minimumSize
-    void            setMinimumSize(QSizeF minimumSize) noexcept { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
+    void            setMinimumSize(QSizeF minimumSize) noexcept { _minimumSize = minimumSize; emit minimumSizeChanged(); }
 private:
     QSizeF          _minimumSize{100., 45.};
 signals:
