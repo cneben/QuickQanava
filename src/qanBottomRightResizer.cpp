@@ -52,7 +52,8 @@ BottomRightResizer::BottomRightResizer( QQuickItem* parent ) :
 
 BottomRightResizer::~BottomRightResizer( )
 {
-    if ( _handler )
+    if (_handler &&
+        QQmlEngine::objectOwnership(_handler.data()) == QQmlEngine::CppOwnership)
         _handler->deleteLater();
 }
 //-----------------------------------------------------------------------------
@@ -60,23 +61,23 @@ BottomRightResizer::~BottomRightResizer( )
 /* Resizer Management *///-----------------------------------------------------
 void    BottomRightResizer::setHandler( QQuickItem* handler ) noexcept
 {
-    if ( handler != _handler.data() ) {
-        if ( _handler ) {
-            if ( QQmlEngine::objectOwnership(_handler.data()) == QQmlEngine::CppOwnership )
+    if (handler != _handler.data()) {
+        if (_handler) {     // Delete existing handler
+            if (QQmlEngine::objectOwnership(_handler.data()) == QQmlEngine::CppOwnership)
                 _handler.data()->deleteLater();
         }
         _handler = handler;
-        if ( _handler )
+        if (_handler)
             _handler->installEventFilter(this);
         emit handlerChanged();
     }
-    if ( _target )      // Force target reconfiguration for new handler
+    if (_target)      // Force target reconfiguration for new handler
         configureTarget(*_target);
 }
 
-QQuickItem* BottomRightResizer::getHandler( ) const noexcept
+QQuickItem* BottomRightResizer::getHandler() const noexcept
 {
-    return ( _handler ? _handler.data() : nullptr );
+    return (_handler ? _handler.data() : nullptr);
 }
 
 void    BottomRightResizer::setTarget( QQuickItem* target )

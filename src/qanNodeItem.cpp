@@ -361,35 +361,35 @@ QPolygonF   NodeItem::getBoundingShape() noexcept
     return _boundingShape;
 }
 
-QPolygonF    NodeItem::generateDefaultBoundingShape( ) const
+QPolygonF    NodeItem::generateDefaultBoundingShape() const
 {
     // Generate a rounded rectangular intersection shape for this node rect new geometry
     QPainterPath path;
-    qreal shapeRadius( 5. );
-    path.addRoundedRect( QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius );
-    return path.toFillPolygon( QTransform{} );
+    qreal shapeRadius = 5.;
+    path.addRoundedRect(QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius);
+    return path.toFillPolygon(QTransform{});
 }
 
-void    NodeItem::setDefaultBoundingShape( )
+void    NodeItem::setDefaultBoundingShape()
 {
-    setBoundingShape( generateDefaultBoundingShape() );
+    setBoundingShape(generateDefaultBoundingShape());
 }
 
-void    NodeItem::setBoundingShape( QVariantList boundingShape )
+void    NodeItem::setBoundingShape(QVariantList boundingShape)
 {
-    QPolygonF shape; shape.resize( boundingShape.size() );
+    QPolygonF shape; shape.resize(boundingShape.size());
     int p = 0;
-    for ( const auto& vp : boundingShape )
-        shape[p++] = vp.toPointF( );
-    _boundingShape = ( !shape.isEmpty( ) ? shape : generateDefaultBoundingShape() );
+    for (const auto& vp : boundingShape)
+        shape[p++] = vp.toPointF();
+    _boundingShape = (!shape.isEmpty( ) ? shape : generateDefaultBoundingShape());
     emit boundingShapeChanged();
 }
 
-bool    NodeItem::isInsideBoundingShape( QPointF p )
+bool    NodeItem::isInsideBoundingShape(QPointF p)
 {
     if ( _boundingShape.isEmpty() )
-        setBoundingShape( generateDefaultBoundingShape() );
-    return _boundingShape.containsPoint( p, Qt::OddEvenFill );
+        setBoundingShape(generateDefaultBoundingShape());
+    return _boundingShape.containsPoint(p, Qt::OddEvenFill);
 }
 //-----------------------------------------------------------------------------
 

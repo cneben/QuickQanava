@@ -273,22 +273,22 @@ void    Graph::setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) 
     }
 }
 
-void    Graph::setConnectorItem( QQuickItem* connectorItem ) noexcept
+void    Graph::setConnectorItem(QQuickItem* connectorItem) noexcept
 {
-    if ( connectorItem != _connectorItem ) {
+    if (connectorItem != _connectorItem) {
         _connectorItem = connectorItem;
-        if ( _connectorItem &&
-             _connector )
-            _connector->setConnectorItem( _connectorItem.data() );
+        if (_connectorItem &&
+            _connector)
+            _connector->setConnectorItem(_connectorItem.data());
         emit connectorItemChanged();
     }
 }
 
-void    Graph::setConnectorEnabled( bool connectorEnabled ) noexcept
+void    Graph::setConnectorEnabled(bool connectorEnabled) noexcept
 {
-    if ( connectorEnabled != _connectorEnabled ) {
+    if (connectorEnabled != _connectorEnabled) {
         _connectorEnabled = connectorEnabled;
-        if ( _connector ) {
+        if (_connector) {
             _connector->setVisible(connectorEnabled);
             _connector->setEnabled(connectorEnabled);
         }

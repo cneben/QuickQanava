@@ -151,10 +151,10 @@ Qan.AbstractGraphView {
             graph.sendToFront(node.item)
             if (node.locked)                // Do not show any connector for locked node/groups
                 return;
-            if ( graph.connector &&
-                 graph.connectorEnabled &&
-                 ( node.item.connectable === Qan.NodeItem.Connectable ||
-                   node.item.connectable === Qan.NodeItem.OutConnectable ) ) {      // Do not show visual connector if node is not visually "connectable"
+            if (graph.connector &&
+                graph.connectorEnabled &&
+                 (node.item.connectable === Qan.NodeItem.Connectable ||
+                  node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
                 graph.connector.visible = true
                 graph.connector.sourceNode = node
                 // Connector should be half on top of node
