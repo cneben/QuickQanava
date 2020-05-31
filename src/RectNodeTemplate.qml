@@ -45,16 +45,25 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
+
+    // PUBLIC /////////////////////////////////////////////////////////////////
     property var            nodeItem : undefined
     default property alias  children : contentLayout.children
 
+    // PRIVATE ////////////////////////////////////////////////////////////////
+    onNodeItemChanged: {
+        if (delegateLoader.item &&
+            delegateLoader.item.nodeItem)
+            delegateLoader.item.nodeItem = nodeItem
+    }
     Loader {
+        id: delegateLoader
         anchors.fill: parent
         source: {
-            if ( !nodeItem ||
-                 !nodeItem.style )     // Defaul to solid no effect with unconfigured nodes
+            if (!nodeItem ||
+                !nodeItem.style)     // Defaul to solid no effect with unconfigured nodes
                 return "qrc:/QuickQanava/RectSolidBackground.qml";
-            switch ( nodeItem.style.fillType ) {  // Otherwise, select the delegate according to current style configuration
+            switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
             case Qan.NodeStyle.FillSolid:
                 switch (nodeItem.style.effectType ) {
                 case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectSolidBackground.qml";
@@ -73,7 +82,7 @@ Item {
         }
         onItemChanged: {
             if (item)
-                item.nodeItem = Qt.binding(function() { return template.nodeItem; } );
+                item.nodeItem = template.nodeItem
         }
     }
     ColumnLayout {
@@ -112,4 +121,4 @@ Item {
         target: parent.nodeItem.node
         visible: false
     }
-}
+} // Item: template
