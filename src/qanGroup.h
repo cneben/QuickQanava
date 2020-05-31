@@ -109,7 +109,7 @@ public:
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
      */
-    static  qan::Style*         style(QObject* parent = nullptr) noexcept;
+    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 

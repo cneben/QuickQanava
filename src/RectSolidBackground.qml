@@ -50,6 +50,7 @@ Rectangle {
     anchors.fill: parent    // Background follow the content layout implicit size
     radius: nodeItem.style.backRadius
     color: backColor
+    onColorChanged: console.error('backColor=' + backColor)
     border.color: nodeItem.style.borderColor
     border.width: nodeItem.style.borderWidth
     antialiasing: true

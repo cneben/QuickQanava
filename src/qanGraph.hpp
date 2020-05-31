@@ -209,12 +209,12 @@ qan::Group* Graph::insertGroup()
 {
     const auto engine = qmlEngine(this);
     QQmlComponent* groupComponent = nullptr;
-    if ( engine != nullptr )
+    if (engine != nullptr)
         groupComponent = Group_t::delegate(*engine, this);
-    if ( groupComponent == nullptr )
+    if (groupComponent == nullptr)
         groupComponent = _groupDelegate.get();
     auto group = std::make_shared<Group_t>();
-    if (!insertGroup(group, groupComponent, nullptr))
+    if (!insertGroup(group, groupComponent, Group_t::style(nullptr)))
         qWarning() << "qan::Graph::insertGroup<>(): Warning: Error at group insertion.";
     return group.get();
 }

@@ -126,15 +126,18 @@ QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
     return delegate.get();
 }
 
-qan::Style*     Group::style(QObject* parent) noexcept
+qan::NodeStyle* Group::style(QObject* parent) noexcept
 {
     static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
-    if ( !qan_Group_style ) {
+    if (!qan_Group_style) {
         qan_Group_style = std::make_unique<qan::NodeStyle>(parent);
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
         qan_Group_style->setBorderWidth(2.);
         qan_Group_style->setBackRadius(8.);
+        qan_Group_style->setBackOpacity(0.90);
+        qan_Group_style->setBaseColor(QColor(240, 245, 250));
+        qan_Group_style->setBackColor(QColor(242, 248, 255));
     }
     return qan_Group_style.get();
 }

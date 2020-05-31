@@ -304,7 +304,7 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
     // Note 20160712: Do not call base QQuickItem implementation.
 }
 
-void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
+void    NodeItem::mouseReleaseEvent(QMouseEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseReleaseEvent(event);
@@ -313,16 +313,17 @@ void    NodeItem::mouseReleaseEvent( QMouseEvent* event )
 
 
 /* Style Management *///-------------------------------------------------------
-void    NodeItem::setStyle( qan::NodeStyle* style ) noexcept
+void    NodeItem::setStyle(qan::NodeStyle* style) noexcept
 {
-    if ( style != _style ) {
-        if ( _style )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, Q_NULLPTR, this, Q_NULLPTR );
+    if (style != _style) {
+        if (_style)  // Every style that is non default is disconnect from this node
+            QObject::disconnect(_style, nullptr,
+                                this,   nullptr);
         _style = style;
-        if ( _style )
-            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
-                     this,      &NodeItem::styleDestroyed );
-        emit styleChanged( );
+        if (_style)
+            connect(_style,     &QObject::destroyed,    // Monitor eventual style destruction
+                    this,       &NodeItem::styleDestroyed);
+        emit styleChanged();
     }
 }
 

@@ -365,43 +365,44 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
         const auto rootContext = qmlContext(this);
         //qWarning() << "Graph::createComComponent(): rootContext=" << rootContext;
         //qWarning() << "   rootContext.thread=" << rootContext->thread();
-        if ( rootContext == nullptr )
+        if (rootContext == nullptr)
             throw qan::Error{ "Error can't access to local QML context." };
         //qWarning() << "   component.thread=" << component->thread();
         //qWarning() << "   this.thread=" << this->thread();
         QObject* object = component->beginCreate(rootContext);
-        if ( object == nullptr ||
-             component->isError() ) {
-            if ( object != nullptr )
+        if (object == nullptr ||
+            component->isError()) {
+            if (object != nullptr)
                 object->deleteLater();
             throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
                               component->errorString() };
         }
         // No error occurs
-        if ( node != nullptr ) {
+        if (node != nullptr) {
             const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
-            if ( nodeItem != nullptr ) {
+            if (nodeItem != nullptr) {
                 node->setItem(nodeItem);
                 nodeItem->setNode(node);
                 nodeItem->setGraph(this);
                 nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 _styleManager.setStyleComponent(&style, component );
             }
-        } else if ( edge != nullptr ) {
+        } else if (edge != nullptr) {
             const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
-            if ( edgeItem != nullptr ) {
+            if (edgeItem != nullptr) {
                 edge->setItem(edgeItem);
                 edgeItem->setEdge(edge);
                 edgeItem->setGraph(this);
-                _styleManager.setStyleComponent(edgeItem->getStyle(), component );
+                _styleManager.setStyleComponent(edgeItem->getStyle(), component);
             }
-        } else if ( group != nullptr ) {
+        } else if (group != nullptr) {
             const auto groupItem = qobject_cast<qan::GroupItem*>(object);
-            if ( groupItem != nullptr ) {
+            if (groupItem != nullptr) {
                 group->setItem(groupItem);
                 groupItem->setGroup(group);
                 groupItem->setGraph(this);
-                _styleManager.setStyleComponent(groupItem->getStyle(), component );
+                groupItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                _styleManager.setStyleComponent(groupItem->getStyle(), component);
             }
         } else {
             const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
@@ -889,7 +890,7 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
     QQmlEngine::setObjectOwnership(group.get(), QQmlEngine::CppOwnership);
 
     qan::GroupItem* groupItem = nullptr;
-    if ( groupComponent == nullptr )
+    if (groupComponent == nullptr)
         groupComponent = _groupDelegate.get();
 
     if (groupStyle == nullptr)

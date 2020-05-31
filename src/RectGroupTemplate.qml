@@ -66,7 +66,7 @@ Item {
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
     }
-    RectSolidBackground {       // Node background and shadow with backOpacity and backRadius support
+    RectGradientBackground {       // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
         anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
         nodeItem: template.groupItem
@@ -123,8 +123,9 @@ Item {
         } // labelEditor Item
     } // RowLayout: collapser + label
 
+    // FIXME 0.75
     // Emitted by qan::GroupItem when node dragging start
-    function onNodeDragEnter() { groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) }
+    function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
     // Emitted by qan::GroupItem when node dragging ends
-    function onNodeDragLeave() { groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) }
+    function onNodeDragLeave() { /*groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) */}
 }
