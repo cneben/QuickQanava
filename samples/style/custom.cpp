@@ -48,8 +48,9 @@ QQmlComponent*  CustomRectNode::delegate(QQmlEngine& engine) noexcept
     return customRectNode_delegate.get();
 }
 
-qan::NodeStyle* CustomRectNode::style() noexcept
+qan::NodeStyle* CustomRectNode::style(QObject* parent) noexcept
 {
+    Q_UNUSED(parent)
     static std::unique_ptr<qan::NodeStyle>  customRectNode_style;
     if ( !customRectNode_style ) {
         customRectNode_style = std::make_unique<qan::NodeStyle>();
@@ -67,8 +68,9 @@ QQmlComponent*  CustomRoundNode::delegate(QQmlEngine& engine) noexcept
     return customRoundNode_delegate.get();
 }
 
-qan::NodeStyle* CustomRoundNode::style() noexcept
+qan::NodeStyle* CustomRoundNode::style(QObject* parent) noexcept
 {
+    Q_UNUSED(parent)
     static std::unique_ptr<qan::NodeStyle>  customRoundNode_style;
     if ( !customRoundNode_style ) {
         customRoundNode_style = std::make_unique<qan::NodeStyle>();
@@ -86,8 +88,9 @@ QQmlComponent*  CustomEdge::delegate(QQmlEngine& engine) noexcept
     return customEdge_delegate.get();
 }
 
-qan::EdgeStyle* CustomEdge::style() noexcept
+qan::EdgeStyle* CustomEdge::style(QObject* parent) noexcept
 {
+    Q_UNUSED(parent)
     static std::unique_ptr<qan::EdgeStyle>  customEdge_style;
     if ( !customEdge_style )
         customEdge_style = std::make_unique<qan::EdgeStyle>();

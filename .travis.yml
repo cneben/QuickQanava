@@ -16,7 +16,7 @@ env:
 addons:
   apt:
     sources:
-      - sourceline: "ppa:beineri/opt-qt-5.12.6-bionic"
+      - sourceline: "ppa:beineri/opt-qt-5.14.2-bionic"
     packages:
       - cmake
       - qt512base

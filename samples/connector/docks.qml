@@ -24,11 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-<<<<<<< HEAD
-import QtQuick                   2.8
-=======
 import QtQuick                   2.12
->>>>>>> devel
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
@@ -42,8 +38,6 @@ Qan.GraphView {
     id: graphView
     anchors.fill: parent
     navigable   : true
-<<<<<<< HEAD
-=======
     PinchHandler {
         target: null
         onActiveScaleChanged: {
@@ -54,7 +48,6 @@ Qan.GraphView {
             graphView.zoomOn(p, graphView.zoom + (f * 0.03))
         }
     }
->>>>>>> devel
     graph: Qan.Graph {
         id: graph
         connectorEnabled: true

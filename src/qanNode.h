@@ -69,10 +69,10 @@ public:
     //! Node constructor.
     explicit Node(QObject* parent=nullptr);
     virtual ~Node();
-    Node( const Node& ) = delete;
+    Node(const Node&) = delete;
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::node<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
