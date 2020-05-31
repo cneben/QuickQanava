@@ -23,17 +23,10 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-<<<<<<< HEAD
-import QtQuick 2.7
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
-=======
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts  1.3
 import QtQuick.Dialogs  1.2
->>>>>>> devel
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 
@@ -57,13 +50,6 @@ ApplicationWindow {
         property var targetNode: undefined
         property var targetEdge: undefined
         MenuItem {
-<<<<<<< HEAD
-            text: "Clear Graph"
-            onTriggered: topology.clearGraph()
-        }
-        MenuItem {
-=======
->>>>>>> devel
             text: "Insert Node"
             onTriggered: {
                 var n = topology.insertNode()
@@ -97,36 +83,6 @@ ApplicationWindow {
                 n.label = "Group #" + topology.getGroupCount()
             }
         }
-<<<<<<< HEAD
-        MenuItem {
-            text: "Add Left port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: {
-                var inPort = topology.insertPort(menu.targetNode,
-                                                 Qan.NodeItem.Left)
-                inPort.label = "LPORT"
-            }
-        }
-        MenuItem {
-            text: "Add Top port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Top, "IN")
-        }
-        MenuItem {
-            text: "Add Right port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Right, "RPORT")
-        }
-        MenuItem {
-            text: "Add Bottom port"
-            enabled: menu.targetNode !== undefined
-            onTriggered: topology.insertPort(menu.targetNode,
-                                             Qan.NodeItem.Bottom, "IN")
-        }
-    }
-=======
         Menu {
             title: "Align"
             MenuItem {
@@ -196,7 +152,6 @@ ApplicationWindow {
             onTriggered: topology.clearGraph()
         }
     } // Menu: menu
->>>>>>> devel
 
     Menu {
         id: menuRmPort
@@ -261,15 +216,9 @@ ApplicationWindow {
                 menu.open()
             }
             onEdgeRightClicked: {
-<<<<<<< HEAD
-                if (!edge)
-                    return
-                var globalPos = edge.mapToItem(topology, pos.x, pos.y)
-=======
                 if (!edge || !edge.item)
                     return
                 var globalPos = edge.item.mapToItem(topology, pos.x, pos.y)
->>>>>>> devel
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetEdge = edge
@@ -594,19 +543,12 @@ ApplicationWindow {
                 flickableDirection: Flickable.VerticalFlick
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
-<<<<<<< HEAD
-                    x: 0
-                    y: nodesListView.currentItem.y
-                    width: nodesListView.width
-                    height: nodesListView.currentItem.height
-=======
                     visible: nodesListView.currentItem !== undefined &&
                              nodesListView.currentItem !== null
                     x: 0
                     y: nodesListView.currentItem ? nodesListView.currentItem.y : 0
                     width: nodesListView.width
                     height: nodesListView.currentItem ? nodesListView.currentItem.height : 0
->>>>>>> devel
                     color: Material.accent
                     opacity: 0.7
                     radius: 3
@@ -679,14 +621,6 @@ ApplicationWindow {
                 highlightFollowsCurrentItem: false
                 highlight: Rectangle {
                     x: 0
-<<<<<<< HEAD
-                    y: portsListView.currentItem.y
-                    width: portsListView.width
-                    height: portsListView.currentItem.height
-                    color: Material.accent
-                    opacity: 0.7
-                    radius: 3
-=======
                     y: portsListView.currentItem ? portsListView.currentItem.y : 0
                     width: portsListView.width
                     height: portsListView.currentItem ? portsListView.currentItem.height : 0
@@ -694,7 +628,6 @@ ApplicationWindow {
                     opacity: 0.7
                     radius: 3
                     visible: portsListView.currentItem !== undefined && portsListView.currentItem !== null
->>>>>>> devel
                     Behavior on y {
                         SpringAnimation {
                             duration: 200
@@ -722,21 +655,6 @@ ApplicationWindow {
         }
     } // portList
 
-<<<<<<< HEAD
-    Button {
-        id: autoPosButton
-        anchors.top: portList.bottom
-        anchors.topMargin: 15
-        anchors.left: portList.left
-        width: 110
-        height: 50
-        text: "AutoPos"
-        onClicked: topology.autoPositionNodes()
-        visible: showDebugControls.checked
-    }
-
-=======
->>>>>>> devel
     ColorDialog {
         id: selectionColorDialog
         title: "Selection hilight color"
@@ -917,42 +835,6 @@ ApplicationWindow {
             }
         }
     } // selectionView
-<<<<<<< HEAD
-    RowLayout {
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        CheckBox {
-            text: qsTr("Dark")
-            checked: ApplicationWindow.contentItem.Material.theme === Material.Dark
-            onClicked: ApplicationWindow.contentItem.Material.theme
-                       = checked ? Material.Dark : Material.Light
-        }
-        RowLayout {
-            Layout.margins: 2
-            Label {
-                text: "Edge type:"
-            }
-            Item {
-                Layout.fillWidth: true
-            }
-            ComboBox {
-                model: ["Straight", "Curved"]
-                enabled: defaultEdgeStyle !== undefined
-                currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                onActivated: {
-                    if (index == 0)
-                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
-                    else if (index == 1)
-                        defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
-                }
-            }
-            CheckBox {
-                id: showDebugControls
-                text: "Show Debug controls"
-                checked: true
-            }
-        } // RowLayout: edgeType
-=======
 
     Control {
         anchors.bottom: parent.bottom
@@ -1001,6 +883,5 @@ ApplicationWindow {
                 }
             } // RowLayout: edgeType
         }
->>>>>>> devel
     }
 }

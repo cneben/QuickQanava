@@ -56,11 +56,7 @@ EdgeItem::EdgeItem( QQuickItem* parent ) :
     setAcceptDrops( true );
     setVisible(false);  // Invisible until there is a valid src/dst
 
-<<<<<<< HEAD
-    setStyle( qan::Edge::style() );
-=======
     setStyle(qan::Edge::style(parent));
->>>>>>> devel
     setObjectName( QStringLiteral("qan::EdgeItem") );
 }
 
@@ -968,22 +964,12 @@ void    EdgeItem::setLine( QPoint src, QPoint dst )
     emit lineGeometryChanged();
 }
 
-<<<<<<< HEAD
-QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
-                                        const QPolygonF& polygon ) const noexcept
-=======
 QPointF  EdgeItem::getLineIntersection(const QPointF& p1, const QPointF& p2,
                                        const QPolygonF& polygon) const noexcept
->>>>>>> devel
 {
     const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-<<<<<<< HEAD
-    for ( auto p = 0; p < polygon.length() - 1 ; ++p ) {
-        const QLineF polyLine( polygon[p], polygon[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
-=======
     for (auto p = 0; p < polygon.length() - 1 ; ++p) {
         const QLineF polyLine(polygon[p], polygon[p + 1]);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -991,7 +977,6 @@ QPointF  EdgeItem::getLineIntersection(const QPointF& p1, const QPointF& p2,
 #else
         if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
 #endif
->>>>>>> devel
             source = intersection;
             break;
         }
@@ -1005,11 +990,6 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-<<<<<<< HEAD
-    for ( auto p = 0; p < srcBp.length() - 1 ; ++p ) {
-        const QLineF polyLine( srcBp[p], srcBp[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
-=======
     for (auto p = 0; p < srcBp.length() - 1 ; ++p) {
         const QLineF polyLine(srcBp[p], srcBp[p + 1]);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -1017,17 +997,11 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
 #else
         if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
 #endif
->>>>>>> devel
             source = intersection;
             break;
         }
     }
     QPointF destination{p2};
-<<<<<<< HEAD
-    for ( auto p = 0; p < dstBp.length() - 1 ; ++p ) {
-        const QLineF polyLine( dstBp[p], dstBp[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
-=======
     for (auto p = 0; p < dstBp.length() - 1 ; ++p) {
         const QLineF polyLine(dstBp[p], dstBp[p + 1]);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
@@ -1035,7 +1009,6 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
 #else
         if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
 #endif
->>>>>>> devel
             destination = intersection;
             break;
         }

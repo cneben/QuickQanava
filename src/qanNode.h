@@ -85,11 +85,7 @@ public:
     bool    operator==( const qan::Node& right ) const;
 
 public:
-<<<<<<< HEAD
-    Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
-=======
     Q_PROPERTY(qan::NodeItem* item READ getItem CONSTANT)
->>>>>>> devel
     qan::NodeItem*          getItem() noexcept;
     const qan::NodeItem*    getItem() const noexcept;
     virtual void            setItem(qan::NodeItem* nodeItem) noexcept;
@@ -106,21 +102,13 @@ public:
      *  \arg engine QML engine used to create delegate component.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Node component).
      */
-<<<<<<< HEAD
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-=======
     static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
->>>>>>> devel
 
     /*! \brief Return the default style that should be used with qan::Node.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default node style will be used).
      */
-<<<<<<< HEAD
-    static  qan::NodeStyle*     style() noexcept;
-=======
     static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
->>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 
@@ -184,15 +172,6 @@ public:
      *
      * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
      */
-<<<<<<< HEAD
-    Q_PROPERTY( bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL )
-    void            setLocked(bool locked) noexcept;
-    bool            getLocked() const noexcept { return _locked; }
-private:
-    bool            _locked{false};
-signals:
-    void            lockedChanged( );
-=======
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
     void            setLocked(bool locked) noexcept;
     bool            getLocked() const noexcept { return _locked; }
@@ -200,7 +179,6 @@ private:
     bool            _locked = false;
 signals:
     void            lockedChanged();
->>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 
@@ -211,11 +189,7 @@ public:
      *
      * \note nullptr if group or node is ungrouped.
      */
-<<<<<<< HEAD
-    Q_PROPERTY( qan::Group* group READ getGroup FINAL )
-=======
     Q_PROPERTY(qan::Group* group READ getGroup FINAL)
->>>>>>> devel
     const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
     qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
 
@@ -227,4 +201,4 @@ public:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Node )
+QML_DECLARE_TYPE(qan::Node)

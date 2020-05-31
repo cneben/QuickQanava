@@ -71,21 +71,6 @@ auto    Connector::getGraph() const noexcept -> qan::Graph* { return _graph.data
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-<<<<<<< HEAD
-QQmlComponent*  Connector::delegate(QQmlEngine& engine) noexcept
-{
-    static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/VisualConnector.qml");
-    return delegate.get();
-}
-
-qan::NodeStyle* Connector::style() noexcept
-{
-    static std::unique_ptr<qan::NodeStyle>  qan_Connector_style;
-    if ( !qan_Connector_style )
-        qan_Connector_style = std::make_unique<qan::NodeStyle>();
-=======
 QQmlComponent*  Connector::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
@@ -100,7 +85,6 @@ qan::NodeStyle* Connector::style(QObject* parent) noexcept
     static std::unique_ptr<qan::NodeStyle>  qan_Connector_style;
     if ( !qan_Connector_style )
         qan_Connector_style = std::make_unique<qan::NodeStyle>(parent);
->>>>>>> devel
     return qan_Connector_style.get();
 }
 //-----------------------------------------------------------------------------
@@ -108,10 +92,6 @@ qan::NodeStyle* Connector::style(QObject* parent) noexcept
 /* Connector Configuration *///------------------------------------------------
 void    Connector::connectorReleased(QQuickItem* target) noexcept
 {
-<<<<<<< HEAD
-    qWarning() << "connectorReleased...";
-=======
->>>>>>> devel
     // Restore original position
     if ( _connectorItem )
         _connectorItem->setState("NORMAL");

@@ -47,11 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-<<<<<<< HEAD
-    gtpo::node< qan::Config >{}
-=======
     gtpo::node<qan::Config>{parent}
->>>>>>> devel
 {
     Q_UNUSED(parent)
 
@@ -99,21 +95,6 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-<<<<<<< HEAD
-QQmlComponent*  Node::delegate(QQmlEngine& engine) noexcept
-{
-    static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml");
-    return delegate.get();
-}
-
-qan::NodeStyle* Node::style() noexcept
-{
-    static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
-    if ( !qan_Node_style )
-        qan_Node_style = std::make_unique<qan::NodeStyle>();
-=======
 QQmlComponent*  Node::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
@@ -128,7 +109,6 @@ qan::NodeStyle* Node::style(QObject* parent) noexcept
     static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
     if ( !qan_Node_style )
         qan_Node_style = std::make_unique<qan::NodeStyle>(parent);
->>>>>>> devel
     return qan_Node_style.get();
 }
 //-----------------------------------------------------------------------------
@@ -206,13 +186,6 @@ void    Node::setLocked(bool locked) noexcept
         emit lockedChanged();
     }
 }
-<<<<<<< HEAD
-
-//-----------------------------------------------------------------------------
-
-/* Dock Management *///--------------------------------------------------------
-=======
->>>>>>> devel
 //-----------------------------------------------------------------------------
 
 } // ::qan

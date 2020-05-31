@@ -85,11 +85,7 @@ public:
             createModel();
         return _model.data();
     }
-<<<<<<< HEAD
-    //! Shortcut to getModel() (HACK).
-=======
     //! Shortcut to getModel().
->>>>>>> devel
     inline ContainerModel*      model() const noexcept { return const_cast<AbstractContainer*>(this)->getModel(); }
 
 protected:

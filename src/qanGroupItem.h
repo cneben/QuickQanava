@@ -64,11 +64,6 @@ class GroupItem : public qan::NodeItem
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
-<<<<<<< HEAD
-    //Q_INTERFACES(qan::Selectable)
-    //Q_INTERFACES(qan::Draggable)
-=======
->>>>>>> devel
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
@@ -80,11 +75,7 @@ public:
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
-<<<<<<< HEAD
-    Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
-=======
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
->>>>>>> devel
     auto        getGroup() noexcept -> qan::Group*;
     auto        getGroup() const noexcept -> const qan::Group*;
     auto        setGroup(qan::Group* group) noexcept -> void;
@@ -93,11 +84,7 @@ private:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-<<<<<<< HEAD
-    auto            setRect(const QRectF& r) noexcept -> void;
-=======
     auto        setRect(const QRectF& r) noexcept -> void;
->>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 
@@ -155,11 +142,7 @@ public:
     void            setMinimumGroupHeight(qreal minimumGroupHeight) noexcept;
 private:
     //! \copydoc minimumGroupHeight
-<<<<<<< HEAD
-    qreal           _minimumGroupHeight = 100.;
-=======
     qreal           _minimumGroupHeight = 80.;
->>>>>>> devel
 signals:
     //! \copydoc minimumGroupHeight
     void            minimumGroupHeightChanged();
@@ -168,22 +151,10 @@ signals:
 
     /*! \name Collapse Management *///-----------------------------------------
     //@{
-<<<<<<< HEAD
-public:
-    // FIXME document me
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
-    inline bool getCollapsed() const noexcept { return _collapsed; }
-    void        setCollapsed( bool collapsed ) noexcept;
-private:
-    bool        _collapsed{false};
-signals:
-    void        collapsedChanged();
-=======
 protected:
     virtual void    setCollapsed(bool collapsed) noexcept override;
 public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
->>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 

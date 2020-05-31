@@ -16,18 +16,6 @@ test-cpp.subdir         = samples/cpp
 #test-40k.depends    = quickqanava
 
 #SUBDIRS +=  test-resizer
-<<<<<<< HEAD
-SUBDIRS +=  test-navigable
-SUBDIRS +=  test-nodes
-SUBDIRS +=  test-edges
-SUBDIRS +=  test-connector
-SUBDIRS +=  test-groups
-SUBDIRS +=  test-selection
-SUBDIRS +=  test-style
-SUBDIRS +=  test-topology
-SUBDIRS +=  test-dataflow
-SUBDIRS +=  test-cpp
-=======
 #SUBDIRS +=  test-navigable
 #SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-edges
@@ -38,6 +26,5 @@ SUBDIRS +=  test-groups
 SUBDIRS +=  test-topology
 #SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
->>>>>>> devel
 
 #SUBDIRS +=  test-40k

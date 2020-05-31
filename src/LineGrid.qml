@@ -63,11 +63,7 @@ Qan.AbstractLineGrid {
             if (minorLineToDrawCount <= lineGrid.minorLines.length) {
                 ctx.lineWidth = 1.
                 context.beginPath();
-<<<<<<< HEAD
-                for (let l = 0; l < minorLineToDrawCount; l++) {
-=======
                 for (var l = 0; l < minorLineToDrawCount; l++) {
->>>>>>> devel
                     let line = lineGrid.minorLines[l];
                     if (!line)
                         break;
@@ -79,16 +75,10 @@ Qan.AbstractLineGrid {
 
             // iterate over major lines...
             if (majorLineToDrawCount <= lineGrid.majorLines.length) {
-<<<<<<< HEAD
-                ctx.lineWidth = 2.
-                context.beginPath();
-                for (let l = 0; l < majorLineToDrawCount; l++) {
-=======
                 //ctx.lineWidth = 2.
                 ctx.strokeStyle = Qt.darker(lineGrid.thickColor, 1.3)
                 context.beginPath();
                 for (l = 0; l < majorLineToDrawCount; l++) {
->>>>>>> devel
                     let line = lineGrid.majorLines[l];
                     if (!line)
                         break;
