@@ -964,15 +964,19 @@ void    EdgeItem::setLine( QPoint src, QPoint dst )
     emit lineGeometryChanged();
 }
 
-QPointF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
-                                        const QPolygonF& polygon ) const noexcept
+QPointF  EdgeItem::getLineIntersection(const QPointF& p1, const QPointF& p2,
+                                       const QPolygonF& polygon) const noexcept
 {
     const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-    for ( auto p = 0; p < polygon.length() - 1 ; ++p ) {
-        const QLineF polyLine( polygon[p], polygon[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
+    for (auto p = 0; p < polygon.length() - 1 ; ++p) {
+        const QLineF polyLine(polygon[p], polygon[p + 1]);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#else
+        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#endif
             source = intersection;
             break;
         }
@@ -986,17 +990,25 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     const QLineF line{p1, p2};
     QPointF source{p1};
     QPointF intersection;
-    for ( auto p = 0; p < srcBp.length() - 1 ; ++p ) {
-        const QLineF polyLine( srcBp[p], srcBp[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
+    for (auto p = 0; p < srcBp.length() - 1 ; ++p) {
+        const QLineF polyLine(srcBp[p], srcBp[p + 1]);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#else
+        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#endif
             source = intersection;
             break;
         }
     }
     QPointF destination{p2};
-    for ( auto p = 0; p < dstBp.length() - 1 ; ++p ) {
-        const QLineF polyLine( dstBp[p], dstBp[p + 1] );
-        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection ) {
+    for (auto p = 0; p < dstBp.length() - 1 ; ++p) {
+        const QLineF polyLine(dstBp[p], dstBp[p + 1]);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#else
+        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
+#endif
             destination = intersection;
             break;
         }

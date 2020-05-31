@@ -115,6 +115,18 @@ auto    NodeItem::setRect(const QRectF& r) noexcept -> void
     setWidth(r.width());
     setHeight(r.height());
 }
+//-----------------------------------------------------------------------------
+
+/* Collapse Management *///----------------------------------------------------
+void    NodeItem::setCollapsed(bool collapsed) noexcept
+{
+    if (collapsed != _collapsed) {
+        _collapsed = collapsed;
+        if (qan::Selectable::getSelectionItem())              // Hide selection item when group is collapsed
+            qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
+        emit collapsedChanged();
+    }
+}
 
 void    NodeItem::collapseAncestors(bool collapsed)
 {
@@ -198,9 +210,9 @@ void    NodeItem::setRatio(qreal ratio) noexcept
     emit ratioChanged();
 }
 
-void    NodeItem::setConnectable( Connectable connectable ) noexcept
+void    NodeItem::setConnectable(Connectable connectable) noexcept
 {
-    if ( _connectable != connectable ) {
+    if (_connectable != connectable) {
         _connectable = connectable;
         emit connectableChanged();
     }
@@ -259,8 +271,8 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseDoubleClickEvent(event);
-    if ( event->button() == Qt::LeftButton )
-        emit nodeDoubleClicked( this, event->localPos() );
+    if (event->button() == Qt::LeftButton)
+        emit nodeDoubleClicked( this, event->localPos());
 }
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event )
@@ -271,15 +283,17 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event )
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
-    if ( draggableCtrl->handleMouseMoveEvent(event) )
+    if (draggableCtrl->handleMouseMoveEvent(event))
         event->accept();
     else
-        QQuickItem::mouseMoveEvent(event);
+        event->ignore();
+        // Note 20200531: Do not call base QQuickItem implementation, really.
 }
 
 void    NodeItem::mousePressEvent(QMouseEvent* event)
 {
-    bool accepted = isInsideBoundingShape(event->localPos());
+    bool accepted = !getCollapsed() &&            // Fast exit
+                    isInsideBoundingShape(event->localPos());
     if (accepted) {
         forceActiveFocus();
 

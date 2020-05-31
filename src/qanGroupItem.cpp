@@ -121,29 +121,19 @@ void    GroupItem::setMinimumGroupHeight(qreal minimumGroupHeight) noexcept
 
 
 /* Collapse Management *///----------------------------------------------------
-void    GroupItem::setCollapsed( bool collapsed ) noexcept
+void    GroupItem::setCollapsed(bool collapsed) noexcept
 {
-    if ( _group &&
-         collapsed != _collapsed ) {
-        _collapsed = collapsed;
-
+    qan::NodeItem::setCollapsed(collapsed);
+    // Note: Selection is hidden in base implementation
+    if (_group) {
         const auto adjacentEdges = _group->collectAdjacentEdges();
         for (auto edge : adjacentEdges) {    // When a group is collapsed, all adjacent edges shouldbe hidden/shown...
-            if ( edge &&
-                 edge->getItem() != nullptr )
-                edge->getItem()->setVisible( !collapsed );
+            if (edge &&
+                edge->getItem() != nullptr)
+                edge->getItem()->setVisible(!getCollapsed());
         }
-        if ( qan::Selectable::getSelectionItem() )              // Hide selection item when group is collapsed
-            qan::Selectable::getSelectionItem()->setVisible(!_collapsed && getSelected());
-
-        if (!collapsed)
+        if (!getCollapsed())
             groupMoved();   // Force update of all adjacent edges
-
-        //if (collapsed)
-        // FIXME overwrite any potentially draggable configuration...
-        setDraggable(collapsed ? false : true);
-
-        emit collapsedChanged();
     }
 }
 
@@ -198,16 +188,16 @@ void    GroupItem::collapseAncestors(bool collapsed)
 /* Group DnD Management *///---------------------------------------------------
 void    GroupItem::groupMoved()
 {
-    if ( _collapsed )   // Do not update edges when the group is collapsed
+    if (getCollapsed())   // Do not update edges when the group is collapsed
         return;
 
     // Group node adjacent edges must be updated manually since node are children of this group,
     // their x an y position does not change and is no longer monitored by their edges.
-    if ( _group ) {
+    if (_group) {
         auto adjacentEdges = _group->collectAdjacentEdges();
-        for ( auto edge : adjacentEdges ) {
-            if ( edge != nullptr &&
-                 edge->getItem() != nullptr )
+        for (auto edge : adjacentEdges) {
+            if (edge != nullptr &&
+                edge->getItem() != nullptr)
                 edge->getItem()->updateItem(); // Edge is updated even is edge item visible=false, updateItem() will take care of visibility
         }
     }
@@ -259,31 +249,29 @@ void    GroupItem::setContainer(QQuickItem* container) noexcept
 QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
 const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }
 
-void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event )
+void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     qan::NodeItem::mouseDoubleClickEvent(event);
-    if ( event->button() == Qt::LeftButton )
-        emit groupDoubleClicked( this, event->localPos() );
+    if (event->button() == Qt::LeftButton)
+        emit groupDoubleClicked( this, event->localPos());
 }
 
-void    GroupItem::mousePressEvent( QMouseEvent* event )
+void    GroupItem::mousePressEvent(QMouseEvent* event)
 {
-    // FIXME ???
-    qan::NodeItem::mouseDoubleClickEvent(event);
+    qan::NodeItem::mousePressEvent(event);
 
-    // Selection management
-    if ( event->button() == Qt::LeftButton &&
+    if (event->button() == Qt::LeftButton &&    // Selection management
          getGroup() &&
          isSelectable() &&
          !getCollapsed()) {     // Collapsed group is not selectable
         if (getGraph())
-            getGraph()->selectGroup( *getGroup(), event->modifiers() );
+            getGraph()->selectGroup(*getGroup(), event->modifiers());
     }
 
-    if ( event->button() == Qt::LeftButton )
-        emit groupClicked( this, event->localPos() );
-    else if ( event->button() == Qt::RightButton )
-        emit groupRightClicked( this, event->localPos() );
+    if (event->button() == Qt::LeftButton)
+        emit groupClicked(this, event->localPos());
+    else if (event->button() == Qt::RightButton)
+        emit groupRightClicked(this, event->localPos());
 }
 //-----------------------------------------------------------------------------
 

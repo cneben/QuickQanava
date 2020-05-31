@@ -107,17 +107,24 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
 {
     // PRECONDITIONS:
         // graph must be non nullptr (configured).
+        // _targetItem can't be nullptr
     const auto graph = getGraph();
     if (graph == nullptr)
         return false;
+    if (!_targetItem)
+        return false;
 
+    // Early exits
     if (event->buttons().testFlag(Qt::NoButton))
         return false;
+    if (!_targetItem->getDraggable())
+        return false;
+    if (_targetItem->getCollapsed())
+        return false;
+
     const auto rootItem = getGraph()->getContainerItem();
-    if (rootItem != nullptr &&
-        _targetItem != nullptr &&
-        _targetItem->getDraggable() &&      // Dragging management
-        event->buttons().testFlag(Qt::LeftButton)) {
+    if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
+        event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
         const auto globalPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
             beginDragMove(globalPos, _targetItem->getSelected());

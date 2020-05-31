@@ -75,7 +75,7 @@ public:
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
+    Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
     auto        getGroup() noexcept -> qan::Group*;
     auto        getGroup() const noexcept -> const qan::Group*;
     auto        setGroup(qan::Group* group) noexcept -> void;
@@ -84,7 +84,7 @@ private:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto            setRect(const QRectF& r) noexcept -> void;
+    auto        setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 
@@ -151,16 +151,8 @@ signals:
 
     /*! \name Collapse Management *///-----------------------------------------
     //@{
-public:
-    //! \brief True when the group is collapsed (content of a collapsed group is hidden, leaving just an header bar with a +/- collapse control).
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
-    inline bool getCollapsed() const noexcept { return _collapsed; }
-    void        setCollapsed( bool collapsed ) noexcept;
-private:
-    bool        _collapsed{false};
-signals:
-    void        collapsedChanged();
-
+protected:
+    virtual void    setCollapsed(bool collapsed) noexcept override;
 public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
     //@}
