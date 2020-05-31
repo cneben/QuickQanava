@@ -32,8 +32,12 @@
 // \date	2016 08 12
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 #ifndef qanFaceNode_h
 #define qanFaceNode_h
+=======
+#pragma once
+>>>>>>> devel
 
 // QuickQanava headers
 #include <QuickQanava>
@@ -48,7 +52,11 @@ class FaceNode : public qan::Node
     Q_OBJECT
 public:
     explicit FaceNode( QQuickItem* parent = nullptr );
+<<<<<<< HEAD
     virtual ~FaceNode();
+=======
+    virtual ~FaceNode() override = default;
+>>>>>>> devel
 private:
     Q_DISABLE_COPY( FaceNode )
 public:
@@ -82,8 +90,13 @@ public:
 
 } // ::qan
 
+<<<<<<< HEAD
 QML_DECLARE_TYPE( qan::FaceNode )
 QML_DECLARE_TYPE( qan::FaceGraph )
 
 #endif // qanFaceNode_h
 
+=======
+QML_DECLARE_TYPE(qan::FaceNode)
+QML_DECLARE_TYPE(qan::FaceGraph)
+>>>>>>> devel

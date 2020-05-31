@@ -230,7 +230,10 @@ Item {
         id: edgeShape
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
+<<<<<<< HEAD
         //asynchronous: true    // FIXME: Benchmark that
+=======
+>>>>>>> devel
         antialiasing: true
         smooth: true
         property var curvedLine : undefined

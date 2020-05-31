@@ -49,7 +49,11 @@
 namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
+<<<<<<< HEAD
 Group::Group( QObject* parent ) :
+=======
+Group::Group(QObject* parent) :
+>>>>>>> devel
     qan::Node{parent}
 {
     set_is_group(true);
@@ -117,6 +121,7 @@ void    Group::itemEndProposeNodeDrop()
 //-----------------------------------------------------------------------------
 
 /* Group Static Factories *///-------------------------------------------------
+<<<<<<< HEAD
 QQmlComponent*  Group::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
@@ -130,22 +135,52 @@ qan::Style*     Group::style() noexcept
     static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
     if ( !qan_Group_style ) {
         qan_Group_style = std::make_unique<qan::NodeStyle>();
+=======
+QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
+{
+    static std::unique_ptr<QQmlComponent>   delegate;
+    if ( !delegate )
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml",
+                                                   QQmlComponent::PreferSynchronous, parent);
+    return delegate.get();
+}
+
+qan::NodeStyle* Group::style(QObject* parent) noexcept
+{
+    static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
+    if (!qan_Group_style) {
+        qan_Group_style = std::make_unique<qan::NodeStyle>(parent);
+>>>>>>> devel
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
         qan_Group_style->setBorderWidth(2.);
         qan_Group_style->setBackRadius(8.);
+<<<<<<< HEAD
+=======
+        qan_Group_style->setBackOpacity(0.90);
+        qan_Group_style->setBaseColor(QColor(240, 245, 250));
+        qan_Group_style->setBackColor(QColor(242, 248, 255));
+>>>>>>> devel
     }
     return qan_Group_style.get();
 }
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
+<<<<<<< HEAD
 bool    Group::hasNode( qan::Node* node ) const
+=======
+bool    Group::hasNode(const qan::Node* node) const
+>>>>>>> devel
 {
     if ( node == nullptr )
         return false;
     try {
+<<<<<<< HEAD
         auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
+=======
+        auto weakNode = std::static_pointer_cast<qan::Node>(const_cast<qan::Node*>(node)->shared_from_this());
+>>>>>>> devel
         return gtpo_node_t::has_node(weakNode);
     } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
     return false;

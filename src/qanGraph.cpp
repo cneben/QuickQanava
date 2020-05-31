@@ -41,10 +41,13 @@
 #include <QQmlEngine>
 #include <QQmlComponent>
 
+<<<<<<< HEAD
 #ifdef USE_GRAPHVIZ
 #include <gvc.h>
 #endif
 
+=======
+>>>>>>> devel
 // QuickQanava headers
 #include "./qanUtils.h"
 #include "./qanGraph.h"
@@ -90,6 +93,7 @@ void    Graph::classBegin()
 
 void    Graph::componentComplete()
 {
+<<<<<<< HEAD
     const auto engine = qmlEngine(this);
     if ( engine ) {
         // Visual connector initialization
@@ -97,6 +101,17 @@ void    Graph::componentComplete()
         if ( connectorComponent ) {
             qan::Style* style = qan::Connector::style();
             if ( style != nullptr ) {
+=======
+    if (_connector)     // Initialize _connector just once, it looks like this method could be called multiple times (Qt 5.15...)
+        return;
+    const auto engine = qmlEngine(this);
+    if (engine != nullptr) {
+        // Visual connector initialization
+        auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
+        if (connectorComponent) {
+            qan::Style* style = qan::Connector::style(this);
+            if (style != nullptr) {
+>>>>>>> devel
                 _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
                 emit connectorChanged();
                 if (_connector) {
@@ -208,10 +223,17 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
     // 3.
     if (getContainerItem() == nullptr)
             return nullptr;
+<<<<<<< HEAD
     for ( const auto group : qAsConst(groups) ) {
         if ( group &&
              group->getItem() != nullptr &&
              group->getItem() != except) {
+=======
+    for (const auto group : qAsConst(groups)) {
+        if (group &&
+            group->getItem() != nullptr &&
+            group->getItem() != except) {
+>>>>>>> devel
             const auto groupItem = group->getItem();
 
             const auto groupRect =  QRectF{ groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
@@ -275,6 +297,7 @@ void    Graph::setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) 
     }
 }
 
+<<<<<<< HEAD
 void    Graph::setConnectorItem( QQuickItem* connectorItem ) noexcept
 {
     if ( connectorItem != _connectorItem ) {
@@ -282,15 +305,32 @@ void    Graph::setConnectorItem( QQuickItem* connectorItem ) noexcept
         if ( _connectorItem &&
              _connector )
             _connector->setConnectorItem( _connectorItem.data() );
+=======
+void    Graph::setConnectorItem(QQuickItem* connectorItem) noexcept
+{
+    if (connectorItem != _connectorItem) {
+        _connectorItem = connectorItem;
+        if (_connectorItem &&
+            _connector)
+            _connector->setConnectorItem(_connectorItem.data());
+>>>>>>> devel
         emit connectorItemChanged();
     }
 }
 
+<<<<<<< HEAD
 void    Graph::setConnectorEnabled( bool connectorEnabled ) noexcept
 {
     if ( connectorEnabled != _connectorEnabled ) {
         _connectorEnabled = connectorEnabled;
         if ( _connector ) {
+=======
+void    Graph::setConnectorEnabled(bool connectorEnabled) noexcept
+{
+    if (connectorEnabled != _connectorEnabled) {
+        _connectorEnabled = connectorEnabled;
+        if (_connector) {
+>>>>>>> devel
             _connector->setVisible(connectorEnabled);
             _connector->setEnabled(connectorEnabled);
         }
@@ -354,12 +394,18 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                                         qan::Edge* edge,
                                         qan::Group* group ) noexcept
 {
+<<<<<<< HEAD
     if ( component == nullptr ) {
+=======
+    //qWarning() << "Graph::createFromComponent(): node=" << node << "  edge=" << edge << "  group=" << group;
+    if (component == nullptr) {
+>>>>>>> devel
         qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
     try {
+<<<<<<< HEAD
         if ( !component->isReady() )
             throw qan::Error{ "Error delegate component is not ready." };
 
@@ -370,20 +416,43 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
         if ( object == nullptr ||
              component->isError() ) {
             if ( object != nullptr )
+=======
+        if (!component->isReady())
+            throw qan::Error{ "Error delegate component is not ready." };
+
+        const auto rootContext = qmlContext(this);
+        //qWarning() << "Graph::createComComponent(): rootContext=" << rootContext;
+        //qWarning() << "   rootContext.thread=" << rootContext->thread();
+        if (rootContext == nullptr)
+            throw qan::Error{ "Error can't access to local QML context." };
+        //qWarning() << "   component.thread=" << component->thread();
+        //qWarning() << "   this.thread=" << this->thread();
+        QObject* object = component->beginCreate(rootContext);
+        if (object == nullptr ||
+            component->isError()) {
+            if (object != nullptr)
+>>>>>>> devel
                 object->deleteLater();
             throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
                               component->errorString() };
         }
         // No error occurs
+<<<<<<< HEAD
         if ( node != nullptr ) {
             const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
             if ( nodeItem != nullptr ) {
+=======
+        if (node != nullptr) {
+            const auto nodeItem = qobject_cast<qan::NodeItem*>(object);
+            if (nodeItem != nullptr) {
+>>>>>>> devel
                 node->setItem(nodeItem);
                 nodeItem->setNode(node);
                 nodeItem->setGraph(this);
                 nodeItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 _styleManager.setStyleComponent(&style, component );
             }
+<<<<<<< HEAD
         } else if ( edge != nullptr ) {
             const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
             if ( edgeItem != nullptr ) {
@@ -399,6 +468,24 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 groupItem->setGroup(group);
                 groupItem->setGraph(this);
                 _styleManager.setStyleComponent(groupItem->getStyle(), component );
+=======
+        } else if (edge != nullptr) {
+            const auto edgeItem = qobject_cast<qan::EdgeItem*>(object);
+            if (edgeItem != nullptr) {
+                edge->setItem(edgeItem);
+                edgeItem->setEdge(edge);
+                edgeItem->setGraph(this);
+                _styleManager.setStyleComponent(edgeItem->getStyle(), component);
+            }
+        } else if (group != nullptr) {
+            const auto groupItem = qobject_cast<qan::GroupItem*>(object);
+            if (groupItem != nullptr) {
+                group->setItem(groupItem);
+                groupItem->setGroup(group);
+                groupItem->setGraph(this);
+                groupItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
+                _styleManager.setStyleComponent(groupItem->getStyle(), component);
+>>>>>>> devel
             }
         } else {
             const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
@@ -412,10 +499,17 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
             item->setVisible( true );
             item->setParentItem( getContainerItem() );
         } // Note: There is no leak until cpp ownership is set
+<<<<<<< HEAD
     } catch ( const qan::Error& e ) {
         Q_UNUSED(e);
         qWarning() << "qan::Graph::createFromComponent(): " << component->errors();
     } catch ( const std::exception& e ) {
+=======
+    } catch (const qan::Error& e) {
+        Q_UNUSED(e)
+        qWarning() << "qan::Graph::createFromComponent(): " << component->errors();
+    } catch (const std::exception& e) {
+>>>>>>> devel
         qWarning() << "qan::Graph::createFromComponent(): " << e.what();
     }
     return item;
@@ -668,6 +762,7 @@ void    Graph::removeNode( qan::Node* node )
 
 int     Graph::getNodeCount() const noexcept { return gtpo_graph_t::get_node_count(); }
 
+<<<<<<< HEAD
 void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node); /* Nil */ }
 
 void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node); /* Nil */ }
@@ -689,6 +784,31 @@ qan::Edge*  Graph::insertEdge( QObject* source, QObject* destination, QQmlCompon
     if (edge != nullptr)
         emit edgeInserted(edge);
     if (edge == nullptr)
+=======
+void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node) /* Nil */ }
+
+void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node) /* Nil */ }
+//-----------------------------------------------------------------------------
+
+/* Graph Edge Management *///--------------------------------------------------
+qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlComponent* edgeComponent)
+{
+    qan::Edge* edge = nullptr;
+    auto sourceNode = qobject_cast<qan::Node*>(source);
+    if (sourceNode != nullptr) {
+        const auto destNode = qobject_cast<qan::Node*>(destination);
+        if (destNode != nullptr)
+            edge = insertEdge(sourceNode, destNode, edgeComponent);
+        else if (qobject_cast<qan::Group*>(destination) != nullptr)
+            edge = insertEdge(sourceNode, qobject_cast<qan::Group*>(destination), edgeComponent);
+        else if (qobject_cast<qan::Edge*>(destination) != nullptr)
+            edge = insertEdge(sourceNode, qobject_cast<qan::Edge*>(destination), edgeComponent);
+    }
+    if (edge != nullptr) {
+        QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
+        emit edgeInserted(edge);
+    } else
+>>>>>>> devel
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
     return edge;
 }
@@ -700,7 +820,11 @@ qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlCo
     if ( source == nullptr ||
          destination == nullptr )
         return nullptr;
+<<<<<<< HEAD
     return insertEdge<qan::Edge>(*source, destination, edgeComponent );
+=======
+    return insertEdge<qan::Edge>(*source, destination, edgeComponent);
+>>>>>>> devel
 }
 
 void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
@@ -834,41 +958,63 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
     return true;
 }
 
+<<<<<<< HEAD
 void    Graph::removeEdge( qan::Node* source, qan::Node* destination )
+=======
+void    Graph::removeEdge(qan::Node* source, qan::Node* destination)
+>>>>>>> devel
 {
     if ( source == nullptr || destination == nullptr )
         return;
     WeakNode sharedSource;
     WeakNode sharedDestination;
     try {
+<<<<<<< HEAD
         //sharedSource = WeakNode{ source->shared_from_this() };
         //sharedDestination = WeakNode{ destination->shared_from_this() };
+=======
+>>>>>>> devel
         sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
         sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr ) { return; }
     return gtpo_graph_t::remove_edge( sharedSource, sharedDestination );
 }
 
+<<<<<<< HEAD
 void    Graph::removeEdge( qan::Edge* edge )
+=======
+void    Graph::removeEdge(qan::Edge* edge)
+>>>>>>> devel
 {
     using WeakEdge = std::weak_ptr<qan::Edge>;
     if ( edge != nullptr )
         gtpo_graph_t::remove_edge( WeakEdge{edge->shared_from_this()} );
 }
 
+<<<<<<< HEAD
 bool    Graph::hasEdge( qan::Node* source, qan::Node* destination ) const
+=======
+bool    Graph::hasEdge(qan::Node* source, qan::Node* destination) const
+>>>>>>> devel
 {
     if ( source == nullptr || destination == nullptr )
         return false;
     WeakNode sharedSource;
     WeakNode sharedDestination;
     try {
+<<<<<<< HEAD
         //sharedSource = WeakNode{ source->shared_from_this() };
         //sharedDestination = WeakNode{ destination->shared_from_this() };
         sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
         sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
     } catch ( std::bad_weak_ptr e ) { return false; }
     return gtpo_graph_t::has_edge( sharedSource, sharedDestination );
+=======
+        sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
+        sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
+    } catch ( std::bad_weak_ptr e ) { return false; }
+    return gtpo_graph_t::has_edge(sharedSource, sharedDestination);
+>>>>>>> devel
 }
 //-----------------------------------------------------------------------------
 
@@ -888,7 +1034,11 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
     QQmlEngine::setObjectOwnership(group.get(), QQmlEngine::CppOwnership);
 
     qan::GroupItem* groupItem = nullptr;
+<<<<<<< HEAD
     if ( groupComponent == nullptr )
+=======
+    if (groupComponent == nullptr)
+>>>>>>> devel
         groupComponent = _groupDelegate.get();
 
     if (groupStyle == nullptr)
@@ -907,14 +1057,22 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
         // If group delegate (groupItem) failed, insert a non visual node.
         // Otherwise, insert a visual item.
     if (groupItem == nullptr) {
+<<<<<<< HEAD
         gtpo_graph_t::insert_group( group );
+=======
+        gtpo_graph_t::insert_group(group);
+>>>>>>> devel
         return true;
     }
     if (groupItem == nullptr) {
         qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
         return false;
     }
+<<<<<<< HEAD
     gtpo_graph_t::insert_group( group );
+=======
+    gtpo_graph_t::insert_group(group);
+>>>>>>> devel
     groupItem->setGroup(group.get());
     groupItem->setGraph(this);
     group->setItem(groupItem);
@@ -948,7 +1106,11 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
     return true;
 }
 
+<<<<<<< HEAD
 void    Graph::removeGroup( qan::Group* group )
+=======
+void    Graph::removeGroup(qan::Group* group)
+>>>>>>> devel
 {
     if ( group == nullptr )
         return;
@@ -974,33 +1136,61 @@ void    Graph::removeGroup( qan::Group* group )
     gtpo_graph_t::remove_group(weakNodeGroupPtr);
 }
 
+<<<<<<< HEAD
 bool    Graph::hasGroup( qan::Group* group ) const
+=======
+bool    Graph::hasGroup(qan::Group* group) const
+>>>>>>> devel
 {
     if ( group == nullptr )
         return false;
     return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
 }
 
+<<<<<<< HEAD
 void    qan::Graph::groupNode( qan::Group* group, qan::Node* node, bool transform) noexcept
+=======
+bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform) noexcept
+>>>>>>> devel
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
     if ( group == nullptr ||
          node == nullptr )
+<<<<<<< HEAD
         return;
 
+=======
+        return false;
+    if (static_cast<const QObject*>(group) == static_cast<const QObject*>(node)) {
+        qWarning() << "qan::Graph::groupNode(): Error, can't group a group in itself.";
+        return false;
+    }
+>>>>>>> devel
     try {
         gtpo_graph_t::group_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                  std::static_pointer_cast<Group>(group->shared_from_this()) );
         if ( node->get_group().lock().get() == group &&  // Check that group insertion succeed
              group->getGroupItem() != nullptr &&
              node->getItem() != nullptr ) {
+<<<<<<< HEAD
             group->getGroupItem()->groupNodeItem(node->getItem(), transform);
         }
     } catch ( ... ) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
 }
 
 void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
+=======
+            emit nodeGrouped(node, group);
+            group->getGroupItem()->groupNodeItem(node->getItem(), transform);
+        }
+        return true;
+    } catch (...) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
+    return false;
+}
+
+bool    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
+>>>>>>> devel
 {
     // PRECONDITIONS:
         // node can't be nullptr
@@ -1008,6 +1198,7 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
         // if group is nullptr node->getGroup() can't be nullptr
         // if group is not nullptr group should not be different from node->getGroup()
     if ( node == nullptr )
+<<<<<<< HEAD
         return;
     if ( group == nullptr &&
          !node->get_group().lock() )
@@ -1015,6 +1206,15 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
     if ( group != nullptr &&
          group != node->get_group().lock().get() )
         return;
+=======
+        return false;
+    if ( group == nullptr &&
+         !node->get_group().lock() )
+        return false;
+    if ( group != nullptr &&
+         group != node->get_group().lock().get() )
+        return false;
+>>>>>>> devel
     group = node->get_group().lock().get();
     if ( group != nullptr &&
          node != nullptr ) {
@@ -1023,14 +1223,25 @@ void    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
                  group->getGroupItem()->ungroupNodeItem(node->getItem());
             gtpo_graph_t::ungroup_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                        std::static_pointer_cast<Group>(group->shared_from_this()) );
+<<<<<<< HEAD
+=======
+            emit nodeUngrouped(node, group);
+>>>>>>> devel
             if (node != nullptr &&
                 node->getItem() != nullptr) {
                 // Update node z to maxZ: otherwise an undroupped node might be behind it's host group.
                 _maxZ += 1.0;
                 node->getItem()->setZ(_maxZ);
             }
+<<<<<<< HEAD
         } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
+=======
+            return true;
+        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+    }
+    return false;
+>>>>>>> devel
 }
 //-----------------------------------------------------------------------------
 
@@ -1091,6 +1302,7 @@ bool    selectPrimitiveImpl( Primitive_t& primitive,
                          Qt::KeyboardModifiers modifiers,
                          qan::Graph& graph )
 {
+<<<<<<< HEAD
     if ( graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection )
         return false;
 
@@ -1100,14 +1312,32 @@ bool    selectPrimitiveImpl( Primitive_t& primitive,
         return false;
 
     if ( primitive.getItem()->getSelected() ) {
+=======
+    if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
+        return false;
+
+    bool selectPrimitive = false;
+    const bool ctrlPressed = modifiers & Qt::ControlModifier;
+    if (primitive.getItem() == nullptr)
+        return false;
+
+    if (primitive.getItem()->getSelected()) {
+>>>>>>> devel
         if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
             primitive.getItem()->setSelected(false);
             // Note: graph.removeFromSelection() is called from primitive.selected()
     } else {
+<<<<<<< HEAD
         switch ( graph.getSelectionPolicy() ) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
             selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
             if ( !ctrlPressed )
+=======
+        switch (graph.getSelectionPolicy()) {
+        case qan::Graph::SelectionPolicy::SelectOnClick:
+            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
+            if (!ctrlPressed)
+>>>>>>> devel
                 graph.clearSelection();
             break;
         case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
@@ -1116,15 +1346,29 @@ bool    selectPrimitiveImpl( Primitive_t& primitive,
         case qan::Graph::SelectionPolicy::NoSelection: break;
         }
     }
+<<<<<<< HEAD
     if ( selectPrimitive ) {
         graph.addToSelection( primitive );
+=======
+    if (selectPrimitive) {
+        graph.addToSelection(primitive);
+>>>>>>> devel
         return true;
     }
     return false;
 }
 
+<<<<<<< HEAD
 bool    Graph::selectNode( qan::Node& node, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Node>(node, modifiers, *this); }
 bool    Graph::selectGroup( qan::Group& group, Qt::KeyboardModifiers modifiers ) { return selectPrimitiveImpl<qan::Group>(group, modifiers, *this); }
+=======
+bool    Graph::selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers) { return selectPrimitiveImpl<qan::Node>(node, modifiers, *this); }
+bool    Graph::selectNode(qan::Node* node)
+{
+    return (node != nullptr ? selectNode(*node) : false);
+}
+bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return selectPrimitiveImpl<qan::Group>(group, modifiers, *this); }
+>>>>>>> devel
 
 template < class Primitive_t >
 void    addToSelectionImpl( Primitive_t& primitive,
@@ -1194,9 +1438,15 @@ void    Graph::clearSelection()
     std::copy( _selectedNodes.cbegin(),
                 _selectedNodes.cend(),
                 std::back_inserter(selectedNodesCopy) );
+<<<<<<< HEAD
     for ( auto node : selectedNodesCopy )
         if ( node != nullptr &&
              node->getItem() != nullptr )
+=======
+    for (auto node : selectedNodesCopy)
+        if (node != nullptr &&
+            node->getItem() != nullptr)
+>>>>>>> devel
             node->getItem()->setSelected(false);
     _selectedNodes.clear();
 
@@ -1210,6 +1460,103 @@ void    Graph::clearSelection()
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
 }
+<<<<<<< HEAD
+=======
+
+std::vector<QQuickItem*>    Graph::getSelectedItems() const
+{
+    using item_vector_t = std::vector<QQuickItem*>;
+    item_vector_t items;
+    items.reserve(static_cast<item_vector_t::size_type>(_selectedNodes.size() + _selectedGroups.size()));
+    for (const auto& selectedNode: _selectedNodes) {
+        if (selectedNode->getItem() != nullptr)
+            items.push_back(selectedNode->getItem());
+    }
+    for (const auto& selectedGroup: _selectedGroups) {
+        if (selectedGroup->getItem() != nullptr)
+            items.push_back(selectedGroup->getItem());
+    }
+    return items;   // Expect RVA
+}
+//-----------------------------------------------------------------------------
+
+
+/* Alignment Management *///---------------------------------------------------
+void    Graph::alignSelectionHorizontalCenter() { alignHorizontalCenter(getSelectedItems()); }
+
+void    Graph::alignSelectionRight() { alignRight(getSelectedItems()); }
+
+void    Graph::alignSelectionLeft() { alignLeft(getSelectedItems()); }
+
+void    Graph::alignSelectionTop() { alignTop(getSelectedItems()); }
+
+void    Graph::alignSelectionBottom() { alignBottom(getSelectedItems()); }
+
+void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+
+    // ALGORITHM:
+        // Get min left and max right.
+        // Compute center of min left and max right
+        // Align all items on this center
+    qreal maxRight = std::numeric_limits<qreal>::min();
+    qreal minLeft = std::numeric_limits<qreal>::max();
+    for (const auto item: items) {
+        maxRight = std::max(maxRight, item->x() + item->width());
+        minLeft = std::min(minLeft, item->x());
+    }
+
+    qreal center = minLeft + (maxRight - minLeft) / 2.;
+    for (auto item: items)
+        item->setX(center - (item->width() / 2.));
+}
+
+void    Graph::alignRight(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal maxRight = std::numeric_limits<qreal>::min();
+    for (const auto item: items)
+        maxRight = std::max(maxRight, item->x() + item->width());
+    for (auto item: items)
+        item->setX(maxRight - item->width());
+}
+
+void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal minLeft = std::numeric_limits<qreal>::max();
+    for (const auto item: items)
+        minLeft = std::min(minLeft, item->x());
+    for (auto item: items)
+        item->setX(minLeft);
+}
+
+void    Graph::alignTop(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal minTop = std::numeric_limits<qreal>::max();
+    for (const auto item: items)
+        minTop = std::min(minTop, item->y());
+    for (auto item: items)
+        item->setY(minTop);
+}
+
+void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
+{
+    if (items.size() <= 1)
+        return;
+    qreal maxBottom = std::numeric_limits<qreal>::min();
+    for (const auto item: items)
+        maxBottom = std::max(maxBottom, item->y() + item->height());
+    for (auto item: items)
+        item->setY(maxBottom - item->height());
+}
+>>>>>>> devel
 //-----------------------------------------------------------------------------
 
 
@@ -1348,7 +1695,11 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
     if ( dock == Dock::Left ||
          dock == Dock::Right ) {
         if ( _verticalDockDelegate ) {
+<<<<<<< HEAD
             auto verticalDock = createItemFromComponent(_verticalDockDelegate.get());;
+=======
+            auto verticalDock = createItemFromComponent(_verticalDockDelegate.get());
+>>>>>>> devel
             verticalDock->setParentItem(node.getItem());
             verticalDock->setProperty("hostNodeItem",
                                       QVariant::fromValue(node.getItem()));
@@ -1470,6 +1821,7 @@ auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
 };
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
 /* Node auto-positioning *///--------------------------------------------------
 void    Graph::autoPositionNodes() noexcept
 {
@@ -1643,4 +1995,129 @@ void    Graph::autoPositionNodes() noexcept
 }
 //-----------------------------------------------------------------------------
 
+=======
+
+/* Topology Algorithms *///----------------------------------------------------
+std::vector<QPointer<const qan::Node>>  Graph::collectRootNodes() const noexcept
+{
+    std::vector<QPointer<const qan::Node>> roots;
+    auto& rootNodes = get_root_nodes();
+    roots.reserve(static_cast<unsigned long>(rootNodes.size()));
+    for (const auto& rootNode : rootNodes)
+        roots.push_back(QPointer<const qan::Node>(rootNode.lock().get()));
+    return roots;
+}
+
+std::vector<const qan::Node*>   Graph::collectDfs(bool collectGroup) const noexcept
+{
+    std::vector<const qan::Node*> nodes;
+    std::unordered_set<const qan::Node*> marks;
+    auto& rootNodes = get_root_nodes();
+    for (const auto& rootNode : rootNodes) {
+        collectDfsRec(rootNode.lock().get(), marks, nodes, collectGroup);
+    }
+    return nodes;
+}
+
+std::vector<const qan::Node*>   Graph::collectDfs(const qan::Node& node, bool collectGroup) const noexcept
+{
+    std::vector<const qan::Node*> childs;
+    std::unordered_set<const qan::Node*> marks;
+    if (collectGroup &&
+        node.isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(&node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectDfsRec(groupNode.lock().get(), marks, childs, collectGroup);
+        }
+    }
+    for (const auto& outNode : node.get_out_nodes())
+        collectDfsRec(outNode.lock().get(), marks, childs, collectGroup);
+    return childs;
+}
+
+void    Graph::collectDfsRec(const qan::Node* node,
+                             std::unordered_set<const qan::Node*>& marks,
+                             std::vector<const qan::Node*>& childs,
+                             bool collectGroup) const noexcept
+{
+    if (node == nullptr)
+        return;
+    if (marks.find(node) != marks.end())    // Do not collect on already visited
+        return;                             // branchs
+    marks.insert(node);
+    childs.push_back(node);
+    if (collectGroup &&
+        node->isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectDfsRec(groupNode.lock().get(), marks, childs, collectGroup);
+        }
+    }
+    for (const auto& outNode : node->get_out_nodes())
+        collectDfsRec(outNode.lock().get(), marks, childs, collectGroup);
+}
+
+bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept
+{
+    Q_UNUSED(node)
+    Q_UNUSED(candidate)
+    qWarning() << "qan::Graph::isAncestor(): Not implemented.";
+    return false;
+}
+
+std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const noexcept
+{
+    std::vector<const qan::Node*> parents;
+    std::unordered_set<const qan::Node*> marks;
+    if (collectGroup &&
+        node.isGroup()) {
+        // Collect all nodes in a group
+        const auto group = qobject_cast<const qan::Group*>(&node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }
+    // Collect the parent group of a node
+    /*if (collectGroup) {
+        const auto nodeGroup = node.getGroup();
+        if (nodeGroup != nullptr)
+            collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    }*/
+    for (const auto& inNode : node.get_in_nodes())
+        collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+    return parents;
+}
+
+void    Graph::collectAncestorsDfsRec(const qan::Node* node,
+                             std::unordered_set<const qan::Node*>& marks,
+                             std::vector<const qan::Node*>& parents,
+                             bool collectGroup) const noexcept
+{
+    if (node == nullptr)
+        return;
+    if (marks.find(node) != marks.end())    // Do not collect on already visited
+        return;                             // branchs
+    marks.insert(node);
+    parents.push_back(node);
+    if (collectGroup &&
+        node->isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }
+    const auto nodeGroup = node->getGroup();
+    if (nodeGroup != nullptr)
+        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
+    for (const auto& inNode : node->get_in_nodes())
+        collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+}
+//-----------------------------------------------------------------------------
+
+
+>>>>>>> devel
 } // ::qan

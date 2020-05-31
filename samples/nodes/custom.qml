@@ -24,7 +24,11 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+<<<<<<< HEAD
 import QtQuick                   2.8
+=======
+import QtQuick                   2.12
+>>>>>>> devel
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
@@ -36,6 +40,19 @@ Qan.GraphView {
     anchors.fill: parent
     id: graphView
     navigable   : true
+<<<<<<< HEAD
+=======
+    PinchHandler {
+        target: null
+        onActiveScaleChanged: {
+            console.error('centroid.position=' + centroid.position)
+            console.error('activeScale=' + activeScale)
+            var p = centroid.position
+            var f = activeScale > 1.0 ? 1. : -1.
+            navigable.zoomOn(p, navigable.zoom + (f * 0.03))
+        }
+    }
+>>>>>>> devel
     graph: Qan.Graph {
         id: graph
         property var customNodeDelegate: Qt.createComponent( "qrc:/CustomNode.qml" )

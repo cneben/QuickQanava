@@ -38,6 +38,19 @@ Qan.GraphView {
     id: graphView
     anchors.fill: parent
     navigable   : true
+<<<<<<< HEAD
+=======
+    PinchHandler {
+        target: null
+        onActiveScaleChanged: {
+            console.error('centroid.position=' + centroid.position)
+            console.error('activeScale=' + activeScale)
+            var p = centroid.position
+            var f = activeScale > 1.0 ? 1. : -1.
+            graphView.zoomOn(p, graphView.zoom + (f * 0.04))
+        }
+    }
+>>>>>>> devel
     graph: Qan.Graph {
         id: graph
         connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...

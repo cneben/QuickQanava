@@ -90,6 +90,7 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml               \
                 $$PWD/qmldir_static
+<<<<<<< HEAD
 
 #CONFIG      += use_graphviz
 use_graphviz {
@@ -110,3 +111,5 @@ use_graphviz {
     win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cdt.lib
     win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cgraph.lib
 }
+=======
+>>>>>>> devel

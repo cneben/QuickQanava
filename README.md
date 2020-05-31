@@ -29,7 +29,11 @@ QuickQanava
 
 QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
+<<<<<<< HEAD
 QuickQanava is primarily developed for Linux with Qt 5.13 with MSVC2017 and g++7 (minimal required Qt version is **Qt 5.10**)
+=======
+QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2017 and g++7.5 (minimal required Qt version is **Qt 5.10**)
+>>>>>>> devel
 
 + Project homepage: http://cneben.github.io/QuickQanava/index.html
 

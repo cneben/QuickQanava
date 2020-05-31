@@ -45,6 +45,7 @@ import QuickQanava          2.0 as Qan
  */
 Item {
     id: template
+<<<<<<< HEAD
     property var            nodeItem : undefined
     default property alias  children : contentLayout.children
 
@@ -55,6 +56,27 @@ Item {
                  !nodeItem.style )     // Defaul to solid no effect with unconfigured nodes
                 return "qrc:/QuickQanava/RectSolidBackground.qml";
             switch ( nodeItem.style.fillType ) {  // Otherwise, select the delegate according to current style configuration
+=======
+
+    // PUBLIC /////////////////////////////////////////////////////////////////
+    property var            nodeItem : undefined
+    default property alias  children : contentLayout.children
+
+    // PRIVATE ////////////////////////////////////////////////////////////////
+    onNodeItemChanged: {
+        if (delegateLoader.item &&
+            delegateLoader.item.nodeItem)
+            delegateLoader.item.nodeItem = nodeItem
+    }
+    Loader {
+        id: delegateLoader
+        anchors.fill: parent
+        source: {
+            if (!nodeItem ||
+                !nodeItem.style)     // Defaul to solid no effect with unconfigured nodes
+                return "qrc:/QuickQanava/RectSolidBackground.qml";
+            switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
+>>>>>>> devel
             case Qan.NodeStyle.FillSolid:
                 switch (nodeItem.style.effectType ) {
                 case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectSolidBackground.qml";
@@ -73,7 +95,11 @@ Item {
         }
         onItemChanged: {
             if (item)
+<<<<<<< HEAD
                 item.nodeItem = Qt.binding(function() { return template.nodeItem; } );
+=======
+                item.nodeItem = template.nodeItem
+>>>>>>> devel
         }
     }
     ColumnLayout {
@@ -112,4 +138,8 @@ Item {
         target: parent.nodeItem.node
         visible: false
     }
+<<<<<<< HEAD
 }
+=======
+} // Item: template
+>>>>>>> devel

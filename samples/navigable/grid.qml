@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import QtQuick          2.7
+=======
+import QtQuick          2.12
+>>>>>>> devel
 import QtQuick.Controls 2.0
 import QtQuick.Layouts  1.3
 import QtQuick.Shapes   1.0
@@ -15,6 +19,20 @@ Item {
         clip: true
         navigable: true
         grid: lineGrid
+<<<<<<< HEAD
+=======
+        PinchHandler {
+            target: null
+            onActiveScaleChanged: {
+                console.error('centroid.position=' + centroid.position)
+                console.error('activeScale=' + activeScale)
+                var p = centroid.position
+                var f = activeScale > 1.0 ? 1. : -1.
+                navigable.zoomOn(p, navigable.zoom + (f * 0.03))
+            }
+        }
+
+>>>>>>> devel
         Rectangle {
             parent: navigable.containerItem
             x: 100; y: 100

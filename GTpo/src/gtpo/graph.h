@@ -228,7 +228,11 @@ public:
     inline auto     get_root_nodes() const -> const weak_nodes_t& { return _root_nodes; }
 
 private:
+<<<<<<< HEAD
     shared_nodes_t        _nodes;
+=======
+    shared_nodes_t      _nodes;
+>>>>>>> devel
     weak_nodes_t        _root_nodes;
     weak_nodes_t_search _nodes_search;
     //@}

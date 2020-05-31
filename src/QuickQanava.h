@@ -74,7 +74,11 @@ struct QuickQanava {
         QuickContainers::initialize();
 
         qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");
+<<<<<<< HEAD
         if ( engine ) {
+=======
+        if (engine != nullptr) {
+>>>>>>> devel
             engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
             engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
@@ -103,7 +107,11 @@ struct QuickQanava {
         qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
         qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer" );
 #endif // QUICKQANAVA_STATIC
+<<<<<<< HEAD
     }
+=======
+    } // initialize()
+>>>>>>> devel
 };
 
 namespace qan { // ::qan
