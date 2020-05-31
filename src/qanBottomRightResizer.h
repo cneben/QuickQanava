@@ -32,7 +32,12 @@
 // \date	2016 07 08
 //-----------------------------------------------------------------------------
 
+<<<<<<< HEAD
+#ifndef qanBottomRightResizer_h
+#define qanBottomRightResizer_h
+=======
 #pragma once
+>>>>>>> devel
 
 // Qt headers
 #include <QtQml>
@@ -75,15 +80,30 @@ class BottomRightResizer : public QQuickItem
     Q_OBJECT
 public:
     //! .
+<<<<<<< HEAD
+    explicit BottomRightResizer( QQuickItem* parent = nullptr );
+    virtual ~BottomRightResizer() override;
+    BottomRightResizer( const BottomRightResizer& ) = delete;
+=======
     explicit BottomRightResizer(QQuickItem* parent = nullptr);
     virtual ~BottomRightResizer() override;
     BottomRightResizer(const BottomRightResizer&) = delete;
+>>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Resizer Management *///------------------------------------------
     //@{
 public:
+<<<<<<< HEAD
+    Q_PROPERTY( QQuickItem* handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL )
+    void                    setHandler( QQuickItem* handler ) noexcept;
+    QQuickItem*             getHandler( ) const noexcept;
+signals:
+    void                    handlerChanged();
+private:
+    QPointer< QQuickItem >  _handler{ nullptr };
+=======
     Q_PROPERTY(QQuickItem*  handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL)
     void                    setHandler(QQuickItem* handler) noexcept;
     QQuickItem*             getHandler() const noexcept;
@@ -91,6 +111,7 @@ signals:
     void                    handlerChanged();
 private:
     QPointer<QQuickItem>    _handler = nullptr;
+>>>>>>> devel
 
 public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
@@ -177,8 +198,13 @@ private:
     qreal       _handlerWidth{ 4.0 };
 
 public:
+<<<<<<< HEAD
+    //! Target could not be resized below \c minimumTargetSize (default to \c empty).
+    Q_PROPERTY( QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL )
+=======
     //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no constrain).
     Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL)
+>>>>>>> devel
     //! \sa minimumTargetSize
     void        setMinimumTargetSize( QSizeF minimumTargetSize );
     //! \sa minimumTargetSize
@@ -192,7 +218,11 @@ private:
 
 public:
     //! Set to true to hide the resize handler component when the resize area is not hovered (default to \c false).
+<<<<<<< HEAD
+    Q_PROPERTY( bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY autoHideHandlerChanged FINAL )
+=======
     Q_PROPERTY(bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY autoHideHandlerChanged FINAL)
+>>>>>>> devel
     void        setAutoHideHandler( bool autoHideHandler );
     bool        getAutoHideHandler( ) const { return _autoHideHandler; }
 signals:
@@ -202,7 +232,11 @@ private:
 
 public:
     //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+<<<<<<< HEAD
+    Q_PROPERTY( bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY preserveRatioChanged FINAL )
+=======
     Q_PROPERTY(bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY preserveRatioChanged FINAL)
+>>>>>>> devel
     void        setPreserveRatio(bool preserveRatio) noexcept;
     bool        getPreserveRatio() const noexcept { return _preserveRatio; }
 signals:
@@ -212,7 +246,11 @@ private:
 
 public:
     //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+<<<<<<< HEAD
+    Q_PROPERTY( qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL )
+=======
     Q_PROPERTY(qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL)
+>>>>>>> devel
     void        setRatio(qreal ratio) noexcept;
     qreal       getRatio() const noexcept { return _ratio; }
 signals:
@@ -228,7 +266,11 @@ signals:
     //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
     void    resizeStart(QSizeF targetSize );
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
+<<<<<<< HEAD
+    void    resizeEnd( QSizeF targetSize );
+=======
     void    resizeEnd(QSizeF targetSize);
+>>>>>>> devel
 protected:
     //virtual bool    childMouseEventFilter(QQuickItem *item, QEvent *event) override;
 
@@ -244,4 +286,12 @@ private:
 
 }  // ::qan
 
+<<<<<<< HEAD
+QML_DECLARE_TYPE( qan::BottomRightResizer );
+
+#endif // qanBottomRightResizer_h
+
+
+=======
 QML_DECLARE_TYPE(qan::BottomRightResizer);
+>>>>>>> devel

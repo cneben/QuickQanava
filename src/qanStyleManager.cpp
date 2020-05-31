@@ -64,8 +64,13 @@ void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* compon
 {
     if ( style != nullptr &&
          component != nullptr ) {
+<<<<<<< HEAD
+        _styleComponentMap.insert( style, component );
+        if ( !_styles.contains(style) )
+=======
         _styleComponentMap.insert(style, component);
         if (!_styles.contains(style))
+>>>>>>> devel
             _styles.append(style);
     }
 }

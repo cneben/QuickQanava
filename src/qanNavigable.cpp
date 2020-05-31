@@ -46,7 +46,10 @@ Navigable::Navigable( QQuickItem* parent ) :
 {
     _containerItem = new QQuickItem{this};
     _containerItem->setTransformOrigin( TransformOrigin::TopLeft );
+<<<<<<< HEAD
+=======
     _containerItem->setAcceptTouchEvents(true);
+>>>>>>> devel
     connect( _containerItem, &QQuickItem::childrenRectChanged,  // Listenning to children rect changes to update containerItem size.
              [this]() {
         if ( this->_containerItem ) {
@@ -60,7 +63,10 @@ Navigable::Navigable( QQuickItem* parent ) :
 
     _defaultGrid = std::make_unique<qan::Grid>();
     setGrid(_defaultGrid.get());
+<<<<<<< HEAD
+=======
     setAcceptTouchEvents(true);
+>>>>>>> devel
 }
 //-----------------------------------------------------------------------------
 
@@ -73,7 +79,11 @@ void    Navigable::setNavigable( bool navigable ) noexcept
     }
 }
 
+<<<<<<< HEAD
+void    Navigable::centerOn( QQuickItem* item )
+=======
 void    Navigable::centerOn(QQuickItem* item)
+>>>>>>> devel
 {
     // Algorithm:
         // 1. Project navigable view center in container item CS.
@@ -82,8 +92,13 @@ void    Navigable::centerOn(QQuickItem* item)
     if ( _containerItem == nullptr ||
          item == nullptr )
         return;
+<<<<<<< HEAD
+    if ( item->parentItem() != getContainerItem() )
+        return;
+=======
     //if ( item->parentItem() != getContainerItem() )
     //    return;
+>>>>>>> devel
     QPointF navigableCenter{ width() / 2., height() / 2. };
     QPointF navigableCenterContainerCs = mapToItem( _containerItem, navigableCenter );
     QPointF itemCenterContainerCs{ item->mapToItem( _containerItem, QPointF{ item->width() / 2., item->height() / 2. } ) };
@@ -93,6 +108,8 @@ void    Navigable::centerOn(QQuickItem* item)
     updateGrid();
 }
 
+<<<<<<< HEAD
+=======
 void    Navigable::centerOnPosition(QPointF position)
 {
     QPointF navigableCenter{ width() / 2., height() / 2. };
@@ -103,6 +120,7 @@ void    Navigable::centerOnPosition(QPointF position)
     updateGrid();
 }
 
+>>>>>>> devel
 void    Navigable::fitInView( )
 {
     QRectF content = _containerItem->childrenRect();
@@ -320,9 +338,14 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
 
 void    Navigable::mouseMoveEvent( QMouseEvent* event )
 {
+<<<<<<< HEAD
+    if ( getNavigable() ) {
+        if ( _leftButtonPressed && !_lastPan.isNull() ) {
+=======
     if (getNavigable()) {
         if (_leftButtonPressed &&
             !_lastPan.isNull()) {
+>>>>>>> devel
             QPointF delta = _lastPan - event->localPos();
             QPointF p{ QPointF{ _containerItem->x(), _containerItem->y() } - delta };
             _containerItem->setX( p.x() );
@@ -341,14 +364,23 @@ void    Navigable::mouseMoveEvent( QMouseEvent* event )
 
 void    Navigable::mousePressEvent( QMouseEvent* event )
 {
+<<<<<<< HEAD
+    if ( getNavigable() ) {
+        if ( event->button() == Qt::LeftButton ) {
+=======
     if (getNavigable()) {
         if (event->button() == Qt::LeftButton) {
+>>>>>>> devel
             _leftButtonPressed = true;
             _lastPan = event->localPos();
             event->accept();
             return;
         }
+<<<<<<< HEAD
+        if ( event->button() == Qt::RightButton ) {
+=======
         if (event->button() == Qt::RightButton) {
+>>>>>>> devel
             event->accept();
             return;
         }
@@ -370,10 +402,17 @@ void    Navigable::mouseReleaseEvent( QMouseEvent* event )
         setDragActive(false);
         _leftButtonPressed = false;
     }
+<<<<<<< HEAD
+    QQuickItem::mouseReleaseEvent( event );
+}
+
+void    Navigable::wheelEvent( QWheelEvent* event )
+=======
     QQuickItem::mouseReleaseEvent(event);
 }
 
 void    Navigable::wheelEvent(QWheelEvent* event)
+>>>>>>> devel
 {
     if ( getNavigable() ) {
         qreal zoomFactor = ( event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement );
@@ -389,13 +428,21 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 //-----------------------------------------------------------------------------
 
 /* Grid Management *///--------------------------------------------------------
+<<<<<<< HEAD
+void    Navigable::setGrid( qan::Grid* grid ) noexcept
+=======
 void    Navigable::setGrid(qan::Grid* grid) noexcept
+>>>>>>> devel
 {
     if ( grid != _grid ) {
         if ( _grid ) {                    // Hide previous grid
             disconnect( _grid, nullptr,
                         this, nullptr );  // Disconnect every update signals from grid to this navigable
         }
+<<<<<<< HEAD
+
+=======
+>>>>>>> devel
         _grid = grid;                       // Configure new grid
         if ( _grid ) {
             _grid->setParentItem( this );

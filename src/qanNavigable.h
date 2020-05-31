@@ -143,7 +143,11 @@ public:
      * \endcode
      *
      */
+<<<<<<< HEAD
+    Q_PROPERTY( QQuickItem* containerItem READ getContainerItem CONSTANT FINAL )
+=======
     Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+>>>>>>> devel
     //! \sa containerItem
     inline QQuickItem*  getContainerItem() noexcept { return _containerItem; }
 private:
@@ -151,17 +155,25 @@ private:
 
 public:
     //! Center the view on a given child item (zoom level is not modified).
+<<<<<<< HEAD
+    Q_INVOKABLE void    centerOn( QQuickItem* item );
+=======
     Q_INVOKABLE void    centerOn(QQuickItem* item);
 
     //! Center the view on a given position
     Q_INVOKABLE void    centerOnPosition(QPointF position);
+>>>>>>> devel
 
     /*! Fit the area content (\c containerItem childs) in view and update current zoom level.
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.
      * \sa autoFitMode
      */
+<<<<<<< HEAD
+    Q_INVOKABLE void    fitInView( );
+=======
     Q_INVOKABLE void    fitInView();
+>>>>>>> devel
 
 public:
     //! \brief Auto fitting mode.
@@ -233,7 +245,11 @@ public:
      */
     void        setZoom( qreal zoom );
     //! Set area current zoom centered on a given \c center point.
+<<<<<<< HEAD
+    void        zoomOn( QPointF center, qreal zoom );
+=======
     Q_INVOKABLE void        zoomOn( QPointF center, qreal zoom );
+>>>>>>> devel
     //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom, maxZoom) range.
     bool        isValidZoom( qreal zoom ) const;
 private:
@@ -280,6 +296,27 @@ public:
     //! Area minimum zoom level, default to 0.1 (10% zoom), zoomMin can't be <= 0.
     Q_PROPERTY( qreal zoomMin READ getZoomMin WRITE setZoomMin NOTIFY zoomMinChanged FINAL )
     //! \sa zoomMin
+<<<<<<< HEAD
+    qreal       getZoomMin( ) const { return _zoomMin; }
+    //! \sa zoomMin
+    void        setZoomMin( qreal zoomMin );
+private:
+    //! \copydoc zoomMin
+    qreal       _zoomMin{ 0.1 };
+signals:
+    //! \sa zoomMin
+    void        zoomMinChanged( );
+
+signals:
+    //! Emitted whenever the mouse is clicked in the container.
+    void    clicked( QVariant pos );
+
+    //! Emitted whenever the mouse is right clicked in the container.
+    void    rightClicked( QVariant pos );
+
+    //! Emitted whenever the container item is scaled (zoomed) or panned.
+    void    containerItemModified( );
+=======
     qreal       getZoomMin() const { return _zoomMin; }
     //! \sa zoomMin
     void        setZoomMin(qreal zoomMin);
@@ -299,6 +336,7 @@ signals:
 
     //! Emitted whenever the container item is scaled (zoomed) or panned.
     void    containerItemModified();
+>>>>>>> devel
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
@@ -310,6 +348,26 @@ protected:
 
 public:
     //! True when the navigable conctent area is actually dragged.
+<<<<<<< HEAD
+    Q_PROPERTY( bool dragActive READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL )
+    //! \copydoc dragActive
+    inline bool getDragActive() const noexcept { return _dragActive; }
+    //! \copydoc dragActive
+    void        setDragActive( bool dragActive ) noexcept;
+private:
+    //! \copydoc dragActive
+    bool        _dragActive{ false };
+signals:
+    //! \copydoc dragActive
+    void        dragActiveChanged( );
+
+protected:
+    virtual void    geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry ) override;
+    virtual void    mouseMoveEvent( QMouseEvent* event ) override;
+    virtual void    mousePressEvent( QMouseEvent* event ) override;
+    virtual void    mouseReleaseEvent( QMouseEvent* event ) override;
+    virtual void    wheelEvent( QWheelEvent* event ) override;
+=======
     Q_PROPERTY(bool dragActive READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL)
     //! \copydoc dragActive
     inline bool getDragActive() const noexcept { return _dragActive; }
@@ -328,6 +386,7 @@ protected:
     virtual void    mousePressEvent(QMouseEvent* event) override;
     virtual void    mouseReleaseEvent(QMouseEvent* event) override;
     virtual void    wheelEvent(QWheelEvent* event) override;
+>>>>>>> devel
 
 protected:
     bool        _leftButtonPressed{ false };
@@ -344,7 +403,11 @@ public:
      *
      * \note may be nullptr (undefined in QML).
      */
+<<<<<<< HEAD
+    Q_PROPERTY( qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL )
+=======
     Q_PROPERTY(qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL)
+>>>>>>> devel
     //! \copydoc grid
     qan::Grid*          getGrid() noexcept { return _grid.data(); }
     const qan::Grid*    getGrid() const noexcept { return _grid.data(); }
@@ -358,7 +421,11 @@ private:
     std::unique_ptr<qan::Grid>   _defaultGrid;
 signals:
     //! \copydoc grid
+<<<<<<< HEAD
+    void                gridChanged( );
+=======
     void                gridChanged();
+>>>>>>> devel
     //@}
     //-------------------------------------------------------------------------
 };

@@ -209,10 +209,21 @@ Qan.Connector {
                 edgeItem.visible = false    // be visible on non rectangular nodes.
         }
         onPressed : {
+<<<<<<< HEAD
+            console.error("onPressed")
+            console.error("PRE edgeItem.visible=" + edgeItem.visible)
+            console.error("PRE edgeItem.hidden=" + edgeItem.hidden)
+=======
+>>>>>>> devel
             mouse.accepted = true
             connectorPressed()
             if (edgeItem)
                 edgeItem.visible = true
+<<<<<<< HEAD
+            console.error("POST edgeItem.visible=" + edgeItem.visible)
+            console.error("POST edgeItem.hidden=" + edgeItem.hidden)
+=======
+>>>>>>> devel
         }
     } // MouseArea: dropDestArea
 }

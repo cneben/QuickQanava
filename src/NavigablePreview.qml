@@ -59,11 +59,19 @@ Qan.AbstractNavigablePreview {
     Connections {
         id: containerItemMonitor
         target: voidItem
+<<<<<<< HEAD
+        onXChanged: updatevisibleWindow()
+        onYChanged: updatevisibleWindow()
+        onScaleChanged: updatevisibleWindow()
+        onWidthChanged: updatevisibleWindow()
+        onHeightChanged: updatevisibleWindow()
+=======
         function onXChanged() { updatevisibleWindow() }
         function onYChanged() { updatevisibleWindow() }
         function onScaleChanged() { updatevisibleWindow() }
         function onWidthChanged() { updatevisibleWindow() }
         function onHeightChanged() { updatevisibleWindow() }
+>>>>>>> devel
     }
     onSourceChanged: {
         if ( source &&
