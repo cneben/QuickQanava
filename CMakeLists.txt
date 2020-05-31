@@ -19,6 +19,7 @@ add_subdirectory(QuickContainers)
 add_subdirectory(src)
 
 option(BUILD_SAMPLES "Build the samples" TRUE)
+option(BUILD_STATIC_QRC "Build *.qrc resources statically" FALSE)
 option(DEPLOY "Use windeployqt on Windows" FALSE)
 
 if (${BUILD_SAMPLES})

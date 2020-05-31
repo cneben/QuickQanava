@@ -109,7 +109,7 @@ QuickQanava could be used with either _qmake_ or _CMake_ build configuration sys
 
 | qmake                | cmake             | 
 | :---:                | :---:             | 
-| Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed | 
+| Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed, resources can be linked statically trough QRC | 
 
 
 Using qmake (**preferred and supported way of integrating QuickQanava**):
@@ -137,10 +137,10 @@ $ mkdir build
 $ cd build
 
 # IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
-$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE ..
+$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ..
 
 # IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
-$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE ../QuickQanava/
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ../QuickQanava/
 
 $ cmake --build .
 # Then run the samples in ./samples
@@ -148,7 +148,7 @@ $ cmake --build .
 # Eventually make install
 ```
 
-Detailled instructions:  [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
+Detailed instructions:  [Installation](http://cneben.github.io/QuickQanava/installation/index.html)
 
 Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:
 

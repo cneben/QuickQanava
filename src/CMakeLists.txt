@@ -66,7 +66,12 @@ set (qan_plugin_files
 set(CMAKE_AUTOMOC ON)
 qt5_wrap_cpp(qan_source_files, qan_header_files)
 set(CMAKE_AUTORCC ON)
-list(APPEND RESOURCES QuickQanava_plugin.qrc)
+
+if(BUILD_STATIC_QRC)
+	list(APPEND RESOURCES QuickQanava_static.qrc)
+else()
+	list(APPEND RESOURCES QuickQanava_plugin.qrc)
+endif(BUILD_STATIC_QRC)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -98,7 +103,9 @@ install(TARGETS QuickQanava
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
-
+if(BUILD_STATIC_QRC)
+	target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
+endif(BUILD_STATIC_QRC)
 
 # Configure QuickQanava QML module plugin #####################################
 set(PLUGIN_TARGET "quickqanavaplugin")
@@ -123,14 +130,14 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
 # Install qmldir file
 install(
-	FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/qmldir_plugin
+	FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
 	DESTINATION ${DESTDIR}
 	RENAME qmldir
 )
 
 # Install source QML files to ease debugging
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
 	DESTINATION ${DESTDIR}
 	FILES_MATCHING PATTERN "*.qml"
 )
