@@ -19,10 +19,10 @@ addons:
       - sourceline: "ppa:beineri/opt-qt-5.14.2-bionic"
     packages:
       - cmake
-      - qt512base
-      - qt512declarative
-      - qt512graphicaleffects
-      - qt512quickcontrols2
+      - qt514base
+      - qt514declarative
+      - qt514graphicaleffects
+      - qt514quickcontrols2
       - mesa-common-dev
       - libgl1-mesa-dev
   homebrew:
