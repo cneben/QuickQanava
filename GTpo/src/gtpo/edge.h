@@ -86,7 +86,7 @@ public:
     explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
         config_t::edge_base{}, _src{ src }, _dst{ dst } { }
     virtual ~edge() {
-        if ( _graph != nullptr )
+        if (_graph != nullptr)
             std::cerr << "gtpo::edge<>::~edge(): Warning: an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
         _graph = nullptr;

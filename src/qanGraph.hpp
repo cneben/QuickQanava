@@ -42,56 +42,54 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
     if (nodeComponent == nullptr) {
         const auto engine = qmlEngine(this);
         nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the node type delegate() factory
-        if (nodeComponent == nullptr && engine != nullptr) // Otherwise, use default node delegate component
+        if (nodeComponent == nullptr &&
+            engine != nullptr) // Otherwise, use default node delegate component
             nodeComponent = Node_t::delegate(*engine);
     }
     if (nodeComponent == nullptr) {          // Otherwise, generate a warning and create a "non visual node"
         qWarning() << "qan::Graph::insertNode(): Can't find a valid node delegate component.";
-    } else {                    // If component exists, it should be instanciable
-        if ( nodeComponent->isError() ) {
-            qWarning() << "Component error: " << nodeComponent->errors();
-            return nullptr;
-        }
+        return nullptr;
+    }
+    if (nodeComponent->isError()) { // If component exists, it should be instanciable
+        qWarning() << "Component error: " << nodeComponent->errors();
+        return nullptr;
     }
     const auto node = std::make_shared<Node_t>();
     try {
-        if (nodeComponent != nullptr) {
-            QQmlEngine::setObjectOwnership(node.get(), QQmlEngine::CppOwnership);
-            if (nodeStyle == nullptr)
-                nodeStyle = Node_t::style(this);
-            if (nodeStyle == nullptr)
-                throw qan::Error{"style() factory has returned a nullptr style."};
-            _styleManager.setStyleComponent(nodeStyle, nodeComponent);      // nullptr nodeComponent is ok
-            qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
-                                                                                      *nodeStyle,
-                                                                                      node.get()));
-            if ( nodeItem  == nullptr )
-                throw qan::Error{"Node item creation failed."};
-            nodeItem->setNode(node.get());
-            nodeItem->setGraph(this);
-            node->setItem(nodeItem);
-            auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                    emit this->nodeClicked(nodeItem->getNode(), p);
-            };
-            connect(nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked);
+        QQmlEngine::setObjectOwnership(node.get(), QQmlEngine::CppOwnership);
+        if (nodeStyle == nullptr)
+            nodeStyle = Node_t::style(nullptr);
+        if (nodeStyle == nullptr)
+            throw qan::Error{"style() factory has returned a nullptr style."};
+        _styleManager.setStyleComponent(nodeStyle, nodeComponent);      // nullptr nodeComponent is ok
+        qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
+                                                                                  *nodeStyle,
+                                                                                  node.get()));
+        if (nodeItem == nullptr)
+            throw qan::Error{"Node item creation failed."};
+        nodeItem->setNode(node.get());
+        nodeItem->setGraph(this);
+        node->setItem(nodeItem);
+        auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
+                emit this->nodeClicked(nodeItem->getNode(), p);
+        };
+        connect(nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked);
 
-            auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                    emit this->nodeRightClicked(nodeItem->getNode(), p);
-            };
-            connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
+                emit this->nodeRightClicked(nodeItem->getNode(), p);
+        };
+        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
 
-            auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-                if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                    emit this->nodeDoubleClicked(nodeItem->getNode(), p);
-            };
-            connect(nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked);
-            node->setItem(nodeItem);
-            {   // Send item to front
-                _maxZ += 1;
-                nodeItem->setZ(_maxZ);
-            }
+        auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+            if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
+                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+        };
+        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked);
+        {   // Send item to front
+            _maxZ += 1;
+            nodeItem->setZ(_maxZ);
         }
         gtpo_graph_t::insert_node(node);        // Insert visual or non visual node
     } catch (const gtpo::bad_topology_error& e) {
@@ -142,37 +140,40 @@ qan::Node*  Graph::insertNonVisualNode()
 template < class Edge_t >
 qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent )
 {
-    if ( dstNode == nullptr )
+    if (dstNode == nullptr)
         return nullptr;
-    if ( edgeComponent == nullptr ) {
+    if (edgeComponent == nullptr) {
         const auto engine = qmlEngine(this);
-        if ( engine != nullptr )
-            edgeComponent = Edge_t::delegate(*engine);     // If no delegate component is specified, try the edge type delegate() factory
-        if ( edgeComponent == nullptr )
+        if (engine != nullptr)
+            edgeComponent = Edge_t::delegate(*engine, nullptr);     // If no delegate component is specified, try the edge type delegate() factory
+        if (edgeComponent == nullptr)
             edgeComponent = _edgeDelegate.get();    // Otherwise, use default edge delegate component
     }
-    if ( edgeComponent == nullptr ) {               // Otherwise, throw an error, a visual edge must have a delegate
+    if (edgeComponent == nullptr) {               // Otherwise, throw an error, a visual edge must have a delegate
         qWarning() << "qan::Graph::insertEdge<>(): Error: Can't find a valid edge delegate component.";
         return nullptr;
     }
-    const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style(this));
-    if ( style == nullptr ) {
+    const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style(nullptr));
+    if (style == nullptr) {
         qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
         return nullptr;
     }
     qan::Edge* configuredEdge = nullptr;
     try {
-        auto edge = std::make_shared<Edge_t>(this);
-        QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        if ( configureEdge( *edge,  *edgeComponent, *style,
-                            src,    dstNode ) ) {
-            gtpo_graph_t::insert_edge( edge );
+        auto edge = std::make_shared<Edge_t>(nullptr);
+        QQmlEngine::setObjectOwnership(edge.get(), QQmlEngine::CppOwnership);
+        if (configureEdge(*edge,  *edgeComponent, *style,
+                           src,    dstNode)) {
+            gtpo_graph_t::insert_edge(edge);
             configuredEdge = edge.get();
+        } else {
+            qWarning() << "qan::Graph::insertEdge<>(): Error: Internal error during edge configuration.";
+            // Note: edge is deleted since it is unreferenced...
         }
-    } catch ( gtpo::bad_topology_error e ) {
+    } catch (gtpo::bad_topology_error e) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
         // Note: edge is cleaned automatically if it has still not been inserted to graph
-    } catch ( ... ) {
+    } catch (...) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error.";
         // Note: edge is cleaned automatically if it has still not been inserted to graph
     }
@@ -210,7 +211,7 @@ qan::Group* Graph::insertGroup()
     const auto engine = qmlEngine(this);
     QQmlComponent* groupComponent = nullptr;
     if (engine != nullptr)
-        groupComponent = Group_t::delegate(*engine, this);
+        groupComponent = Group_t::delegate(*engine, nullptr);
     if (groupComponent == nullptr)
         groupComponent = _groupDelegate.get();
     auto group = std::make_shared<Group_t>();

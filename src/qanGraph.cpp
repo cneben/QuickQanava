@@ -73,14 +73,13 @@ void    Graph::classBegin()
     setGroupDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Group.qml")));
     // Note: Do not set a default node delegate, otherwise it would be used instead
     //  of qan::Node::delegate(), just let the user specify one.
-        //Ie setNodeDelegate(nullpr);
     setEdgeDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Edge.qml")));
     setSelectionDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml")));
 
     const auto engine = qmlEngine(this);
     if ( engine != nullptr ) {
-        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(*engine) );
-        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(*engine) );
+        _styleManager.setStyleComponent(qan::Node::style(), qan::Node::delegate(*engine));
+        _styleManager.setStyleComponent(qan::Edge::style(), qan::Edge::delegate(*engine));
     } else qWarning() << "qan::Graph::classBegin(): Error, no valid QML engine available.";
 }
 
@@ -93,7 +92,7 @@ void    Graph::componentComplete()
         // Visual connector initialization
         auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
         if (connectorComponent) {
-            qan::Style* style = qan::Connector::style(this);
+            qan::Style* style = qan::Connector::style(nullptr);
             if (style != nullptr) {
                 _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
                 emit connectorChanged();
@@ -101,9 +100,9 @@ void    Graph::componentComplete()
                     _connector->setGraph(this);
                     _connector->setEnabled(getConnectorEnabled());
                     _connector->setVisible(false);
-                    _connector->setProperty( "edgeColor", getConnectorEdgeColor() );
-                    _connector->setProperty( "connectorColor", getConnectorColor() );
-                    _connector->setProperty( "createDefaultEdge", getConnectorCreateDefaultEdge() );
+                    _connector->setProperty("edgeColor", getConnectorEdgeColor());
+                    _connector->setProperty("connectorColor", getConnectorColor());
+                    _connector->setProperty("createDefaultEdge", getConnectorCreateDefaultEdge());
                     if ( getConnectorItem() != nullptr )
                         _connector->setConnectorItem( getConnectorItem() );
                     connect( _connector.data(), &qan::Connector::requestEdgeCreation,
@@ -346,11 +345,11 @@ void    Graph::setGroupDelegate(std::unique_ptr<QQmlComponent> groupDelegate) no
     setGroupDelegate(groupDelegate.release());
 }
 
-QQuickItem* Graph::createFromComponent( QQmlComponent* component,
-                                        qan::Style& style,
-                                        qan::Node* node,
-                                        qan::Edge* edge,
-                                        qan::Group* group ) noexcept
+QQuickItem* Graph::createFromComponent(QQmlComponent* component,
+                                       qan::Style& style,
+                                       qan::Node* node,
+                                       qan::Edge* edge,
+                                       qan::Group* group) noexcept
 {
     //qWarning() << "Graph::createFromComponent(): node=" << node << "  edge=" << edge << "  group=" << group;
     if (component == nullptr) {
@@ -410,11 +409,11 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
                 nodeItem->setItemStyle(&style);
         }
         component->completeCreate();
-        if ( !component->isError() ) {
-            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
-            item = qobject_cast< QQuickItem* >( object );
-            item->setVisible( true );
-            item->setParentItem( getContainerItem() );
+        if (!component->isError()) {
+            QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
+            item = qobject_cast<QQuickItem*>(object);
+            item->setVisible(true);
+            item->setParentItem(getContainerItem());
         } // Note: There is no leak until cpp ownership is set
     } catch (const qan::Error& e) {
         Q_UNUSED(e)
@@ -425,10 +424,11 @@ QQuickItem* Graph::createFromComponent( QQmlComponent* component,
     return item;
 }
 
-QQuickItem* Graph::createFromComponent( QQmlComponent* component, qan::Style* style )
+QQuickItem* Graph::createFromComponent(QQmlComponent* component, qan::Style* style)
 {
-    return ( component != nullptr &&
-             style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) : nullptr;
+    return (component != nullptr &&
+            style != nullptr ) ? createFromComponent( component, *style, nullptr, nullptr, nullptr ) :
+                                 nullptr;
 }
 
 void Graph::setSelectionDelegate(QQmlComponent* selectionDelegate) noexcept
@@ -571,7 +571,7 @@ auto    Graph::insertNonVisualNode( SharedNode node ) noexcept(false) -> WeakNod
     return weakNode;
 }
 
-qan::Node*  Graph::insertNode( QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle )
+qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* nodeStyle)
 {
     return insertNode<qan::Node>(nodeComponent, nodeStyle);
 }
@@ -584,21 +584,21 @@ bool    Graph::insertNode(const SharedNode& node, QQmlComponent* nodeComponent, 
     if (!node)
         return false;
 
-    if ( nodeComponent == nullptr ) {
+    if (nodeComponent == nullptr) {
         nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the default node delegate
     }
-    if ( nodeComponent == nullptr ) {               // Otherwise, throw an error, a visual node must have a delegate
+    if (nodeComponent == nullptr) {               // Otherwise, throw an error, a visual node must have a delegate
         qWarning() << "qan::Graph::insertNode(SharedNode): Can't find a valid node delegate component.";
         return false;
     }
-    if ( nodeComponent->isError() ) {
+    if (nodeComponent->isError()) {
         qWarning() << "qan::Graph::insertNode(SharedNode): Component error: " << nodeComponent->errors();
         return false;
     }
     try {
-        QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
+        QQmlEngine::setObjectOwnership(node.get(), QQmlEngine::CppOwnership);
         qan::NodeItem* nodeItem = nullptr;
-        if (nodeStyle != nullptr ) {
+        if (nodeStyle != nullptr) {
             _styleManager.setStyleComponent(nodeStyle, nodeComponent);
             nodeItem = static_cast<qan::NodeItem*>( createFromComponent( nodeComponent,
                                                                          *nodeStyle,
@@ -696,6 +696,7 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
         emit edgeInserted(edge);
     } else
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
+    qWarning() << "qan::Graph::insertEdge(): edge.ownership=" << QQmlEngine::objectOwnership(edge);
     return edge;
 }
 
@@ -806,7 +807,6 @@ bool    Graph::configureEdge( qan::Edge& edge, QQmlComponent& edgeComponent, qan
 {
     _styleManager.setStyleComponent(&style, &edgeComponent);
     auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
-    // FIXME: a leak might occurs if qobject_cast fails, but createFromComponent() return a non nullptr object...
     if ( edgeItem == nullptr ) {
         qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
         return false;
@@ -1327,23 +1327,23 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
                                   qan::NodeItem::Dock dockType,
                                   qan::PortItem::Type portType,
                                   QString label,
-                                  QString id ) noexcept
+                                  QString id) noexcept
 {
     // PRECONDITIONS:
         // node can't be nullptr
         // node must have an item (to access node style)
         // default _portDelegate must be valid
-    if ( node == nullptr ||
-         node->getItem() == nullptr )
+    if (node == nullptr ||
+        node->getItem() == nullptr)
         return nullptr;
-    if ( !_portDelegate ) {
+    if (!_portDelegate) {
         qWarning() << "qan::Graph::insertPort(): no default port delegate available.";
         return nullptr;
     }
 
     qan::PortItem* portItem{nullptr};
     const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
-    if ( nodeStyle ) {
+    if (nodeStyle) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
         // Note 20190501: CppOwnership is set in createFromComponen()
         if ( portItem != nullptr ) {

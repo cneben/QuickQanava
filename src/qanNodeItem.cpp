@@ -350,8 +350,8 @@ void    NodeItem::setItemStyle( qan::Style* style ) noexcept
 
 void    NodeItem::styleDestroyed( QObject* style )
 {
-    if ( style != nullptr )
-        setStyle( nullptr );   // Set default style when current style is destroyed
+    if (style != nullptr)
+        setStyle(nullptr);   // Set default style when current style is destroyed
 }
 //-----------------------------------------------------------------------------
 

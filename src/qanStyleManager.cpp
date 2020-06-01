@@ -62,8 +62,8 @@ void    StyleManager::clear()
 /* Style Management *///-------------------------------------------------------
 void    StyleManager::setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept
 {
-    if ( style != nullptr &&
-         component != nullptr ) {
+    if (style != nullptr &&
+        component != nullptr) {
         _styleComponentMap.insert(style, component);
         if (!_styles.contains(style))
             _styles.append(style);

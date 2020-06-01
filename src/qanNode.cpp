@@ -64,7 +64,7 @@ Node::Node(QObject* parent) :
 
 Node::~Node()
 {
-    if ( _item )
+    if (_item)
         _item->deleteLater();
 }
 
@@ -86,9 +86,9 @@ const qan::NodeItem*    Node::getItem() const noexcept { return _item.data(); }
 
 void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 {
-    if ( nodeItem != nullptr ) {
+    if (nodeItem != nullptr) {
         _item = nodeItem;
-        if ( nodeItem->getNode() != this )
+        if (nodeItem->getNode() != this)
             nodeItem->setNode(this);
     }
 }
@@ -97,19 +97,20 @@ void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 /* Node Static Factories *///--------------------------------------------------
 QQmlComponent*  Node::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
+    Q_UNUSED(parent)
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
+    if (!delegate)
         delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml",
-                                                   QQmlComponent::PreferSynchronous, parent);
+                                                   QQmlComponent::PreferSynchronous);
     return delegate.get();
 }
 
 qan::NodeStyle* Node::style(QObject* parent) noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
-    if ( !qan_Node_style )
-        qan_Node_style = std::make_unique<qan::NodeStyle>(parent);
-    return qan_Node_style.get();
+    static QScopedPointer<qan::NodeStyle>  qan_Node_style;
+    if (!qan_Node_style)
+        qan_Node_style.reset(new qan::NodeStyle(parent));
+    return qan_Node_style.data();
 }
 //-----------------------------------------------------------------------------
 

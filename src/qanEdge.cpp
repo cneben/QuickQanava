@@ -80,7 +80,7 @@ void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 QQmlComponent*  Edge::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
+    if (!delegate)
         delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Edge.qml",
                                                    QQmlComponent::PreferSynchronous, parent);
     return delegate.get();

@@ -67,7 +67,7 @@ public:
      */
     Style(QObject* parent = nullptr);
     explicit Style(QString name, QObject* parent = nullptr);
-    virtual ~Style() = default;
+    virtual ~Style() override = default;
     Style(const Style&) = delete;
     //@}
     //-------------------------------------------------------------------------
@@ -100,7 +100,7 @@ public:
      */
     NodeStyle(QObject* parent = nullptr);
     explicit NodeStyle(QString name, QObject* parent = nullptr);
-    virtual ~NodeStyle( ) { }
+    virtual ~NodeStyle() override = default;
     NodeStyle(const NodeStyle&) = delete;
     //@}
     //-------------------------------------------------------------------------

@@ -165,15 +165,11 @@ public:
 
 public:
     enum PropertiesRoles {
-        ItemDataRole = Qt::UserRole + 1,
-        ItemLabelRole
+        ItemDataRole = Qt::UserRole + 1
     };
 protected:
-    virtual QHash< int, QByteArray >    roleNames( ) const override {
-        QHash< int, QByteArray > roles;
-        roles[ItemDataRole]  = "itemData";
-        roles[ItemLabelRole] = "itemLabel";
-        return roles;
+    virtual QHash<int, QByteArray>  roleNames() const override {
+        return { {static_cast<int>(ItemDataRole),   "itemData"} };
     }
     //@}
     //-------------------------------------------------------------------------
@@ -281,13 +277,12 @@ public:
         return ( parent.isValid() ? 0 : static_cast<int>(_container.size()) );
     }
     virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override {
-        if ( index.row() >= 0 &&
-             index.row() < static_cast<int>(_container.size()) ) {
-            if ( role == Qt::DisplayRole ||
-                 role == ContainerModel::ItemLabelRole )
-                return dataDisplayRole( index.row(), typename ItemDispatcher<T>::type{} );
-            else if ( role == ContainerModel::ItemDataRole )
-                return dataItemRole( index.row(), typename ItemDispatcher<T>::type{} );
+        if (index.row() >= 0 &&
+            index.row() < static_cast<int>(_container.size())) {
+            if (role == Qt::DisplayRole)
+                return dataDisplayRole(index.row(), typename ItemDispatcher<T>::type{});
+            else if (role == ContainerModel::ItemDataRole)
+                return dataItemRole(index.row(), typename ItemDispatcher<T>::type{});
         }
         return QVariant{};
     }
@@ -369,7 +364,7 @@ private:
     inline auto dataItemRole( int, ItemDispatcherBase::ptr_type )                   const -> QVariant { /* empty */ return QVariant{};  }
     inline auto dataItemRole( int row, ItemDispatcherBase::ptr_qobject_type )       const -> QVariant {
         T item = qobject_cast<T>(at( row ));
-        if ( item != nullptr )
+        if (item != nullptr)
             QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
         return QVariant::fromValue< T >( item );
     }

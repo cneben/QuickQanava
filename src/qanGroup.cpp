@@ -120,7 +120,7 @@ void    Group::itemEndProposeNodeDrop()
 QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
+    if (!delegate)
         delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml",
                                                    QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
@@ -128,9 +128,9 @@ QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
 
 qan::NodeStyle* Group::style(QObject* parent) noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
+    static QScopedPointer<qan::NodeStyle>  qan_Group_style;
     if (!qan_Group_style) {
-        qan_Group_style = std::make_unique<qan::NodeStyle>(parent);
+        qan_Group_style.reset(new qan::NodeStyle{parent});
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
         qan_Group_style->setBorderWidth(2.);

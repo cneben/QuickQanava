@@ -99,7 +99,7 @@ Item {
     }
     Connections {
         target: nodeItem
-        onNodeDoubleClicked: labelEditor.visible = true
+        function onNodeDoubleClicked() { labelEditor.visible = true }
     }
     LabelEditor {
         id: labelEditor

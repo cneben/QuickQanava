@@ -74,7 +74,7 @@ auto    Connector::getGraph() const noexcept -> qan::Graph* { return _graph.data
 QQmlComponent*  Connector::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
+    if (!delegate)
         delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/VisualConnector.qml",
                                                    QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
@@ -82,9 +82,9 @@ QQmlComponent*  Connector::delegate(QQmlEngine& engine, QObject* parent) noexcep
 
 qan::NodeStyle* Connector::style(QObject* parent) noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  qan_Connector_style;
-    if ( !qan_Connector_style )
-        qan_Connector_style = std::make_unique<qan::NodeStyle>(parent);
+    static QScopedPointer<qan::NodeStyle>  qan_Connector_style;
+    if (!qan_Connector_style)
+        qan_Connector_style.reset(new qan::NodeStyle{parent});
     return qan_Connector_style.get();
 }
 //-----------------------------------------------------------------------------
