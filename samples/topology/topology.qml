@@ -148,6 +148,10 @@ ApplicationWindow {
         } // Menu: ports
         MenuSeparator { }
         MenuItem {
+            text: "Fit Graph in View"
+            onTriggered: graphView.fitInView()
+        }
+        MenuItem {
             text: "Clear Graph"
             onTriggered: topology.clearGraph()
         }
