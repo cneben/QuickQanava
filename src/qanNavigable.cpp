@@ -75,21 +75,32 @@ void    Navigable::setNavigable( bool navigable ) noexcept
 
 void    Navigable::centerOn(QQuickItem* item)
 {
-    // Algorithm:
-        // 1. Project navigable view center in container item CS.
-        // 2. Compute vector from navigable view center to item center in container item CS.
-        // 3. Translate container by (-) this vector.
-    if ( _containerItem == nullptr ||
-         item == nullptr )
+    if (_containerItem == nullptr ||
+        item == nullptr)
         return;
-    //if ( item->parentItem() != getContainerItem() )
-    //    return;
-    QPointF navigableCenter{ width() / 2., height() / 2. };
-    QPointF navigableCenterContainerCs = mapToItem(_containerItem, navigableCenter);
-    QPointF itemCenterContainerCs{ item->mapToItem( _containerItem, QPointF{ item->width() / 2., item->height() / 2. } ) };
-    QPointF translation{ navigableCenterContainerCs - itemCenterContainerCs };
-    _containerItem->setPosition( QPointF{ _containerItem->x() + translation.x(),
-                                          _containerItem->y() + translation.y() } );
+
+    // ALGORITHM:
+        // 1. Map item center in container CS, then translate view by this scaled center to set
+        //    the top left corner of item at view origin (0, 0)
+        // 2. Then compute a vector to move item at center of view using an (origin, view venter) vector
+        //    in container item coordinate system.
+
+    const qreal zoom = _containerItem->scale();
+
+    // 1.
+    const QPointF itemPos = _containerItem->mapToItem(item, QPointF{-item->width() / 2., -item->height() / 2.});
+    QPointF containerPos{0., 0.};
+    containerPos.rx() = itemPos.x() * zoom;
+    containerPos.ry() = itemPos.y() * zoom;
+    _containerItem->setPosition(containerPos);
+
+    // 2.
+    const QPointF viewCenter = QPointF{width() / 2., height() / 2.};
+    const QPointF viewCenterContainerCs = mapToItem(_containerItem, viewCenter);
+    const QPointF viewOriginContainerCs = mapToItem(_containerItem, QPointF{0, 0});
+    const QPointF translationContainerCs = viewCenterContainerCs - viewOriginContainerCs;
+    _containerItem->setPosition(_containerItem->position() + (translationContainerCs * zoom));
+
     updateGrid();
 }
 
@@ -106,27 +117,23 @@ void    Navigable::centerOnPosition(QPointF position)
 void    Navigable::fitInView( )
 {
     QRectF content = _containerItem->childrenRect();
-    if ( !content.isEmpty() ) { // Protect against div/0, can't fit if there is no content...
-        qreal viewWidth = width();
-        qreal viewHeight = height();
+    if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
+        const qreal viewWidth = width();
+        const qreal viewHeight = height();
 
-        qreal fitWidthZoom = 1.0;
-        qreal fitHeightZoom = 1.0;
-        fitWidthZoom = viewWidth / content.width();
-        fitHeightZoom = viewHeight / content.height( );
+        const qreal fitWidthZoom = viewWidth / content.width();
+        const qreal fitHeightZoom = viewHeight / content.height( );
 
         qreal fitZoom = fitWidthZoom;
-        if ( content.height() * fitWidthZoom > viewHeight )
+        if (content.height() * fitWidthZoom > viewHeight)
             fitZoom = fitHeightZoom;
 
         QPointF contentPos{0., 0.};
-        if ( content.width() * fitZoom < viewWidth ) {  // Center zoomed content horizontally
-            contentPos.rx() = ( viewWidth - ( content.width() * fitZoom ) ) / 2.;
-        }
-        if ( content.height() * fitZoom < viewHeight ) {   // Center zoomed content horizontally
-            contentPos.ry() = ( viewHeight - ( content.height() * fitZoom ) ) / 2.;
-        }
-        _containerItem->setPosition( contentPos );
+        if (content.width() * fitZoom < viewWidth)      // Center zoomed content horizontally
+            contentPos.rx() = ( viewWidth - (content.width() * fitZoom) ) / 2.;
+        if (content.height() * fitZoom < viewHeight)    // Center zoomed content horizontally
+            contentPos.ry() = ( viewHeight - (content.height() * fitZoom) ) / 2.;
+        _containerItem->setPosition(contentPos);
         _panModified = false;
         _zoomModified = false;
 
@@ -377,9 +384,7 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 {
     if ( getNavigable() ) {
         qreal zoomFactor = ( event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement );
-        zoomOn( QPointF{ static_cast<qreal>(event->x()),
-                         static_cast<qreal>(event->y()) },
-                getZoom() + zoomFactor );
+        zoomOn(event->position(), getZoom() + zoomFactor);
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);
