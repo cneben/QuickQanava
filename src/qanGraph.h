@@ -62,6 +62,10 @@ class PortItem;
 
 /*! \brief Main interface to manage graph topology.
  *
+ * Visual connection of nodes:
+ *   \li Visual connection of nodes with VisualConnector is enabled by setting the \c connectorEnabled property to \c true (default to true).
+ *   \li When an edge is created with the visual node connector, the signal \c connectorEdgeInserted with the newly inserted \c edge as an argument.
+
  * \nosubgrouping
  */
 class Graph : public gtpo::graph<qan::Config>
@@ -187,7 +191,7 @@ private:
 
 public:
     //! Alias to qan::Connector::connectorItem property (default to nullptr, ie default connector item).
-    Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
+    Q_PROPERTY(QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL)
     inline QQuickItem*      getConnectorItem() const noexcept { return _connectorItem; }
     void                    setConnectorItem( QQuickItem* connectorItem ) noexcept;
 signals:
@@ -207,7 +211,7 @@ private:
 
 public:
     //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).
-    Q_PROPERTY( qan::Connector* connector READ getConnector NOTIFY connectorChanged FINAL )
+    Q_PROPERTY(qan::Connector* connector READ getConnector NOTIFY connectorChanged FINAL)
     qan::Connector*             getConnector() noexcept;
 private:
     QScopedPointer<qan::Connector> _connector{};

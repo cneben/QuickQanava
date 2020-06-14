@@ -40,13 +40,7 @@ import "qrc:/QuickQanava" as Qan
 
 /*! \brief Visual view for a Qan.Graph component.
  *
- *  Set the graph property to Qan.Graph{}.
- *
- * Visual connection of nodes:
- *   \li Visual connection of nodes with VisualConnector is enabled by setting the \c enableVisualConnector property to \c true (default to false).
- *   \li Class name for the edges created by the visual node connector could be changed with property \c connectorEdgeClassName (default to qan::Edge).
- *   \li When an edge is created with the visual node connector, the signal \c edgeInsertedVisually with the newly inserted \c edge as an argument.
- *
+ *  Set the \c graph property to a Qan.Graph{} component.
  */
 Qan.AbstractGraphView {
     id: graphView
@@ -135,9 +129,9 @@ Qan.AbstractGraphView {
         id: nodeItemRatioWatcher
         target: null
         function onRatioChanged() {
-            if ( nodeResizer &&
-                 target &&
-                 nodeResizer.target === target ) {
+            if (nodeResizer &&
+                target &&
+                nodeResizer.target === target) {
                 nodeResizer.preserveRatio = target.ratio > 0.
                 nodeResizer.ratio = target.ratio
             }

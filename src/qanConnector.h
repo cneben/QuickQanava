@@ -72,7 +72,7 @@ public:
     Connector(Connector&&) = delete;
     Connector& operator=(Connector&&) = delete;
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL)
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     auto    getGraph() const noexcept -> qan::Graph*;
@@ -170,7 +170,7 @@ public:
      * \note Connector item is automatically hidden if \c sourceNode is nullptr or \c sourceNode is
      * destroyed.
      */
-    Q_PROPERTY( qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL )
+    Q_PROPERTY(qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL)
     void                setSourceNode( qan::Node* sourceNode ) noexcept;
     inline qan::Node*   getSourceNode() const noexcept { return _sourceNode.data(); }
 private:

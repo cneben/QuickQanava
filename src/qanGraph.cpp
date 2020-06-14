@@ -94,7 +94,7 @@ void    Graph::componentComplete()
         if (connectorComponent) {
             qan::Style* style = qan::Connector::style(nullptr);
             if (style != nullptr) {
-                _connector.reset( qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)) );
+                _connector.reset(qobject_cast<qan::Connector*>(createFromComponent(connectorComponent.get(), *style, nullptr)));
                 emit connectorChanged();
                 if (_connector) {
                     _connector->setGraph(this);
@@ -103,12 +103,12 @@ void    Graph::componentComplete()
                     _connector->setProperty("edgeColor", getConnectorEdgeColor());
                     _connector->setProperty("connectorColor", getConnectorColor());
                     _connector->setProperty("createDefaultEdge", getConnectorCreateDefaultEdge());
-                    if ( getConnectorItem() != nullptr )
-                        _connector->setConnectorItem( getConnectorItem() );
-                    connect( _connector.data(), &qan::Connector::requestEdgeCreation,
-                             this,              &qan::Graph::connectorRequestEdgeCreation);
-                    connect( _connector.data(), &qan::Connector::edgeInserted,
-                             this,              &qan::Graph::connectorEdgeInserted);
+                    if (getConnectorItem() != nullptr)
+                        _connector->setConnectorItem(getConnectorItem());
+                    connect(_connector.data(), &qan::Connector::requestEdgeCreation,
+                            this,              &qan::Graph::connectorRequestEdgeCreation);
+                    connect(_connector.data(), &qan::Connector::edgeInserted,
+                            this,              &qan::Graph::connectorEdgeInserted);
                 }
             } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
         }
@@ -234,8 +234,8 @@ void    Graph::setContainerItem(QQuickItem* containerItem)
 /* Visual connection Management *///-------------------------------------------
 void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
 {
-    if ( _connector ) {
-        if ( sourceNode != nullptr )
+    if (_connector) {
+        if (sourceNode != nullptr)
             _connector->setSourceNode(sourceNode);
         _connector->setVisible(getConnectorEnabled());
         _connector->setEnabled(getConnectorEnabled());
@@ -351,7 +351,6 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
                                        qan::Edge* edge,
                                        qan::Group* group) noexcept
 {
-    //qWarning() << "Graph::createFromComponent(): node=" << node << "  edge=" << edge << "  group=" << group;
     if (component == nullptr) {
         qWarning() << "qan::Graph::createFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
@@ -362,12 +361,8 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
             throw qan::Error{ "Error delegate component is not ready." };
 
         const auto rootContext = qmlContext(this);
-        //qWarning() << "Graph::createComComponent(): rootContext=" << rootContext;
-        //qWarning() << "   rootContext.thread=" << rootContext->thread();
         if (rootContext == nullptr)
             throw qan::Error{ "Error can't access to local QML context." };
-        //qWarning() << "   component.thread=" << component->thread();
-        //qWarning() << "   this.thread=" << this->thread();
         QObject* object = component->beginCreate(rootContext);
         if (object == nullptr ||
             component->isError()) {
@@ -405,7 +400,7 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
             }
         } else {
             const auto nodeItem = qobject_cast<qan::NodeItem*>(object); // Note 20170323: Usefull for Qan.StyleListView, where there
-            if ( nodeItem != nullptr )                                  // is a preview item, but now actual underlining node.
+            if (nodeItem != nullptr)                                    // is a preview item, but now actual underlining node.
                 nodeItem->setItemStyle(&style);
         }
         component->completeCreate();
