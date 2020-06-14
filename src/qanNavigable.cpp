@@ -122,23 +122,28 @@ void    Navigable::fitInView( )
         const qreal viewHeight = height();
 
         const qreal fitWidthZoom = viewWidth / content.width();
-        const qreal fitHeightZoom = viewHeight / content.height( );
+        const qreal fitHeightZoom = viewHeight / content.height();
 
         qreal fitZoom = fitWidthZoom;
         if (content.height() * fitWidthZoom > viewHeight)
             fitZoom = fitHeightZoom;
+        fitZoom -= 0.1; // Add margins
 
+        // FIXME: Buggy, do something similar to  centerOn() 2.0...
         QPointF contentPos{0., 0.};
-        if (content.width() * fitZoom < viewWidth)      // Center zoomed content horizontally
+        /*if (content.width() * fitZoom < viewWidth)      // Center zoomed content horizontally
             contentPos.rx() = ( viewWidth - (content.width() * fitZoom) ) / 2.;
         if (content.height() * fitZoom < viewHeight)    // Center zoomed content horizontally
             contentPos.ry() = ( viewHeight - (content.height() * fitZoom) ) / 2.;
-        _containerItem->setPosition(contentPos);
+        //_containerItem->setPosition(contentPos);
+        */
+        contentPos = content.topLeft() * fitZoom;
+        _containerItem->setPosition(-contentPos);
         _panModified = false;
         _zoomModified = false;
 
         // Don't use setZoom() because we force a TopLeft scale
-        if ( isValidZoom(fitZoom) ) {
+        if (isValidZoom(fitZoom)) {
             _zoom = fitZoom;
             _containerItem->setScale(_zoom);
             emit zoomChanged();
