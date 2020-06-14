@@ -14,6 +14,7 @@ SOURCES     +=  ./topology.cpp      \
 HEADERS     +=  ./qanFaceNode.h     \
                 ./topology.qml
 
-OTHER_FILES +=  main.qml        \
-                FaceNode.qml    \
-                EdgesList.qml
+OTHER_FILES +=  topology.qml        \
+                FaceNode.qml        \
+                NodesListView.qml   \
+                EdgesListView.qml

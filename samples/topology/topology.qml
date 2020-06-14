@@ -409,192 +409,124 @@ ApplicationWindow {
 \t- Add content with Add Node or Add Face Node entries.
 \t- Use the DnD connector to add edges between nodes."
     }
-    Item {
-        id: edgeList
+
+    RowLayout {
+        id: topDebugLayout
         anchors.top: parent.top
-        anchors.topMargin: 15
         anchors.right: parent.right
         anchors.rightMargin: 15
-        width: 200; height: 300
-        visible: showDebugControls.checked
+        anchors.topMargin: 5
+        spacing: 15
         Frame {
-            anchors.fill: parent
-            opacity: 0.8
-            padding: 0
-            Pane {
+            id: edgesListView
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: 200
+            Layout.alignment: Qt.AlignTop
+            visible: showDebugControls.checked
+            leftPadding: 0; rightPadding: 0
+            topPadding: 0;  bottomPadding: 0
+            Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
+            ColumnLayout {
                 anchors.fill: parent
+                anchors.margins: 10
+                Label {
+                    Layout.margins: 3
+                    text: "Edges:"
+                    font.bold: true
+                }
+                EdgesListView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: topology.edges
+                }
             }
-        } // Background
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            Label {
-                Layout.margins: 3
-                text: "Edges:"
-                font.bold: true
-                horizontalAlignment: Text.AlignLeft
-            }
-            EdgesList {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                model: topology.edges
-            }
-            /*ComboBox {
-                Layout.fillWidth: true
-                Layout.fillHeight: false
-                model: topology.edges
-                textRole: "itemLabel"
-            }*/
-        }
-    } // edgeList
+        } // Frame: edgesListView
 
-    Item {
-        id: nodeList
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        anchors.right: portList.left
-        anchors.rightMargin: 15
-        width: 200; height: 300
-        visible: showDebugControls.checked
         Frame {
-            anchors.fill: parent
-            opacity: 0.8
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: 300
+            leftPadding: 0; rightPadding: 0
+            topPadding: 0;  bottomPadding: 0
+            visible: showDebugControls.checked
             padding: 0
-            Pane {
+            Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
+            ColumnLayout {
                 anchors.fill: parent
-            }
-        } // Background
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            Label {
-                Layout.margins: 3
-                text: "Nodes:"
-                font.bold: true
-                horizontalAlignment: Text.AlignLeft
-            }
-            ListView {
-                id: nodesListView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                model: topology.nodes
-                spacing: 4
-                focus: true
-                flickableDirection: Flickable.VerticalFlick
-                highlightFollowsCurrentItem: false
-                highlight: Rectangle {
-                    visible: nodesListView.currentItem !== undefined &&
-                             nodesListView.currentItem !== null
-                    x: 0
-                    y: nodesListView.currentItem ? nodesListView.currentItem.y : 0
-                    width: nodesListView.width
-                    height: nodesListView.currentItem ? nodesListView.currentItem.height : 0
-                    color: Material.accent
-                    opacity: 0.7
-                    radius: 3
-                    Behavior on y {
-                        SpringAnimation {
-                            duration: 200
-                            spring: 2
-                            damping: 0.1
-                        }
-                    }
+                anchors.margins: 10
+                Label {
+                    Layout.margins: 3
+                    text: "Nodes:"
+                    font.bold: true
                 }
-                delegate: Item {
-                    id: nodeDelegate
-                    width: ListView.view.width
-                    height: 30
-                    Label {
-                        id: nodeLabel
-                        text: "Label: " + itemData.label
-                    }
-                    MouseArea {
-                        anchors.fill: nodeDelegate
-                        onClicked: {
-                            nodesListView.currentIndex = index
-                        }
-                    }
+                NodesListView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: topology.nodes
                 }
             }
-            ComboBox {
-                Layout.fillWidth: true
-                Layout.fillHeight: false
-                model: topology.nodes
-                textRole: "itemLabel"
-            }
-        }
-    } // nodeList
+        } // Frame: nodesListView
 
-    Item {
-        id: portList
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        anchors.right: edgeList.left
-        anchors.rightMargin: 15
-        width: 200; height: 300
-        visible: showDebugControls.checked
         Frame {
-            anchors.fill: parent
-            opacity: 0.8
-            padding: 0
-            Pane {
+            id: portList
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: 300
+            visible: showDebugControls.checked
+            leftPadding: 0; rightPadding: 0
+            topPadding: 0;  bottomPadding: 0
+            Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
+            ColumnLayout {
                 anchors.fill: parent
-            }
-        } // Background
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            Label {
-                Layout.margins: 3
-                text: "Selected Node's Ports:"
-                font.bold: true
-                horizontalAlignment: Text.AlignLeft
-            }
-            ListView {
-                id: portsListView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                spacing: 4
-                focus: true
-                flickableDirection: Flickable.VerticalFlick
-                highlightFollowsCurrentItem: false
-                highlight: Rectangle {
-                    x: 0
-                    y: portsListView.currentItem ? portsListView.currentItem.y : 0
-                    width: portsListView.width
-                    height: portsListView.currentItem ? portsListView.currentItem.height : 0
-                    color: Material.accent
-                    opacity: 0.7
-                    radius: 3
-                    visible: portsListView.currentItem !== undefined && portsListView.currentItem !== null
-                    Behavior on y {
-                        SpringAnimation {
-                            duration: 200
-                            spring: 2
-                            damping: 0.1
+                anchors.margins: 10
+                Label {
+                    Layout.margins: 3
+                    text: "Selected Node's Ports:"
+                    font.bold: true
+                }
+                ListView {
+                    id: portsListView
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+                    spacing: 4
+                    focus: true
+                    flickableDirection: Flickable.VerticalFlick
+                    highlightFollowsCurrentItem: false
+                    highlight: Rectangle {
+                        x: 0
+                        y: portsListView.currentItem ? portsListView.currentItem.y : 0
+                        width: portsListView.width
+                        height: portsListView.currentItem ? portsListView.currentItem.height : 0
+                        color: Material.accent
+                        opacity: 0.7
+                        radius: 3
+                        visible: portsListView.currentItem !== undefined && portsListView.currentItem !== null
+                        Behavior on y {
+                            SpringAnimation {
+                                duration: 200
+                                spring: 2
+                                damping: 0.1
+                            }
                         }
                     }
-                }
-                delegate: Item {
-                    id: portDelegate
-                    width: ListView.view.width
-                    height: 30
-                    Label {
-                        id: portLabel
-                        text: "Label: " + itemData.label
-                    }
-                    MouseArea {
-                        anchors.fill: portDelegate
-                        onClicked: {
-                            portsListView.currentIndex = index
+                    delegate: Item {
+                        id: portDelegate
+                        width: ListView.view.width
+                        height: 30
+                        Label {
+                            id: portLabel
+                            text: "Label: " + itemData.label
+                        }
+                        MouseArea {
+                            anchors.fill: portDelegate
+                            onClicked: {
+                                portsListView.currentIndex = index
+                            }
                         }
                     }
                 }
             }
-        }
-    } // portList
+        } // portList
+    }  // RowLayout nodes / nodes ports / edge debug control
 
     ColorDialog {
         id: selectionColorDialog
@@ -603,22 +535,23 @@ ApplicationWindow {
             topology.selectionColor = color
         }
     }
-    Item {
+
+    Frame {
         id: selectionView
-        anchors.top: nodeList.bottom
+
+        anchors.top: topDebugLayout.bottom
         anchors.topMargin: 15
         anchors.right: parent.right
         anchors.rightMargin: 15
-        width: 250; height: 280
+        width: 250
+        height: 280
+
         visible: showDebugControls.checked
-        Frame {
-            anchors.fill: parent
-            opacity: 0.8
-            padding: 0
-            Pane {
-                anchors.fill: parent
-            }
-        } // Background
+
+        leftPadding: 0; rightPadding: 0
+        topPadding: 0;  bottomPadding: 0
+
+        Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 10
@@ -659,9 +592,7 @@ ApplicationWindow {
                     id: selectedNodeDelegate
                     width: ListView.view.width
                     height: 30
-                    Label {
-                        text: "Label: " + itemData.label
-                    }
+                    Label { text: "Label: " + itemData.label }
                     MouseArea {
                         anchors.fill: selectedNodeDelegate
                         onClicked: {
@@ -672,12 +603,8 @@ ApplicationWindow {
             }
             RowLayout {
                 Layout.margins: 2
-                Label {
-                    text: "Policy:"
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
+                Label { text: "Policy:" }
+                Item { Layout.fillWidth: true } // Space eater
                 ColumnLayout {
                     CheckBox {
                         Layout.preferredHeight: 25
@@ -716,12 +643,8 @@ ApplicationWindow {
             }
             RowLayout {
                 Layout.margins: 2
-                Label {
-                    text: "Color:"
-                }
-                Item {
-                    Layout.fillWidth: true
-                }
+                Label { text: "Color:" }
+                Item { Layout.fillWidth: true }        // Space eater
                 Rectangle {
                     Layout.preferredWidth: 25
                     Layout.preferredHeight: 25
@@ -742,9 +665,7 @@ ApplicationWindow {
             }
             RowLayout {
                 Layout.margins: 2
-                Label {
-                    text: "Weight:"
-                }
+                Label { text: "Weight:" }
                 Slider {
                     Layout.preferredHeight: 20
                     Layout.fillWidth: true
@@ -776,6 +697,7 @@ ApplicationWindow {
             }
         }
     } // selectionView
+
 
     Control {
         anchors.bottom: parent.bottom
