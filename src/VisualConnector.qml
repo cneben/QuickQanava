@@ -81,7 +81,7 @@ Qan.Connector {
 
     // Private ////////////////////////////////////////////////////////////////
     width: radius * 2;  height: radius * 2
-    x: parent.width + connectorMargin;  y: topMargin
+    x: parent == null ? parent.width + connectorMargin : connectorMargin;  y: topMargin
 
     visible: false
     selectable: false
