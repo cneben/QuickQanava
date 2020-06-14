@@ -39,6 +39,9 @@ ListView {
     // PUBLIC /////////////////////////////////////////////////////////////////
     model: undefined
 
+    //! Used for the "center on node" right click context menu action (could be undefined).
+    property var graphView: undefined
+
     // PRIVATE ////////////////////////////////////////////////////////////////
     clip: true
     spacing: 4
@@ -65,6 +68,22 @@ ListView {
         }
     }
 
+    Menu {
+        id: nodeMenu
+        title: qsTr('Nodes')
+        property var node: undefined
+        MenuItem {
+            text: qsTr("Center On") ;
+            enabled: nodesListView.graphView !== undefined
+            onTriggered: {
+                if (nodesListView.graphView &&
+                    nodeMenu.node &&
+                    nodeMenu.node.item )
+                    graphView.centerOn(nodeMenu.node.item)
+            }
+        }
+    } // Menu: nodeMenu
+
     delegate: Item {
         id: nodeDelegate
         width: ListView.view.width
@@ -75,7 +94,13 @@ ListView {
         }
         MouseArea {
             anchors.fill: nodeDelegate
-            onClicked: nodesListView.currentIndex = index
+            acceptedButtons: Qt.AllButtons
+            onClicked: {
+                nodeMenu.node = itemData
+                nodesListView.currentIndex = index
+                if (mouse.button == Qt.RightButton)
+                    nodeMenu.popup()
+            }
         }
     } // Item: nodeDelegate
 } // ListView: nodesListView

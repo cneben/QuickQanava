@@ -462,6 +462,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     model: topology.nodes
+                    graphView: graphView
                 }
             }
         } // Frame: nodesListView
