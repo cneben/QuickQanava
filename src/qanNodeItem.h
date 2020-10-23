@@ -130,7 +130,7 @@ public:
     //! \copydoc minimumSize
     const QSizeF&   getMinimumSize() const noexcept { return _minimumSize; }
     //! \copydoc minimumSize
-    void            setMinimumSize(QSizeF minimumSize) noexcept { _minimumSize = minimumSize; emit minimumSizeChanged(); }
+    bool            setMinimumSize(QSizeF minimumSize) noexcept;
 private:
     QSizeF          _minimumSize{100., 45.};
 signals:

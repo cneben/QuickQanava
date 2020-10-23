@@ -43,6 +43,8 @@ Item {
     id: template
 
     default property alias children : content.children
+
+    // Binded to Tpp.Group.container in Tpp.Group.
     property alias  content: content
 
     property var    groupItem: undefined
@@ -65,11 +67,14 @@ Item {
         height: preferredGroupHeight
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
+
+        // Necessary for Qan.GraphView
+        property var groupItem: template.groupItem
     }
-    RectGradientBackground {       // Node background and shadow with backOpacity and backRadius support
+    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
-        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
-        nodeItem: template.groupItem
+        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
+        nodeItem: template.groupItem    // with content.childrenRect
         visible: !groupItem.collapsed
     }
     RowLayout {
@@ -102,7 +107,6 @@ Item {
                 anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
                 target: groupItem && groupItem.group ? groupItem.group : undefined
                 visible: false
-                //pointSize: groupItem.style.fontPointSize != -1
                 bold: groupItem.style.fontBold
             }
             Label {
@@ -115,6 +119,7 @@ Item {
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent
+                    enabled: !groupItem.group.locked    // Do not allow dragging of locked groups
                     preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
                     drag.target: groupItem.draggable ? groupItem : null
                     onDoubleClicked: labelEditor.visible = true

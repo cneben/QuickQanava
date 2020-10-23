@@ -17,4 +17,5 @@ HEADERS     +=  ./qanFaceNode.h     \
 OTHER_FILES +=  topology.qml        \
                 FaceNode.qml        \
                 NodesListView.qml   \
-                EdgesListView.qml
+                EdgesListView.qml   \
+                ScreenshotPopup.qml

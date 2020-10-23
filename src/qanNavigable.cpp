@@ -45,18 +45,18 @@ Navigable::Navigable( QQuickItem* parent ) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
-    _containerItem->setTransformOrigin( TransformOrigin::TopLeft );
+    _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
     _containerItem->setAcceptTouchEvents(true);
-    connect( _containerItem, &QQuickItem::childrenRectChanged,  // Listenning to children rect changes to update containerItem size.
+    connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
              [this]() {
-        if ( this->_containerItem ) {
+        if (this->_containerItem != nullptr) {
             const auto cr = this->_containerItem->childrenRect();
             this->_containerItem->setWidth(cr.width());
             this->_containerItem->setHeight(cr.height());
         }
     });
-    setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
-    setTransformOrigin( TransformOrigin::TopLeft );
+    setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
+    setTransformOrigin(TransformOrigin::TopLeft);
 
     _defaultGrid = std::make_unique<qan::Grid>();
     setGrid(_defaultGrid.get());

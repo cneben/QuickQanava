@@ -49,8 +49,6 @@ Qan.AbstractGraphView {
     }
     grid: lineGrid
 
-    property real   maxZ: -1.    // Node management ////////////////////////////////////////////////////////
-
     property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
     onGridThickColorChanged: {
         if ( grid )
@@ -73,6 +71,12 @@ Qan.AbstractGraphView {
         handlerRadius: resizeHandlerRadius
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
+
+        onResizeEnd: {
+            if (target &&
+                target.node)
+                graph.nodeResized(target.node);
+        }
     }
     Qan.BottomRightResizer {
         id: groupResizer
@@ -84,6 +88,13 @@ Qan.AbstractGraphView {
         handlerRadius: resizeHandlerRadius
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
+
+        onResizeEnd: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupResized(target.groupItem.group);
+        }
     }
 
     // View Click management //////////////////////////////////////////////////
@@ -139,12 +150,11 @@ Qan.AbstractGraphView {
     }
 
     onNodeClicked: {
-        if ( graph &&
-             node &&
-             node.item ) {
-            graph.sendToFront(node.item)
+        if (graph &&
+            node && node.item) {
             if (node.locked)                // Do not show any connector for locked node/groups
                 return;
+            graph.sendToFront(node.item)    // Locked nodes are not re-ordered to front.
             if (graph.connector &&
                 graph.connectorEnabled &&
                  (node.item.connectable === Qan.NodeItem.Connectable ||
@@ -157,13 +167,14 @@ Qan.AbstractGraphView {
             if (node.item.resizable) {
                 nodeItemRatioWatcher.target = node.item
                 nodeResizer.parent = node.item
-                nodeResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
-                nodeResizer.minimumTargetSize = Qt.binding(function() { return node.item.minimumSize; })   // to avoid old target beeing eventually resized to new target min size...
+                nodeResizer.target = null                       // Note: set resizer target to null _before_ settings minimum
+                nodeResizer.minimumTargetSize = Qt.binding(     // target size to avoid old target beeing eventually resized
+                            function() { return node.item.minimumSize; })                       // to new target min size...
                 nodeResizer.target = node.item
                 nodeResizer.visible = Qt.binding(function() { return nodeResizer.target.resizable; })
                 nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 nodeResizer.preserveRatio = (node.item.ratio > 0.)
-                if (node.item.ratio > 0. ) {
+                if (node.item.ratio > 0.) {
                     nodeResizer.ratio = node.item.ratio
                     nodeResizer.preserveRatio = true
                 } else
@@ -172,7 +183,7 @@ Qan.AbstractGraphView {
                 nodeResizer.target = null
                 nodeResizer.visible = false
             }
-        } else if ( graph ) {
+        } else if (graph) {
             nodeItemRatioWatcher.target = null
             graph.connector.visible = false
             resizer.visible = false
@@ -181,20 +192,18 @@ Qan.AbstractGraphView {
 
     // Group management ///////////////////////////////////////////////////////
     onGroupClicked: {
-        if ( group && graph )
+        if (group && graph)
             graph.sendToFront(group.item)
 
-        if ( graph &&
-             group && group.item &&
-                group.item.container ) {
-            if ( group.item.resizable ) {
+        if (graph &&
+            group && group.item &&
+            group.item.container) {
+            if (group.item.resizable) {
                 groupResizer.parent = group.item
-                groupResizer.target = null   // Note: set resizer target to null _before_ settings minimum target size
 
-                groupResizer.minimumTargetSize = Qt.binding( function() {
-                    return Qt.size( Math.max( group.item.minimumGroupWidth, group.item.container.childrenRect.width + 10 ),
-                                   Math.max( group.item.minimumGroupHeight, group.item.container.childrenRect.height + 10 ) )
-                } )
+                groupResizer.target = null  // See previous note in onNodeClicked()
+                groupResizer.minimumTargetSize = Qt.binding(
+                            function() { return group.item.minimumSize; })
                 groupResizer.target = Qt.binding( function() { return group.item.container } )
 
                 // Do not show resizer when group is collapsed
@@ -221,6 +230,58 @@ Qan.AbstractGraphView {
     onGroupDoubleClicked: {
         if (group && group.itm)
             graph.sendToFront(group.item)
+    }
+    ShaderEffectSource {        // Screenshot shader is used for gradbbing graph containerItem screenshot. Default
+        id: graphImageShader    // Item.grabToImage() does not allow negative (x, y) position, ShaderEffectSource is
+        visible: false          // used to render graph at desired resolution with a custom negative sourceRect, then
+        enabled: false          // it is rendered to an image with ShaderEffectSource.grabToImage() !
+    }
+
+    /*! \brief Grab graph view to an image file.
+     *
+     * filePath must be an url.
+     * Maximum zoom level is 2.0, set zoom to undefined to let default 1.0 zoom.
+     */
+    function    grabGraphImage(filePath, zoom, border) {
+        if (!graph ||
+            !graph.containerItem) {
+            console.error('Qan.GraphView.onRequestGrabGraph(): Error, graph or graph container item is invalid.')
+            return
+        }
+        let localFilePath = graphView.urlToLocalFile(filePath)
+        if (!localFilePath || localFilePath === '') {
+            console.error('GraphView.grapbGraphImage(): Invalid file url ' + filePath)
+            return
+        }
+        if (!border)
+            border = 0
+        let origin = Qt.point(graph.containerItem.childrenRect.x, graph.containerItem.childrenRect.y)
+        graph.containerItem.width = graph.containerItem.childrenRect.width - (origin.x < 0. ? origin.x : 0.)
+        graph.containerItem.height = graph.containerItem.childrenRect.height - (origin.y < 0. ? origin.y : 0.)
+
+        graphImageShader.sourceItem = graph.containerItem
+        if (!zoom)
+            zoom = 1.0
+        if (zoom > 2.0001)
+            zoom = 2.
+        let border2 = 2. * border
+        let imageSize = Qt.size(border2 + graph.containerItem.childrenRect.width * zoom,
+                                border2 + graph.containerItem.childrenRect.height * zoom)
+        graphImageShader.width = imageSize.width
+        graphImageShader.height = imageSize.height
+        graphImageShader.sourceRect = Qt.rect(graph.containerItem.childrenRect.x - border,
+                                              graph.containerItem.childrenRect.y - border,
+                                              graph.containerItem.childrenRect.width + border2,
+                                              graph.containerItem.childrenRect.height + border2)
+
+        if (!graphImageShader.grabToImage(function(result) {
+                                if (!result.saveToFile(localFilePath)) {
+                                    console.error('Error while writing image to ' + filePath)
+                                }
+                                // Reset graphImageShader
+                                graphImageShader.sourceItem = undefined
+                           }, imageSize))
+            console.error('Qan.GraphView.onRequestGrabGraph(): Graph screenshot request failed.')
     }
 } // Qan.GraphView
 

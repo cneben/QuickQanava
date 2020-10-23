@@ -222,6 +222,12 @@ qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem*
 
 void    Graph::setContainerItem(QQuickItem* containerItem)
 {
+    // PRECONDITIONS:
+        // containerItem can't be nullptr
+    if (containerItem == nullptr) {
+        qWarning() << "qan::Graph::setContainerItem(): Error, invalid container item.";
+        return;
+    }
     if ( containerItem != nullptr &&
          containerItem != _containerItem.data() ) {
         _containerItem = containerItem;
@@ -904,7 +910,12 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
         // If group delegate (groupItem) failed, insert a non visual node.
         // Otherwise, insert a visual item.
     if (groupItem == nullptr) {
-        gtpo_graph_t::insert_group(group);
+        try {
+            gtpo_graph_t::insert_group(group);
+        } catch (const gtpo::bad_topology_error& e) {
+            qWarning() << "qan::Graph::insertGroup(): Error: Internal topology error, a graphical component might have leaked.";
+            return false;
+        }
         return true;
     }
     if (groupItem == nullptr) {
@@ -1003,14 +1014,15 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
     return false;
 }
 
-bool    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
+bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) noexcept
 {
+    qWarning() << "ungroupNode(): node=" << node << "  group=" << group;
     // PRECONDITIONS:
         // node can't be nullptr
         // group can be nullptr
         // if group is nullptr node->getGroup() can't be nullptr
         // if group is not nullptr group should not be different from node->getGroup()
-    if ( node == nullptr )
+    if (node == nullptr)
         return false;
     if ( group == nullptr &&
          !node->get_group().lock() )
@@ -1019,11 +1031,11 @@ bool    qan::Graph::ungroupNode( qan::Node* node, Group* group ) noexcept
          group != node->get_group().lock().get() )
         return false;
     group = node->get_group().lock().get();
-    if ( group != nullptr &&
-         node != nullptr ) {
+    if (group != nullptr &&
+        node != nullptr) {
         try {
-            if ( group->getGroupItem() )
-                 group->getGroupItem()->ungroupNodeItem(node->getItem());
+            if (group->getGroupItem())
+                group->getGroupItem()->ungroupNodeItem(node->getItem(), transform);
             gtpo_graph_t::ungroup_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()),
                                        std::static_pointer_cast<Group>(group->shared_from_this()) );
             emit nodeUngrouped(node, group);
@@ -1527,12 +1539,10 @@ void    Graph::sendToFront(QQuickItem* item)
 
     if (nodeItem != nullptr &&      // 1. If item is an ungrouped node OR a root group: update maxZ and set item.z to maxZ.
         groupItem == nullptr) {
-        _maxZ += 1.;
-        nodeItem->setZ(_maxZ);
+        nodeItem->setZ(nextMaxZ());
     } else if (groupItem != nullptr &&      // 1.
                groupItem->parentItem() == graphContainerItem ) {
-        _maxZ += 1.;
-        groupItem->setZ(_maxZ);
+        groupItem->setZ(nextMaxZ());
     } else if (groupItem != nullptr) {
         // 2. If item is a group (or is a node inside a group)
         const auto groups = collectGroups_rec(groupItem);       // 2.1 Collect all parents groups.
@@ -1543,19 +1553,40 @@ void    Graph::sendToFront(QQuickItem* item)
             if (groupParentItem == nullptr)
                 continue;       // Should not happen, a group necessary have a parent item.
             if (groupParentItem == graphContainerItem) {        // 2.2.1 We have root group, use global graph maxZ property
-                _maxZ += 1.;
-                groupItem->setZ(_maxZ);
+                groupItem->setZ(nextMaxZ());
             } else {
                 const auto maxZ = maxChildsZ(groupParentItem);  // 2.2.2
+                updateMaxZ(maxZ + 1.);
                 groupItem->setZ(maxZ + 1.);
             }
         } // For all group items
     }
 }
 
-void    Graph::updateMaxZ() noexcept
+void    Graph::findMaxZ() noexcept
 {
-    _maxZ = maxChildsZ(getContainerItem());
+    const auto maxZ = maxChildsZ(getContainerItem());
+    setMaxZ(maxZ);
+}
+
+qreal   Graph::getMaxZ() const noexcept { return _maxZ; }
+void    Graph::setMaxZ(const qreal maxZ) noexcept
+{
+    _maxZ = maxZ;
+    emit maxZChanged();
+}
+
+qreal   Graph::nextMaxZ() noexcept
+{
+    _maxZ += 1.;
+    emit maxZChanged();
+    return _maxZ;
+}
+
+void    Graph::updateMaxZ(qreal z) noexcept
+{
+    if (z > _maxZ)
+        setMaxZ(z);
 }
 
 auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
@@ -1695,5 +1726,6 @@ void    Graph::collectAncestorsDfsRec(const qan::Node* node,
         collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
 }
 //-----------------------------------------------------------------------------
+
 
 } // ::qan

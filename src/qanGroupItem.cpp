@@ -217,22 +217,23 @@ void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
     if (transform) {
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
+        nodeItem->setPosition(groupPos);
     }
-    nodeItem->setPosition(groupPos);
     nodeItem->setParentItem(getContainer());
     groupMoved();           // Force call to groupMoved() to update group adjacent edges
     endProposeNodeDrop();
 }
 
-void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem)
+void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
 {
-    if ( nodeItem == nullptr )   // A container must have configured in concrete QML group component
+    if (nodeItem == nullptr)   // A container must have configured in concrete QML group component
         return;
-    if ( getGraph() &&
-         getGraph()->getContainerItem() != nullptr ) {
+    if (getGraph() &&
+        getGraph()->getContainerItem() != nullptr) {
         QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
-        nodeItem->setParentItem( getGraph()->getContainerItem() );
-        nodeItem->setPosition( nodeGlobalPos );
+        nodeItem->setParentItem(getGraph()->getContainerItem());
+        if (transform)
+            nodeItem->setPosition(nodeGlobalPos);
         nodeItem->setZ(z()+1.);
         nodeItem->setDraggable( true );
         nodeItem->setDroppable( true );

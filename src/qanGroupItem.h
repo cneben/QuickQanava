@@ -170,7 +170,7 @@ public:
     virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
-    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);
+    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
     //! Call at the beginning of another group or node hover operation on this group (usually trigger a visual change to notify user that insertion is possible trought DND).
     inline void     proposeNodeDrop() noexcept { emit nodeDragEnter( ); }
@@ -185,14 +185,15 @@ public:
      * following code to set 'container' property:
      *
      * \code
-     * Qan.Group {
-     *  id: group
-     *  default property alias children : content.children
-     *  Item {
-     *      id: content
-     *      // ...
-     *  }
-     *  container = content
+     * Qan.GroupItem {
+     *   id: groupItem
+     *   default property alias children : content
+     *   container: content
+     *   Item {
+     *     id: content
+     *     // ...
+     *   }
+     *   container = content
      * }
      * \endcode
      */

@@ -42,6 +42,7 @@ import "qrc:/QuickQanava"   as Qan
 Qan.GroupItem {
     id: groupItem
 
+    minimumSize: Qt.size(150., 100.)
     default property alias children : template
     container: template.content   // See qan::GroupItem::container property documentation
     onContainerChanged: {

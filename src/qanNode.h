@@ -157,8 +157,8 @@ public:
     /*! \name Appearance Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    void            setLabel( const QString& label ) noexcept;
+    Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
+    bool            setLabel( const QString& label ) noexcept;
     QString         getLabel() const noexcept { return _label; }
 private:
     QString         _label{ QStringLiteral("") };
@@ -173,7 +173,7 @@ public:
      * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    void            setLocked(bool locked) noexcept;
+    bool            setLocked(bool locked) noexcept;
     bool            getLocked() const noexcept { return _locked; }
 private:
     bool            _locked = false;

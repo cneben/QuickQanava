@@ -95,9 +95,9 @@ class Navigable : public QQuickItem
     //@{
 Q_OBJECT
 public:
-    explicit Navigable( QQuickItem* parent = nullptr );
+    explicit Navigable(QQuickItem* parent = nullptr);
     virtual ~Navigable() override = default;
-    Navigable( const Navigable& ) = delete;
+    Navigable(const Navigable&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -147,7 +147,7 @@ public:
     //! \sa containerItem
     inline QQuickItem*  getContainerItem() noexcept { return _containerItem; }
 private:
-    QQuickItem*         _containerItem{nullptr};
+    QQuickItem*         _containerItem = nullptr;
 
 public:
     //! Center the view on a given child item (zoom level is not modified).

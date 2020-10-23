@@ -49,6 +49,7 @@ Qan.GraphView {
         }
     }
     graph: Qan.Graph {
+        parent: graphView
         id: graph
         Component.onCompleted: {
             var n1 = graph.insertNode()

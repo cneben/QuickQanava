@@ -99,10 +99,20 @@ auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
 
 auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
     _graph = graph;
-    qan::Selectable::configure( this, graph );
+    qan::Selectable::configure(this, graph);
 }
 auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
 auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+
+bool    NodeItem::setMinimumSize(QSizeF minimumSize) noexcept
+{
+    if (minimumSize != _minimumSize) {
+        _minimumSize = minimumSize;
+        emit minimumSizeChanged();
+        return true;
+    }
+    return false;
+}
 
 auto    NodeItem::setRect(const QRectF& r) noexcept -> void
 {

@@ -52,44 +52,47 @@ GraphView::GraphView(QQuickItem* parent) :
 
 void    GraphView::setGraph(qan::Graph* graph)
 {
-    if ( graph == nullptr ) {
+    if (graph == nullptr) {
         qWarning() << "qan::GraphView::setGraph(): Error: Setting a nullptr graph in Qan.GraphView is not supported.";
         return;
     }
-    if ( graph != _graph ) {
-        if ( _graph != nullptr )
-            disconnect(_graph, 0, this, 0 );
+    if (graph != _graph) {
+        if (_graph != nullptr)
+            disconnect(_graph, 0, this, 0);
         _graph = graph;
-        _graph->setContainerItem( getContainerItem() );
-        connect( _graph, &qan::Graph::nodeClicked,
-                 this,   &qan::GraphView::nodeClicked );
+        auto graphViewQmlContext = qmlContext(this);
+        auto containerQmlContext = qmlContext(getContainerItem());
+        QQmlEngine::setContextForObject(getContainerItem(), graphViewQmlContext);
+        _graph->setContainerItem(getContainerItem());
+        connect(_graph, &qan::Graph::nodeClicked,
+                this,   &qan::GraphView::nodeClicked);
 
-        connect( _graph, &qan::Graph::connectorChanged,
-                 this,   &qan::GraphView::connectorChanged );
+        connect(_graph, &qan::Graph::connectorChanged,
+                this,   &qan::GraphView::connectorChanged);
 
-        connect( _graph, &qan::Graph::nodeRightClicked,
-                 this,   &qan::GraphView::nodeRightClicked );
-        connect( _graph, &qan::Graph::nodeDoubleClicked,
-                 this,   &qan::GraphView::nodeDoubleClicked );
+        connect(_graph, &qan::Graph::nodeRightClicked,
+                this,   &qan::GraphView::nodeRightClicked);
+        connect(_graph, &qan::Graph::nodeDoubleClicked,
+                this,   &qan::GraphView::nodeDoubleClicked);
 
-        connect( _graph, &qan::Graph::portClicked,
-                 this,   &qan::GraphView::portClicked );
-        connect( _graph, &qan::Graph::portRightClicked,
-                 this,   &qan::GraphView::portRightClicked );
+        connect(_graph, &qan::Graph::portClicked,
+                this,   &qan::GraphView::portClicked);
+        connect(_graph, &qan::Graph::portRightClicked,
+                this,   &qan::GraphView::portRightClicked);
 
-        connect( _graph, &qan::Graph::edgeClicked,
-                 this,   &qan::GraphView::edgeClicked );
-        connect( _graph, &qan::Graph::edgeRightClicked,
-                 this,   &qan::GraphView::edgeRightClicked );
-        connect( _graph, &qan::Graph::edgeDoubleClicked,
-                 this,   &qan::GraphView::edgeDoubleClicked );
+        connect(_graph, &qan::Graph::edgeClicked,
+                this,   &qan::GraphView::edgeClicked);
+        connect(_graph, &qan::Graph::edgeRightClicked,
+                this,   &qan::GraphView::edgeRightClicked);
+        connect(_graph, &qan::Graph::edgeDoubleClicked,
+                this,   &qan::GraphView::edgeDoubleClicked);
 
-        connect( _graph, &qan::Graph::groupClicked,
-                 this,   &qan::GraphView::groupClicked );
-        connect( _graph, &qan::Graph::groupRightClicked,
-                 this,   &qan::GraphView::groupRightClicked );
-        connect( _graph, &qan::Graph::groupDoubleClicked,
-                 this,   &qan::GraphView::groupDoubleClicked );
+        connect(_graph, &qan::Graph::groupClicked,
+                this,   &qan::GraphView::groupClicked);
+        connect(_graph, &qan::Graph::groupRightClicked,
+                this,   &qan::GraphView::groupRightClicked);
+        connect(_graph, &qan::Graph::groupDoubleClicked,
+                this,   &qan::GraphView::groupDoubleClicked);
         emit graphChanged();
     }
 }
@@ -97,12 +100,20 @@ void    GraphView::setGraph(qan::Graph* graph)
 void    GraphView::navigableClicked(QPointF pos)
 {
     Q_UNUSED(pos)
-    if ( _graph )
+    if (_graph)
         _graph->clearSelection();
 }
 
-void    GraphView::navigableRightClicked(QPointF pos) {
+void    GraphView::navigableRightClicked(QPointF pos)
+{
     emit    rightClicked(pos);
+}
+
+QString GraphView::urlToLocalFile(QUrl url) const noexcept
+{
+    if (url.isLocalFile())
+        return url.toLocalFile();
+    return QString{};
 }
 //-----------------------------------------------------------------------------
 

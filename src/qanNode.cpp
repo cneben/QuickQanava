@@ -172,20 +172,26 @@ void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
 //-----------------------------------------------------------------------------
 
 /* Appearance Management *///--------------------------------------------------
-void    Node::setLabel( const QString& label ) noexcept
+bool    Node::setLabel(const QString& label) noexcept
 {
-    if ( label != _label ) {
+    if (label != _label) {
         _label = label;
         emit labelChanged();
+        if (auto graph = getGraph())
+            emit graph->nodeLabelChanged(this);
+        return true;
     }
+    return false;
 }
 
-void    Node::setLocked(bool locked) noexcept
+bool    Node::setLocked(bool locked) noexcept
 {
     if (locked != _locked) {
         _locked = locked;
         emit lockedChanged();
+        return true;
     }
+    return false;
 }
 //-----------------------------------------------------------------------------
 

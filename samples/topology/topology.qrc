@@ -4,6 +4,7 @@
         <file>FaceNode.qml</file>
         <file>EdgesListView.qml</file>
         <file>NodesListView.qml</file>
+        <file>ScreenshotPopup.qml</file>
         <file>faces/BW1.jpg</file>
         <file>faces/BW2.jpg</file>
         <file>faces/BW3.jpg</file>

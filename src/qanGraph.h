@@ -420,6 +420,17 @@ signals:
     /*! \brief Emitted _after_ a node has been moved.
      */
     void            nodeMoved(qan::Node* node);
+
+    /*! \brief Emitted _after_ a node has been resized.
+     */
+    void            nodeResized(qan::Node* node);
+
+    /*! \brief Emitted _after_ a grouphas been resized.
+     */
+    void            groupResized(qan::Group* group);
+
+    //! Emitted when a node setLabel() method is called.
+    void            nodeLabelChanged(qan::Node* node);
     //-------------------------------------------------------------------------
 
     /*! \name Graph Edge Management *///---------------------------------------
@@ -526,13 +537,10 @@ public:
 
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
-     * **FIXME**
-     * gtpo::bad_topology_error is thrown if group insertion fails.
+     * If group insertion fails, method return \c false, no exception is thrown.
      *
-     * **FIXME**
-     * A default node delegate must have been registered with registerNodeDelegate() if
-     * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
-     * Qan.Graph is used, with a rectangular node delegate for default node.
+     * If \c groupComponent is unspecified (ie \c nullptr), default qan::Graph::groupDelegate is
+     * used.
      *
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      * \note graph keep ownership of the returned node.
@@ -562,7 +570,7 @@ public:
     Q_INVOKABLE virtual bool    groupNode(qan::Group* group, qan::Node* node, bool transform = true) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
-    Q_INVOKABLE virtual bool    ungroupNode(qan::Node* node, qan::Group* group = nullptr) noexcept;
+    Q_INVOKABLE virtual bool    ungroupNode(qan::Node* node, qan::Group* group = nullptr, bool transform = true) noexcept;
 
 signals:
 
@@ -851,22 +859,31 @@ public:
      */
     Q_INVOKABLE void    sendToFront(QQuickItem* item);
 
-    /*! \brief Iterate over all graph container items and update the maxZ property.
+    /*! \brief Iterate over all graph container items, find and update the maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
      * maxZ after in serialization for example).
      */
-    Q_INVOKABLE void    updateMaxZ() noexcept;
+    Q_INVOKABLE void    findMaxZ() noexcept;
 
-    /*! \brief Maximum global z for nodes and groups.
+    /*! \brief Maximum global z for nodes and groups (ie top-most item).
      *
      * \note By global we mean that z value for a node parented to a group is parent(s) group(s)
      * a plus item z.
      */
-    Q_PROPERTY( qreal   maxZ READ getMaxZ CONSTANT FINAL )
-    inline qreal        getMaxZ() const noexcept { return _maxZ; }
+    Q_PROPERTY(qreal    maxZ READ getMaxZ WRITE setMaxZ NOTIFY maxZChanged FINAL)
+    qreal        getMaxZ() const noexcept;
+    void         setMaxZ(const qreal maxZ) noexcept;
 private:
     qreal               _maxZ = 0.;
+signals:
+    void                maxZChanged();
+
+public:
+    //! Add 1. to \c maxZ and return the new \c maxZ.
+    qreal               nextMaxZ() noexcept;
+    //! Update maximum z value if \c z is greater than actual \c maxZ value.
+    Q_INVOKABLE void    updateMaxZ(qreal z) noexcept;
 
 protected:
     /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.

@@ -93,8 +93,8 @@ Qan.Connector {
      *  or port configuration, also restore position bindings to source.
      */
     function configureConnectorPosition() {
-        if ( sourcePort ) {
-            switch ( sourcePort.dockType ) {
+        if (sourcePort) {
+            switch (sourcePort.dockType) {
             case Qan.NodeItem.Left:
                 visualConnector.x = Qt.binding( function(){ return -width - connectorMargin } )
                 visualConnector.y = Qt.binding( function(){ return ( sourcePort.height - visualConnector.height ) / 2 } )
@@ -116,7 +116,7 @@ Qan.Connector {
                 visualConnector.z = Qt.binding( function(){ return sourcePort.z + 1. } )
                 break;
             }
-        } else if ( sourceNode ) {
+        } else if (sourceNode) {
             visualConnector.x = Qt.binding( function(){ return sourceNode.item.width + connectorMargin } )
             visualConnector.y = -visualConnector.height / 2 + visualConnector.topMargin
             visualConnector.z = Qt.binding( function(){ return sourceNode.item.z + 1. } )
@@ -127,7 +127,7 @@ Qan.Connector {
     onSourceNodeChanged: configureConnectorPosition()
 
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
-        if ( connectorItem )
+        if (connectorItem)
             connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
 
         if (edgeItem && !visible)       // Force hiding the connector edge item
@@ -137,13 +137,13 @@ Qan.Connector {
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
-        if ( Drag.target ) {
+        if (Drag.target) {
             visualConnector.z = Drag.target.z + 1
             if ( connectorItem )
                 connectorItem.z = Drag.target.z + 1
         }
-        if ( !Drag.target &&
-             connectorItem ) {
+        if (!Drag.target &&
+            connectorItem) {
             connectorItem.state = "NORMAL"
             return;
         }
@@ -160,7 +160,7 @@ Qan.Connector {
                 var target = Drag.target.group ? Drag.target.group : Drag.target.node
                 var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
                         Drag.target.connectable === Qan.NodeItem.InConnectable
-                if ( target && connectable )
+                if (target && connectable)
                     connectorItem.state = "HILIGHT"
             }
         }
@@ -203,9 +203,8 @@ Qan.Connector {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            if ( connectorItem.state === "HILIGHT" ) {
+            if (connectorItem.state === "HILIGHT")
                 connectorReleased(visualConnector.Drag.target)
-            }
             configureConnectorPosition()
             if (edgeItem)       // Hide the edgeItem after a mouse release or it could
                 edgeItem.visible = false    // be visible on non rectangular nodes.
