@@ -758,47 +758,9 @@ ApplicationWindow {
         }
     }
 
-    Control {
-        id: graphRadar
+    Qan.GraphPreview {
         anchors.right: graphView.right; anchors.bottom: graphView.bottom
-        padding: 0
-        property real   previewSize: 0.15
-        width: previewSize * graphView.width
-        height: width * (graphView.containerItem.childrenRect.height / graphView.containerItem.childrenRect.width)
-        opacity: 0.8
-        hoverEnabled: true; ToolTip.visible: hovered; ToolTip.delay: 1500
-        ToolTip.text: qsTr("Show parts of image that have actually been viewed with more than 100% zoom")
-        z: 3    // Avoid tooltips beeing generated on top of preview
-        RectangularGlow {
-            anchors.fill: parent
-            cached: true; glowRadius: 4.
-            color: "lightgrey"
-        }
-        Qan.NavigablePreview {
-            id: analysisTimeHeatMapPreview
-            anchors.fill: parent
-            source: graphView
-            visible: true
-            visibleWindowColor: Material.accent
-            Pane {
-                anchors.bottom: parent.bottom; anchors.right: parent.right
-                opacity: 0.8; padding: 1
-                Label {
-                    text: (graphView.zoom * 100).toFixed(1) + "%"
-                    font.pixelSize: 11
-                }
-            }
-            Menu {
-                id: analysisTimeHeatMapMenu
-                MenuItem {
-                    text: qsTr("Increase preview size")
-                    onTriggered: graphRadar.previewSize = Math.min(0.5, graphRadar.previewSize + 0.1)
-                }
-                MenuItem {
-                    text: qsTr("Decrease preview size")
-                    onTriggered: graphRadar.previewSize = Math.max(0.1, graphRadar.previewSize - 0.1)
-                }
-            }
-        } // Qan.NavigablePreview
-    }  // Control navigable preview
+        source: graphView
+        visibleWindowColor: Material.accent
+    }
 }  // ApplicationWindow

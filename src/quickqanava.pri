@@ -63,6 +63,8 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanBottomRightResizer.cpp
 
 OTHER_FILES +=  $$PWD/QuickQanava                   \
+                $$PWD/NavigablePreview.qml          \
+                $$PWD/GraphPreview.qml              \
                 $$PWD/LineGrid.qml                  \
                 $$PWD/GraphView.qml                 \
                 $$PWD/Graph.qml                     \

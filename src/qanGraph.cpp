@@ -166,7 +166,7 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
     return nullptr;
 }
 
-qan::Group* Graph::groupAt( const QPointF& p, const QSizeF& s, const QQuickItem* except ) const
+qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* except) const
 {
     // PRECONDITIONS:
         // s must be valid
@@ -228,8 +228,8 @@ void    Graph::setContainerItem(QQuickItem* containerItem)
         qWarning() << "qan::Graph::setContainerItem(): Error, invalid container item.";
         return;
     }
-    if ( containerItem != nullptr &&
-         containerItem != _containerItem.data() ) {
+    if (containerItem != nullptr &&
+        containerItem != _containerItem.data()) {
         _containerItem = containerItem;
         emit containerItemChanged();
     }
@@ -1105,9 +1105,9 @@ void    Graph::configureSelectionItems() noexcept
 }
 
 template < class Primitive_t >
-bool    selectPrimitiveImpl( Primitive_t& primitive,
-                         Qt::KeyboardModifiers modifiers,
-                         qan::Graph& graph )
+bool    selectPrimitiveImpl(Primitive_t& primitive,
+                            Qt::KeyboardModifiers modifiers,
+                            qan::Graph& graph)
 {
     if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
         return false;
@@ -1118,7 +1118,7 @@ bool    selectPrimitiveImpl( Primitive_t& primitive,
         return false;
 
     if (primitive.getItem()->getSelected()) {
-        if ( ctrlPressed )          // Click on a selected node + CTRL = deselect node
+        if (ctrlPressed)          // Click on a selected node + CTRL = deselect node
             primitive.getItem()->setSelected(false);
             // Note: graph.removeFromSelection() is called from primitive.selected()
     } else {
