@@ -26,7 +26,6 @@ import QuickQanava 2.0 as Qan
  */
 Qan.AbstractNavigablePreview {
     id: preview
-    clip: true
 
     //! Overlay item could be used to display a user defined item (for example an heat map image) between the background and the current visible window rectangle.
     property var    overlay : overlayItem
