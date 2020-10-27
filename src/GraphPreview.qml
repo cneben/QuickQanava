@@ -33,7 +33,7 @@ Control {
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
     height: 150
-    clip: true
+    //clip: true
 
     property alias source: navigablePreview.source
     property alias visibleWindowColor: navigablePreview.visibleWindowColor
@@ -83,6 +83,7 @@ Control {
         // If npw is larger than actual preview width (pw), scale nph
         if (npw > pw)
             nph = nph * (pw / npw)
+
         // Secure with boundary Check
         navigablePreview.width = Math.min(npw, pw)
         navigablePreview.height = Math.min(nph, ph)
@@ -95,8 +96,8 @@ Control {
     RectangularGlow {
         anchors.fill: parent
         cached: true
-        glowRadius: 10
-        cornerRadius: 15
+        glowRadius:  8
+        cornerRadius: 10
         spread: 0.5
         color: "lightgrey"
     }
@@ -105,13 +106,16 @@ Control {
         anchors.fill: parent
         opacity: 0.9
         padding: 1
+        clip: true
         Label {
+            x: 4
+            y: 2
             text: (graphView.zoom * 100).toFixed(1) + "%"
             font.pixelSize: 11
         }
+        Qan.NavigablePreview {
+            id: navigablePreview
+            anchors.centerIn: parent
+        }  // Qan.NavigablePreview
     }
-    Qan.NavigablePreview {
-        id: navigablePreview
-        anchors.centerIn: parent
-    }  // Qan.NavigablePreview
 }  // Control graph preview
