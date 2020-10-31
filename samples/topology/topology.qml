@@ -30,7 +30,6 @@ import QtQuick.Dialogs  1.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 import QtGraphicalEffects   1.0
-import Qt.labs.platform 1.1 as Labs
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan
@@ -783,10 +782,6 @@ ApplicationWindow {
                 onTriggered: graphPreview.visible = false
             }
             MenuSeparator { }
-            Labs.MenuItemGroup {  // FIXME remove...
-                id: previewSizeGroup
-                //items: verticalMenu.items
-            }
             MenuItem {
                 text: qsTr('Small')
                 checkable: true
