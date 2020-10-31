@@ -108,8 +108,13 @@ signals:
     /*! \name Selection Rectangle Management *///------------------------------
     //@{
 protected:
-    //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in containerItem space.
+    //! \copydoc qan::Navigable::selectionRectActivated()
     virtual void    selectionRectActivated(const QRectF& rect) override;
+
+    //! \copydoc qan::Navigable::selectionRectEnd()
+    virtual void    selectionRectEnd() override;
+private:
+    QSet<QQuickItem*>   _selectedItems;
     //@}
     //-------------------------------------------------------------------------
 };

@@ -44,22 +44,29 @@ import "qrc:/QuickQanava" as Qan
  */
 Qan.AbstractGraphView {
     id: graphView
-    Qan.LineGrid {
-        id: lineGrid
-    }
-    grid: lineGrid
 
+    // PUBLIC ////////////////////////////////////////////////////////////////
+    //! Grid line and thick points color
     property color  gridThickColor: grid ? grid.thickColor : lineGrid.thickColor
-    onGridThickColorChanged: {
-        if ( grid )
-            grid.thickColor = gridThickColor
-    }
+
+    //! Visual selection rectangle (CTRL + right click drag) color, default to Material blue.
+    property color  selectionRectColor: Qt.rgba(0.129, 0.588, 0.953, 1) // Material blue: #2196f3
 
     property color  resizeHandlerColor: Qt.rgba(0.117, 0.564, 1.0)  // dodgerblue=rgb( 30, 144, 255)
     property real   resizeHandlerOpacity: 1.0
     property real   resizeHandlerRadius: 4.0
     property real   resizeHandlerWidth: 4.0
     property size   resizeHandlerSize: "9x9"
+
+    // PRIVATE ////////////////////////////////////////////////////////////////
+    Qan.LineGrid {
+        id: lineGrid
+    }
+    grid: lineGrid
+    onGridThickColorChanged: {
+        if (grid)
+            grid.thickColor = gridThickColor
+    }
 
     Qan.BottomRightResizer {
         id: nodeResizer
@@ -96,6 +103,16 @@ Qan.AbstractGraphView {
                 graph.groupResized(target.groupItem.group);
         }
     }
+    Rectangle {
+        id: selectionRect
+        x: 0; y: 0
+        width: 10; height: 10
+        border.width: 2
+        border.color: selectionRectColor
+        color: Qt.rgba(0, 0, 0, 0)  // transparent
+        visible: false
+    }
+    selectionRectItem: selectionRect
 
     // View Click management //////////////////////////////////////////////////
     onClicked: {

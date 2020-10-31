@@ -351,7 +351,8 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
         setDragActive(true);
 
         updateGrid();
-    } else if (_ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
+    } else if (_selectionRectItem != nullptr &&
+               _ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
         const auto& p = event->localPos();
         _selectionRectItem->setWidth(p.x() - _selectionRectItem->x());
         _selectionRectItem->setHeight(p.y() - _selectionRectItem->y());
@@ -372,7 +373,8 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
         return;
     }
     if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() == Qt::ControlModifier) {
+        if (getSelectionRectEnabled() &&
+            event->modifiers() == Qt::ControlModifier) {
             _ctrlLeftButtonPressed = true;          // SELECT = Left button + CTRL //////
             _lastSelectRect = event->localPos();
             if (_selectionRectItem) {
@@ -381,6 +383,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
                 _selectionRectItem->setWidth(1.);
                 _selectionRectItem->setHeight(1.);
                 _selectionRectItem->setVisible(true);
+                _selectRectActive = true;
             }
             event->accept();
             return;
@@ -402,7 +405,8 @@ void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
     if (getNavigable()) {
         if (event->button() == Qt::LeftButton &&
-            !_dragActive) {       // Do not emit clicked when dragging occurs
+            !_dragActive &&
+            !_selectRectActive) {       // Do not emit clicked when dragging occurs
             emit clicked(event->localPos());
             navigableClicked(event->localPos());
         } else if (event->button() == Qt::RightButton) {
@@ -413,8 +417,11 @@ void    Navigable::mouseReleaseEvent( QMouseEvent* event )
         _leftButtonPressed = false;
 
         _ctrlLeftButtonPressed = false;     // End selection rect resizing
-        if (_selectionRectItem)
+        _selectRectActive = false;
+        if (_selectionRectItem) {
             _selectionRectItem->setVisible(false);
+            selectionRectEnd();
+        }
     }
     QQuickItem::mouseReleaseEvent(event);
 }
@@ -432,9 +439,24 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 
 
 /* Selection Rectangle Management *///-----------------------------------------
+void    Navigable::setSelectionRectEnabled(bool selectionRectEnabled) noexcept
+{
+    if (selectionRectEnabled != _selectionRectEnabled) {
+        _selectionRectEnabled = selectionRectEnabled;
+        _ctrlLeftButtonPressed = false; // Reset the selection rect state
+        _selectRectActive = false;
+        _lastSelectRect = QPointF{};
+        if (!_selectionRectEnabled)
+            selectionRectEnd();
+        emit selectionRectEnabledChanged();
+    }
+}
+
 void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem) noexcept { _selectionRectItem = selectionRectItem; }
 
 void    Navigable::selectionRectActivated(const QRectF& rect) { Q_UNUSED(rect); }
+
+void    Navigable::selectionRectEnd() { }
 //-----------------------------------------------------------------------------
 
 

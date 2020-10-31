@@ -113,7 +113,7 @@ public:
     void            setNavigable(bool navigable) noexcept;
 private:
     //! \copydoc navigable
-    bool            _navigable{true};
+    bool            _navigable = true;
 signals:
     //! \sa navigable
     void            navigableChanged();
@@ -264,28 +264,28 @@ signals:
 
 public:
     //! Area maximum zoom level (-1 = no maximum zoom limitation, 1.0 = no zoom allowed, >1.0 = zoomMax*100% maximum zoom).
-    Q_PROPERTY( qreal zoomMax READ getZoomMax WRITE setZoomMax NOTIFY zoomMaxChanged FINAL )
+    Q_PROPERTY(qreal zoomMax READ getZoomMax WRITE setZoomMax NOTIFY zoomMaxChanged FINAL)
     //! \sa zoomMax
-    qreal       getZoomMax( ) const { return _zoomMax; }
+    qreal       getZoomMax() const noexcept { return _zoomMax; }
     //! \sa zoomMax
-    void        setZoomMax( qreal zoomMax );
+    void        setZoomMax(qreal zoomMax);
 private:
     //! \copydoc zoomMax
-    qreal       _zoomMax{ -1.0 };
+    qreal       _zoomMax = -1.0;
 signals:
     //! \sa zoomMax
-    void        zoomMaxChanged( );
+    void        zoomMaxChanged();
 
 public:
     //! Area minimum zoom level, default to 0.1 (10% zoom), zoomMin can't be <= 0.
-    Q_PROPERTY( qreal zoomMin READ getZoomMin WRITE setZoomMin NOTIFY zoomMinChanged FINAL )
+    Q_PROPERTY(qreal zoomMin READ getZoomMin WRITE setZoomMin NOTIFY zoomMinChanged FINAL)
     //! \sa zoomMin
-    qreal       getZoomMin() const { return _zoomMin; }
+    qreal       getZoomMin() const noexcept { return _zoomMin; }
     //! \sa zoomMin
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin{0.1};
+    qreal       _zoomMin = 0.1;
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
@@ -339,6 +339,21 @@ protected:
     /*! \name Selection Rectangle Management *///------------------------------
     //@{
 public:
+    /*! \brief Enable or disable visual selection rect (default to true, ie selection is enabled).
+     */
+    Q_PROPERTY(bool selectionRectEnabled READ getSelectionRectEnabled WRITE setSelectionRectEnabled NOTIFY selectionRectEnabledChanged FINAL)
+    //! \sa selectionRectEnabled
+    inline bool     getSelectionRectEnabled() const noexcept { return _selectionRectEnabled; }
+    //! \sa selectionRectEnabled
+    void            setSelectionRectEnabled(bool selectionRectEnabled) noexcept;
+private:
+    //! \copydoc selectionRectEnabled
+    bool            _selectionRectEnabled = true;
+signals:
+    //! \sa selectionRectEnabled
+    void            selectionRectEnabledChanged();
+
+public:
     /*! \brief Selection rectangle is activated instead of view panning when CTRL key is used while clicking and dragging.
      *
      * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized in a concrete component or subclass.
@@ -357,11 +372,17 @@ private:
     bool        _ctrlLeftButtonPressed = false;
 
     //! \copydoc selectionRectItem
+    bool        _selectRectActive = false;
+
+    //! \copydoc selectionRectItem
     QPointF     _lastSelectRect{};
 
 protected:
     //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in containerItem space.
     virtual void    selectionRectActivated(const QRectF& rect);
+
+    //! Called when the selectionRectItem interaction ends.
+    virtual void    selectionRectEnd();
     //@}
     //-------------------------------------------------------------------------
 

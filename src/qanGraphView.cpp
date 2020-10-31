@@ -126,19 +126,48 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
         return;
     if (rect.isEmpty())
         return;
-    if (rect.width() > 250) {
-        const auto items = _graph->getContainerItem()->childItems();
-        for (const auto item: items) {
-            auto nodeItem = qobject_cast<qan::NodeItem*>(item);
-            if (nodeItem != nullptr &&
-                nodeItem->getNode() != nullptr ) {
-                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
-                                                        item->boundingRect());
-                if (rect.contains(itemBr))
-                    _graph->setNodeSelected(*nodeItem->getNode(), true);
+    // Algorithm:
+    // 1. Iterate over all already selected items, remove one that are no longer inside selection rect
+    //    (for example, if selection rect has grown down...)
+    // 2. Iterate over all graph items, select items inside selection rect.
+
+    // 1.
+    QSetIterator<QQuickItem*> selectedItem(_selectedItems);
+    while (selectedItem.hasNext()) {
+        const auto item = selectedItem.next();
+        auto nodeItem = qobject_cast<qan::NodeItem*>(item);
+        if (nodeItem != nullptr &&
+            nodeItem->getNode() != nullptr ) {
+            const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                    item->boundingRect());
+            if (!rect.contains(itemBr)) {
+                _graph->setNodeSelected(*nodeItem->getNode(), false);
+                        _selectedItems.remove(item);
             }
         }
     }
+
+    // 2.
+    const auto items = _graph->getContainerItem()->childItems();
+    for (const auto item: items) {
+        auto nodeItem = qobject_cast<qan::NodeItem*>(item);
+        if (nodeItem != nullptr &&
+            nodeItem->getNode() != nullptr ) {
+            const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                    item->boundingRect());
+            if (rect.contains(itemBr)) {
+                _graph->setNodeSelected(*nodeItem->getNode(), true);
+                // Note we assume that items are not deleted while the selection
+                // is in progress... (QPointer can't be trivially inserted in QSet)
+                _selectedItems.insert(nodeItem);
+            }
+        }
+    }
+}
+
+void    GraphView::selectionRectEnd()
+{
+    _selectedItems.clear();  // Clear selection cache
 }
 //-----------------------------------------------------------------------------
 
