@@ -647,13 +647,20 @@ protected:
     void            configureSelectionItems() noexcept;
 
 public:
-    /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully added.
+    /*! \brief Request insertion of a node in the current selection according to current policy and return true if the node was successfully selected.
+     *
+     * \note A call to selectNode() on an already selected node will deselect it, to set an "absolute" selection, use setNodeSelected().
      *
      * \note If \c selectionPolicy is set to Qan.AbstractGraph.NoSelection or SelextionPolicy::NoSelection,
      * method will always return false.
      */
     bool                selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     Q_INVOKABLE bool    selectNode(qan::Node* node);
+
+    //! Set the node selection state (graph selectionPolicy is not taken into account).
+    void                setNodeSelected(qan::Node& node, bool selected);
+    //! \copydoc setNodeSelected
+    Q_INVOKABLE void    setNodeSelected(qan::Node* node, bool selected);
 
     //! Similar to selectNode() for qan::Group (internally group is a node).
     bool            selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);

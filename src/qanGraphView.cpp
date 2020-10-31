@@ -135,7 +135,7 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                 const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
                                                         item->boundingRect());
                 if (rect.contains(itemBr))
-                    _graph->selectNode(*nodeItem->getNode(), Qt::ControlModifier);
+                    _graph->setNodeSelected(*nodeItem->getNode(), true);
             }
         }
     }

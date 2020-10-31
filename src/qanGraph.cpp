@@ -1104,10 +1104,13 @@ void    Graph::configureSelectionItems() noexcept
             group->getItem()->configureSelectionItem();
 }
 
-template < class Primitive_t >
-bool    selectPrimitiveImpl(Primitive_t& primitive,
-                            Qt::KeyboardModifiers modifiers,
-                            qan::Graph& graph)
+namespace impl { // qan::impl
+
+// Generic utility to select either node or groups (is primitive with a qan::Selectable interface)
+template <class Primitive_t>
+bool    selectPrimitive(Primitive_t& primitive,
+                        Qt::KeyboardModifiers modifiers,
+                        qan::Graph& graph)
 {
     if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
         return false;
@@ -1120,7 +1123,7 @@ bool    selectPrimitiveImpl(Primitive_t& primitive,
     if (primitive.getItem()->getSelected()) {
         if (ctrlPressed)          // Click on a selected node + CTRL = deselect node
             primitive.getItem()->setSelected(false);
-            // Note: graph.removeFromSelection() is called from primitive.selected()
+            // Note: graph.removeFromSelection() is called from primitive qan::Selectable::setSelected()
     } else {
         switch (graph.getSelectionPolicy()) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
@@ -1141,12 +1144,38 @@ bool    selectPrimitiveImpl(Primitive_t& primitive,
     return false;
 }
 
-bool    Graph::selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers) { return selectPrimitiveImpl<qan::Node>(node, modifiers, *this); }
+
+// Generic utility to set selection state for either node or groups (is primitive with a qan::Selectable interface)
+template <class Primitive_t>
+void    setPrimitiveSelected(Primitive_t& primitive,
+                             bool selected,
+                             qan::Graph& graph)
+{
+    // Note: graph.selectionPolicy is not taken into account
+    if (primitive.getItem() == nullptr)
+        return;
+    primitive.getItem()->setSelected(selected); // Note: graph.removeFromSelection() is called from primitive qan::Selectable::setSelected()
+    if (selected)
+        graph.addToSelection(primitive);
+    return;
+}
+
+} // qan::impl
+
+bool    Graph::selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Node>(node, modifiers, *this); }
 bool    Graph::selectNode(qan::Node* node)
 {
     return (node != nullptr ? selectNode(*node) : false);
 }
-bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return selectPrimitiveImpl<qan::Group>(group, modifiers, *this); }
+
+void    Graph::setNodeSelected(qan::Node& node, bool selected) { impl::setPrimitiveSelected<qan::Node>(node, selected, *this); }
+void    Graph::setNodeSelected(qan::Node* node, bool selected)
+{
+    if (node != nullptr)
+        impl::setPrimitiveSelected<qan::Node>(*node, selected, *this);
+}
+
+bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
 
 template < class Primitive_t >
 void    addToSelectionImpl( Primitive_t& primitive,
