@@ -30,6 +30,7 @@ import QtQuick.Dialogs  1.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 import QtGraphicalEffects   1.0
+import Qt.labs.platform 1.1 as Labs
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan
@@ -766,8 +767,61 @@ ApplicationWindow {
 
     Qan.GraphPreview {
         id: graphPreview
-        anchors.right: graphView.right; anchors.bottom: graphView.bottom
         source: graphView
         visibleWindowColor: Material.accent
+        anchors.right: graphView.right; anchors.bottom: graphView.bottom
+        anchors.rightMargin: 8; anchors.bottomMargin: 8
+        width: previewMenu.mediumPreview.width
+        height: previewMenu.mediumPreview.height
+        Menu {
+            id: previewMenu
+            readonly property size smallPreview: Qt.size(150, 85)
+            readonly property size mediumPreview: Qt.size(250, 141)
+            readonly property size largePreview: Qt.size(350, 198)
+            MenuItem {
+                text: "Hide preview"
+                onTriggered: graphPreview.visible = false
+            }
+            MenuSeparator { }
+            Labs.MenuItemGroup {  // FIXME remove...
+                id: previewSizeGroup
+                //items: verticalMenu.items
+            }
+            MenuItem {
+                text: qsTr('Small')
+                checkable: true
+                checked: graphPreview.width === previewMenu.smallPreview.width &&
+                         graphPreview.height === previewMenu.smallPreview.height
+                onTriggered: {
+                    graphPreview.width = previewMenu.smallPreview.width
+                    graphPreview.height = previewMenu.smallPreview.height
+                }
+            }
+            MenuItem {
+                text: qsTr('Medium')
+                checkable: true
+                checked: graphPreview.width === previewMenu.mediumPreview.width &&
+                         graphPreview.height === previewMenu.mediumPreview.height
+                onTriggered: {
+                    graphPreview.width = previewMenu.mediumPreview.width
+                    graphPreview.height = previewMenu.mediumPreview.height
+                }
+            }
+            MenuItem {
+                text: qsTr('Large')
+                checkable: true
+                checked: graphPreview.width === previewMenu.largePreview.width &&
+                         graphPreview.height === previewMenu.largePreview.height
+                onTriggered: {
+                    graphPreview.width = previewMenu.largePreview.width
+                    graphPreview.height = previewMenu.largePreview.height
+                }
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            onClicked: previewMenu.open(mouse.x, mouse.y)
+        }
     }
 }  // ApplicationWindow

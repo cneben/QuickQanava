@@ -32,7 +32,7 @@ Control {
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
-    height: 150
+    height: 113
 
     property alias source: navigablePreview.source
     property alias visibleWindowColor: navigablePreview.visibleWindowColor
@@ -96,7 +96,7 @@ Control {
         anchors.fill: parent
         cached: true
         glowRadius:  8
-        cornerRadius: 10
+        cornerRadius: 8
         spread: 0.5
         color: "lightgrey"
     }

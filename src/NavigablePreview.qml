@@ -42,13 +42,10 @@ Qan.AbstractNavigablePreview {
     function updatePreviewSourceRect(rect) {
         if (!source)
             return
-        console.error('NavigablePreview.updatePreviewSourceRect(): source=' + source)
-        console.error('NavigablePreview.updatePreviewSourceRect(): source.containerItem=' + source.containerItem)
         if (preview.source &&     // Manually update shader effect source source rect
             preview.source.containerItem &&
             sourcePreview.sourceItem === preview.source.containerItem ) {
             var cr = preview.source.containerItem.childrenRect
-            console.error('NavigablePreview.updatePreviewSourceRect(): cr=' + cr)
             if (cr.width > 0 && cr.height > 0)
                 sourcePreview.sourceRect = cr
         }
