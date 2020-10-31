@@ -27,6 +27,8 @@ import QuickQanava 2.0 as Qan
 Qan.AbstractNavigablePreview {
     id: preview
 
+    // PUBLIC /////////////////////////////////////////////////////////////////
+
     //! Overlay item could be used to display a user defined item (for example an heat map image) between the background and the current visible window rectangle.
     property var    overlay : overlayItem
 
@@ -36,72 +38,111 @@ Qan.AbstractNavigablePreview {
     //! Show or hide the target navigable content as a background image (default to true).
     property alias  backgroundPreviewVisible: sourcePreview.visible
 
-    Item {
-        id: voidItem
-        visible: false
-    }
-    Connections {
-        id: sourceMonitor
-        function onWidthChanged(width) { updatevisibleWindow() }
-        function onHeightChanged(height) { updatevisibleWindow() }
-        function onZoomChanged() { updatevisibleWindow() }
-        function onChildrenRectChanged(rect) {
-            if (preview.source &&     // Manually update shader effect source source rect
-                preview.source.containerItem &&
-                sourcePreview.sourceItem === preview.source.containerItem ) {
-                var cr = preview.source.containerItem.childrenRect
-                if (cr.width > 0 && cr.height > 0)
-                    sourcePreview.sourceRect = cr
-            }
+    // PRIVATE ////////////////////////////////////////////////////////////////
+    function updatePreviewSourceRect(rect) {
+        if (!source)
+            return
+        console.error('NavigablePreview.updatePreviewSourceRect(): source=' + source)
+        console.error('NavigablePreview.updatePreviewSourceRect(): source.containerItem=' + source.containerItem)
+        if (preview.source &&     // Manually update shader effect source source rect
+            preview.source.containerItem &&
+            sourcePreview.sourceItem === preview.source.containerItem ) {
+            var cr = preview.source.containerItem.childrenRect
+            console.error('NavigablePreview.updatePreviewSourceRect(): cr=' + cr)
+            if (cr.width > 0 && cr.height > 0)
+                sourcePreview.sourceRect = cr
         }
     }
-    Connections {
-        id: containerItemMonitor
-        target: voidItem
-        function onXChanged() { updatevisibleWindow() }
-        function onYChanged() { updatevisibleWindow() }
-        function onScaleChanged() { updatevisibleWindow() }
-        function onWidthChanged() { updatevisibleWindow() }
-        function onHeightChanged() { updatevisibleWindow() }
-    }
+
     onSourceChanged: {
-        if ( source &&
-             source.containerItem ) {
-            containerItemMonitor.target = source.containerItem
-            sourceMonitor.target = source
+        if (source &&
+            source.containerItem) {
+            resetVisibleWindow()
+
+            // Monitor source changes
+            source.containerItem.onWidthChanged.connect(updateVisibleWindow)
+            source.containerItem.onHeightChanged.connect(updateVisibleWindow)
+            source.containerItem.onScaleChanged.connect(updateVisibleWindow)
+            source.containerItem.onXChanged.connect(updateVisibleWindow)
+            source.containerItem.onYChanged.connect(updateVisibleWindow)
+            source.containerItem.onChildrenRectChanged.connect(updatePreviewSourceRect)
+
             sourcePreview.sourceItem = source.containerItem
             var cr = preview.source.containerItem.childrenRect
-            if ( cr.width > 0 && cr.height > 0 )
+            if (cr.width > 0 && cr.height > 0)
                 sourcePreview.sourceRect = cr
-        } else sourcePreview.sourceItem = undefined
-        updatevisibleWindow()
+        } else
+            sourcePreview.sourceItem = undefined
+        updateVisibleWindow()
     }
+
     ShaderEffectSource {
         id: sourcePreview
         anchors.fill: parent
+        anchors.margins: 0
         live: true; recursive: false
         sourceItem: source.containerItem
         textureSize: Qt.size(width, height)
     }
-    function updatevisibleWindow() {
-        if ( !source )
+
+    // Reset visibleWindow rect to preview dimension (taking rectangle border into account)
+    function    resetVisibleWindow() {
+        const border = visibleWindow.border.width
+        const border2 = visibleWindow.border.width * 2
+        visibleWindow.x = border
+        visibleWindow.y = border
+        visibleWindow.width = preview.width - border2
+        visibleWindow.height = preview.height - border2
+    }
+
+    function    updateVisibleWindow() {
+        if (!preview)
             return
+        if (!source) {  // Reset the window when source is invalid
+            preview.resetVisibleWindow()
+            return
+        }
         var containerItem = source.containerItem
-        if ( !containerItem )
-            return;
+        if (!containerItem) {
+            preview.resetVisibleWindow()
+            return
+        }
         var containerItemCr = containerItem.childrenRect
-        if ( containerItemCr.width < 0.01 ||        // Do not update without a valid children rect
-             containerItemCr.height < 0.01 )
-            return;
+        if (containerItemCr.width < preview.source.width && // If scene size is stricly inferior to preview size
+            containerItemCr.height < preview.source.height) {         // reset the preview window
+            //preview.resetVisibleWindow()
+            //return
+            containerItemCr.width = preview.source.width
+            containerItemCr.height = preview.source.height
+        }
+        if (containerItemCr.width < 0.01 ||        // Do not update without a valid children rect
+            containerItemCr.height < 0.01) {
+            preview.resetVisibleWindow()
+            return
+        }
+        if (containerItemCr.width < containerItemCr.width ||        // Reset the visible window is the whole containerItem content
+            containerItemCr.height < containerItemCr.height) {       // is smaller than graph view
+            preview.resetVisibleWindow()
+            return
+        }
+        if (containerItemCr.width < preview.width && // If scene size is stricly inferior to preview size
+            containerItemCr.height < preview.height) {         // reset the preview window
+            preview.resetVisibleWindow()
+            return
+        }
+        const border = visibleWindow.border.width
+        const border2 = border * 2.
         var windowTopLeft = source.mapToItem(containerItem, 0, 0)
         var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
+
         var previewXRatio = preview.width / containerItemCr.width
         var previewYRatio = preview.height / containerItemCr.height
-        var borderHalf = visibleWindow.border.width / 2.
-        visibleWindow.x = ( windowTopLeft.x * previewXRatio ) + borderHalf
-        visibleWindow.y = ( windowTopLeft.y * previewYRatio ) + borderHalf
-        visibleWindow.width = ( ( windowBottomRight.x - windowTopLeft.x ) * previewXRatio ) - visibleWindow.border.width
-        visibleWindow.height = ( ( windowBottomRight.y - windowTopLeft.y )  * previewYRatio ) - visibleWindow.border.width
+
+        visibleWindow.x = previewXRatio * (windowTopLeft.x - containerItemCr.x) + border
+        visibleWindow.y = previewYRatio * (windowTopLeft.y - containerItemCr.y) + border
+        visibleWindow.width = previewXRatio * Math.abs(windowBottomRight.x - windowTopLeft.x) - border2
+        visibleWindow.height = previewYRatio * Math.abs(windowBottomRight.y - windowTopLeft.y) - border2
+
         visibleWindowChanged(Qt.rect(visibleWindow.x / preview.width,     visibleWindow.y / preview.height,
                                      visibleWindow.width / preview.width, visibleWindow.height / preview.height),
                              source.zoom);
@@ -114,9 +155,11 @@ Qan.AbstractNavigablePreview {
         id: visibleWindow
         color: Qt.rgba(0, 0, 0, 0)
         smooth: true;   antialiasing: true
-        border.color: visibleWindowColor; border.width: 2
+        border.color: visibleWindowColor;
+        border.width: 2
     }
-    MouseArea {
+    // Not active on 20201027
+    /*MouseArea {
         id: visibleWindowDragger
         anchors.fill: parent
         drag.onActiveChanged: {
@@ -136,6 +179,6 @@ Qan.AbstractNavigablePreview {
         }
         onPressed : {
         }
-    }
+    }*/
 }
 

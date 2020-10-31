@@ -164,19 +164,19 @@ void    Navigable::setAutoFitMode( AutoFitMode autoFitMode )
     emit autoFitModeChanged();
 }
 
-void    Navigable::setZoom( qreal zoom )
+void    Navigable::setZoom(qreal zoom)
 {
-    if ( isValidZoom( zoom ) ) {
-        switch ( _zoomOrigin ) {
+    if (isValidZoom(zoom)) {
+        switch (_zoomOrigin) {
         case QQuickItem::Center: {
-            zoomOn( QPointF{ width( ) / 2., height() / 2. },
-                    zoom );
+            zoomOn(QPointF{width() / 2., height() / 2.},
+                   zoom);
         }
             break;
         case QQuickItem::TopLeft:
         default:
             _zoom = zoom;
-            _containerItem->setScale( _zoom );
+            _containerItem->setScale(_zoom);
             _zoomModified = true;
             emit zoomChanged();
             emit containerItemModified();
@@ -185,7 +185,7 @@ void    Navigable::setZoom( qreal zoom )
     }
 }
 
-void    Navigable::zoomOn( QPointF center, qreal zoom )
+void    Navigable::zoomOn(QPointF center, qreal zoom)
 {
     // Get center coordinates in container CS, it is our
     // zoom application point
@@ -218,9 +218,9 @@ void    Navigable::zoomOn( QPointF center, qreal zoom )
     }
 }
 
-bool    Navigable::isValidZoom( qreal zoom ) const
+bool    Navigable::isValidZoom(qreal zoom) const
 {
-    if ( qFuzzyCompare( 1. + zoom - _zoom, 1.0 ) )
+    if (qFuzzyCompare(1. + zoom - _zoom, 1.0))
         return false;
     if ( ( zoom > _zoomMin ) &&    // Don't zoom less than zoomMin
          ( _zoomMax < 0. ||   // Don't zoom more than zoomMax except if zoomMax is infinite
@@ -255,9 +255,9 @@ void    Navigable::setZoomMin( qreal zoomMin )
     emit zoomMinChanged();
 }
 
-void    Navigable::setDragActive( bool dragActive ) noexcept
+void    Navigable::setDragActive(bool dragActive) noexcept
 {
-    if ( dragActive != _dragActive ) {
+    if (dragActive != _dragActive) {
         _dragActive = dragActive;
         emit dragActiveChanged();
     }
@@ -330,40 +330,70 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
 }
 
-void    Navigable::mouseMoveEvent( QMouseEvent* event )
+void    Navigable::mouseMoveEvent(QMouseEvent* event)
 {
-    if (getNavigable()) {
-        if (_leftButtonPressed &&
-            !_lastPan.isNull()) {
-            QPointF delta = _lastPan - event->localPos();
-            QPointF p{ QPointF{ _containerItem->x(), _containerItem->y() } - delta };
-            _containerItem->setX( p.x() );
-            _containerItem->setY( p.y() );
-            emit containerItemModified();
-            navigableContainerItemModified();
-            _panModified = true;
-            _lastPan = event->localPos();
-            setDragActive(true);
-
-            updateGrid();
-        }
+    if (!getNavigable() ||
+        !_containerItem) {
+        QQuickItem::mouseMoveEvent(event);
+        return;
     }
-    QQuickItem::mouseMoveEvent( event );
+    if (_leftButtonPressed &&               // Left click panning /////////////
+        !_lastPan.isNull()) {
+        const QPointF delta = _lastPan - event->localPos();
+        const auto p = QPointF{_containerItem->x(),
+                               _containerItem->y()} - delta;
+        _containerItem->setX(p.x());
+        _containerItem->setY(p.y());
+        emit containerItemModified();
+        navigableContainerItemModified();
+        _panModified = true;
+        _lastPan = event->localPos();
+        setDragActive(true);
+
+        updateGrid();
+    } else if (_ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
+        const auto& p = event->localPos();
+        _selectionRectItem->setWidth(p.x() - _selectionRectItem->x());
+        _selectionRectItem->setHeight(p.y() - _selectionRectItem->y());
+        _lastSelectRect = event->localPos();
+        const auto selectionRect = mapRectToItem(_containerItem,
+                                                 QRectF{_selectionRectItem->x(), _selectionRectItem->y(),
+                                                        _selectionRectItem->width(), _selectionRectItem->height()});
+        qWarning() << "selectionRect=" << selectionRect;
+        selectionRectActivated(selectionRect);
+    }
+    QQuickItem::mouseMoveEvent(event);
 }
 
-void    Navigable::mousePressEvent( QMouseEvent* event )
+void    Navigable::mousePressEvent(QMouseEvent* event)
 {
-    if (getNavigable()) {
-        if (event->button() == Qt::LeftButton) {
-            _leftButtonPressed = true;
+    if (!getNavigable()) {
+        event->ignore();
+        return;
+    }
+    if (event->button() == Qt::LeftButton) {
+        if (event->modifiers() == Qt::ControlModifier) {
+            _ctrlLeftButtonPressed = true;          // SELECT = Left button + CTRL //////
+            _lastSelectRect = event->localPos();
+            if (_selectionRectItem) {
+                _selectionRectItem->setX(event->localPos().x());
+                _selectionRectItem->setY(event->localPos().y());
+                _selectionRectItem->setWidth(1.);
+                _selectionRectItem->setHeight(1.);
+                _selectionRectItem->setVisible(true);
+            }
+            event->accept();
+            return;
+        } else {
+            _leftButtonPressed = true;              // PAN = Left button ////////////////
             _lastPan = event->localPos();
             event->accept();
             return;
         }
-        if (event->button() == Qt::RightButton) {
-            event->accept();
-            return;
-        }
+    }
+    if (event->button() == Qt::RightButton) {       // Right clicks are catched /////////
+        event->accept();
+        return;
     }
     event->ignore();
 }
@@ -371,30 +401,42 @@ void    Navigable::mousePressEvent( QMouseEvent* event )
 void    Navigable::mouseReleaseEvent( QMouseEvent* event )
 {
     if (getNavigable()) {
-        if ( event->button() == Qt::LeftButton &&
-             !_dragActive ) {       // Do not emit clicked when dragging occurs
-            emit clicked( event->localPos() );
-            navigableClicked( event->localPos() );
-        } else if ( event->button() == Qt::RightButton ) {
-            emit rightClicked( event->localPos() );
-            navigableRightClicked(event->localPos() );
+        if (event->button() == Qt::LeftButton &&
+            !_dragActive) {       // Do not emit clicked when dragging occurs
+            emit clicked(event->localPos());
+            navigableClicked(event->localPos());
+        } else if (event->button() == Qt::RightButton) {
+            emit rightClicked(event->localPos());
+            navigableRightClicked(event->localPos());
         }
         setDragActive(false);
         _leftButtonPressed = false;
+
+        _ctrlLeftButtonPressed = false;     // End selection rect resizing
+        if (_selectionRectItem)
+            _selectionRectItem->setVisible(false);
     }
     QQuickItem::mouseReleaseEvent(event);
 }
 
 void    Navigable::wheelEvent(QWheelEvent* event)
 {
-    if ( getNavigable() ) {
-        qreal zoomFactor = ( event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement );
+    if (getNavigable()) {
+        qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
         zoomOn(event->position(), getZoom() + zoomFactor);
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);
 }
 //-----------------------------------------------------------------------------
+
+
+/* Selection Rectangle Management *///-----------------------------------------
+void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem) noexcept { _selectionRectItem = selectionRectItem; }
+
+void    Navigable::selectionRectActivated(const QRectF& rect) { Q_UNUSED(rect); }
+//-----------------------------------------------------------------------------
+
 
 /* Grid Management *///--------------------------------------------------------
 void    Navigable::setGrid(qan::Grid* grid) noexcept

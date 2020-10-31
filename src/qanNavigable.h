@@ -106,11 +106,11 @@ public:
 public:
     /*! \brief Enable or disable navigation (navigation is enabled by default).
      */
-    Q_PROPERTY( bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL )
+    Q_PROPERTY(bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL)
     //! \sa navigable
     inline bool     getNavigable() const noexcept { return _navigable; }
     //! \sa navigable
-    void            setNavigable( bool navigable ) noexcept;
+    void            setNavigable(bool navigable) noexcept;
 private:
     //! \copydoc navigable
     bool            _navigable{true};
@@ -145,9 +145,9 @@ public:
      */
     Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
     //! \sa containerItem
-    inline QQuickItem*  getContainerItem() noexcept { return _containerItem; }
+    inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
 private:
-    QQuickItem*         _containerItem = nullptr;
+    QPointer<QQuickItem>    _containerItem = nullptr;
 
 public:
     //! Center the view on a given child item (zoom level is not modified).
@@ -181,40 +181,40 @@ public:
          */
         AutoFit
     };
-    Q_ENUM( AutoFitMode )
+    Q_ENUM(AutoFitMode)
 
     /*! \brief Current auto-fit mode (default to NoAutoFit).    */
-    Q_PROPERTY( AutoFitMode autoFitMode READ getAutoFitMode WRITE setAutoFitMode NOTIFY autoFitModeChanged FINAL )
+    Q_PROPERTY(AutoFitMode autoFitMode READ getAutoFitMode WRITE setAutoFitMode NOTIFY autoFitModeChanged FINAL)
     //! \sa autoFitMode
-    AutoFitMode getAutoFitMode( ) const { return _autoFitMode; }
+    AutoFitMode getAutoFitMode() const { return _autoFitMode; }
     //! \sa autoFitMode
-    void        setAutoFitMode( AutoFitMode autoFitMode );
+    void        setAutoFitMode(AutoFitMode autoFitMode);
 private:
     //! \copydoc autoFitMode
-    AutoFitMode _autoFitMode{ NoAutoFit };
+    AutoFitMode _autoFitMode{NoAutoFit};
 signals:
     //! \sa autoFitMode
-    void        autoFitModeChanged( );
+    void        autoFitModeChanged();
 private:
     //! Flag set to true if area panning has been modified since the last fitInView() call.
-    bool        _panModified{ false };
+    bool        _panModified = false;
     //! Flag set to true if area zoom has been modified since the last fitInView() call.
-    bool        _zoomModified{ false };
+    bool        _zoomModified = false;
 
 public:
-    /*! \brief Zoom incrementation delta (default to 0.05).
+    /*! \brief Zoom incrementation delta (default to 0.05,ie 5%).
      */
-    Q_PROPERTY( qreal zoomIncrement READ getZoomIncrement WRITE setZoomIncrement NOTIFY zoomIncrementChanged FINAL )
+    Q_PROPERTY(qreal zoomIncrement READ getZoomIncrement WRITE setZoomIncrement NOTIFY zoomIncrementChanged FINAL)
     //! \sa zoomIncrement
-    qreal       getZoomIncrement( ) const { return _zoomIncrement; }
+    qreal       getZoomIncrement() const { return _zoomIncrement; }
     //! \sa zoomIncrement
-    void        setZoomIncrement( qreal zoomIncrement ) { _zoomIncrement = zoomIncrement; emit zoomIncrementChanged(); }
+    void        setZoomIncrement(qreal zoomIncrement) noexcept { _zoomIncrement = zoomIncrement; emit zoomIncrementChanged(); }
 private:
     //! \copydoc zoomIncrement
-    qreal       _zoomIncrement{0.05 };
+    qreal       _zoomIncrement = 0.05;
 signals:
     //! \sa zoomIncrement
-    void        zoomIncrementChanged( );
+    void        zoomIncrementChanged();
 
 public:
     /*! \brief Area current zoom level (default to 1.0).
@@ -223,44 +223,44 @@ public:
      *
      * Accessing zoom directly from QML is safe, since setZoom() is protected against binding loops.
      */
-    Q_PROPERTY( qreal zoom READ getZoom WRITE setZoom NOTIFY zoomChanged FINAL )
+    Q_PROPERTY(qreal zoom READ getZoom WRITE setZoom NOTIFY zoomChanged FINAL)
     //! \sa zoom
-    qreal       getZoom( ) const { return _zoom; }
+    inline qreal        getZoom() const noexcept { return _zoom; }
     /*! \brief Set navigable area current zoom (zoom is applied on current \c zoomOrigin).
      *
      * \note To avoid QML binding loops, this setter is protected against setting the same value multiple times.
      * \sa zoom
      */
-    void        setZoom( qreal zoom );
+    void                setZoom(qreal zoom);
     //! Set area current zoom centered on a given \c center point.
-    Q_INVOKABLE void        zoomOn( QPointF center, qreal zoom );
+    Q_INVOKABLE void    zoomOn(QPointF center, qreal zoom);
     //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom, maxZoom) range.
-    bool        isValidZoom( qreal zoom ) const;
+    bool                isValidZoom(qreal zoom) const;
 private:
     //! \copydoc zoom
-    qreal       _zoom{ 1.0 };
+    qreal       _zoom = 1.0;
 signals:
     //! \sa zoom
-    void        zoomChanged( );
+    void        zoomChanged();
 
 public:
     /*! \brief Origin point where any zoom set view setZoom or \c zoom will be applied (default to QQuickItem::Center).
      */
-    Q_PROPERTY( QQuickItem::TransformOrigin zoomOrigin READ getZoomOrigin WRITE setZoomOrigin NOTIFY zoomOriginChanged FINAL )
+    Q_PROPERTY(QQuickItem::TransformOrigin zoomOrigin READ getZoomOrigin WRITE setZoomOrigin NOTIFY zoomOriginChanged FINAL)
     //! \sa zoomOrigin
-    QQuickItem::TransformOrigin       getZoomOrigin( ) const { return _zoomOrigin; }
+    QQuickItem::TransformOrigin       getZoomOrigin() const noexcept { return _zoomOrigin; }
     /*! \brief Set navigable area current zoom origin (either QQuickItem::TopLeft or QQuickItem::Center).
      *
      * \note Zooming initiated via mouse wheel is always applied at current mouse position.
      * \sa zoom
      */
-    void        setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin );
+    void        setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin);
 private:
     //! \copydoc zoomOrigin
-    QQuickItem::TransformOrigin _zoomOrigin{ QQuickItem::Center };
+    QQuickItem::TransformOrigin _zoomOrigin = QQuickItem::Center;
 signals:
     //! \sa zoomOrigin
-    void        zoomOriginChanged( );
+    void        zoomOriginChanged();
 
 public:
     //! Area maximum zoom level (-1 = no maximum zoom limitation, 1.0 = no zoom allowed, >1.0 = zoomMax*100% maximum zoom).
@@ -330,10 +330,41 @@ protected:
     virtual void    wheelEvent(QWheelEvent* event) override;
 
 protected:
-    bool        _leftButtonPressed{ false };
+    bool        _leftButtonPressed = false;
     QPointF     _lastPan{};
     //@}
     //-------------------------------------------------------------------------
+
+
+    /*! \name Selection Rectangle Management *///------------------------------
+    //@{
+public:
+    /*! \brief Selection rectangle is activated instead of view panning when CTRL key is used while clicking and dragging.
+     *
+     * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized in a concrete component or subclass.
+     * Selection rectangle is not owned by this qan::Navigable object, it might be a QML owned object.
+     */
+    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem FINAL)
+    //! \copydoc selectionRectItem
+    inline QQuickItem*  getSelectionRectItem() noexcept { return _selectionRectItem; }
+    //! \copydoc selectionRectItem
+    void                setSelectionRectItem(QQuickItem* selectionRectItem) noexcept;
+private:
+    //! \copydoc selectionRectItem
+    QPointer<QQuickItem>    _selectionRectItem = nullptr;
+
+    //! \copydoc selectionRectItem
+    bool        _ctrlLeftButtonPressed = false;
+
+    //! \copydoc selectionRectItem
+    QPointF     _lastSelectRect{};
+
+protected:
+    //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in containerItem space.
+    virtual void    selectionRectActivated(const QRectF& rect);
+    //@}
+    //-------------------------------------------------------------------------
+
 
     /*! \name Grid Management *///---------------------------------------------
     //@{

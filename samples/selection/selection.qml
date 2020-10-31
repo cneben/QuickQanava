@@ -47,6 +47,7 @@ ApplicationWindow {
         id: graphView
         anchors.fill: parent
         navigable   : true
+        selectionRectItem: selectionRect
         graph: Qan.Graph {
             id: topology
             connectorEnabled: true
@@ -66,6 +67,16 @@ ApplicationWindow {
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
             onGroupRightClicked: { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
+
+        Rectangle {
+            id: selectionRect     // FIXME
+            x: 0; y: 0
+            width: 10; height: 10
+            border.width: 2
+            border.color: "violet"
+            color: 'transparent'
+            visible: false
+        }
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15

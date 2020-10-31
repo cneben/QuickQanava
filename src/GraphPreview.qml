@@ -33,7 +33,6 @@ Control {
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
     height: 150
-    //clip: true
 
     property alias source: navigablePreview.source
     property alias visibleWindowColor: navigablePreview.visibleWindowColor

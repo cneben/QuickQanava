@@ -17,13 +17,13 @@ test-cpp.subdir         = samples/cpp
 
 #SUBDIRS +=  test-resizer
 #SUBDIRS +=  test-navigable
-SUBDIRS +=  test-nodes
+#SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-edges
 #SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups
-#SUBDIRS +=  test-selection
+SUBDIRS +=  test-selection
 #SUBDIRS +=  test-style
-SUBDIRS +=  test-topology
+#SUBDIRS +=  test-topology
 #SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
 

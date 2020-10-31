@@ -117,5 +117,30 @@ QString GraphView::urlToLocalFile(QUrl url) const noexcept
 }
 //-----------------------------------------------------------------------------
 
+
+/* Selection Rectangle Management *///-----------------------------------------
+void    GraphView::selectionRectActivated(const QRectF& rect)
+{
+    if (!_graph ||
+        _graph->getContainerItem() == nullptr)
+        return;
+    if (rect.isEmpty())
+        return;
+    if (rect.width() > 250) {
+        const auto items = _graph->getContainerItem()->childItems();
+        for (const auto item: items) {
+            auto nodeItem = qobject_cast<qan::NodeItem*>(item);
+            if (nodeItem != nullptr &&
+                nodeItem->getNode() != nullptr ) {
+                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                        item->boundingRect());
+                if (rect.contains(itemBr))
+                    _graph->selectNode(*nodeItem->getNode(), Qt::ControlModifier);
+            }
+        }
+    }
+}
+//-----------------------------------------------------------------------------
+
 } // ::qan
 

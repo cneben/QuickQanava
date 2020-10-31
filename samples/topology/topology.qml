@@ -153,6 +153,12 @@ ApplicationWindow {
         } // Menu: ports
         MenuSeparator { }
         MenuItem {
+            text: "Show Radar"
+            onTriggered: graphPreview.visible = checked
+            checkable: true
+            checked: graphPreview.visible
+        }
+        MenuItem {
             text: "Export to PNG"
             onTriggered: screenshotPopup.open()
         }
@@ -759,6 +765,7 @@ ApplicationWindow {
     }
 
     Qan.GraphPreview {
+        id: graphPreview
         anchors.right: graphView.right; anchors.bottom: graphView.bottom
         source: graphView
         visibleWindowColor: Material.accent
