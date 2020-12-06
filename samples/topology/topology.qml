@@ -53,7 +53,13 @@ ApplicationWindow {
         id: menu
         title: "Main Menu"
         property var targetNode: undefined
+        property var targetGroup: undefined
         property var targetEdge: undefined
+        onClosed: {
+            menu.targetNode = undefined
+            menu.targetGroup = undefined
+            menu.targetEdge = undefined
+        }
         MenuItem {
             text: "Insert Node"
             onTriggered: {
@@ -63,11 +69,31 @@ ApplicationWindow {
             }
         }
         MenuItem {
-            text: "Remove node"
-            enabled: menu.targetNode !== undefined
+            text: {
+                if (topology.selectedNodes.length > 1)
+                    return "Remove All"
+                else if (menu.targetGroup !== undefined)
+                    return "Remove Group"
+                return "Remove node"
+            }
+            enabled: menu.targetNode !== undefined ||
+                     menu.targetGroup !== undefined ||
+                     topology.selectedNodes.length > 1
             onTriggered: {
-                if (menu.targetNode !== undefined)
+                if (topology.selectedNodes.length > 1) {
+                    let nodes = []  // Copy the original selection, since removing nodes also modify selection
+                    var n = 0
+                    for (n = 0; n < topology.selectedNodes.length; n++)
+                        nodes.push(topology.selectedNodes.at(n))
+                    for (n = 0; n < nodes.length; n++) {
+                        let node = nodes[n]
+                        console.error('node.isGroup=' + node.isGroup())
+                        topology.removeNode(nodes[n])
+                    }
+                } else if (menu.targetNode !== undefined)
                     topology.removeNode(menu.targetNode)
+                else if (menu.targetGroup !== undefined)
+                    topology.removeGroup(menu.targetGroup)
                 menu.targetNode = undefined
             }
         }
@@ -222,8 +248,7 @@ ApplicationWindow {
                 if (edge)
                     edge.label = "My edge"
             }
-            property Component faceNodeComponent: Qt.createComponent(
-                                                      "qrc:/FaceNode.qml")
+            property Component faceNodeComponent: Qt.createComponent("qrc:/FaceNode.qml")
             onNodeClicked: {
                 portsListView.model = node.item.ports
             }
@@ -232,6 +257,13 @@ ApplicationWindow {
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetNode = node
+                menu.open()
+            }
+            onGroupRightClicked: {
+                var globalPos = group.item.mapToItem(topology, pos.x, pos.y)
+                menu.x = globalPos.x
+                menu.y = globalPos.y
+                menu.targetGroup = group
                 menu.open()
             }
             onEdgeRightClicked: {

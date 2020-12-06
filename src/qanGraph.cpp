@@ -958,12 +958,12 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
 
 void    Graph::removeGroup(qan::Group* group)
 {
-    if ( group == nullptr )
+    if (group == nullptr)
         return;
 
     // Reparent all group childrens (ie node) to graph before destructing the group
-    // otherwise all child iems get destructed too
-    for ( auto& node : group->get_nodes() ) {
+    // otherwise all child items get destructed too
+    for (auto& node : group->get_nodes()) {
         const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
         if (qanNode != nullptr &&
             qanNode->getItem() != nullptr &&
@@ -974,7 +974,7 @@ void    Graph::removeGroup(qan::Group* group)
     onNodeRemoved(*group);      // group are node, notify group
     emit nodeRemoved(group);    // removed as a node
 
-    if ( _selectedNodes.contains(group) )
+    if (_selectedNodes.contains(group))
         _selectedNodes.removeAll(group);
 
     auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());

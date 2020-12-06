@@ -153,8 +153,8 @@ public:
      * \note Connector item is automatically hidden if \c sourcePort is nullptr or \c sourcePort is
      * destroyed.
      */
-    Q_PROPERTY( qan::PortItem* sourcePort READ getSourcePort WRITE setSourcePort NOTIFY sourcePortChanged FINAL )
-    void                    setSourcePort( qan::PortItem* sourcePort ) noexcept;
+    Q_PROPERTY(qan::PortItem* sourcePort READ getSourcePort WRITE setSourcePort NOTIFY sourcePortChanged FINAL)
+    void                    setSourcePort(qan::PortItem* sourcePort) noexcept;
     inline qan::PortItem*   getSourcePort() const noexcept { return _sourcePort.data(); }
 private:
     QPointer<qan::PortItem> _sourcePort;
@@ -171,7 +171,7 @@ public:
      * destroyed.
      */
     Q_PROPERTY(qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL)
-    void                setSourceNode( qan::Node* sourceNode ) noexcept;
+    void                setSourceNode(qan::Node* sourceNode) noexcept;
     inline qan::Node*   getSourceNode() const noexcept { return _sourceNode.data(); }
 private:
     QPointer<qan::Node> _sourceNode;

@@ -82,7 +82,7 @@ public:
     /*!
      * \note only label is taken into account for equality comparison.
      */
-    bool    operator==( const qan::Node& right ) const;
+    bool    operator==(const qan::Node& right) const;
 
 public:
     Q_PROPERTY(qan::NodeItem* item READ getItem CONSTANT)
