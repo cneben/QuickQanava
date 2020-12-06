@@ -1,5 +1,4 @@
-QuickQanava 
-============================
+# QuickQanava 
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
@@ -15,15 +14,12 @@ QuickQanava
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.15.0-blue.svg) |
+![](https://img.shields.io/badge/version-0.20.0-blue.svg) |
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 **There is quite a lot of traffic and clones actually: Please remember to star the project and reports bugs....**
 
-+ **CHANGELOG 20191110:** Complete rewrite of LineGrid, various cosmetic fixes and bugfixes (update to v0.15.0).
-+ **CHANGELOG 20190825:** Maintenance release, add more flexible content creation methods in qan::Graph.
 + [CHANGELOG.md](CHANGELOG.md)
-
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
@@ -157,32 +153,29 @@ QuickQanava and QuickContainers plugins directories could be removed manually fr
 
 ## Roadmap / Changelog
 
-  - **v0.15.x:**
+  - **Done**:
     - [X] Add full support for groups inside group (ie subgraphs).
-    - [ ] Update geometry creation interface and delegate management.
-  - **v0.16.x:**
-    - [ ] Add support for direct visual dragging of port items.
-    - [X] Fix current qan::LineGrid bugs
-    - [ ] Add "snap to grid" support.
-  - **v0.17.x:**
+    - [X] Fix qan::LineGrid bugs
+  - **Todo**:
     - [ ] Rewrite CMake configuration, add install step, use QML plugins.
+    - [ ] Update geometry creation interface and delegate management.
+    - [ ] Add support for direct visual dragging of port items.
+    - [ ] Add "snap to grid" support.
   - **v1.: Advanced edge visualization**
     - [ ] Add better support for graph fine grained locking strategies.
     - [ ] Add simple layout algorithms (force directed, tree).
     - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
 
-Contributors
-=======
+## Contributors
 
  - @kwallner / Conan.io and CMake configuration
  - @Letrab / Edge configuration
  - @machinekoder / QML plugin and CMake configuration
  - @NielsBillen / Ports support and stability fixes
 
-License
-=======
+## License
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017-2019 BA
+Copyright (c) 2017-2020 BA
 
