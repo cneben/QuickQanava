@@ -75,7 +75,7 @@ public:
     CustomEdge(const CustomEdge&) = delete;
 
 public:
-    static  QQmlComponent*  delegate(QQmlEngine& engine) noexcept;
+    static  QQmlComponent*  delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
     static  qan::EdgeStyle* style(QObject* parent = nullptr) noexcept;
 };
 

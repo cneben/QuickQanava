@@ -80,11 +80,12 @@ qan::NodeStyle* CustomRoundNode::style(QObject* parent) noexcept
 }
 
 
-QQmlComponent*  CustomEdge::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  CustomEdge::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   customEdge_delegate;
-    if ( !customEdge_delegate )
-        customEdge_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
+    if (!customEdge_delegate)
+        customEdge_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml",
+                                                              QQmlComponent::PreferSynchronous, parent);
     return customEdge_delegate.get();
 }
 

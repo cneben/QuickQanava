@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>40k.qml</file>
-        <file>qt4logo.png</file>
-        <file>qt4logo4k.png</file>
-        <file>qt4logo1k.png</file>
-        <file>qtquickcontrols2.conf</file>
-    </qresource>
-</RCC>

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -138,7 +138,7 @@ qan::Node*  Graph::insertNonVisualNode()
 
 /* Graph Edge Management *///--------------------------------------------------
 template < class Edge_t >
-qan::Edge*  Graph::insertEdge( qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent* edgeComponent)
 {
     if (dstNode == nullptr)
         return nullptr;
