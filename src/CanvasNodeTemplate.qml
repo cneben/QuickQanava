@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -99,7 +99,7 @@ Item {
     }
     Connections {
         target: nodeItem
-        onNodeDoubleClicked: labelEditor.visible = true
+        function onNodeDoubleClicked() { labelEditor.visible = true }
     }
     LabelEditor {
         id: labelEditor

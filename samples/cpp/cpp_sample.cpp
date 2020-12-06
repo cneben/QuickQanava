@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -44,53 +44,59 @@
 
 using namespace qan;
 
-QQmlComponent *CustomGroup::delegate(QQmlEngine &engine) noexcept {
-  static std::unique_ptr<QQmlComponent> delegate;
-  if (!delegate)
-    delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomGroup.qml");
-  return delegate.get();
+QQmlComponent*  CustomGroup::delegate(QQmlEngine &engine, QObject* parent) noexcept {
+    Q_UNUSED(parent)
+    static std::unique_ptr<QQmlComponent> delegate;
+    if (!delegate)
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/CustomGroup.qml");
+    return delegate.get();
 }
 
-qan::Style *CustomGroup::style() noexcept {
-  static std::unique_ptr<qan::Style> style;
-  if (!style) {
-    style = std::make_unique<qan::Style>();
-  }
-  return style.get();
+qan::NodeStyle* CustomGroup::style(QObject* parent) noexcept {
+    Q_UNUSED(parent)
+    static std::unique_ptr<qan::NodeStyle> style;
+    if (!style) {
+        style = std::make_unique<qan::NodeStyle>();
+    }
+    return style.get();
 }
 
-QQmlComponent *CustomNode::delegate(QQmlEngine &engine) noexcept
+QQmlComponent*  CustomNode::delegate(QQmlEngine &engine, QObject* parent) noexcept
 {
-  static std::unique_ptr<QQmlComponent> CustomRectNode_delegate;
-  if (!CustomRectNode_delegate)
-    CustomRectNode_delegate =
-        std::make_unique<QQmlComponent>(&engine, "qrc:/CustomNode.qml");
-  return CustomRectNode_delegate.get();
+    Q_UNUSED(parent)
+    static std::unique_ptr<QQmlComponent> customRectNode_delegate;
+    if (!customRectNode_delegate)
+        customRectNode_delegate =
+                std::make_unique<QQmlComponent>(&engine, "qrc:/CustomNode.qml");
+    return customRectNode_delegate.get();
 }
 
-qan::NodeStyle *CustomNode::style() noexcept
+qan::NodeStyle *CustomNode::style(QObject* parent) noexcept
 {
-  static std::unique_ptr<qan::NodeStyle> CustomRectNode_style;
-  if (!CustomRectNode_style) {
-    CustomRectNode_style = std::make_unique<qan::NodeStyle>();
-    CustomRectNode_style->setBackColor(QColor("#ff29fc"));
-  }
-  return CustomRectNode_style.get();
+    Q_UNUSED(parent)
+    static std::unique_ptr<qan::NodeStyle> customRectNode_style;
+    if (!customRectNode_style) {
+        customRectNode_style = std::make_unique<qan::NodeStyle>();
+        customRectNode_style->setBackColor(QColor("#ff29fc"));
+    }
+    return customRectNode_style.get();
 }
 
-QQmlComponent *CustomEdge::delegate(QQmlEngine &engine) noexcept {
-  static std::unique_ptr<QQmlComponent> CustomEdge_delegate;
-  if (!CustomEdge_delegate)
-    CustomEdge_delegate =
-        std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
-  return CustomEdge_delegate.get();
+QQmlComponent *CustomEdge::delegate(QQmlEngine &engine, QObject* parent) noexcept {
+    Q_UNUSED(parent)
+    static std::unique_ptr<QQmlComponent> customEdge_delegate;
+    if (!customEdge_delegate)
+        customEdge_delegate =
+                std::make_unique<QQmlComponent>(&engine, "qrc:/CustomEdge.qml");
+    return customEdge_delegate.get();
 }
 
-qan::EdgeStyle *CustomEdge::style() noexcept {
-  static std::unique_ptr<qan::EdgeStyle> CustomEdge_style;
-  if (!CustomEdge_style)
-    CustomEdge_style = std::make_unique<qan::EdgeStyle>();
-  return CustomEdge_style.get();
+qan::EdgeStyle *CustomEdge::style(QObject* parent) noexcept {
+    Q_UNUSED(parent)
+    static std::unique_ptr<qan::EdgeStyle> customEdge_style;
+    if (!customEdge_style)
+        customEdge_style = std::make_unique<qan::EdgeStyle>();
+    return customEdge_style.get();
 }
 
 qan::Group *CustomGraph::insertCustomGroup() {
@@ -138,7 +144,6 @@ int	main( int argc, char** argv )
         }
 
         if (graph) {
-            unsigned int n = 0;
             static constexpr qreal defaultWidth{40.}, defaultHeight{30.};
             static constexpr qreal xSpacing{50.}, ySpacing{30.};
 
@@ -165,7 +170,6 @@ int	main( int argc, char** argv )
 
             // Grouping nodes from c++
             graph->groupNode(group, nodes[0][0], false);
-
 
             // NOTE: If the node is already on top of the group were we want to insert node, use transformPosition=true
             // to convert node position from graphview coordinate system to group coordinate system.

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,6 +42,7 @@ import "qrc:/QuickQanava"   as Qan
 Qan.GroupItem {
     id: groupItem
 
+    minimumSize: Qt.size(150., 100.)
     default property alias children : template
     container: template.content   // See qan::GroupItem::container property documentation
     onContainerChanged: {

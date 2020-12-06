@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -51,8 +51,8 @@ private:
   CustomGroup(const CustomGroup &) = delete;
 
 public:
-  static QQmlComponent* delegate(QQmlEngine &engine) noexcept;
-  static qan::Style*    style() noexcept;
+  static QQmlComponent*     delegate(QQmlEngine &engine, QObject* parent = nullptr) noexcept;
+  static qan::NodeStyle*    style(QObject* parent = nullptr) noexcept;
 };
 
 QML_DECLARE_TYPE(CustomGroup)
@@ -67,8 +67,8 @@ private:
   CustomNode(const CustomNode &) = delete;
 
 public:
-  static QQmlComponent*     delegate(QQmlEngine &engine) noexcept;
-  static qan::NodeStyle*    style() noexcept;
+  static QQmlComponent*     delegate(QQmlEngine &engine, QObject* parent = nullptr) noexcept;
+  static qan::NodeStyle*    style(QObject* parent = nullptr) noexcept;
 };
 
 QML_DECLARE_TYPE(CustomNode)
@@ -76,14 +76,14 @@ QML_DECLARE_TYPE(CustomNode)
 class CustomEdge : public qan::Edge {
   Q_OBJECT
 public:
-  explicit CustomEdge() : qan::Edge{} {}
-  virtual ~CustomEdge() override { /* Nil */ }
+  explicit CustomEdge(QObject* parent = nullptr) : qan::Edge{parent} {}
+  virtual ~CustomEdge() override = default;
 private:
   CustomEdge(const CustomEdge &) = delete;
 
 public:
-  static QQmlComponent*     delegate(QQmlEngine &engine) noexcept;
-  static qan::EdgeStyle*    style() noexcept;
+  static QQmlComponent*     delegate(QQmlEngine &engine, QObject* parent = nullptr) noexcept;
+  static qan::EdgeStyle*    style(QObject* parent = nullptr) noexcept;
 };
 
 QML_DECLARE_TYPE(CustomEdge)

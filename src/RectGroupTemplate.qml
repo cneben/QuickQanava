@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,6 +43,8 @@ Item {
     id: template
 
     default property alias children : content.children
+
+    // Binded to Tpp.Group.container in Tpp.Group.
     property alias  content: content
 
     property var    groupItem: undefined
@@ -65,11 +67,14 @@ Item {
         height: preferredGroupHeight
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
+
+        // Necessary for Qan.GraphView
+        property var groupItem: template.groupItem
     }
-    RectSolidBackground {       // Node background and shadow with backOpacity and backRadius support
+    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
-        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring with content.childrenRect
-        nodeItem: template.groupItem
+        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
+        nodeItem: template.groupItem    // with content.childrenRect
         visible: !groupItem.collapsed
     }
     RowLayout {
@@ -102,7 +107,6 @@ Item {
                 anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
                 target: groupItem && groupItem.group ? groupItem.group : undefined
                 visible: false
-                //pointSize: groupItem.style.fontPointSize != -1
                 bold: groupItem.style.fontBold
             }
             Label {
@@ -115,16 +119,18 @@ Item {
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent
+                    enabled: !groupItem.group.locked    // Do not allow dragging of locked groups
                     preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
                     drag.target: groupItem.draggable ? groupItem : null
                     onDoubleClicked: labelEditor.visible = true
                 }
             }
-        }
+        } // labelEditor Item
     } // RowLayout: collapser + label
 
+    // FIXME 0.75
     // Emitted by qan::GroupItem when node dragging start
-    function onNodeDragEnter() { groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) }
+    function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
     // Emitted by qan::GroupItem when node dragging ends
-    function onNodeDragLeave() { groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) }
+    function onNodeDragLeave() { /*groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) */}
 }

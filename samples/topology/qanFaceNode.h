@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,7 @@
 // \date	2016 08 12
 //-----------------------------------------------------------------------------
 
-#ifndef qanFaceNode_h
-#define qanFaceNode_h
+#pragma once
 
 // QuickQanava headers
 #include <QuickQanava>
@@ -47,18 +46,18 @@ class FaceNode : public qan::Node
 {
     Q_OBJECT
 public:
-    explicit FaceNode( QQuickItem* parent = nullptr );
-    virtual ~FaceNode();
+    explicit FaceNode(QQuickItem* parent = nullptr);
+    virtual ~FaceNode() override = default;
 private:
-    Q_DISABLE_COPY( FaceNode )
+    Q_DISABLE_COPY(FaceNode)
 public:
-    Q_PROPERTY( QUrl image READ getImage WRITE setImage NOTIFY imageChanged )
-    const QUrl&         getImage() const noexcept { return _image; }
-    void                setImage(QUrl image) noexcept;
+    Q_PROPERTY(QUrl image READ getImage WRITE setImage NOTIFY imageChanged)
+    const QUrl&     getImage() const noexcept { return _image; }
+    void            setImage(QUrl image) noexcept;
 private:
-    QUrl        _image;
+    QUrl            _image;
 signals:
-    void        imageChanged();
+    void            imageChanged();
 
     /*! \name Node Static Factories *///---------------------------------------
     //@{
@@ -72,18 +71,17 @@ class FaceGraph : public qan::Graph
 {
     Q_OBJECT
 public:
-    explicit FaceGraph( QQuickItem* parent = nullptr ) noexcept : qan::Graph(parent) { }
+    explicit FaceGraph(QQuickItem* parent = nullptr) noexcept :
+        qan::Graph(parent) { }
 
 public:
     Q_INVOKABLE qan::Node* insertFaceNode() {
-        return insertNode<FaceNode>(nullptr);
+        auto node = insertNode<FaceNode>(nullptr);
+        return node;
     }
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::FaceNode )
-QML_DECLARE_TYPE( qan::FaceGraph )
-
-#endif // qanFaceNode_h
-
+QML_DECLARE_TYPE(qan::FaceNode)
+QML_DECLARE_TYPE(qan::FaceGraph)

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -69,10 +69,10 @@ public:
     //! Node constructor.
     explicit Node(QObject* parent=nullptr);
     virtual ~Node();
-    Node( const Node& ) = delete;
+    Node(const Node&) = delete;
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::node<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
@@ -82,10 +82,10 @@ public:
     /*!
      * \note only label is taken into account for equality comparison.
      */
-    bool    operator==( const qan::Node& right ) const;
+    bool    operator==(const qan::Node& right) const;
 
 public:
-    Q_PROPERTY( qan::NodeItem* item READ getItem CONSTANT )
+    Q_PROPERTY(qan::NodeItem* item READ getItem CONSTANT)
     qan::NodeItem*          getItem() noexcept;
     const qan::NodeItem*    getItem() const noexcept;
     virtual void            setItem(qan::NodeItem* nodeItem) noexcept;
@@ -102,13 +102,13 @@ public:
      *  \arg engine QML engine used to create delegate component.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Node component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Node.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default node style will be used).
      */
-    static  qan::NodeStyle*     style() noexcept;
+    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -157,8 +157,8 @@ public:
     /*! \name Appearance Management *///---------------------------------------
     //@{
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    void            setLabel( const QString& label ) noexcept;
+    Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
+    bool            setLabel( const QString& label ) noexcept;
     QString         getLabel() const noexcept { return _label; }
 private:
     QString         _label{ QStringLiteral("") };
@@ -172,13 +172,13 @@ public:
      *
      * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
      */
-    Q_PROPERTY( bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL )
-    void            setLocked(bool locked) noexcept;
+    Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
+    bool            setLocked(bool locked) noexcept;
     bool            getLocked() const noexcept { return _locked; }
 private:
-    bool            _locked{false};
+    bool            _locked = false;
 signals:
-    void            lockedChanged( );
+    void            lockedChanged();
     //@}
     //-------------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ public:
      *
      * \note nullptr if group or node is ungrouped.
      */
-    Q_PROPERTY( qan::Group* group READ getGroup FINAL )
+    Q_PROPERTY(qan::Group* group READ getGroup FINAL)
     const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
     qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
 
@@ -201,4 +201,4 @@ public:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Node )
+QML_DECLARE_TYPE(qan::Node)

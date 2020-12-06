@@ -39,14 +39,14 @@ ApplicationWindow {
     id: window
     visible: true
     width: 1280; height: 720
-    title: "Custom nodes sample"
+    title: "Selection sample"
     Pane { anchors.fill: parent }
     ToolTip { id: toolTip; timeout: 2000 }
     function notifyUser(message) { toolTip.text=message; toolTip.open() }
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
-        navigable   : true
+        navigable : true
         graph: Qan.Graph {
             id: topology
             connectorEnabled: true
@@ -96,12 +96,15 @@ ApplicationWindow {
             onAccepted: { topology.selectionColor = color; }
         }
 
-        Item {
+        Frame {
             id: selectionSettings
-            anchors.bottom: parent.bottom;   anchors.bottomMargin: 15
-            anchors.right: parent.right;    anchors.rightMargin: 15
-            width: 250; height: 390
-            Frame { anchors.fill: parent; opacity: 0.8; padding: 0; Pane { anchors.fill: parent } } // Background
+            anchors.bottom: parent.bottom;   anchors.bottomMargin: 10
+            anchors.right: parent.right;    anchors.rightMargin: 10
+            width: 250
+            height: 430
+            leftPadding: 0; rightPadding: 0
+            topPadding: 0;  bottomPadding: 0
+            Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
             ColumnLayout {
                 anchors.fill: parent; anchors.margins: 10
                 ComboBox {
@@ -132,7 +135,8 @@ ApplicationWindow {
                     highlightFollowsCurrentItem: false
                     highlight: Rectangle {
                         x: 0; y: ( selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0 );
-                        width: selectionListView.width; height: selectionListView.currentItem.height
+                        width: selectionListView.width
+                        height: selectionListView.currentItem ? selectionListView.currentItem.height : 0
                         color: Material.accent; opacity: 0.7; radius: 3
                         Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                     }
@@ -158,7 +162,7 @@ ApplicationWindow {
                             text: "NoSelection"
                             checked: topology.selectionPolicy === Qan.Graph.NoSelection
                             onCheckedChanged: {
-                                if ( checked )
+                                if (checked)
                                     topology.selectionPolicy = Qan.Graph.NoSelection;
                             }
                         }
@@ -169,7 +173,7 @@ ApplicationWindow {
                             text: "SelectOnClick"
                             checked: topology.selectionPolicy === Qan.Graph.SelectOnClick
                             onCheckedChanged: {
-                                if ( checked )
+                                if (checked)
                                     topology.selectionPolicy = Qan.Graph.SelectOnClick;
                             }
                         }
@@ -180,7 +184,7 @@ ApplicationWindow {
                             text: "SelectOnCtrlClick"
                             checked: topology.selectionPolicy === Qan.Graph.SelectOnCtrlClick
                             onCheckedChanged: {
-                                if ( checked )
+                                if (checked)
                                     topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick;
                             }
                         }
@@ -225,6 +229,11 @@ ApplicationWindow {
                         value: topology.selectionMargin
                         onValueChanged: { topology.selectionMargin = value  }
                     }
+                }
+                CheckBox {
+                    text: 'Enable visual selection rect'
+                    checked: graphView.selectionRectEnabled
+                    onClicked: graphView.selectionRectEnabled = checked
                 }
             }
         } // selectionSettings

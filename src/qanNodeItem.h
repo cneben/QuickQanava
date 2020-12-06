@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,7 @@
 // \date	2016 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef qanNodeItem_h
-#define qanNodeItem_h
+#pragma once
 
 // Std headers
 #include <cstddef>  // std::size_t
@@ -90,12 +89,12 @@ class NodeItem : public QQuickItem,
     Q_INTERFACES(qan::Draggable)
 public:
     //! Node constructor.
-    explicit NodeItem( QQuickItem* parent = nullptr );
+    explicit NodeItem(QQuickItem* parent = nullptr);
     virtual ~NodeItem() override;
-    NodeItem( const NodeItem& ) = delete;
-    NodeItem& operator=( const NodeItem& ) = delete;
-    NodeItem( NodeItem&& ) = delete;
-    NodeItem& operator=( NodeItem&& ) = delete;
+    NodeItem(const NodeItem&) = delete;
+    NodeItem& operator=(const NodeItem&) = delete;
+    NodeItem(NodeItem&&) = delete;
+    NodeItem& operator=(NodeItem&&) = delete;
 
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
@@ -127,11 +126,11 @@ private:
 
 public:
     //! Node minimum size, default to "100 x 45" (node could not be visually resized below this size if \c resizable property is true).
-    Q_PROPERTY( QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL )
+    Q_PROPERTY(QSizeF minimumSize READ getMinimumSize WRITE setMinimumSize NOTIFY minimumSizeChanged FINAL)
     //! \copydoc minimumSize
     const QSizeF&   getMinimumSize() const noexcept { return _minimumSize; }
     //! \copydoc minimumSize
-    void            setMinimumSize(QSizeF minimumSize) noexcept { _minimumSize = minimumSize; emit minimumSizeChanged( ); }
+    bool            setMinimumSize(QSizeF minimumSize) noexcept;
 private:
     QSizeF          _minimumSize{100., 45.};
 signals:
@@ -144,14 +143,30 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Collapse Management *///-----------------------------------------
+    //@{
+public:
+    //! \brief True when the node (usually a group) is collapsed (content of a collapsed group is hidden, leaving just an header bar with a +/- collapse control).
+    Q_PROPERTY(bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL)
+    inline bool     getCollapsed() const noexcept { return _collapsed; }
+    virtual void    setCollapsed(bool collapsed) noexcept;
+private:
+    bool        _collapsed{false};
+signals:
+    void        collapsedChanged();
+public:
+    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
+    //@}
+    //-------------------------------------------------------------------------
+
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
     //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
-    Q_PROPERTY( bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL )
-    Q_PROPERTY( bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL )
+    Q_PROPERTY(bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL)
+    Q_PROPERTY(bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL)
     //! \brief Item used to hilight selection (usually a Rectangle quick item).
-    Q_PROPERTY( QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL )
+    Q_PROPERTY(QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL)
 protected:
     virtual void    emitSelectableChanged() override { emit selectableChanged(); }
     virtual void    emitSelectedChanged() override { emit selectedChanged(); }
@@ -306,11 +321,11 @@ private slots:
     //@{
 signals:
     //! Emitted whenever the node is clicked (even at the start of a dragging operation).
-    void    nodeClicked( qan::NodeItem* node, QPointF p );
+    void    nodeClicked(qan::NodeItem* node, QPointF p);
     //! Emitted whenever the node is double clicked.
-    void    nodeDoubleClicked( qan::NodeItem* node, QPointF p );
+    void    nodeDoubleClicked(qan::NodeItem* node, QPointF p);
     //! Emitted whenever the node is right clicked.
-    void    nodeRightClicked( qan::NodeItem* node, QPointF p );
+    void    nodeRightClicked(qan::NodeItem* node, QPointF p);
 
 public:
     //! Set to true if the node item has a complex non rounded rectangle bounding shape (and manually install a \c onRequestUpdateBoundingShape() handler in QML delegate).
@@ -470,5 +485,3 @@ private:
 QML_DECLARE_TYPE(qan::NodeItem)
 Q_DECLARE_METATYPE(qan::NodeItem::Connectable)
 Q_DECLARE_METATYPE(qan::NodeItem::Dock)
-
-#endif // qanNodeItem_h

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -72,7 +72,7 @@ public:
     Connector(Connector&&) = delete;
     Connector& operator=(Connector&&) = delete;
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL)
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
     auto    getGraph() const noexcept -> qan::Graph*;
@@ -85,8 +85,8 @@ signals:
     /*! \name Connector Static Factories *///----------------------------------
     //@{
 public:
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-    static  qan::NodeStyle*     style() noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
+    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -153,8 +153,8 @@ public:
      * \note Connector item is automatically hidden if \c sourcePort is nullptr or \c sourcePort is
      * destroyed.
      */
-    Q_PROPERTY( qan::PortItem* sourcePort READ getSourcePort WRITE setSourcePort NOTIFY sourcePortChanged FINAL )
-    void                    setSourcePort( qan::PortItem* sourcePort ) noexcept;
+    Q_PROPERTY(qan::PortItem* sourcePort READ getSourcePort WRITE setSourcePort NOTIFY sourcePortChanged FINAL)
+    void                    setSourcePort(qan::PortItem* sourcePort) noexcept;
     inline qan::PortItem*   getSourcePort() const noexcept { return _sourcePort.data(); }
 private:
     QPointer<qan::PortItem> _sourcePort;
@@ -170,8 +170,8 @@ public:
      * \note Connector item is automatically hidden if \c sourceNode is nullptr or \c sourceNode is
      * destroyed.
      */
-    Q_PROPERTY( qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL )
-    void                setSourceNode( qan::Node* sourceNode ) noexcept;
+    Q_PROPERTY(qan::Node* sourceNode READ getSourceNode WRITE setSourceNode NOTIFY sourceNodeChanged FINAL)
+    void                setSourceNode(qan::Node* sourceNode) noexcept;
     inline qan::Node*   getSourceNode() const noexcept { return _sourceNode.data(); }
 private:
     QPointer<qan::Node> _sourceNode;

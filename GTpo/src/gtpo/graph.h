@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -228,7 +228,7 @@ public:
     inline auto     get_root_nodes() const -> const weak_nodes_t& { return _root_nodes; }
 
 private:
-    shared_nodes_t        _nodes;
+    shared_nodes_t      _nodes;
     weak_nodes_t        _root_nodes;
     weak_nodes_t_search _nodes_search;
     //@}

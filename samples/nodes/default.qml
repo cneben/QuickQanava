@@ -24,7 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
+import QtQuick                   2.12
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
@@ -38,8 +38,18 @@ Qan.GraphView {
     navigable   : true
     resizeHandlerColor: "#03a9f4"       // SAMPLE: Set resize handler color to blue for 'resizable' nodes
     gridThickColor: Material.theme === Material.Dark ? "#4e4e4e" : "#c1c1c1"
-
+    PinchHandler {
+        target: null
+        onActiveScaleChanged: {
+            console.error('centroid.position=' + centroid.position)
+            console.error('activeScale=' + activeScale)
+            var p = centroid.position
+            var f = activeScale > 1.0 ? 1. : -1.
+            graphView.zoomOn(p, graphView.zoom + (f * 0.03))
+        }
+    }
     graph: Qan.Graph {
+        parent: graphView
         id: graph
         Component.onCompleted: {
             var n1 = graph.insertNode()

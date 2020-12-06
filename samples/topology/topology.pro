@@ -5,14 +5,17 @@ QT          += widgets core gui qml quick quickcontrols2
 
 include(../../src/quickqanava.pri)
 
-RESOURCES   += ./topology.qrc
+RESOURCES   += ./topology.qrc           \
+               ./theme/qan/qan-theme.qrc
 
-SOURCES     +=  ./qanTopologySample.cpp \
+SOURCES     +=  ./topology.cpp      \
                 ./qanFaceNode.cpp
 
-HEADERS     +=  ./qanTopologySample.h   \
-                ./qanFaceNode.h         \
-                ./main.qml
+HEADERS     +=  ./qanFaceNode.h     \
+                ./topology.qml
 
-OTHER_FILES +=  main.qml        \
-                FaceNode.qml
+OTHER_FILES +=  topology.qml        \
+                FaceNode.qml        \
+                NodesListView.qml   \
+                EdgesListView.qml   \
+                ScreenshotPopup.qml

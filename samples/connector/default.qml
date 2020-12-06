@@ -24,7 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
+import QtQuick                   2.15
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
@@ -38,6 +38,16 @@ Qan.GraphView {
     id: graphView
     anchors.fill: parent
     navigable   : true
+    PinchHandler {
+        target: null
+        onActiveScaleChanged: {
+            console.error('centroid.position=' + centroid.position)
+            console.error('activeScale=' + activeScale)
+            var p = centroid.position
+            var f = activeScale > 1.0 ? 1. : -1.
+            graphView.zoomOn(p, graphView.zoom + (f * 0.04))
+        }
+    }
     graph: Qan.Graph {
         id: graph
         connectorEnabled: true              // SAMPLE: This is where visual connection of node is enabled...

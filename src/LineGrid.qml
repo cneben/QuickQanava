@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -63,7 +63,7 @@ Qan.AbstractLineGrid {
             if (minorLineToDrawCount <= lineGrid.minorLines.length) {
                 ctx.lineWidth = 1.
                 context.beginPath();
-                for (let l = 0; l < minorLineToDrawCount; l++) {
+                for (var l = 0; l < minorLineToDrawCount; l++) {
                     let line = lineGrid.minorLines[l];
                     if (!line)
                         break;
@@ -75,9 +75,10 @@ Qan.AbstractLineGrid {
 
             // iterate over major lines...
             if (majorLineToDrawCount <= lineGrid.majorLines.length) {
-                ctx.lineWidth = 2.
+                //ctx.lineWidth = 2.
+                ctx.strokeStyle = Qt.darker(lineGrid.thickColor, 1.3)
                 context.beginPath();
-                for (let l = 0; l < majorLineToDrawCount; l++) {
+                for (l = 0; l < majorLineToDrawCount; l++) {
                     let line = lineGrid.majorLines[l];
                     if (!line)
                         break;

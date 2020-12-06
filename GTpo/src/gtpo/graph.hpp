@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -46,15 +46,16 @@ void    graph<config_t>::clear() noexcept
 {
     // Note 20160104: First edges, then nodes (it helps maintaining topology if
     // womething went wrong during destruction
-    for ( auto& edge: _edges )   // Do not maintain topology during edge deletion
-        edge->_graph = nullptr;
-    _edges_search.clear();
-    _edges.clear();
     for ( auto& node: _nodes )   // Do not maintain topology during node deletion
         node->_graph = nullptr;
     _root_nodes.clear();         // Remove weak_ptr containers first
     _nodes_search.clear();
     _nodes.clear();
+
+    for ( auto& edge: _edges )   // Do not maintain topology during edge deletion
+        edge->_graph = nullptr;
+    _edges_search.clear();
+    _edges.clear();
 
     // Clearing groups and behaviours (Not: group->_graph is resetted with nodes)
     _groups.clear();
@@ -76,11 +77,11 @@ auto graph<config_t>::create_node( ) -> weak_node_t
 template < class config_t >
 auto    graph<config_t>::insert_node( shared_node_t node ) -> weak_node_t
 {
-    assert_throw( node != nullptr, "gtpo::graph<>::insert_node(): Error: Trying to insert a nullptr node in graph." );
+    assert_throw(node != nullptr, "gtpo::graph<>::insert_node(): Error: Trying to insert a nullptr node in graph.");
     weak_node_t weak_node;
     try {
         weak_node = node;
-        node->set_graph( this );
+        node->set_graph(this);
         config_t::template container_adapter< shared_nodes_t >::insert( node, _nodes );
         config_t::template container_adapter< weak_nodes_t_search >::insert( weak_node, _nodes_search );
         config_t::template container_adapter< weak_nodes_t >::insert( weak_node, _root_nodes );
@@ -197,8 +198,9 @@ auto    graph<config_t>::insert_edge( shared_edge_t edge ) -> weak_edge_t
          edge->get_dst().expired() )
         throw gtpo::bad_topology_error( "gtpo::graph<>::insert_edge(): Error: Either source and/or destination nodes are expired." );
     edge->set_graph( this );
+    weak_edge_t weak_edge = edge;
     config_t::template container_adapter<shared_edges_t>::insert( edge, _edges );
-    config_t::template container_adapter<weak_edges_search_t>::insert( edge, _edges_search );
+    config_t::template container_adapter<weak_edges_search_t>::insert( weak_edge, _edges_search );
     try {
         source->add_out_edge( edge );
         auto destination = edge->get_dst().lock();

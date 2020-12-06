@@ -32,8 +32,7 @@
 // \date	2017 03 19
 //-----------------------------------------------------------------------------
 
-#ifndef custom_h
-#define custom_h
+#pragma once
 
 // QuickQanava headers
 #include "QuickQanava"
@@ -43,12 +42,12 @@ class CustomRectNode : public qan::Node
     Q_OBJECT
 public:
     explicit CustomRectNode(QObject* parent=nullptr)  : qan::Node{parent} { /* Nil */ }
-    virtual ~CustomRectNode() { /* Nil */ }
-    CustomRectNode( const CustomRectNode& ) = delete;
+    virtual ~CustomRectNode() override = default;
+    CustomRectNode(const CustomRectNode&) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-    static  qan::NodeStyle*     style() noexcept;
+    static  QQmlComponent*  delegate(QQmlEngine& engine) noexcept;
+    static  qan::NodeStyle* style(QObject* parent = nullptr) noexcept;
 };
 
 class CustomRoundNode : public qan::Node
@@ -56,39 +55,39 @@ class CustomRoundNode : public qan::Node
     Q_OBJECT
 public:
     explicit CustomRoundNode(QObject* parent=nullptr) : qan::Node{parent} { }
-    virtual ~CustomRoundNode() { /* Nil */ }
+    virtual ~CustomRoundNode() override = default;
     CustomRoundNode( const CustomRoundNode& ) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-    static  qan::NodeStyle*     style() noexcept;
+    static  QQmlComponent*  delegate(QQmlEngine& engine) noexcept;
+    static  qan::NodeStyle* style(QObject* parent = nullptr) noexcept;
 };
 
-QML_DECLARE_TYPE( CustomRectNode )
-QML_DECLARE_TYPE( CustomRoundNode )
+QML_DECLARE_TYPE(CustomRectNode)
+QML_DECLARE_TYPE(CustomRoundNode)
 
 class CustomEdge : public qan::Edge
 {
     Q_OBJECT
 public:
-    explicit CustomEdge() : qan::Edge{} { }
-    virtual ~CustomEdge() { /* Nil */ }
-    CustomEdge( const CustomEdge& ) = delete;
+    explicit CustomEdge(QObject* parent = nullptr) : qan::Edge{parent} { }
+    virtual ~CustomEdge() override = default;
+    CustomEdge(const CustomEdge&) = delete;
 
 public:
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-    static  qan::EdgeStyle*     style() noexcept;
+    static  QQmlComponent*  delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
+    static  qan::EdgeStyle* style(QObject* parent = nullptr) noexcept;
 };
 
-QML_DECLARE_TYPE( CustomEdge )
+QML_DECLARE_TYPE(CustomEdge)
 
 class CustomGraph : public qan::Graph
 {
     Q_OBJECT
 public:
-    explicit CustomGraph( QQuickItem* parent = nullptr ) : qan::Graph(parent) { /* Nil */ }
-    virtual ~CustomGraph() { /* Nil */ }
-    CustomGraph( const CustomGraph& ) = delete;
+    explicit CustomGraph(QQuickItem* parent = nullptr) : qan::Graph(parent) { /* Nil */ }
+    virtual ~CustomGraph() override = default;
+    CustomGraph(const CustomGraph&) = delete;
 
 public:
     Q_INVOKABLE qan::Node*  insertRectNode();
@@ -96,7 +95,4 @@ public:
     Q_INVOKABLE qan::Edge*  insertCustomEdge(qan::Node* source, qan::Node* destination);
 };
 
-QML_DECLARE_TYPE( CustomGraph )
-
-#endif // custom_h
-
+QML_DECLARE_TYPE(CustomGraph)

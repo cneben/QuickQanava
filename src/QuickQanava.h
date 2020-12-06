@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -74,7 +74,7 @@ struct QuickQanava {
         QuickContainers::initialize();
 
         qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");
-        if ( engine ) {
+        if (engine != nullptr) {
             engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
             engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
@@ -103,7 +103,7 @@ struct QuickQanava {
         qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
         qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer" );
 #endif // QUICKQANAVA_STATIC
-    }
+    } // initialize()
 };
 
 namespace qan { // ::qan

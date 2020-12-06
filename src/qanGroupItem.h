@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -64,8 +64,6 @@ class GroupItem : public qan::NodeItem
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
-    //Q_INTERFACES(qan::Selectable)
-    //Q_INTERFACES(qan::Draggable)
 public:
     //! Group constructor.
     explicit GroupItem( QQuickItem* parent = nullptr );
@@ -77,7 +75,7 @@ public:
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::Group* group READ getGroup CONSTANT FINAL )
+    Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
     auto        getGroup() noexcept -> qan::Group*;
     auto        getGroup() const noexcept -> const qan::Group*;
     auto        setGroup(qan::Group* group) noexcept -> void;
@@ -86,7 +84,7 @@ private:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto            setRect(const QRectF& r) noexcept -> void;
+    auto        setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 
@@ -144,7 +142,7 @@ public:
     void            setMinimumGroupHeight(qreal minimumGroupHeight) noexcept;
 private:
     //! \copydoc minimumGroupHeight
-    qreal           _minimumGroupHeight = 100.;
+    qreal           _minimumGroupHeight = 80.;
 signals:
     //! \copydoc minimumGroupHeight
     void            minimumGroupHeightChanged();
@@ -153,15 +151,10 @@ signals:
 
     /*! \name Collapse Management *///-----------------------------------------
     //@{
+protected:
+    virtual void    setCollapsed(bool collapsed) noexcept override;
 public:
-    // FIXME document me
-    Q_PROPERTY( bool collapsed READ getCollapsed WRITE setCollapsed NOTIFY collapsedChanged FINAL )
-    inline bool getCollapsed() const noexcept { return _collapsed; }
-    void        setCollapsed( bool collapsed ) noexcept;
-private:
-    bool        _collapsed{false};
-signals:
-    void        collapsedChanged();
+    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
     //@}
     //-------------------------------------------------------------------------
 
@@ -177,7 +170,7 @@ public:
     virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
-    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem);
+    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
     //! Call at the beginning of another group or node hover operation on this group (usually trigger a visual change to notify user that insertion is possible trought DND).
     inline void     proposeNodeDrop() noexcept { emit nodeDragEnter( ); }
@@ -192,14 +185,15 @@ public:
      * following code to set 'container' property:
      *
      * \code
-     * Qan.Group {
-     *  id: group
-     *  default property alias children : content.children
-     *  Item {
-     *      id: content
-     *      // ...
-     *  }
-     *  container = content
+     * Qan.GroupItem {
+     *   id: groupItem
+     *   default property alias children : content
+     *   container: content
+     *   Item {
+     *     id: content
+     *     // ...
+     *   }
+     *   container = content
      * }
      * \endcode
      */

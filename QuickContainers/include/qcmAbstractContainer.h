@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -85,7 +85,7 @@ public:
             createModel();
         return _model.data();
     }
-    //! Shortcut to getModel() (HACK).
+    //! Shortcut to getModel().
     inline ContainerModel*      model() const noexcept { return const_cast<AbstractContainer*>(this)->getModel(); }
 
 protected:

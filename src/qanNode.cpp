@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::node< qan::Config >{}
+    gtpo::node<qan::Config>{parent}
 {
     Q_UNUSED(parent)
 
@@ -64,7 +64,7 @@ Node::Node(QObject* parent) :
 
 Node::~Node()
 {
-    if ( _item )
+    if (_item)
         _item->deleteLater();
 }
 
@@ -86,29 +86,31 @@ const qan::NodeItem*    Node::getItem() const noexcept { return _item.data(); }
 
 void    Node::setItem(qan::NodeItem* nodeItem) noexcept
 {
-    if ( nodeItem != nullptr ) {
+    if (nodeItem != nullptr) {
         _item = nodeItem;
-        if ( nodeItem->getNode() != this )
+        if (nodeItem->getNode() != this)
             nodeItem->setNode(this);
     }
 }
 //-----------------------------------------------------------------------------
 
 /* Node Static Factories *///--------------------------------------------------
-QQmlComponent*  Node::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  Node::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
+    Q_UNUSED(parent)
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml");
+    if (!delegate)
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Node.qml",
+                                                   QQmlComponent::PreferSynchronous);
     return delegate.get();
 }
 
-qan::NodeStyle* Node::style() noexcept
+qan::NodeStyle* Node::style(QObject* parent) noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  qan_Node_style;
-    if ( !qan_Node_style )
-        qan_Node_style = std::make_unique<qan::NodeStyle>();
-    return qan_Node_style.get();
+    static QScopedPointer<qan::NodeStyle>  qan_Node_style;
+    if (!qan_Node_style)
+        qan_Node_style.reset(new qan::NodeStyle(parent));
+    return qan_Node_style.data();
 }
 //-----------------------------------------------------------------------------
 
@@ -170,25 +172,27 @@ void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
 //-----------------------------------------------------------------------------
 
 /* Appearance Management *///--------------------------------------------------
-void    Node::setLabel( const QString& label ) noexcept
+bool    Node::setLabel(const QString& label) noexcept
 {
-    if ( label != _label ) {
+    if (label != _label) {
         _label = label;
         emit labelChanged();
+        if (auto graph = getGraph())
+            emit graph->nodeLabelChanged(this);
+        return true;
     }
+    return false;
 }
 
-void    Node::setLocked(bool locked) noexcept
+bool    Node::setLocked(bool locked) noexcept
 {
     if (locked != _locked) {
         _locked = locked;
         emit lockedChanged();
+        return true;
     }
+    return false;
 }
-
-//-----------------------------------------------------------------------------
-
-/* Dock Management *///--------------------------------------------------------
 //-----------------------------------------------------------------------------
 
 } // ::qan

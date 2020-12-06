@@ -63,6 +63,8 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanBottomRightResizer.cpp
 
 OTHER_FILES +=  $$PWD/QuickQanava                   \
+                $$PWD/NavigablePreview.qml          \
+                $$PWD/GraphPreview.qml              \
                 $$PWD/LineGrid.qml                  \
                 $$PWD/GraphView.qml                 \
                 $$PWD/Graph.qml                     \
@@ -90,23 +92,3 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml               \
                 $$PWD/qmldir_static
-
-#CONFIG      += use_graphviz
-use_graphviz {
-    DEFINES     += USE_GRAPHVIZ
-    unix: CONFIG += link_pkgconfig
-    unix: PKGCONFIG += libgvc
-
-    GRAPHVIZ_DIR = "C:\graphviz"
-
-    # note these are x64 libs, graphviz only distributes x86 ones
-    win32: LIBS += $$GRAPHVIZ_DIR/lib/gvc.lib
-    win32: LIBS += $$GRAPHVIZ_DIR/lib/cgraph.lib
-    win32: LIBS += $$GRAPHVIZ_DIR/lib/cdt.lib
-    win32: LIBS += $$GRAPHVIZ_DIR/lib/gvplugin_dot_layout.lib
-    win32: INCLUDEPATH += "$$GRAPHVIZ_DIR/include/graphviz"
-    win32: DEPENDPATH += "$$GRAPHVIZ_DIR/include/graphviz"
-    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/gvc.lib
-    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cdt.lib
-    win32: PRE_TARGETDEPS += $$GRAPHVIZ_DIR/lib/cgraph.lib
-}

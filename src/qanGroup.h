@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -60,7 +60,7 @@ class Group : public qan::Node
     Q_OBJECT
 public:
     //! Group constructor.
-    explicit Group( QObject* parent = nullptr );
+    explicit Group(QObject* parent = nullptr);
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
@@ -69,7 +69,7 @@ public:
 
     using gtpo_node_t = gtpo::node<qan::Config>;
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::group<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
@@ -103,13 +103,13 @@ public:
      *  \arg engine QML engine used for delegate QML component creation.
      *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
+    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Group.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
      */
-    static  qan::Style*         style() noexcept;
+    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -117,7 +117,7 @@ public:
     //@{
 public:
     //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
-    Q_INVOKABLE bool    hasNode( qan::Node* node ) const;
+    Q_INVOKABLE bool    hasNode(const qan::Node* node) const;
     //@}
     //-------------------------------------------------------------------------
 

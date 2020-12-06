@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -49,7 +49,7 @@
 namespace qan { // ::qan
 
 /* Group Object Management *///------------------------------------------------
-Group::Group( QObject* parent ) :
+Group::Group(QObject* parent) :
     qan::Node{parent}
 {
     set_is_group(true);
@@ -117,35 +117,39 @@ void    Group::itemEndProposeNodeDrop()
 //-----------------------------------------------------------------------------
 
 /* Group Static Factories *///-------------------------------------------------
-QQmlComponent*  Group::delegate(QQmlEngine& engine) noexcept
+QQmlComponent*  Group::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
-    if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml");
+    if (!delegate)
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/Group.qml",
+                                                   QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
 }
 
-qan::Style*     Group::style() noexcept
+qan::NodeStyle* Group::style(QObject* parent) noexcept
 {
-    static std::unique_ptr<qan::NodeStyle>  qan_Group_style;
-    if ( !qan_Group_style ) {
-        qan_Group_style = std::make_unique<qan::NodeStyle>();
+    static QScopedPointer<qan::NodeStyle>  qan_Group_style;
+    if (!qan_Group_style) {
+        qan_Group_style.reset(new qan::NodeStyle{parent});
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
         qan_Group_style->setBorderWidth(2.);
         qan_Group_style->setBackRadius(8.);
+        qan_Group_style->setBackOpacity(0.90);
+        qan_Group_style->setBaseColor(QColor(240, 245, 250));
+        qan_Group_style->setBackColor(QColor(242, 248, 255));
     }
     return qan_Group_style.get();
 }
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
-bool    Group::hasNode( qan::Node* node ) const
+bool    Group::hasNode(const qan::Node* node) const
 {
     if ( node == nullptr )
         return false;
     try {
-        auto weakNode = std::static_pointer_cast<qan::Node>(node->shared_from_this());
+        auto weakNode = std::static_pointer_cast<qan::Node>(const_cast<qan::Node*>(node)->shared_from_this());
         return gtpo_node_t::has_node(weakNode);
     } catch ( std::bad_weak_ptr ) { /* Nil */ } // C++17
     return false;

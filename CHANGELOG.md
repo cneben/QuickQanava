@@ -1,6 +1,10 @@
 CHANGELOG
 ---------
 
+**20201205:** 
++ Update copyright notice.
++ Multiple bug fixes.
+
 **20191110:** 
 + Complete rewrite of LineGrid, various cosmetic fixes and bugfixes (update to v0.15.0).
 + Breaking change: Qan.PointGrid support removed.

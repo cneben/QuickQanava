@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -230,7 +230,6 @@ Item {
         id: edgeShape
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
-        //asynchronous: true    // FIXME: Benchmark that
         antialiasing: true
         smooth: true
         property var curvedLine : undefined

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -81,7 +81,8 @@ Qan.Connector {
 
     // Private ////////////////////////////////////////////////////////////////
     width: radius * 2;  height: radius * 2
-    x: parent.width + connectorMargin;  y: topMargin
+    x: connectorMargin
+    y: topMargin
 
     visible: false
     selectable: false
@@ -91,8 +92,8 @@ Qan.Connector {
      *  or port configuration, also restore position bindings to source.
      */
     function configureConnectorPosition() {
-        if ( sourcePort ) {
-            switch ( sourcePort.dockType ) {
+        if (sourcePort) {
+            switch (sourcePort.dockType) {
             case Qan.NodeItem.Left:
                 visualConnector.x = Qt.binding( function(){ return -width - connectorMargin } )
                 visualConnector.y = Qt.binding( function(){ return ( sourcePort.height - visualConnector.height ) / 2 } )
@@ -114,7 +115,7 @@ Qan.Connector {
                 visualConnector.z = Qt.binding( function(){ return sourcePort.z + 1. } )
                 break;
             }
-        } else if ( sourceNode ) {
+        } else if (sourceNode) {
             visualConnector.x = Qt.binding( function(){ return sourceNode.item.width + connectorMargin } )
             visualConnector.y = -visualConnector.height / 2 + visualConnector.topMargin
             visualConnector.z = Qt.binding( function(){ return sourceNode.item.z + 1. } )
@@ -125,8 +126,8 @@ Qan.Connector {
     onSourceNodeChanged: configureConnectorPosition()
 
     onVisibleChanged: {     // Note 20170323: Necessary for custom connectorItem until they are reparented to this
-        if ( connectorItem )
-            connectorItem.visible = visible && sourceNode   // Visible only if visual connector is visible and a valid source node is set
+        if (connectorItem)
+            connectorItem.visible = visible && (sourceNode || sourcePort)  // Visible only if visual connector is visible and a valid source node is set
 
         if (edgeItem && !visible)       // Force hiding the connector edge item
             edgeItem.visible = false
@@ -135,30 +136,32 @@ Qan.Connector {
     Drag.active: dropDestArea.drag.active
     Drag.dragType: Drag.Internal
     Drag.onTargetChanged: { // Hilight a target node
-        if ( Drag.target ) {
+        if (Drag.target) {
             visualConnector.z = Drag.target.z + 1
-            if ( connectorItem )
+            if (connectorItem)
                 connectorItem.z = Drag.target.z + 1
         }
-        if ( !Drag.target &&
-             connectorItem ) {
+        if (!Drag.target &&
+            connectorItem) {
             connectorItem.state = "NORMAL"
             return;
         }
         // Drag.target is valid, trying to find a valid target
-        if (sourceNode && sourceNode.item) {
-            if ( Drag.target === sourceNode.item ) { // Prevent creation of a circuit on source node
+        let source = visualConnector.sourceNode ? visualConnector.sourceNode : visualConnector.sourcePort
+        if (source) {   // Note: source might be a qan::Node OR a qan::PortItem
+            if (source.item &&
+                Drag.target === source.item) { // Prevent creation of a circuit on source node
                 connectorItem.state = "NORMAL"
-            } else if ( sourceNode.group &&
-                        sourceNode.group.item &&
-                        Drag.target === sourceNode.group.item ) { // Prevent creation of an edge from source node to it's own group
+            } else if (source.group &&
+                       source.group.item &&                 // Prevent creation of an edge from
+                       Drag.target === source.group.item) { // source node to it's own group
                 connectorItem.state = "NORMAL"
             } else {
                 // Potentially, we have a valid node or group target
-                var target = Drag.target.group ? Drag.target.group : Drag.target.node
-                var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
-                        Drag.target.connectable === Qan.NodeItem.InConnectable
-                if ( target && connectable )
+                let target = Drag.target.group ? Drag.target.group : Drag.target.node
+                let connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
+                                  Drag.target.connectable === Qan.NodeItem.InConnectable
+                if (target && connectable)
                     connectorItem.state = "HILIGHT"
             }
         }
@@ -201,23 +204,17 @@ Qan.Connector {
         hoverEnabled: true
         enabled: true
         onReleased: {
-            if ( connectorItem.state === "HILIGHT" ) {
+            if (connectorItem.state === "HILIGHT")
                 connectorReleased(visualConnector.Drag.target)
-            }
             configureConnectorPosition()
             if (edgeItem)       // Hide the edgeItem after a mouse release or it could
                 edgeItem.visible = false    // be visible on non rectangular nodes.
         }
         onPressed : {
-            console.error("onPressed")
-            console.error("PRE edgeItem.visible=" + edgeItem.visible)
-            console.error("PRE edgeItem.hidden=" + edgeItem.hidden)
             mouse.accepted = true
             connectorPressed()
             if (edgeItem)
                 edgeItem.visible = true
-            console.error("POST edgeItem.visible=" + edgeItem.visible)
-            console.error("POST edgeItem.hidden=" + edgeItem.hidden)
         }
     } // MouseArea: dropDestArea
 }
