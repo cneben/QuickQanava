@@ -81,8 +81,7 @@ Qan.Connector {
 
     // Private ////////////////////////////////////////////////////////////////
     width: radius * 2;  height: radius * 2
-    x: parent && visible ? parent.width + connectorMargin :         // VisualConnector is parented to GraphView containerItem by default, when connector is not visible
-                           connectorMargin                          // (ie not reparented to a node, do not set it's width to avoid modifying a parent childrenRect
+    x: connectorMargin
     y: topMargin
 
     visible: false
