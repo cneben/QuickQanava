@@ -354,8 +354,27 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
     } else if (_selectionRectItem != nullptr &&
                _ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
         const auto& p = event->localPos();
-        _selectionRectItem->setWidth(p.x() - _selectionRectItem->x());
-        _selectionRectItem->setHeight(p.y() - _selectionRectItem->y());
+        if (_selectionRectItem->rotation() == 0 ||
+            _selectionRectItem->rotation() == -180) {
+            _selectionRectItem->setWidth(abs(p.x() - _selectionRectItem->x()));
+            _selectionRectItem->setHeight(abs(p.y() - _selectionRectItem->y()));
+        }
+        else {
+            _selectionRectItem->setWidth(abs(p.y() - _selectionRectItem->y()));
+            _selectionRectItem->setHeight(abs(p.x() - _selectionRectItem->x()));
+        }
+        if (p.x() >= _selectionRectItem->x()) {
+            if (p.y() >= _selectionRectItem->y())
+                _selectionRectItem->setRotation(0);
+            else
+                _selectionRectItem->setRotation(-90);
+        }
+        else {
+            if (p.y() >= _selectionRectItem->y())
+                _selectionRectItem->setRotation(90);
+            else
+                _selectionRectItem->setRotation(-180);
+        }
         _lastSelectRect = event->localPos();
         const auto selectionRect = mapRectToItem(_containerItem,
                                                  QRectF{_selectionRectItem->x(), _selectionRectItem->y(),
@@ -383,6 +402,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
                 _selectionRectItem->setWidth(1.);
                 _selectionRectItem->setHeight(1.);
                 _selectionRectItem->setVisible(true);
+                _selectionRectItem->setTransformOrigin(QQuickItem::TopLeft);
                 _selectRectActive = true;
             }
             event->accept();
