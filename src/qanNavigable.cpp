@@ -355,13 +355,13 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
                _ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
         const auto& p = event->localPos();
         if (_selectionRectItem->rotation() == 0 ||
-            _selectionRectItem->rotation() == -180) {
-            _selectionRectItem->setWidth(abs(p.x() - _selectionRectItem->x()));
-            _selectionRectItem->setHeight(abs(p.y() - _selectionRectItem->y()));
+            _selectionRectItem->rotation() == 180) {
+            _selectionRectItem->setWidth(qAbs(p.x() - _selectionRectItem->x()));
+            _selectionRectItem->setHeight(qAbs(p.y() - _selectionRectItem->y()));
         }
         else {
-            _selectionRectItem->setWidth(abs(p.y() - _selectionRectItem->y()));
-            _selectionRectItem->setHeight(abs(p.x() - _selectionRectItem->x()));
+            _selectionRectItem->setWidth(qAbs(p.y() - _selectionRectItem->y()));
+            _selectionRectItem->setHeight(qAbs(p.x() - _selectionRectItem->x()));
         }
         if (p.x() >= _selectionRectItem->x()) {
             if (p.y() >= _selectionRectItem->y())
@@ -373,12 +373,16 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
             if (p.y() >= _selectionRectItem->y())
                 _selectionRectItem->setRotation(90);
             else
-                _selectionRectItem->setRotation(-180);
+                _selectionRectItem->setRotation(180);
         }
+        const auto topLeftSelectionPoint = QPointF{qMin(_selectionRectItem->x(), p.x()),
+                                                   qMin(_selectionRectItem->y(), p.y())};
+        const auto bottomRightSelectionPoint = QPointF{qMax(_selectionRectItem->x(), p.x()),
+                                                       qMax(_selectionRectItem->y(), p.y())};
         _lastSelectRect = event->localPos();
         const auto selectionRect = mapRectToItem(_containerItem,
-                                                 QRectF{_selectionRectItem->x(), _selectionRectItem->y(),
-                                                        _selectionRectItem->width(), _selectionRectItem->height()});
+                                                 QRectF{topLeftSelectionPoint,
+                                                        bottomRightSelectionPoint});
         qWarning() << "selectionRect=" << selectionRect;
         selectionRectActivated(selectionRect);
     }
