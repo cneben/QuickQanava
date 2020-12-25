@@ -67,11 +67,11 @@ set(CMAKE_AUTOMOC ON)
 qt5_wrap_cpp(qan_source_files, qan_header_files)
 set(CMAKE_AUTORCC ON)
 
-if(BUILD_STATIC_QRC)
-	list(APPEND RESOURCES QuickQanava_static.qrc)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+        list(APPEND RESOURCES QuickQanava_static.qrc)
 else()
-	list(APPEND RESOURCES QuickQanava_plugin.qrc)
-endif(BUILD_STATIC_QRC)
+        list(APPEND RESOURCES QuickQanava_plugin.qrc)
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -103,9 +103,9 @@ install(TARGETS QuickQanava
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
-if(BUILD_STATIC_QRC)
-	target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
-endif(BUILD_STATIC_QRC)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+        target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 # Configure QuickQanava QML module plugin #####################################
 set(PLUGIN_TARGET "quickqanavaplugin")
@@ -122,7 +122,7 @@ if (NOT DEFINED QT_QMAKE_EXECUTABLE)
     endif()
 endif()
 execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
-string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
+string(STRIP "${QT_INSTALL_QML_RAW}" QT_INSTALL_QML)
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
 install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
@@ -130,25 +130,25 @@ install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
 # Install qmldir file
 
-if(BUILD_STATIC_QRC)
-	install(
-		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_static
-		DESTINATION ${DESTDIR}
-		RENAME qmldir
-	)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+        install(
+                FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_static
+                DESTINATION ${DESTDIR}
+                RENAME qmldir
+        )
 else()
-	install(
-		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
-		DESTINATION ${DESTDIR}
-		RENAME qmldir
-	)
-endif(BUILD_STATIC_QRC)
+        install(
+                FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
+                DESTINATION ${DESTDIR}
+                RENAME qmldir
+        )
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 
 # Install source QML files to ease debugging
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
-	DESTINATION ${DESTDIR}
-	FILES_MATCHING PATTERN "*.qml"
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
+        DESTINATION ${DESTDIR}
+        FILES_MATCHING PATTERN "*.qml"
 )
 

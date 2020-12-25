@@ -147,7 +147,7 @@ Qan.Connector {
             return;
         }
         // Drag.target is valid, trying to find a valid target
-        let source = visualConnector.sourceNode ? visualConnector.sourceNode : visualConnector.sourcePort
+        var source = visualConnector.sourceNode ? visualConnector.sourceNode : visualConnector.sourcePort
         if (source) {   // Note: source might be a qan::Node OR a qan::PortItem
             if (source.item &&
                 Drag.target === source.item) { // Prevent creation of a circuit on source node
@@ -158,8 +158,8 @@ Qan.Connector {
                 connectorItem.state = "NORMAL"
             } else {
                 // Potentially, we have a valid node or group target
-                let target = Drag.target.group ? Drag.target.group : Drag.target.node
-                let connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
+                var target = Drag.target.group ? Drag.target.group : Drag.target.node
+                var connectable = Drag.target.connectable === Qan.NodeItem.Connectable ||
                                   Drag.target.connectable === Qan.NodeItem.InConnectable
                 if (target && connectable)
                     connectorItem.state = "HILIGHT"

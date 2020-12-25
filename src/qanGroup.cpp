@@ -139,7 +139,7 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
         qan_Group_style->setBaseColor(QColor(240, 245, 250));
         qan_Group_style->setBackColor(QColor(242, 248, 255));
     }
-    return qan_Group_style.get();
+    return qan_Group_style.data();
 }
 //-----------------------------------------------------------------------------
 

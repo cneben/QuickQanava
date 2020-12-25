@@ -64,7 +64,7 @@ Qan.AbstractLineGrid {
                 ctx.lineWidth = 1.
                 context.beginPath();
                 for (var l = 0; l < minorLineToDrawCount; l++) {
-                    let line = lineGrid.minorLines[l];
+                    var line = lineGrid.minorLines[l];
                     if (!line)
                         break;
                     ctx.moveTo(line.p1.x, line.p1.y)
@@ -79,7 +79,7 @@ Qan.AbstractLineGrid {
                 ctx.strokeStyle = Qt.darker(lineGrid.thickColor, 1.3)
                 context.beginPath();
                 for (l = 0; l < majorLineToDrawCount; l++) {
-                    let line = lineGrid.majorLines[l];
+                    var line = lineGrid.majorLines[l];
                     if (!line)
                         break;
                     ctx.moveTo(line.p1.x, line.p1.y)

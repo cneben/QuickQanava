@@ -73,10 +73,10 @@ Control {
         //console.error('gw=' + gw + '   gh=' + gh)
 
         // 1.
-        let sw = pw / gw
-        let sh = ph / gh
-        let npw = 0.
-        let nph = pw * graphRatio
+        var sw = pw / gw
+        var sh = ph / gh
+        var npw = 0.
+        var nph = pw * graphRatio
         if (nph < ph) {
             // 2.
             npw = pw

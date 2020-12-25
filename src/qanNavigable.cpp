@@ -383,7 +383,8 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
         const auto selectionRect = mapRectToItem(_containerItem,
                                                  QRectF{topLeftSelectionPoint,
                                                         bottomRightSelectionPoint});
-        qWarning() << "selectionRect=" << selectionRect;
+
+//        qWarning() << "selectionRect=" << selectionRect;
         selectionRectActivated(selectionRect);
     }
     QQuickItem::mouseMoveEvent(event);
@@ -454,7 +455,7 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 {
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
-        zoomOn(event->position(), getZoom() + zoomFactor);
+        zoomOn(event->pos(), getZoom() + zoomFactor);
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);

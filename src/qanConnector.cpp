@@ -85,7 +85,7 @@ qan::NodeStyle* Connector::style(QObject* parent) noexcept
     static QScopedPointer<qan::NodeStyle>  qan_Connector_style;
     if (!qan_Connector_style)
         qan_Connector_style.reset(new qan::NodeStyle{parent});
-    return qan_Connector_style.get();
+    return qan_Connector_style.data();
 }
 //-----------------------------------------------------------------------------
 
