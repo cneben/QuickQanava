@@ -376,6 +376,7 @@ private:
 
     //! \copydoc selectionRectItem
     QPointF     _lastSelectRect{};
+    QPointF     _startSelectRect{};
 
 protected:
     //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in containerItem space.
