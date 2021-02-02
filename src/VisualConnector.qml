@@ -158,10 +158,6 @@ Qan.Connector {
         }
     }
 
-    Component.onCompleted: {
-        console.debug(attachMode)
-    }
-
     onSourcePortChanged: configureConnectorPosition()
     onSourceNodeChanged: configureConnectorPosition()
 
