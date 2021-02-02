@@ -160,6 +160,16 @@ signals:
     void                connectorEdgeInserted(qan::Edge* edge);
 
 public:
+    //! Alias to VisualConnector::attachMode property (default to NodePort).
+    Q_PROPERTY( qan::Connector::AttachMode attachMode READ getAttachMode WRITE setAttachMode NOTIFY attachModeChanged FINAL )
+    inline qan::Connector::AttachMode   getAttachMode() const noexcept { return _attachMode; }
+    void                                setAttachMode( qan::Connector::AttachMode attachMode ) noexcept;
+signals:
+    void                                attachModeChanged();
+private:
+    qan::Connector::AttachMode          _attachMode{qan::Connector::AttachMode::NodePort};
+
+public:
     //! Alias to VisualConnector::edgeColor property (default to Black).
     Q_PROPERTY( QColor connectorEdgeColor READ getConnectorEdgeColor WRITE setConnectorEdgeColor NOTIFY connectorEdgeColorChanged FINAL )
     inline QColor   getConnectorEdgeColor() const noexcept { return _connectorEdgeColor; }

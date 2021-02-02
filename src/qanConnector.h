@@ -180,6 +180,34 @@ signals:
 private slots:
     //! Called when the current source node is destroyed.
     void                sourceNodeDestroyed();
+
+public:
+    //! Define to which element VisualConnector can be attached
+    enum class AttachMode {
+        //! VisualConnector can be attached to the Node and Port
+        NodePort,
+        //! VisualConnector can be attached only to the Port
+        PortOnly,
+        //! VisualConnector can be attached only to the Node
+        NodeOnly
+    };
+    Q_ENUM(AttachMode)
+
+    /*! \brief Choose elements to which VisualConnector can be attached (default to NodePort, ie you can attach VisualConnector to node and port)
+     *
+     * \note When set PortOnly or NodeOnly you can attach VisualConnector only to \c node or \c port respectively
+     */
+    Q_PROPERTY( AttachMode attachMode READ getAttachMode WRITE setAttachMode NOTIFY attachModeChanged FINAL )
+    //! \copydoc attachMode
+    inline AttachMode  getAttachMode() const noexcept { return _attachMode; }
+    //! \copydoc attachMode
+    void            setAttachMode( AttachMode attachMode ) noexcept;
+protected:
+    //! \copydoc attachMode
+    AttachMode     _attachMode{AttachMode::NodePort};
+signals:
+    //! \copydoc attachMode
+    void            attachModeChanged();
     //@}
     //-------------------------------------------------------------------------
 };

@@ -350,6 +350,14 @@ void    Connector::sourceNodeDestroyed()
     if (sender() == _sourceNode.data())
         setSourceNode(nullptr);
 }
+
+void Connector::setAttachMode(Connector::AttachMode attachMode) noexcept
+{
+    if (_attachMode != attachMode) {
+        _attachMode = attachMode;
+        emit attachModeChanged();
+    }
+}
 //-----------------------------------------------------------------------------
 
 

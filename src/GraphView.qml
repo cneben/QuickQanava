@@ -124,12 +124,15 @@ Qan.AbstractGraphView {
         groupResizer.target = null
         groupResizer.visible = false
 
-        // Hide the default visual edge connector
+//        // Hide the default visual edge connector
         if (graph &&
             graph.connectorEnabled &&
             graph.connector &&
             graph.connector.visible)
-            graph.connector.visible = false
+        {
+            graph.connector.sourceNode = null
+            graph.connector.sourcePort = null
+        }
 
         graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
     }
@@ -144,10 +147,10 @@ Qan.AbstractGraphView {
             if (port.node)    // Force port host node on top
                 graph.sendToFront(port.node.item)
             if (graph.connector &&
-                graph.connectorEnabled)
+                graph.connectorEnabled &&
+                    (graph.connector.attachMode === Qan.Connector.NodePort ||
+                     graph.connector.attachMode === Qan.Connector.PortOnly))
                 graph.connector.sourcePort = port
-        } else if (graph) {
-            graph.connector.visible = false
         }
     }
     onPortRightClicked: { }
@@ -177,8 +180,9 @@ Qan.AbstractGraphView {
             if (graph.connector &&
                 graph.connectorEnabled &&
                  (node.item.connectable === Qan.NodeItem.Connectable ||
-                  node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
-                graph.connector.visible = true
+                  node.item.connectable === Qan.NodeItem.OutConnectable) &&
+                    (graph.connector.attachMode === Qan.Connector.NodePort ||
+                     graph.connector.attachMode === Qan.Connector.NodeOnly)) {      // Do not show visual connector if node is not visually "connectable"
                 graph.connector.sourceNode = node
                 // Connector should be half on top of node
                 graph.connector.y = -graph.connector.height / 2
@@ -204,7 +208,6 @@ Qan.AbstractGraphView {
             }
         } else if (graph) {
             nodeItemRatioWatcher.target = null
-            graph.connector.visible = false
             resizer.visible = false
         }
     }

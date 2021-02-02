@@ -84,7 +84,20 @@ Qan.Connector {
     x: connectorMargin
     y: topMargin
 
-    visible: false
+    visible: {
+        if (connectorItem) {
+            switch (attachMode) {
+            case Qan.Connector.NodePort:
+                return sourceNode || sourcePort // Visible only if a valid source node/port is set
+            case Qan.Connector.PortOnly:
+                return sourcePort // Visible only if a valid source port is set
+            case Qan.Connector.NodeOnly:
+                return sourceNode // Visible only if a valid source node is set
+            }
+        }
+        return false
+    }
+
     selectable: false
     clip: false; antialiasing: true
 
@@ -92,6 +105,25 @@ Qan.Connector {
      *  or port configuration, also restore position bindings to source.
      */
     function configureConnectorPosition() {
+
+        switch (attachMode)
+        {
+        case Qan.Connector.NodePort:
+            connectorPortPosition()
+            connectorNodePosition()
+            break
+
+        case Qan.Connector.PortOnly:
+            connectorPortPosition()
+            break
+
+        case Qan.Connector.NodeOnly:
+            connectorNodePosition()
+            break
+        }
+    }
+
+    function connectorPortPosition() {
         if (sourcePort) {
             switch (sourcePort.dockType) {
             case Qan.NodeItem.Left:
@@ -115,11 +147,19 @@ Qan.Connector {
                 visualConnector.z = Qt.binding( function(){ return sourcePort.z + 1. } )
                 break;
             }
-        } else if (sourceNode) {
+        }
+    }
+
+    function connectorNodePosition() {
+        if (sourceNode && sourceNode.item) {
             visualConnector.x = Qt.binding( function(){ return sourceNode.item.width + connectorMargin } )
             visualConnector.y = -visualConnector.height / 2 + visualConnector.topMargin
             visualConnector.z = Qt.binding( function(){ return sourceNode.item.z + 1. } )
         }
+    }
+
+    Component.onCompleted: {
+        console.debug(attachMode)
     }
 
     onSourcePortChanged: configureConnectorPosition()

@@ -111,6 +111,14 @@ void    PortItem::addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept
 
 void    PortItem::onEdgeItemDestroyed(QObject* obj)
 {
+    // When u inherit from the Edge class to create your own component qobject_cast doesn't work
+    // ( Only with _multiplicity == Multiplicity::Single )
+    if ( _multiplicity == Multiplicity::Single )
+    {
+        _inEdgeItems.clear();
+        _outEdgeItems.clear();
+        return;
+    }
     // Connection to destroyed signal in addInEdgeItem() and addOutEdgeItem()
     const auto edgeItem = qobject_cast<qan::EdgeItem*>(obj);
     if (edgeItem != nullptr) {

@@ -100,6 +100,7 @@ void    Graph::componentComplete()
                     _connector->setGraph(this);
                     _connector->setEnabled(getConnectorEnabled());
                     _connector->setVisible(false);
+                    _connector->setAttachMode(qan::Connector::AttachMode::NodePort);
                     _connector->setProperty("edgeColor", getConnectorEdgeColor());
                     _connector->setProperty("connectorColor", getConnectorColor());
                     _connector->setProperty("createDefaultEdge", getConnectorCreateDefaultEdge());
@@ -245,6 +246,16 @@ void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
             _connector->setSourceNode(sourceNode);
         _connector->setVisible(getConnectorEnabled());
         _connector->setEnabled(getConnectorEnabled());
+    }
+}
+
+void    Graph::setAttachMode( qan::Connector::AttachMode attachMode ) noexcept
+{
+    if ( _attachMode != attachMode ) {
+        _attachMode = attachMode;
+        if ( _connector )
+            _connector->setAttachMode( attachMode );
+        emit attachModeChanged();
     }
 }
 
@@ -785,7 +796,7 @@ void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcep
 
     if ( isEdgeSourceBindable(outPort) ) {
         edgeItem->setSourceItem(&outPort);
-        outPort.getOutEdgeItems().append(edgeItem);
+        outPort.addOutEdgeItem(*edgeItem);
     }
 }
 
@@ -799,7 +810,7 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
 
     if ( isEdgeDestinationBindable(inPort) ) {
         edgeItem->setDestinationItem(&inPort);
-        inPort.getInEdgeItems().append(edgeItem);
+        inPort.addInEdgeItem(*edgeItem);
     }
 }
 
