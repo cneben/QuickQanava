@@ -507,6 +507,7 @@ private:
 } // ::qcm
 
 QML_DECLARE_TYPE(qcm::ContainerModel)
+QML_DECLARE_TYPE(const qcm::ContainerModel)
 
 #endif // qcmContainerModel_h
 

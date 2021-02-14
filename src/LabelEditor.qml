@@ -102,15 +102,15 @@ Loader {
             font.bold: labelEditorLoader.bold
             font.pointSize: labelEditorLoader.pointSize
             onAccepted: {
-                if ( target &&
-                     text.length !== 0 )
+                if (target &&
+                    text.length !== 0)
                     target.label = text   // Do not allow empty labels
                 focus = false;          // Release focus once the label has been edited
             }
             onEditingFinished: labelEditorLoader.visible = false
             onActiveFocusChanged: {
-                if ( target &&
-                     text !== target.label )  // Ensure that last edition text is removed
+                if (target &&
+                    text !== target.label)  // Ensure that last edition text is removed
                     text = target.label       // for exemple if edition has been interrupted in a focus change
             }
             Keys.onEscapePressed: {
