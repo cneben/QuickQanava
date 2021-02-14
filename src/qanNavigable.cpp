@@ -354,13 +354,14 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
     } else if (_selectionRectItem != nullptr &&
                _ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
         const auto& p = event->localPos();
-        _selectionRectItem->setWidth(p.x() - _selectionRectItem->x());
-        _selectionRectItem->setHeight(p.y() - _selectionRectItem->y());
+        _selectionRectItem->setX(std::min(p.x(), _startSelectRect.x()));
+        _selectionRectItem->setY(std::min(p.y(), _startSelectRect.y()));
+        _selectionRectItem->setWidth(std::abs(p.x() - _startSelectRect.x()));
+        _selectionRectItem->setHeight(std::abs(p.y() - _startSelectRect.y()));
         _lastSelectRect = event->localPos();
         const auto selectionRect = mapRectToItem(_containerItem,
                                                  QRectF{_selectionRectItem->x(), _selectionRectItem->y(),
                                                         _selectionRectItem->width(), _selectionRectItem->height()});
-        qWarning() << "selectionRect=" << selectionRect;
         selectionRectActivated(selectionRect);
     }
     QQuickItem::mouseMoveEvent(event);
@@ -377,6 +378,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
             event->modifiers() == Qt::ControlModifier) {
             _ctrlLeftButtonPressed = true;          // SELECT = Left button + CTRL //////
             _lastSelectRect = event->localPos();
+            _startSelectRect = event->localPos();
             if (_selectionRectItem) {
                 _selectionRectItem->setX(event->localPos().x());
                 _selectionRectItem->setY(event->localPos().y());
@@ -446,6 +448,7 @@ void    Navigable::setSelectionRectEnabled(bool selectionRectEnabled) noexcept
         _ctrlLeftButtonPressed = false; // Reset the selection rect state
         _selectRectActive = false;
         _lastSelectRect = QPointF{};
+        _startSelectRect = QPointF{};
         if (!_selectionRectEnabled)
             selectionRectEnd();
         emit selectionRectEnabledChanged();
