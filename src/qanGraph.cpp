@@ -1205,8 +1205,16 @@ void    addToSelectionImpl( Primitive_t& primitive,
     }
 }
 
-void    Graph::addToSelection( qan::Node& node ) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
-void    Graph::addToSelection( qan::Group& group ) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+void    Graph::addToSelection( qan::Node& node )
+{
+    addToSelectionImpl<qan::Node>(node, _selectedNodes, *this);
+    emit selectedNodesChanged();
+}
+void    Graph::addToSelection( qan::Group& group )
+{
+    addToSelectionImpl<qan::Group>(group, _selectedGroups, *this);
+    emit selectedGroupsChanged();
+}
 
 template < class Primitive_t >
 void    removeFromSelectionImpl( Primitive_t& primitive,
