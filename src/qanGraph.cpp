@@ -1224,8 +1224,16 @@ void    removeFromSelectionImpl( Primitive_t& primitive,
         selectedPrimitives.removeAll( &primitive );
 }
 
-void    Graph::removeFromSelection( qan::Node& node ) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
-void    Graph::removeFromSelection( qan::Group& group ) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
+void    Graph::removeFromSelection( qan::Node& node )
+{
+    removeFromSelectionImpl<qan::Node>(node, _selectedNodes);
+    emit selectedNodesChanged();
+}
+void    Graph::removeFromSelection( qan::Group& group )
+{
+    removeFromSelectionImpl<qan::Group>(group, _selectedGroups);
+    emit selectedGroupsChanged();
+}
 
 // Note: Called from
 void    Graph::removeFromSelection( QQuickItem* item ) {
@@ -1233,12 +1241,14 @@ void    Graph::removeFromSelection( QQuickItem* item ) {
     if ( nodeItem != nullptr &&
          nodeItem->getNode() != nullptr ) {
         _selectedNodes.removeAll(nodeItem->getNode());
+        emit selectedNodesChanged();
         //nodeItem->setSelected(false);
     } else {
         const auto groupItem = qobject_cast<qan::GroupItem*>(item);
         if ( groupItem != nullptr &&
              groupItem->getGroup() != nullptr ) {
             _selectedGroups.removeAll(groupItem->getGroup());
+            emit selectedGroupsChanged();
         }
     }
 }
