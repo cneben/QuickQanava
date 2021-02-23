@@ -65,7 +65,7 @@ public:
      *
      */
     virtual ~Group() override = default;
-    Group( const Group& ) = delete;
+    Group(const Group&) = delete;
 
     using gtpo_node_t = gtpo::node<qan::Config>;
 public:
@@ -131,8 +131,8 @@ public:
      *
      * Default to true (ie group is draggable by mouse).
      */
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
-    void            setDraggable(bool draggable) noexcept;
+    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
+    bool            setDraggable(bool draggable) noexcept;
     bool            getDraggable() const noexcept;
 private:
     bool            _draggable = true;
@@ -144,4 +144,4 @@ signals:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Group )
+QML_DECLARE_TYPE(qan::Group)

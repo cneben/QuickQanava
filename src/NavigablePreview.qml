@@ -33,6 +33,7 @@ import QuickQanava 2.0 as Qan
  */
 Qan.AbstractNavigablePreview {
     id: preview
+    clip: true
 
     // PUBLIC /////////////////////////////////////////////////////////////////
 

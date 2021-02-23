@@ -354,37 +354,14 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
     } else if (_selectionRectItem != nullptr &&
                _ctrlLeftButtonPressed) {    // Ctrl+Left click selection //////
         const auto& p = event->localPos();
-        if (_selectionRectItem->rotation() == 0 ||
-            _selectionRectItem->rotation() == 180) {
-            _selectionRectItem->setWidth(qAbs(p.x() - _selectionRectItem->x()));
-            _selectionRectItem->setHeight(qAbs(p.y() - _selectionRectItem->y()));
-        }
-        else {
-            _selectionRectItem->setWidth(qAbs(p.y() - _selectionRectItem->y()));
-            _selectionRectItem->setHeight(qAbs(p.x() - _selectionRectItem->x()));
-        }
-        if (p.x() >= _selectionRectItem->x()) {
-            if (p.y() >= _selectionRectItem->y())
-                _selectionRectItem->setRotation(0);
-            else
-                _selectionRectItem->setRotation(-90);
-        }
-        else {
-            if (p.y() >= _selectionRectItem->y())
-                _selectionRectItem->setRotation(90);
-            else
-                _selectionRectItem->setRotation(180);
-        }
-        const auto topLeftSelectionPoint = QPointF{qMin(_selectionRectItem->x(), p.x()),
-                                                   qMin(_selectionRectItem->y(), p.y())};
-        const auto bottomRightSelectionPoint = QPointF{qMax(_selectionRectItem->x(), p.x()),
-                                                       qMax(_selectionRectItem->y(), p.y())};
+        _selectionRectItem->setX(std::min(p.x(), _startSelectRect.x()));
+        _selectionRectItem->setY(std::min(p.y(), _startSelectRect.y()));
+        _selectionRectItem->setWidth(std::abs(p.x() - _startSelectRect.x()));
+        _selectionRectItem->setHeight(std::abs(p.y() - _startSelectRect.y()));
         _lastSelectRect = event->localPos();
         const auto selectionRect = mapRectToItem(_containerItem,
-                                                 QRectF{topLeftSelectionPoint,
-                                                        bottomRightSelectionPoint});
-
-//        qWarning() << "selectionRect=" << selectionRect;
+                                                 QRectF{_selectionRectItem->x(), _selectionRectItem->y(),
+                                                        _selectionRectItem->width(), _selectionRectItem->height()});
         selectionRectActivated(selectionRect);
     }
     QQuickItem::mouseMoveEvent(event);
@@ -401,6 +378,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
             event->modifiers() == Qt::ControlModifier) {
             _ctrlLeftButtonPressed = true;          // SELECT = Left button + CTRL //////
             _lastSelectRect = event->localPos();
+            _startSelectRect = event->localPos();
             if (_selectionRectItem) {
                 _selectionRectItem->setX(event->localPos().x());
                 _selectionRectItem->setY(event->localPos().y());
@@ -471,6 +449,7 @@ void    Navigable::setSelectionRectEnabled(bool selectionRectEnabled) noexcept
         _ctrlLeftButtonPressed = false; // Reset the selection rect state
         _selectRectActive = false;
         _lastSelectRect = QPointF{};
+        _startSelectRect = QPointF{};
         if (!_selectionRectEnabled)
             selectionRectEnd();
         emit selectionRectEnabledChanged();
