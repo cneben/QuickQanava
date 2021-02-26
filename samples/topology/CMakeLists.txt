@@ -7,15 +7,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set( source_files
-    qanTopologySample.cpp
+    topology.cpp
     qanFaceNode.cpp
 )
 
-set (header_files qanTopologySample.h qanFaceNode.h)
+set (header_files qanFaceNode.h)
 
 # Configure Qt
 find_package(Qt5Core)
-find_package(Qt5Widgets)
+find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5Qml)
@@ -30,8 +30,8 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_topology ${source_files} topology.qrc)
-target_include_directories(sample_topology PUBLIC QuickQanava Qt5::QuickControls2)
-target_link_libraries(sample_topology QuickQanava QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
+target_include_directories(sample_topology PUBLIC QuickQanava Qt5::Core Qt5::Gui Qt5::QuickControls2 Qt5::Widgets)
+target_link_libraries(sample_topology QuickQanava QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2 Qt5::Widgets)
 
 if(WIN32 AND DEPLOY)
     find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
