@@ -72,6 +72,7 @@ if(BUILD_STATIC_QRC)
 else()
 	list(APPEND RESOURCES QuickQanava_plugin.qrc)
 endif(BUILD_STATIC_QRC)
+list(APPEND RESOURCES GraphicalEffects${QT_VERSION_MAJOR}/QuickQanavaGraphicalEffects.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
