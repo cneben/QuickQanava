@@ -46,8 +46,10 @@ using namespace qan;
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
 {
-    QGuiApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+    QGuiApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
     engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml

@@ -323,7 +323,11 @@ signals:
     void        dragActiveChanged();
 
 protected:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     virtual void    geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+#else
+    virtual void    geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+#endif
     virtual void    mouseMoveEvent(QMouseEvent* event) override;
     virtual void    mousePressEvent(QMouseEvent* event) override;
     virtual void    mouseReleaseEvent(QMouseEvent* event) override;

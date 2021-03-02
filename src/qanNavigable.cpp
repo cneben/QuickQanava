@@ -263,7 +263,11 @@ void    Navigable::setDragActive(bool dragActive) noexcept
     }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
+#else
+void    Navigable::geometryChange( const QRectF& newGeometry, const QRectF& oldGeometry )
+#endif
 {
     if (getNavigable()) {
         // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
@@ -327,7 +331,11 @@ void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& old
 
         updateGrid();
     }
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QQuickItem::geometryChanged( newGeometry, oldGeometry );
+#else
+    QQuickItem::geometryChange( newGeometry, oldGeometry );
+#endif
 }
 
 void    Navigable::mouseMoveEvent(QMouseEvent* event)
