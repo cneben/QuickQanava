@@ -136,7 +136,7 @@ Qan.AbstractGraphView {
     }
 
     // Port management ////////////////////////////////////////////////////////
-    onPortClicked: {
+    onPortClicked: function(port) {
         if ( graph &&
              port ) {
             if (port.node)    // Force port host node on top
@@ -166,7 +166,7 @@ Qan.AbstractGraphView {
         }
     }
 
-    onNodeClicked: {
+    onNodeClicked: function(node) {
         if (graph &&
             node && node.item) {
             if (node.locked)                // Do not show any connector for locked node/groups
@@ -208,7 +208,7 @@ Qan.AbstractGraphView {
     }
 
     // Group management ///////////////////////////////////////////////////////
-    onGroupClicked: {
+    onGroupClicked: function(group) {
         if (group && graph)
             graph.sendToFront(group.item)
 
@@ -240,11 +240,11 @@ Qan.AbstractGraphView {
         }
     }
 
-    onGroupRightClicked: {
+    onGroupRightClicked: function(group) {
         if (group && group.item)
             graph.sendToFront(group.item)
     }
-    onGroupDoubleClicked: {
+    onGroupDoubleClicked: function(group) {
         if (group && group.itm)
             graph.sendToFront(group.item)
     }
