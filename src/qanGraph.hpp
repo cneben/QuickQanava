@@ -119,7 +119,7 @@ qan::Node*  Graph::insertNonVisualNode()
     try {
         QQmlEngine::setObjectOwnership( node.get(), QQmlEngine::CppOwnership );
         gtpo_graph_t::insert_node( node );
-    } catch ( const gtpo::bad_topology_error& e ) {
+    } catch (const gtpo::bad_topology_error& e) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
         return nullptr; // node eventually destroyed by shared_ptr
     }
@@ -170,7 +170,7 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
             qWarning() << "qan::Graph::insertEdge<>(): Error: Internal error during edge configuration.";
             // Note: edge is deleted since it is unreferenced...
         }
-    } catch (gtpo::bad_topology_error e) {
+    } catch (const gtpo::bad_topology_error& e) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
         // Note: edge is cleaned automatically if it has still not been inserted to graph
     } catch (...) {
@@ -194,7 +194,7 @@ qan::Edge*  Graph::insertNonVisualEdge( qan::Node& src, qan::Node* dstNode )
         if ( dstNode != nullptr )
             edge->set_dst( std::static_pointer_cast<Config::final_node_t>(dstNode->shared_from_this()) );
         gtpo_graph_t::insert_edge( edge );
-    } catch ( gtpo::bad_topology_error e ) {
+    } catch (const gtpo::bad_topology_error& e) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
     }
     catch ( ... ) {
