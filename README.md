@@ -172,6 +172,8 @@ QuickQanava and QuickContainers plugins directories could be removed manually fr
  - @Letrab / Edge configuration
  - @machinekoder / QML plugin and CMake configuration
  - @NielsBillen / Ports support and stability fixes
+ - @walterbrebels
+ - @chesnoksatan / Major connector feature, build configuration
 
 ## License
 
