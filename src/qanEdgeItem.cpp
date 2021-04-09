@@ -226,12 +226,14 @@ void    EdgeItem::updateItem() noexcept
     auto cache = generateGeometryCache();       // 1.
     if ( cache.isValid() ) {
         switch (cache.lineType) {               // 2.
+        case qan::EdgeStyle::LineType::Undefined:       // [[fallthrough]] default to Straight
         case qan::EdgeStyle::LineType::Straight: generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Curved:   generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Ortho:    generateOrthoEnds(cache);    break;
         }
         if ( cache.isValid() ) {
             switch (cache.lineType) {           // 3.
+            case qan::EdgeStyle::LineType::Undefined:   // [[fallthrough]] default to Straight
             case qan::EdgeStyle::LineType::Straight: /* Nil */                           break;
             case qan::EdgeStyle::LineType::Curved:   generateCurvedControlPoints(cache); break;
             case qan::EdgeStyle::LineType::Ortho:    /* Nil */                           break; // Ortho C1 control point is generated in generateOrthoEnds()
@@ -583,6 +585,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update source arrow cache points
     const auto srcShape = getSrcShape();
     switch (srcShape) {
+        case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
@@ -602,6 +605,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update destination arrow cache points
     const auto dstShape = getDstShape();
     switch (dstShape) {
+        case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;
@@ -621,6 +625,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
 
     // Generate start/end arrow angle
     switch (cache.lineType) {
+        case qan::EdgeStyle::LineType::Undefined:      // [[fallthrough]]
         case qan::EdgeStyle::LineType::Straight:
             cache.dstAngle = generateStraightArrowAngle(cache.p1, cache.p2, dstShape, arrowLength);
             cache.srcAngle = generateStraightArrowAngle(cache.p2, cache.p1, srcShape, arrowLength);
@@ -1161,20 +1166,21 @@ bool    EdgeItem::contains(const QPointF& point) const
 {
     const auto lineType = _style ? _style->getLineType() : qan::EdgeStyle::LineType::Straight;
     bool r = false;
-    qreal d;
+    qreal d = 0.;
     switch (lineType) {
+    case qan::EdgeStyle::LineType::Undefined:  // [[fallthrough]]
     case qan::EdgeStyle::LineType::Straight:
         d = distanceFromLine(point, QLineF{_p1, _p2});
-        r = ( d > 0. && d < 5. );
+        r = (d > 0. && d < 5.);
         break;
     case qan::EdgeStyle::LineType::Curved:
         break;
     case qan::EdgeStyle::LineType::Ortho:
         d = distanceFromLine(point, QLineF{_p1, _c1});
-        r = ( d > 0. && d < 5. );
+        r = (d > 0. && d < 5.);
         if (!r) {
             const qreal d2 = distanceFromLine(point, QLineF{_p2, _c1});
-            r = ( d2 > 0. && d2 < 5. );
+            r = (d2 > 0. && d2 < 5.);
         }
         break;
     }

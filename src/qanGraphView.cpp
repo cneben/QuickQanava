@@ -61,7 +61,8 @@ void    GraphView::setGraph(qan::Graph* graph)
             disconnect(_graph, 0, this, 0);
         _graph = graph;
         auto graphViewQmlContext = qmlContext(this);
-        auto containerQmlContext = qmlContext(getContainerItem());
+        // FIXME remove that
+        //auto containerQmlContext = qmlContext(getContainerItem());
         QQmlEngine::setContextForObject(getContainerItem(), graphViewQmlContext);
         _graph->setContainerItem(getContainerItem());
         connect(_graph, &qan::Graph::nodeClicked,
