@@ -87,7 +87,7 @@ Item {
             padding: 0
             Layout.preferredWidth: 32; Layout.preferredHeight: 32
             text: groupItem ? ( groupItem.collapsed ? "+" : "-" ) : "-"
-            font.pointSize: 13; font.bold: true
+            font.pixelSize: 13; font.bold: true
             onClicked: groupItem.collapsed = !groupItem.collapsed
         }
         Item {
@@ -96,8 +96,8 @@ Item {
             Layout.fillWidth: true; Layout.fillHeight: true
             property int fontPointSize : groupItem.style.fontPointSize  // Do not set pointSize for -1 value
             onFontPointSizeChanged: {
-                if ( fontPointSize != -1 )
-                    labelEditor.pointSize = fontPointSize
+                if (fontPointSize != -1)
+                    labelEditor.pixelSize = fontPointSize
                 groupLabel.font.pointSize = fontPointSize
             }
             LabelEditor {
