@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.1.0)
 project(QuickContainers)
 
 # Configure Qt
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Qml REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
 set(CMAKE_AUTOMOC ON)
 
 set (qcm_source_files
@@ -27,15 +27,12 @@ set (qcm_plugin_files
 )
 
 # Configure QuickContainers library ###########################################
-include_directories( ${Qt5Core_INCLUDE_DIRS} )
-include_directories( ${Qt5Qml_INCLUDE_DIRS} )
-include_directories( include )
-
 #target_include_directories(QuickContainers INTERFACE include)
 #target_sources(QuickContainers INTERFACE ${qcm_header_files})
 
 add_library(QuickContainers STATIC ${qcm_header_files} ${qcm_source_files})
 set_target_properties(QuickContainers PROPERTIES LINKER_LANGUAGE CXX)
+
 target_include_directories(QuickContainers
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -63,14 +60,14 @@ install(TARGETS QuickContainers
 set(PLUGIN_TARGET "quickcontainersplugin")
 add_library(${PLUGIN_TARGET} SHARED ${qcm_plugin_files})
 
-target_link_libraries(QuickContainers Qt5::Core Qt5::Qml)
+target_link_libraries(QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Qml)
 target_link_libraries(${PLUGIN_TARGET} QuickContainers)
 
 # QML module deployment
 set(URI QuickContainers)
 string(REPLACE "." "/" TARGETPATH ${URI})
 if (NOT DEFINED QT_QMAKE_EXECUTABLE)
-    get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    get_target_property (QT_QMAKE_EXECUTABLE Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
 endif()
 execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_INSTALL_QML OUTPUT_VARIABLE QT_INSTALL_QML_RAW)
 string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)

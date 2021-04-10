@@ -64,7 +64,7 @@ set (qan_plugin_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-qt5_wrap_cpp(qan_source_files, qan_header_files)
+qt_wrap_cpp(qan_source_files, qan_header_files)
 set(CMAKE_AUTORCC ON)
 
 if(BUILD_STATIC_QRC)
@@ -72,6 +72,7 @@ if(BUILD_STATIC_QRC)
 else()
 	list(APPEND RESOURCES QuickQanava_plugin.qrc)
 endif(BUILD_STATIC_QRC)
+list(APPEND RESOURCES GraphicalEffects${QT_VERSION_MAJOR}/QuickQanavaGraphicalEffects.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -102,7 +103,7 @@ install(TARGETS QuickQanava
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt5::Core Qt5::Gui Qt5::QuickControls2)
+target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
 if(BUILD_STATIC_QRC)
 	target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
 endif(BUILD_STATIC_QRC)
@@ -116,7 +117,7 @@ target_link_libraries(${PLUGIN_TARGET} QuickQanava)
 set(URI QuickQanava)
 string(REPLACE "." "/" TARGETPATH ${URI})
 if (NOT DEFINED QT_QMAKE_EXECUTABLE)
-    get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    get_target_property (QT_QMAKE_EXECUTABLE Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
     if (NOT QT_QMAKE_EXECUTABLE)
         message(FATAL_ERROR "Cannot find qmake")
     endif()

@@ -33,9 +33,9 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with solid fill, shadow effect and backOpacity style support
  *
@@ -67,7 +67,7 @@ Item {
             color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             layer.enabled: true
-            layer.effect: DropShadow {
+            layer.effect: Qan.DropShadow {
                 horizontalOffset: shadowOffset; verticalOffset: shadowOffset
                 radius: shadowRadius; samples: 8
                 color: shadowColor
@@ -90,7 +90,7 @@ Item {
             color: Qt.rgba(1, 0, 0, 1)
         }
     }
-    OpacityMask {
+    Qan.OpacityMask {
         anchors.fill: effectBackground
         source: effectBackground
         maskSource: backgroundMask

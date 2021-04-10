@@ -58,6 +58,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class Connector;
 class PortItem;
 
 /*! \brief Main interface to manage graph topology.

@@ -63,8 +63,8 @@ ApplicationWindow {
                 var g1 = topology.insertGroup()
                 g1.label = "GROUP"; g1.item.x = 250; g1.item.y = 45
             }
-            onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
+            onGroupDoubleClicked: function(group) { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
+            onGroupRightClicked: function(group) { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
 
         RowLayout {

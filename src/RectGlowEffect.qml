@@ -33,9 +33,9 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with solid fill, glow effect and backOpacity style support
  *
@@ -70,7 +70,7 @@ Item {
             color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             layer.enabled: true
-            layer.effect: Glow {
+            layer.effect: Qan.Glow {
                 color: glowEffect.glowColor
                 radius: glowEffect.glowRadius;     samples: Math.min( 16, glowEffect.glowRadius)
                 spread: 0.25;   transparentBorder: true;    cached: false
@@ -91,7 +91,7 @@ Item {
             antialiasing: true
         }
     }
-    OpacityMask {
+    Qan.OpacityMask {
         anchors.fill: effectBackground
         source: effectBackground
         maskSource: backgroundMask

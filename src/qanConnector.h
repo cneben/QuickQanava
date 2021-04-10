@@ -41,10 +41,10 @@
 #include "./qanGroupItem.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
+#include "./qanGraph.h"
 
 namespace qan { // ::qan
 
-class Graph;
 class Node;
 
 /*! \brief Base class for modelling the connector draggable visual node.
