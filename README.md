@@ -85,6 +85,8 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 ## Contributors
 
+![GitHub Contributors Image](https://contrib.rocks/image?repo=cneben/QuickQanava)
+
  - @kwallner / Conan.io and CMake configuration
  - @Letrab / Edge configuration
  - @machinekoder / QML plugin and CMake configuration
