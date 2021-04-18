@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -114,11 +114,10 @@ ApplicationWindow {
                         CustomSelectionItem { }
                     }
                     onActivated: {
-                        if ( currentIndex == 0 )
+                        if (currentIndex == 0)
                             topology.selectionDelegate = null  // Use undefined to set back the default delegate
-                        else if ( currentIndex == 1 ) {
+                        else if (currentIndex == 1)
                             topology.selectionDelegate = customSelectionComponent
-                        }
                     }
                 }
 
@@ -134,7 +133,8 @@ ApplicationWindow {
                     spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
                     highlightFollowsCurrentItem: false
                     highlight: Rectangle {
-                        x: 0; y: ( selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0 );
+                        x: 0
+                        y: selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0
                         width: selectionListView.width
                         height: selectionListView.currentItem ? selectionListView.currentItem.height : 0
                         color: Material.accent; opacity: 0.7; radius: 3
@@ -163,7 +163,7 @@ ApplicationWindow {
                             checked: topology.selectionPolicy === Qan.Graph.NoSelection
                             onCheckedChanged: {
                                 if (checked)
-                                    topology.selectionPolicy = Qan.Graph.NoSelection;
+                                    topology.selectionPolicy = Qan.Graph.NoSelection
                             }
                         }
                         CheckBox {
@@ -174,7 +174,7 @@ ApplicationWindow {
                             checked: topology.selectionPolicy === Qan.Graph.SelectOnClick
                             onCheckedChanged: {
                                 if (checked)
-                                    topology.selectionPolicy = Qan.Graph.SelectOnClick;
+                                    topology.selectionPolicy = Qan.Graph.SelectOnClick
                             }
                         }
                         CheckBox {
@@ -185,7 +185,7 @@ ApplicationWindow {
                             checked: topology.selectionPolicy === Qan.Graph.SelectOnCtrlClick
                             onCheckedChanged: {
                                 if (checked)
-                                    topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick;
+                                    topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick
                             }
                         }
                     }
