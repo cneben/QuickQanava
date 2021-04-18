@@ -71,10 +71,6 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 | ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/nodes/sample-groups.gif) |
 
   - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
-## Dependencies
-
-- **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
 
 | Styles       |
 | :---:        | 
