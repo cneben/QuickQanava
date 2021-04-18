@@ -24,89 +24,38 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
+import QtQuick                   2.13
+import QtQuick.Controls          2.15
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 import QtQuick.Shapes            1.0
-import Qt.labs.platform          1.0    // ColorDialog
+import Qt.labs.platform          1.0 as Labs    // ColorDialog
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
-import "."
 
 ApplicationWindow {
     id: window
     visible: true
     width: 1280; height: 720
-    title: "Selection sample"
+    title: 'Selection sample'
     Pane { anchors.fill: parent }
     ToolTip { id: toolTip; timeout: 2000 }
-    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     Menu {
         id: menu
-        title: "Main Menu"
+        title: 'Context Menu'
         property var targetNode: undefined
         property var targetGroup: undefined
-        property var targetEdge: undefined
         onClosed: {
             menu.targetNode = undefined
             menu.targetGroup = undefined
-            menu.targetEdge = undefined
         }
         MenuItem {
-            text: "Insert Node"
+            text: 'Copy'
             onTriggered: {
-                var n = topology.insertNode()
-                centerItem(n.item)
-                n.label = "Node #" + topology.getNodeCount()
-            }
-        }
-        MenuItem {
-            text: {
-                if (topology.selectedNodes.length > 1)
-                    return "Remove All"
-                else if (menu.targetGroup !== undefined)
-                    return "Remove Group"
-                return "Remove node"
-            }
-            enabled: menu.targetNode !== undefined ||
-                     menu.targetGroup !== undefined ||
-                     topology.selectedNodes.length > 1
-            onTriggered: {
-                if (topology.selectedNodes.length > 1) {
-                    let nodes = []  // Copy the original selection, since removing nodes also modify selection
-                    var n = 0
-                    for (n = 0; n < topology.selectedNodes.length; n++)
-                        nodes.push(topology.selectedNodes.at(n))
-                    for (n = 0; n < nodes.length; n++) {
-                        let node = nodes[n]
-                        console.error('node.isGroup=' + node.isGroup())
-                        topology.removeNode(nodes[n])
-                    }
-                } else if (menu.targetNode !== undefined)
-                    topology.removeNode(menu.targetNode)
-                else if (menu.targetGroup !== undefined)
-                    topology.removeGroup(menu.targetGroup)
-                menu.targetNode = undefined
-            }
-        }
-        MenuItem {
-            text: "Remove edge"
-            enabled: menu.targetEdge !== undefined
-            onTriggered: {
-                if (menu.targetEdge !== undefined)
-                    topology.removeEdge(menu.targetEdge)
-                menu.targetEdge = undefined
-            }
-        }
-        MenuItem {
-            text: "Insert Group"
-            onTriggered: {
-                var n = topology.insertGroup()
-                centerItem(n.item)
-                n.label = "Group #" + topology.getGroupCount()
+
             }
         }
     } // Menu: menu
@@ -158,7 +107,7 @@ ApplicationWindow {
             }
         }
 
-        ColorDialog {
+        Labs.ColorDialog {
             id: selectionColorDialog
             title: "Selection hilight color"
             onAccepted: { topology.selectionColor = color; }

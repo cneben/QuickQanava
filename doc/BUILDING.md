@@ -76,6 +76,11 @@ qrc:/nodes.qml:33 module "QuickQanava" plugin "quickqanavaplugin" not found
 
 QuickQanava and QuickContainers plugins directories could be removed manually from `$QTDIR\..\qml` to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').
 
+On Ubuntu system, the following dependencies must be isntalled:
+```
+$ sudo apt install libopengl0 -y
+```
+
 ## Roadmap / Changelog
 
   - **Done**:

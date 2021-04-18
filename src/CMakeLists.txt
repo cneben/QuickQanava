@@ -1,59 +1,58 @@
 
-set( qan_source_files
-
-	qanBehaviour.cpp
-	qanBottomRightResizer.cpp
-	qanConnector.cpp
-	qanDraggable.cpp
-	qanDraggableCtrl.cpp
-	qanEdge.cpp
-	qanEdgeItem.cpp
-	qanGraph.cpp
-	qanGraphView.cpp
-	qanGrid.cpp
-	qanLineGrid.cpp
-	qanGroup.cpp
-	qanGroupItem.cpp
-	qanNavigable.cpp
-	qanNavigablePreview.cpp
-	qanNode.cpp
-	qanNodeItem.cpp
-	qanPortItem.cpp
-	qanSelectable.cpp
-	qanStyle.cpp
-	qanStyleManager.cpp
-	qanUtils.cpp
-)
+set(qan_source_files
+    qanBehaviour.cpp
+    qanBottomRightResizer.cpp
+    qanConnector.cpp
+    qanDraggable.cpp
+    qanDraggableCtrl.cpp
+    qanEdge.cpp
+    qanEdgeItem.cpp
+    qanGraph.cpp
+    qanGraphView.cpp
+    qanGrid.cpp
+    qanLineGrid.cpp
+    qanGroup.cpp
+    qanGroupItem.cpp
+    qanNavigable.cpp
+    qanNavigablePreview.cpp
+    qanNode.cpp
+    qanNodeItem.cpp
+    qanPortItem.cpp
+    qanSelectable.cpp
+    qanStyle.cpp
+    qanStyleManager.cpp
+    qanUtils.cpp
+    )
 
 set (qan_header_files
+    qanAbstractDraggableCtrl.h
+    qanBehaviour.h
+    qanBottomRightResizer.h
+    qanConnector.h
+    qanContainerAdapter.h
+    qanDraggableCtrl.h
+    qanDraggable.h
+    qanEdge.h
+    qanEdgeItem.h
+    qanGraphConfig.h
+    qanGraph.h
+    qanGraphView.h
+    qanGrid.h
+    qanGrid.h
+    qanGroup.h
+    qanGroupItem.h
+    qanNavigable.h
+    qanNavigablePreview.h
+    qanNode.h
+    qanNodeItem.h
+    qanPortItem.h
+    qanSelectable.h
+    qanStyle.h
+    qanStyleManager.h
+    qanUtils.h
+    QuickQanava.h
+    )
 
-	qanAbstractDraggableCtrl.h
-	qanBehaviour.h
-	qanBottomRightResizer.h
-	qanConnector.h
-	qanContainerAdapter.h
-	qanDraggableCtrl.h
-	qanDraggable.h
-	qanEdge.h
-	qanEdgeItem.h
-	qanGraphConfig.h
-	qanGraph.h
-	qanGraphView.h
-	qanGrid.h
-	qanGrid.h
-	qanGroup.h
-	qanGroupItem.h
-	qanNavigable.h
-	qanNavigablePreview.h
-	qanNode.h
-	qanNodeItem.h
-	qanPortItem.h
-	qanSelectable.h
-	qanStyle.h
-	qanStyleManager.h
-	qanUtils.h
-	QuickQanava.h
-)
 source_group("Headers" FILES ${qan_header_files})
 source_group("Sources" FILES ${qan_source_files})
 
@@ -64,14 +63,14 @@ set (qan_plugin_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-qt_wrap_cpp(qan_source_files, qan_header_files)
+qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
 set(CMAKE_AUTORCC ON)
 
-if(BUILD_STATIC_QRC)
-	list(APPEND RESOURCES QuickQanava_static.qrc)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+    list(APPEND RESOURCES QuickQanava_static.qrc)
 else()
-	list(APPEND RESOURCES QuickQanava_plugin.qrc)
-endif(BUILD_STATIC_QRC)
+    list(APPEND RESOURCES QuickQanava_plugin.qrc)
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 list(APPEND RESOURCES GraphicalEffects${QT_VERSION_MAJOR}/QuickQanavaGraphicalEffects.qrc)
 
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
@@ -104,9 +103,9 @@ install(TARGETS QuickQanava
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
-if(BUILD_STATIC_QRC)
-	target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
-endif(BUILD_STATIC_QRC)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+    target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 # Configure QuickQanava QML module plugin #####################################
 set(PLUGIN_TARGET "quickqanavaplugin")
@@ -127,29 +126,26 @@ string(STRIP ${QT_INSTALL_QML_RAW} QT_INSTALL_QML)
 set(DESTDIR "${QT_INSTALL_QML}/${TARGETPATH}")
 install(TARGETS ${PLUGIN_TARGET} DESTINATION ${DESTDIR})
 
-#message("QT_INSTALL_QML=" ${QT_INSTALL_QML})
-
 # Install qmldir file
-
-if(BUILD_STATIC_QRC)
-	install(
-		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_static
-		DESTINATION ${DESTDIR}
-		RENAME qmldir
-	)
+if(QUICK_QANAVA_BUILD_STATIC_QRC)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_static
+        DESTINATION ${DESTDIR}
+        RENAME qmldir
+        )
 else()
-	install(
-		FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
-		DESTINATION ${DESTDIR}
-		RENAME qmldir
-	)
-endif(BUILD_STATIC_QRC)
+    install(
+        FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir_plugin
+        DESTINATION ${DESTDIR}
+        RENAME qmldir
+        )
+endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 
 # Install source QML files to ease debugging
 install(
-	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
-	DESTINATION ${DESTDIR}
-	FILES_MATCHING PATTERN "*.qml"
-)
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/	# sic! Need leading slash, otherwise it will install into subdir src
+    DESTINATION ${DESTDIR}
+    FILES_MATCHING PATTERN "*.qml"
+    )
 
