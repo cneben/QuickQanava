@@ -3,7 +3,7 @@ name: Linux build develop
 on: [push]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Cache Qt
