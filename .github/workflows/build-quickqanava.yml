@@ -18,11 +18,14 @@ jobs:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: 'qtcore qtgui qtquickcontrols2'
           setup-python: false
-      - name: clone QuickQanava
+      - name: Clone QuickQanava
         uses: actions/checkout@v2
         with:
           ref: develqt6
       - name: Build QuickQanava Ubuntu qmake
         run: |
-          qmake quickqanava.pro
+          qmake -makefile -o ./../build/Makefile quickqanava.pro
+          cd ../build
+          make -j4
+        working-directory: ./         
         shell: bash
