@@ -1,5 +1,13 @@
 # QuickQanava 
 
+![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
+![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava-win64.yml/badge.svg)
+
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
+![](https://img.shields.io/badge/version-0.20.0-blue.svg) |
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
+
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
 [Overview](#QuickQanava) |
@@ -7,18 +15,6 @@
 [Building](#building) |
 [Roadmap](#Roadmap) |
 [License](#license)
-
-![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
-![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava-win64.yml/badge.svg)
-
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.12.1 - OSX / Clang 8.1 / Qt 5.12.1 CMake)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows / MSVC 2015 x64 / Qt5.10.1 / qmake)
-
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.20.0-blue.svg) |
-[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 + [CHANGELOG.md](CHANGELOG.md)
 
