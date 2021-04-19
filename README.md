@@ -10,12 +10,6 @@
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
-[Overview](#QuickQanava) |
-[Dependencies](#Dependencies) |
-[Building](#building) |
-[Roadmap](#Roadmap) |
-[License](#license)
-
 + [CHANGELOG.md](CHANGELOG.md)
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
