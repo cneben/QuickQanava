@@ -1,4 +1,4 @@
-name: Win64 build
+name: Win64 build develop
 
 on: [push]
 
