@@ -17,3 +17,8 @@ jobs:
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: 'qtcore qtgui qtquickcontrols2'
+          
+      - name: Build QuickQanava Ubuntu qmake
+        run: |
+          qmake
+        shell: bash
