@@ -19,6 +19,6 @@ jobs:
           modules: 'qtcore qtgui qtquickcontrols2'
           
       - name: Build QuickQanava Ubuntu qmake
-        run: |
+        run:
           qmake quickqanava.pro
         shell: bash
