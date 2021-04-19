@@ -33,9 +33,9 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick              2.7
-import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with gradient fill, no effect and backOpacity style support
  *
@@ -59,7 +59,7 @@ Item {
         opacity: nodeItem.style.backOpacity
 
         layer.enabled: true
-        layer.effect:    LinearGradient {
+        layer.effect: Qan.LinearGradient {
             start:  Qt.point(0.,0.)
             end:    Qt.point(background.width, background.height)
             cached: false

@@ -653,19 +653,19 @@ bool    Graph::insertNode(const SharedNode& node, QQmlComponent* nodeComponent, 
     return node.get();
 }
 
-void    Graph::removeNode( qan::Node* node )
+void    Graph::removeNode(qan::Node* node)
 {
     // PRECONDITIONS:
         // node can't be nullptr
-    if ( node == nullptr )
+    if (node == nullptr)
         return;
     try {
         onNodeRemoved(*node);
         emit nodeRemoved(node);
-        if ( _selectedNodes.contains(node) )
+        if (_selectedNodes.contains(node))
             _selectedNodes.removeAll(node);
-        gtpo_graph_t::remove_node( std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()) );
-    } catch ( std::bad_weak_ptr ) {
+        gtpo_graph_t::remove_node(std::static_pointer_cast<Config::final_node_t>(node->shared_from_this()));
+    } catch (const std::bad_weak_ptr&) {
         qWarning() << "qan::Graph::removeNode(): Internal error for node " << node;
         return;
     }
@@ -850,7 +850,7 @@ void    Graph::removeEdge(qan::Node* source, qan::Node* destination)
     try {
         sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
         sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
-    } catch ( std::bad_weak_ptr ) { return; }
+    } catch (const std::bad_weak_ptr&) { return; }
     return gtpo_graph_t::remove_edge( sharedSource, sharedDestination );
 }
 
@@ -870,7 +870,7 @@ bool    Graph::hasEdge(qan::Node* source, qan::Node* destination) const
     try {
         sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
         sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
-    } catch ( std::bad_weak_ptr e ) { return false; }
+    } catch (const std::bad_weak_ptr& e) { return false; }
     return gtpo_graph_t::has_edge(sharedSource, sharedDestination);
 }
 //-----------------------------------------------------------------------------

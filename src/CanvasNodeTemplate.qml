@@ -35,9 +35,9 @@
 import QtQuick              2.7
 import QtQuick.Controls     2.1
 import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
 
 /*! \brief Default component template for building a custom qan::Node Item with an arbitrary geometry drawn into a JS Canvas2D.
@@ -62,7 +62,7 @@ Item {
                 backgroundShadow.source = item
         }
     }
-    DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
+    Qan.DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
         id: backgroundShadow
         anchors.fill: parent
         horizontalOffset: nodeItem.style.effectRadius

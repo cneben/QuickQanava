@@ -43,7 +43,8 @@ Qan.AbstractLineGrid {
     gridScale: 25
     property int minorLineToDrawCount: 0
     property int majorLineToDrawCount: 0
-    onRedrawLines: {
+
+    onRedrawLines: function(minorLineToDrawCount, majorLineToDrawCount) {
         lineGrid.minorLineToDrawCount = minorLineToDrawCount
         lineGrid.majorLineToDrawCount = majorLineToDrawCount
         gridCanvas.requestPaint()

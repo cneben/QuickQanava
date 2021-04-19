@@ -210,7 +210,7 @@ Qan.Connector {
             if (edgeItem)       // Hide the edgeItem after a mouse release or it could
                 edgeItem.visible = false    // be visible on non rectangular nodes.
         }
-        onPressed : {
+        onPressed: function(mouse) {
             mouse.accepted = true
             connectorPressed()
             if (edgeItem)

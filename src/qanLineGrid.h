@@ -160,20 +160,26 @@ protected:
     QQmlListProperty<qan::impl::GridLine> getMajorLines();
 
 private:
-    int                         minorLinesCount() const;
-    impl::GridLine*             minorLinesAt(int index) const;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    using size_type = int;
+#else
+    using size_type = qsizetype;
+#endif
+
+    size_type                   minorLinesCount() const;
+    impl::GridLine*             minorLinesAt(size_type index) const;
     QVector<impl::GridLine*>    _minorLines;
 
-    int                         majorLinesCount() const;
-    impl::GridLine*             majorLinesAt(int index) const;
+    size_type                   majorLinesCount() const;
+    impl::GridLine*             majorLinesAt(size_type index) const;
     QVector<impl::GridLine*>    _majorLines;
 
 private:
-    static int              callMinorLinesCount(QQmlListProperty<impl::GridLine>*);
-    static impl::GridLine*  callMinorLinesAt(QQmlListProperty<impl::GridLine>*, int index);
+    static size_type        callMinorLinesCount(QQmlListProperty<impl::GridLine>*);
+    static impl::GridLine*  callMinorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
 
-    static int              callMajorLinesCount(QQmlListProperty<impl::GridLine>*);
-    static impl::GridLine*  callMajorLinesAt(QQmlListProperty<impl::GridLine>*, int index);
+    static size_type        callMajorLinesCount(QQmlListProperty<impl::GridLine>*);
+    static impl::GridLine*  callMajorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
     //@}
     //-------------------------------------------------------------------------
 };
