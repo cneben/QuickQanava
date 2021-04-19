@@ -1,3 +1,4 @@
+.vscode
 .directory
 *.pro.user*
 CMakeLists.txt.user
@@ -8,3 +9,6 @@ Makefile
 quickgeogl.pro.user
 Makefile
 .qmake.stash
+samples/build*
+*.o
+

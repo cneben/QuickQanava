@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,6 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
@@ -31,7 +32,6 @@
 // \author	alexander @machinekoder
 // \date	2018 08 19
 //-----------------------------------------------------------------------------
-
 
 // QuickQanava headers
 #include "./qanPlugin.h"
@@ -65,23 +65,23 @@ static const struct {
     const char *type;
     int major, minor;
 } qmldir [] = {
-    { "LineGrid", 2, 0 },
-    { "Edge", 2, 0 },
-    { "EdgeTemplate", 2, 0 },
-    { "Node", 2, 0 },
-    { "GraphView", 2, 0 },
-    { "Group", 2, 0 },
-    { "RectNodeTemplate", 2, 0 },
-    { "RectSolidBackground",  2, 0 },
-    { "RectGroupTemplate",  2, 0 },
-    { "CanvasNodeTemplate",  2, 0 },
-    { "VisualConnector",  2, 0 },
-    { "LabelEditor",  2, 0 },
-    { "SelectionItem",  2, 0 },
-    { "StyleListView",  2, 0 },
-    { "HorizontalDock",  2, 0 },
-    { "VerticalDock",  2, 0 },
-    { "Port",  2, 0 },
+    {"LineGrid", 2, 0},
+    {"Edge", 2, 0},
+    {"EdgeTemplate", 2, 0},
+    {"Node", 2, 0},
+    {"GraphView", 2, 0},
+    {"Group", 2, 0},
+    {"RectNodeTemplate", 2, 0},
+    {"RectSolidBackground",  2, 0},
+    {"RectGroupTemplate",  2, 0},
+    {"CanvasNodeTemplate",  2, 0},
+    {"VisualConnector",  2, 0},
+    {"LabelEditor",  2, 0},
+    {"SelectionItem",  2, 0},
+    {"StyleListView",  2, 0},
+    {"HorizontalDock",  2, 0},
+    {"VerticalDock",  2, 0},
+    {"Port",  2, 0},
 };
 
 void QuickQanavaPlugin::registerTypes(const char *uri)
@@ -89,30 +89,30 @@ void QuickQanavaPlugin::registerTypes(const char *uri)
     initResources();
 
     // @uri QuickQanava
-    qmlRegisterType< qan::Node >( uri, 2, 0, "AbstractNode");
-    qmlRegisterType< qan::NodeItem >( uri, 2, 0, "NodeItem");
-    qmlRegisterType< qan::PortItem >( uri, 2, 0, "PortItem");
-    qmlRegisterType< qan::Edge >( uri, 2, 0, "AbstractEdge");
-    qmlRegisterType< qan::EdgeItem >( uri, 2, 0, "EdgeItem");
-    qmlRegisterType< qan::Group >( uri, 2, 0, "AbstractGroup");
-    qmlRegisterType< qan::GroupItem >( uri, 2, 0, "GroupItem");
-    qmlRegisterType< qan::Connector >( uri, 2, 0, "Connector");
+    qmlRegisterType<qan::Node>(uri, 2, 0, "AbstractNode");
+    qmlRegisterType<qan::NodeItem>(uri, 2, 0, "NodeItem");
+    qmlRegisterType<qan::PortItem>(uri, 2, 0, "PortItem");
+    qmlRegisterType<qan::Edge>(uri, 2, 0, "AbstractEdge");
+    qmlRegisterType<qan::EdgeItem>(uri, 2, 0, "EdgeItem");
+    qmlRegisterType<qan::Group>(uri, 2, 0, "AbstractGroup");
+    qmlRegisterType<qan::GroupItem>(uri, 2, 0, "GroupItem");
+    qmlRegisterType<qan::Connector>(uri, 2, 0, "Connector");
 
-    qmlRegisterType< qan::Graph >( uri, 2, 0, "Graph");
-    qmlRegisterType< qan::GraphView >( uri, 2, 0, "AbstractGraphView");
-    qmlRegisterType< qan::Navigable >( uri, 2, 0, "Navigable");
-    qmlRegisterType< qan::NavigablePreview >( uri, 2, 0, "AbstractNavigablePreview");
+    qmlRegisterType<qan::Graph>(uri, 2, 0, "Graph");
+    qmlRegisterType<qan::GraphView>(uri, 2, 0, "AbstractGraphView");
+    qmlRegisterType<qan::Navigable>(uri, 2, 0, "Navigable");
+    qmlRegisterType<qan::NavigablePreview>(uri, 2, 0, "AbstractNavigablePreview");
     
     qmlRegisterType<qan::Grid>(uri, 2, 0, "AbstractGrid");
     qmlRegisterType<qan::OrthoGrid>(uri, 2, 0, "OrthoGrid");
     qmlRegisterType<qan::LineGrid>(uri, 2, 0, "AbstractLineGrid");
     qmlRegisterType<qan::impl::GridLine>(uri, 2, 0, "GridLine");
 
-    qmlRegisterType< qan::Style >( uri, 2, 0, "Style");
-    qmlRegisterType< qan::NodeStyle >( uri, 2, 0, "NodeStyle");
-    qmlRegisterType< qan::EdgeStyle >( uri, 2, 0, "EdgeStyle");
-    qmlRegisterType< qan::StyleManager >( uri, 2, 0, "StyleManager");
-    qmlRegisterType< qan::BottomRightResizer >( uri, 2, 0, "BottomRightResizer" );
+    qmlRegisterType<qan::Style>(uri, 2, 0, "Style");
+    qmlRegisterType<qan::NodeStyle>(uri, 2, 0, "NodeStyle");
+    qmlRegisterType<qan::EdgeStyle>(uri, 2, 0, "EdgeStyle");
+    qmlRegisterType<qan::StyleManager>(uri, 2, 0, "StyleManager");
+    qmlRegisterType<qan::BottomRightResizer>(uri, 2, 0, "BottomRightResizer" );
 
     const QString filesLocation = fileLocation();
     for (auto i : qmldir) {

@@ -217,17 +217,17 @@ QQmlListProperty<impl::GridLine> LineGrid::getMajorLines() {
                                       &LineGrid::callMajorLinesAt);
 }
 
-int             LineGrid::minorLinesCount() const { return _minorLines.size(); }
-impl::GridLine* LineGrid::minorLinesAt(int index) const { return _minorLines.at(index); }
+LineGrid::size_type LineGrid::minorLinesCount() const { return _minorLines.size(); }
+impl::GridLine*     LineGrid::minorLinesAt(size_type index) const { return _minorLines.at(index); }
 
-int             LineGrid::majorLinesCount() const { return _majorLines.size(); }
-impl::GridLine* LineGrid::majorLinesAt(int index) const { return _majorLines.at(index); }
+LineGrid::size_type LineGrid::majorLinesCount() const { return _majorLines.size(); }
+impl::GridLine* LineGrid::majorLinesAt(size_type index) const { return _majorLines.at(index); }
 
-int             LineGrid::callMinorLinesCount(QQmlListProperty<impl::GridLine>* list) { return reinterpret_cast<LineGrid*>(list->data)->minorLinesCount(); }
-impl::GridLine* LineGrid::callMinorLinesAt(QQmlListProperty<impl::GridLine>* list, int index) { return reinterpret_cast<LineGrid*>(list->data)->minorLinesAt(index); }
+LineGrid::size_type LineGrid::callMinorLinesCount(QQmlListProperty<impl::GridLine>* list) { return reinterpret_cast<LineGrid*>(list->data)->minorLinesCount(); }
+impl::GridLine*     LineGrid::callMinorLinesAt(QQmlListProperty<impl::GridLine>* list, size_type index) { return reinterpret_cast<LineGrid*>(list->data)->minorLinesAt(index); }
 
-int             LineGrid::callMajorLinesCount(QQmlListProperty<impl::GridLine>* list) { return reinterpret_cast<LineGrid*>(list->data)->majorLinesCount(); }
-impl::GridLine* LineGrid::callMajorLinesAt(QQmlListProperty<impl::GridLine>* list, int index) { return reinterpret_cast<LineGrid*>(list->data)->majorLinesAt(index); }
+LineGrid::size_type LineGrid::callMajorLinesCount(QQmlListProperty<impl::GridLine>* list) { return reinterpret_cast<LineGrid*>(list->data)->majorLinesCount(); }
+impl::GridLine*     LineGrid::callMajorLinesAt(QQmlListProperty<impl::GridLine>* list, size_type index) { return reinterpret_cast<LineGrid*>(list->data)->majorLinesAt(index); }
 //-----------------------------------------------------------------------------
 
 } // ::qan

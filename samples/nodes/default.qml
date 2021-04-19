@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -61,14 +61,13 @@ Qan.GraphView {
             var e = graph.insertEdge(n1, n2);
             defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
         }
-        onNodeClicked: {
+        onNodeClicked: function(node) {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )
             nodeEditor.node = node
         }
-        onNodeRightClicked: { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
-        onNodeDoubleClicked: { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
-
-        onNodeMoved: notifyUser("Node <b>" + node.label + "</b> moved")
+        onNodeRightClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
+        onNodeDoubleClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
+        onNodeMoved: function(node) { notifyUser("Node <b>" + node.label + "</b> moved") }
     } // Qan.Graph
 
     Menu {      // Context menu demonstration
@@ -96,7 +95,7 @@ Qan.GraphView {
         }
     } // Menu
 
-    onRightClicked: {
+    onRightClicked: function(pos) {
         contextMenu.x = pos.x
         contextMenu.y = pos.y
         contextMenu.open()

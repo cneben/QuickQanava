@@ -32,8 +32,7 @@
 // \date	2016 02 04
 //-----------------------------------------------------------------------------
 
-#ifndef QuickQanava_h
-#define QuickQanava_h
+#pragma once
 
 // GTpo headers
 #include <gtpo/GTpo.h>
@@ -67,7 +66,9 @@
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
 #ifdef QUICKQANAVA_STATIC   // Initialization is done in QuickQanavaPlugin when QUICKQANAVA_STATIC is not defined
+
         Q_INIT_RESOURCE(QuickQanava_static);
+        Q_INIT_RESOURCE(QuickQanavaGraphicalEffects);
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
         qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
 #endif
@@ -109,6 +110,3 @@ struct QuickQanava {
 namespace qan { // ::qan
 
 } // ::qan
-
-#endif // QuickQanava_h
-
