@@ -1,6 +1,8 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
+project(sample_toplogy VERSION 0.11.0 LANGUAGES CXX)
+
 # Require C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,16 +26,21 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${Qt5Quick_INCLUDE_DIRS} )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_executable(sample_topology ${source_files} topology.qrc)
-target_include_directories(sample_topology PUBLIC QuickQanava)
-target_link_libraries(sample_topology QuickQanava QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2 Qt${QT_VERSION_MAJOR}::Widgets)
-
-if(WIN32 AND DEPLOY)
-    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
-    add_custom_command(TARGET sample_topology POST_BUILD
-        COMMAND ${WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_FILE:sample_topology> $<$<CONFIG:Debug>:--pdb>)
-    add_custom_command(TARGET sample_topology POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_topology>)
+if(NOT TARGET QuickQanava)
+    set(QUICK_QANAVA_BUILD_STATIC_QRC ON)
+    add_subdirectory(../../ quickqanava_build)  # Use ../../src as quickqanava_build subdirectory
+    # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+add_executable(sample_topology ${source_files} topology.qrc)
+target_include_directories(sample_topology PUBLIC QuickQanava)
+target_link_libraries(sample_topology
+    QuickQanava
+    QuickContainers
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::QuickControls2
+    Qt${QT_VERSION_MAJOR}::Widgets
+    )

@@ -32,8 +32,7 @@
 // \date	2016 02 04
 //-----------------------------------------------------------------------------
 
-#ifndef QuickQanava_h
-#define QuickQanava_h
+#pragma once
 
 // GTpo headers
 #include <gtpo/GTpo.h>
@@ -111,6 +110,3 @@ struct QuickQanava {
 namespace qan { // ::qan
 
 } // ::qan
-
-#endif // QuickQanava_h
-

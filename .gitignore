@@ -9,3 +9,4 @@ Makefile
 quickgeogl.pro.user
 Makefile
 .qmake.stash
+samples/build*
