@@ -3,16 +3,15 @@ name: Test building QuickQanava
 on: [push]
 
 jobs:
-  runs-on: ubuntu-latest
   steps:
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
       with:
-       path: ../Qt
+        path: ../Qt
         key: ${{ runner.os }}-QtCache
 
    - name: Install Qt
      uses: jurplel/install-qt-action@v2
      with:
-      cached: ${{ steps.cache-qt.outputs.cache-hit }}
+       cached: ${{ steps.cache-qt.outputs.cache-hit }}
