@@ -1,26 +1,14 @@
 # QuickQanava 
 
-![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
-
-[Overview](#QuickQanava) |
-[Dependencies](#Dependencies) |
-[Building](#building) |
-[Roadmap](#Roadmap) |
-[License](#license)
-
 ![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
 ![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava-win64.yml/badge.svg)
 
-[![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.12.1 - OSX / Clang 8.1 / Qt 5.12.1 CMake)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true)](https://ci.appveyor.com/project/cneben/quickqanava) (Windows / MSVC 2015 x64 / Qt5.10.1 / qmake)
-
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/) |
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-![](https://img.shields.io/badge/version-0.20.0-blue.svg) |
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+![](https://img.shields.io/badge/version-1.0.0-blue.svg)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-+ [CHANGELOG.md](CHANGELOG.md)
+![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
 `QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
 
@@ -28,6 +16,7 @@ QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQa
 
 QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2017 and g++7.5 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.2**)
 
++ [CHANGELOG.md](CHANGELOG.md)
 + Project homepage: http://cneben.github.io/QuickQanava/index.html
 
 + [Building](./doc/BUILDING.md)
