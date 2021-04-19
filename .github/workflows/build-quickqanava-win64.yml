@@ -3,7 +3,7 @@ name: Win64 build develop
 on: [push]
 
 jobs:
-  test:
+  test-build:
     runs-on: windows-2019
     steps:
       - name: Cache Qt
