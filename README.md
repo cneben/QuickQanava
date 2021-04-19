@@ -70,13 +70,13 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 | :---:        | 
 | ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/nodes/sample-groups.gif) |
 
-  - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/topology/index.html#using-groups)
+  - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/nodes.html#grouping-nodes)
 
 | Styles       |
 | :---:        | 
 | ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
 
-  - User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles/index.html)
+  - User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles.html)
 
 
 ## Contributors
