@@ -8,7 +8,7 @@
 [Roadmap](#Roadmap) |
 [License](#license)
 
-[!Build Status](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
+![Build Status](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
 
 [![Build Status](https://travis-ci.org/cneben/QuickQanava.svg?branch=master)](https://travis-ci.org/cneben/QuickQanava)  (Linux / g++6 / Qt5.12.1 - OSX / Clang 8.1 / Qt 5.12.1 CMake)
 
