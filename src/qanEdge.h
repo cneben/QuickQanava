@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,14 +27,12 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	hedges.h
+// \file	qanEdge.h
 // \author	benoit@destrat.io
 // \date	2004 February 15
 //-----------------------------------------------------------------------------
 
 #pragma once
-
-// Qt headers
 
 // QuickQanava headers
 #include "./qanGraphConfig.h"
@@ -62,7 +60,7 @@ public:
     virtual ~Edge() override;
 
 public:
-    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::edge<>::getGraph().
     qan::Graph*         getGraph() noexcept;
     //! \copydoc getGraph()
@@ -71,7 +69,7 @@ public:
 public:
     friend class qan::EdgeItem;
 
-    Q_PROPERTY( qan::EdgeItem* item READ getItem CONSTANT )
+    Q_PROPERTY(qan::EdgeItem* item READ getItem CONSTANT)
     qan::EdgeItem*   getItem() noexcept;
     void             setItem(qan::EdgeItem* edgeItem) noexcept;
 private:
@@ -108,30 +106,36 @@ public:
     /*! \name Edge Properties Management *///----------------------------------
     //@{
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
-    //! Set this edge label.
-    void            setLabel( const QString& label );
-    //! Get this edge label.
-    const QString&  getLabel( ) const { return _label; }
+    //! \copydoc _label
+    Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
+    //! \copydoc _label
+    bool            setLabel(const QString& label);
+    //! \copydoc _label
+    const QString&  getLabel() const { return _label; }
 protected:
-    QString         _label{""};
+    //! Edge label.
+    QString         _label = QStringLiteral("");
 signals:
-    void            labelChanged( );
+    //! \copydoc _label
+    void            labelChanged();
 
 public:
-    Q_PROPERTY( qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL )
-    //! Get edge's weight.
-    inline qreal    getWeight( ) const { return _weight; }
-    //! Set edge's weight.
-    void            setWeight( qreal weight );
+    //! \copydoc _weight
+    Q_PROPERTY(qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL)
+    //! \copydoc _weight
+    qreal           getWeight() const { return _weight; }
+    //! \copydoc _weight
+    bool            setWeight(qreal weight);
 protected:
-    qreal           _weight{1.0};
+    //! Edge weight (default to 1.0, range [-1., 1.0] is safe, otherwise setWeight() might not work).
+    qreal           _weight = 1.0;
 signals:
-    void            weightChanged( );
+    //! \copydoc _weight
+    void            weightChanged();
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::Edge )
+QML_DECLARE_TYPE(qan::Edge)
