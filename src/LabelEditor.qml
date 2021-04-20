@@ -25,9 +25,9 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanva software. Copyright 2014 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
-// \file	CanvasTemplate.qml
+// \file	LabelEditor.qml
 // \author	benoit@destrat.io
 // \date	2015 11 30
 //-----------------------------------------------------------------------------

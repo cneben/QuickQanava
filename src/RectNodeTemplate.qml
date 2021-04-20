@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
 // \file	RectNodeTemplate.qml
 // \author	benoit@destrat.io

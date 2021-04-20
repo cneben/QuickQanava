@@ -25,7 +25,8 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2015 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
+//
 // \file	VerticalDock.qml
 // \author	benoit@destrat.io
 // \date	2017 08 28

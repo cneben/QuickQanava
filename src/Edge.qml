@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
 // \file	CurvedEdge.qml
 // \author	benoit@destrat.io

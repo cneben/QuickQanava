@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava library. Copyright 2016 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
 // \file	qanGrid.h
 // \author	benoit@destrat.io
