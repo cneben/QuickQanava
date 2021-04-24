@@ -176,6 +176,14 @@ void    NodeStyle::setFontBold( bool fontBold ) noexcept
         emit fontBoldChanged();
     }
 }
+
+void    NodeStyle::setLabelColor( QColor labelColor ) noexcept
+{
+    if ( _labelColor != labelColor ) {
+        _labelColor = labelColor;
+        emit labelColorChanged();
+    }
+}
 //-----------------------------------------------------------------------------
 
 

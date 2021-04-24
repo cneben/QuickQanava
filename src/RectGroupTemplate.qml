@@ -115,6 +115,8 @@ Item {
                 visible: !labelEditor.visible
                 verticalAlignment: Text.AlignVCenter
                 font.bold: groupItem.style.fontBold
+                color: groupItem && groupItem.style && groupItem.style.labelColor ?
+                                                                        groupItem.style.labelColor : "black"
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent

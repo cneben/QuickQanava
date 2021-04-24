@@ -35,7 +35,14 @@
 #pragma once
 
 // GTpo headers
-#include <gtpo/GTpo>
+#include "../GTpo/src/gtpo/GTpo"
+
+// Qt headers
+#include <QString>
+#include <QQuickItem>
+#include <QQmlParserStatus>
+#include <QSharedPointer>
+#include <QAbstractListModel>
 
 // QuickQanava headers
 #include "./qanUtils.h"
@@ -48,11 +55,6 @@
 #include "./qanSelectable.h"
 #include "./qanConnector.h"
 
-// Qt headers
-#include <QQuickItem>
-#include <QQmlParserStatus>
-#include <QSharedPointer>
-#include <QAbstractListModel>
 
 //! Main QuickQanava namespace
 namespace qan { // ::qan

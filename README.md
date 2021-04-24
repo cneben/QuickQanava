@@ -37,37 +37,25 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 ## QuickQanava Showcase
 
-[![Toplogy sample video](https://img.youtube.com/vi/bUTO_PeegP4/0.jpg)](https://www.youtube.com/watch?v=bUTO_PeegP4)
+**Edges:**
 
-| Edges       | 
-| :---:       |
-| ![Curved-Straight Edges](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/edges-curved-straight.gif) |
+![Curved-Straight Edges](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/edges-curved-straight.gif) 
 
-| Nodes       | 
-| :---:       |
-| ![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif) |
+**Nodes:** User Doc:  [QuickStart - Custom Nodes](http://cneben.github.io/QuickQanava/nodes.html#defining-custom-nodes)
 
-  - User Doc:  [QuickStart - Custom Nodes](http://cneben.github.io/QuickQanava/topology/index.html#displaying-custom-nodes)
+![Custom content](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-nodes.gif)
 
-| Visual Connector       |   
-| :---:                  | 
-![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-dataflow-short.gif) |
+**Visual Connector:** User Doc:  [QuickStart - Visual Connector](http://cneben.github.io/QuickQanava/edges.html#visual-connectors)
 
-  - User Doc:  [QuickStart - Visual Connector](http://cneben.github.io/QuickQanava/topology/index.html#visual-connection-of-nodes)
-  - Reference documentation: qan::Connector interface and Qan.VisualConnector component
+![Visual Connector](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-dataflow-short.gif)
 
-| Groups       | 
-| :---:        | 
-| ![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/nodes/sample-groups.gif) |
+**Groups:** User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/nodes.html#grouping-nodes)
 
-  - User Doc:  [QuickStart - Using Groups](http://cneben.github.io/QuickQanava/nodes.html#grouping-nodes)
+![Groups](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/nodes/sample-groups.gif)
 
-| Styles       |
-| :---:        | 
-| ![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif) |
+**Styles:** User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles.html)
 
-  - User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles.html)
-
+![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif)
 
 ## Contributors
 

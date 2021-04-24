@@ -133,6 +133,7 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
         qan_Group_style.reset(new qan::NodeStyle{parent});
         qan_Group_style->setFontPointSize(11);
         qan_Group_style->setFontBold(true);
+        qan_Group_style->setLabelColor(QColor{"black"});
         qan_Group_style->setBorderWidth(2.);
         qan_Group_style->setBackRadius(8.);
         qan_Group_style->setBackOpacity(0.90);
