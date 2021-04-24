@@ -11,4 +11,6 @@ Makefile
 .qmake.stash
 samples/build*
 *.o
+.idea
+.DS_Store
 
