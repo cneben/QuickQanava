@@ -173,8 +173,6 @@ void    NodeItem::collapseAncestors(bool collapsed)
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
         const auto edges = ancestor->collectAdjacentEdges0();
-        //ancestorsEdges.insert(std::inserter += edges;
-        // FIXME use STL std::inserter here ?
         for (const auto edge : edges)
             ancestorsEdges.insert(edge);
     }
