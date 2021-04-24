@@ -40,7 +40,7 @@
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include <qcmContainer.h>
+#include "../QuickContainers/include/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"

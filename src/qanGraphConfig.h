@@ -46,10 +46,10 @@
 #include <QQuickItem>
 
 // GTpo headers
-#include <gtpo/GTpo>
+#include "../GTpo/src/gtpo/GTpo"
 
 // QuickContainers headers
-#include "qcmContainer.h"
+#include "../QuickContainers/include/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanNavigable.h"
