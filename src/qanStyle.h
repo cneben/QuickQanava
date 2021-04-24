@@ -82,7 +82,7 @@ public:
 signals:
     void        nameChanged();
 private:
-    QString     _name{QStringLiteral("")};
+    QString     _name = QStringLiteral("");
     //@}
     //-------------------------------------------------------------------------
 };
