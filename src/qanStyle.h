@@ -310,14 +310,14 @@ signals:
 public:
     /*! \brief Color to use to paint the node label (default to black)
      */
-    Q_PROPERTY( QColor labelColor READ getLabelColor WRITE setLabelColor NOTIFY labelColorChanged FINAL )
+    Q_PROPERTY(QColor labelColor READ getLabelColor WRITE setLabelColor NOTIFY labelColorChanged FINAL)
     //! \copydoc labelColor
-    void            setLabelColor( QColor labelColor ) noexcept;
+    void            setLabelColor(QColor labelColor) noexcept;
     //! \copydoc labelColor
-    inline QColor     getLabelColor() const noexcept { return _labelColor; }
+    inline QColor   getLabelColor() const noexcept { return _labelColor; }
 protected:
     //! \copydoc labelColor
-    QColor            _labelColor{QColor{"black"}};
+    QColor          _labelColor = QColor{"black"};
 signals:
     //! \copydoc labelColor
     void            labelColorChanged();
