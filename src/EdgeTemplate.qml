@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,9 +25,9 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2014 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library.
 //
-// \file	CurvedEdge.qml
+// \file	EdgeTemplate.qml
 // \author	benoit@destrat.io
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
@@ -238,63 +238,34 @@ Item {
         property var lineType: edgeTemplate.lineType
         onLineTypeChanged: {
             switch (lineType) {
+            case Qan.EdgeStyle.Undefined:   // falltrought
             case Qan.EdgeStyle.Straight:
-                if ( orthoLine )
+                if (orthoLine)
                     orthoLine.destroy()
-                if ( curvedLine )
+                if (curvedLine)
                     curvedLine.destroy()
                 straightLine = straightShapePath.createObject(edgeShape)
                 edgeShape.data = straightLine
                 break;
 
             case Qan.EdgeStyle.Ortho:
-                if ( straightLine )
+                if (straightLine)
                     straightLine.destroy()
-                if ( curvedLine )
+                if (curvedLine)
                     curvedLine.destroy()
                 orthoLine = orthoShapePath.createObject(edgeShape)
                 edgeShape.data = orthoLine
                 break;
 
             case Qan.EdgeStyle.Curved:
-                if ( straightLine )
+                if (straightLine)
                     straightLine.destroy()
-                if ( orthoLine )
+                if (orthoLine)
                     orthoLine.destroy()
                 curvedLine = curvedShapePath.createObject(edgeShape)
                 edgeShape.data = curvedLine
                 break;
             }
         }
-    }
-    // Debug control points display code.
-    /*
-    Rectangle {
-        width: 8; height: 8
-        x: edgeItem.c1.x - 4
-        y: edgeItem.c1.y - 4
-        radius: 4
-        color: "red"
-    }
-    Rectangle {
-        width: 8; height: 8
-        x: edgeItem.c2.x - 4
-        y: edgeItem.c2.y - 4
-        radius: 4
-        color: "green"
-    }
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.width: 1; border.color: "violet"
-    }
-    Rectangle {
-        x: p1.x - 2; y: p1.y - 2
-        width: 4; height: 4; radius: 4; color: "red"
-    }
-    Rectangle {
-        x: edgeItem.p2.x - 2; y: edgeItem.p2.y - 2
-        width: 4; height: 4; radius: 2; color: "blue"
-    }
-    */
-}
+    }  // Shape: edgeShape
+}  // Item: edgeTemplate

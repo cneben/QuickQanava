@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -173,8 +173,6 @@ void    NodeItem::collapseAncestors(bool collapsed)
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
         const auto edges = ancestor->collectAdjacentEdges0();
-        //ancestorsEdges.insert(std::inserter += edges;
-        // FIXME use STL std::inserter here ?
         for (const auto edge : edges)
             ancestorsEdges.insert(edge);
     }

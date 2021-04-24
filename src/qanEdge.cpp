@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -68,9 +68,9 @@ qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
 
 void    Edge::setItem(qan::EdgeItem* edgeItem) noexcept
 {
-    if ( edgeItem != nullptr ) {
+    if (edgeItem != nullptr) {
         _item = edgeItem;
-        if ( edgeItem->getEdge() != this )
+        if (edgeItem->getEdge() != this)
             edgeItem->setEdge(this);
     }
 }
@@ -108,20 +108,24 @@ qan::Node*  Edge::getDestination() noexcept
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------
-void    Edge::setLabel( const QString& label )
+bool    Edge::setLabel(const QString& label)
 {
-    if ( label != _label ) {
+    if (label != _label) {
         _label = label;
-        emit labelChanged( );
+        emit labelChanged();
+        return true;
     }
+    return false;
 }
 
-void     Edge::setWeight( qreal weight )
+bool    Edge::setWeight(qreal weight)
 {
-    if ( !qFuzzyCompare( 1.0 + weight, 1.0 + _weight ) ) {
+    if (!qFuzzyCompare(1.5 + weight, 1.5 + _weight)) {
         _weight = weight;
         emit weightChanged();
+        return true;
     }
+    return false;
 }
 //-----------------------------------------------------------------------------
 
