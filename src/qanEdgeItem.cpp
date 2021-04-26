@@ -585,7 +585,8 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update source arrow cache points
     const auto srcShape = getSrcShape();
     switch (srcShape) {
-        case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
+        // FIXME AHN
+        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
@@ -605,7 +606,8 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update destination arrow cache points
     const auto dstShape = getDstShape();
     switch (dstShape) {
-        case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
+        // FIXME AHN
+        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;

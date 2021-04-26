@@ -350,21 +350,21 @@ public:
     //! End type drawing configuration
     enum class ArrowShape {
         //! Invalid undefined value, usefull for serialization (if Undefined, default to Arrow).
-        Undefined = 0,
+        //Undefined = 0,
         //! Do not draw an end.
-        None = 1,
+        None = 0,
         //! End shape is an arrow.
-        Arrow = 2,
+        Arrow = 1,
         //! End shape is an open arrow.
-        ArrowOpen = 3,
+        ArrowOpen = 2,
         //! End shape is a filled circle.
-        Circle = 4,
+        Circle = 3,
         //! End shape is an open circle.
-        CircleOpen = 5,
+        CircleOpen = 4,
         //! End shape is a filled rectangle.
-        Rect = 6,
+        Rect = 5,
         //! End shape is a open rectangle.
-        RectOpen = 7
+        RectOpen = 6
     };
     Q_ENUM(ArrowShape)
 
@@ -401,7 +401,7 @@ public:
     void            setLineWidth(qreal lineWidth) noexcept;
     inline qreal    getLineWidth() const noexcept { return _lineWidth; }
 protected:
-    qreal           _lineWidth = 2.0;
+    qreal           _lineWidth = 3.0;
 signals:
     void            lineWidthChanged();
 
