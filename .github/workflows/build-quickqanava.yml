@@ -21,7 +21,7 @@ jobs:
       - name: Clone QuickQanava
         uses: actions/checkout@v2
         with:
-          ref: develqt6
+          ref: develop
       - name: Build QuickQanava Ubuntu qmake
         run: |
           qmake -makefile -o ./../build/Makefile quickqanava.pro
