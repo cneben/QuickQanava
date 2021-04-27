@@ -150,7 +150,7 @@ public:
     auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
 private:
     //! \copydoc srcShape
-    ArrowShape          _srcShape{ArrowShape::None};
+    ArrowShape          _srcShape = ArrowShape::None;
 signals:
     void                srcShapeChanged();
 
@@ -164,7 +164,7 @@ public:
     auto                setDstShape(ArrowShape dstShape) noexcept -> void;
 private:
     //! \copydoc dstShape
-    ArrowShape          _dstShape{ArrowShape::Arrow};
+    ArrowShape          _dstShape = ArrowShape::Arrow;
 signals:
     void                dstShapeChanged();
 
