@@ -1113,42 +1113,38 @@ qreal   EdgeItem::distanceFromLine( const QPointF& p, const QLineF& line ) const
 /* Style and Properties Management *///----------------------------------------
 void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
 {
-    if ( style != _style ) {
-        if ( _style != nullptr )  // Every style that is non default is disconnect from this node
-            QObject::disconnect( _style, nullptr,
-                                 this,   nullptr );
+    if (style != _style) {
+        if (_style != nullptr)  // Every style that is non default is disconnect from this node
+            QObject::disconnect(_style, nullptr,
+                                this,   nullptr);
         _style = style;
-        if ( _style ) {
-            connect( _style,    &QObject::destroyed,    // Monitor eventual style destruction
-                     this,      &EdgeItem::styleDestroyed );
+        if (_style) {
+            connect(_style,    &QObject::destroyed,    // Monitor eventual style destruction
+                    this,      &EdgeItem::styleDestroyed );
             // Note 20170909: _style.styleModified() signal is _not_ binded to updateItem() slot, since
             // it would be very unefficient to update edge for properties change affecting only
             // edge visual item (for example, _stye.lineWidth modification is watched directly
             // from edge delegate). Since arrowSize affect concrete edge geometry, bind it manually to
             // updateItem().
-            connect( _style,    &qan::EdgeStyle::arrowSizeChanged,
-                     this,      &EdgeItem::styleModified );
-            connect( _style,    &qan::EdgeStyle::lineTypeChanged,
-                     this,      &EdgeItem::styleModified );
-            connect( _style,    &qan::EdgeStyle::srcShapeChanged,   // FIXME: Add intelligent updating
-                     this,      &EdgeItem::styleModified );
-            connect( _style,    &qan::EdgeStyle::dstShapeChanged,   // FIXME: Add intelligent updating
-                     this,      &EdgeItem::styleModified );
+            connect(_style,    &qan::EdgeStyle::arrowSizeChanged,
+                    this,      &EdgeItem::styleModified);
+            connect(_style,    &qan::EdgeStyle::lineTypeChanged,
+                    this,      &EdgeItem::styleModified);
+            connect(_style,    &qan::EdgeStyle::srcShapeChanged,
+                    this,      &EdgeItem::styleModified);
+            connect(_style,    &qan::EdgeStyle::dstShapeChanged,
+                    this,      &EdgeItem::styleModified);
         }
         emit styleChanged();
         updateItem();   // Force initial style settings
     }
 }
 
-void    EdgeItem::styleDestroyed( QObject* style )
-{
-    if ( style != nullptr )
-        setStyle( nullptr );
-}
+void    EdgeItem::styleDestroyed(QObject* style) { Q_UNUSED(style); setStyle(nullptr); }
 
 void    EdgeItem::styleModified()
 {
-    if ( getStyle() != nullptr ) {
+    if (getStyle() != nullptr) {
         _arrowSize = getStyle()->getArrowSize();
         emit arrowSizeChanged();
         _srcShape = getStyle()->getSrcShape();
@@ -1162,6 +1158,13 @@ void    EdgeItem::styleModified()
 
 
 /* Drag'nDrop Management *///--------------------------------------------------
+void    EdgeItem::setAcceptDrops(bool acceptDrops)
+{
+    _acceptDrops = acceptDrops;
+    setFlag(QQuickItem::ItemAcceptsDrops, acceptDrops);
+    emit acceptDropsChanged();
+}
+
 bool    EdgeItem::contains(const QPointF& point) const
 {
     const auto lineType = _style ? _style->getLineType() : qan::EdgeStyle::LineType::Straight;
@@ -1187,67 +1190,67 @@ bool    EdgeItem::contains(const QPointF& point) const
     return r;
 }
 
-void    EdgeItem::dragEnterEvent( QDragEnterEvent* event )
+void    EdgeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     // Note 20160218: contains() is used so enter event is necessary generated "on the edge line"
-    if ( _acceptDrops ) {
-        if ( event->source() == nullptr ) {
+    if (_acceptDrops) {
+        if (event->source() == nullptr) {
             event->accept(); // This is propably a drag initated with type=Drag.Internal, for exemple a connector drop node trying to create an hyper edge, accept by default...
-            QQuickItem::dragEnterEvent( event );
+            QQuickItem::dragEnterEvent(event);
             return;
         }
-        if ( event->source() != nullptr ) { // Get the source item from the quick drag attached object received
-            QVariant source = event->source()->property( "source" );
-            if ( source.isValid() ) {
-                QQuickItem* sourceItem = source.value< QQuickItem* >( );
-                QVariant draggedStyle = sourceItem->property( "draggedEdgeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-                if ( draggedStyle.isValid() ) {
+        if (event->source() != nullptr) { // Get the source item from the quick drag attached object received
+            QVariant source = event->source()->property("source");
+            if (source.isValid()) {
+                QQuickItem* sourceItem = source.value<QQuickItem*>();
+                QVariant draggedStyle = sourceItem->property("draggedEdgeStyle"); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+                if (draggedStyle.isValid()) {
                     event->accept();
                     return;
                 }
             }
         }
         event->ignore();
-        QQuickItem::dragEnterEvent( event );
+        QQuickItem::dragEnterEvent(event);
     }
-    QQuickItem::dragEnterEvent( event );
+    QQuickItem::dragEnterEvent(event);
 }
 
-void	EdgeItem::dragMoveEvent( QDragMoveEvent* event )
+void	EdgeItem::dragMoveEvent(QDragMoveEvent* event)
 {
-    if ( getAcceptDrops() ) {
-        qreal d = distanceFromLine( event->posF( ), QLineF{_p1, _p2} );
-        if ( d > 0. && d < 5. )
+    if (getAcceptDrops()) {
+        qreal d = distanceFromLine(event->posF( ), QLineF{_p1, _p2});
+        if (d > 0. && d < 5.)
             event->accept();
         else event->ignore();
     }
-    QQuickItem::dragMoveEvent( event );
+    QQuickItem::dragMoveEvent(event);
 }
 
-void	EdgeItem::dragLeaveEvent( QDragLeaveEvent* event )
+void	EdgeItem::dragLeaveEvent(QDragLeaveEvent* event)
 {
-    QQuickItem::dragLeaveEvent( event );
-    if ( getAcceptDrops() )
+    QQuickItem::dragLeaveEvent(event);
+    if (getAcceptDrops())
         event->ignore();
 }
 
 void    EdgeItem::dropEvent( QDropEvent* event )
 {
-    if ( getAcceptDrops() && event->source() != nullptr ) { // Get the source item from the quick drag attached object received
-        QVariant source = event->source()->property( "source" );
-        if ( source.isValid() ) {
-            QQuickItem* sourceItem = source.value< QQuickItem* >( );
-            QVariant draggedStyle = sourceItem->property( "draggedEdgeStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-            if ( draggedStyle.isValid() ) {
-                qan::EdgeStyle* draggedEdgeStyle = draggedStyle.value< qan::EdgeStyle* >( );
-                if ( draggedEdgeStyle != nullptr ) {
-                    setStyle( draggedEdgeStyle );
+    if (getAcceptDrops() && event->source() != nullptr) { // Get the source item from the quick drag attached object received
+        QVariant source = event->source()->property("source");
+        if (source.isValid()) {
+            QQuickItem* sourceItem = source.value<QQuickItem*>();
+            QVariant draggedStyle = sourceItem->property("draggedEdgeStyle"); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+            if (draggedStyle.isValid()) {
+                qan::EdgeStyle* draggedEdgeStyle = draggedStyle.value< qan::EdgeStyle* >();
+                if (draggedEdgeStyle != nullptr) {
+                    setStyle(draggedEdgeStyle);
                     event->accept();
                 }
             }
         }
     }
-    QQuickItem::dropEvent( event );
+    QQuickItem::dropEvent(event);
 }
 //-----------------------------------------------------------------------------
 
