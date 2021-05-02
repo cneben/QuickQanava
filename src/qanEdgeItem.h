@@ -49,8 +49,7 @@ class Graph;
 class Edge;
 class NodeItem;
 
-//! Weighted directed edge linking two nodes in a graph.
-/*!
+/*! \brief Weighted directed edge linking two nodes in a graph.
  *
  * \warning EdgeItem \c objectName property is set to "qan::EdgeItem" and should not be changed in subclasses.
  *

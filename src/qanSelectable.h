@@ -60,7 +60,7 @@ class Selectable
 public:
     explicit Selectable();
     virtual ~Selectable();
-    Selectable( const Selectable& ) = delete;
+    Selectable(const Selectable&) = delete;
 
 protected:
     //! Configure this \c qan::Selectable interface with a valid graph.
@@ -74,21 +74,21 @@ private:
     /*! \name Selection Management *///----------------------------------------
     //@{
 public:
-    void            setSelectable( bool selectable ) noexcept;
+    void            setSelectable(bool selectable) noexcept;
     inline bool     getSelectable() const noexcept { return _selectable; }
     inline bool     isSelectable() const noexcept { return _selectable; }
 protected:
     virtual void    emitSelectableChanged() = 0;
 private:
-    bool            _selectable{true};
+    bool            _selectable = true;
 
 public:
-    void            setSelected( bool selected ) noexcept;
+    void            setSelected(bool selected) noexcept;
     inline bool     getSelected() const noexcept { return _selected; }
 protected:
     virtual void    emitSelectedChanged() = 0;
 private:
-    bool            _selected{false};
+    bool            _selected = false;
 
 public:
     /*! \brief Item used to hilight selection.

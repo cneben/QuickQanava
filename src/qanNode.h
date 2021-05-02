@@ -116,8 +116,8 @@ public:
     //@{
 public:
     //! Read-only abstract item model of this node in nodes.
-    Q_PROPERTY( QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL )
-    QAbstractItemModel* qmlGetInNodes( ) const;
+    Q_PROPERTY(QAbstractItemModel* inNodes READ qmlGetInNodes CONSTANT FINAL)
+    QAbstractItemModel* qmlGetInNodes() const;
 
 public:
     Q_PROPERTY(int  inDegree READ getInDegree NOTIFY inDegreeChanged FINAL)
