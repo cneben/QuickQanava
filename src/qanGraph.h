@@ -605,19 +605,19 @@ public:
      *
      * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
      */
-    Q_PROPERTY( SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged FINAL )
-    void                    setSelectionPolicy( SelectionPolicy selectionPolicy ) noexcept;
+    Q_PROPERTY(SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged FINAL)
+    void                    setSelectionPolicy(SelectionPolicy selectionPolicy) noexcept;
     inline SelectionPolicy  getSelectionPolicy() const noexcept { return _selectionPolicy; }
 private:
-    SelectionPolicy         _selectionPolicy{ SelectionPolicy::SelectOnClick };
+    SelectionPolicy         _selectionPolicy = SelectionPolicy::SelectOnClick;
 signals:
     void                    selectionPolicyChanged();
 
 
 public:
     //! Color for the node selection hilgither component (default to dodgerblue).
-    Q_PROPERTY( QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL )
-    void            setSelectionColor( QColor selectionColor ) noexcept;
+    Q_PROPERTY(QColor selectionColor READ getSelectionColor WRITE setSelectionColor NOTIFY selectionColorChanged FINAL)
+    void            setSelectionColor(QColor selectionColor) noexcept;
     inline QColor   getSelectionColor() const noexcept { return _selectionColor; }
 private:
     QColor          _selectionColor{30, 144, 255};  // dodgerblue=rgb(30, 144, 255)
@@ -626,21 +626,21 @@ signals:
 
 public:
     //! Selection hilgither item stroke width (default to 3.0).
-    Q_PROPERTY( qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL )
-    void            setSelectionWeight( qreal selectionWeight ) noexcept;
+    Q_PROPERTY(qreal selectionWeight READ getSelectionWeight WRITE setSelectionWeight NOTIFY selectionWeightChanged FINAL)
+    void            setSelectionWeight(qreal selectionWeight) noexcept;
     inline qreal    getSelectionWeight() const noexcept { return _selectionWeight; }
 private:
-    qreal           _selectionWeight{ 3. };
+    qreal           _selectionWeight = 3.;
 signals:
-    void            selectionWeightChanged( );
+    void            selectionWeightChanged();
 
 public:
     //! Margin between the selection hilgither item and a selected item (default to 3.0).
-    Q_PROPERTY( qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL )
-    void            setSelectionMargin( qreal selectionMargin ) noexcept;
+    Q_PROPERTY(qreal selectionMargin READ getSelectionMargin WRITE setSelectionMargin NOTIFY selectionMarginChanged FINAL)
+    void            setSelectionMargin(qreal selectionMargin) noexcept;
     inline qreal    getSelectionMargin() const noexcept { return _selectionMargin; }
 private:
-    qreal           _selectionMargin{ 3. };
+    qreal           _selectionMargin = 3.;
 signals:
     void            selectionMarginChanged();
 
@@ -932,6 +932,10 @@ private:
                                           std::unordered_set<const qan::Node*>& marks,
                                           std::vector<const qan::Node*>& childs,
                                           bool collectGroup) const noexcept;
+
+public:
+    //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
+    auto        collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
     /*! \brief Synchronously collect all parent nodes of \c node using DFS.

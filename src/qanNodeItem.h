@@ -106,7 +106,7 @@ protected:
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
-    Q_PROPERTY( qan::Node* node READ getNode CONSTANT FINAL )
+    Q_PROPERTY(qan::Node* node READ getNode CONSTANT FINAL)
     auto        getNode() noexcept -> qan::Node*;
     auto        getNode() const noexcept -> const qan::Node*;
     auto        setNode(qan::Node* node) noexcept -> void;
@@ -115,7 +115,7 @@ private:
 
 public:
     //! Secure shortcut to getNode().getGraph().
-    Q_PROPERTY( qan::Graph* graph READ getGraph CONSTANT FINAL )
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! \copydoc graph
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
@@ -186,14 +186,14 @@ protected slots:
     //@{
 public:
     //! Enable or disable node item resizing (default to true, ie node is resizable).
-    Q_PROPERTY( bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL )
+    Q_PROPERTY(bool resizable READ getResizable WRITE setResizable NOTIFY resizableChanged FINAL)
     //! \copydoc resizable
     inline bool     getResizable() const noexcept { return _resizable; }
     //! \copydoc resizable
-    void            setResizable( bool resizable ) noexcept;
+    void            setResizable(bool resizable) noexcept;
 protected:
     //! \copydoc resizable
-    bool            _resizable{true};
+    bool            _resizable = true;
 signals:
     //! \copydoc resizable
     void            resizableChanged();
@@ -205,14 +205,14 @@ public:
      *
      * Ration conservation is disabled if \c ration is < 0.
      */
-    Q_PROPERTY( qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL )
+    Q_PROPERTY(qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL)
     //! \copydoc ratio
     inline qreal    getRatio() const noexcept { return _ratio; }
     //! \copydoc ratio
     void            setRatio(qreal ratio) noexcept;
 protected:
     //! \copydoc ratio
-    qreal           _ratio{-1.};
+    qreal           _ratio = -1.;
 signals:
     //! \copydoc ratio
     void            ratioChanged();
@@ -241,14 +241,14 @@ public:
      *
      * \sa Connectable
      */
-    Q_PROPERTY( Connectable connectable READ getConnectable WRITE setConnectable NOTIFY connectableChanged FINAL )
+    Q_PROPERTY(Connectable connectable READ getConnectable WRITE setConnectable NOTIFY connectableChanged FINAL)
     //! \copydoc connectable
     inline Connectable  getConnectable() const noexcept { return _connectable; }
     //! \copydoc connectable
-    void            setConnectable( Connectable connectable ) noexcept;
+    void            setConnectable(Connectable connectable) noexcept;
 protected:
     //! \copydoc connectable
-    Connectable     _connectable{Connectable::Connectable};
+    Connectable     _connectable = Connectable::Connectable;
 signals:
     //! \copydoc connectable
     void            connectableChanged();
@@ -259,13 +259,13 @@ signals:
     //@{
 public:
     //! \copydoc qan::Draggable::_draggable
-    Q_PROPERTY( bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL )
+    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
     //! \copydoc qan::Draggable::_dragged
-    Q_PROPERTY( bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL )
+    Q_PROPERTY(bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL)
     //! \copydoc qan::Draggable::_dropable
-    Q_PROPERTY( bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL )
+    Q_PROPERTY(bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL)
     //! \copydoc qan::Draggable::_acceptDrops
-    Q_PROPERTY( bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL )
+    Q_PROPERTY(bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL)
 protected:
     virtual void    emitDraggableChanged() override { emit draggableChanged(); }
     virtual void    emitDraggedChanged() override { emit draggedChanged(); }
@@ -279,13 +279,13 @@ signals:
 
 protected:
     //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragEnterEvent( QDragEnterEvent* event ) override;
+    virtual void    dragEnterEvent(QDragEnterEvent* event) override;
     //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragMoveEvent( QDragMoveEvent* event ) override;
+    virtual void    dragMoveEvent(QDragMoveEvent* event) override;
     //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
-    virtual void    dragLeaveEvent( QDragLeaveEvent* event ) override;
+    virtual void    dragLeaveEvent(QDragLeaveEvent* event) override;
     //! Internally used to accept style drops.
-    virtual void    dropEvent( QDropEvent* event ) override;
+    virtual void    dropEvent(QDropEvent* event) override;
 
     virtual void    mouseDoubleClickEvent(QMouseEvent* event) override;
     virtual void    mouseMoveEvent(QMouseEvent* event) override;
@@ -299,10 +299,10 @@ protected:
     //@{
 public:
     //! Node current style (this property is never null, a default style is returned when no style has been manually set).
-    Q_PROPERTY( qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL )
-    void                        setStyle( qan::NodeStyle* style ) noexcept;
+    Q_PROPERTY(qan::NodeStyle* style READ getStyle WRITE setStyle NOTIFY styleChanged FINAL)
+    void                        setStyle(qan::NodeStyle* style) noexcept;
     //! Generic interface for qan::DraggableCtrl<>::handleDropEvent().
-    void                        setItemStyle( qan::Style* style ) noexcept;
+    void                        setItemStyle(qan::Style* style) noexcept;
     //! \copydoc style
     inline qan::NodeStyle*      getStyle() const noexcept { return _style.data(); }
 private:
@@ -313,7 +313,7 @@ signals:
     void                        styleChanged();
 private slots:
     //! Called when this node style is destroyed, remove any existing binding.
-    void                        styleDestroyed( QObject* style );
+    void                        styleDestroyed(QObject* style);
     //@}
     //-------------------------------------------------------------------------
 
