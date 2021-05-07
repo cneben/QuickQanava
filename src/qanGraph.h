@@ -934,6 +934,10 @@ private:
                                           bool collectGroup) const noexcept;
 
 public:
+    //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
+    auto        collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
+
+public:
     /*! \brief Synchronously collect all parent nodes of \c node using DFS.
      *
      * \note \c node is automatically added to the result and returned as the first

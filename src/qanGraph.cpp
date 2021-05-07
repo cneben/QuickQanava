@@ -1705,6 +1705,37 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
     return false;
 }
 
+auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
+{
+    // Algorithm:
+        // 0. Index nodes
+        // 1. For every nodes:
+            // 1.1 Collect all out edge where dst is part of nodes
+            // 1.2 Collect all in edge where src is part of nodes
+    std::unordered_set<const qan::Edge*>  innerEdges;
+    std::unordered_set<const qan::Node*>  nodesSet(nodes.cbegin(), nodes.cend());
+
+    std::unordered_set<qan::Edge*>  edges;
+    for (const auto node: nodes) {
+        const auto& inEdges = node->get_in_edges();
+        for (const auto& inEdgePtr: inEdges) {
+            const auto inEdge = inEdgePtr.lock();
+            if (inEdge &&
+                nodesSet.find(inEdge->getDestination()) != nodesSet.end())
+                innerEdges.insert(inEdge.get());
+        }
+
+        const auto& outEdges = node->get_out_edges();
+        for (const auto& outEdgePtr: outEdges) {
+            const auto outEdge = outEdgePtr.lock();
+            if (outEdge &&
+                nodesSet.find(outEdge->getSource()) != nodesSet.end())
+                innerEdges.insert(outEdge.get());
+        }
+    }
+    return innerEdges;
+}
+
 std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const noexcept
 {
     std::vector<const qan::Node*> parents;
