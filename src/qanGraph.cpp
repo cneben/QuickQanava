@@ -1674,6 +1674,12 @@ std::vector<const qan::Node*>   Graph::collectDfs(const qan::Node& node, bool co
     return childs;
 }
 
+std::vector<const qan::Node*>   Graph::collectDfs(const QVector<qan::Node*> nodes,
+                                                  bool collectGroup) const noexcept
+{
+    // FIXME...
+}
+
 void    Graph::collectDfsRec(const qan::Node* node,
                              std::unordered_set<const qan::Node*>& marks,
                              std::vector<const qan::Node*>& childs,

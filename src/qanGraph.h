@@ -927,6 +927,9 @@ public:
      */
     std::vector<const qan::Node*>   collectDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
+    //! \copydoc collectDfs()
+    std::vector<const qan::Node*>   collectDfs(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept;
+
 private:
     void                    collectDfsRec(const qan::Node*,
                                           std::unordered_set<const qan::Node*>& marks,
