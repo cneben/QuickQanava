@@ -1674,10 +1674,17 @@ std::vector<const qan::Node*>   Graph::collectDfs(const qan::Node& node, bool co
     return childs;
 }
 
-std::vector<const qan::Node*>   Graph::collectDfs(const QVector<qan::Node*> nodes,
-                                                  bool collectGroup) const noexcept
+auto    Graph::collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup) const noexcept -> std::unordered_set<const qan::Node*>
 {
-    // FIXME...
+    std::unordered_set<const qan::Node*> r;
+    for (const auto node: nodes) {
+        if (node == nullptr)
+            continue;
+        std::vector<const qan::Node*> subNodes = collectDfs(*node, collectGroup);
+        if (subNodes.size() > 0)
+            r.insert(subNodes.cbegin(), subNodes.cend());
+    }
+    return r;
 }
 
 void    Graph::collectDfsRec(const qan::Node* node,
@@ -1719,6 +1726,8 @@ auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) cons
             // 1.1 Collect all out edge where dst is part of nodes
             // 1.2 Collect all in edge where src is part of nodes
     std::unordered_set<const qan::Edge*>  innerEdges;
+    if (nodes.size() == 0)
+        return innerEdges;
     std::unordered_set<const qan::Node*>  nodesSet(nodes.cbegin(), nodes.cend());
 
     std::unordered_set<qan::Edge*>  edges;
