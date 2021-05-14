@@ -16,19 +16,19 @@ jobs:
         with:
           ref: develop
 
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v1
-        with:
-          path: ../Qt
-          key: ubuntu-latest-QtCache
+      #- name: Cache Qt
+      #  id: cache-qt
+      #  uses: actions/cache@v1
+      #  with:
+      #    path: ../Qt
+      #    key: ubuntu-latest-QtCache
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          #cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: qtcore qttools qtgui qtquickcontrols2
-          version: 5.15.1
+          version: 5.15.2
           target: desktop
           setup-python: false
 
