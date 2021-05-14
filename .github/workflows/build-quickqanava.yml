@@ -28,13 +28,14 @@ jobs:
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: qtcore qttools qtgui qtquickcontrols2
+          version: 5.15.1
+          target: desktop
           setup-python: false
 
       - name: Configure qmake
         run: |
-          QT_SELECT=5 qmake CONFIG+=release -spec linux-g++-64 -makefile -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro
-          cd ../build
-          make -j4
+          mkdir build
+          qmake CONFIG+=release -spec linux-g++-64 -makefile -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro          
         working-directory: ${{runner.workspace}}/build
         shell: bash
 
