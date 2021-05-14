@@ -1,31 +1,44 @@
 name: Linux build develop
 
-on: [push]
-
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
 jobs:
   test-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    timeout-minutes: 120
     steps:
+      - name: Clone QuickQanava
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+
       - name: Cache Qt
         id: cache-qt
         uses: actions/cache@v1
         with:
           path: ../Qt
           key: ubuntu-latest-QtCache
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
-          modules: 'qtcore qtgui qtquickcontrols2'
+          modules: qtcore qttools qtgui qtquickcontrols2
           setup-python: false
-      - name: Clone QuickQanava
-        uses: actions/checkout@v2
-        with:
-          ref: develop
-      - name: Build QuickQanava Ubuntu qmake
+
+      - name: Configure qmake
         run: |
-          qmake -makefile -o ./../build/Makefile quickqanava.pro
+          QT_SELECT=5 
+          qmake CONFIG+=release -spec linux-g++-64 -makefile -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro
           cd ../build
           make -j4
-        working-directory: ./         
+        working-directory: ${{runner.workspace}}/build
         shell: bash
+
+      - name: Build Project
+        run: make -j$(nproc)
+        working-directory: ${{runner.workspace}}/build
