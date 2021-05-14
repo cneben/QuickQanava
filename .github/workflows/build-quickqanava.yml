@@ -32,9 +32,12 @@ jobs:
           target: desktop
           setup-python: false
 
+      - name: Create Build Dir
+        run: mkdir build
+        working-directory: ${{runner.workspace}}
+        
       - name: Configure qmake
         run: |
-          mkdir build
           qmake CONFIG+=release -spec linux-g++-64 -makefile -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro          
         working-directory: ${{runner.workspace}}/build
         shell: bash
