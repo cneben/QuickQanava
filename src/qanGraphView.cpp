@@ -48,6 +48,7 @@ GraphView::GraphView(QQuickItem* parent) :
 {
     setAntialiasing(true);
     setSmooth(true);
+    setFocus(true);
 }
 
 void    GraphView::setGraph(qan::Graph* graph)

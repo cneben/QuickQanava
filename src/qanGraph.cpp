@@ -1224,6 +1224,13 @@ void    Graph::removeFromSelection( QQuickItem* item ) {
     }
 }
 
+void    Graph::selectAll()
+{
+    for (const auto& node: get_nodes())
+        if (node)
+            selectNode(*node, Qt::ControlModifier);
+}
+
 void    Graph::removeSelection()
 {
     const auto& selectedNodes = getSelectedNodes();
@@ -1242,9 +1249,9 @@ void    Graph::clearSelection()
     // container is necessary to avoid iterating on a vector that
     // has changed while iterator has been modified.
     SelectedNodes selectedNodesCopy;
-    std::copy( _selectedNodes.cbegin(),
-                _selectedNodes.cend(),
-                std::back_inserter(selectedNodesCopy) );
+    std::copy(_selectedNodes.cbegin(),
+               _selectedNodes.cend(),
+               std::back_inserter(selectedNodesCopy));
     for (auto node : selectedNodesCopy)
         if (node != nullptr &&
             node->getItem() != nullptr)
@@ -1252,12 +1259,12 @@ void    Graph::clearSelection()
     _selectedNodes.clear();
 
     SelectedGroups selectedGroupsCopy;
-    std::copy( _selectedGroups.cbegin(),
-                _selectedGroups.cend(),
-                std::back_inserter(selectedGroupsCopy) );
-    for ( auto group : selectedGroupsCopy )
-        if ( group != nullptr &&
-             group->getItem() != nullptr )
+    std::copy(_selectedGroups.cbegin(),
+              _selectedGroups.cend(),
+              std::back_inserter(selectedGroupsCopy));
+    for (auto group : selectedGroupsCopy)
+        if (group != nullptr &&
+            group->getItem() != nullptr)
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
 }
@@ -1674,10 +1681,17 @@ std::vector<const qan::Node*>   Graph::collectDfs(const qan::Node& node, bool co
     return childs;
 }
 
-std::vector<const qan::Node*>   Graph::collectDfs(const QVector<qan::Node*> nodes,
-                                                  bool collectGroup) const noexcept
+auto    Graph::collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup) const noexcept -> std::unordered_set<const qan::Node*>
 {
-    // FIXME...
+    std::unordered_set<const qan::Node*> r;
+    for (const auto node: nodes) {
+        if (node == nullptr)
+            continue;
+        std::vector<const qan::Node*> subNodes = collectDfs(*node, collectGroup);
+        if (subNodes.size() > 0)
+            r.insert(subNodes.cbegin(), subNodes.cend());
+    }
+    return r;
 }
 
 void    Graph::collectDfsRec(const qan::Node* node,
@@ -1719,6 +1733,8 @@ auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) cons
             // 1.1 Collect all out edge where dst is part of nodes
             // 1.2 Collect all in edge where src is part of nodes
     std::unordered_set<const qan::Edge*>  innerEdges;
+    if (nodes.size() == 0)
+        return innerEdges;
     std::unordered_set<const qan::Node*>  nodesSet(nodes.cbegin(), nodes.cend());
 
     std::unordered_set<qan::Edge*>  edges;

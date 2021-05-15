@@ -1,10 +1,14 @@
-name: Linux build develop
+name: Win64 build develop
 
-on: [push]
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
 
 jobs:
   test-build:
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
     steps:
       - name: Cache Qt
         id: cache-qt
@@ -18,14 +22,3 @@ jobs:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: 'qtcore qtgui qtquickcontrols2'
           setup-python: false
-      - name: Clone QuickQanava
-        uses: actions/checkout@v2
-        with:
-          ref: develop
-      - name: Build QuickQanava Ubuntu qmake
-        run: |
-          qmake -makefile -o ./../build/Makefile quickqanava.pro
-          cd ../build
-          make -j4
-        working-directory: ./         
-        shell: bash

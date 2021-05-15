@@ -83,6 +83,15 @@ ApplicationWindow {
             onGroupDoubleClicked: function(group) { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
             onGroupRightClicked: function(group) { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
+        focus: true
+        Keys.onPressed: {
+            if (event.modifiers & Qt.ControlModifier &&      // CTRL+A
+                event.key === Qt.Key_A) {
+                topology.selectAll()
+                event.accepted = false
+            } else
+                event.accepted = false
+        }
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
