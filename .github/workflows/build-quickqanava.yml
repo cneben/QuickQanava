@@ -30,7 +30,7 @@ jobs:
           modules: qtcore qttools qtgui qtquickcontrols2
           version: 5.15.2
           target: desktop
-          setup-python: false
+          #setup-python: false
 
       - name: Create Build Dir
         run: mkdir build
