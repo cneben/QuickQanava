@@ -1,7 +1,7 @@
 # QuickQanava 
 
-![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava.yml/badge.svg)
-![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-quickqanava-win64.yml/badge.svg)
+![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-master.yml/badge.svg) ![Build Status Ubuntu](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-master.yml/badge.svg)
+![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-master.yml/badge.svg) ![Build Status Win64](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-master.yml/badge.svg)
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
