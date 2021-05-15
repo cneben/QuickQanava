@@ -1224,6 +1224,13 @@ void    Graph::removeFromSelection( QQuickItem* item ) {
     }
 }
 
+void    Graph::selectAll()
+{
+    for (const auto& node: get_nodes())
+        if (node)
+            selectNode(*node, Qt::ControlModifier);
+}
+
 void    Graph::removeSelection()
 {
     const auto& selectedNodes = getSelectedNodes();
@@ -1242,9 +1249,9 @@ void    Graph::clearSelection()
     // container is necessary to avoid iterating on a vector that
     // has changed while iterator has been modified.
     SelectedNodes selectedNodesCopy;
-    std::copy( _selectedNodes.cbegin(),
-                _selectedNodes.cend(),
-                std::back_inserter(selectedNodesCopy) );
+    std::copy(_selectedNodes.cbegin(),
+               _selectedNodes.cend(),
+               std::back_inserter(selectedNodesCopy));
     for (auto node : selectedNodesCopy)
         if (node != nullptr &&
             node->getItem() != nullptr)
@@ -1252,12 +1259,12 @@ void    Graph::clearSelection()
     _selectedNodes.clear();
 
     SelectedGroups selectedGroupsCopy;
-    std::copy( _selectedGroups.cbegin(),
-                _selectedGroups.cend(),
-                std::back_inserter(selectedGroupsCopy) );
-    for ( auto group : selectedGroupsCopy )
-        if ( group != nullptr &&
-             group->getItem() != nullptr )
+    std::copy(_selectedGroups.cbegin(),
+              _selectedGroups.cend(),
+              std::back_inserter(selectedGroupsCopy));
+    for (auto group : selectedGroupsCopy)
+        if (group != nullptr &&
+            group->getItem() != nullptr)
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
 }

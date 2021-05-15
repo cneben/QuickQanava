@@ -681,6 +681,9 @@ public:
     //! \copydoc removeFromSelection
     void            removeFromSelection(QQuickItem* item);
 
+    //! Select all graph content (nodes, groups and edges).
+    Q_INVOKABLE void    selectAll();
+
     //! Remove all selected nodes and groups and clear selection.
     Q_INVOKABLE void    removeSelection();
 
