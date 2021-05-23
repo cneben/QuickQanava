@@ -504,6 +504,9 @@ public:
     //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
     Q_INVOKABLE bool        hasEdge(qan::Node* source, qan::Node* destination) const;
 
+    //! Return true if edge is in graph.
+    Q_INVOKABLE bool        hasEdge(const qan::Edge* edge) const;
+
 public:
     //! Access the list of edges with an abstract item model interface.
     Q_PROPERTY( QAbstractItemModel* edges READ getEdgesModel CONSTANT FINAL )

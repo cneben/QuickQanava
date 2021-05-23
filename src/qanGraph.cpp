@@ -881,6 +881,15 @@ bool    Graph::hasEdge(qan::Node* source, qan::Node* destination) const
     } catch (const std::bad_weak_ptr& e) { return false; }
     return gtpo_graph_t::has_edge(sharedSource, sharedDestination);
 }
+
+bool    Graph::hasEdge(const qan::Edge* edge) const
+{
+    bool r = false;
+    try {
+        r = gtpo_graph_t::contains(std::static_pointer_cast<Config::final_edge_t>(const_cast<qan::Edge*>(edge)->shared_from_this()));
+    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
+    return r;
+}
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
