@@ -202,3 +202,4 @@ public:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::Node)
+QML_DECLARE_TYPE(const qan::Node)

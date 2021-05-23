@@ -673,6 +673,14 @@ void    Graph::removeNode(qan::Node* node)
 
 int     Graph::getNodeCount() const noexcept { return gtpo_graph_t::get_node_count(); }
 
+bool    Graph::hasNode(const qan::Node* node) const {
+    bool r = false;
+    try {
+        r = gtpo_graph_t::contains(std::static_pointer_cast<Config::final_node_t>(const_cast<qan::Node*>(node)->shared_from_this()));
+    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
+    return r;
+}
+
 void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node) /* Nil */ }
 
 void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node) /* Nil */ }

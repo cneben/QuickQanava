@@ -372,6 +372,9 @@ public:
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount() const noexcept;
 
+    //! Return true if \c node is registered in graph.
+    bool                    hasNode(const qan::Node* node) const;
+
 public:
     //! Access the list of nodes with an abstract item model interface.
     Q_PROPERTY(QAbstractItemModel* nodes READ getNodesModel CONSTANT FINAL)
