@@ -940,14 +940,14 @@ public:
     auto    collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept -> std::unordered_set<const qan::Node*>;
 
 private:
-    void                    collectDfsRec(const qan::Node*,
-                                          std::unordered_set<const qan::Node*>& marks,
-                                          std::vector<const qan::Node*>& childs,
-                                          bool collectGroup) const noexcept;
+    void    collectDfsRec(const qan::Node*,
+                          std::unordered_set<const qan::Node*>& marks,
+                          std::vector<const qan::Node*>& childs,
+                          bool collectGroup) const noexcept;
 
 public:
     //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
-    auto        collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
+    auto    collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
     /*! \brief Synchronously collect all parent nodes of \c node using DFS.
@@ -958,6 +958,16 @@ public:
      */
     std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
+private:
+    void                    collectAncestorsDfsRec(const qan::Node*,
+                                                   std::unordered_set<const qan::Node*>& marks,
+                                                   std::vector<const qan::Node*>& parents,
+                                                   bool collectGroup) const noexcept;
+
+public:
+    //! \copydoc isAncestor()
+    Q_INVOKABLE bool        isAncestor(qan::Node* node, qan::Node* candidate) const;
+
     /*! \brief Return true if \c candidate node is an ancestor of given \c node.
      *
      * \warning this method is synchronous and recursive.
@@ -967,10 +977,10 @@ public:
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
 
 private:
-    void                    collectAncestorsDfsRec(const qan::Node*,
-                                                   std::unordered_set<const qan::Node*>& marks,
-                                                   std::vector<const qan::Node*>& parents,
-                                                   bool collectGroup) const noexcept;
+    bool                    isAncestorsDfsRec(const qan::Node*,
+                                              const qan::Node& candidate,
+                                              std::unordered_set<const qan::Node*>& marks,
+                                              bool collectGroup) const noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

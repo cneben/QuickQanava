@@ -1734,14 +1734,6 @@ void    Graph::collectDfsRec(const qan::Node* node,
         collectDfsRec(outNode.lock().get(), marks, childs, collectGroup);
 }
 
-bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept
-{
-    Q_UNUSED(node)
-    Q_UNUSED(candidate)
-    qWarning() << "qan::Graph::isAncestor(): Not implemented.";
-    return false;
-}
-
 auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
 {
     // Algorithm:
@@ -1823,6 +1815,53 @@ void    Graph::collectAncestorsDfsRec(const qan::Node* node,
         collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
     for (const auto& inNode : node->get_in_nodes())
         collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+}
+
+bool    Graph::isAncestor(qan::Node* node, qan::Node* candidate) const
+{
+    if (node != nullptr && candidate != nullptr)
+        return isAncestor(*node, *candidate);
+    return false;
+}
+
+bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept
+{
+    std::unordered_set<const qan::Node*> marks;
+    marks.insert(&node);
+    for (const auto& inNode : node.get_in_nodes()) {
+        if (isAncestorsDfsRec(inNode.lock().get(), candidate, marks, false))
+            return true;
+    }
+    return false;
+}
+
+bool    Graph::isAncestorsDfsRec(const qan::Node* node,
+                                 const qan::Node& candidate,
+                                 std::unordered_set<const qan::Node*>& marks,
+                                 bool collectGroup) const noexcept
+{
+    if (node == nullptr)
+        return false;
+    if (node == &candidate)
+        return true;
+    if (marks.find(node) != marks.end())    // Do not collect on already visited
+        return false;                       // branchs
+    marks.insert(node);
+/*    if (collectGroup &&
+        node->isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }*/
+    /*const auto nodeGroup = node->getGroup();
+    if (nodeGroup != nullptr)
+        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);*/
+    for (const auto& inNode : node->get_in_nodes())
+        if (isAncestorsDfsRec(inNode.lock().get(), candidate, marks, collectGroup))
+            return true;
+    return false;
 }
 //-----------------------------------------------------------------------------
 
