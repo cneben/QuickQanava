@@ -785,7 +785,7 @@ void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcep
 
     if ( isEdgeSourceBindable(outPort) ) {
         edgeItem->setSourceItem(&outPort);
-        outPort.getOutEdgeItems().append(edgeItem);
+        outPort.addOutEdgeItem(*edgeItem);
     }
 }
 
@@ -799,7 +799,7 @@ void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noe
 
     if ( isEdgeDestinationBindable(inPort) ) {
         edgeItem->setDestinationItem(&inPort);
-        inPort.getInEdgeItems().append(edgeItem);
+        inPort.addInEdgeItem(*edgeItem);
     }
 }
 
