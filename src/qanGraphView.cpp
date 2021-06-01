@@ -154,11 +154,20 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
     for (const auto item: items) {
         auto nodeItem = qobject_cast<qan::NodeItem*>(item);
         if (nodeItem != nullptr &&
-            nodeItem->getNode() != nullptr ) {
+            nodeItem->getNode() != nullptr) {
+            auto node = nodeItem->getNode();
             const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
                                                     item->boundingRect());
             if (rect.contains(itemBr)) {
-                _graph->setNodeSelected(*nodeItem->getNode(), true);
+                _graph->setNodeSelected(*node, true);
+                if (node->isGroup()) {
+                    auto subNodes = _graph->collectDfs(*node, true);   // Insert group content to selection
+                    for (auto subNode: subNodes)
+                        if (subNode != nullptr) {
+                            _graph->setNodeSelected(const_cast<qan::Node&>(*subNode), true);
+                            _selectedItems.insert(const_cast<qan::NodeItem*>(subNode->getItem()));
+                        }
+                }
                 // Note we assume that items are not deleted while the selection
                 // is in progress... (QPointer can't be trivially inserted in QSet)
                 _selectedItems.insert(nodeItem);
