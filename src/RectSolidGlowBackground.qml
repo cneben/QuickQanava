@@ -42,18 +42,16 @@ import QuickQanava          2.0 as Qan
 Item {
     id: background
 
-    // Public:
-    property var    nodeItem: undefined
+    // PUBLIC /////////////////////////////////////////////////////////////////
+    property var    style: undefined
 
-    //! Back color property, default to style.backColor, but available for user overidde.
-    property color  backColor: nodeItem.style.backColor
-
+    // PRIVATE ////////////////////////////////////////////////////////////////
     RectGlowEffect {
-        //anchors.fill: parent
-        nodeItem: background.nodeItem
+        anchors.fill: parent
+        style: background.style
     }
     RectSolidBackground {
         anchors.fill: parent
-        nodeItem: background.nodeItem
+        style: background.style
     }
 }

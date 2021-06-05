@@ -37,56 +37,61 @@ import QtQuick              2.7
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
-/*! \brief Node or group background component with solid fill, glow effect and backOpacity style support
- *
+/*! \brief Node or group background glow effect with transparent mask for node content.
  */
 Item {
     id: glowEffect
 
-    // Public:
-    property var    nodeItem: undefined
+    // PUBLIC /////////////////////////////////////////////////////////////////
+    property var    style: undefined
 
-    // private:
+    // PRIVATE ////////////////////////////////////////////////////////////////
     // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    property real   glowRadius:     nodeItem.style.effectRadius
-    property color  glowColor:      nodeItem.style.effectColor
-    property real   effectMargin:   glowRadius * 2
-    property real   borderWidth:    nodeItem.style.borderWidth
-    property real   borderWidth2:   borderWidth / 2.
+    readonly property real   glowRadius:     style ? style.effectRadius : 3.
+    readonly property color  glowColor:      style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
+    readonly property real   effectMargin:   glowRadius * 2
+    readonly property real   borderWidth:    style ? style.borderWidth : 1.
+    readonly property real   borderWidth2:   borderWidth / 2.
+    readonly property real   backRadius:     style ? style.backRadius : 4.
 
     Item {
         id: effectBackground
         z: -1   // Effect should be behind edges , docks and connectors...
         x: -effectMargin; y: -effectMargin
-        width: nodeItem.width + effectMargin * 2; height: nodeItem.height + effectMargin * 2
+        width: glowEffect.width + effectMargin * 2
+        height: glowEffect.height + effectMargin * 2
         visible: false
         Rectangle {
             x: effectMargin
             y: effectMargin
-            width: nodeItem.width       // Avoid aliasing artifacts for mask at high scales.
-            height: nodeItem.height
-            radius: nodeItem.style.backRadius
+            width: glowEffect.width       // Avoid aliasing artifacts for mask at high scales.
+            height: glowEffect.height
+            radius: backRadius
             border.width: borderWidth
             color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             layer.enabled: true
             layer.effect: Qan.Glow {
                 color: glowEffect.glowColor
-                radius: glowEffect.glowRadius;     samples: Math.min( 16, glowEffect.glowRadius)
-                spread: 0.25;   transparentBorder: true;    cached: false
-                visible: nodeItem.style.effectEnabled
+                radius: glowEffect.glowRadius
+                samples: Math.min(16, glowEffect.glowRadius)
+                spread: 0.25
+                transparentBorder: true
+                cached: false
+                visible: glowEffect.style !== undefined ? style.effectEnabled : false
             }
         }
     }
-    Item {
-        id: backgroundMask
+    Item {  // Used as a mask to prevent effect beeing applied on node background, usefull if the node
+        id: backgroundMask  // background is transparent
         anchors.fill: effectBackground
         visible: false
         Rectangle {
             x: effectMargin + borderWidth2
             y: effectMargin + borderWidth2
-            width: nodeItem.width - borderWidth;  height: nodeItem.height - borderWidth
-            radius: nodeItem.style.backRadius
+            width: glowEffect.width - borderWidth
+            height: glowEffect.height - borderWidth
+            radius: backRadius
             color: Qt.rgba(0,0,0,1)
             antialiasing: true
         }
@@ -97,4 +102,4 @@ Item {
         maskSource: backgroundMask
         invert: true
     }
-}
+}  // Item: glowEffect

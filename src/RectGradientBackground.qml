@@ -41,22 +41,30 @@ import "qrc:/QuickQanava" as Qan
  *
  */
 Item {
-    // Public:
-    property var    nodeItem: undefined
+    // PUBLIC /////////////////////////////////////////////////////////////////
+    property var    style: nodeItem ? nodeItem.style : undefined
 
-    // Note: Using an item to separate render tree of background with a gradient effect and foreground (mainly
-    // rectangle border), to ensure that rectangle border is always rasterized even at high scale and never
-    //  batched/cached with gradient effect SG node...
+    readonly property real   backRadius:    style ? style.backRadius : 4.
+    readonly property real   backOpacity:   style ? style.backOpacity : 0.8
+    readonly property color  baseColor:     style ? style.baseColor: Qt.rgba(0., 0., 0., 0.)
+    readonly property color  backColor:     style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
+    readonly property real   borderWidth:   style ? style.borderWidth : 1.
+    readonly property color  borderColor:   style ? style.borderColor : Qt.rgba(1., 1., 1., 0.)
 
-    anchors.fill: parent
+    // PRIVATE ////////////////////////////////////////////////////////////////
+    // Note: Top level item is used to isolate rendering of:
+    //    - background with a gradient effect
+    //    - foreground (rectangle border)
+    // to ensure that border is always rasterized even at high scale and never
+    // batched/cached with gradient effect SG node to avoid blurry edges
     Rectangle {
         id: background
         anchors.fill: parent
-        radius: nodeItem.style.backRadius
+        radius: backRadius
         color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
         antialiasing: true
-        opacity: nodeItem.style.backOpacity
+        opacity: backOpacity
 
         layer.enabled: true
         layer.effect: Qan.LinearGradient {
@@ -64,19 +72,19 @@ Item {
             end:    Qt.point(background.width, background.height)
             cached: false
             gradient: Gradient {
-                GradientStop { position: 0.0; color: nodeItem.style.baseColor }
-                GradientStop { position: 1.0;  color: nodeItem.style.backColor }
+                GradientStop { position: 0.0; color: baseColor }
+                GradientStop { position: 1.0;  color: backColor }
             }
         }
     }
     Rectangle {
         id: foreground
         anchors.fill: parent    // Background follow the content layout implicit size
-        radius: nodeItem.style.backRadius
+        radius: backRadius
         color: Qt.rgba(0, 0, 0, 0)  // Fully transparent
-        border.color: nodeItem.style.borderColor
-        border.width: nodeItem.style.borderWidth
+        border.color: borderColor
+        border.width: borderWidth
         antialiasing: true
         // Note: Do not enable layer to avoid aliasing at high scale
     }
-}
+}  // Item
