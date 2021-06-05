@@ -46,7 +46,7 @@ Rectangle {
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     radius: style ? style.backRadius : 4.
-    color: backColor
+    color: style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
     border.color: style ? style.borderColor : Qt.rgba(0., 0., 0., 0.)
     border.width: style ? style.borderWidth : 1.0
     antialiasing: true
