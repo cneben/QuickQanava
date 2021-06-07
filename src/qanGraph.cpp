@@ -705,7 +705,6 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
         emit edgeInserted(edge);
     } else
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
-    qWarning() << "qan::Graph::insertEdge(): edge.ownership=" << QQmlEngine::objectOwnership(edge);
     return edge;
 }
 
@@ -1033,7 +1032,6 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
 
 bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) noexcept
 {
-    qWarning() << "ungroupNode(): node=" << node << "  group=" << group;
     // PRECONDITIONS:
         // node can't be nullptr
         // group can be nullptr
