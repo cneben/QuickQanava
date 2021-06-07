@@ -34,36 +34,39 @@
 
 import QtQuick              2.7
 
-import QuickQanava          2.0 as Qan
+import QuickQanava    2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with solid fill, shadow effect and backOpacity style support
  *
  */
 Item {
-    // Public:
-    property var    nodeItem: undefined
+    id: shadowEffect
 
-    // private:
+    // PUBLIC /////////////////////////////////////////////////////////////////
+    property var    style: undefined
+
+    // PRIVATE ////////////////////////////////////////////////////////////////
     // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    property real   borderWidth  : nodeItem.style.borderWidth
-    property real   borderWidth2 : borderWidth / 2.
-    property real   shadowOffset : nodeItem.style.effectOffset
-    property real   shadowRadius : nodeItem.style.effectRadius
-    property color  shadowColor  : nodeItem.style.effectColor
+    readonly property real   borderWidth:   style ? style.borderWidth : 1.
+    readonly property real   borderWidth2:  borderWidth / 2.
+    readonly property real   shadowOffset:  style ? style.effectRadius : 3.
+    readonly property real   shadowRadius:  style ? style.effectRadius : 3.
+    readonly property color  shadowColor:   style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
+    readonly property real   backRadius:    style ? style.backRadius : 4.
+
 
     Item {
         id: effectBackground
         x: 0; y: 0
-        //z: -1   // Effect should be behind edges , docks and connectors...
-        width: nodeItem.width + shadowOffset + shadowRadius
-        height: nodeItem.height + shadowOffset + shadowRadius
+        width: shadowEffect.width + shadowOffset + shadowRadius
+        height: shadowEffect.height + shadowOffset + shadowRadius
         visible: false
         Rectangle {
             x: borderWidth2; y: borderWidth2
-            width: nodeItem.width - borderWidth         // avoid aliasing artifacts at high scales.
-            height: nodeItem.height - borderWidth
-            radius: nodeItem.style.backRadius
+            width: shadowEffect.width - borderWidth         // avoid aliasing artifacts at high scales.
+            height: shadowEffect.height - borderWidth
+            radius: backRadius
             color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             layer.enabled: true
@@ -71,7 +74,7 @@ Item {
                 horizontalOffset: shadowOffset; verticalOffset: shadowOffset
                 radius: shadowRadius; samples: 8
                 color: shadowColor
-                visible: nodeItem.style.effectEnabled
+                visible: shadowEffect.style ? shadowEffect.style.effectEnabled : false
                 transparentBorder: true
                 cached: false
             }
@@ -84,9 +87,9 @@ Item {
         visible: false
         Rectangle {
             x: 0; y: 0
-            width: nodeItem.width - borderWidth2
-            height: nodeItem.height - borderWidth2
-            radius: nodeItem.style.backRadius
+            width: shadowEffect.width - borderWidth2
+            height: shadowEffect.height - borderWidth2
+            radius: backRadius
             color: Qt.rgba(1, 0, 0, 1)
         }
     }
@@ -96,4 +99,4 @@ Item {
         maskSource: backgroundMask
         invert: true
     }
-}
+}  // Item: shadowEffect

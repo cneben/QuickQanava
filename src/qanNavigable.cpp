@@ -404,7 +404,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
             return;
         }
     }
-    if (event->button() == Qt::RightButton) {       // Right clicks are catched /////////
+    if (event->button() == Qt::RightButton) {       // Right clicks are caught //////////
         event->accept();
         return;
     }

@@ -116,16 +116,16 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
          dstNode != nullptr ) {
         bool create = true;    // Do not create edge if ports are not bindable, create if there no ports bindings are necessary
 
-        if ( srcPortItem ) {
+        /*if (srcPortItem) {
             qDebug() << "srcPortItem.multiplicity=" << srcPortItem->getMultiplicity();
             qDebug() << "srcPortItem.outDegree=" << srcPortItem->getOutEdgeItems().size();
             qDebug() << "edge source bindable=" << _graph->isEdgeSourceBindable(*srcPortItem );
         }
-        if ( dstPortItem ) {
+        if (dstPortItem) {
             qDebug() << "dstPortItem.multiplicity=" << dstPortItem->getMultiplicity();
             qDebug() << "srcPortItem.inDegree=" << dstPortItem->getInEdgeItems().size();
             qDebug() << "edge source bindable=" << _graph->isEdgeDestinationBindable(*dstPortItem );
-        }
+        }*/
 
         if ( srcPortItem &&
              dstPortItem != nullptr )

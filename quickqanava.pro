@@ -13,8 +13,7 @@ test-dataflow.subdir    = samples/dataflow
 test-topology.subdir    = samples/topology
 test-cpp.subdir         = samples/cpp
 
-#SUBDIRS +=  test-resizer
-#SUBDIRS +=  test-navigable
+# Uncomment to activate samples projects:
 #SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-edges
 #SUBDIRS +=  test-connector
@@ -24,4 +23,8 @@ SUBDIRS +=  test-selection
 #SUBDIRS +=  test-topology
 #SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
+
+# Theses ones are test projects, not sample:
+#SUBDIRS +=  test-resizer
+#SUBDIRS +=  test-navigable
 

@@ -673,6 +673,14 @@ void    Graph::removeNode(qan::Node* node)
 
 int     Graph::getNodeCount() const noexcept { return gtpo_graph_t::get_node_count(); }
 
+bool    Graph::hasNode(const qan::Node* node) const {
+    bool r = false;
+    try {
+        r = gtpo_graph_t::contains(std::static_pointer_cast<Config::final_node_t>(const_cast<qan::Node*>(node)->shared_from_this()));
+    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
+    return r;
+}
+
 void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node) /* Nil */ }
 
 void    Graph::onNodeRemoved(qan::Node& node){ Q_UNUSED(node) /* Nil */ }
@@ -697,7 +705,6 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
         emit edgeInserted(edge);
     } else
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
-    qWarning() << "qan::Graph::insertEdge(): edge.ownership=" << QQmlEngine::objectOwnership(edge);
     return edge;
 }
 
@@ -756,50 +763,50 @@ bool    Graph::isEdgeSourceBindable( const qan::PortItem& outPort) const noexcep
     return false;
 }
 
-bool    Graph::isEdgeDestinationBindable( const qan::PortItem& inPort ) const noexcept
+bool    Graph::isEdgeDestinationBindable(const qan::PortItem& inPort) const noexcept
 {
     // To allow an edge destination to be binded to a port, we must have an in port
-    if ( inPort.getType() != qan::PortItem::Type::In &&
-         inPort.getType() != qan::PortItem::Type::InOut )
+    if (inPort.getType() != qan::PortItem::Type::In &&
+        inPort.getType() != qan::PortItem::Type::InOut)
         return false;
 
     // Do not connect an edge to a port that has Single multiplicity and
     // already has an in edge
-    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple )
+    if (inPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple)
         return true;    // Fast exit
-    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Single ) {
+    if (inPort.getMultiplicity() == qan::PortItem::Multiplicity::Single) {
         const auto inPortInDegree = inPort.getInEdgeItems().size();
-        if ( inPortInDegree == 0 )
+        if (inPortInDegree == 0)
             return true;
     }
     return false;
 }
 
-void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcept
+void    Graph::bindEdgeSource(qan::Edge& edge, qan::PortItem& outPort) noexcept
 {
     // PRECONDITION:
         // edge must have an associed item
     auto edgeItem = edge.getItem();
-    if ( edgeItem == nullptr )
+    if (edgeItem == nullptr)
         return;
 
-    if ( isEdgeSourceBindable(outPort) ) {
+    if (isEdgeSourceBindable(outPort)) {
         edgeItem->setSourceItem(&outPort);
-        outPort.getOutEdgeItems().append(edgeItem);
+        outPort.addOutEdgeItem(*edgeItem);
     }
 }
 
-void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
+void    Graph::bindEdgeDestination(qan::Edge& edge, qan::PortItem& inPort) noexcept
 {
     // PRECONDITION:
         // edge must have an associed item
     auto edgeItem = edge.getItem();
-    if ( edgeItem == nullptr )
+    if (edgeItem == nullptr)
         return;
 
-    if ( isEdgeDestinationBindable(inPort) ) {
+    if (isEdgeDestinationBindable(inPort)) {
         edgeItem->setDestinationItem(&inPort);
-        inPort.getInEdgeItems().append(edgeItem);
+        inPort.addInEdgeItem(*edgeItem);
     }
 }
 
@@ -872,6 +879,15 @@ bool    Graph::hasEdge(qan::Node* source, qan::Node* destination) const
         sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
     } catch (const std::bad_weak_ptr& e) { return false; }
     return gtpo_graph_t::has_edge(sharedSource, sharedDestination);
+}
+
+bool    Graph::hasEdge(const qan::Edge* edge) const
+{
+    bool r = false;
+    try {
+        r = gtpo_graph_t::contains(std::static_pointer_cast<Config::final_edge_t>(const_cast<qan::Edge*>(edge)->shared_from_this()));
+    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
+    return r;
 }
 //-----------------------------------------------------------------------------
 
@@ -1016,7 +1032,6 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
 
 bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) noexcept
 {
-    qWarning() << "ungroupNode(): node=" << node << "  group=" << group;
     // PRECONDITIONS:
         // node can't be nullptr
         // group can be nullptr
@@ -1717,14 +1732,6 @@ void    Graph::collectDfsRec(const qan::Node* node,
         collectDfsRec(outNode.lock().get(), marks, childs, collectGroup);
 }
 
-bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept
-{
-    Q_UNUSED(node)
-    Q_UNUSED(candidate)
-    qWarning() << "qan::Graph::isAncestor(): Not implemented.";
-    return false;
-}
-
 auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
 {
     // Algorithm:
@@ -1806,6 +1813,53 @@ void    Graph::collectAncestorsDfsRec(const qan::Node* node,
         collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
     for (const auto& inNode : node->get_in_nodes())
         collectAncestorsDfsRec(inNode.lock().get(), marks, parents, collectGroup);
+}
+
+bool    Graph::isAncestor(qan::Node* node, qan::Node* candidate) const
+{
+    if (node != nullptr && candidate != nullptr)
+        return isAncestor(*node, *candidate);
+    return false;
+}
+
+bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept
+{
+    std::unordered_set<const qan::Node*> marks;
+    marks.insert(&node);
+    for (const auto& inNode : node.get_in_nodes()) {
+        if (isAncestorsDfsRec(inNode.lock().get(), candidate, marks, false))
+            return true;
+    }
+    return false;
+}
+
+bool    Graph::isAncestorsDfsRec(const qan::Node* node,
+                                 const qan::Node& candidate,
+                                 std::unordered_set<const qan::Node*>& marks,
+                                 bool collectGroup) const noexcept
+{
+    if (node == nullptr)
+        return false;
+    if (node == &candidate)
+        return true;
+    if (marks.find(node) != marks.end())    // Do not collect on already visited
+        return false;                       // branchs
+    marks.insert(node);
+/*    if (collectGroup &&
+        node->isGroup()) {
+        const auto group = qobject_cast<const qan::Group*>(node);
+        if (group) {
+            for (const auto& groupNode : group->get_nodes())
+                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
+        }
+    }*/
+    /*const auto nodeGroup = node->getGroup();
+    if (nodeGroup != nullptr)
+        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);*/
+    for (const auto& inNode : node->get_in_nodes())
+        if (isAncestorsDfsRec(inNode.lock().get(), candidate, marks, collectGroup))
+            return true;
+    return false;
 }
 //-----------------------------------------------------------------------------
 

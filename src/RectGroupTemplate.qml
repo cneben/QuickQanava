@@ -73,7 +73,7 @@ Item {
     RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
         anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
-        nodeItem: template.groupItem    // with content.childrenRect
+        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
         visible: !groupItem.collapsed
     }
     RowLayout {
