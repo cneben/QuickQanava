@@ -705,7 +705,6 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
         emit edgeInserted(edge);
     } else
         qWarning() << "qan::Graph::insertEdge(): Error: Unable to find a valid insertEdge() method for arguments " << source << " and " << destination;
-    qWarning() << "qan::Graph::insertEdge(): edge.ownership=" << QQmlEngine::objectOwnership(edge);
     return edge;
 }
 
@@ -764,50 +763,50 @@ bool    Graph::isEdgeSourceBindable( const qan::PortItem& outPort) const noexcep
     return false;
 }
 
-bool    Graph::isEdgeDestinationBindable( const qan::PortItem& inPort ) const noexcept
+bool    Graph::isEdgeDestinationBindable(const qan::PortItem& inPort) const noexcept
 {
     // To allow an edge destination to be binded to a port, we must have an in port
-    if ( inPort.getType() != qan::PortItem::Type::In &&
-         inPort.getType() != qan::PortItem::Type::InOut )
+    if (inPort.getType() != qan::PortItem::Type::In &&
+        inPort.getType() != qan::PortItem::Type::InOut)
         return false;
 
     // Do not connect an edge to a port that has Single multiplicity and
     // already has an in edge
-    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple )
+    if (inPort.getMultiplicity() == qan::PortItem::Multiplicity::Multiple)
         return true;    // Fast exit
-    if ( inPort.getMultiplicity() == qan::PortItem::Multiplicity::Single ) {
+    if (inPort.getMultiplicity() == qan::PortItem::Multiplicity::Single) {
         const auto inPortInDegree = inPort.getInEdgeItems().size();
-        if ( inPortInDegree == 0 )
+        if (inPortInDegree == 0)
             return true;
     }
     return false;
 }
 
-void    Graph::bindEdgeSource( qan::Edge& edge, qan::PortItem& outPort ) noexcept
+void    Graph::bindEdgeSource(qan::Edge& edge, qan::PortItem& outPort) noexcept
 {
     // PRECONDITION:
         // edge must have an associed item
     auto edgeItem = edge.getItem();
-    if ( edgeItem == nullptr )
+    if (edgeItem == nullptr)
         return;
 
-    if ( isEdgeSourceBindable(outPort) ) {
+    if (isEdgeSourceBindable(outPort)) {
         edgeItem->setSourceItem(&outPort);
-        outPort.getOutEdgeItems().append(edgeItem);
+        outPort.addOutEdgeItem(*edgeItem);
     }
 }
 
-void    Graph::bindEdgeDestination( qan::Edge& edge, qan::PortItem& inPort ) noexcept
+void    Graph::bindEdgeDestination(qan::Edge& edge, qan::PortItem& inPort) noexcept
 {
     // PRECONDITION:
         // edge must have an associed item
     auto edgeItem = edge.getItem();
-    if ( edgeItem == nullptr )
+    if (edgeItem == nullptr)
         return;
 
-    if ( isEdgeDestinationBindable(inPort) ) {
+    if (isEdgeDestinationBindable(inPort)) {
         edgeItem->setDestinationItem(&inPort);
-        inPort.getInEdgeItems().append(edgeItem);
+        inPort.addInEdgeItem(*edgeItem);
     }
 }
 
@@ -1033,7 +1032,6 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
 
 bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) noexcept
 {
-    qWarning() << "ungroupNode(): node=" << node << "  group=" << group;
     // PRECONDITIONS:
         // node can't be nullptr
         // group can be nullptr
