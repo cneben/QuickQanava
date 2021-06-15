@@ -569,7 +569,7 @@ public:
     Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false);
 
 protected:
-    void        removeGroupContent_rec(qan::Group* group, bool removeContent = false);
+    void        removeGroupContent_rec(qan::Group* group);
 
 public:
     //! Return true if \c group is registered in graph.

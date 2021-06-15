@@ -1002,7 +1002,7 @@ void    Graph::removeGroup(qan::Group* group, bool removeContent)
     }
 }
 
-void    Graph::removeGroupContent_rec(qan::Group* group, bool removeContent)
+void    Graph::removeGroupContent_rec(qan::Group* group)
 {
     // Remove group sub group and node, starting from leafs
     for (auto& subNode : group->get_nodes()) {
