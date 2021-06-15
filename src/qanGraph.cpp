@@ -1005,11 +1005,12 @@ void    Graph::removeGroup(qan::Group* group, bool removeContent)
 void    Graph::removeGroupContent_rec(qan::Group* group, bool removeContent)
 {
     // Remove group sub group and node, starting from leafs
-    for (auto& node : group->get_nodes()) {
-        const auto qanSubNode = qobject_cast<qan::Node*>(node.lock().get());
-
+    for (auto& subNode : group->get_nodes()) {
+        const auto qanSubNode = qobject_cast<qan::Node*>(subNode.lock().get());
+        if (qanSubNode == nullptr)
+            continue;
         if (qanSubNode->isGroup()) {
-            const auto qanSubGroup = qobject_cast<qan::Group*>(node.lock().get());
+            const auto qanSubGroup = qobject_cast<qan::Group*>(subNode.lock().get());
             removeGroupContent_rec(qanSubGroup);
         } else
             removeNode(qanSubNode);
