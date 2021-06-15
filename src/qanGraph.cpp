@@ -977,8 +977,8 @@ void    Graph::removeGroup(qan::Group* group)
     if (group == nullptr)
         return;
 
-    // Reparent all group childrens (ie node) to graph before destructing the group
-    // otherwise all child items get destructed too
+    // Reparent all group childrens (ie node) to graph before destroying the group
+    // otherwise all child items get destroyed too
     for (auto& node : group->get_nodes()) {
         const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
         if (qanNode != nullptr &&

@@ -41,11 +41,9 @@
 
 namespace qan { // ::qan
 
-//using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
-
 /* Group Object Management *///------------------------------------------------
-GroupItem::GroupItem( QQuickItem* parent ) :
-    qan::NodeItem{ parent }
+GroupItem::GroupItem(QQuickItem* parent) :
+    qan::NodeItem{parent}
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
