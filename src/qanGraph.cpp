@@ -972,19 +972,47 @@ bool    Graph::insertGroup(const SharedGroup& group, QQmlComponent* groupCompone
     return true;
 }
 
-void    Graph::removeGroup(qan::Group* group)
+void    Graph::removeGroup(qan::Group* group, bool removeContent)
 {
     if (group == nullptr)
         return;
 
-    // Reparent all group childrens (ie node) to graph before destroying the group
-    // otherwise all child items get destroyed too
+    if (!removeContent) {
+        // Reparent all group childrens (ie node) to graph before destroying the group
+        // otherwise all child items get destroyed too
+        for (auto& node : group->get_nodes()) {
+            const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
+            if (qanNode != nullptr &&
+                qanNode->getItem() != nullptr &&
+                group->getGroupItem() != nullptr )
+                group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
+        }
+
+        onNodeRemoved(*group);      // group are node, notify group
+        emit nodeRemoved(group);    // removed as a node
+
+        if (_selectedNodes.contains(group))
+            _selectedNodes.removeAll(group);
+
+        auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());
+        gtpo_graph_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
+        gtpo_graph_t::remove_group(weakNodeGroupPtr);
+    } else {
+        removeGroupContent_rec(group);
+    }
+}
+
+void    Graph::removeGroupContent_rec(qan::Group* group, bool removeContent)
+{
+    // Remove group sub group and node, starting from leafs
     for (auto& node : group->get_nodes()) {
-        const auto qanNode = qobject_cast<qan::Node*>(node.lock().get());
-        if (qanNode != nullptr &&
-            qanNode->getItem() != nullptr &&
-            group->getGroupItem() != nullptr )
-            group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
+        const auto qanSubNode = qobject_cast<qan::Node*>(node.lock().get());
+
+        if (qanSubNode->isGroup()) {
+            const auto qanSubGroup = qobject_cast<qan::Group*>(node.lock().get());
+            removeGroupContent_rec(qanSubGroup);
+        } else
+            removeNode(qanSubNode);
     }
 
     onNodeRemoved(*group);      // group are node, notify group

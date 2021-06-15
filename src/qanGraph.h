@@ -392,7 +392,7 @@ protected:
 
     /*! \brief Notify user immediately before a node \c node is removed.
      *
-     * \warning Since groups are node, onNodeInserted() is also emitted when removeGroup() is called.
+     * \warning Since groups are node, onNodeRemoved() is also emitted when removeGroup() is called.
      * \note Signal nodeRemoved() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -560,9 +560,18 @@ public:
     template <class Group_t>
     qan::Group*             insertGroup();
 
-    //! Shortcut to gtpo::GenGraph<>::removeGroup().
-    Q_INVOKABLE virtual void    removeGroup(qan::Group* group);
+    /*! Shortcut to gtpo::GenGraph<>::removeGroup().
+     *
+     *  \note When remove content is set to true group nodes (and any eventual subgroup
+     *  is removed too). When false (default behaviour), group nodes are reparented to
+     *  graph root.
+     */
+    Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false);
 
+protected:
+    void        removeGroupContent_rec(qan::Group* group, bool removeContent = false);
+
+public:
     //! Return true if \c group is registered in graph.
     bool                    hasGroup(qan::Group* group) const;
 

@@ -319,9 +319,6 @@ auto    graph<config_t>::insert_group( shared_group_t group ) noexcept( false ) 
     try {
         group->set_graph( this );
         config_t::template container_adapter<weak_groups_t>::insert( group, _groups );
-
-        // FIXME GROUPS
-        //this->notify_group_inserted( weakGroup );
     } catch (...) {
         throw gtpo::bad_topology_error( "gtpo::graph<>::insert_group(): Insertion of group failed" );
     }
@@ -336,8 +333,6 @@ auto    graph<config_t>::remove_group( weak_group_t group_ptr ) noexcept( false 
         gtpo::assert_throw( false, "graph<>::remove_group(): Error: trying to remove and expired group." );
 
     // Remove group (it will be automatically deallocated)
-    // FIXME GROUPS
-    //this->notify_group_removed( group_ptr );
     group->set_graph( nullptr );
     config_t::template container_adapter<weak_groups_t>::remove( group_ptr, _groups );
 
@@ -365,9 +360,6 @@ auto    graph<config_t>::group_node( weak_node_t node, weak_group_t group) noexc
 
     node_ptr->set_group( group );
     config_t::template container_adapter<weak_nodes_t>::insert( node, group_ptr->_nodes );
-
-    // FIXME GROUPS
-    //group_ptr->notify_node_inserted( node );
 }
 
 template < class config_t >
@@ -382,8 +374,6 @@ auto    graph<config_t>::ungroup_node( weak_node_t weakNode, weak_node_t weakGro
     gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
 
     config_t::template container_adapter<weak_nodes_t>::remove( weakNode, group->_nodes );
-    // FIXME GROUPS
-    //group->notify_node_removed( weakNode );
     node->set_group( weak_group_t{} );  // Warning: group must remain valid while notify_node_removed() is called
 }
 //-----------------------------------------------------------------------------
