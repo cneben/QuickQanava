@@ -996,7 +996,7 @@ public:
      *
      * \note Recursively collect \c groups nodes and sub groups and group sub group nodes.
      */
-    auto    collectGroupsNodes(const QVector<qan::Group*> groups) const noexcept -> std::unordered_set<const qan::Node*>;
+    auto    collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>;
 protected:
 
     // Recursive utility for collectGroupsNodes().
