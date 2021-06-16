@@ -1890,6 +1890,33 @@ bool    Graph::isAncestorsDfsRec(const qan::Node* node,
             return true;
     return false;
 }
+
+auto    Graph::collectGroupsNodes(const QVector<qan::Group*> groups) const noexcept -> std::unordered_set<const qan::Node*>
+{
+    std::unordered_set<const qan::Node*> r;
+    for (auto group: qAsConst(groups))  // Collect all group nodes and their sub groups nodes
+        if (group != nullptr)           // recursively
+            collectGroupNodes_rec(group, r);
+    return r;
+}
+
+auto    Graph::collectGroupNodes_rec(const qan::Group* group, std::unordered_set<const qan::Node*>& nodes) const -> void
+{
+    if (group == nullptr)
+        return;
+
+    for (const auto& groupNode : group->get_nodes()) {
+        auto groupNodePtr = groupNode.lock();
+        if (!groupNodePtr)
+            continue;
+        nodes.insert(groupNodePtr.get());
+        if (groupNodePtr->isGroup()) {
+            const auto groupGroup = qobject_cast<const qan::Group*>(groupNodePtr.get());
+            if (groupGroup != nullptr)
+                collectGroupNodes_rec(groupGroup, nodes);
+        }
+    }
+}
 //-----------------------------------------------------------------------------
 
 

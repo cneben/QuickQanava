@@ -990,6 +990,17 @@ private:
                                               const qan::Node& candidate,
                                               std::unordered_set<const qan::Node*>& marks,
                                               bool collectGroup) const noexcept;
+
+public:
+    /*! Collect all nodes and groups contained in given groups.
+     *
+     * \note Recursively collect \c groups nodes and sub groups and group sub group nodes.
+     */
+    auto    collectGroupsNodes(const QVector<qan::Group*> groups) const noexcept -> std::unordered_set<const qan::Node*>;
+protected:
+
+    // Recursive utility for collectGroupsNodes().
+    auto    collectGroupNodes_rec(const qan::Group* group, std::unordered_set<const qan::Node*>& nodes) const -> void;
     //@}
     //-------------------------------------------------------------------------
 };
