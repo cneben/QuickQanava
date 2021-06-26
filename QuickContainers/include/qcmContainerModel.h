@@ -236,7 +236,7 @@ protected:
     //@{
 public:
     //! Similar to ES6 array.length.
-    Q_PROPERTY( int length READ getLength NOTIFY lengthChanged FINAL )
+    Q_PROPERTY(int length READ getLength NOTIFY lengthChanged FINAL)
     //! \copydoc length
     Q_INVOKABLE int getLength() const noexcept { return rowCount(QModelIndex{}); }
 protected:
