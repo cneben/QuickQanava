@@ -156,7 +156,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
 {
     if (_targetItem == nullptr)
         return;
-
+    const auto graph = getGraph();
+    if (graph != nullptr &&
+        _target != nullptr)
+        emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
     _dragLastPos = dragInitialMousePos;
 

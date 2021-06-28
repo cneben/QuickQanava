@@ -423,6 +423,10 @@ signals:
     //! \brief Emitted _after_ a node (or a group...) has been un grouped.
     void            nodeUngrouped(qan::Node* node, qan::Group* group);
 
+    /*! \brief Emitted immediatly _before_ a node is moved.
+     */
+    void            nodeAboutToBeMoved(qan::Node* node);
+
     /*! \brief Emitted _after_ a node has been moved.
      */
     void            nodeMoved(qan::Node* node);
