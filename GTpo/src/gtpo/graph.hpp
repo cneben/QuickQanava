@@ -342,10 +342,10 @@ auto    graph<config_t>::remove_group( weak_group_t group_ptr ) noexcept( false 
 template < class config_t >
 auto    graph<config_t>::has_group( const weak_group_t& group ) const -> bool
 {
-    if ( group.expired() )
+    if (group.expired())
         return false;
-    auto groupIter = std::find_if( _groups.begin(), _groups.end(),
-                                        [=](const weak_group_t& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
+    auto groupIter = std::find_if(_groups.begin(), _groups.end(),
+                                  [=](const weak_group_t& graphGroup){ return (compare_weak_ptr<>(group, graphGroup)); } );
     return groupIter != _groups.end();
 }
 

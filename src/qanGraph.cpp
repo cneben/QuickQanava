@@ -1029,9 +1029,10 @@ void    Graph::removeGroupContent_rec(qan::Group* group)
 
 bool    Graph::hasGroup(qan::Group* group) const
 {
-    if ( group == nullptr )
+    if (group == nullptr)
         return false;
-    return gtpo_graph_t::has_group(gtpo_graph_t::shared_group_t{group});
+    auto nodeGroupPtr = std::static_pointer_cast<gtpo_graph_t::group_t>(group->shared_from_this());
+    return gtpo_graph_t::has_group(nodeGroupPtr);
 }
 
 bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform) noexcept
