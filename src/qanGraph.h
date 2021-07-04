@@ -431,12 +431,14 @@ signals:
      */
     void            nodeMoved(qan::Node* node);
 
-    /*! \brief Emitted _after_ a node has been resized.
-     */
+    //! \brief Emitted immediately _before_ a node is resized.
+    void            nodeAboutToBeResized(qan::Node* node);
+    //! \brief Emitted _after_ a node has been resized.
     void            nodeResized(qan::Node* node);
 
-    /*! \brief Emitted _after_ a grouphas been resized.
-     */
+    //! \brief Emitted immediately _before_ a group is resized.
+    void            groupAboutToBeResized(qan::Group* group);
+    //! \brief Emitted _after_ a group has been resized.
     void            groupResized(qan::Group* group);
 
     //! Emitted when a node setLabel() method is called.

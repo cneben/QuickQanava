@@ -78,7 +78,11 @@ Qan.AbstractGraphView {
         handlerRadius: resizeHandlerRadius
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
-
+        onResizeStart: {
+            if (target &&
+                target.node)
+                graph.nodeAboutToBeResized(target.node);
+        }
         onResizeEnd: {
             if (target &&
                 target.node)
@@ -96,6 +100,12 @@ Qan.AbstractGraphView {
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
 
+        onResizeStart: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupAboutToBeResized(target.groupItem.group);
+        }
         onResizeEnd: {
             if (target &&
                 target.groupItem &&

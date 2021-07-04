@@ -1069,11 +1069,11 @@ bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) n
         // if group is not nullptr group should not be different from node->getGroup()
     if (node == nullptr)
         return false;
-    if ( group == nullptr &&
-         !node->get_group().lock() )
+    if (group == nullptr &&
+        !node->get_group().lock())
         return false;
-    if ( group != nullptr &&
-         group != node->get_group().lock().get() )
+    if (group != nullptr &&
+        group != node->get_group().lock().get())
         return false;
     group = node->get_group().lock().get();
     if (group != nullptr &&
@@ -1091,7 +1091,7 @@ bool    qan::Graph::ungroupNode(qan::Node* node, Group* group, bool transform) n
                 node->getItem()->setZ(_maxZ);
             }
             return true;
-        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+        } catch (...) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
     return false;
 }

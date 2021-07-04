@@ -226,7 +226,7 @@ private:
     //@{
 signals:
     //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
-    void    resizeStart(QSizeF targetSize );
+    void    resizeStart(QSizeF targetSize);
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd(QSizeF targetSize);
 protected:
