@@ -1183,10 +1183,21 @@ bool    Graph::selectNode(qan::Node* node)
     return (node != nullptr ? selectNode(*node) : false);
 }
 
-void    Graph::setNodeSelected(qan::Node& node, bool selected) { impl::setPrimitiveSelected<qan::Node>(node, selected, *this); }
+void    Graph::setNodeSelected(qan::Node& node, bool selected)
+{
+    if (node.isGroup())
+        impl::setPrimitiveSelected<qan::Group>(dynamic_cast<qan::Group&>(node), selected, *this);
+    else
+        impl::setPrimitiveSelected<qan::Node>(node, selected, *this);
+}
+
 void    Graph::setNodeSelected(qan::Node* node, bool selected)
 {
-    if (node != nullptr)
+    if (node == nullptr)
+        return;
+    if (node->isGroup())
+        impl::setPrimitiveSelected<qan::Group>(dynamic_cast<qan::Group&>(*node), selected, *this);
+    else
         impl::setPrimitiveSelected<qan::Node>(*node, selected, *this);
 }
 
