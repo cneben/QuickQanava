@@ -115,7 +115,7 @@ private:
 
 public:
     //! Secure shortcut to getNode().getGraph().
-    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT)
     //! \copydoc graph
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
