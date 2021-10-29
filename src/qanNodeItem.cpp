@@ -53,34 +53,34 @@ NodeItem::NodeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
     setStyle(qan::Node::style());
-    setObjectName( QStringLiteral("qan::NodeItem") );
+    setObjectName(QStringLiteral("qan::NodeItem"));
 
     qan::Draggable::configure(this);
     _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<qan::DraggableCtrl>()};
     const auto nodeDraggableCtrl = static_cast<qan::DraggableCtrl*>(_draggableCtrl.get());
     nodeDraggableCtrl->setTargetItem(this);
 
-    setFlag( QQuickItem::ItemAcceptsDrops, true );
-    setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+    setFlag(QQuickItem::ItemAcceptsDrops, true);
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptTouchEvents(true);
 
-    connect( this, &qan::NodeItem::widthChanged,
-             this, &qan::NodeItem::onWidthChanged );
-    connect( this, &qan::NodeItem::heightChanged,
-             this, &qan::NodeItem::onHeightChanged );
+    connect(this, &qan::NodeItem::widthChanged,
+            this, &qan::NodeItem::onWidthChanged);
+    connect(this, &qan::NodeItem::heightChanged,
+            this, &qan::NodeItem::onHeightChanged);
 }
 
 NodeItem::~NodeItem()
 {
     // Delete all dock items
-    for ( auto& dockItem : _dockItems ) {
-        if ( dockItem )
+    for (auto& dockItem : _dockItems) {
+        if (dockItem)
             dockItem->deleteLater();
     }
 
     // Delete all ports
     for (auto& port : _ports) {
-        if ( port && port->parent() == nullptr)
+        if (port && port->parent() == nullptr)
             port->deleteLater();
     }
 }
