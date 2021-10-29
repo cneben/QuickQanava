@@ -188,31 +188,7 @@ protected:
     struct GeometryCache {
         GeometryCache() = default;
         GeometryCache(const GeometryCache&) = default;  // Defaut copy ctor is ok.
-        GeometryCache(GeometryCache&& rha) :
-            valid{rha.valid},
-            lineType{rha.lineType},
-            z{rha.z},
-            hidden{rha.hidden},
-            srcBs{std::move(rha.srcBs)},    dstBs{std::move(rha.dstBs)},
-            srcBr{std::move(rha.srcBr)},    dstBr{std::move(rha.dstBr)},
-            srcBrCenter{std::move(rha.srcBrCenter)},
-            dstBrCenter{std::move(rha.dstBrCenter)},
-            p1{std::move(rha.p1)},          p2{std::move(rha.p2)},
-            dstA1{std::move(rha.dstA1)},
-            dstA2{std::move(rha.dstA2)},
-            dstA3{std::move(rha.dstA3)},
-            dstAngle{rha.dstAngle},
-            srcA1{std::move(rha.srcA1)},
-            srcA2{std::move(rha.srcA2)},
-            srcA3{std::move(rha.srcA3)},
-            srcAngle{rha.srcAngle},
-            c1{std::move(rha.c1)},          c2{std::move(rha.c2)},
-            labelPosition{std::move(rha.labelPosition)}
-        {
-            srcItem.swap(rha.srcItem);
-            dstItem.swap(rha.dstItem);
-            rha.valid = false;
-        }
+        GeometryCache(GeometryCache&& rha);
 
         inline auto isValid() const noexcept -> bool { return valid && srcItem && dstItem; }
         bool    valid{false};
