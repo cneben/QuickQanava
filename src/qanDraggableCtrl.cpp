@@ -218,9 +218,8 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
                                QSizeF{ targetGroup->getItem()->width(), targetGroup->getItem()->height() }};
 
         movedInsideGroup = groupRect.contains(targetRect);
-        if (!movedInsideGroup) {
-            graph->ungroupNode(_target,_target->get_group().lock().get());
-        }
+        if (!movedInsideGroup)
+            graph->ungroupNode(_target, _target->get_group().lock().get());
     }
 
     const auto localPos = _targetItem->position();

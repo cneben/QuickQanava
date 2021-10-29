@@ -14,8 +14,8 @@ test-topology.subdir    = samples/topology
 test-cpp.subdir         = samples/cpp
 
 # Uncomment to activate samples projects:
-#SUBDIRS +=  test-nodes
-SUBDIRS +=  test-edges
+SUBDIRS +=  test-nodes
+#SUBDIRS +=  test-edges
 #SUBDIRS +=  test-connector
 #SUBDIRS +=  test-groups
 #SUBDIRS +=  test-selection

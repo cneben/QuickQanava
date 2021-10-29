@@ -1108,11 +1108,11 @@ void    EdgeItem::mouseDoubleClickEvent( QMouseEvent* event )
 void    EdgeItem::mousePressEvent( QMouseEvent* event )
 {
     if (contains(event->localPos())) {
-        if ( event->button() == Qt::LeftButton ) {
+        if (event->button() == Qt::LeftButton) {
             emit edgeClicked( this, event->localPos() );
             event->accept();
         }
-        else if ( event->button() == Qt::RightButton ) {
+        else if (event->button() == Qt::RightButton) {
             emit edgeRightClicked( this, event->localPos() );
             event->accept();
         }
@@ -1120,20 +1120,34 @@ void    EdgeItem::mousePressEvent( QMouseEvent* event )
         event->ignore();
 }
 
-qreal   EdgeItem::distanceFromLine( const QPointF& p, const QLineF& line ) const noexcept
+void    EdgeItem::mouseMoveEvent(QMouseEvent* event)
+{
+    if (getEdge() != nullptr) {
+        QQuickItem::mouseMoveEvent(event);
+        return;
+    }
+
+}
+
+void    EdgeItem::mouseReleaseEvent(QMouseEvent* event)
+{
+
+}
+
+qreal   EdgeItem::distanceFromLine(const QPointF& p, const QLineF& line) const noexcept
 {
     // Inspired by DistancePointLine Unit Test, Copyright (c) 2002, All rights reserved
     // Damian Coventry  Tuesday, 16 July 2002
     static constexpr    qreal MinLength = 0.00001;
     const qreal lLength = line.length();
-    if ( lLength < MinLength )
+    if (lLength < MinLength)
         return -1.; // Protect generation of u from DIV0
     const qreal u  = ( ( ( p.x() - line.x1() ) * ( line.x2() - line.x1() ) ) +
                      ( ( p.y() - line.y1() ) * ( line.y2() - line.y1() ) ) ) / ( lLength * lLength );
-    if ( u < 0. || u > 1. )
+    if (u < 0. || u > 1.)
         return -1.;
-    const QPointF i { line.x1() + u * ( line.x2() - line.x1() ),
-                      line.y1() + u * ( line.y2() - line.y1() ) };
+    const QPointF i {line.x1() + u * ( line.x2() - line.x1() ),
+                     line.y1() + u * ( line.y2() - line.y1() )};
     return QLineF{p, i}.length();
 }
 //-----------------------------------------------------------------------------
@@ -1184,6 +1198,25 @@ void    EdgeItem::styleModified()
 }
 //-----------------------------------------------------------------------------
 
+/* Edge drag management *///---------------------------------------------------
+void    EdgeItem::setDraggable(bool draggable) noexcept
+{
+    if (draggable != _draggable) {
+        _draggable = draggable;
+        if (!draggable)
+            setDragged(false);
+        emit draggableChanged();
+    }
+}
+
+void    EdgeItem::setDragged(bool dragged) noexcept
+{
+    if (dragged != _dragged) {
+        _dragged = dragged;
+        emit draggedChanged();
+    }
+}
+//-----------------------------------------------------------------------------
 
 /* Drag'nDrop Management *///--------------------------------------------------
 void    EdgeItem::setAcceptDrops(bool acceptDrops)

@@ -196,9 +196,9 @@ protected:
         QPointer<const QQuickItem>  dstItem{nullptr};
         qan::EdgeStyle::LineType    lineType{qan::EdgeStyle::LineType::Straight};
 
-        qreal   z{0.};
+        qreal   z = 0.;
 
-        bool hidden{false};
+        bool hidden = false;
         QPolygonF   srcBs;
         QPolygonF   dstBs;
         QRectF      srcBr, dstBr;
@@ -208,10 +208,10 @@ protected:
         QPointF p1, p2;
 
         QPointF dstA1, dstA2, dstA3;
-        qreal   dstAngle{0.};
+        qreal   dstAngle = 0.;
 
         QPointF srcA1, srcA2, srcA3;
-        qreal   srcAngle{0.};
+        qreal   srcAngle = 0.;
 
         QPointF c1, c2;
 
@@ -381,6 +381,9 @@ signals:
 protected:
     virtual void    mouseDoubleClickEvent(QMouseEvent* event) override;
     virtual void    mousePressEvent(QMouseEvent* event) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
+
 signals:
     void            edgeClicked(qan::EdgeItem* edge, QPointF pos);
     void            edgeRightClicked(qan::EdgeItem* edge, QPointF pos);
@@ -421,6 +424,38 @@ private slots:
     void            styleDestroyed(QObject* style);
 
     void            styleModified();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge drag management *///----------------------------------------
+    //@{
+public:
+    //! \copydoc qan::Draggable::_draggable
+    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
+    void            setDraggable(bool draggable) noexcept;
+    inline bool     getDraggable() const noexcept { return _draggable; }
+signals:
+    void            draggableChanged();
+private:
+    /*! \brief Define if the node could actually be dragged by mouse (default to true).
+     *
+     * Set this property to true if you want to allow this node to be moved by mouse (if false, the node position is
+     * fixed and should be changed programmatically).
+     *
+     * Default to true.
+     */
+    bool            _draggable = true;
+
+public:
+    //! \copydoc qan::Draggable::_dragged
+    Q_PROPERTY(bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL)
+    void            setDragged(bool dragged) noexcept;
+    inline bool     getDragged() const noexcept { return _dragged; }
+signals:
+    void            draggedChanged();
+private:
+    //! True when the node is currently beeing dragged.
+    bool            _dragged = false;
     //@}
     //-------------------------------------------------------------------------
 
