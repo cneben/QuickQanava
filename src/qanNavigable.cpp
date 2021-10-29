@@ -82,7 +82,7 @@ void    Navigable::centerOn(QQuickItem* item)
     // ALGORITHM:
         // 1. Map item center in container CS, then translate view by this scaled center to set
         //    the top left corner of item at view origin (0, 0)
-        // 2. Then compute a vector to move item at center of view using an (origin, view venter) vector
+        // 2. Then compute a vector to move item at center of view using an (origin, view center) vector
         //    in container item coordinate system.
 
     const qreal zoom = _containerItem->scale();
@@ -106,11 +106,19 @@ void    Navigable::centerOn(QQuickItem* item)
 
 void    Navigable::centerOnPosition(QPointF position)
 {
+    // ALGORITHM:
+        //  1. Compute a translation vector to move from current view center to the target position.
+        //     Take the zoom into account to scale the translation.
+
+    if (_containerItem == nullptr)
+        return;
+
     QPointF navigableCenter{ width() / 2., height() / 2. };
     QPointF navigableCenterContainerCs = mapToItem( _containerItem, navigableCenter );
     QPointF translation{ navigableCenterContainerCs - position };
-    _containerItem->setPosition(QPointF{_containerItem->x() + translation.x(),
-                                         _containerItem->y() + translation.y()});
+
+    const qreal zoom = _containerItem->scale();
+    _containerItem->setPosition(_containerItem->position() + (translation * zoom));
     updateGrid();
 }
 
