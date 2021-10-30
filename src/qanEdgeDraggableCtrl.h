@@ -27,9 +27,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanDraggableCtrl.h
+// \file	qanEdgeDraggableCtrl.h
 // \author	benoit@destrat.io
-// \date	2017 03 15
+// \date	2021 10 29
 //-----------------------------------------------------------------------------
 
 #pragma once
@@ -49,43 +49,30 @@
 
 namespace qan { // ::qan
 
-/*! \brief Generic logic for dragging either qan::Node or qan::Group visual items.
+/*! \brief Generic logic for dragging qan::Edge visual items.
  *
  * \nosubgrouping
  */
-class DraggableCtrl : public qan::AbstractDraggableCtrl
+class EdgeDraggableCtrl : public qan::AbstractDraggableCtrl
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
 public:
     //! DraggableCtrl constructor.
-    explicit DraggableCtrl() = default;
-    virtual ~DraggableCtrl() override = default;
-    DraggableCtrl(const DraggableCtrl&) = delete;
+    explicit EdgeDraggableCtrl() = default;
+    virtual ~EdgeDraggableCtrl() override = default;
+    EdgeDraggableCtrl(const EdgeDraggableCtrl&) = delete;
 
 public:
-    inline auto getTarget() noexcept -> qan::Node* { return _target.data(); }
-    inline auto getTarget() const noexcept -> const qan::Node* { return _target.data(); }
-    inline auto setTarget(qan::Node* target) noexcept { _target = target; }
+    inline auto getTargetItem() noexcept -> qan::EdgeItem* { return _targetItem.data(); }
+    inline auto getTargetItem() const noexcept -> const qan::EdgeItem* { return _targetItem.data(); }
+    inline auto setTargetItem(qan::EdgeItem* targetItem) noexcept { _targetItem = targetItem; }
 private:
-    QPointer<qan::Node>    _target{nullptr};
-
-public:
-    inline auto getTargetItem() noexcept -> qan::NodeItem* { return _targetItem.data(); }
-    inline auto getTargetItem() const noexcept -> const qan::NodeItem* { return _targetItem.data(); }
-    inline auto setTargetItem(qan::NodeItem* targetItem) noexcept { _targetItem = targetItem; }
-private:
-    QPointer<qan::NodeItem>    _targetItem{nullptr};
-
-public:
-    inline auto getTargetEdgeItem() noexcept -> qan::EdgeItem* { return _targetEdgeItem.data(); }
-    inline auto getTargetEdgeItem() const noexcept -> const qan::EdgeItem* { return _targetEdgeItem.data(); }
-    inline auto setTargetEdgeItem(qan::EdgeItem* targetEdgeItem) noexcept { _targetEdgeItem = targetEdgeItem; }
-private:
-    QPointer<qan::EdgeItem>    _targetEdgeItem{nullptr};
+    QPointer<qan::EdgeItem>    _targetItem{nullptr};
 
 protected:
-    inline qan::Graph*  getGraph() noexcept { return _target ? _target->getGraph() : nullptr; }
+    //! Utility to return a safe _targetItem->getGraph().
+    qan::Graph*  getGraph() noexcept;
     //@}
     //-------------------------------------------------------------------------
 

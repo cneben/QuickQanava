@@ -42,6 +42,7 @@
 #include "./qanNodeItem.h"      // Resolve forward declaration
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
+#include "./qanEdgeDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -49,15 +50,19 @@ namespace qan { // ::qan
 EdgeItem::EdgeItem( QQuickItem* parent ) :
     QQuickItem{parent}
 {
-    setParentItem( parent );
-    setAntialiasing( true );
-    setFlag( QQuickItem::ItemHasContents, true );
-    setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
-    setAcceptDrops( true );
+    setParentItem(parent);
+    setAntialiasing(true);
+    setFlag(QQuickItem::ItemHasContents, true);
+    setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
+    setAcceptDrops(true);
     setVisible(false);  // Invisible until there is a valid src/dst
 
+    _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<qan::EdgeDraggableCtrl>()};
+    const auto edgeDraggableCtrl = static_cast<qan::EdgeDraggableCtrl*>(_draggableCtrl.get());
+    edgeDraggableCtrl->setTargetItem(this);
+
     setStyle(qan::Edge::style(parent));
-    setObjectName( QStringLiteral("qan::EdgeItem") );
+    setObjectName(QStringLiteral("qan::EdgeItem"));
 }
 
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
@@ -1092,28 +1097,28 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 
 
 /* Mouse Management *///-------------------------------------------------------
-void    EdgeItem::mouseDoubleClickEvent( QMouseEvent* event )
+void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    const qreal d = distanceFromLine( event->localPos(), QLineF{_p1, _p2} );
-    if ( d > -0.0001 && d < 5. &&
-         event->button() == Qt::LeftButton ) {
-        emit edgeDoubleClicked( this, event->localPos() );
+    const qreal d = distanceFromLine(event->localPos(), QLineF{_p1, _p2});
+    if (d > -0.0001 && d < 5. &&
+        event->button() == Qt::LeftButton) {
+        emit edgeDoubleClicked(this, event->localPos());
         event->accept();
     }
     else
         event->ignore();
-    QQuickItem::mouseDoubleClickEvent( event );
+    QQuickItem::mouseDoubleClickEvent(event);
 }
 
-void    EdgeItem::mousePressEvent( QMouseEvent* event )
+void    EdgeItem::mousePressEvent(QMouseEvent* event)
 {
     if (contains(event->localPos())) {
         if (event->button() == Qt::LeftButton) {
-            emit edgeClicked( this, event->localPos() );
+            emit edgeClicked(this, event->localPos());
             event->accept();
         }
         else if (event->button() == Qt::RightButton) {
-            emit edgeRightClicked( this, event->localPos() );
+            emit edgeRightClicked(this, event->localPos());
             event->accept();
         }
     } else
@@ -1122,16 +1127,28 @@ void    EdgeItem::mousePressEvent( QMouseEvent* event )
 
 void    EdgeItem::mouseMoveEvent(QMouseEvent* event)
 {
-    if (getEdge() != nullptr) {
+    // Early exits
+    if (!getDraggable())
+        return;
+    if (getEdge() == nullptr) {
         QQuickItem::mouseMoveEvent(event);
         return;
     }
+    if (event->buttons().testFlag(Qt::NoButton))
+        return;
 
+    const auto draggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+    if (draggableCtrl->handleMouseMoveEvent(event))
+        event->accept();
+    else
+        event->ignore();
+        // Note 20200531: Do not call base QQuickItem implementation, really.
 }
 
 void    EdgeItem::mouseReleaseEvent(QMouseEvent* event)
 {
-
+    const auto draggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+    draggableCtrl->handleMouseReleaseEvent(event);
 }
 
 qreal   EdgeItem::distanceFromLine(const QPointF& p, const QLineF& line) const noexcept

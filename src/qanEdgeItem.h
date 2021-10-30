@@ -456,6 +456,13 @@ signals:
 private:
     //! True when the node is currently beeing dragged.
     bool            _dragged = false;
+
+protected:
+    // TEMP FIXME (qanDraggableCtrl...)
+public:
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
+protected:
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
 
