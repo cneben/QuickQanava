@@ -120,6 +120,19 @@ signals:
     void            labelChanged();
 
 public:
+    /*! \brief A locked edge can't be selected / dragged by user (default to false ie unlocked).
+     *
+     * Might be usefull to prevent user inputs when the edge is laid out automatically.
+     */
+    Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
+    bool            setLocked(bool locked) noexcept;
+    bool            getLocked() const noexcept { return _locked; }
+private:
+    bool            _locked = false;
+signals:
+    void            lockedChanged();
+
+public:
     //! \copydoc _weight
     Q_PROPERTY(qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL)
     //! \copydoc _weight

@@ -118,6 +118,16 @@ bool    Edge::setLabel(const QString& label)
     return false;
 }
 
+bool    Edge::setLocked(bool locked) noexcept
+{
+    if (locked != _locked) {
+        _locked = locked;
+        emit lockedChanged();
+        return true;
+    }
+    return false;
+}
+
 bool    Edge::setWeight(qreal weight)
 {
     if (!qFuzzyCompare(1.5 + weight, 1.5 + _weight)) {

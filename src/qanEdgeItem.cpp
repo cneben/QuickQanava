@@ -1114,6 +1114,11 @@ void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void    EdgeItem::mousePressEvent(QMouseEvent* event)
 {
+    if (getEdge() != nullptr &&
+        getEdge()->getLocked()) {
+        event->ignore();
+        return;
+    }
     if (contains(event->localPos())) {
         if (event->button() == Qt::LeftButton) {
             emit edgeClicked(this, event->localPos());
@@ -1130,12 +1135,13 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
 void    EdgeItem::mouseMoveEvent(QMouseEvent* event)
 {
     // Early exits
-    if (!getDraggable())
-        return;
-    if (getEdge() == nullptr) {
+    if (getEdge() == nullptr ||
+        getEdge()->getLocked()) {
         QQuickItem::mouseMoveEvent(event);
         return;
     }
+    if (!getDraggable())
+        return;
     if (event->buttons().testFlag(Qt::NoButton))
         return;
 

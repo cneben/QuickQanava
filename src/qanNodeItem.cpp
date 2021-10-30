@@ -228,7 +228,7 @@ void    NodeItem::setConnectable(Connectable connectable) noexcept
 //-----------------------------------------------------------------------------
 
 /* Draggable Management *///---------------------------------------------------
-void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
+void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -237,12 +237,12 @@ void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
-    if ( !draggableCtrl->handleDragEnterEvent(event) )
+    if (!draggableCtrl->handleDragEnterEvent(event))
         event->ignore();
     QQuickItem::dragEnterEvent(event);
 }
 
-void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
+void	NodeItem::dragMoveEvent(QDragMoveEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -255,7 +255,7 @@ void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
     QQuickItem::dragMoveEvent(event);
 }
 
-void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
+void	NodeItem::dragLeaveEvent(QDragLeaveEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -268,14 +268,14 @@ void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
     QQuickItem::dragLeaveEvent(event);
 }
 
-void    NodeItem::dropEvent( QDropEvent* event )
+void    NodeItem::dropEvent(QDropEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleDropEvent(event);
-    QQuickItem::dropEvent( event );
+    QQuickItem::dropEvent(event);
 }
 
-void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
+void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseDoubleClickEvent(event);
@@ -283,7 +283,7 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
         emit nodeDoubleClicked( this, event->localPos());
 }
 
-void    NodeItem::mouseMoveEvent(QMouseEvent* event )
+void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
