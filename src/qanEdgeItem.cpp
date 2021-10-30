@@ -1118,11 +1118,9 @@ void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void    EdgeItem::mousePressEvent(QMouseEvent* event)
 {
-    if (getEdge() != nullptr &&
-        getEdge()->getLocked()) {
-        event->ignore();
-        return;
-    }
+    // Note 20211030: Do not take getLocked() into account,
+    // otherwise onEdgeDoubleClicked() is no longer fired (and edge
+    // can't be unlocked with a visual editor !
     if (contains(event->localPos())) {
         if (event->button() == Qt::LeftButton) {
             emit edgeClicked(this, event->localPos());
