@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QtGlobal>
 #include <QBrush>
 #include <QPainter>
 
@@ -287,50 +288,51 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     // PRECONDITIONS:
         // _sourceItem can't be nullptr
         // _destinationItem can't be nullptr
-    if ( !_sourceItem )
+    if (!_sourceItem)
         return EdgeItem::GeometryCache{};
-    if ( !_destinationItem )
+    if (!_destinationItem)
         return EdgeItem::GeometryCache{};
 
     EdgeItem::GeometryCache cache{};
     cache.valid = false;
 
-    const QQuickItem*     graphContainerItem = ( getGraph() != nullptr ? getGraph()->getContainerItem() : nullptr );
-    if ( graphContainerItem == nullptr ) {
+    const QQuickItem* graphContainerItem = (getGraph() != nullptr ? getGraph()->getContainerItem() :
+                                                                    nullptr);
+    if (graphContainerItem == nullptr) {
         qWarning() << "qan::EdgeItem::generateEdgeGeometry(): No access to valid graph container item.";
         return cache;    // Return INVALID geometry cache
     }
 
     const QQuickItem* srcItem = _sourceItem.data();
-    if ( srcItem == nullptr ) {
+    if (srcItem == nullptr) {
         qWarning() << "qan::EdgeItem::generateEdgeGeometry(): No valid source item.";
         return cache;    // Return INVALID geometry cache
     }
 
     qan::GroupItem* srcGroupItem = nullptr;
-    if(  srcItem != nullptr ) {
+    if (srcItem != nullptr) {
         const auto srcNode = static_cast<qan::Node*>(_sourceItem->getNode());
-        if ( srcNode != nullptr ) {
+        if (srcNode != nullptr) {
             const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group().lock().get());
-            if ( srcNodeGroup != nullptr )
+            if (srcNodeGroup != nullptr)
                 srcGroupItem = srcNodeGroup->getGroupItem();
         }
     }
 
     qan::NodeItem*  dstNodeItem = qobject_cast<qan::NodeItem*>(_destinationItem);
-    if ( dstNodeItem == nullptr &&
-         _edge ) {
-        qan::Node*  dstNode = static_cast< qan::Node* >( _edge->get_dst().lock().get() );
-        if ( dstNode != nullptr )
+    if (dstNodeItem == nullptr &&
+        _edge) {
+        qan::Node*  dstNode = static_cast< qan::Node* >(_edge->get_dst().lock().get());
+        if (dstNode != nullptr)
             dstNodeItem = dstNode->getItem();
     }
 
     // Initialize dstGroupItem: eventual group item for dst item
     qan::GroupItem* dstGroupItem = nullptr;
-    if ( dstNodeItem != nullptr &&
-         dstNodeItem->getNode() != nullptr ) {
-        auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->get_group().lock().get() );
-        if ( dstNodeGroup )
+    if (dstNodeItem != nullptr &&
+        dstNodeItem->getNode() != nullptr) {
+        auto dstNodeGroup = qobject_cast<qan::Group*>(dstNodeItem->getNode()->get_group().lock().get());
+        if (dstNodeGroup)
             dstGroupItem = dstNodeGroup->getGroupItem();
     }
 
@@ -338,18 +340,18 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     const QQuickItem* dstItem = dstNodeItem;
 
     // Check that we have a valid source and destination Quick Item
-    if ( srcItem == nullptr || dstItem == nullptr )
+    if (srcItem == nullptr || dstItem == nullptr)
         return cache;        // Otherwise, return an invalid cache
     cache.srcItem = srcItem;
     cache.dstItem = dstItem;
 
     // If the edge "src" or "dst" is inside a collapsed group, generate invalid cache, it will automatically be
     // hidden
-    if ( srcGroupItem != nullptr &&
-         srcGroupItem->getCollapsed() )
+    if (srcGroupItem != nullptr &&
+        srcGroupItem->getCollapsed())
         return cache;   // Return invalid cache
-    if ( dstGroupItem != nullptr &&
-         dstGroupItem->getCollapsed() )
+    if (dstGroupItem != nullptr &&
+        dstGroupItem->getCollapsed())
         return cache;   // Return invalid cache
 
     // Generate bounding shapes for source and destination in global CS
@@ -357,16 +359,16 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         if ( _sourceItem != nullptr ) {        // Generate source bounding shape polygon
             cache.srcBs.resize(_sourceItem->getBoundingShape().size());
             int p = 0;
-            for ( const auto& point: _sourceItem->getBoundingShape() )
-                cache.srcBs[p++] = _sourceItem->mapToItem( graphContainerItem, point );
+            for (const auto& point: _sourceItem->getBoundingShape())
+                cache.srcBs[p++] = _sourceItem->mapToItem(graphContainerItem, point);
         }
         // Generate destination bounding shape polygon
         if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
             // Update edge z to source or destination maximum x
             cache.dstBs.resize(dstNodeItem->getBoundingShape().size());
             int p = 0;
-            for ( const auto& point: dstNodeItem->getBoundingShape() )
-                cache.dstBs[p++] = dstNodeItem->mapToItem( graphContainerItem, point );
+            for (const auto& point: dstNodeItem->getBoundingShape())
+                cache.dstBs[p++] = dstNodeItem->mapToItem(graphContainerItem, point);
         }
     }
 

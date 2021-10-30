@@ -99,8 +99,6 @@ public:
 private:
     //! Internal position cache.
     QPointF                 _dragLastPos{0., 0.};
-    //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
-    QPointer<qan::Group>    _lastProposedGroup{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

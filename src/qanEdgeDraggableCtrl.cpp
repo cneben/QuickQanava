@@ -102,16 +102,23 @@ void    EdgeDraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 void    EdgeDraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection)
 {
     Q_UNUSED(dragSelection)
-    if (_targetItem == nullptr)
+    if (!_targetItem)
         return;
+
     _targetItem->setDragged(true);
     _dragLastPos = dragInitialMousePos;
 
     // Get target edge adjacent nodes
-    auto src = _targetItem->getSourceItem()->getNode()->getItem();
-    auto dst = _targetItem->getDestinationItem()->getNode()->getItem();
-    src->draggableCtrl().beginDragMove(dragInitialMousePos, false);
-    dst->draggableCtrl().beginDragMove(dragInitialMousePos, false);
+    auto src = _targetItem->getSourceItem() != nullptr &&
+               _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
+                                                                    nullptr;
+    auto dst = _targetItem->getDestinationItem() != nullptr &&
+               _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
+                                                                         nullptr;
+    if (src != nullptr)
+        src->draggableCtrl().beginDragMove(dragInitialMousePos, false);
+    if (dst != nullptr)
+        dst->draggableCtrl().beginDragMove(dragInitialMousePos, false);
 }
 
 void    EdgeDraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
@@ -122,10 +129,16 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     if (!_targetItem)
         return;
     // Get target edge adjacent nodes
-    auto src = _targetItem->getSourceItem()->getNode()->getItem();
-    auto dst = _targetItem->getDestinationItem()->getNode()->getItem();
-    src->draggableCtrl().dragMove(delta, false);
-    dst->draggableCtrl().dragMove(delta, false);
+    auto src = _targetItem->getSourceItem() != nullptr &&
+               _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
+                                                                    nullptr;
+    auto dst = _targetItem->getDestinationItem() != nullptr &&
+               _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
+                                                                         nullptr;
+    if (src != nullptr)
+        src->draggableCtrl().dragMove(delta, false);
+    if (dst != nullptr)
+        dst->draggableCtrl().dragMove(delta, false);
 }
 
 void    EdgeDraggableCtrl::endDragMove(bool dragSelection)
@@ -139,10 +152,16 @@ void    EdgeDraggableCtrl::endDragMove(bool dragSelection)
     _targetItem->setDragged(false);
 
     // Get target edge adjacent nodes
-    auto src = _targetItem->getSourceItem()->getNode()->getItem();
-    auto dst = _targetItem->getDestinationItem()->getNode()->getItem();
-    src->draggableCtrl().endDragMove(false);
-    dst->draggableCtrl().endDragMove(false);
+    auto src = _targetItem->getSourceItem() != nullptr &&
+               _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
+                                                                    nullptr;
+    auto dst = _targetItem->getDestinationItem() != nullptr &&
+               _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
+                                                                         nullptr;
+    if (src != nullptr)
+        src->draggableCtrl().endDragMove(false);
+    if (dst != nullptr)
+        dst->draggableCtrl().endDragMove(false);
 }
 //-----------------------------------------------------------------------------
 
