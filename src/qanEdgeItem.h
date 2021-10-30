@@ -444,7 +444,7 @@ private:
      *
      * Default to false.
      */
-    bool            _draggable = true;
+    bool            _draggable = false;
 
 public:
     //! \copydoc qan::Draggable::_dragged
