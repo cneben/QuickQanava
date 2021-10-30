@@ -69,7 +69,16 @@ bool    EdgeDraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     // Early exits
     if (event->buttons().testFlag(Qt::NoButton))
         return false;
-    if (!_targetItem->getDraggable())
+    if (!_targetItem->getDraggable())   // Do not drag if edge is non draggable
+        return false;
+
+    // Do not drag if edge source and destination nodes are locked.
+    auto src = _targetItem->getSourceItem() != nullptr ? _targetItem->getSourceItem()->getNode() :
+                                                         nullptr;
+    auto dst = _targetItem->getDestinationItem() != nullptr ? _targetItem->getDestinationItem()->getNode() :
+                                                              nullptr;
+    if ((src && src->getLocked()) ||
+        (dst && dst->getLocked()))
         return false;
 
     const auto rootItem = graph->getContainerItem();
