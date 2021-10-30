@@ -430,19 +430,19 @@ private slots:
     /*! \name Edge drag management *///----------------------------------------
     //@{
 public:
-    //! \copydoc qan::Draggable::_draggable
+    //! \copydoc qan::EdgeItem::_draggable
     Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
     void            setDraggable(bool draggable) noexcept;
     inline bool     getDraggable() const noexcept { return _draggable; }
 signals:
     void            draggableChanged();
 private:
-    /*! \brief Define if the node could actually be dragged by mouse (default to true).
+    /*! \brief Define if the edge could be dragged by mouse (default to false).
      *
-     * Set this property to true if you want to allow this node to be moved by mouse (if false, the node position is
-     * fixed and should be changed programmatically).
+     * Set this property to true if you want to allow this edge to be moved by mouse. Nodes connected
+     * to a dragged edge are moved automatically with the edge.
      *
-     * Default to true.
+     * Default to false.
      */
     bool            _draggable = true;
 
@@ -454,11 +454,9 @@ public:
 signals:
     void            draggedChanged();
 private:
-    //! True when the node is currently beeing dragged.
+    //! True when the edge is currently beeing dragged.
     bool            _dragged = false;
 
-protected:
-    // TEMP FIXME (qanDraggableCtrl...)
 public:
     qan::AbstractDraggableCtrl&                 draggableCtrl();
 protected:
