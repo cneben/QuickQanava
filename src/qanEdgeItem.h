@@ -146,7 +146,7 @@ public:
     //! \copydoc srcShape
     inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
     //! \copydoc srcShape
-    auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
+    auto                setSrcShape(ArrowShape srcShape) noexcept -> bool;
 private:
     //! \copydoc srcShape
     ArrowShape          _srcShape = ArrowShape::None;
@@ -160,7 +160,7 @@ public:
     //! \copydoc dstShape
     inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
     //! \copydoc dstShape
-    auto                setDstShape(ArrowShape dstShape) noexcept -> void;
+    auto                setDstShape(ArrowShape dstShape) noexcept -> bool;
 private:
     //! \copydoc dstShape
     ArrowShape          _dstShape = ArrowShape::Arrow;

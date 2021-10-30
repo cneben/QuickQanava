@@ -204,22 +204,26 @@ void    EdgeItem::setArrowSize( qreal arrowSize ) noexcept
     }
 }
 
-auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> void
+auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> bool
 {
-    if ( _srcShape != srcShape ) {
+    if (_srcShape != srcShape) {
         _srcShape = srcShape;
         emit srcShapeChanged();
         updateItem();
+        return true;
     }
+    return false;
 }
 
-auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> void
+auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> bool
 {
-    if ( _dstShape != dstShape ) {
+    if (_dstShape != dstShape) {
         _dstShape = dstShape;
         emit dstShapeChanged();
         updateItem();
+        return true;
     }
+    return false;
 }
 
 void    EdgeItem::updateItem() noexcept
