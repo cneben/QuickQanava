@@ -188,31 +188,7 @@ protected:
     struct GeometryCache {
         GeometryCache() = default;
         GeometryCache(const GeometryCache&) = default;  // Defaut copy ctor is ok.
-        GeometryCache(GeometryCache&& rha) :
-            valid{rha.valid},
-            lineType{rha.lineType},
-            z{rha.z},
-            hidden{rha.hidden},
-            srcBs{std::move(rha.srcBs)},    dstBs{std::move(rha.dstBs)},
-            srcBr{std::move(rha.srcBr)},    dstBr{std::move(rha.dstBr)},
-            srcBrCenter{std::move(rha.srcBrCenter)},
-            dstBrCenter{std::move(rha.dstBrCenter)},
-            p1{std::move(rha.p1)},          p2{std::move(rha.p2)},
-            dstA1{std::move(rha.dstA1)},
-            dstA2{std::move(rha.dstA2)},
-            dstA3{std::move(rha.dstA3)},
-            dstAngle{rha.dstAngle},
-            srcA1{std::move(rha.srcA1)},
-            srcA2{std::move(rha.srcA2)},
-            srcA3{std::move(rha.srcA3)},
-            srcAngle{rha.srcAngle},
-            c1{std::move(rha.c1)},          c2{std::move(rha.c2)},
-            labelPosition{std::move(rha.labelPosition)}
-        {
-            srcItem.swap(rha.srcItem);
-            dstItem.swap(rha.dstItem);
-            rha.valid = false;
-        }
+        GeometryCache(GeometryCache&& rha);
 
         inline auto isValid() const noexcept -> bool { return valid && srcItem && dstItem; }
         bool    valid{false};
@@ -220,9 +196,9 @@ protected:
         QPointer<const QQuickItem>  dstItem{nullptr};
         qan::EdgeStyle::LineType    lineType{qan::EdgeStyle::LineType::Straight};
 
-        qreal   z{0.};
+        qreal   z = 0.;
 
-        bool hidden{false};
+        bool hidden = false;
         QPolygonF   srcBs;
         QPolygonF   dstBs;
         QRectF      srcBr, dstBr;
@@ -232,10 +208,10 @@ protected:
         QPointF p1, p2;
 
         QPointF dstA1, dstA2, dstA3;
-        qreal   dstAngle{0.};
+        qreal   dstAngle = 0.;
 
         QPointF srcA1, srcA2, srcA3;
-        qreal   srcAngle{0.};
+        qreal   srcAngle = 0.;
 
         QPointF c1, c2;
 
@@ -405,6 +381,9 @@ signals:
 protected:
     virtual void    mouseDoubleClickEvent(QMouseEvent* event) override;
     virtual void    mousePressEvent(QMouseEvent* event) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
+
 signals:
     void            edgeClicked(qan::EdgeItem* edge, QPointF pos);
     void            edgeRightClicked(qan::EdgeItem* edge, QPointF pos);
@@ -445,6 +424,43 @@ private slots:
     void            styleDestroyed(QObject* style);
 
     void            styleModified();
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Edge drag management *///----------------------------------------
+    //@{
+public:
+    //! \copydoc qan::EdgeItem::_draggable
+    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
+    void            setDraggable(bool draggable) noexcept;
+    inline bool     getDraggable() const noexcept { return _draggable; }
+signals:
+    void            draggableChanged();
+private:
+    /*! \brief Define if the edge could be dragged by mouse (default to false).
+     *
+     * Set this property to true if you want to allow this edge to be moved by mouse. Nodes connected
+     * to a dragged edge are moved automatically with the edge.
+     *
+     * Default to false.
+     */
+    bool            _draggable = true;
+
+public:
+    //! \copydoc qan::Draggable::_dragged
+    Q_PROPERTY(bool dragged READ getDragged WRITE setDragged NOTIFY draggedChanged FINAL)
+    void            setDragged(bool dragged) noexcept;
+    inline bool     getDragged() const noexcept { return _dragged; }
+signals:
+    void            draggedChanged();
+private:
+    //! True when the edge is currently beeing dragged.
+    bool            _dragged = false;
+
+public:
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
+protected:
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
 

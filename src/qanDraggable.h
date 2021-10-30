@@ -61,7 +61,7 @@ class Draggable
 public:
     explicit Draggable();
     virtual ~Draggable();
-    Draggable( const Draggable& ) = delete;
+    Draggable(const Draggable&) = delete;
 
 protected:
     //! Configure this \c qan::Draggable interface with a valid \c target (usually a qan::Node or qan::Group).
@@ -75,7 +75,7 @@ private:
     /*! \name Draggable Management *///----------------------------------------
     //@{
 public:
-    void            setDraggable( bool draggable ) noexcept;
+    void            setDraggable(bool draggable) noexcept;
     inline bool     getDraggable() const noexcept { return _draggable; }
 protected:
     virtual void    emitDraggableChanged() = 0;
@@ -87,19 +87,19 @@ private:
      *
      * Default to true.
      */
-    bool            _draggable{true};
+    bool            _draggable = true;
 
 public:
-    void            setDragged( bool dragged ) noexcept;
+    void            setDragged(bool dragged) noexcept;
     inline bool     getDragged() const noexcept { return _dragged; }
 protected:
     virtual void    emitDraggedChanged() = 0;
 private:
     //! True when the node is currently beeing dragged.
-    bool            _dragged{false};
+    bool            _dragged = false;
 
 public:
-    void            setDroppable( bool droppable ) noexcept;
+    void            setDroppable(bool droppable) noexcept;
     inline bool     getDroppable() const noexcept { return _droppable; }
 protected:
     virtual void    emitDroppableChanged() = 0;
@@ -110,10 +110,10 @@ private:
      * Default to true.
      * Setting this property to false may lead to a significant performance improvement if group dropping is not needed.
      */
-    bool            _droppable{true};
+    bool            _droppable = true;
 
 public:
-    void            setAcceptDrops( bool acceptDrops ) noexcept;
+    void            setAcceptDrops(bool acceptDrops) noexcept;
     inline bool     getAcceptDrops() const noexcept { return _acceptDrops; }
 protected:
     virtual void    emitAcceptDropsChanged() = 0;
@@ -124,7 +124,7 @@ private:
      *
      * Setting this property to false may lead to a significant performance improvement if DropNode support is not needed.
      */
-    bool            _acceptDrops{true};
+    bool            _acceptDrops = true;
     //@}
     //-------------------------------------------------------------------------
 };

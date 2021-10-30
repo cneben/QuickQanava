@@ -151,7 +151,7 @@ public:
     inline bool     getCollapsed() const noexcept { return _collapsed; }
     virtual void    setCollapsed(bool collapsed) noexcept;
 private:
-    bool        _collapsed{false};
+    bool        _collapsed = false;
 signals:
     void        collapsedChanged();
 public:

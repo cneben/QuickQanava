@@ -27,6 +27,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanDraggable.h            \
             $$PWD/qanAbstractDraggableCtrl.h\
             $$PWD/qanDraggableCtrl.h        \
+            $$PWD/qanEdgeDraggableCtrl.h    \
             $$PWD/qanConnector.h            \
             $$PWD/qanBehaviour.h            \
             $$PWD/qanGroup.h                \
@@ -52,6 +53,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanSelectable.cpp         \
             $$PWD/qanDraggable.cpp          \
             $$PWD/qanDraggableCtrl.cpp      \
+            $$PWD/qanEdgeDraggableCtrl.cpp  \
             $$PWD/qanConnector.cpp          \
             $$PWD/qanBehaviour.cpp          \
             $$PWD/qanGraph.cpp              \
