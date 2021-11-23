@@ -430,7 +430,7 @@ public:
      *
      * \arg item    if nullptr, return -1.
      */
-    inline auto    indexOf( T item ) const noexcept -> size_t { return qcm::adapter<C, T>::indexOf( _container, item ); }
+    inline auto    indexOf( T item ) const noexcept -> int { return qcm::adapter<C, T>::indexOf(_container, item); }
 
 private:
     C<T>                _container;
