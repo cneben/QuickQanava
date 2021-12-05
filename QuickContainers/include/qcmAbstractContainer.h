@@ -75,13 +75,13 @@ public:
     inline void    fwdEndResetModel() noexcept { if (_model) _model->fwdEndResetModel(); }
 
 public:
-    Q_PROPERTY( ContainerModel*    model READ getModel CONSTANT FINAL )
+    Q_PROPERTY(ContainerModel*    model READ getModel CONSTANT FINAL)
     /*! \brief Return a Qt model for this container extended with a modification interface for the underlining container model from QML.
      *
      * \warning Underlying model is created \b synchronously on first \c model access, expect a quite slow first call (O(n), n beein container size).
      */
-    inline ContainerModel*      getModel( ) noexcept {
-        if ( !_model )
+    inline ContainerModel*      getModel() noexcept {
+        if (!_model)
             createModel();
         return _model.data();
     }

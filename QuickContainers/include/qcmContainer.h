@@ -137,10 +137,12 @@ class Container : public AbstractContainer
     /*! \name Container Object Management *///------------------------
     //@{
 public:
-    explicit Container( QObject* parent = nullptr ) :
-        AbstractContainer( parent ) { }
-    virtual ~Container( ) { }
-    Container( const Container<C, T>& container ) = delete;
+    explicit Container(QObject* parent = nullptr) :
+        AbstractContainer{parent} { }
+    virtual ~Container() {   // Prevent _model beeing used in superclasses destroyed
+        _model = nullptr;    // after this concrete implementation
+    }
+    Container(const Container<C, T>& container) = delete;
 
 protected:
     using ModelImpl = qcm::ContainerModelImpl< qcm::Container<C, T> >;
@@ -373,15 +375,14 @@ private:
 
 public:
     inline  void    clear() noexcept {
-        if ( _model && _modelImpl ) {
+        if (_model && _modelImpl) {
             fwdBeginResetModel();
             _modelImpl->_qObjectItemMap.clear();
             _container.clear( );
             fwdEndResetModel();
             fwdEmitLengthChanged();
-        } else {
-            _container.clear( );
-        }
+        } else
+            _container.clear();
     }
 
 public:
