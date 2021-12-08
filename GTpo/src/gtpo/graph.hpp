@@ -38,7 +38,7 @@ namespace gtpo { // ::gtpo
 template <class config_t>
 graph<config_t>::~graph()
 {
-    clear();
+    //clear();
 }
 
 template <class config_t>

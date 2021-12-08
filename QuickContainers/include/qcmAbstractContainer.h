@@ -83,7 +83,9 @@ public:
     inline ContainerModel*      getModel() noexcept {
         if (!_model)
             createModel();
-        return _model.data();
+        auto model = _model.data();
+        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
+        return model;
     }
     //! Shortcut to getModel().
     inline ContainerModel*      model() const noexcept { return const_cast<AbstractContainer*>(this)->getModel(); }
