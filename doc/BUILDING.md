@@ -42,7 +42,7 @@ or with (CMake >= 3.5) and Qt Creator:
 
 1. Open _CMakeLists.txt_ in QtCreator.
 
-2. In 'Projects' panel, set DBUILD_SAMPLES option to true in CMake configuration panel.
+2. In 'Projects' panel, set DQUICK_QANAVA_BUILD_SAMPLES option to true in CMake configuration panel.
 
 3. Select a kit, build and launch samples.
 
@@ -54,10 +54,10 @@ $ mkdir build
 $ cd build
 
 # IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
-$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ..
+$ cmake -DCMAKE_BUILD_TYPE=Release -DQUICK_QANAVA_BUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ..
 
 # IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
-$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ../QuickQanava/
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DQUICK_QANAVA_BUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ../QuickQanava/
 
 $ cmake --build .
 # Then run the samples in ./samples
