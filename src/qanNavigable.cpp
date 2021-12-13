@@ -440,7 +440,11 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 {
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
         zoomOn(event->position(), getZoom() + zoomFactor);
+#else // QWheelEvent::position was added in Qt 5.14; pos was deprecated in 5.15.
+        zoomOn(event->pos(), getZoom() + zoomFactor);
+#endif
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);
