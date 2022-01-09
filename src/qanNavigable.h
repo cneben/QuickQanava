@@ -285,7 +285,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.1;
+    qreal       _zoomMin = 0.09;
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
@@ -363,15 +363,18 @@ public:
      * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized in a concrete component or subclass.
      * Selection rectangle is not owned by this qan::Navigable object, it might be a QML owned object.
      */
-    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem FINAL)
+    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem NOTIFY selectionRectChanged FINAL)
     //! \copydoc selectionRectItem
-    inline QQuickItem*  getSelectionRectItem() noexcept { return _selectionRectItem; }
+    inline QQuickItem*  getSelectionRectItem() { return _selectionRectItem; }
     //! \copydoc selectionRectItem
-    void                setSelectionRectItem(QQuickItem* selectionRectItem) noexcept;
+    void                setSelectionRectItem(QQuickItem* selectionRectItem);
 private:
     //! \copydoc selectionRectItem
     QPointer<QQuickItem>    _selectionRectItem = nullptr;
+signals:
+    void    selectionRectChanged();
 
+private:
     //! \copydoc selectionRectItem
     bool        _ctrlLeftButtonPressed = false;
 

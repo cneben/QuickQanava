@@ -41,7 +41,7 @@
 namespace qan { // ::qan
 
 /* Navigable Object Management *///--------------------------------------------
-Navigable::Navigable( QQuickItem* parent ) :
+Navigable::Navigable(QQuickItem* parent) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
@@ -65,9 +65,9 @@ Navigable::Navigable( QQuickItem* parent ) :
 //-----------------------------------------------------------------------------
 
 /* Navigation Management *///--------------------------------------------------
-void    Navigable::setNavigable( bool navigable ) noexcept
+void    Navigable::setNavigable(bool navigable) noexcept
 {
-    if ( navigable != _navigable ) {
+    if (navigable != _navigable) {
         _navigable = navigable;
         emit navigableChanged();
     }
@@ -122,7 +122,7 @@ void    Navigable::centerOnPosition(QPointF position)
     updateGrid();
 }
 
-void    Navigable::fitInView( )
+void    Navigable::fitInView()
 {
     QRectF content = _containerItem->childrenRect();
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
@@ -162,10 +162,10 @@ void    Navigable::fitInView( )
     }
 }
 
-void    Navigable::setAutoFitMode( AutoFitMode autoFitMode )
+void    Navigable::setAutoFitMode(AutoFitMode autoFitMode)
 {
-    if ( _autoFitMode != AutoFit &&
-         autoFitMode == AutoFit )
+    if (_autoFitMode != AutoFit &&
+        autoFitMode == AutoFit)
         fitInView();    // When going to auto fit mode from another mode, force fitInView()
 
     _autoFitMode = autoFitMode;
@@ -230,14 +230,14 @@ bool    Navigable::isValidZoom(qreal zoom) const
 {
     if (qFuzzyCompare(1. + zoom - _zoom, 1.0))
         return false;
-    if ( ( zoom > _zoomMin ) &&    // Don't zoom less than zoomMin
-         ( _zoomMax < 0. ||   // Don't zoom more than zoomMax except if zoomMax is infinite
-           zoom < _zoomMax ) )
+    if ((zoom > _zoomMin) &&    // Don't zoom less than zoomMin
+         (_zoomMax < 0. ||   // Don't zoom more than zoomMax except if zoomMax is infinite
+          zoom < _zoomMax))
             return true;
     return false;
 }
 
-void    Navigable::setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin )
+void    Navigable::setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin)
 {
     if ( zoomOrigin != _zoomOrigin ) {
         _zoomOrigin = zoomOrigin;
@@ -245,15 +245,15 @@ void    Navigable::setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin )
     }
 }
 
-void    Navigable::setZoomMax( qreal zoomMax )
+void    Navigable::setZoomMax(qreal zoomMax)
 {
-    if ( qFuzzyCompare( 1. + zoomMax - _zoomMax, 1.0 ) )
+    if (qFuzzyCompare(1. + zoomMax - _zoomMax, 1.0))
         return;
     _zoomMax = zoomMax;
     emit zoomMaxChanged();
 }
 
-void    Navigable::setZoomMin( qreal zoomMin )
+void    Navigable::setZoomMin(qreal zoomMin)
 {
     if ( qFuzzyCompare( 1. + zoomMin - _zoomMin, 1.0 ) )
         return;
@@ -340,9 +340,9 @@ void    Navigable::geometryChange( const QRectF& newGeometry, const QRectF& oldG
         updateGrid();
     }
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QQuickItem::geometryChanged( newGeometry, oldGeometry );
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 #else
-    QQuickItem::geometryChange( newGeometry, oldGeometry );
+    QQuickItem::geometryChange(newGeometry, oldGeometry);
 #endif
 }
 
@@ -471,7 +471,11 @@ void    Navigable::setSelectionRectEnabled(bool selectionRectEnabled) noexcept
     }
 }
 
-void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem) noexcept { _selectionRectItem = selectionRectItem; }
+void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem)
+{
+    _selectionRectItem = selectionRectItem;
+    emit selectionRectChanged();
+}
 
 void    Navigable::selectionRectActivated(const QRectF& rect) { Q_UNUSED(rect); }
 
