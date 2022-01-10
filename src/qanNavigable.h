@@ -285,7 +285,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.09;
+    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
