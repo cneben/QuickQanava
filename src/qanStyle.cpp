@@ -270,7 +270,7 @@ bool    EdgeStyle::setDashed(bool dashed) noexcept
 
 bool    EdgeStyle::setDashPattern(const QVector<qreal>& dashPattern) noexcept
 {
-    if (dashPattern != dashPattern) {
+    if (_dashPattern != dashPattern) {
         _dashPattern = dashPattern;
         emit dashPatternChanged();
         return true;
