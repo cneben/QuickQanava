@@ -100,6 +100,7 @@ ApplicationWindow {
             }
             onNodeClicked: {
                 ungroupNodeButton.node = node
+                groupEditor.group = undefined;
                 contextMenu.node = node
             }
             onNodeRightClicked: {
