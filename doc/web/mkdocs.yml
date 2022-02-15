@@ -10,13 +10,12 @@ copyright: 'Copyright &copy; 2019 BA'
 use_directory_urls: false
 
 theme: 
-  name: 'material'
-#  logo: 'images/logo.png'
-  logo:
-    icon: 'share'
+  name: material
+  icon:
+    logo: material/graph-outline
   palette:
-    primary: 'indigo'
-    accent: 'amber'
+    primary: indigo
+    accent: amber
   font:
     text: 'Roboto'
     code: 'Roboto Mono'
@@ -24,25 +23,21 @@ theme:
 extra:
   version: '0.14.0'
   author:
-    github: 'cneben'
+    github: 'cneben'    
   social:
-    - type: 'twitter'
+    - icon: fontawesome/brands/twitter
       link: 'https://twitter.com/QuickQanava'
-    - type: 'github'
-      link: 'https://github.com/cneben'
+    - icon: fontawesome/brands/github
+      link: https://github.com/cneben
 
 markdown_extensions:
+  - attr_list
   - admonition
   - codehilite:
       linenums: true
   - footnotes
   - meta
   - toc:
-      permalink: true
-  - markdown.extensions.def_list
-  - markdown.extensions.footnotes
-  - markdown.extensions.meta
-  - markdown.extensions.toc:
       permalink: true
   - pymdownx.arithmatex
   - pymdownx.betterem:
@@ -51,17 +46,25 @@ markdown_extensions:
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.emoji:
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      options:
+        custom_icons:
+          - material/.icons
   - pymdownx.inlinehilite
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences
+  - pymdownx.keys
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - pymdownx.snippets
+  - fontawesome_markdown
+  - abbr
 
-pages:
+nav:
   - 'QuickQanava':  'index.md'
   - 'Installation': 'installation.md'
   - 'Graph':        'graph.md'

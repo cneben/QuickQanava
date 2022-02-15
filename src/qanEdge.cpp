@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -100,6 +100,16 @@ bool    Edge::setLabel(const QString& label)
     if (label != _label) {
         _label = label;
         emit labelChanged();
+        return true;
+    }
+    return false;
+}
+
+bool    Edge::setLocked(bool locked) noexcept
+{
+    if (locked != _locked) {
+        _locked = locked;
+        emit lockedChanged();
         return true;
     }
     return false;

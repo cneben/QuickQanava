@@ -15,13 +15,13 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml Quick QuickControls2 REQUIRED)
 message("Building with Qt" ${QT_VERSION_MAJOR})
 
-add_subdirectory(GTpo)
-add_subdirectory(QuickContainers)
-add_subdirectory(src)
-
 option(QUICK_QANAVA_BUILD_SAMPLES "Build the samples" TRUE)
 option(QUICK_QANAVA_BUILD_STATIC_QRC "Build *.qrc resources statically" TRUE)
 option(QUICK_QANAVA_WINDOWS_DEPLOY "Use windeployqt on Windows" FALSE)
+
+add_subdirectory(GTpo)
+add_subdirectory(QuickContainers)
+add_subdirectory(src)
 
 if (${QUICK_QANAVA_BUILD_SAMPLES})
     #add_subdirectory(samples/resizer)

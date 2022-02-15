@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -387,7 +387,7 @@ protected:
 
     /*! \brief Notify user immediately before a node \c node is removed.
      *
-     * \warning Since groups are node, onNodeInserted() is also emitted when removeGroup() is called.
+     * \warning Since groups are node, onNodeRemoved() is also emitted when removeGroup() is called.
      * \note Signal nodeRemoved() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -418,16 +418,22 @@ signals:
     //! \brief Emitted _after_ a node (or a group...) has been un grouped.
     void            nodeUngrouped(qan::Node* node, qan::Group* group);
 
+    /*! \brief Emitted immediatly _before_ a node is moved.
+     */
+    void            nodeAboutToBeMoved(qan::Node* node);
+
     /*! \brief Emitted _after_ a node has been moved.
      */
     void            nodeMoved(qan::Node* node);
 
-    /*! \brief Emitted _after_ a node has been resized.
-     */
+    //! \brief Emitted immediately _before_ a node is resized.
+    void            nodeAboutToBeResized(qan::Node* node);
+    //! \brief Emitted _after_ a node has been resized.
     void            nodeResized(qan::Node* node);
 
-    /*! \brief Emitted _after_ a grouphas been resized.
-     */
+    //! \brief Emitted immediately _before_ a group is resized.
+    void            groupAboutToBeResized(qan::Group* group);
+    //! \brief Emitted _after_ a group has been resized.
     void            groupResized(qan::Group* group);
 
     //! Emitted when a node setLabel() method is called.
@@ -554,9 +560,18 @@ public:
     template <class Group_t>
     qan::Group*             insertGroup();
 
-    //! Shortcut to gtpo::GenGraph<>::removeGroup().
-    Q_INVOKABLE virtual void    removeGroup(qan::Group* group);
+    /*! Shortcut to gtpo::GenGraph<>::removeGroup().
+     *
+     *  \note When remove content is set to true group nodes (and any eventual subgroup
+     *  is removed too). When false (default behaviour), group nodes are reparented to
+     *  graph root.
+     */
+    Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false);
 
+protected:
+    void        removeGroupContent_rec(qan::Group* group);
+
+public:
     //! Return true if \c group is registered in graph.
     bool                    hasGroup(qan::Group* group) const;
 
@@ -691,7 +706,7 @@ public:
     Q_INVOKABLE void    clearSelection();
 
     //! Return true if multiple node are selected.
-    inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
+    Q_INVOKABLE bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
 
 public:
     using SelectedNodes = qcm::Container<QVector, qan::Node*>;
@@ -975,6 +990,17 @@ private:
                                               const qan::Node& candidate,
                                               std::unordered_set<const qan::Node*>& marks,
                                               bool collectGroup) const noexcept;
+
+public:
+    /*! Collect all nodes and groups contained in given groups.
+     *
+     * \note Recursively collect \c groups nodes and sub groups and group sub group nodes.
+     */
+    auto    collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>;
+protected:
+
+    // Recursive utility for collectGroupsNodes().
+    auto    collectGroupNodes_rec(const qan::Group* group, std::unordered_set<const qan::Node*>& nodes) const -> void;
     //@}
     //-------------------------------------------------------------------------
 };

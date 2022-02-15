@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -121,6 +121,19 @@ protected:
 signals:
     //! \copydoc _label
     void            labelChanged();
+
+public:
+    /*! \brief A locked edge can't be selected / dragged by user (default to false ie unlocked).
+     *
+     * Might be usefull to prevent user inputs when the edge is laid out automatically.
+     */
+    Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
+    bool            setLocked(bool locked) noexcept;
+    bool            getLocked() const noexcept { return _locked; }
+private:
+    bool            _locked = false;
+signals:
+    void            lockedChanged();
 
 public:
     //! \copydoc _weight

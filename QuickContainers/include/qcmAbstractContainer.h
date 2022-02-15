@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -54,35 +54,37 @@ class AbstractContainer : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractContainer( QObject* parent = nullptr ) : QObject{parent} { /* Nil */ }
-    virtual ~AbstractContainer( ) { /* Nil */ }
+    explicit AbstractContainer(QObject* parent = nullptr) : QObject{parent} { /* Nil */ }
+    virtual ~AbstractContainer() { /* Nil */ }
 
-    AbstractContainer( const AbstractContainer& ) = delete;
+    AbstractContainer(const AbstractContainer&) = delete;
     AbstractContainer& operator=(const AbstractContainer&) = delete;
-    AbstractContainer( AbstractContainer&& ) = delete;
+    AbstractContainer(AbstractContainer&&) = delete;
 
     // WARNING: _model must have been checked on user side before calling theses fwd methods.
     template <typename... Args>         // std::forward<As>(a)...
-    inline void    fwdBeginInsertRows(Args... args) noexcept { _model->fwdBeginInsertRows(std::forward<Args>(args)...); }
-    inline void    fwdEndInsertRows() noexcept { _model->fwdEndInsertRows(); }
-    inline void    fwdEmitLengthChanged() noexcept { _model->fwdEmitLengthChanged(); }
+    inline void    fwdBeginInsertRows(Args... args) noexcept { if (_model) _model->fwdBeginInsertRows(std::forward<Args>(args)...); }
+    inline void    fwdEndInsertRows() noexcept { if (_model) _model->fwdEndInsertRows(); }
+    inline void    fwdEmitLengthChanged() noexcept { if (_model) _model->fwdEmitLengthChanged(); }
 
     template <typename... Args>         // std::forward<As>(a)...
-    inline void    fwdBeginRemoveRows(Args... args) noexcept { _model->fwdBeginRemoveRows(std::forward<Args>(args)...); }
-    inline void    fwdEndRemoveRows() noexcept { _model->fwdEndRemoveRows(); }
-    inline void    fwdBeginResetModel() noexcept { _model->fwdBeginResetModel(); }
-    inline void    fwdEndResetModel() noexcept { _model->fwdEndResetModel(); }
+    inline void    fwdBeginRemoveRows(Args... args) noexcept { if (_model) _model->fwdBeginRemoveRows(std::forward<Args>(args)...); }
+    inline void    fwdEndRemoveRows() noexcept { if (_model) _model->fwdEndRemoveRows(); }
+    inline void    fwdBeginResetModel() noexcept { if (_model) _model->fwdBeginResetModel(); }
+    inline void    fwdEndResetModel() noexcept { if (_model) _model->fwdEndResetModel(); }
 
 public:
-    Q_PROPERTY( ContainerModel*    model READ getModel CONSTANT FINAL )
+    Q_PROPERTY(ContainerModel*    model READ getModel CONSTANT FINAL)
     /*! \brief Return a Qt model for this container extended with a modification interface for the underlining container model from QML.
      *
      * \warning Underlying model is created \b synchronously on first \c model access, expect a quite slow first call (O(n), n beein container size).
      */
-    inline ContainerModel*      getModel( ) noexcept {
-        if ( !_model )
+    inline ContainerModel*      getModel() noexcept {
+        if (!_model)
             createModel();
-        return _model.data();
+        auto model = _model.data();
+        QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
+        return model;
     }
     //! Shortcut to getModel().
     inline ContainerModel*      model() const noexcept { return const_cast<AbstractContainer*>(this)->getModel(); }

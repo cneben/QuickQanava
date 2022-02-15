@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -78,7 +78,11 @@ Qan.AbstractGraphView {
         handlerRadius: resizeHandlerRadius
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
-
+        onResizeStart: {
+            if (target &&
+                target.node)
+                graph.nodeAboutToBeResized(target.node);
+        }
         onResizeEnd: {
             if (target &&
                 target.node)
@@ -96,6 +100,12 @@ Qan.AbstractGraphView {
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
 
+        onResizeStart: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupAboutToBeResized(target.groupItem.group);
+        }
         onResizeEnd: {
             if (target &&
                 target.groupItem &&

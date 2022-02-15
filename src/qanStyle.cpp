@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -192,72 +192,90 @@ EdgeStyle::EdgeStyle(QString name, QObject* parent) : qan::Style(name, parent) {
 
 EdgeStyle::EdgeStyle(QObject* parent) : qan::Style(parent) { /* Nil */ }
 
-void    EdgeStyle::setLineType( LineType lineType ) noexcept
+bool    EdgeStyle::setLineType(LineType lineType) noexcept
 {
-    if ( lineType != _lineType ) {
+    if (lineType != _lineType) {
         _lineType = lineType;
         emit lineTypeChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-void    EdgeStyle::setLineColor( const QColor& lineColor ) noexcept
+bool    EdgeStyle::setLineColor(const QColor& lineColor) noexcept
 {
-    if ( lineColor != _lineColor ) {
+    if (lineColor != _lineColor) {
         _lineColor = lineColor;
         emit lineColorChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-void    EdgeStyle::setLineWidth( qreal lineWidth ) noexcept
+bool    EdgeStyle::setLineWidth(qreal lineWidth) noexcept
 {
-    if ( !qFuzzyCompare( 1.0 + lineWidth, 1.0 + _lineWidth ) ) {
+    if (!qFuzzyCompare(1.0 + lineWidth, 1.0 + _lineWidth)) {
         _lineWidth = lineWidth;
         emit lineWidthChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-void    EdgeStyle::setArrowSize( qreal arrowSize ) noexcept
+bool    EdgeStyle::setArrowSize(qreal arrowSize) noexcept
 {
-    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+    if (!qFuzzyCompare(1. + arrowSize, 1. + _arrowSize)) {
         _arrowSize = arrowSize;
         emit arrowSizeChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-auto    EdgeStyle::setSrcShape(ArrowShape srcShape) noexcept -> void
+auto    EdgeStyle::setSrcShape(ArrowShape srcShape) noexcept -> bool
 {
-    if ( _srcShape != srcShape ) {
+    if (_srcShape != srcShape) {
         _srcShape = srcShape;
         emit srcShapeChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-auto    EdgeStyle::setDstShape(ArrowShape dstShape) noexcept -> void
+auto    EdgeStyle::setDstShape(ArrowShape dstShape) noexcept -> bool
 {
-    if ( _dstShape != dstShape ) {
+    if (_dstShape != dstShape) {
         _dstShape = dstShape;
         emit dstShapeChanged();
         emit styleModified();
+        return true;
     }
+    return false;
 }
 
-void    EdgeStyle::setDashed( bool dashed ) noexcept
+bool    EdgeStyle::setDashed(bool dashed) noexcept
 {
-    if ( dashed != _dashed ) {
+    if (dashed != _dashed) {
         _dashed = dashed;
         emit dashedChanged();
+        return true;
     }
+    return false;
 }
 
-void    EdgeStyle::setDashPattern( const QVector<qreal>& dashPattern ) noexcept
+bool    EdgeStyle::setDashPattern(const QVector<qreal>& dashPattern) noexcept
 {
-    _dashPattern = dashPattern;
-    emit dashPatternChanged();
+    if (_dashPattern != dashPattern) {
+        _dashPattern = dashPattern;
+        emit dashPatternChanged();
+        return true;
+    }
+    return false;
 }
 
 const QVector<qreal>& EdgeStyle::getDashPattern() const noexcept { return _dashPattern; }

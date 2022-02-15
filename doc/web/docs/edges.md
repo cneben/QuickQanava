@@ -1,8 +1,6 @@
-Edges
-============================
+# Edges
 
-Creating Edges
-------------------
+## Creating Edges
 
 Edges are managed from `Qan.Graph` (QML) or `qan::Graph` (C++) interface, usually in graph `Component.onCompleted()` handler:
 
@@ -27,9 +25,9 @@ Component.onCompleted: {	// Qan.Graph.Component.onCompleted()
 
 Edges appearance could be tuned by changing default styles properties directly from QML with global variables `defaultEdgeStyle`, see the [Style Management](styles.md) section for more options.
 
+Edge could be moved by mouse when `qan::EdgeItem::draggable` property is set to true, edge source and destination nodes will be moved with the edge (this is not the default behavior).
 
-Visual creation of edges
-------------------
+## Visual creation of edges
 
 ### Visual Connectors
 

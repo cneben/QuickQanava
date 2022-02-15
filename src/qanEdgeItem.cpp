@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QtGlobal>
 #include <QBrush>
 #include <QPainter>
 
@@ -42,6 +43,7 @@
 #include "./qanNodeItem.h"      // Resolve forward declaration
 #include "./qanGroupItem.h"
 #include "./qanGraph.h"
+#include "./qanEdgeDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -49,15 +51,19 @@ namespace qan { // ::qan
 EdgeItem::EdgeItem( QQuickItem* parent ) :
     QQuickItem{parent}
 {
-    setParentItem( parent );
-    setAntialiasing( true );
-    setFlag( QQuickItem::ItemHasContents, true );
-    setAcceptedMouseButtons( Qt::RightButton | Qt::LeftButton );
-    setAcceptDrops( true );
+    setParentItem(parent);
+    setAntialiasing(true);
+    setFlag(QQuickItem::ItemHasContents, true);
+    setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
+    setAcceptDrops(true);
     setVisible(false);  // Invisible until there is a valid src/dst
 
+    _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<qan::EdgeDraggableCtrl>()};
+    const auto edgeDraggableCtrl = static_cast<qan::EdgeDraggableCtrl*>(_draggableCtrl.get());
+    edgeDraggableCtrl->setTargetItem(this);
+
     setStyle(qan::Edge::style(parent));
-    setObjectName( QStringLiteral("qan::EdgeItem") );
+    setObjectName(QStringLiteral("qan::EdgeItem"));
 }
 
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
@@ -198,22 +204,26 @@ void    EdgeItem::setArrowSize( qreal arrowSize ) noexcept
     }
 }
 
-auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> void
+auto    EdgeItem::setSrcShape(ArrowShape srcShape) noexcept -> bool
 {
-    if ( _srcShape != srcShape ) {
+    if (_srcShape != srcShape) {
         _srcShape = srcShape;
         emit srcShapeChanged();
         updateItem();
+        return true;
     }
+    return false;
 }
 
-auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> void
+auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> bool
 {
-    if ( _dstShape != dstShape ) {
+    if (_dstShape != dstShape) {
         _dstShape = dstShape;
         emit dstShapeChanged();
         updateItem();
+        return true;
     }
+    return false;
 }
 
 void    EdgeItem::updateItem() noexcept
@@ -251,27 +261,54 @@ void    EdgeItem::updateItem() noexcept
         setHidden(true);
 }
 
+EdgeItem::GeometryCache::GeometryCache(GeometryCache&& rha) :
+    valid{rha.valid},
+    lineType{rha.lineType},
+    z{rha.z},
+    hidden{rha.hidden},
+    srcBs{std::move(rha.srcBs)},    dstBs{std::move(rha.dstBs)},
+    srcBr{std::move(rha.srcBr)},    dstBr{std::move(rha.dstBr)},
+    srcBrCenter{std::move(rha.srcBrCenter)},
+    dstBrCenter{std::move(rha.dstBrCenter)},
+    p1{std::move(rha.p1)},          p2{std::move(rha.p2)},
+    dstA1{std::move(rha.dstA1)},
+    dstA2{std::move(rha.dstA2)},
+    dstA3{std::move(rha.dstA3)},
+    dstAngle{rha.dstAngle},
+    srcA1{std::move(rha.srcA1)},
+    srcA2{std::move(rha.srcA2)},
+    srcA3{std::move(rha.srcA3)},
+    srcAngle{rha.srcAngle},
+    c1{std::move(rha.c1)},          c2{std::move(rha.c2)},
+    labelPosition{std::move(rha.labelPosition)}
+{
+    srcItem.swap(rha.srcItem);
+    dstItem.swap(rha.dstItem);
+    rha.valid = false;
+}
+
 EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
 {
     // PRECONDITIONS:
         // _sourceItem can't be nullptr
         // _destinationItem can't be nullptr
-    if ( !_sourceItem )
+    if (!_sourceItem)
         return EdgeItem::GeometryCache{};
-    if ( !_destinationItem )
+    if (!_destinationItem)
         return EdgeItem::GeometryCache{};
 
     EdgeItem::GeometryCache cache{};
     cache.valid = false;
 
-    const QQuickItem*     graphContainerItem = ( getGraph() != nullptr ? getGraph()->getContainerItem() : nullptr );
-    if ( graphContainerItem == nullptr ) {
+    const QQuickItem* graphContainerItem = (getGraph() != nullptr ? getGraph()->getContainerItem() :
+                                                                    nullptr);
+    if (graphContainerItem == nullptr) {
         qWarning() << "qan::EdgeItem::generateEdgeGeometry(): No access to valid graph container item.";
         return cache;    // Return INVALID geometry cache
     }
 
     const QQuickItem* srcItem = _sourceItem.data();
-    if ( srcItem == nullptr ) {
+    if (srcItem == nullptr) {
         qWarning() << "qan::EdgeItem::generateEdgeGeometry(): No valid source item.";
         return cache;    // Return INVALID geometry cache
     }
@@ -307,18 +344,18 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     const QQuickItem* dstItem = dstNodeItem;
 
     // Check that we have a valid source and destination Quick Item
-    if ( srcItem == nullptr || dstItem == nullptr )
+    if (srcItem == nullptr || dstItem == nullptr)
         return cache;        // Otherwise, return an invalid cache
     cache.srcItem = srcItem;
     cache.dstItem = dstItem;
 
     // If the edge "src" or "dst" is inside a collapsed group, generate invalid cache, it will automatically be
     // hidden
-    if ( srcGroupItem != nullptr &&
-         srcGroupItem->getCollapsed() )
+    if (srcGroupItem != nullptr &&
+        srcGroupItem->getCollapsed())
         return cache;   // Return invalid cache
-    if ( dstGroupItem != nullptr &&
-         dstGroupItem->getCollapsed() )
+    if (dstGroupItem != nullptr &&
+        dstGroupItem->getCollapsed())
         return cache;   // Return invalid cache
 
     // Generate bounding shapes for source and destination in global CS
@@ -326,16 +363,16 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
         if ( _sourceItem != nullptr ) {        // Generate source bounding shape polygon
             cache.srcBs.resize(_sourceItem->getBoundingShape().size());
             int p = 0;
-            for ( const auto& point: _sourceItem->getBoundingShape() )
-                cache.srcBs[p++] = _sourceItem->mapToItem( graphContainerItem, point );
+            for (const auto& point: _sourceItem->getBoundingShape())
+                cache.srcBs[p++] = _sourceItem->mapToItem(graphContainerItem, point);
         }
         // Generate destination bounding shape polygon
         if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
             // Update edge z to source or destination maximum x
             cache.dstBs.resize(dstNodeItem->getBoundingShape().size());
             int p = 0;
-            for ( const auto& point: dstNodeItem->getBoundingShape() )
-                cache.dstBs[p++] = dstNodeItem->mapToItem( graphContainerItem, point );
+            for (const auto& point: dstNodeItem->getBoundingShape())
+                cache.dstBs[p++] = dstNodeItem->mapToItem(graphContainerItem, point);
         }
     }
 
@@ -1066,48 +1103,78 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 
 
 /* Mouse Management *///-------------------------------------------------------
-void    EdgeItem::mouseDoubleClickEvent( QMouseEvent* event )
+void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    const qreal d = distanceFromLine( event->localPos(), QLineF{_p1, _p2} );
-    if ( d > -0.0001 && d < 5. &&
-         event->button() == Qt::LeftButton ) {
-        emit edgeDoubleClicked( this, event->localPos() );
+    const qreal d = distanceFromLine(event->localPos(), QLineF{_p1, _p2});
+    if (d > -0.0001 && d < 5. &&
+        event->button() == Qt::LeftButton) {
+        emit edgeDoubleClicked(this, event->localPos());
         event->accept();
     }
     else
         event->ignore();
-    QQuickItem::mouseDoubleClickEvent( event );
+    QQuickItem::mouseDoubleClickEvent(event);
 }
 
-void    EdgeItem::mousePressEvent( QMouseEvent* event )
+void    EdgeItem::mousePressEvent(QMouseEvent* event)
 {
+    // Note 20211030: Do not take getLocked() into account,
+    // otherwise onEdgeDoubleClicked() is no longer fired (and edge
+    // can't be unlocked with a visual editor !
     if (contains(event->localPos())) {
-        if ( event->button() == Qt::LeftButton ) {
-            emit edgeClicked( this, event->localPos() );
+        if (event->button() == Qt::LeftButton) {
+            emit edgeClicked(this, event->localPos());
             event->accept();
         }
-        else if ( event->button() == Qt::RightButton ) {
-            emit edgeRightClicked( this, event->localPos() );
+        else if (event->button() == Qt::RightButton) {
+            emit edgeRightClicked(this, event->localPos());
             event->accept();
         }
     } else
         event->ignore();
 }
 
-qreal   EdgeItem::distanceFromLine( const QPointF& p, const QLineF& line ) const noexcept
+void    EdgeItem::mouseMoveEvent(QMouseEvent* event)
+{
+    // Early exits
+    if (getEdge() == nullptr ||
+        getEdge()->getLocked()) {
+        QQuickItem::mouseMoveEvent(event);
+        return;
+    }
+    if (!getDraggable())
+        return;
+    if (event->buttons().testFlag(Qt::NoButton))
+        return;
+
+    const auto draggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+    if (draggableCtrl->handleMouseMoveEvent(event))
+        event->accept();
+    else
+        event->ignore();
+        // Note 20200531: Do not call base QQuickItem implementation, really.
+}
+
+void    EdgeItem::mouseReleaseEvent(QMouseEvent* event)
+{
+    const auto draggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+    draggableCtrl->handleMouseReleaseEvent(event);
+}
+
+qreal   EdgeItem::distanceFromLine(const QPointF& p, const QLineF& line) const noexcept
 {
     // Inspired by DistancePointLine Unit Test, Copyright (c) 2002, All rights reserved
     // Damian Coventry  Tuesday, 16 July 2002
     static constexpr    qreal MinLength = 0.00001;
     const qreal lLength = line.length();
-    if ( lLength < MinLength )
+    if (lLength < MinLength)
         return -1.; // Protect generation of u from DIV0
     const qreal u  = ( ( ( p.x() - line.x1() ) * ( line.x2() - line.x1() ) ) +
                      ( ( p.y() - line.y1() ) * ( line.y2() - line.y1() ) ) ) / ( lLength * lLength );
-    if ( u < 0. || u > 1. )
+    if (u < 0. || u > 1.)
         return -1.;
-    const QPointF i { line.x1() + u * ( line.x2() - line.x1() ),
-                      line.y1() + u * ( line.y2() - line.y1() ) };
+    const QPointF i {line.x1() + u * ( line.x2() - line.x1() ),
+                     line.y1() + u * ( line.y2() - line.y1() )};
     return QLineF{p, i}.length();
 }
 //-----------------------------------------------------------------------------
@@ -1158,6 +1225,25 @@ void    EdgeItem::styleModified()
 }
 //-----------------------------------------------------------------------------
 
+/* Edge drag management *///---------------------------------------------------
+void    EdgeItem::setDraggable(bool draggable) noexcept
+{
+    if (draggable != _draggable) {
+        _draggable = draggable;
+        if (!draggable)
+            setDragged(false);
+        emit draggableChanged();
+    }
+}
+
+void    EdgeItem::setDragged(bool dragged) noexcept
+{
+    if (dragged != _dragged) {
+        _dragged = dragged;
+        emit draggedChanged();
+    }
+}
+//-----------------------------------------------------------------------------
 
 /* Drag'nDrop Management *///--------------------------------------------------
 void    EdgeItem::setAcceptDrops(bool acceptDrops)

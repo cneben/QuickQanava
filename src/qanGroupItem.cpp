@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -41,11 +41,9 @@
 
 namespace qan { // ::qan
 
-//using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
-
 /* Group Object Management *///------------------------------------------------
-GroupItem::GroupItem( QQuickItem* parent ) :
-    qan::NodeItem{ parent }
+GroupItem::GroupItem(QQuickItem* parent) :
+    qan::NodeItem{parent}
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);

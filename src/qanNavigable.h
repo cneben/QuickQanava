@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -45,7 +45,7 @@ namespace qan { // ::qan
 /*! \brief Provide a pannable/zoomable container for quick items.
  *
  * Child items must manually set their parent property to this area \c containerItem:
- * Exemple code for navigating an image:
+ * Example code for navigating an image:
  * \code
  * // Don't forget to register the component:
  * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
@@ -123,7 +123,7 @@ public:
      *
      * Items added as child of the area must manually update their parents property to \c containerItem
      *
-     * Exemple code for navigating an image:
+     * Example code for navigating an image:
      * \code
      * // Don't forget to register the component:
      * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
@@ -156,7 +156,7 @@ public:
     //! Center the view on a given position
     Q_INVOKABLE void    centerOnPosition(QPointF position);
 
-    /*! Fit the area content (\c containerItem childs) in view and update current zoom level.
+    /*! Fit the area content (\c containerItem children) in view and update current zoom level.
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.
      * \sa autoFitMode
@@ -231,7 +231,7 @@ public:
      * \note To avoid QML binding loops, this setter is protected against setting the same value multiple times.
      * \sa zoom
      */
-    void                setZoom(qreal zoom);
+    Q_INVOKABLE void                setZoom(qreal zoom);
     //! Set area current zoom centered on a given \c center point.
     Q_INVOKABLE void    zoomOn(QPointF center, qreal zoom);
     //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom, maxZoom) range.
@@ -285,7 +285,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.1;
+    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
@@ -363,15 +363,18 @@ public:
      * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized in a concrete component or subclass.
      * Selection rectangle is not owned by this qan::Navigable object, it might be a QML owned object.
      */
-    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem FINAL)
+    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem NOTIFY selectionRectChanged FINAL)
     //! \copydoc selectionRectItem
-    inline QQuickItem*  getSelectionRectItem() noexcept { return _selectionRectItem; }
+    inline QQuickItem*  getSelectionRectItem() { return _selectionRectItem; }
     //! \copydoc selectionRectItem
-    void                setSelectionRectItem(QQuickItem* selectionRectItem) noexcept;
+    void                setSelectionRectItem(QQuickItem* selectionRectItem);
 private:
     //! \copydoc selectionRectItem
     QPointer<QQuickItem>    _selectionRectItem = nullptr;
+signals:
+    void    selectionRectChanged();
 
+private:
     //! \copydoc selectionRectItem
     bool        _ctrlLeftButtonPressed = false;
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,19 +43,19 @@
 namespace qan { // ::qan
 
 /* Drag'nDrop Management *///--------------------------------------------------
-bool    DraggableCtrl::handleDragEnterEvent( QDragEnterEvent* event )
+bool    DraggableCtrl::handleDragEnterEvent(QDragEnterEvent* event)
 {
-    if ( _targetItem &&
-         _targetItem->getAcceptDrops() ) {
-        if ( event->source() == nullptr ) {
+    if (_targetItem &&
+        _targetItem->getAcceptDrops()) {
+        if (event->source() == nullptr) {
             event->accept(); // This is propably a drag initated with type=Drag.Internal, for exemple a connector drop node, accept by default...
             return true;
         }
         else { // Get the source item from the quick drag attached object received
             QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-            if ( sourceItem != nullptr ) {
-                QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
-                if ( draggedStyle.isValid() ) {
+            if (sourceItem != nullptr) {
+                QVariant draggedStyle = sourceItem->property("draggedStyle"); // The source item (usually a style node or edge delegate must expose a draggedStyle property.
+                if (draggedStyle.isValid()) {
                     event->accept();
                     return true;
                 }
@@ -65,23 +65,23 @@ bool    DraggableCtrl::handleDragEnterEvent( QDragEnterEvent* event )
     return false;
 }
 
-void	DraggableCtrl::handleDragMoveEvent( QDragMoveEvent* event )
+void	DraggableCtrl::handleDragMoveEvent(QDragMoveEvent* event)
 {
-    if ( _targetItem &&
-         _targetItem->getAcceptDrops() ) {
+    if (_targetItem &&
+        _targetItem->getAcceptDrops()) {
         event->acceptProposedAction();
         event->accept();
     }
 }
 
-void	DraggableCtrl::handleDragLeaveEvent( QDragLeaveEvent* event )
+void	DraggableCtrl::handleDragLeaveEvent(QDragLeaveEvent* event)
 {
-    if ( _targetItem &&
-         _targetItem->getAcceptDrops() )
+    if (_targetItem &&
+        _targetItem->getAcceptDrops())
         event->ignore();
 }
 
-void    DraggableCtrl::handleDropEvent( QDropEvent* event )
+void    DraggableCtrl::handleDropEvent(QDropEvent* event)
 {
     if ( _targetItem &&
          _targetItem->getAcceptDrops() &&
@@ -144,7 +144,7 @@ void    DraggableCtrl::handleMousePressEvent(QMouseEvent* event)
     Q_UNUSED(event)
 }
 
-void    DraggableCtrl::handleMouseReleaseEvent( QMouseEvent* event )
+void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 {
     Q_UNUSED(event)
     if (_targetItem &&
@@ -156,7 +156,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
 {
     if (_targetItem == nullptr)
         return;
-
+    const auto graph = getGraph();
+    if (graph != nullptr &&
+        _target != nullptr)
+        emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
     _dragLastPos = dragInitialMousePos;
 

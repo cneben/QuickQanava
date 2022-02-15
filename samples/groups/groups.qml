@@ -155,6 +155,22 @@ ApplicationWindow {
                     contextMenu.node = undefined
                 }
             }
+            MenuItem {
+                text: "Remove group"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.removeGroup(contextMenu.group)
+                    contextMenu.group = undefined
+                }
+            }
+            MenuItem {
+                text: "Remove group with content"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.removeGroup(contextMenu.group, true)
+                    contextMenu.group = undefined
+                }
+            }
             onClosed: { // Clean internal state when context menu us closed
                 contextMenu.node = undefined
                 contextMenu.group = undefined

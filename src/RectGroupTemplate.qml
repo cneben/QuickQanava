@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -78,16 +78,21 @@ Item {
     }
     RowLayout {
         id: headerLayout
-        x: 0;   y: -collapser.height; z:2
+        x: 0
+        y: -2 - Math.max(collapser.height,                   // Shift header by the size of collapser button or the label
+                         groupLabel.contentHeight, labelEditor.height) // height (for large font size) plus 2px margin
+        z: 2
         width: content.width; height: collapser.height
         Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
         spacing: 0
         ToolButton {
             id: collapser
             padding: 0
-            Layout.preferredWidth: 32; Layout.preferredHeight: 32
-            text: groupItem ? ( groupItem.collapsed ? "+" : "-" ) : "-"
-            font.pixelSize: 13; font.bold: true
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
+            text: groupItem ? (groupItem.collapsed ? "+" : "-") : "-"
+            font.pixelSize: 13
+            font.bold: true
             onClicked: groupItem.collapsed = !groupItem.collapsed
         }
         Item {

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -926,19 +926,45 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
     return true;
 }
 
-void    Graph::removeGroup(qan::Group* group)
+void    Graph::removeGroup(qan::Group* group, bool removeContent)
 {
     if (group == nullptr)
         return;
 
-    // Reparent all group childrens (ie node) to graph before destructing the group
-    // otherwise all child items get destructed too
-    for (auto node : group->get_nodes()) {
-        auto qanNode = qobject_cast<qan::Node*>(node);
-        if (qanNode != nullptr &&
-            qanNode->getItem() != nullptr &&
-            group->getGroupItem() != nullptr )
-            group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
+    if (!removeContent) {
+        // Reparent all group childrens (ie node) to graph before destructing the group
+        // otherwise all child items get destructed too
+        for (auto node : group->get_nodes()) {
+            auto qanNode = qobject_cast<qan::Node*>(node);
+            if (qanNode != nullptr &&
+                qanNode->getItem() != nullptr &&
+                group->getGroupItem() != nullptr )
+                group->getGroupItem()->ungroupNodeItem(qanNode->getItem());
+        }
+
+        onNodeRemoved(*group);      // group are node, notify group
+        emit nodeRemoved(group);    // removed as a node
+
+        if (_selectedNodes.contains(group))
+            _selectedNodes.removeAll(group);
+        remove_group(group);
+    } else {
+        removeGroupContent_rec(group);
+    }
+}
+
+void    Graph::removeGroupContent_rec(qan::Group* group)
+{
+    // Remove group sub group and node, starting from leafs
+    for (auto& subNode : group->get_nodes()) {
+        const auto qanSubNode = qobject_cast<qan::Node*>(subNode);
+        if (qanSubNode == nullptr)
+            continue;
+        if (qanSubNode->isGroup()) {
+            const auto qanSubGroup = qobject_cast<qan::Group*>(subNode);
+            removeGroupContent_rec(qanSubGroup);
+        } else
+            removeNode(qanSubNode);
     }
 
     onNodeRemoved(*group);      // group are node, notify group
@@ -1013,7 +1039,7 @@ bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transfo
                 node->getItem()->setZ(_maxZ);
             }
             return true;
-        } catch ( ... ) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
+        } catch (...) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
     }
     return false;
 }
@@ -1135,10 +1161,21 @@ bool    Graph::selectNode(qan::Node* node)
     return (node != nullptr ? selectNode(*node) : false);
 }
 
-void    Graph::setNodeSelected(qan::Node& node, bool selected) { impl::setPrimitiveSelected<qan::Node>(node, selected, *this); }
+void    Graph::setNodeSelected(qan::Node& node, bool selected)
+{
+    if (node.isGroup())
+        impl::setPrimitiveSelected<qan::Group>(dynamic_cast<qan::Group&>(node), selected, *this);
+    else
+        impl::setPrimitiveSelected<qan::Node>(node, selected, *this);
+}
+
 void    Graph::setNodeSelected(qan::Node* node, bool selected)
 {
-    if (node != nullptr)
+    if (node == nullptr)
+        return;
+    if (node->isGroup())
+        impl::setPrimitiveSelected<qan::Group>(dynamic_cast<qan::Group&>(*node), selected, *this);
+    else
         impl::setPrimitiveSelected<qan::Node>(*node, selected, *this);
 }
 
@@ -1821,6 +1858,33 @@ bool    Graph::isAncestorsDfsRec(const qan::Node* node,
                               marks, collectGroup))
             return true;
     return false;
+}
+
+auto    Graph::collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>
+{
+    std::unordered_set<const qan::Node*> r;
+    for (const auto group: qAsConst(groups))  // Collect all group nodes and their sub groups nodes
+        if (group != nullptr)           // recursively
+            collectGroupNodes_rec(group, r);
+    return r;
+}
+
+auto    Graph::collectGroupNodes_rec(const qan::Group* group, std::unordered_set<const qan::Node*>& nodes) const -> void
+{
+    if (group == nullptr)
+        return;
+
+    for (const auto& groupNode : group->get_nodes()) {
+        auto groupNodePtr = groupNode.lock();
+        if (!groupNodePtr)
+            continue;
+        nodes.insert(groupNodePtr.get());
+        if (groupNodePtr->isGroup()) {
+            const auto groupGroup = qobject_cast<const qan::Group*>(groupNodePtr.get());
+            if (groupGroup != nullptr)
+                collectGroupNodes_rec(groupGroup, nodes);
+        }
+    }
 }
 //-----------------------------------------------------------------------------
 
