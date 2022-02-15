@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -37,6 +37,7 @@
 namespace gtpo { // ::gtpo
 
 /* Virtual Behaviours Management *///------------------------------------------
+/*
 template < class behaviour_t, class static_behaviours_t  >
 template < class T >
 auto    behaviourable< behaviour_t, static_behaviours_t >::notify_dynamic_behaviours( void (behaviour_t::*method)(T&), T& arg ) noexcept -> void
@@ -86,6 +87,7 @@ auto    behaviourable< behaviour_t, static_behaviours_t >::notify_dynamic_behavi
         if ( behaviour )
             ((*behaviour).*method)();
 }
+*/
 //-----------------------------------------------------------------------------
 
 } // ::gtpo

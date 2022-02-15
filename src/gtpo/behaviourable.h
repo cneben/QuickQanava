@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -108,35 +108,17 @@ public:
     inline auto    getObservers() const noexcept -> const observer_t& { return _observers; }
 
 protected:
-    /*! \brief Call a pointer on a method on all registered dynamic behaviours.
-     *
-     * Example use:
-     * \code
-     *    // For a given node_behaviour method: auto    notifyNodeModified( weak_node_t& node ) -> void;
-     *    notify_behaviours< weak_node_t >( &behaviour::nodeModified, node );
-     * \endcode
-     */
-    template < class T >
-    auto    notify_observers( void (observer_t::*method)(T&) /*noexcept*/, T& arg ) noexcept -> void;
-
-    template < class T, class T2 >
-    auto    notify_observers( void (observer_t::*method)(T&, T2&) /*noexcept*/, T& arg, T2&) noexcept -> void;
-
-    template < class T, class T2, class T3 >
-    auto    notify_observers( void (observer_t::*method)(T&, T2&, const T3&) /*noexcept*/, T&, T2&, const T3&) noexcept -> void;
-
-    //! Similar to notifyBahaviours() but without arguments.
-    auto    notify_observers0( void (observer_t::*method)() /*noexcept*/ ) noexcept -> void;
-
-private:
     observers_t    _observers;
     //@}
     //-------------------------------------------------------------------------
 };
 
+template <class target_t>
+class observer;
 
 template <class node_t, class edge_t>
 class node_observer;
+
 
 /*! \brief Observation interface for gtpo::node.
  *
@@ -161,13 +143,17 @@ public:
         super_t::add_behaviour(std::move(observer));
     }
 
-    auto    notify_in_node_inserted(node_t target, node_t node, const edge_t& edge) noexcept -> void;
+    auto    notify_in_node_inserted(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
+        for (const auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_in_node_inserted(target, node, edge);
+    }
 
-    auto    notify_in_node_removed(node_t target, node_t node, const edge_t& edge) noexcept -> void;
+    auto    notify_in_node_removed(node_t* target, node_t node, const edge_t& edge) noexcept -> void;
 
-    auto    notify_in_node_removed(node_t target) noexcept -> void;
+    auto    notify_in_node_removed(node_t* target) noexcept -> void;
 
-    auto    notify_out_node_inserted(node_t target, node_t node, const edge_t& edge) noexcept -> void;
+    auto    notify_out_node_inserted(node_t* target, node_t node, const edge_t& edge) noexcept -> void;
 
     auto    notify_out_node_removed(node_t* target, node_t* node, const edge_t& edge) noexcept -> void;
 
@@ -238,6 +224,9 @@ template <class node_t, class edge_t>
 class node_observer : public observer<node_t>
 {
 public:
+    template<class, class>
+    friend class gtpo::observable_node;
+
     node_observer() noexcept : observer<node_t>{} { }
     virtual ~node_observer() = default;
     node_observer(const node_observer<node_t, edge_t>& ) = delete;

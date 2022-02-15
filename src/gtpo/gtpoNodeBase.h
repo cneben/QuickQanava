@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,9 +43,10 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpo/gtpoUtils.h"
-#include "./gtpo/gtpoGraphProperty.h"
+#include "./gtpoUtils.h"
+#include "./gtpoGraphProperty.h"
 #include "./behaviourable.h"
+#include "./gtpoContainerAdapter.h"
 
 // QuickContainers headers
 #include "../../QuickContainers/include/qcmContainer.h"
@@ -63,7 +64,7 @@ template <class node_base_t,
           class group_t>
 class node : public node_base_t,
              public graph_property_impl<graph_t>,
-             public gtpo::behaviourable_node<node_t>
+             public gtpo::observable_node<node_t, edge_t>
 {
     /*! \name Node Management *///---------------------------------------------
     //@{
@@ -71,8 +72,8 @@ public:
     friend graph_t;   // graph need access to graph_property_impl<>::set_graph()
     using nodes_t   = qcm::Container<QVector, node_t*>;
 
-    //! User friendly shortcut type to this concrete node Behaviourable base type.
-    //using behaviourable_base = gtpo::behaviourable_node< config_t >;
+    //! User friendly shortcut type to node gtpo::observable<> base class.
+    using observable_base_t =  gtpo::observable_node<node_t, edge_t>;
 
     node(node_base_t* parent = nullptr) noexcept : node_base_t{parent} { }
     virtual ~node() noexcept {
@@ -120,7 +121,7 @@ public:
      *
      * \note if \c inEdge destination node is different from \c node, it is automatically set to \c node.
      */
-    auto    add_in_edge(edge_t* inEdge ) -> void;
+    auto    add_in_edge(edge_t* inEdge ) -> bool;
     /*! \brief Remove edge \c outEdge from this node out edges.
      *
      * \throw gtpo::bad_topology_error

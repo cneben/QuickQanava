@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -76,26 +76,21 @@ auto node<node_base_t,
           graph_t,
           node_t,
           edge_t,
-          group_t>::add_in_edge(edge_t* inEdge) -> void
+          group_t>::add_in_edge(edge_t* in_edge) -> bool
 {
-    // FIXME v2
-    //assert_throw( !inEdgePtr.expired(), "gtpo::node<>::add_in_edge(): Error: in edge is expired." );
-    //auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
-    //auto inEdge = inEdgePtr.lock( );
-    if (inEdge != nullptr) {
-        auto inEdgeDst = inEdge->get_dst();
-        if (!inEdgeDst ||
-            inEdgeDst != this) // In edge destination should point to target node
-            inEdge->set_dst(reinterpret_cast<node_t*>(this));
-        // FIXME v2 container
-        //config_t::template container_adapter<weak_edges_t>::insert(inEdgePtr, _in_edges);
-        if (inEdge->get_src() != nullptr) {
-            // FIXME v2 container
-            //config_t::template container_adapter< weak_nodes_t >::insert(inEdge->get_src(), _in_nodes);
-            // FIXME v2 notify
-            //this->notify_in_node_inserted(weak_node_t{node}, inEdge->get_src(), inEdgePtr);
-        }
+    if (in_edge == nullptr)
+        return false;
+    auto in_edge_dst = in_edge->get_dst();
+    if (!in_edge_dst ||
+            in_edge_dst != this) // In edge destination should point to target node
+        in_edge->set_dst(reinterpret_cast<node_t*>(this));
+    container_adapter<edges_t>::insert(in_edge, _in_edges);
+    if (in_edge->get_src() != nullptr) {
+        container_adapter<nodes_t>::insert(in_edge->get_src(), _in_nodes);
+        observable_base_t::notify_in_node_inserted(*reinterpret_cast<node_t*>(this),
+                                                   *in_edge->get_src(), *in_edge);
     }
+    return true;
 }
 
 template <class node_base_t,
@@ -150,9 +145,9 @@ auto node<node_base_t,
     //auto inEdgePtr = inEdge.lock( );
     if (inEdge == nullptr)
         return;
-    auto inEdgeDst = inEdge->get_dst();
-    //gtpo::assert_throw( inEdgeDstPtr &&    // in edge dst must be this node
-    //                    inEdgeDstPtr == nodePtr, "gtpo::node<>::remove_in_edge(): Error: In edge destination is expired or different from this node.");
+    auto in_edge_dst = inEdge->get_dst();
+    //gtpo::assert_throw( in_edge_dstPtr &&    // in edge dst must be this node
+    //                    in_edge_dstPtr == nodePtr, "gtpo::node<>::remove_in_edge(): Error: In edge destination is expired or different from this node.");
 
     auto inEdgeSrc = inEdge->get_src();
     //gtpo::assert_throw(inEdgeSrcPtr != nullptr, "gtpo::node<>::remove_in_edge(): Error: In edge source is expired.");
