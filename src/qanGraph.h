@@ -320,7 +320,7 @@ public:
     /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
      *
      * \warning This method is mainly for tests purposes since inserted node delegate and style is
-     * left unconfigured. HAndle with a lot of care only to insert "pure topology" non visual nodes.
+     * left unconfigured. Handle with a lot of care only to insert "pure topology" non visual nodes.
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
     auto    insertNonVisualNode(Node* node) -> bool;

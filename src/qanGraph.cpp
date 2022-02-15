@@ -305,10 +305,10 @@ qan::Connector* Graph::getConnector() noexcept  {  return _connector.data(); }
 /* Delegates Management *///---------------------------------------------------
 void    Graph::setNodeDelegate(QQmlComponent* nodeDelegate) noexcept
 {
-    if ( nodeDelegate != nullptr ) {
-        if ( nodeDelegate != _nodeDelegate.get() ) {
+    if (nodeDelegate != nullptr) {
+        if (nodeDelegate != _nodeDelegate.get()) {
             _nodeDelegate.reset(nodeDelegate);
-            QQmlEngine::setObjectOwnership( nodeDelegate, QQmlEngine::CppOwnership );
+            QQmlEngine::setObjectOwnership(nodeDelegate, QQmlEngine::CppOwnership);
             emit nodeDelegateChanged();
         }
     }
@@ -521,36 +521,36 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
 {
     // PRECONDITIONS:
         // component should not be nullptr, warning issued
-    if ( component == nullptr ) {
+    if (component == nullptr) {
         qWarning() << "qan::Graph::createItemFromComponent(): Error called with a nullptr delegate component.";
         return nullptr;
     }
     QQuickItem* item = nullptr;
     try {
-        if ( !component->isReady() )
-            throw qan::Error{ "Error delegate component is not ready." };
+        if (!component->isReady())
+            throw qan::Error{"Error delegate component is not ready."};
 
         const auto rootContext = qmlContext(this);
-        if ( rootContext == nullptr )
-            throw qan::Error{ "Error can't access to local QML context." };
+        if (rootContext == nullptr)
+            throw qan::Error{"Error can't access to local QML context."};
         QObject* object = component->beginCreate(rootContext);
-        if ( object == nullptr ||
-             component->isError() ) {
-            if ( object != nullptr )
+        if (object == nullptr ||
+            component->isError()) {
+            if (object != nullptr)
                 object->deleteLater();
             throw qan::Error{ "Failed to create a concrete QQuickItem from QML component:\n\t" +
                               component->errorString() };
         }
         component->completeCreate();
-        if ( !component->isError() ) {
-            QQmlEngine::setObjectOwnership( object, QQmlEngine::CppOwnership );
-            item = qobject_cast< QQuickItem* >( object );
-            item->setVisible( true );
-            item->setParentItem( getContainerItem() );
-        } // Note QAN3: There is no leak until cpp ownership is set
-    } catch ( const qan::Error& e ) {
+        if (!component->isError()) {
+            QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
+            item = qobject_cast<QQuickItem*>(object);
+            item->setVisible(true);
+            item->setParentItem(getContainerItem());
+        } // Note: No leak until cpp ownership is set
+    } catch (const qan::Error& e) {
         qWarning() << "qan::Graph::createItemFromComponent(): " << e.getMsg() << "\n" << component->errors();
-    } catch ( const std::exception& e ) {
+    } catch (const std::exception& e) {
         qWarning() << "qan::Graph::createItemFromComponent(): " << e.what() << "\n" << component->errors();
     }
     return QPointer<QQuickItem>{item};
