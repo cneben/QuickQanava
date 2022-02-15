@@ -35,10 +35,7 @@
 #pragma once
 
 // STD headers
-#include <list>
 #include <unordered_set>
-#include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
-#include <functional>       // std::hash
 #include <cassert>
 #include <iterator>         // std::back_inserter
 
@@ -46,8 +43,6 @@
 #include "./utils.h"
 #include "./graph_property.h"
 
-/*! \brief GTPO for Generic Graph ToPolOgy.
- */
 namespace gtpo { // ::gtpo
 
 /*! Directed edge linking two nodes in a graph.

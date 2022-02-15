@@ -35,10 +35,7 @@
 #pragma once
 
 // STD headers
-#include <list>
 #include <unordered_set>
-#include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
-#include <functional>       // std::hash
 #include <cassert>
 #include <iterator>         // std::back_inserter
 
@@ -48,7 +45,7 @@
 #include "./observable.h"
 #include "./observer.h"
 
-/*! \brief Main GTpo namespace (\#include \<GTpo\>).
+/*! \brief GTPO for Generic Graph ToPolOgy.
  */
 namespace gtpo { // ::gtpo
 
