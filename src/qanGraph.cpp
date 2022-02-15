@@ -1875,12 +1875,11 @@ auto    Graph::collectGroupNodes_rec(const qan::Group* group, std::unordered_set
         return;
 
     for (const auto& groupNode : group->get_nodes()) {
-        auto groupNodePtr = groupNode.lock();
-        if (!groupNodePtr)
+        if (groupNode == nullptr)
             continue;
-        nodes.insert(groupNodePtr.get());
-        if (groupNodePtr->isGroup()) {
-            const auto groupGroup = qobject_cast<const qan::Group*>(groupNodePtr.get());
+        nodes.insert(groupNode);
+        if (groupNode->isGroup()) {
+            const auto groupGroup = qobject_cast<const qan::Group*>(groupNode);
             if (groupGroup != nullptr)
                 collectGroupNodes_rec(groupGroup, nodes);
         }

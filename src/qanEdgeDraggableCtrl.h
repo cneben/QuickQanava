@@ -42,7 +42,6 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanAbstractDraggableCtrl.h"
 #include "./qanStyle.h"         // Used in handleDropEvent()
 #include "./qanGroup.h"
