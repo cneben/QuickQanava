@@ -326,7 +326,7 @@ public:
      * Worst case complexity is O(group count).
      * \throw a gtpo::bad_topology_error if suppression fails (\c group does not exists).
      */
-    auto            remove_group(group_t* group) -> void;
+    auto            remove_group(group_t* group) -> bool;
 
     //! Return true if a given group \c group is registered in the graph.
     auto            has_group(const group_t* group) const -> bool;
@@ -353,10 +353,10 @@ public:
      *
      * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
      */
-    auto            ungroup_node(node_t* node, node_t* group) -> void;
+    auto            ungroup_node(node_t* node, node_t* group) -> bool;
 
 private:
-    groups_t    _groups;
+    groups_t        _groups;
     //@}
     //-------------------------------------------------------------------------
 };

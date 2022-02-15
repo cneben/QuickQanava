@@ -208,7 +208,8 @@ auto    graph<graph_base_t, node_t,
 {
     if (source == nullptr ||
         destination == nullptr) {
-        std::cerr << "gtpo::graph<>::create_edge(node, node): Insertion of edge failed, either source or destination nodes are nullptr." << std::endl;
+        std::cerr << "gtpo::graph<>::create_edge(node, node): Insertion of edge failed, "
+                     "either source or destination nodes are nullptr." << std::endl;
         return nullptr;
     }
 
@@ -248,8 +249,8 @@ auto    graph<graph_base_t, node_t,
     auto source = edge->get_src();
     if (source == nullptr ||
         edge->get_dst() == nullptr) {
-        // FIXME v2
-        //throw gtpo::bad_topology_error( "gtpo::graph<>::insert_edge(): Error: Either source and/or destination nodes are expired." );
+        std::cerr << "gtpo::graph<>::insert_edge(): Error: Either source and/or "
+                     "destination nodes are nullptr." << std::endl;
         return false;
     }
     edge->set_graph(this);
@@ -263,13 +264,13 @@ auto    graph<graph_base_t, node_t,
             if (source != destination) // If edge define is a trivial circuit, do not remove destination from root nodes
                 container_adapter<nodes_t>::remove(destination, _root_nodes);    // Otherwise destination is no longer a root node
         }
-        // FIXME v2 notify
-        //observable_base_t::notify_edge_inserted( weak_edge );
-        return true;
+        observable_base_t::notify_edge_inserted(*edge);
     } catch ( ... ) {
-        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
+        std::cerr << "gtpo::graph<>::create_edge(): Insertion of edge failed, source or "
+                     "destination nodes topology can't be modified." << std::endl;
+        return false;
     }
-    return false;
+    return true;
 }
 
 template <class graph_base_t,
@@ -279,10 +280,6 @@ template <class graph_base_t,
 auto    graph<graph_base_t, node_t,
               group_t, edge_t>::remove_edge(node_t* source, node_t* destination) -> bool
 {
-    // FIXME v2
-    //if ( source.expired() ||
-    //     destination.expired() )
-    //    throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Topology error." );
     if (source == nullptr ||
         destination == nullptr)
         return false;
@@ -290,22 +287,13 @@ auto    graph<graph_base_t, node_t,
     // Find the edge associed with source / destination
     if (_edges.size() == 0)
         return false; // Fast exit
-    // FIXME v2 test
-    /*auto edgeIter = std::find_if( _edges.begin(), _edges.end(),
-                                 [=](const shared_edge_t& e ){
-                                    return ( compare_weak_ptr<>( e->get_src(), source ) &&
-                                             compare_weak_ptr<>( e->get_dst(), destination ) );
-                                    }
-                                 ); // std::find_if*/
     auto edgeIter = std::find_if(_edges.begin(), _edges.end(),
                                  [=](const edge_t* e ) {
                                     return (e->get_src() == source &&
                                             e->get_dst() == destination);
                                     }
                                  ); // std::find_if
-    if (edgeIter != _edges.end())
-        return remove_edge(*edgeIter);
-    return false;
+    return edgeIter != _edges.end() ? remove_edge(*edgeIter) : false;
 }
 
 template <class graph_base_t,
@@ -315,10 +303,6 @@ template <class graph_base_t,
 auto    graph<graph_base_t, node_t,
               group_t, edge_t>::remove_all_edges(node_t* source, node_t* destination) -> bool
 {
-    // FIXME v2
-    /*if ( source.expired() ||
-         destination.expired() )
-        throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Topology error." );*/
     if (source == nullptr ||
         destination == nullptr)
         return false;
@@ -334,20 +318,17 @@ template <class graph_base_t,
 auto    graph<graph_base_t, node_t,
               group_t, edge_t>::remove_edge(edge_t* edge) -> bool
 {
-    // FIXME v2 test
     if (edge == nullptr)
         return false;
-        //throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Error: Edge to be removed is already expired." );
     auto source = edge->get_src();
     auto destination = edge->get_dst();
     if (source == nullptr      ||           // Expecting a non null source and either a destination or an hyper destination
-        destination == nullptr)
+        destination == nullptr) {
+        std::cerr << "gtpo::graph<>::remove_edge(): Error: Edge source or destination is/are nullptr." << std::endl;
         return false;
-        // FIXME v2
-       //throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Error: Edge source or destination are expired." );
+    }
 
-    // FIXME v2 notify
-    //observable_base_t::notify_edge_removed( weak_edge );
+    observable_base_t::notify_edge_removed(*edge);
     source->remove_out_edge(edge);
     destination->remove_in_edge(edge);
 
@@ -424,14 +405,10 @@ auto    graph<graph_base_t, node_t,
 {
     if (group == nullptr)
         return false;
-    //assert_throw( group != nullptr, "gtpo::graph<>::insert_group(): Error: trying to insert a nullptr shared_node_t" );
-    // FIXME v2 serious bug in v1 ;)
     if (insert_node(group)) {
         group->set_graph(this);
         container_adapter<groups_t>::insert(group, _groups);
-
-        // FIXME GROUPS  v2 notify
-        //this->notify_group_inserted( weakGroup );
+        observable_base_t::notify_group_inserted(*group);
         return true;
     }
     return false;
@@ -442,21 +419,14 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::remove_group(group_t* group) -> void
+              group_t, edge_t>::remove_group(group_t* group) -> bool
 {
-    // FIXME v2
-/*    shared_node_t group = group_ptr.lock();
-    if ( !group )
-        gtpo::assert_throw( false, "graph<>::remove_group(): Error: trying to remove and expired group." );
-
-    // Remove group (it will be automatically deallocated)
-    // FIXME GROUPS
-    //this->notify_group_removed( group_ptr );
-    group->set_graph( nullptr );
-    config_t::template container_adapter<weak_groups_t>::remove( group_ptr, _groups );
-
-    remove_node(group_ptr);
-    */
+    if (group == nullptr)
+        return false;
+    observable_base_t::notify_group_removed(*group);
+    group->set_graph(nullptr);
+    container_adapter<groups_t>::remove(group, _groups);
+    return remove_node(group);   // Group destroyed here
 }
 
 template <class graph_base_t,
@@ -468,9 +438,6 @@ auto    graph<graph_base_t, node_t,
 {
     if (group == nullptr)
         return false;
-    // FIXME v2 test
-    //auto groupIter = std::find_if(_groups.begin(), _groups.end(),
-    //                                    [=](const weak_group_t& graphGroup  ){ return ( compare_weak_ptr<>( group, graphGroup ) ); } );
     return _groups.contains(const_cast<group_t*>(group));
 }
 
@@ -483,18 +450,8 @@ auto    graph<graph_base_t, node_t,
 {
     if (node == nullptr || group == nullptr)
         return;
-    // FIXME v2
-    //auto group_ptr = group.lock();
-    //gtpo::assert_throw( group_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert a node into an expired group." );
-
-    //auto node_ptr = node.lock();
-    //gtpo::assert_throw( node_ptr != nullptr, "gtpo::group<>::group_node(): Error: trying to insert an expired node in group." );
-
     node->set_group(group);
     container_adapter<nodes_t>::insert(node, group->get_nodes());
-
-    // FIXME GROUPS
-    //group_ptr->notify_node_inserted( node );
 }
 
 template <class graph_base_t,
@@ -502,26 +459,20 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::ungroup_node(node_t* node, node_t* group) -> void
+              group_t, edge_t>::ungroup_node(node_t* node, node_t* group) -> bool
 {
-    if (node == nullptr || group == nullptr)
-        return;
-
-    //auto group = weakGroup.lock();
-    //gtpo::assert_throw( group != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup from an expired group." );
-    //auto node = weakNode.lock();
-    //gtpo::assert_throw( node != nullptr, "gtpo::group<>::ungroup_node(): Error: trying to ungroup an expired node from a group." );
-
-    //gtpo::assert_throw( node->get_group().lock() == group, "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node that is not part of group." );
-    if (node->get_group() != group) {
-        // FIXME v2 error
-        return;
+    if (node == nullptr ||
+        group == nullptr)
+        return false;
+    if (node->get_group() == nullptr ||
+        node->get_group() != group) {
+        std::cerr << "gtpo::group<>::ungroup_node(): Error: trying to ungroup a node "
+                     "that is not part of group." << std::endl;
+        return false;
     }
-
     container_adapter<nodes_t>::remove(node, group->get_nodes());
-    // FIXME GROUPS
-    //group->notify_node_removed( weakNode );
     node->set_group(nullptr);  // Warning: group must remain valid while notify_node_removed() is called
+    return true;
 }
 //-----------------------------------------------------------------------------
 
