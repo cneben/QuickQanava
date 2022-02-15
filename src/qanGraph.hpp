@@ -175,9 +175,9 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
 {
     if (dstNode == nullptr)
         return nullptr;
-    auto edge = std::make_shared<Edge_t>();
+    auto edge = new Edge_t();
     try {
-        QQmlEngine::setObjectOwnership(edge.get(), QQmlEngine::CppOwnership);
+        QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
         edge->set_src(&src);
         if (dstNode != nullptr)
             edge->set_dst(dstNode);
@@ -185,7 +185,7 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
     } catch (...) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
     }
-    return edge.get();
+    return edge;
 }
 //-----------------------------------------------------------------------------
 

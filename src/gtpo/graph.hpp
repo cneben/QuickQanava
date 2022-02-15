@@ -42,7 +42,13 @@ template <class graph_base_t,
 graph<graph_base_t, node_t,
       group_t, edge_t>::~graph()
 {
-    clear();
+    for (const auto node: _nodes)
+        delete node;
+    for (const auto edge: _edges)
+        delete edge;
+    // Note: _nodes and _edges containers take care of deleting all ressources
+    // calling clear() here lead to very subtle notification bugs when container
+    // models are binded to view.
 }
 
 template <class graph_base_t,

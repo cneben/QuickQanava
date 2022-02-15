@@ -261,7 +261,7 @@ template < class Container >
 class ContainerModelImpl : public qcm::ContainerModel
 {
 public:
-    explicit ContainerModelImpl( Container& container ) :
+    explicit ContainerModelImpl(Container& container) :
         qcm::ContainerModel{},
         _container( container ) { }
     ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
