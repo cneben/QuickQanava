@@ -48,20 +48,15 @@ auto node<node_base_t,
 {
     if (outEdge == nullptr)
         return false;
-    // FIXME v2
-    //assert_throw( !outEdgePtr.expired(), "gtpo::node<>::add_out_edge(): Error: out edge is expired." );
-    //auto node = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
-    //auto outEdge = outEdgePtr.lock();
     auto outEdgeSrc = outEdge->get_src();
-    if (!outEdgeSrc || outEdgeSrc != this)  // Out edge source should point to target node
+    if (!outEdgeSrc ||
+        outEdgeSrc != this)  // Out edge source should point to target node
         outEdge->set_src(reinterpret_cast<node_t*>(this));
-    // FIXME v2 container
-    //config_t::template container_adapter< weak_edges_t >::insert( outEdgePtr, _out_edges );
+    container_adapter<edges_t>::insert(outEdge, _out_edges);
     if (outEdge->get_dst() != nullptr) {
-        // FIXME v2 container
-        //config_t::template container_adapter< weak_nodes_t >::insert( outEdge->get_dst(), _out_nodes );
-        // FIXME v2 notify
-        //this->notify_out_node_inserted( weak_node_t{node}, outEdge->get_dst(), weak_edge_t{outEdge} );
+        container_adapter<nodes_t>::insert(outEdge->get_dst(), _out_nodes);
+        observable_base_t::notify_out_node_inserted(*reinterpret_cast<node_t*>(this),
+                                                    *outEdge->get_dst(), *outEdge);
         return true;
     }
     return false;
@@ -101,32 +96,32 @@ template <class node_base_t,
 auto node<node_base_t,
           graph_t,
           node_t, edge_t,
-          group_t>::remove_out_edge(const edge_t* outEdge) -> void
+          group_t>::remove_out_edge(const edge_t* outEdge) -> bool
 {
-    // FIXME v2
-    //gtpo::assert_throw( !outEdge.expired(), "gtpo::node<>::remove_out_edge(): Error: Out edge has expired" );
     if (outEdge == nullptr)
-        return;
+        return false;
     auto outEdgeSrc = outEdge->get_src();
-    //weak_node_t node{ std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this()) };
-    //gtpo::assert_throw( outEdgeSrcPtr != nullptr &&    // Out edge src must be this node
-    //                    outEdgeSrcPtr.get() == this, "gtpo::node<>::remove_out_edge(): Error: Out edge source is expired or different from this node.");
+    if (outEdgeSrc == nullptr) {
+        std::cerr << "gtpo::node<>::remove_out_edge(): Error: Out edge source is nullptr or different from this node." << std::endl;
+        return false;
+    }
 
     auto outEdgeDst = outEdge->get_dst();
     if (outEdgeDst != nullptr) {
-        //gtpo::assert_throw( outEdgeDst != nullptr, "gtpo::node<>::remove_out_edge(): Error: Out edge destination is expired." );
-        //this->notify_out_node_removed( node, outEdgePtr->get_dst(), outEdge );
+        std::cerr << "gtpo::node<>::remove_out_edge(): Error: Out edge destination is nullptr." << std::endl;
+        observable_base_t::notify_out_node_removed(*reinterpret_cast<node_t*>(this),
+                                                   *const_cast<node_t*>(outEdge->get_dst()), *outEdge);
+        return false;
     }
-    // FIXME v2 container
-    //config_t::template container_adapter<weak_edges_t>::remove( outEdge, _out_edges );
-    //config_t::template container_adapter<weak_nodes_t>::remove( outEdgePtr->get_dst(), _out_nodes );
+    container_adapter<edges_t>::remove(const_cast<edge_t*>(outEdge), _out_edges);
+    container_adapter<nodes_t>::remove(const_cast<node_t*>(outEdge->get_dst()), _out_nodes);
     if (get_in_degree() == 0) {
         graph_t* graph = this->get_graph();
         if (graph != nullptr)
             graph->install_root_node(reinterpret_cast<node_t*>(this));
     }
-    // FIXME v2 notify
-    //this->notify_out_node_removed(this);
+    observable_base_t::notify_out_node_removed(*reinterpret_cast<node_t*>(this));
+    return true;
 }
 
 template <class node_base_t,
@@ -137,32 +132,36 @@ template <class node_base_t,
 auto node<node_base_t,
           graph_t,
           node_t, edge_t,
-          group_t>::remove_in_edge(const edge_t* inEdge) -> void
+          group_t>::remove_in_edge(const edge_t* inEdge) -> bool
 {
-    // FIXME v2
-    //gtpo::assert_throw( !inEdge.expired(), "gtpo::node<>::remove_in_edge(): Error: In edge has expired" );
-    //auto nodePtr = std::static_pointer_cast<typename config_t::final_node_t>(this->shared_from_this());
-    //auto inEdgePtr = inEdge.lock( );
-    if (inEdge == nullptr)
-        return;
+    if (inEdge == nullptr) {
+        std::cerr << "gtpo::node<>::remove_in_edge(): Error: In edge is nullptr." << std::endl;
+        return false;
+    }
     auto in_edge_dst = inEdge->get_dst();
-    //gtpo::assert_throw( in_edge_dstPtr &&    // in edge dst must be this node
-    //                    in_edge_dstPtr == nodePtr, "gtpo::node<>::remove_in_edge(): Error: In edge destination is expired or different from this node.");
+    if (in_edge_dst == nullptr ||
+        in_edge_dst != this) {      // in edge dst must be this node
+        std::cerr << "gtpo::node<>::remove_in_edge(): Error: In edge destination is nullptr or different from this node." << std::endl;
+        return false;
+    }
 
     auto inEdgeSrc = inEdge->get_src();
-    //gtpo::assert_throw(inEdgeSrcPtr != nullptr, "gtpo::node<>::remove_in_edge(): Error: In edge source is expired.");
-    //this->notify_in_node_removed( weak_node_t{ nodePtr }, inEdgePtr->get_src(), inEdge );
-    // FIXME v2 container
-    //config_t::template container_adapter< weak_edges_t >::remove( inEdge, _in_edges );
-    //config_t::template container_adapter< weak_nodes_t >::remove( inEdgePtr->get_src(), _in_nodes );
+    if (inEdgeSrc == nullptr) {
+        std::cerr << "gtpo::node<>::remove_in_edge(): Error: In edge source is expired." << std::endl;
+        return false;
+    }
+    observable_base_t::notify_in_node_removed(*reinterpret_cast<node_t*>(this),
+                                              *const_cast<node_t*>(inEdge->get_src()), *inEdge);
+    container_adapter<edges_t>::remove(const_cast<edge_t*>(inEdge), _in_edges);
+    container_adapter<nodes_t>::remove(const_cast<node_t*>(inEdge->get_src()), _in_nodes);
     if (get_in_degree() == 0) {
         graph_t* graph = this->get_graph();
         if (graph != nullptr)
             graph->install_root_node(reinterpret_cast<node_t*>(this));
     }
 
-    // FIXME v2 notify
-    //this->notify_in_node_removed(this);
+    observable_base_t::notify_in_node_removed(*reinterpret_cast<node_t*>(this));
+    return true;
 }
 //-----------------------------------------------------------------------------
 

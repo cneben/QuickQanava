@@ -126,12 +126,12 @@ public:
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    remove_out_edge(const edge_t* outEdge) -> void;
+    auto    remove_out_edge(const edge_t* outEdge) -> bool;
     /*! \brief Remove edge \c inEdge from this node in edges.
      *
      * \throw gtpo::bad_topology_error
      */
-    auto    remove_in_edge(const edge_t* inEdge) -> void;
+    auto    remove_in_edge(const edge_t* inEdge) -> bool;
 
     inline auto     get_in_edges() const noexcept -> const edges_t& { return _in_edges; }
     inline auto     get_out_edges() const noexcept -> const edges_t& { return _out_edges; }

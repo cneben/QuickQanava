@@ -144,20 +144,40 @@ public:
     }
 
     auto    notify_in_node_inserted(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
-        for (const auto& observer: super_t::_observers)
+        for (auto& observer: super_t::_observers)
             if (observer)
                 observer->on_in_node_inserted(target, node, edge);
     }
 
-    auto    notify_in_node_removed(node_t* target, node_t node, const edge_t& edge) noexcept -> void;
+    auto    notify_in_node_removed(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_in_node_removed(target, node, edge);
+    }
 
-    auto    notify_in_node_removed(node_t* target) noexcept -> void;
+    auto    notify_in_node_removed(node_t& target) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_in_node_removed(target);
+    }
 
-    auto    notify_out_node_inserted(node_t* target, node_t node, const edge_t& edge) noexcept -> void;
+    auto    notify_out_node_inserted(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_out_node_inserted(target, node, edge);
+    }
 
-    auto    notify_out_node_removed(node_t* target, node_t* node, const edge_t& edge) noexcept -> void;
+    auto    notify_out_node_removed(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_out_node_removed(target, node, edge);
+    }
 
-    auto    notify_out_node_removed(node_t* target) noexcept -> void;
+    auto    notify_out_node_removed(node_t& target) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_out_node_removed(target);
+    }
     //@}
     //-------------------------------------------------------------------------
 };
