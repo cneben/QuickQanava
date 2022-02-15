@@ -101,7 +101,7 @@ public:
     inline auto    hasObservers() const noexcept -> bool { return _observers.size() > 0; }
 
     //! Return a read only container of actually registered observers.
-    inline auto    getObservers() const noexcept -> const observer_t& { return _observers; }
+    inline auto    getObservers() const noexcept -> const observers_t& { return _observers; }
 
 protected:
     observers_t    _observers;
