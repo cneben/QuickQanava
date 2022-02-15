@@ -68,8 +68,7 @@ void    graph<graph_base_t, node_t,
     // Clearing groups and behaviours (Not: group->_graph is resetted with nodes)
     _groups.clear();
 
-    // FIXME v2
-    //behaviourable_base::clear();
+    observable_base_t::clear();
 }
 //-----------------------------------------------------------------------------
 
@@ -81,12 +80,13 @@ template <class graph_base_t,
 auto graph<graph_base_t, node_t,
            group_t, edge_t>::create_node( ) -> node_t*
 {
-    node_t* node = nullptr;
+    std::unique_ptr<node_t> node;
     try {
-        // FIXME v2 unique_ptr
-        node = insert_node(new node_t{});
-    } catch (...) { gtpo::assert_throw( false, "graph<>::create_node(): Error: can't insert node in graph." ); }
-    return node;
+        node = std::make_unique<node_t>();
+    } catch (...) {
+        std::cerr << "graph<>::create_node(): Error: can't create node." << std::endl;
+    }
+    return node ? node.release() : nullptr;
 }
 
 template <class graph_base_t,
@@ -96,7 +96,6 @@ template <class graph_base_t,
 auto    graph<graph_base_t, node_t,
               group_t, edge_t>::insert_node(node_t* node) -> bool
 {
-    //assert_throw(node != nullptr, "gtpo::graph<>::insert_node(): Error: Trying to insert a nullptr node in graph.");
     if (node == nullptr)
         return false;
     try {
@@ -105,11 +104,12 @@ auto    graph<graph_base_t, node_t,
         container_adapter<nodes_search_t>::insert(node, _nodes_search);
         container_adapter<nodes_t>::insert(node, _root_nodes);
 
-        // FIXME v2
-        //behaviourable_base::notify_node_inserted(weak_node);
-        return true;
-    } catch (...) { gtpo::assert_throw(false, "gtpo::graph<>::insert_node(): Error: can't insert node in graph."); }
-    return false;
+        observable_base_t::notify_node_inserted(*node);
+    } catch (...) {
+        std::cerr << "gtpo::graph<>::insert_node(): Error: can't insert node in graph." << std::endl;
+        return false;
+    }
+    return true;
 }
 
 template <class graph_base_t,
@@ -127,8 +127,7 @@ auto    graph<graph_base_t, node_t,
     if (group != nullptr)
         ungroup_node(node, group);
 
-    // FIXME v2
-    //behaviourable_base::notify_node_removed( weak_node );
+    observable_base_t::notify_node_removed(*node);
 
     // Removing all orphant edges pointing to node.
     edges_t nodeInEdges;
@@ -165,8 +164,8 @@ auto    graph<graph_base_t, node_t,
     if (node == nullptr)
         return;
     if (node->get_in_degree() != 0) {
-        // FIXME v2 log output...
-        //"gtpo::graph<>::setRootNode(): Error: trying to set a node with non 0 in degree as a root node." );
+        std::cerr << "gtpo::graph<>::install_root_node(): Error: trying to set a node with non "
+                     "0 in degree as a root node." << std::endl;
         return;
     }
     container_adapter<nodes_t>::insert(node, _root_nodes);
@@ -181,12 +180,9 @@ auto    graph<graph_base_t, node_t,
 {
     if (node == nullptr)
         return false;
-    //assert_throw( !node.expired(), "gtpo::graph<>::is_root_node(): Error: node is expired." );
     if (node->get_in_degree() != 0)   // Fast exit when node in degree != 0, it can't be a root node
         return false;
-    // FIXME v2  REPLACED THAT...
-    //return gtpo::find_weak_ptr( _root_nodes, node );
-    return false;
+    return _root_nodes.find(node) != _root_nodes.cend();
 }
 
 template <class graph_base_t,
@@ -199,10 +195,6 @@ auto    graph<graph_base_t, node_t,
     if (node == nullptr)
         return false;
     return _nodes_search.contains(const_cast<node_t*>(node));
-    // FIXME v2
-    //auto nodeIter = std::find_if( _nodes_search.cbegin(), _nodes_search.cend(),
-    //                                        [=](const weak_node_t& n ) { return ( compare_weak_ptr<>( node, n ) ); } );
-    //return nodeIter != _nodes_search.cend();
 }
 //-----------------------------------------------------------------------------
 
@@ -215,31 +207,33 @@ auto    graph<graph_base_t, node_t,
               group_t, edge_t>::create_edge(node_t* source, node_t* destination) -> edge_t*
 {
     if (source == nullptr ||
-        destination == nullptr)
+        destination == nullptr) {
+        std::cerr << "gtpo::graph<>::create_edge(node, node): Insertion of edge failed, either source or destination nodes are nullptr." << std::endl;
         return nullptr;
-    // FIXME v2
-        //throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, either source or destination nodes are expired." );
+    }
 
-    // FIXME v2 unique_ptr
-    auto edge = new edge_t{};
-    edge->set_graph(this);
-    container_adapter<edges_t>::insert(edge, _edges);
-    container_adapter<edges_search_t>::insert(edge, _edges_search);
-    edge->set_src(source);
-    edge->set_dst(destination);
+    std::unique_ptr<edge_t> edge;
     try {
-        source->add_out_edge(edge);
-        destination->add_in_edge(edge);
+        edge = std::make_unique<edge_t>();
+        edge->set_graph(this);
+
+        container_adapter<edges_t>::insert(edge.get(), _edges);
+        container_adapter<edges_search_t>::insert(edge.get(), _edges_search);
+        edge->set_src(source);
+        edge->set_dst(destination);
+
+        source->add_out_edge(edge.get());
+        destination->add_in_edge(edge.get());
+
         if (source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
             container_adapter<nodes_t>::remove(destination, _root_nodes);    // Otherwise destination is no longer a root node
 
-        // FIXME v2 notify
-        //behaviourable_base::notify_edge_inserted(edge);
+        observable_base_t::notify_edge_inserted(edge);
     } catch ( ... ) {
-        // FIXME v2 remove that...
-        throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(Node,Node): Insertion of edge failed, source or destination nodes topology can't be modified." );
+        std::cerr << "gtpo::graph<>::create_edge(node,node): Insertion of edge "
+                     "failed, source or destination nodes topology can't be modified." << std::endl;
     }
-    return edge;
+    return edge ? edge.release() : nullptr;
 }
 
 template <class graph_base_t,
@@ -270,7 +264,7 @@ auto    graph<graph_base_t, node_t,
                 container_adapter<nodes_t>::remove(destination, _root_nodes);    // Otherwise destination is no longer a root node
         }
         // FIXME v2 notify
-        //behaviourable_base::notify_edge_inserted( weak_edge );
+        //observable_base_t::notify_edge_inserted( weak_edge );
         return true;
     } catch ( ... ) {
         throw gtpo::bad_topology_error( "gtpo::graph<>::create_edge(): Insertion of edge failed, source or destination nodes topology can't be modified." );
@@ -353,7 +347,7 @@ auto    graph<graph_base_t, node_t,
        //throw gtpo::bad_topology_error( "gtpo::graph<>::remove_edge(): Error: Edge source or destination are expired." );
 
     // FIXME v2 notify
-    //behaviourable_base::notify_edge_removed( weak_edge );
+    //observable_base_t::notify_edge_removed( weak_edge );
     source->remove_out_edge(edge);
     destination->remove_in_edge(edge);
 

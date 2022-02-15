@@ -209,21 +209,41 @@ public:
         super_t::add_behaviour(std::move(observer));
     }
 
-    auto    notify_node_inserted(node_t& node) noexcept -> void{
+    auto    notify_node_inserted(node_t& node) noexcept -> void {
         for (auto& observer: super_t::_observers)
             if (observer)
                 observer->on_node_inserted(node);
     }
 
-    auto    notify_node_removed(node_t& node) noexcept -> void;
+    auto    notify_node_removed(node_t& node) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_node_removed(node);
+    }
 
-    auto    notify_edge_inserted(edge_t& node) noexcept -> void;
+    auto    notify_edge_inserted(edge_t& edge) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_edge_inserted(edge);
+    }
 
-    auto    notify_edge_removed(edge_t& node) noexcept -> void;
+    auto    notify_edge_removed(edge_t& edge) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_edge_removed(edge);
+    }
 
-    auto    notify_group_inserted(group_t& group) noexcept -> void;
+    auto    notify_group_inserted(group_t& group) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_group_inserted(group);
+    }
 
-    auto    notify_group_removed(group_t& group) noexcept -> void;
+    auto    notify_group_removed(group_t& group) noexcept -> void {
+        for (auto& observer: super_t::_observers)
+            if (observer)
+                observer->on_group_removed(group);
+    }
     //@}
     //-------------------------------------------------------------------------
 };

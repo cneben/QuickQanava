@@ -46,7 +46,7 @@
 #include "./utils.h"
 #include "./graph_property.h"
 
-/*! \brief Main GTpo namespace (\#include \<GTpo\>).
+/*! \brief GTPO for Generic Graph ToPolOgy.
  */
 namespace gtpo { // ::gtpo
 

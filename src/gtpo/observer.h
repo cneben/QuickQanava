@@ -149,6 +149,9 @@ template <class graph_t, class node_t, class edge_t, class group_t>
 class graph_observer : public observer<node_t>
 {
 public:
+    template<class, class, class, class>
+    friend class gtpo::observable_graph;
+
     using this_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
     graph_observer() noexcept : gtpo::observer<graph_t>{} {}
     ~graph_observer() noexcept = default;
