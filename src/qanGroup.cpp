@@ -140,18 +140,7 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Group Nodes Management *///-------------------------------------------------
-bool    Group::hasNode(const qan::Node* node) const
-{
-    if ( node == nullptr )
-        return false;
-    // FIXME v2
-    /*try {
-        auto weakNode = std::static_pointer_cast<qan::Node>(const_cast<qan::Node*>(node)->shared_from_this());
-        return gtpo_node_t::has_node(weakNode);
-    } catch (const std::bad_weak_ptr&) { } // C++17
-    */
-    return qan::Node::has_node(node);
-}
+bool    Group::hasNode(const qan::Node* node) const { return qan::Node::has_node(node); }
 //-----------------------------------------------------------------------------
 
 /*! \name Group DnD Management *///----------------------------------------

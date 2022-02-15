@@ -453,16 +453,12 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
     if ( delegateChanged ) {  // Update all existing delegates...
         // Note: It could be done in a more more 'generic' way!
         auto updateNodeSelectionItem = [this](auto& primitive) -> void {
-            // FIXME v2
-            //auto finalPrimitive = qobject_cast<qan::Node*>(primitive.get());
             if (primitive != nullptr &&
                 primitive->getItem() &&
                 primitive->getItem()->getSelectionItem() != nullptr)   // Replace only existing selection items
                 primitive->getItem()->setSelectionItem(this->createSelectionItem(primitive->getItem()));
         };
-        auto updateGroupSelectionItem = [this]( auto& primitive ) -> void {
-            // FIXME v2
-            //auto finalPrimitive = qobject_cast<qan::Group*>(primitive.lock().get());
+        auto updateGroupSelectionItem = [this](auto& primitive) -> void {
             if (primitive != nullptr &&
                 primitive->getItem() &&
                 primitive->getItem()->getSelectionItem() != nullptr)   // Replace only existing selection items
@@ -565,8 +561,7 @@ QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) no
 auto    Graph::insertNonVisualNode(Node* node) -> bool
 {
     if (node == nullptr) {
-        // FIXME v2
-        // warning
+        qWarning() << "Graph::insertNonVisualNode(): Error: node is nullptr.";
         return false;
     }
     if (super_t::insert_node(node)) {
@@ -650,8 +645,7 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
         onNodeInserted(*node);
         emit nodeInserted(node);
     }
-    // FIXME v2 return true...
-    return node;
+    return true;
 }
 
 void    Graph::removeNode(qan::Node* node)
@@ -856,27 +850,10 @@ bool    Graph::hasEdge(const qan::Node* source, const qan::Node* destination) co
 {
     if ( source == nullptr || destination == nullptr )
         return false;
-    // FIXME v2
-    /*WeakNode sharedSource;
-    WeakNode sharedDestination;
-    try {
-        sharedSource = std::static_pointer_cast<Config::final_node_t>( source->shared_from_this() );
-        sharedDestination = std::static_pointer_cast<Config::final_node_t>( destination->shared_from_this() );
-    } catch (const std::bad_weak_ptr& e) { return false; }
-    return super_t::has_edge(sharedSource, sharedDestination);*/
     return super_t::has_edge(source, destination);
 }
 
-bool    Graph::hasEdge(const qan::Edge* edge) const
-{
-    // FIXME v2
-    /*bool r = false;
-    try {
-        r = super_t::contains(std::static_pointer_cast<Config::final_edge_t>(const_cast<qan::Edge*>(edge)->shared_from_this()));
-    } catch (const std::bad_weak_ptr&) { *//* Nil*/ //}
-    return hasEdge(edge->get_src(), edge->get_dst());
-    //return r;
-}
+bool    Graph::hasEdge(const qan::Edge* edge) const { return hasEdge(edge->get_src(), edge->get_dst()); }
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
@@ -979,8 +956,6 @@ bool    Graph::hasGroup(qan::Group* group) const
 {
     if (group == nullptr)
         return false;
-    // FIXME v2
-    //return super_t::has_group(super_t::shared_group_t{group});
     return super_t::has_group(group);
 }
 

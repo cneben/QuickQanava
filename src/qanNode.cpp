@@ -68,17 +68,8 @@ Node::~Node()
         _item->deleteLater();
 }
 
-qan::Graph* Node::getGraph() noexcept {
-    // FIXME v2
-    //return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
-    return get_graph();
-}
-
-const qan::Graph* Node::getGraph() const noexcept {
-    // FIXME v2
-    //return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
-    return get_graph();
-}
+qan::Graph*         Node::getGraph() noexcept { return get_graph(); }
+const qan::Graph*   Node::getGraph() const noexcept { return get_graph(); }
 
 bool    Node::operator==( const qan::Node& right ) const
 {
@@ -143,8 +134,6 @@ int     Node::getOutDegree() const
 
 QAbstractItemModel* Node::qmlGetOutEdges() const
 {
-    // FIXME v2
-    //return const_cast<QAbstractItemModel*>( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) );
     return super_t::get_out_edges().model();
 }
 
@@ -168,12 +157,10 @@ void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
 {
     // PRECONDITIONS:
         // behaviour can't be nullptr
-    if ( !behaviour )
+    if (!behaviour)
         return;
     behaviour->setHost(this);
-    // FIXME v2
-    qWarning() << "qan::Node::installBehaviour(): FIXME v2";
-    //add_dynamic_node_behaviour(std::move(behaviour));
+    add_node_observer(std::move(behaviour));
 }
 //-----------------------------------------------------------------------------
 

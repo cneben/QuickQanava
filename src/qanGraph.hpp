@@ -54,8 +54,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         qWarning() << "Component error: " << nodeComponent->errors();
         return nullptr;
     }
-    // FIXME v2 unique_ptr
-    const auto node = new Node_t{};
+    const auto node = new Node_t{};   // Might leak, but using unique_ptr is unsafe given current mxed bool/except error handling
     try {
         QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
         if (nodeStyle == nullptr)
@@ -66,12 +65,8 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
                                                                                   *nodeStyle,
                                                                                   node));
-        if (nodeItem == nullptr) {
-            // FIXME v2  NON laisser le throw...
-            //throw qan::Error{"Node item creation failed."};
-            qWarning() << "qan::Graph::insertNode<>(): Error: Node item creation failed.";
-            return nullptr;
-        }
+        if (nodeItem == nullptr)
+            throw qan::Error{"Node item creation failed."};
         nodeItem->setNode(node);
         nodeItem->setGraph(this);
         node->setItem(nodeItem);
@@ -96,8 +91,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
             _maxZ += 1;
             nodeItem->setZ(_maxZ);
         }
-        // FIXME v2
-        /*gtpo_graph_t::*/insert_node(node);        // Insert visual or non visual node
+        insert_node(node);        // Insert visual or non visual node
     } catch (const qan::Error& e) {
         qWarning() << "qan::Graph::insertNode(): Error: " << e.getMsg();
         return nullptr; // node eventually destroyed by shared_ptr
@@ -113,19 +107,17 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
     return node;
 }
 
-template < class Node_t >
+template <class Node_t>
 qan::Node*  Graph::insertNonVisualNode()
 {
-    // FIXME v2   unique_ptr then detach...
     const auto node = new Node_t();
     try {
         QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
-        // FIXME v2
-        /*gtpo_graph_t::*/insert_node(node);
+        if (!insert_node(node))
+            qWarning() << "qan::Graph::insertNonVisualNode(): Error: Insertion error.";
     } catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error.";
-        // FIXME v2
-        return nullptr; // node eventually destroyed by share_ptr
+        return nullptr;
     }
     if (node != nullptr) {       // Notify user.
         onNodeInserted(*node);
@@ -159,14 +151,11 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
     }
     qan::Edge* configuredEdge = nullptr;
     try {
-        // FIXME v2  unique_ptr
-        //auto edge = std::make_shared<Edge_t>(nullptr);
         auto edge = new Edge_t{nullptr};
         QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
         if (configureEdge(*edge,  *edgeComponent, *style,
                            src,    dstNode)) {
-            // FIXME v2
-            /*gtpo_graph_t::*/insert_edge(edge);
+            insert_edge(edge);
             configuredEdge = edge;
         } else {
             qWarning() << "qan::Graph::insertEdge<>(): Error: Internal error during edge configuration.";
@@ -188,15 +177,12 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
         return nullptr;
     auto edge = std::make_shared<Edge_t>();
     try {
-        QQmlEngine::setObjectOwnership( edge.get(), QQmlEngine::CppOwnership );
-        // FIXME v2
-        //edge->set_src( std::static_pointer_cast<Config::final_node_t>(src.shared_from_this()) );
+        QQmlEngine::setObjectOwnership(edge.get(), QQmlEngine::CppOwnership);
         edge->set_src(&src);
         if (dstNode != nullptr)
             edge->set_dst(dstNode);
-        // FIXME v2
-        /*gtpo_graph_t::*/insert_edge( edge );
-    } catch ( ... ) {
+        insert_edge(edge);
+    } catch (...) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
     }
     return edge.get();
@@ -214,8 +200,6 @@ qan::Group* Graph::insertGroup()
     if (groupComponent == nullptr)
         groupComponent = _groupDelegate.get();
     auto group = new Group_t();
-    // FIXME v2
-    //if (!insertGroup(group, groupComponent, Group_t::style(nullptr)))
     if (!insertGroup(group, groupComponent, nullptr))
         qWarning() << "qan::Graph::insertGroup<>(): Warning: Error at group insertion.";
     return group;

@@ -95,12 +95,11 @@ public:
     }
     node& operator=(node const&) = delete;
 
-    // FIXME v2
-    /*inline auto     add_dynamic_node_behaviour( std::unique_ptr<gtpo::dynamic_node_behaviour<config_t>> behaviour ) -> void {
-        if (behaviour)
-            behaviour->set_target(this->shared_from_this());
-        behaviourable_base::add_behaviour(std::move(behaviour));
-    }*/
+    auto    add_node_observer(std::unique_ptr<gtpo::node_observer<node_t, edge_t>> observer) -> void {
+        if (observer)
+            observer->set_target(reinterpret_cast<node_t*>(this));
+        observable_base_t::add_observer(std::move(observer));
+    }
     //@}
     //-------------------------------------------------------------------------
 

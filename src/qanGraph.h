@@ -533,10 +533,6 @@ signals:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    // FIXME v2
-    //using Group             = typename Config::final_group_t;
-    //using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
-
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE virtual qan::Group* insertGroup();
 
@@ -889,8 +885,8 @@ public:
      * a plus item z.
      */
     Q_PROPERTY(qreal    maxZ READ getMaxZ WRITE setMaxZ NOTIFY maxZChanged FINAL)
-    qreal        getMaxZ() const noexcept;
-    void         setMaxZ(const qreal maxZ) noexcept;
+    qreal               getMaxZ() const noexcept;
+    void                setMaxZ(const qreal maxZ) noexcept;
 private:
     qreal               _maxZ = 0.;
 signals:

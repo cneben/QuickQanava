@@ -167,12 +167,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
             graph->hasMultipleSelection()) {
 
             auto beginDragMoveSelected = [this, &dragInitialMousePos] (auto primitive) {    // Call beginDragMove() on a given node or group
-                // FIXME v2
                 if (primitive != nullptr &&
                     primitive->getItem() != nullptr &&
                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
                     primitive->get_group() == nullptr)      // Do not drag nodes that are inside a group
-                     // && primitive->get_group().expired())       // Do not drag nodes that are inside a group
                     primitive->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
             };
 
@@ -303,8 +301,6 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
                  primitive->getItem() != nullptr &&
                  static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
                  primitive->get_group() == nullptr)        // Do not drag nodes that are inside a group
-                 // FIXME v2
-                 //primitive->get_group().expired() )       // Do not drag nodes that are inside a group
                 primitive->getItem()->draggableCtrl().endDragMove(false);
         };
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);

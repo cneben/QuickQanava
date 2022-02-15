@@ -137,7 +137,7 @@ public:
     //@{
 public:
     auto    add_node_observer(std::unique_ptr<node_observer_t> observer) -> void {
-        super_t::add_behaviour(std::move(observer));
+        super_t::add_observer(std::move(observer));
     }
 
     auto    notify_in_node_inserted(node_t& target, node_t& node, const edge_t& edge) noexcept -> void {
@@ -206,7 +206,7 @@ public:
     //@{
 public:
     inline auto     add_graph_observer(std::unique_ptr<graph_observer_t> observer) -> void {
-        super_t::add_behaviour(std::move(observer));
+        super_t::add_observer(std::move(observer));
     }
 
     auto    notify_node_inserted(node_t& node) noexcept -> void {
