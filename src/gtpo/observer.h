@@ -119,29 +119,61 @@ public:
     node_observer& operator=(node_observer<node_t, edge_t>&&) = delete;
 
 protected:
-    /*! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
-     */
+    //! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
     virtual void    on_in_node_inserted(node_t& target, node_t& weakInNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
-    /*! \brief Called when an in-edge with source \c weakInNode is about to be removed.
-     */
+    //! \brief Called when an in-edge with source \c weakInNode is about to be removed.
     virtual void    on_in_node_removed(node_t& target, node_t& weakInNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
 
-    /*! \brief Called immediatly after an in node has been removed.
-     */
+    //! \brief Called immediatly after an in node has been removed.
     virtual void    on_in_node_removed(node_t& target)  noexcept { static_cast<void>(target); }
 
-    /*! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
-     */
+    //! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
     virtual void    on_out_node_inserted(node_t& target, node_t& weakOutNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
-    /*! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
-     */
+    //! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
     virtual void    on_out_node_removed(node_t& target, node_t& weakOutNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
 
-    /*! \brief Called immediatly after an out-edge has been removed.
-     */
+    //! \brief Called immediatly after an out-edge has been removed.
     virtual void    on_out_node_removed(node_t& target)  noexcept { static_cast<void>(target); }
 };
 
+
+/*! \brief Enable dynamic observers on gtpo::graph<>.
+ *
+ * \note Add enable_graph_behaviour<> to gtpo::config::graph_behaviours tuple to enable dynamic
+ * graph behaviours, otherwise, any gtpo::dynamic_graph_behaviour added using gtpo::graph::add_dynamic_graph_behaviour()
+ * method won't be notified of changes in topology.
+ */
+template <class graph_t, class node_t, class edge_t, class group_t>
+class graph_observer : public observer<node_t>
+{
+public:
+    using this_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
+    graph_observer() noexcept : gtpo::observer<graph_t>{} {}
+    ~graph_observer() noexcept = default;
+    graph_observer(const this_t&) = delete;
+    graph_observer& operator=(const this_t&) = delete;
+
+    /*! \name Graph Dynamic (virtual) Notification Interface *///--------------
+    //@{
+protected:
+    //! Called immediatly after \c node has been inserted in graph.
+    virtual void    on_node_inserted(node_t& node) noexcept { static_cast<void>(node); }
+    //! Called immediatly before \c node is removed from graph.
+    virtual void    on_node_removed(node_t& node) noexcept { static_cast<void>(node); }
+
+    //! Called immediatly after \c group has been inserted in graph.
+    virtual void    on_group_inserted(node_t& group) noexcept { static_cast<void>(group); }
+    //! Called immediatly before \c group is removed from graph.
+    virtual void    on_group_removed(node_t& group) noexcept { static_cast<void>(group); }
+
+protected:
+    //! Called immediatly after \c edge has been inserted.
+    virtual void    on_edge_inserted(edge_t& edge) noexcept { static_cast<void>(edge); }
+    //! Called when \c edge is about to be removed.
+    virtual void    on_edge_removed(edge_t& edge) noexcept { static_cast<void>(edge); }
+    //@}
+    //-------------------------------------------------------------------------
+};
 } // ::gtpo

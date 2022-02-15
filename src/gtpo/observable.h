@@ -180,25 +180,25 @@ public:
 };
 
 
-template <class node_t, class edge_t, class group_t>
+template <class graph_t, class node_t, class edge_t, class group_t>
 class graph_observer;
 
 /*! \brief Enable static and dynamic behaviour support for gtpo::Graph.
  *
  * \nosubgrouping
  */
-template <class node_t, class edge_t, class group_t>
-class observable_graph : public observable<gtpo::graph_observer<node_t, edge_t, group_t> >
+template <class graph_t, class node_t, class edge_t, class group_t>
+class observable_graph : public observable<gtpo::graph_observer<graph_t, node_t, edge_t, group_t> >
 {
     /*! \name behaviourable_graph Object Management *///------------------------
     //@{
 public:
-    using graph_observer_t = gtpo::graph_observer<node_t, edge_t, group_t>;
-    using super_t = observable<gtpo::graph_observer<node_t, edge_t, group_t> >;
+    using graph_observer_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
+    using super_t = observable<gtpo::graph_observer<graph_t, node_t, edge_t, group_t> >;
     observable_graph() : super_t{} { }
     ~observable_graph() noexcept = default;
-    observable_graph(const observable_graph<node_t, edge_t, group_t>&) = delete;
-    observable_graph& operator=(const observable_graph<node_t, edge_t, group_t>&) = delete;
+    observable_graph(const observable_graph<graph_t, node_t, edge_t, group_t>&) = delete;
+    observable_graph& operator=(const observable_graph<graph_t, node_t, edge_t, group_t>&) = delete;
     //@}
     //-------------------------------------------------------------------------
 

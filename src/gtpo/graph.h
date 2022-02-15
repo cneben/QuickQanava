@@ -46,6 +46,7 @@
 #include "./utils.h"
 #include "./container_adapter.h"
 #include "./observable.h"
+#include "./observer.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -65,8 +66,8 @@ template <class graph_base_t,
           class node_t,
           class group_t,
           class edge_t>
-class graph : public graph_base_t/*,
-              public gtpo::behaviourable_graph< config_t >*/
+class graph : public graph_base_t,
+              public gtpo::observable_graph<graph_base_t, node_t, edge_t, group_t>
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
@@ -81,24 +82,20 @@ public:
     using edges_t           = qcm::Container<QVector, edge_t*>;
     using edges_search_t    = QSet<edge_t*>;
 
-    //! User friendly shortcut to this concrete graph behaviour.
-    //using behaviour = graph_behaviour< config_t >;
-    //! User friendly shortcut type to this concrete graph Behaviourable base type.
-    //using behaviourable_base = gtpo::behaviourable_graph< config_t >;
+    //! User friendly shortcut type to graph gtpo::observable<> base class.
+    using observable_base_t =  gtpo::observable_graph<graph_base_t, node_t, edge_t, group_t>;
 
 public:
-    // FIXME v2
-    using size_type  = unsigned int;
-    //using size_type  = typename shared_nodes_t::size_type;
+    using size_type  = std::size_t;
 
     graph() noexcept :
-        graph_base_t{}/*,
-        behaviourable_base{}*/ { }
+        graph_base_t{},
+        observable_base_t{} { }
 
     template <class B>
     explicit graph(B* parent) noexcept :
-        graph_base_t{parent}/*,
-        behaviourable_base{}*/ { }
+        graph_base_t{parent},
+        observable_base_t{} { }
 
     ~graph();
 
