@@ -35,7 +35,7 @@
 #pragma once
 
 // QuickQanava headers
-#include "./gtpo/gtpoEdgeBase.h"
+#include "./gtpo/edge.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
 

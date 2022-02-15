@@ -43,12 +43,8 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpoUtils.h"
-//#include "./config.h"
-//#include "./edge.h"
-//#include "./node.h"
-//#include "./graph_behaviour.h"
-#include "./gtpoContainerAdapter.h"
+#include "./utils.h"
+#include "./container_adapter.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
@@ -369,4 +365,4 @@ private:
 
 } // ::gtpo
 
-#include "./gtpoGraphBase.hpp"
+#include "./graph.hpp"

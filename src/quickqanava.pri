@@ -39,15 +39,16 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanContainerAdapter.h     \
             $$PWD/qanBottomRightResizer.h   \
-            $$PWD/gtpo/gtpoUtils.h          \
-            $$PWD/gtpo/gtpoEdgeBase.h       \
-            $$PWD/gtpo/gtpoNodeBase.h       \
-            $$PWD/gtpo/gtpoNodeBase.hpp     \
-            $$PWD/gtpo/gtpoGraphBase.h      \
-            $$PWD/gtpo/gtpoGraphBase.hpp    \
-            $$PWD/gtpo/gtpoGraphProperty.h  \
-            $$PWD/gtpo/behaviourable.h      \
-            $$PWD/gtpo/behaviourable.hpp
+            $$PWD/gtpo/utils.h              \  # GTPO
+            $$PWD/gtpo/container_adapter.h  \
+            $$PWD/gtpo/edge.h               \
+            $$PWD/gtpo/node.h               \
+            $$PWD/gtpo/node.hpp             \
+            $$PWD/gtpo/graph.h              \
+            $$PWD/gtpo/graph.hpp            \
+            $$PWD/gtpo/graph_property.h     \
+            $$PWD/gtpo/observable.h         \
+            $$PWD/gtpo/observable.hpp
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \

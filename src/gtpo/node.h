@@ -43,10 +43,10 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpoUtils.h"
-#include "./gtpoGraphProperty.h"
-#include "./behaviourable.h"
-#include "./gtpoContainerAdapter.h"
+#include "./utils.h"
+#include "./graph_property.h"
+#include "./observable.h"
+#include "./container_adapter.h"
 
 // QuickContainers headers
 #include "../../QuickContainers/include/qcmContainer.h"
@@ -158,7 +158,7 @@ public:
     inline auto get_group() noexcept -> group_t* { return _group; }
     inline auto get_group() const noexcept -> const group_t* { return _group; }
 private:
-    group_t*  _group;
+    group_t*  _group = nullptr;
     //@}
     //-------------------------------------------------------------------------
 

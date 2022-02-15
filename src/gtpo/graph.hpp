@@ -101,7 +101,6 @@ auto    graph<graph_base_t, node_t,
         return false;
     try {
         node->set_graph(this);
-        // FIXME v2
         container_adapter<nodes_t>::insert(node, _nodes);
         container_adapter<nodes_search_t>::insert(node, _nodes_search);
         container_adapter<nodes_t>::insert(node, _root_nodes);

@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	behaviourable.h
+// \file	observable.h
 // \author	benoit@destrat.io
 // \date	2016 02 08
 //-----------------------------------------------------------------------------
@@ -40,10 +40,6 @@
 #include <vector>
 #include <memory>
 #include <utility>          // c++14 std::index_sequence
-
-// FIXME v2
-// GTpo headers
-//#include "./behaviour.h"
 
 namespace gtpo { // ::gtpo
 
@@ -290,4 +286,4 @@ protected:
 
 } // ::gtpo
 
-#include "./behaviourable.hpp"
+#include "./observable.hpp"

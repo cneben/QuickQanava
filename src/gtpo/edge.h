@@ -43,9 +43,8 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./gtpoUtils.h"
-//#include "./behaviour.h"
-#include "./gtpo/gtpoGraphProperty.h"
+#include "./utils.h"
+#include "./graph_property.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */

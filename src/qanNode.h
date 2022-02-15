@@ -40,7 +40,7 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./gtpo/gtpoNodeBase.h"
+#include "./gtpo/node.h"
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"

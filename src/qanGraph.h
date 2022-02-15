@@ -34,11 +34,8 @@
 
 #pragma once
 
-// GTpo headers
-//#include "../GTpo/src/gtpo/GTpo"
-
-#include "./gtpo/gtpoNodeBase.h"
-#include "./gtpo/gtpoGraphBase.h"
+#include "./gtpo/node.h"
+#include "./gtpo/graph.h"
 
 // Qt headers
 #include <QString>
