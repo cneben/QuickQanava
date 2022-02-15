@@ -45,8 +45,7 @@
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
-Edge::Edge(QObject* parent) :
-    gtpo::edge<qan::Config>{parent}
+Edge::Edge(QObject* parent) : super_t{parent}
 {
 }
 
@@ -56,13 +55,8 @@ Edge::~Edge()
         _item->deleteLater();
 }
 
-qan::Graph* Edge::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
-}
-
-const qan::Graph* Edge::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
-}
+qan::Graph*         Edge::getGraph() noexcept { return get_graph(); }
+const qan::Graph*   Edge::getGraph() const noexcept { return get_graph(); }
 
 qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
 
@@ -96,21 +90,8 @@ qan::EdgeStyle* Edge::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /*! \name Edge Topology Management *///------------------------------------
-qan::Node*  Edge::getSource() noexcept
-{
-    auto source = qobject_cast<qan::Node*>(get_src().lock().get());
-    if (source != nullptr)
-        QQmlEngine::setObjectOwnership(source, QQmlEngine::CppOwnership);
-    return source;
-}
-
-qan::Node*  Edge::getDestination() noexcept
-{
-    auto dst = qobject_cast<qan::Node*>(get_dst().lock().get());
-    if (dst != nullptr)
-        QQmlEngine::setObjectOwnership(dst, QQmlEngine::CppOwnership);
-    return dst;
-}
+qan::Node*  Edge::getSource() noexcept { return get_src(); }
+qan::Node*  Edge::getDestination() noexcept { return get_dst(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------

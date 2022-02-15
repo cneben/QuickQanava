@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpo_topology_tests.cpp
+// \file	topology_tests.cpp
 // \author	benoit@qanava.org
 // \date	2016 01 26
 //-----------------------------------------------------------------------------
@@ -38,7 +38,7 @@
 #include <iostream>
 
 // GTpo headers
-#include <GTpo>
+#include <QuickQanava>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -48,29 +48,27 @@
 // Graph node tests
 //-----------------------------------------------------------------------------
 
-TEST(GTpoTopology, nodeBasic)
+TEST(topology, graph_empty)
 {
     // A default empty graph should have no nodes nor root nodes
-    gtpo::graph<> g;
-    EXPECT_EQ( g.get_node_count(), 0 );
-    EXPECT_EQ( g.get_root_node_count(), 0 );
+    qan::Graph g;
+    EXPECT_EQ(g.get_node_count(), 0);
+    EXPECT_EQ(g.get_root_node_count(), 0);
 }
 
-TEST(GTpoTopology, nodeInsertCount)
+TEST(topology, graph_insert)
 {
     // Inserting a node should increase node count and root node count
-    gtpo::graph<> g;
-    auto nc = g.get_node_count();
-    auto rnc = g.get_root_node_count();
-    EXPECT_EQ( nc, 0);
-    EXPECT_EQ( rnc, 0);
-    g.create_node();
-    EXPECT_EQ( g.get_node_count(), nc + 1 );
-    EXPECT_EQ( g.get_root_node_count(), rnc + 1 );
+    qan::Graph g;
+    EXPECT_EQ(g.get_node_count(), 0);
+    EXPECT_EQ(g.get_root_node_count(), 0);
+    g.insertNonVisualNode(new qan::Node{});
+    EXPECT_EQ(g.get_node_count(), 1);
+    EXPECT_EQ(g.get_root_node_count(), 1);
     g.clear();
 }
 
-TEST(GTpoTopology, remove_nodeCount)
+/*TEST(GTpoTopology, remove_nodeCount)
 {
     gtpo::graph<> g;
     gtpo::graph<>::weak_node_t n = g.create_node();
@@ -369,3 +367,4 @@ TEST(GTpoTopology, remove_nodeInOutDegree)
     EXPECT_EQ( n1->get_out_degree(), 0 );
     EXPECT_EQ( n3->get_in_degree(), 0 );
 }
+*/

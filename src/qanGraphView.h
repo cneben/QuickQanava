@@ -35,7 +35,7 @@
 #pragma once
 
 // GTpo headers
-#include <gtpo/GTpo>
+//#include <gtpo/GTpo>
 
 // QuickQanava headers
 #include "./qanGraph.h"

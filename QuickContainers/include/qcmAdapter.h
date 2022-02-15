@@ -79,8 +79,8 @@ struct adapter< QList, T > {
 };
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template < typename T >
-struct adapter< QVector, T > {
+template <typename T>
+struct adapter<QVector, T> {
     inline static void  reserve(QVector<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
 
     inline static void  append(QVector<T>& c, const T& t)   { c.append(t); }
@@ -119,8 +119,8 @@ struct adapter< QSet, T > {
     }
 };
 
-template < typename T >
-struct adapter< std::vector, T > {
+template <typename T>
+struct adapter<std::vector, T> {
     inline static void  reserve(std::vector<T>& c, std::size_t size) { c.reserve(size); }
 
     inline static void  append(std::vector<T>& c, const T& t)   { c.push_back(t); }

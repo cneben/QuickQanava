@@ -46,7 +46,6 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
 #include "./qanNode.h"

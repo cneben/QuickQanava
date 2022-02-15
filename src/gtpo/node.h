@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,64 +32,53 @@
 // \date	2016 01 22
 //-----------------------------------------------------------------------------
 
-#ifndef gtpo_node_h
-#define gtpo_node_h
+#pragma once
 
 // STD headers
-#include <list>
 #include <unordered_set>
-#include <memory>           // std::shared_ptr std::weak_ptr and std::make_shared
-#include <functional>       // std::hash
 #include <cassert>
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
-#include "./config.h"
 #include "./graph_property.h"
-#include "./node_behaviour.h"
+#include "./observable.h"
+#include "./observer.h"
+#include "./container_adapter.h"
+
+// QuickContainers headers
+#include "../../QuickContainers/include/qcmContainer.h"
 
 namespace gtpo { // ::gtpo
-
-template <class config_t>
-class graph;
-
-template <class config_t>
-class group;
-
-template <class config_t>
-class edge;
 
 /*! \brief Base class for modelling nodes with an in/out edges list in a gtpo::graph graph.
  *
  * \nosubgrouping
  */
-template <class config_t = gtpo::config<>>
-class node : public config_t::node_base,
-             public graph_property_impl<gtpo::graph<config_t>>,
-             public gtpo::behaviourable_node< config_t >,
-             public std::enable_shared_from_this<node<config_t>>
-             //Note: following don't work : public std::enable_shared_from_this<typename config_t::final_node_t>
-                // It prevent node and group from having a common ancestor...
+template <class node_base_t,
+          class graph_t,
+          class node_t,
+          class edge_t,
+          class group_t>
+class node : public node_base_t,
+             public graph_property_impl<graph_t>,
+             public gtpo::observable_node<node_t, edge_t>
 {
-    friend gtpo::graph<config_t>;   // graph need access to graph_property_impl<>::set_graph()
-
     /*! \name Node Management *///---------------------------------------------
     //@{
 public:
-    using graph_t       = gtpo::graph<config_t>;
-    using weak_node_t     = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node_t   = std::shared_ptr<typename config_t::final_node_t>;
-    using weak_nodes_t    = typename config_t::template node_container_t< weak_node_t >;
+    friend graph_t;   // graph need access to graph_property_impl<>::set_graph()
+    using nodes_t   = qcm::Container<QVector, node_t*>;
 
-    //! User friendly shortcut type to this concrete node Behaviourable base type.
-    using behaviourable_base = gtpo::behaviourable_node< config_t >;
+    //! User friendly shortcut type to node gtpo::observable<> base class.
+    using observable_base_t =  gtpo::observable_node<node_t, edge_t>;
 
-    node(typename config_t::node_base* parent = nullptr) noexcept : config_t::node_base{parent} { }
+    node(node_base_t* parent = nullptr) noexcept : node_base_t{parent} { }
     virtual ~node() noexcept {
-        _in_edges.clear(); _out_edges.clear();
-        _in_nodes.clear(); _out_nodes.clear();
-        if ( this->_graph != nullptr ) {
+        _in_edges.clear();
+        _out_edges.clear();
+        _in_nodes.clear();
+        _out_nodes.clear();
+        if (this->_graph != nullptr) {
             std::cerr << "gtpo::node<>::~node(): Warning: Node has been destroyed before beeing removed from the graph." << std::endl;
         }
         this->_graph = nullptr;
@@ -104,12 +93,12 @@ public:
     node(const node& node ) {
         static_cast<void>(node);
     }
-    node& operator=( node const& ) = delete;
+    node& operator=(node const&) = delete;
 
-    inline auto     add_dynamic_node_behaviour( std::unique_ptr<gtpo::dynamic_node_behaviour<config_t>> behaviour ) -> void {
-        if (behaviour)
-            behaviour->set_target(this->shared_from_this());
-        behaviourable_base::add_behaviour(std::move(behaviour));
+    auto    add_node_observer(std::unique_ptr<gtpo::node_observer<node_t, edge_t>> observer) -> void {
+        if (observer)
+            observer->set_target(reinterpret_cast<node_t*>(this));
+        observable_base_t::add_observer(std::move(observer));
     }
     //@}
     //-------------------------------------------------------------------------
@@ -117,57 +106,49 @@ public:
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using weak_edge_t     = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge_t   = std::shared_ptr<typename config_t::final_edge_t>;
-    using weak_edges_t    = typename config_t::template edge_container_t< weak_edge_t >;
+    using edges_t    = qcm::Container<QVector, edge_t*>;
 
     /*! \brief Insert edge \c outEdge as an out edge for this node.
      *
      * \note if \c outEdge source node is different from this node, it is set to this node.
      */
-    auto    add_out_edge( weak_edge_t sharedOutEdge ) noexcept( false ) -> void;
+    auto    add_out_edge(edge_t* outEdge) -> bool;
     /*! \brief Insert edge \c inEdge as an in edge for \c node.
      *
      * \note if \c inEdge destination node is different from \c node, it is automatically set to \c node.
      */
-    auto    add_in_edge( weak_edge_t sharedInEdge ) noexcept( false ) -> void;
-    /*! \brief Remove edge \c outEdge from this node out edges.
-     *
-     * \throw gtpo::bad_topology_error
+    auto    add_in_edge(edge_t* inEdge ) -> bool;
+    /*! \brief Remove edge \c outEdge from this node out edges.     *
      */
-    auto    remove_out_edge( const weak_edge_t outEdge ) noexcept( false ) -> void;
+    auto    remove_out_edge(const edge_t* outEdge) -> bool;
     /*! \brief Remove edge \c inEdge from this node in edges.
-     *
-     * \throw gtpo::bad_topology_error
      */
-    auto    remove_in_edge( const weak_edge_t inEdge ) noexcept( false ) -> void;
+    auto    remove_in_edge(const edge_t* inEdge) -> bool;
 
-    inline auto     get_in_edges() const noexcept -> const weak_edges_t& { return _in_edges; }
-    inline auto     get_out_edges() const noexcept -> const weak_edges_t& { return _out_edges; }
+    inline auto get_in_edges() const noexcept -> const edges_t& { return _in_edges; }
+    inline auto get_out_edges() const noexcept -> const edges_t& { return _out_edges; }
 
-    inline auto     get_in_nodes() const noexcept -> const weak_nodes_t& { return _in_nodes; }
-    inline auto     get_out_nodes() const noexcept -> const weak_nodes_t& { return _out_nodes; }
+    inline auto get_in_nodes() const noexcept -> const nodes_t& { return _in_nodes; }
+    inline auto get_out_nodes() const noexcept -> const nodes_t& { return _out_nodes; }
 
-    inline auto     get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _in_edges.size() ); }
-    inline auto     get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _out_edges.size() ); }
+    inline auto get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _in_edges.size() ); }
+    inline auto get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _out_edges.size() ); }
 private:
-    weak_edges_t       _in_edges;
-    weak_edges_t       _out_edges;
-    weak_nodes_t       _in_nodes;
-    weak_nodes_t       _out_nodes;
+    edges_t     _in_edges;
+    edges_t     _out_edges;
+    nodes_t     _in_nodes;
+    nodes_t     _out_nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    using weak_group_t  = typename std::weak_ptr<typename config_t::final_group_t>;
-
-    inline auto set_group(const weak_group_t& group) noexcept -> void { _group = group; }
-    inline auto get_group() noexcept -> weak_group_t& { return _group; }
-    inline auto get_group() const noexcept -> const weak_group_t& { return _group; }
+    inline auto set_group(const group_t* group) noexcept -> void { _group = const_cast<group_t*>(group); }
+    inline auto get_group() noexcept -> group_t* { return _group; }
+    inline auto get_group() const noexcept -> const group_t* { return _group; }
 private:
-    weak_group_t    _group;
+    group_t*    _group = nullptr;
     //@}
     //-------------------------------------------------------------------------
 
@@ -177,10 +158,13 @@ public:
     inline auto is_group() const noexcept -> bool { return _is_group; }
 
     //! Return group's nodes.
-    inline auto get_nodes() const noexcept -> const weak_nodes_t& { return _nodes; }
+    inline auto get_nodes() const noexcept -> const nodes_t& { return _nodes; }
+
+    //! Return group's nodes.
+    inline auto get_nodes() -> nodes_t& { return _nodes; }
 
     //! Return true if group contains \c node.
-    auto        has_node(const weak_node_t& node) const noexcept -> bool;
+    auto        has_node(const node_t* node) const noexcept -> bool;
 
     //! Return group registered node count.
     inline auto get_node_count() const noexcept -> int { return static_cast< int >( _nodes.size() ); }
@@ -188,15 +172,15 @@ public:
 protected:
     inline  auto set_is_group(bool is_group) noexcept -> void { _is_group = is_group; }
 
-    inline  auto group_nodes() const noexcept -> const weak_nodes_t& { return _nodes; }
+    inline  auto group_nodes() const noexcept -> const nodes_t& { return _nodes; }
 private:
-    bool            _is_group = false;
-    weak_nodes_t   _nodes;
+    bool        _is_group = false;
+    nodes_t     _nodes;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
 
-#endif // gtpo_node_h
+#include "./node.hpp"
 

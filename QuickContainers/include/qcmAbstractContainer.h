@@ -32,8 +32,7 @@
 // \date    2015 06 20
 //-----------------------------------------------------------------------------
 
-#ifndef qcmAbstractContainer_h
-#define qcmAbstractContainer_h
+#pragma once
 
 // Std headers
 #include <memory>               // std::unique_ptr
@@ -101,6 +100,3 @@ protected:
 } // ::qcm
 
 QML_DECLARE_TYPE(qcm::AbstractContainer);
-
-#endif // qcmAbstractContainer_h
-

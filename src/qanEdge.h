@@ -35,7 +35,7 @@
 #pragma once
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
+#include "./gtpo/edge.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
@@ -43,17 +43,20 @@ namespace qan { // ::qan
 
 class Graph;
 class EdgeItem;
+class Node;
 
 //! Weighted directed edge linking two nodes in a graph.
 /*!
     \nosubgrouping
  */
-class Edge : public gtpo::edge<qan::Config>
+class Edge : public gtpo::edge<QObject, qan::Graph, Node>
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
 public:
+    using super_t = gtpo::edge<QObject, qan::Graph, Node>;
+
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge(QObject* parent = nullptr);
     Edge(const Edge&) = delete;
