@@ -48,7 +48,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/gtpo/graph.hpp            \
             $$PWD/gtpo/graph_property.h     \
             $$PWD/gtpo/observable.h         \
-            $$PWD/gtpo/observable.hpp
+            $$PWD/gtpo/observer.h
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \

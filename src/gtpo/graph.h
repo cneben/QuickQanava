@@ -45,6 +45,7 @@
 // GTpo headers
 #include "./utils.h"
 #include "./container_adapter.h"
+#include "./observable.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */

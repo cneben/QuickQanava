@@ -46,6 +46,7 @@
 #include "./utils.h"
 #include "./graph_property.h"
 #include "./observable.h"
+#include "./observer.h"
 #include "./container_adapter.h"
 
 // QuickContainers headers
@@ -192,5 +193,5 @@ private:
 
 } // ::gtpo
 
-#include "gtpoNodeBase.hpp"
+#include "./node.hpp"
 
