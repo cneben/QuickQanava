@@ -27,12 +27,46 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software library.
 //
-// \file	edge.hpp
+// \file	graph_property.h
 // \author	benoit@destrat.io
-// \date	2016 01 22
+// \date	2018 06 25
 //-----------------------------------------------------------------------------
+
+#pragma once
+
+#include <cstddef>
 
 namespace gtpo { // ::gtpo
 
+/*! \brief Add support for a pointer on owning graph for primitive (either a node, edge or group).
+ *
+ * \note The pointer on graph is intentionally a raw pointer to avoid any "smart pointer overhead". Moreover,
+ * GTpo is inherently designed to be used from Qt/QML who is not managing memory with std::make_shared, hence,
+ * using a std::weak_ptr or inheriting graph from std::enable_shared_from_this would be a nonsense...
+ */
+template<class graph_t>
+class graph_property_impl
+{
+public:
+    friend graph_t;   // graph need access to graph_property_impl<>::set_graph()
+
+    graph_property_impl() noexcept = default;
+    ~graph_property_impl() noexcept = default;
+    graph_property_impl(const graph_property_impl<graph_t>&) noexcept = default;
+    graph_property_impl& operator=(const graph_property_impl<graph_t>&) noexcept = default;
+    graph_property_impl(graph_property_impl<graph_t>&&) noexcept = default;
+    graph_property_impl& operator=(graph_property_impl<graph_t>&&) noexcept = default;
+
+public:
+    inline  graph_t*        get_graph() noexcept { return _graph; }
+    inline  const graph_t*  get_graph() const noexcept { return _graph; }
+    inline  void            set_graph(graph_t* graph) noexcept { _graph = graph; }
+    inline  void            set_graph(void* graph) noexcept { _graph = reinterpret_cast<graph_t*>(graph); }
+    inline  void            set_graph(std::nullptr_t) noexcept { _graph = nullptr; }
+protected:
+    // Note: This is the only raw pointer in GTpo.
+    graph_t*                _graph{ nullptr };
+};
 
 } // ::gtpo
+

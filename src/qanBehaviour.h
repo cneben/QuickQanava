@@ -39,13 +39,16 @@
 #include <QQuickItem>
 
 // GTpo headers
-#include "../GTpo/src/gtpo/node_behaviour.h"
+// FIXME v2
+//#include "../GTpo/src/gtpo/node_behaviour.h"
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanEdge.h"
 
 namespace qan { // ::qan
+
+class Node;
+class Edge;
 
 /*! \brief Define node behaviour interface to react to node topology events (QuickQanava adapter for gtpo::dynamic_node_nehaviour<>).
  *
@@ -59,14 +62,14 @@ namespace qan { // ::qan
  *
  *  \nosubgrouping
  */
-class NodeBehaviour : public QObject,
-                      public gtpo::dynamic_node_behaviour< qan::Config >
+class NodeBehaviour : public QObject/*,
+                      public gtpo::dynamic_node_behaviour< qan::Config >*/
 {
     Q_OBJECT
 public:
-    explicit NodeBehaviour( const std::string& name, QObject* parent = nullptr );
+    explicit NodeBehaviour(const std::string& name, QObject* parent = nullptr);
     virtual ~NodeBehaviour() override { }
-    NodeBehaviour( const NodeBehaviour& ) = delete;
+    NodeBehaviour(const NodeBehaviour&) = delete;
 
     /*! \name Behaviour Host Management *///-----------------------------------
     //@{
@@ -96,11 +99,13 @@ signals:
     /*! \name Notification Interface *///--------------------------------------
     //@{
 public:
-    using WeakNode  = gtpo::dynamic_node_behaviour< qan::Config >::weak_node_t;
-    using WeakEdge  = gtpo::dynamic_node_behaviour< qan::Config >::weak_edge_t;
+    // FIXME v2
+    //using WeakNode  = gtpo::dynamic_node_behaviour< qan::Config >::weak_node_t;
+    //using WeakEdge  = gtpo::dynamic_node_behaviour< qan::Config >::weak_edge_t;
 
+    // FIXME v2
     //! \copydoc gtpo::dynamic_node_nehaviour::inNodeInserted()
-    virtual void    on_in_node_inserted(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
+    /*virtual void    on_in_node_inserted(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
     //! \copydoc gtpo::dynamic_node_nehaviour::inNodeRemoved()
     virtual void    on_in_node_removed(WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge) noexcept override;
     //! \copydoc gtpo::dynamic_node_nehaviour::inNodeRemoved()
@@ -112,13 +117,13 @@ public:
     virtual void    on_out_node_removed(WeakNode& target, WeakNode& weakOutNode, const WeakEdge& edge) noexcept override;
     //! \copydoc gtpo::dynamic_node_nehaviour::outNodeRemoved()
     virtual void    on_out_node_removed(WeakNode& target) noexcept override { Q_UNUSED(target); }
-
+    */
 protected:
-    virtual void    inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept { Q_UNUSED( inNode ); Q_UNUSED(edge); }
-    virtual void    inNodeRemoved( qan::Node& inNode, qan::Edge& edge  ) noexcept { Q_UNUSED( inNode ); Q_UNUSED(edge); }
+    virtual void    inNodeInserted(qan::Node& inNode, qan::Edge& edge) noexcept { Q_UNUSED(inNode); Q_UNUSED(edge); }
+    virtual void    inNodeRemoved(qan::Node& inNode, qan::Edge& edge) noexcept { Q_UNUSED(inNode); Q_UNUSED(edge); }
 
-    virtual void    outNodeInserted( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); Q_UNUSED(edge); }
-    virtual void    outNodeRemoved( qan::Node& outNode, qan::Edge& edge  ) noexcept { Q_UNUSED( outNode ); Q_UNUSED(edge); }
+    virtual void    outNodeInserted(qan::Node& outNode, qan::Edge& edge) noexcept { Q_UNUSED(outNode); Q_UNUSED(edge); }
+    virtual void    outNodeRemoved(qan::Node& outNode, qan::Edge& edge) noexcept { Q_UNUSED(outNode); Q_UNUSED(edge); }
     //@}
     //-------------------------------------------------------------------------
 };

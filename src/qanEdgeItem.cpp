@@ -277,29 +277,29 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     }
 
     qan::GroupItem* srcGroupItem = nullptr;
-    if(  srcItem != nullptr ) {
+    if (srcItem != nullptr) {
         const auto srcNode = static_cast<qan::Node*>(_sourceItem->getNode());
-        if ( srcNode != nullptr ) {
-            const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group().lock().get());
-            if ( srcNodeGroup != nullptr )
+        if (srcNode != nullptr) {
+            const auto srcNodeGroup = qobject_cast<qan::Group*>(srcNode->get_group());
+            if (srcNodeGroup != nullptr)
                 srcGroupItem = srcNodeGroup->getGroupItem();
         }
     }
 
     qan::NodeItem*  dstNodeItem = qobject_cast<qan::NodeItem*>(_destinationItem);
-    if ( dstNodeItem == nullptr &&
-         _edge ) {
-        qan::Node*  dstNode = static_cast< qan::Node* >( _edge->get_dst().lock().get() );
-        if ( dstNode != nullptr )
+    if (dstNodeItem == nullptr &&
+        _edge) {
+        qan::Node*  dstNode = static_cast<qan::Node*>(_edge->get_dst());
+        if (dstNode != nullptr)
             dstNodeItem = dstNode->getItem();
     }
 
     // Initialize dstGroupItem: eventual group item for dst item
     qan::GroupItem* dstGroupItem = nullptr;
-    if ( dstNodeItem != nullptr &&
-         dstNodeItem->getNode() != nullptr ) {
-        auto dstNodeGroup = qobject_cast<qan::Group*>( dstNodeItem->getNode()->get_group().lock().get() );
-        if ( dstNodeGroup )
+    if (dstNodeItem != nullptr &&
+        dstNodeItem->getNode() != nullptr) {
+        auto dstNodeGroup = qobject_cast<qan::Group*>(dstNodeItem->getNode()->get_group());
+        if (dstNodeGroup != nullptr)
             dstGroupItem = dstNodeGroup->getGroupItem();
     }
 

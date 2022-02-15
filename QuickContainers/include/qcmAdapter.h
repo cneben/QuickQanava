@@ -79,8 +79,8 @@ struct adapter< QList, T > {
 };
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template < typename T >
-struct adapter< QVector, T > {
+template <typename T>
+struct adapter<QVector, T> {
     inline static void  reserve(QVector<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
 
     inline static void  append(QVector<T>& c, const T& t)   { c.append(t); }
@@ -112,15 +112,15 @@ struct adapter< QSet, T > {
     inline static void  remove(QSet<T>& c, std::size_t i)   { c.erase(c.cbegin() + static_cast<int>(i)); }
     inline static int   removeAll(QSet<T>& c, const T& t )  { return c.remove(t); }
 
-    inline static bool      contains(const QSet<T>& c, const T& t) { return c.contains(t); }
-    inline static int       indexOf(const QSet<T>& c, const T& t) {
+    inline static bool  contains(const QSet<T>& c, const T& t) { return c.contains(t); }
+    inline static int   indexOf(const QSet<T>& c, const T& t) {
         const auto r = c.find(t);
         return r == c.cend() ? -1 : std::distance(c.cbegin(), r);
     }
 };
 
-template < typename T >
-struct adapter< std::vector, T > {
+template <typename T>
+struct adapter<std::vector, T> {
     inline static void  reserve(std::vector<T>& c, std::size_t size) { c.reserve(size); }
 
     inline static void  append(std::vector<T>& c, const T& t)   { c.push_back(t); }

@@ -2,7 +2,6 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
-include(../GTpo/gtpo.pri)
 include(../QuickContainers/quickcontainers.pri)
 
 # Note: Qmake and pri inclusion is reserved to Qt5.
@@ -16,7 +15,6 @@ RESOURCES       += $$PWD/GraphicalEffects5/QuickQanavaGraphicalEffects.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanUtils.h                \
-            $$PWD/qanGraphConfig.h          \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
             $$PWD/qanEdgeItem.h             \
@@ -40,7 +38,14 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGrid.h                 \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanContainerAdapter.h     \
-            $$PWD/qanBottomRightResizer.h
+            $$PWD/qanBottomRightResizer.h   \
+            $$PWD/gtpo/gtpoUtils.h          \
+            $$PWD/gtpo/gtpoEdgeBase.h       \
+            $$PWD/gtpo/gtpoNodeBase.h       \
+            $$PWD/gtpo/gtpoNodeBase.hpp     \
+            $$PWD/gtpo/gtpoGraphBase.h      \
+            $$PWD/gtpo/gtpoGraphBase.hpp    \
+            $$PWD/gtpo/gtpoGraphProperty.h
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \

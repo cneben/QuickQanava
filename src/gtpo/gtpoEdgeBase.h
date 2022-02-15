@@ -32,8 +32,7 @@
 // \date	2017 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef gtpo_edge_h
-#define gtpo_edge_h
+#pragma once
 
 // STD headers
 #include <list>
@@ -44,62 +43,38 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
-#include "./behaviour.h"
-#include "./config.h"
+#include "./gtpoUtils.h"
+//#include "./behaviour.h"
+#include "./gtpo/gtpoGraphProperty.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
 namespace gtpo { // ::gtpo
 
-template <class config>
-class graph;
-
-template <class config>
-class node;
-
-template <class config>
-class group;
-
-
 /*! Directed edge linking two nodes in a graph.
  *
  * \nosubgrouping
  */
-template <class config_t = gtpo::default_config>
-class edge : public config_t::edge_base,
-                public std::enable_shared_from_this<typename config_t::final_edge_t>
+template <class edge_base_t,
+          class graph_t,
+          class node_t>
+class edge : public edge_base_t,
+             public graph_property_impl<graph_t>
 {
     /*! \name Edge Construction *///-------------------------------------------
     //@{
-    friend graph<config_t>;   // graph need access to set_graph()
 public:
-    using graph_t       = graph<config_t>;
+    using edge_t    = edge<edge_base_t, graph_t, node_t>;
 
-    using weak_node_t   = std::weak_ptr<typename config_t::final_node_t>;
-    using shared_node_t = std::shared_ptr<typename config_t::final_node_t>;
-
-    using weak_edge_t   = std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge_t = std::shared_ptr<typename config_t::final_edge_t>;
-
-    edge(typename config_t::node_base* parent = nullptr) noexcept : config_t::edge_base{parent} {}
-    explicit edge( const weak_node_t& src, const weak_node_t& dst ) :
-        config_t::edge_base{}, _src{ src }, _dst{ dst } { }
+    edge(edge_base_t* parent = nullptr) noexcept : edge_base_t{parent} {}
+    explicit edge(const node_t* src, const node_t* dst) :
+        edge_base_t{}, _src{src}, _dst{dst} { }
     virtual ~edge() {
-        if (_graph != nullptr)
+        if (graph_property_impl<graph_t>::_graph != nullptr)
             std::cerr << "gtpo::edge<>::~edge(): Warning: an edge has been deleted before beeing " <<
                          "removed from the graph." << std::endl;
-        _graph = nullptr;
     }
     edge(const edge&) = delete;
-
-public:
-    inline graph_t*         get_graph() noexcept { return _graph; }
-    inline const graph_t*   get_graph() const noexcept { return _graph; }
-private:
-    void                    set_graph( graph_t* graph ) { _graph = graph; }
-public:
-    graph_t*                _graph{ nullptr };
     //@}
     //-------------------------------------------------------------------------
 
@@ -107,11 +82,11 @@ public:
     //@{
 public:
     //! Get the edge current serializable property (false=not serializable, for example a control node).
-    inline  auto    get_serializable( ) const -> bool { return _serializable; }
+    inline  auto    get_serializable() const -> bool { return _serializable; }
     //! Shortcut to get_serializable().
-    inline  auto    is_serializable( ) const -> bool { return get_serializable(); }
+    inline  auto    is_serializable() const -> bool { return get_serializable(); }
     //! Change the edge serializable property (it will not trigger an edge changed call in graph behaviour).
-    inline  auto    set_serializable( bool serializable ) -> void { _serializable = serializable; }
+    inline  auto    set_serializable(bool serializable) -> void { _serializable = serializable; }
 private:
     //! Edge serializable property (default to true ie serializable).
     bool            _serializable = true;
@@ -121,20 +96,18 @@ private:
     /*! \name Source / Destination Management *///-----------------------------
     //@{
 public:
-    inline auto set_src( weak_node_t src ) noexcept -> void { _src = src; }
-    inline auto set_dst( weak_node_t dst ) noexcept -> void { _dst = dst; }
-    inline auto get_src( ) noexcept -> weak_node_t& { return _src; }
-    inline auto get_src( ) const noexcept -> const weak_node_t& { return _src; }
-    inline auto get_dst( ) noexcept -> weak_node_t& { return _dst; }
-    inline auto get_dst( ) const noexcept -> const weak_node_t& { return _dst; }
+    inline auto set_src(node_t* src) noexcept -> void { _src = src; }
+    inline auto set_dst(node_t* dst) noexcept -> void { _dst = dst; }
+    inline auto get_src() noexcept -> node_t* { return _src; }
+    inline auto get_src() const noexcept -> const node_t* { return _src; }
+    inline auto get_dst() noexcept -> node_t* { return _dst; }
+    inline auto get_dst() const noexcept -> const node_t* { return _dst; }
 private:
-    weak_node_t _src;
-    weak_node_t _dst;
+    node_t* _src = nullptr;
+    node_t* _dst = nullptr;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
-
-#endif // gtpo_edge_h
 

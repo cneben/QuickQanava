@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
 Node::Node(QObject* parent) :
-    gtpo::node<qan::Config>{parent}
+    super_t{parent}
 {
     Q_UNUSED(parent)
 
@@ -69,11 +69,15 @@ Node::~Node()
 }
 
 qan::Graph* Node::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
+    // FIXME v2
+    //return qobject_cast< qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
+    return get_graph();
 }
 
 const qan::Graph* Node::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
+    // FIXME v2
+    //return qobject_cast< const qan::Graph* >( gtpo::node< qan::Config >::get_graph() );
+    return get_graph();
 }
 
 bool    Node::operator==( const qan::Node& right ) const
@@ -139,21 +143,21 @@ int     Node::getOutDegree() const
 
 QAbstractItemModel* Node::qmlGetOutEdges() const
 {
-    return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) );
+    // FIXME v2
+    //return const_cast<QAbstractItemModel*>( qobject_cast< const QAbstractItemModel* >( gtpo::node<qan::Config>::get_out_edges().model() ) );
+    return super_t::get_out_edges().model();
 }
 
 std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges0() const
 {
     std::unordered_set<qan::Edge*> edges;
-    for (const auto& in_edge_ptr: qAsConst(get_in_edges())) {
-        const auto in_edge = in_edge_ptr.lock();
-        if (in_edge)
-            edges.insert(in_edge.get());
+    for (const auto in_edge: qAsConst(get_in_edges())) {
+        if (in_edge != nullptr)
+            edges.insert(in_edge);
     }
-    for (const auto& out_edge_ptr: qAsConst(get_out_edges())) {
-        const auto out_edge = out_edge_ptr.lock();
-        if (out_edge)
-            edges.insert(out_edge.get());
+    for (const auto out_edge: qAsConst(get_out_edges())) {
+        if (out_edge != nullptr)
+            edges.insert(out_edge);
     }
     return edges;
 }
@@ -167,7 +171,9 @@ void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
     if ( !behaviour )
         return;
     behaviour->setHost(this);
-    add_dynamic_node_behaviour(std::move(behaviour));
+    // FIXME v2
+    qWarning() << "qan::Node::installBehaviour(): FIXME v2";
+    //add_dynamic_node_behaviour(std::move(behaviour));
 }
 //-----------------------------------------------------------------------------
 

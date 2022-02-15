@@ -32,8 +32,7 @@
 // \date	2016 01 22
 //-----------------------------------------------------------------------------
 
-#ifndef gtpo_graph_h
-#define gtpo_graph_h
+#pragma once
 
 // STD headers
 #include <list>
@@ -44,18 +43,16 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
-#include "./config.h"
-#include "./edge.h"
-#include "./node.h"
-#include "./graph_behaviour.h"
+#include "./gtpoUtils.h"
+//#include "./config.h"
+//#include "./edge.h"
+//#include "./node.h"
+//#include "./graph_behaviour.h"
+#include "./gtpoContainerAdapter.h"
 
 /*! \brief Main GTpo namespace (\#include \<GTpo\>).
  */
 namespace gtpo { // ::gtpo
-
-template <class config_t>
-class graph;
 
 /*! \brief Weighted directed graph using a node-list, edge-list representation.
  *
@@ -67,57 +64,49 @@ class graph;
  *       typename X::template T c++11 syntax and using Nodes = typename config_t::template node_container_t< Node* >;
  *
  */
-template < class config_t = gtpo::default_config >
-class graph : public config_t::graph_base,
-              public gtpo::behaviourable_graph< config_t >
+template <class graph_base_t,
+          class node_t,
+          class group_t,
+          class edge_t>
+class graph : public graph_base_t/*,
+              public gtpo::behaviourable_graph< config_t >*/
 {
     /*! \name Graph Management *///--------------------------------------------
     //@{
 public:
-    using graph_t           = graph<config_t>;
+    using graph_t           = graph<graph_base_t, node_t, group_t, edge_t>;
 
-    // Shortcut for user access to graph configuration.
-    using final_config_t      = config_t;
+    using nodes_t           = qcm::Container<QVector, node_t*>;
+    using nodes_search_t    = QSet<node_t*>;
 
-    using node_t              = typename config_t::final_node_t;
-    using shared_node_t       = typename std::shared_ptr<typename config_t::final_node_t>;
-    using weak_node_t         = typename std::weak_ptr<typename config_t::final_node_t>;
-    using shared_nodes_t      = typename config_t::template node_container_t< shared_node_t >;
-    using weak_nodes_t        = typename config_t::template node_container_t< weak_node_t >;
-    using weak_nodes_t_search = typename config_t::template search_container_t< weak_node_t >;
+    using groups_t          = qcm::Container<QVector, group_t*>;
 
-    using weak_edge_t         = typename std::weak_ptr<typename config_t::final_edge_t>;
-    using shared_edge_t       = typename std::shared_ptr<typename config_t::final_edge_t>;
-    using weak_edges_t        = typename config_t::template edge_container_t< weak_edge_t >;
-    using shared_edges_t      = typename config_t::template edge_container_t< shared_edge_t >;
-    using weak_edges_search_t = typename config_t::template search_container_t< weak_edge_t >;
-
-    using group_t             = typename config_t::final_group_t;
-    using shared_group_t      = typename std::shared_ptr<typename config_t::final_group_t>;
-    using weak_group_t        = typename std::weak_ptr<typename config_t::final_group_t>;
-    using weak_groups_t       = typename config_t::template node_container_t<weak_group_t>;
+    using edges_t           = qcm::Container<QVector, edge_t*>;
+    using edges_search_t    = QSet<edge_t*>;
 
     //! User friendly shortcut to this concrete graph behaviour.
-    using behaviour = graph_behaviour< config_t >;
+    //using behaviour = graph_behaviour< config_t >;
     //! User friendly shortcut type to this concrete graph Behaviourable base type.
-    using behaviourable_base = gtpo::behaviourable_graph< config_t >;
+    //using behaviourable_base = gtpo::behaviourable_graph< config_t >;
 
 public:
-    using size_type  = typename shared_nodes_t::size_type;
+    // FIXME v2
+    using size_type  = unsigned int;
+    //using size_type  = typename shared_nodes_t::size_type;
 
     graph() noexcept :
-        config_t::graph_base{},
-        behaviourable_base{} { }
+        graph_base_t{}/*,
+        behaviourable_base{}*/ { }
 
-    template < class B >
-    explicit graph( B* parent ) noexcept :
-        config_t::graph_base{parent},
-        behaviourable_base{} { }
+    template <class B>
+    explicit graph(B* parent) noexcept :
+        graph_base_t{parent}/*,
+        behaviourable_base{}*/ { }
 
     ~graph();
 
-    graph( const graph& ) = delete;
-    graph& operator=( const graph& ) = delete;
+    graph(const graph&) = delete;
+    graph& operator=(const graph&) = delete;
 
     /*! \brief Clear the graph from all its content (nodes, edges, groups, behaviours).
      *
@@ -161,10 +150,10 @@ public:
      * \return a reference to the created node (graph has ownership for the node).
      * \throw gtpo::bad_topology_error with an error description if creation fails.
      */
-    auto    create_node() noexcept( false ) -> weak_node_t;
+    auto    create_node() -> node_t*;
 
     /*! \brief Insert a node created outside of GTpo into the graph.
-     *
+     *  FIXME v2 interface changed
      * If your nodes must be created outside of GTpo (ie not with the create_node() method),
      * the only way of giving node ownership to GTpo is trought the insert_node method.
      * Example of a node created from a QML component:
@@ -175,7 +164,7 @@ public:
      * \endcode
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    auto    insert_node( shared_node_t node ) noexcept( false ) -> weak_node_t;
+    auto    insert_node(node_t* node) -> bool;
 
     /*! \brief Remove node \c node from graph.
      *
@@ -184,7 +173,7 @@ public:
      * beeing removed (any group behaviour will also be notified that the node is ungrouped).
      * \throw gtpo::bad_topology_error if node can't be removed (or node is not valid).
      */
-    auto    remove_node( weak_node_t weakNode ) noexcept( false ) -> void;
+    auto    remove_node(node_t* node ) -> bool;
 
     //! Return the number of nodes actually registered in graph.
     inline auto get_node_count() const -> size_type { return _nodes.size(); }
@@ -198,7 +187,7 @@ public:
      *
      * \throw gtpo::bad_topology_error if \c node in degree is different from 0.
      */
-    auto    install_root_node( weak_node_t node ) noexcept( false ) -> void;
+    auto    install_root_node(node_t* node) -> void;
     /*! \brief Test if a given \c node is a root node.
      *
      * This method is safer than testing node->get_in_degree()==0, since it check
@@ -207,30 +196,30 @@ public:
      * \return true if \c node is a root node, false otherwise.
      * \throw gtpo::bad_topology_error if there is a graph cohenrency problem (ie node is in the root node cache but has a zero in degree).
      */
-    auto    is_root_node( weak_node_t node ) const noexcept( false ) -> bool;
+    auto    is_root_node(node_t* node) const -> bool;
 
     //! Use fast search container to find if a given \c node is part of this graph.
-    auto    contains( weak_node_t node ) const noexcept -> bool;
+    auto    contains(const node_t* node) const -> bool;
 
     //! Graph main nodes container.
-    inline auto     get_nodes() const -> const shared_nodes_t& { return _nodes; }
+    inline auto     get_nodes() const -> const nodes_t& { return _nodes; }
     //! Return a const begin iterator over graph shared_node_t nodes.
-    inline auto     begin() const -> typename shared_nodes_t::const_iterator { return _nodes.begin( ); }
+    inline auto     begin() const -> typename nodes_t::const_iterator { return _nodes.begin( ); }
     //! Return a const begin iterator over graph shared_node_t nodes.
-    inline auto     end() const -> typename shared_nodes_t::const_iterator { return _nodes.end( ); }
+    inline auto     end() const -> typename nodes_t::const_iterator { return _nodes.end( ); }
 
     //! Return a const begin iterator over graph shared_node_t nodes.
-    inline auto     cbegin() const -> typename shared_nodes_t::const_iterator { return _nodes.cbegin(); }
+    inline auto     cbegin() const -> typename nodes_t::const_iterator { return _nodes.cbegin(); }
     //! Return a const end iterator over graph shared_node_t nodes.
-    inline auto     cend() const -> typename shared_nodes_t::const_iterator { return _nodes.cend(); }
+    inline auto     cend() const -> typename nodes_t::const_iterator { return _nodes.cend(); }
 
     //! Graph root nodes container.
-    inline auto     get_root_nodes() const -> const weak_nodes_t& { return _root_nodes; }
+    inline auto     get_root_nodes() const -> const nodes_t& { return _root_nodes; }
 
 private:
-    shared_nodes_t      _nodes;
-    weak_nodes_t        _root_nodes;
-    weak_nodes_t_search _nodes_search;
+    nodes_t         _nodes;
+    nodes_t         _root_nodes;
+    nodes_search_t  _nodes_search;
     //@}
     //-------------------------------------------------------------------------
 
@@ -243,8 +232,7 @@ public:
      * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
      * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
      */
-    //template < class edge_t = typename config_t::final_edge_t >
-    auto        create_edge( weak_node_t source, weak_node_t destination ) noexcept(false) -> weak_edge_t;
+    auto        create_edge(node_t* source, node_t* destination) -> edge_t*;
 
     /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *
@@ -252,7 +240,7 @@ public:
      * \sa insert_node()
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    auto        insert_edge( shared_edge_t edge ) noexcept( false ) -> weak_edge_t;
+    auto        insert_edge(edge_t* edge) -> bool;
 
     /*! \brief Remove first directed edge found between \c source and \c destination node.
      *
@@ -262,7 +250,7 @@ public:
      * Complexity is O(edge count) at worst.
      * \throw a gtpo::bad_topology_error if suppression fails (either \c source or \c destination or edge does not exists).
      */
-    auto        remove_edge( weak_node_t source, weak_node_t destination ) noexcept( false ) -> void;
+    auto        remove_edge(node_t* source, node_t* destination) -> bool;
 
     /*! \brief Remove all directed edge between \c source and \c destination node.
      *
@@ -272,14 +260,14 @@ public:
      * Worst case complexity is O(edge count).
      * \throw a gtpo::bad_topology_error if suppression fails (either \c source or \c destination or edge does not exists).
      */
-    auto        remove_all_edges( weak_node_t source, weak_node_t destination ) noexcept( false ) -> void;
+    auto        remove_all_edges(node_t* source, node_t* destination) -> bool;
 
     /*! \brief Remove directed edge \c edge.
      *
      * Worst case complexity is O(edge count).
      * \throw a gtpo::bad_topology_error if suppression fails (\c edge does not exists).
      */
-    auto        remove_edge( weak_edge_t edge ) noexcept( false ) -> void;
+    auto        remove_edge(edge_t* edge) -> bool;
 
     /*! \brief Look for the first directed edge between \c source and \c destination and return it.
      *
@@ -287,21 +275,21 @@ public:
      * \return A shared reference on edge, en empty shared reference otherwise (result == false).
      * \throw noexcept.
      */
-    auto        find_edge( weak_node_t source, weak_node_t destination ) const noexcept -> weak_edge_t;
+    auto        find_edge(const node_t* source, const node_t* destination) const -> edge_t*;
     /*! \brief Test if a directed edge exists between nodes \c source and \c destination.
      *
      * This method only test a 1 degree relationship (ie a direct edge between \c source
      * and \c destination). Worst case complexity is O(edge count).
      * \throw noexcept.
      */
-    auto        has_edge( weak_node_t source, weak_node_t destination ) const noexcept -> bool;
+    auto        has_edge(const node_t* source, const node_t* destination) const -> bool;
     /*! \brief Look for the first directed restricted hyper edge between \c source node and \c destination edge and return it.
      *
      * Worst case complexity is O(edge count).
      * \return A shared reference on edge, en empty shared reference otherwise (result == false).
      * \throw noexcept.
      */
-    auto        find_edge( weak_node_t source, weak_edge_t destination ) const noexcept -> weak_edge_t;
+    auto        find_edge(const node_t* source, const edge_t* destination) const -> edge_t*;
 
     //! Return the number of edges currently existing in graph.
     auto        get_edge_count() const noexcept -> unsigned int { return static_cast<int>( _edges.size() ); }
@@ -314,16 +302,16 @@ public:
      * and \c destination). Worst case complexity is O(edge count).
      * \throw no GTpo exception (might throw a std::bad_weak_ptr).
      */
-    auto        get_edge_count( weak_node_t source, weak_node_t destination ) const noexcept( false ) -> unsigned int;
+    auto        get_edge_count(node_t* source, node_t* destination) const -> unsigned int;
 
     //! Use fast search container to find if a given \c edge is part of this graph.
-    auto        contains( weak_edge_t edge ) const noexcept -> bool;
+    auto        contains(edge_t* edge) const -> bool;
 
     //! Graph main edges container.
-    inline auto get_edges() const noexcept -> const shared_edges_t& { return _edges; }
+    inline auto get_edges() const noexcept -> const edges_t& { return _edges; }
 private:
-    shared_edges_t        _edges;
-    weak_edges_search_t   _edges_search;
+    edges_t         _edges;
+    edges_search_t  _edges_search;
     //@}
     //-------------------------------------------------------------------------
 
@@ -334,7 +322,7 @@ public:
      *
      * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
-    auto            insert_group( shared_group_t group ) noexcept( false ) -> weak_group_t;
+    auto            insert_group(group_t* group) -> bool;
 
     /*! \brief Remove node group \c group.
      *
@@ -344,16 +332,16 @@ public:
      * Worst case complexity is O(group count).
      * \throw a gtpo::bad_topology_error if suppression fails (\c group does not exists).
      */
-    auto            remove_group( weak_group_t group ) noexcept( false ) -> void;
+    auto            remove_group(group_t* group) -> void;
 
     //! Return true if a given group \c group is registered in the graph.
-    auto            has_group( const weak_group_t& group ) const -> bool;
+    auto            has_group(const group_t* group) const -> bool;
 
     //! Return the number of edges currently existing in graph.
-    inline auto     get_group_count() const noexcept -> int { return static_cast<int>( _groups.size() ); }
+    inline auto     get_group_count() const -> int { return static_cast<int>( _groups.size() ); }
 
     //! Graph main edges container.
-    inline auto     get_groups() const noexcept -> const weak_groups_t& { return _groups; }
+    inline auto     get_groups() const -> const groups_t& { return _groups; }
 
     /*! \brief Insert an existing node \c node in group \c group.
      *
@@ -362,7 +350,7 @@ public:
      *
      * \note \c node get_group() will return \c group if grouping succeed.
      */
-    auto            group_node( weak_node_t node, weak_group_t group) noexcept(false) -> void;
+    auto            group_node(node_t* node, group_t* group) -> void;
 
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *
@@ -371,15 +359,14 @@ public:
      *
      * \note \c node getGroup() will return an expired weak pointer if ungroup succeed.
      */
-    auto            ungroup_node( weak_node_t weakNode, weak_node_t weakGroup ) noexcept(false) -> void;
+    auto            ungroup_node(node_t* node, node_t* group) -> void;
 
 private:
-    weak_groups_t   _groups;
+    groups_t    _groups;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::gtpo
 
-#endif // gtpo_graph_h
-
+#include "./gtpoGraphBase.hpp"

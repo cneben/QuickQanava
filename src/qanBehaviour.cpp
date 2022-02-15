@@ -45,7 +45,7 @@ namespace qan { // ::qan
 NodeBehaviour::NodeBehaviour( const std::string& name, QObject* parent ) :
     QObject{ parent }
 {
-    gtpo::dynamic_node_behaviour< qan::Config >::setName(name);
+    //gtpo::dynamic_node_behaviour< qan::Config >::setName(name);
 }
 
 /* Behaviour Host Management *///----------------------------------------------
@@ -58,8 +58,9 @@ void    NodeBehaviour::setHost( qan::Node* host )
 }
 //-----------------------------------------------------------------------------
 
-
 /* Notification Interface *///-------------------------------------------------
+// FIXME v2
+/*
 void    NodeBehaviour::on_in_node_inserted( WeakNode& target, WeakNode& weakInNode, const WeakEdge& edge ) noexcept
 {
     Q_UNUSED(target);
@@ -95,6 +96,7 @@ void    NodeBehaviour::on_out_node_removed( WeakNode& target, WeakNode& weakOutN
     if ( outNode && outEdge )
         outNodeRemoved( *qobject_cast<qan::Node*>(outNode.get()), *outEdge );
 }
+*/
 //-----------------------------------------------------------------------------
 
 } // ::qan

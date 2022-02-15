@@ -35,7 +35,8 @@
 #pragma once
 
 // GTpo headers
-#include <gtpo/GTpo.h>
+// FIXME v2
+//#include <gtpo/GTpo.h>
 
 // QuickContainers headers
 #include <QuickContainers>
@@ -44,7 +45,6 @@
 #include <QQmlEngine>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
 #include "./qanNode.h"

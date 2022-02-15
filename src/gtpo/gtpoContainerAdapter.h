@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,34 +25,36 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file    container_adapter.h
-// \author  benoit@destrat.io
-// \date    2017 03 04
+// \file	qanContainerAdapter.h
+// \author	benoit@destrat.io
+// \date	2017 03 04
 //-----------------------------------------------------------------------------
 
-#ifndef gtpo_container_adapter_h
-#define gtpo_container_adapter_h
+#pragma once
 
-// Std headers
-#include <cstddef>          // std::size_t
-#include <list>
-#include <vector>
-#include <set>
+// FIXME v2
 #include <unordered_set>
-#include <memory>
+#include <vector>
+#include <list>
 
-// Gtpo headers
-#include "./utils.h"
+// Qt headers
+#include <QObject>
+#include <QList>
+#include <QVector>
+#include <QSet>
+
+// QuickContainers headers
+#include "../QuickContainers/include/qcmContainer.h"
 
 namespace gtpo { // ::gtpo
 
 template < typename T >
-struct std_container_adapter { };
+struct container_adapter { };
 
 template < typename T >
-struct std_container_adapter< std::vector<T> > {
+struct container_adapter< std::vector<T> > {
     inline static void  insert( T t, std::vector<T>& c ) { c.emplace_back( t ); }
     inline static void  insert( T t, std::vector<T>& c, int i ) { c.insert( i, t ); }
     inline static void  remove( const T& t, std::vector<T>& c )
@@ -64,8 +66,9 @@ struct std_container_adapter< std::vector<T> > {
     inline static   void        reserve( std::vector<T>& c, std::size_t s) { c.reserve(s); }
 };
 
+/*
 template < typename T >
-struct std_container_adapter< std::vector<std::shared_ptr<T>> > {
+struct container_adapter< std::vector<std::shared_ptr<T>> > {
     inline static void          insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
     static constexpr void       insert( std::shared_ptr<T> t, std::vector<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
     inline static void          remove( const std::shared_ptr<T>& t, std::vector<std::shared_ptr<T>>& c )
@@ -75,10 +78,10 @@ struct std_container_adapter< std::vector<std::shared_ptr<T>> > {
     inline static   std::size_t size( std::vector<std::shared_ptr<T>>& c ) { return c.size(); }
     inline static   bool        contains( const std::vector<std::shared_ptr<T>>& c, const std::shared_ptr<T>& t ) { return std::find(std::begin(c), std::end(c), t) != std::end(c); }
     inline static   void        reserve( std::vector<std::shared_ptr<T>>& c, std::size_t s) { c.reserve(s); }
-};
+};*/
 
-template < typename T >
-struct std_container_adapter< std::vector<std::weak_ptr<T>> > {
+/*template < typename T >
+struct container_adapter< std::vector<std::weak_ptr<T>> > {
     inline static void      insert( std::weak_ptr<T> t, std::vector<std::weak_ptr<T>>& c ) { c.emplace_back( t ); }
     static constexpr void   insert( std::weak_ptr<T> t, std::vector<std::weak_ptr<T>>& c, int i ) { c.insert( i, t ); }
     inline static void      remove( const std::weak_ptr<T>& t, std::vector<std::weak_ptr<T>>& c )
@@ -94,20 +97,20 @@ struct std_container_adapter< std::vector<std::weak_ptr<T>> > {
         }) != std::end(c);
     }
     inline static   void        reserve( std::vector<std::weak_ptr<T>>& c, std::size_t s) { c.reserve(s); }
-};
+};*/
 
-template < typename T >
-struct std_container_adapter< std::list<T> > {
+/*template < typename T >
+struct container_adapter< std::list<T> > {
     inline static void             insert( T t, std::list<T>& c ) { c.emplace_back( t ); }
     inline static constexpr void   insert( T t, std::list<T>& c, int i ) { c.insert( i, t ); }
     inline static void             remove( const T& t, std::list<T>& c )
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
-};
+};*/
 
 template < typename T >
-struct std_container_adapter< std::list<std::shared_ptr<T>> > {
+struct container_adapter< std::list<std::shared_ptr<T>> > {
     inline static void             insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
     inline static constexpr void   insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
     inline static void             remove( const std::shared_ptr<T>& t, std::list<std::shared_ptr<T>>& c )
@@ -116,35 +119,57 @@ struct std_container_adapter< std::list<std::shared_ptr<T>> > {
     }
 };
 
-template < typename T >
-struct std_container_adapter< std::set<T> > {
-    inline static void             insert( T t, std::set<T>& c ) { c.insert( t ); }
-    inline static constexpr void   insert( T t, std::set<T>& c, int i ) { c.insert( i, t ); }
-    inline static void             remove( const T& t, std::set<T>& c ) { c.erase(t); }
-};
-
-template < typename T >
-struct std_container_adapter< std::set<std::shared_ptr<T>> > {
+/*template < typename T >
+struct container_adapter< std::set<std::shared_ptr<T>> > {
     inline static void             insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c ) { c.insert( t ); }
     inline static constexpr void   insert( std::shared_ptr<T> t, std::set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
     inline static void             remove( const std::shared_ptr<T>& t, std::set<std::shared_ptr<T>>& c ) { c.erase(t); }
-};
+};*/
 
 template < typename T >
-struct std_container_adapter< std::unordered_set<T> > {
+struct container_adapter< std::unordered_set<T> > {
     inline static void             insert( T t, std::unordered_set<T>& c ) { c.insert( t ); }
     inline static constexpr void   insert( T t, std::unordered_set<T>& c, int i ) { c.insert( i, t ); }
     inline static void             remove( const T& t, std::unordered_set<T>& c ) { c.erase(t); }
 };
 
-template < typename T >
-struct std_container_adapter< std::unordered_set<std::shared_ptr<T>> > {
+/*template < typename T >
+struct container_adapter< std::unordered_set<std::shared_ptr<T>> > {
     inline static void             insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c ) { c.insert( t ); }
     inline static constexpr void   insert( std::shared_ptr<T> t, std::unordered_set<std::shared_ptr<T>>& c, int i ) { c.insert( i, t ); }
     inline static void             remove( const std::shared_ptr<T>& t, std::unordered_set<std::shared_ptr<T>>& c ) { c.erase(t); }
+};*/
+
+
+template < typename T >
+struct container_adapter< QVector<T> > {
+    inline static void  insert( T t, QVector<T>& c ) { c.append( t ); }
+    inline static void  insert( T t, QVector<T>& c, int i ) { c.insert( i, t ); }
+    inline static void  remove( const T& t, QVector<T>& c ) { c.removeAll(t); }
+    inline static   std::size_t size( QVector<T>& c ) { return c.size(); }
+    inline static   bool        contains( const QVector<T>& c, const T& t ) { return c.contains(t); }
+    inline static   void        reserve( QVector<T>& c, std::size_t s) { c.reserve(s); }
 };
 
+template < typename T >
+struct container_adapter< QSet<T> > {
+    inline static void  insert( T t, QSet<T>& c ) { c.insert( t ); }
+    inline static void  insert( T t, QSet<T>& c, int i ) { c.insert( i, t ); }
+    inline static void  remove( const T& t, QSet<T>& c ) { c.remove(t); }
+    inline static   std::size_t size( QSet<T>& c ) { return c.size(); }
+    inline static   bool        contains( const QSet<T>& c, const T& t ) { return c.contains(t); }
+    inline static   void        reserve( QSet<T>& c, std::size_t s) { c.reserve(s); }
+};
+
+template < template<typename...CArgs> class C, typename T >
+struct container_adapter< qcm::Container<C, T> > {
+    inline static void  insert( T t, qcm::Container<C, T>& c ) { c.append( t ); }
+    inline static void  insert( T t, qcm::Container<C, T>& c, int i ) { Q_UNUSED(i); c.insert( t ); }
+    inline static void  remove( const T& t, qcm::Container<C, T>& c ) { c.removeAll(t); }
+    inline static   std::size_t size( qcm::Container<C, T>& c ) { return c.size(); }
+    inline static   bool        contains( const qcm::Container<C, T>& c, const T& t ) { return c.contains(t); }
+    inline static   void        reserve( qcm::Container<C , T>& c, std::size_t s) { c.reserve(s); }
+};
+
+
 } // ::gtpo
-
-#endif // gtpo_container_adapter_h
-

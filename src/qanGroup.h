@@ -40,7 +40,6 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
@@ -67,7 +66,6 @@ public:
     virtual ~Group() override = default;
     Group(const Group&) = delete;
 
-    using gtpo_node_t = gtpo::node<qan::Config>;
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::group<>::getGraph().

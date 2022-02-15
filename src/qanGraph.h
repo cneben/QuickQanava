@@ -35,7 +35,10 @@
 #pragma once
 
 // GTpo headers
-#include "../GTpo/src/gtpo/GTpo"
+//#include "../GTpo/src/gtpo/GTpo"
+
+#include "./gtpo/gtpoNodeBase.h"
+#include "./gtpo/gtpoGraphBase.h"
 
 // Qt headers
 #include <QString>
@@ -46,7 +49,6 @@
 
 // QuickQanava headers
 #include "./qanUtils.h"
-#include "./qanGraphConfig.h"
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
@@ -60,6 +62,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class Node;
 class Connector;
 class PortItem;
 
@@ -71,13 +74,13 @@ class PortItem;
 
  * \nosubgrouping
  */
-class Graph : public gtpo::graph<qan::Config>
+class Graph : public gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
 
-    using gtpo_graph_t = gtpo::graph<qan::Config>;
-
+    //using gtpo_graph_t = gtpo::graph<qan::Config>;
+    using super_t = gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>;
     friend class qan::Selectable;
 
     /*! \name Graph Object Management *///-------------------------------------
@@ -318,9 +321,9 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
-    using Node              = typename Config::final_node_t;
-    using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
-    using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
+    //using Node              = typename Config::final_node_t;
+    //using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
+    //using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
 
     /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
      *
@@ -328,7 +331,7 @@ public:
      * left unconfigured. HAndle with a lot of care only to insert "pure topology" non visual nodes.
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
-    auto    insertNonVisualNode(SharedNode node) noexcept(false) -> WeakNode;
+    auto    insertNonVisualNode(Node* node) -> bool;
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -363,7 +366,9 @@ public:
      *
      * \return true if \c node has been successfully inserted.
      */
-    bool                    insertNode(const SharedNode& node, QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
+    bool                    insertNode(Node* node,
+                                       QQmlComponent* nodeComponent = nullptr,
+                                       qan::NodeStyle* nodeStyle = nullptr);
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
@@ -489,20 +494,20 @@ private:
      * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
      */
     bool                    configureEdge(qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
-                                          qan::Node& src, qan::Node* dstNode);
+                                          qan::Node& src, qan::Node* dst);
 public:
     template <class Edge_t>
     qan::Edge*              insertNonVisualEdge(qan::Node& src, qan::Node* dstNode);
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE virtual void    removeEdge(qan::Node* source, qan::Node* destination);
+    Q_INVOKABLE virtual bool    removeEdge(qan::Node* source, qan::Node* destination);
 
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE virtual void    removeEdge(qan::Edge* edge);
+    Q_INVOKABLE virtual bool    removeEdge(qan::Edge* edge);
 
     //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
-    Q_INVOKABLE bool        hasEdge(qan::Node* source, qan::Node* destination) const;
+    Q_INVOKABLE bool        hasEdge(const qan::Node* source, const qan::Node* destination) const;
 
     //! Return true if edge is in graph.
     Q_INVOKABLE bool        hasEdge(const qan::Edge* edge) const;
@@ -538,8 +543,9 @@ signals:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    using Group             = typename Config::final_group_t;
-    using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
+    // FIXME v2
+    //using Group             = typename Config::final_group_t;
+    //using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
 
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE virtual qan::Group* insertGroup();
@@ -554,7 +560,9 @@ public:
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      * \note graph keep ownership of the returned node.
      */
-    bool                    insertGroup(const SharedGroup& group, QQmlComponent* groupComponent = nullptr, qan::NodeStyle* groupStyle = nullptr);
+    bool                    insertGroup(Group* group,
+                                        QQmlComponent* groupComponent = nullptr,
+                                        qan::NodeStyle* groupStyle = nullptr);
 
     //! Insert a group using its static delegate() and style() factories.
     template <class Group_t>
@@ -567,7 +575,7 @@ public:
     bool                    hasGroup(qan::Group* group) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount() const { return gtpo_graph_t::get_group_count(); }
+    Q_INVOKABLE int         getGroupCount() const { return get_group_count(); }
 
     /*! \brief Group a node  \c node inside \c group group.
      *
@@ -992,4 +1000,3 @@ private:
 Q_DECLARE_METATYPE(QAbstractItemModel*)
 Q_DECLARE_METATYPE(QAbstractListModel*)
 QML_DECLARE_TYPE(qan::Graph)
-QML_DECLARE_TYPE(qan::Graph::WeakNode)

@@ -38,7 +38,7 @@
 #include <QPainterPath>
 
 // GTpo headers
-#include "gtpo/algorithm.h"
+//#include "gtpo/algorithm.h"
 
 // QuickQanava headers
 #include "./qanNode.h"
@@ -55,28 +55,23 @@ Group::Group(QObject* parent) :
     set_is_group(true);
 }
 
-qan::Graph*         Group::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo_node_t::get_graph() );
-}
+qan::Graph*         Group::getGraph() noexcept { return qan::Node::get_graph(); }
 
-const qan::Graph*   Group::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo_node_t::get_graph() );
-}
+const qan::Graph*   Group::getGraph() const noexcept { return qan::Node::get_graph(); }
 
 std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
 {
     std::unordered_set<qan::Edge*> edges = collectAdjacentEdges0();
     if (is_group()) {
-        for (const auto& group_node_ptr: qAsConst(group_nodes())) {
-            const auto group_node = group_node_ptr.lock();
-            if (group_node) {
-                const auto qanGroupNode = qobject_cast<qan::Group*>(group_node.get());
+        for (const auto groupNode: qAsConst(group_nodes())) {
+            if (groupNode != nullptr) {
+                const auto qanGroupNode = qobject_cast<qan::Group*>(groupNode);
                 if (qanGroupNode != nullptr) {
                     const auto groupNodeEdges = qanGroupNode->collectAdjacentEdges();
                     edges.insert(groupNodeEdges.begin(),
                                  groupNodeEdges.end());
                 } else {
-                    auto qanNode = qobject_cast<qan::Node*>(group_node.get());
+                    auto qanNode = qobject_cast<qan::Node*>(groupNode);
                     if (qanNode != nullptr) {
                         auto nodeEdges = qanNode->collectAdjacentEdges0();
                         edges.insert(nodeEdges.begin(), nodeEdges.end());
@@ -149,11 +144,13 @@ bool    Group::hasNode(const qan::Node* node) const
 {
     if ( node == nullptr )
         return false;
-    try {
+    // FIXME v2
+    /*try {
         auto weakNode = std::static_pointer_cast<qan::Node>(const_cast<qan::Node*>(node)->shared_from_this());
         return gtpo_node_t::has_node(weakNode);
-    } catch (const std::bad_weak_ptr&) { /* Nil */ } // C++17
-    return false;
+    } catch (const std::bad_weak_ptr&) { } // C++17
+    */
+    return qan::Node::has_node(node);
 }
 //-----------------------------------------------------------------------------
 
