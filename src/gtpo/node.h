@@ -40,7 +40,6 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
 #include "./graph_property.h"
 #include "./observable.h"
 #include "./observer.h"
@@ -94,7 +93,7 @@ public:
     node(const node& node ) {
         static_cast<void>(node);
     }
-    node& operator=( node const& ) = delete;
+    node& operator=(node const&) = delete;
 
     // FIXME v2
     /*inline auto     add_dynamic_node_behaviour( std::unique_ptr<gtpo::dynamic_node_behaviour<config_t>> behaviour ) -> void {
@@ -120,43 +119,37 @@ public:
      * \note if \c inEdge destination node is different from \c node, it is automatically set to \c node.
      */
     auto    add_in_edge(edge_t* inEdge ) -> bool;
-    /*! \brief Remove edge \c outEdge from this node out edges.
-     *
-     * \throw gtpo::bad_topology_error
+    /*! \brief Remove edge \c outEdge from this node out edges.     *
      */
     auto    remove_out_edge(const edge_t* outEdge) -> bool;
     /*! \brief Remove edge \c inEdge from this node in edges.
-     *
-     * \throw gtpo::bad_topology_error
      */
     auto    remove_in_edge(const edge_t* inEdge) -> bool;
 
-    inline auto     get_in_edges() const noexcept -> const edges_t& { return _in_edges; }
-    inline auto     get_out_edges() const noexcept -> const edges_t& { return _out_edges; }
+    inline auto get_in_edges() const noexcept -> const edges_t& { return _in_edges; }
+    inline auto get_out_edges() const noexcept -> const edges_t& { return _out_edges; }
 
-    inline auto     get_in_nodes() const noexcept -> const nodes_t& { return _in_nodes; }
-    inline auto     get_out_nodes() const noexcept -> const nodes_t& { return _out_nodes; }
+    inline auto get_in_nodes() const noexcept -> const nodes_t& { return _in_nodes; }
+    inline auto get_out_nodes() const noexcept -> const nodes_t& { return _out_nodes; }
 
-    inline auto     get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _in_edges.size() ); }
-    inline auto     get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _out_edges.size() ); }
+    inline auto get_in_degree() const noexcept -> unsigned int { return static_cast<int>( _in_edges.size() ); }
+    inline auto get_out_degree() const noexcept -> unsigned int { return static_cast<int>( _out_edges.size() ); }
 private:
-    edges_t       _in_edges;
-    edges_t       _out_edges;
-    nodes_t       _in_nodes;
-    nodes_t       _out_nodes;
+    edges_t     _in_edges;
+    edges_t     _out_edges;
+    nodes_t     _in_nodes;
+    nodes_t     _out_nodes;
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Node Edges Management *///---------------------------------------
     //@{
 public:
-    //using weak_group_t  = typename std::weak_ptr<typename config_t::group_t>;
-
     inline auto set_group(const group_t* group) noexcept -> void { _group = const_cast<group_t*>(group); }
     inline auto get_group() noexcept -> group_t* { return _group; }
     inline auto get_group() const noexcept -> const group_t* { return _group; }
 private:
-    group_t*  _group = nullptr;
+    group_t*    _group = nullptr;
     //@}
     //-------------------------------------------------------------------------
 

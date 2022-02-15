@@ -40,7 +40,6 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
 #include "./container_adapter.h"
 #include "./observable.h"
 #include "./observer.h"
@@ -118,51 +117,22 @@ public:
     //@{
 public:
     /*! \brief Create node and insert it in the graph an return a reference to it.
-     *
-     * \code
-     * try{
-     *   gtpo::graph<> g;
-     *   std::weak_ptr<gtpo::node<>> n1 = g.create_node();
-     *   // or preferably
-     *   auto n2 = g.create_node();
-     * } catch ( const std::runtime_error& e ) { }
-     * \endcode
-     *
-     * With STpo:
-     * \code
-     * using namespace gtpo;
-     * try{
-     *   gtpo::graph<> g;
-     *   std::weak_ptr<gtpo::Node<>> n1 = g.create_node();
-     *   // or preferably
-     *   auto n2 = g.create_node();
-     * } catch ( const std::runtime_error& e ) { }
-     * \endcode
-     * \return a reference to the created node (graph has ownership for the node).
-     * \throw gtpo::bad_topology_error with an error description if creation fails.
+     * \return a pointer to the created node (graph has ownership for the node).
      */
     auto    create_node() -> node_t*;
 
-    /*! \brief Insert a node created outside of GTpo into the graph.
-     *  FIXME v2 interface changed
+    /*! \brief Insert an already existing \c node in graph (graph take \c node ownership).
+     *
      * If your nodes must be created outside of GTpo (ie not with the create_node() method),
      * the only way of giving node ownership to GTpo is trought the insert_node method.
-     * Example of a node created from a QML component:
-     * \code
-     *  qan::Node* node = static_cast< qan::Node* >( createFromQmlComponent( nodeComponent ) );
-     *  if ( node != nullptr )
-     *    graph<QGraphcConfig>::insert_node( std::shared_ptr<qan::Node>{node} );
-     * \endcode
-     * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
     auto    insert_node(node_t* node) -> bool;
 
     /*! \brief Remove node \c node from graph.
      *
      * Complexity depends on config_t::node_container_t.
-     * \note If \c weakNode is actually grouped in a group, it will first be ungroup before
+     * \note If \c node is actually grouped in a group, it will first be ungrouped before
      * beeing removed (any group behaviour will also be notified that the node is ungrouped).
-     * \throw gtpo::bad_topology_error if node can't be removed (or node is not valid).
      */
     auto    remove_node(node_t* node ) -> bool;
 
@@ -176,7 +146,6 @@ public:
      * This method should not be directly used by an end user until you have deeply
      * modified graph topology with non gtpo::graph<> methods.
      *
-     * \throw gtpo::bad_topology_error if \c node in degree is different from 0.
      */
     auto    install_root_node(node_t* node) -> void;
     /*! \brief Test if a given \c node is a root node.
@@ -185,7 +154,6 @@ public:
      * \c node in degree and its presence in the internal root node cache.
      *
      * \return true if \c node is a root node, false otherwise.
-     * \throw gtpo::bad_topology_error if there is a graph cohenrency problem (ie node is in the root node cache but has a zero in degree).
      */
     auto    is_root_node(node_t* node) const -> bool;
 
@@ -220,8 +188,7 @@ public:
     /*! \brief Create a directed edge between \c source and \c destination node, then insert it into the graph.
      *
      * Complexity is O(1).
-     * \return the inserted edge (if an error occurs edge == false and gtpo::bad_topology_error is thrown).
-     * \throw a gtpo::bad_topology_error if creation fails (either \c source or \c destination does not exists).
+     * \return the inserted edge (if an error occurs return nullptr).
      */
     auto        create_edge(node_t* source, node_t* destination) -> edge_t*;
 
@@ -229,7 +196,6 @@ public:
      *
      * \param edge must have a valid source and destination set otherwise a bad topology exception will be thrown.
      * \sa insert_node()
-     * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
     auto        insert_edge(edge_t* edge) -> bool;
 
@@ -239,7 +205,6 @@ public:
      * edge found between \c source and \c destination will be removed.
      *
      * Complexity is O(edge count) at worst.
-     * \throw a gtpo::bad_topology_error if suppression fails (either \c source or \c destination or edge does not exists).
      */
     auto        remove_edge(node_t* source, node_t* destination) -> bool;
 
@@ -249,14 +214,12 @@ public:
      * edge found between \c source and \c destination will be removed.
      *
      * Worst case complexity is O(edge count).
-     * \throw a gtpo::bad_topology_error if suppression fails (either \c source or \c destination or edge does not exists).
      */
     auto        remove_all_edges(node_t* source, node_t* destination) -> bool;
 
     /*! \brief Remove directed edge \c edge.
      *
      * Worst case complexity is O(edge count).
-     * \throw a gtpo::bad_topology_error if suppression fails (\c edge does not exists).
      */
     auto        remove_edge(edge_t* edge) -> bool;
 
@@ -310,8 +273,6 @@ private:
     //@{
 public:
     /*! \brief Insert a node group into the graph.
-     *
-     * \throw gtpo::bad_topology_error with an error description if insertion fails.
      */
     auto            insert_group(group_t* group) -> bool;
 
@@ -321,7 +282,6 @@ public:
      * the group to the graph).
      *
      * Worst case complexity is O(group count).
-     * \throw a gtpo::bad_topology_error if suppression fails (\c group does not exists).
      */
     auto            remove_group(group_t* group) -> bool;
 

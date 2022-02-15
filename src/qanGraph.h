@@ -327,14 +327,12 @@ public:
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
-     * gtpo::bad_topology_error is thrown if node insertion fails.
-     *
      * A default node delegate must have been registered with registerNodeDelegate() if
      * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
      * Qan.Graph is used, with a rectangular node delegate for default node.
      *
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
-     * \note graph keep ownership of the returned node.
+     * \note graph has ownership for returned node.
      */
     Q_INVOKABLE qan::Node*  insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 

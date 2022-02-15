@@ -34,7 +34,9 @@
 
 #pragma once
 
+// Std headers
 #include <cstddef>
+#include <iostream>     // std::cout
 
 namespace gtpo { // ::gtpo
 

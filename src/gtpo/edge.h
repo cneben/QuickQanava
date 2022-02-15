@@ -40,7 +40,6 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./utils.h"
 #include "./graph_property.h"
 
 namespace gtpo { // ::gtpo

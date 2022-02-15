@@ -39,8 +39,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanContainerAdapter.h     \
             $$PWD/qanBottomRightResizer.h   \
-            $$PWD/gtpo/utils.h              \  # GTPO
-            $$PWD/gtpo/container_adapter.h  \
+            $$PWD/gtpo/container_adapter.h  \  # GTPO
             $$PWD/gtpo/edge.h               \
             $$PWD/gtpo/node.h               \
             $$PWD/gtpo/node.hpp             \

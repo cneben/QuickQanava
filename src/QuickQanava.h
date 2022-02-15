@@ -34,10 +34,6 @@
 
 #pragma once
 
-// GTpo headers
-// FIXME v2
-//#include <gtpo/GTpo.h>
-
 // QuickContainers headers
 #include <QuickContainers>
 

@@ -98,11 +98,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         }
         // FIXME v2
         /*gtpo_graph_t::*/insert_node(node);        // Insert visual or non visual node
-    } catch (const gtpo::bad_topology_error& e) {
-        qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
-        return nullptr; // node eventually destroyed by shared_ptr
-    }
-    catch (const qan::Error& e) {
+    } catch (const qan::Error& e) {
         qWarning() << "qan::Graph::insertNode(): Error: " << e.getMsg();
         return nullptr; // node eventually destroyed by shared_ptr
     }
@@ -126,12 +122,7 @@ qan::Node*  Graph::insertNonVisualNode()
         QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
         // FIXME v2
         /*gtpo_graph_t::*/insert_node(node);
-    } catch (const gtpo::bad_topology_error& e) {
-        qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error:" << e.what();
-        // FIXME v2
-        return nullptr; // node eventually destroyed by shared_ptr
-    }
-    catch ( ... ) {
+    } catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualNode(): Error: Topology error.";
         // FIXME v2
         return nullptr; // node eventually destroyed by share_ptr
@@ -181,9 +172,6 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
             qWarning() << "qan::Graph::insertEdge<>(): Error: Internal error during edge configuration.";
             // Note: edge is deleted since it is unreferenced...
         }
-    } catch (const gtpo::bad_topology_error& e) {
-        qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error:" << e.what();
-        // Note: edge is cleaned automatically if it has still not been inserted to graph
     } catch (...) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error.";
         // Note: edge is cleaned automatically if it has still not been inserted to graph
@@ -208,10 +196,7 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
             edge->set_dst(dstNode);
         // FIXME v2
         /*gtpo_graph_t::*/insert_edge( edge );
-    } catch (const gtpo::bad_topology_error& e) {
-        qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error:" << e.what();
-    }
-    catch ( ... ) {
+    } catch ( ... ) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
     }
     return edge.get();

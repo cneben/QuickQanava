@@ -638,15 +638,11 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
             nodeItem->setZ(_maxZ);
         }
         super_t::insert_node(node);
-    } catch ( const gtpo::bad_topology_error& e ) {
-        qWarning() << "qan::Graph::insertNode(): Error: Topology error: " << e.what();
-        return false; // node eventually destroyed by shared_ptr
-    }
-    catch ( const qan::Error& e ) {
+    } catch (const qan::Error& e) {
         qWarning() << "qan::Graph::insertNode(): Error: " << e.getMsg();
         return false; // node eventually destroyed by shared_ptr
     }
-    catch ( ... ) {
+    catch (...) {
         qWarning() << "qan::Graph::insertNode(): Error: Topology error.";
         return false; // node eventually destroyed by shared_ptr
     }
@@ -914,23 +910,12 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
                                                                      nullptr, group));
     }
 
-    // Insertion strategy:
-        // If group delegate (groupItem) failed, insert a non visual node.
-        // Otherwise, insert a visual item.
-    if (groupItem == nullptr) {
-        try {
-            super_t::insert_group(group);
-        } catch (const gtpo::bad_topology_error& e) {
-            qWarning() << "qan::Graph::insertGroup(): Error: Internal topology error, a graphical component might have leaked.";
-            return false;
-        }
-        return true;
-    }
     if (groupItem == nullptr) {
         qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
         return false;
     }
-    super_t::insert_group(group);
+    if (!super_t::insert_group(group))
+        qWarning() << "qan::Graph::insertGroup(): Error: Internal topology error.";
     groupItem->setGroup(group);
     groupItem->setGraph(this);
     group->setItem(groupItem);
