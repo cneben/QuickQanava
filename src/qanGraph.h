@@ -79,7 +79,6 @@ class Graph : public gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
 
-    //using gtpo_graph_t = gtpo::graph<qan::Config>;
     using super_t = gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>;
     friend class qan::Selectable;
 
@@ -321,10 +320,6 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
-    //using Node              = typename Config::final_node_t;
-    //using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
-    //using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
-
     /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
      *
      * \warning This method is mainly for tests purposes since inserted node delegate and style is

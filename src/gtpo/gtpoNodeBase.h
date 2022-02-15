@@ -45,7 +45,7 @@
 // GTpo headers
 #include "./gtpo/gtpoUtils.h"
 #include "./gtpo/gtpoGraphProperty.h"
-//#include "./node_behaviour.h"
+#include "./behaviourable.h"
 
 // QuickContainers headers
 #include "../../QuickContainers/include/qcmContainer.h"
@@ -62,8 +62,8 @@ template <class node_base_t,
           class edge_t,
           class group_t>
 class node : public node_base_t,
-             public graph_property_impl<graph_t>/*,
-             public gtpo::behaviourable_node< config_t >*/
+             public graph_property_impl<graph_t>,
+             public gtpo::behaviourable_node<node_t>
 {
     /*! \name Node Management *///---------------------------------------------
     //@{

@@ -45,7 +45,9 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/gtpo/gtpoNodeBase.hpp     \
             $$PWD/gtpo/gtpoGraphBase.h      \
             $$PWD/gtpo/gtpoGraphBase.hpp    \
-            $$PWD/gtpo/gtpoGraphProperty.h
+            $$PWD/gtpo/gtpoGraphProperty.h  \
+            $$PWD/gtpo/behaviourable.h      \
+            $$PWD/gtpo/behaviourable.hpp
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \
