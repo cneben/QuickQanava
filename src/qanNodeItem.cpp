@@ -365,11 +365,11 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
+void    NodeItem::setComplexBoundingShape(bool complexBoundingShape) noexcept
 {
-    if ( complexBoundingShape != _complexBoundingShape ) {
+    if (complexBoundingShape != _complexBoundingShape) {
         _complexBoundingShape = complexBoundingShape;
-        if ( !complexBoundingShape )
+        if (!complexBoundingShape)
             setDefaultBoundingShape();
         else
             emit requestUpdateBoundingShape();
@@ -379,8 +379,8 @@ void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
 
 QPolygonF   NodeItem::getBoundingShape() noexcept
 {
-    if ( _boundingShape.isEmpty( ) )
-        _boundingShape = generateDefaultBoundingShape( );
+    if (_boundingShape.isEmpty())
+        _boundingShape = generateDefaultBoundingShape();
     return _boundingShape;
 }
 

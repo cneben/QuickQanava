@@ -337,7 +337,7 @@ signals:
     void            complexBoundingShapeChanged( );
 
 public:
-    /*! \brief Polygon used for mouse event clipping, and edge arrow clipping.
+    /*! \brief Polygon used for mouse event clipping, and edge arrow clipping (in item local coordinates).
      *
      * An intersection shape is automatically generated for rectangular nodes, it can be sets by the user
      * manually with setIntersectionShape() or setIntersectionShapeFromQml() if the node graphical representation is
