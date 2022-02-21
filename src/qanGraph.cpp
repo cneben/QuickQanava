@@ -676,13 +676,7 @@ void    Graph::removeNode(qan::Node* node)
 
 int     Graph::getNodeCount() const noexcept { return super_t::get_node_count(); }
 
-bool    Graph::hasNode(const qan::Node* node) const {
-    bool r = false;
-    try {
-        r = super_t::contains(node);
-    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
-    return r;
-}
+bool    Graph::hasNode(const qan::Node* node) const { return super_t::contains(node); }
 
 void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node) /* Nil */ }
 

@@ -254,7 +254,6 @@ public:
      *
      * This method only test a 1 degree relationship (ie a direct edge between \c source
      * and \c destination). Worst case complexity is O(edge count).
-     * \throw no GTpo exception (might throw a std::bad_weak_ptr).
      */
     auto        get_edge_count(node_t* source, node_t* destination) const -> unsigned int;
 
