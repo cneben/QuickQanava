@@ -318,21 +318,21 @@ private:
 
 public:
     //! Shortcut to Container<T>::remove().
-    void        removeAll( const T& item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
+    void        removeAll(const T& item) {
+        if (isNullPtr(item, typename ItemDispatcher<T>::type{}))
             return;
         const auto itemIndex = qcm::adapter<C,T>::indexOf(_container, item);
-        if ( itemIndex < 0 )
+        if (itemIndex < 0)
             return;
-        if ( _model ) {
+        if (_model) {
             // FIXME: Model updating is actually quite buggy: removeAll might remove
             // items at multiple index, but model update is requested only for itemIndex...
-            fwdBeginRemoveRows( QModelIndex{},
-                                static_cast<int>(itemIndex),
-                                static_cast<int>(itemIndex) );
-            removeImpl( item, typename ItemDispatcher<T>::type{} );
+            fwdBeginRemoveRows(QModelIndex{},
+                               static_cast<int>(itemIndex),
+                               static_cast<int>(itemIndex));
+            removeImpl(item, typename ItemDispatcher<T>::type{});
             qcm::adapter<C,T>::removeAll(_container, item);
-            fwdEndRemoveRows( );
+            fwdEndRemoveRows();
             fwdEmitLengthChanged();
         } else {
             qcm::adapter<C,T>::removeAll(_container, item);
@@ -344,9 +344,9 @@ private:
     inline auto removeImpl( const T&, ItemDispatcherBase::non_ptr_type )                   -> void {}
     inline auto removeImpl( const T&, ItemDispatcherBase::ptr_type )                       -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::ptr_qobject_type )          -> void {
-        if ( _modelImpl &&
-             item != nullptr ) {
-            item->disconnect( 0, _modelImpl, 0);
+        if (_modelImpl &&
+            item != nullptr) {
+            item->disconnect(0, _modelImpl, 0);
             _modelImpl->_qObjectItemMap.erase(item);
         }
     }

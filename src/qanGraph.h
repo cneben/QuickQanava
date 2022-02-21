@@ -89,7 +89,7 @@ public:
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
-    virtual ~Graph() override = default;
+    virtual ~Graph() override;
     Graph(const Graph&) = delete;
     Graph& operator=(const Graph&) = delete;
     Graph(Graph&&) = delete;

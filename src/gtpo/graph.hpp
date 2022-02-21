@@ -42,10 +42,15 @@ template <class graph_base_t,
 graph<graph_base_t, node_t,
       group_t, edge_t>::~graph()
 {
-    for (const auto node: _nodes)
+    std::cerr << "gtpo::graph<>::~graph()" << std::endl;
+    for (const auto node: _nodes) {
+        node->_graph = nullptr;
         delete node;
-    for (const auto edge: _edges)
+    }
+    for (const auto edge: _edges) {
+        edge->_graph = nullptr;
         delete edge;
+    }
     // Note: _nodes and _edges containers take care of deleting all ressources
     // calling clear() here lead to very subtle notification bugs when container
     // models are binded to view.

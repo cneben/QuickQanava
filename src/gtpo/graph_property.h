@@ -65,9 +65,9 @@ public:
     inline  void            set_graph(graph_t* graph) noexcept { _graph = graph; }
     inline  void            set_graph(void* graph) noexcept { _graph = reinterpret_cast<graph_t*>(graph); }
     inline  void            set_graph(std::nullptr_t) noexcept { _graph = nullptr; }
-protected:
+public:
     // Note: This is the only raw pointer in GTpo.
-    graph_t*                _graph{ nullptr };
+    graph_t*                _graph = nullptr;
 };
 
 } // ::gtpo

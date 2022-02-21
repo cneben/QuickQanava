@@ -65,6 +65,18 @@ Graph::Graph(QQuickItem* parent) noexcept :
     // GraphView containerItem.
 }
 
+Graph::~Graph()
+{
+    std::cerr << "qan::Graph::~Graph()" << std::endl;
+    // Force diconnection of node/edges signals, it avoid
+    // triggering code on this prtially deleted graph when a node or
+    // edge destroyed() signal is binded.
+    for (const auto node: get_nodes())
+        node->disconnect(node, 0, 0, 0);
+    for (const auto edge: get_edges())
+        edge->disconnect(edge, 0, 0, 0);
+}
+
 void    Graph::classBegin()
 {
     setPortDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Port.qml")));
@@ -652,17 +664,13 @@ void    Graph::removeNode(qan::Node* node)
 {
     // PRECONDITIONS:
         // node can't be nullptr
-    if (node == nullptr)
-        return;
-    try {
+    if (node != nullptr) {
         onNodeRemoved(*node);
         emit nodeRemoved(node);
         if (_selectedNodes.contains(node))
             _selectedNodes.removeAll(node);
         super_t::remove_node(node);
-    } catch (const std::bad_weak_ptr&) {
-        qWarning() << "qan::Graph::removeNode(): Internal error for node " << node;
-        return;
+        node->deleteLater();
     }
 }
 
