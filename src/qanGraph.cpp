@@ -669,8 +669,7 @@ void    Graph::removeNode(qan::Node* node)
         emit nodeRemoved(node);
         if (_selectedNodes.contains(node))
             _selectedNodes.removeAll(node);
-        super_t::remove_node(node);
-        node->deleteLater();
+        super_t::remove_node(node);  // warning node pointer now invalid
     }
 }
 
@@ -934,8 +933,8 @@ void    Graph::removeGroup(qan::Group* group, bool removeContent)
         return;
 
     if (!removeContent) {
-        // Reparent all group childrens (ie node) to graph before destructing the group
-        // otherwise all child items get destructed too
+        // Reparent all group childrens (ie node) to graph before destructing
+        // the group otherwise all child items get destructed too
         for (auto node : group->get_nodes()) {
             auto qanNode = qobject_cast<qan::Node*>(node);
             if (qanNode != nullptr &&

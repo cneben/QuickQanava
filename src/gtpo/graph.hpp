@@ -162,6 +162,7 @@ auto    graph<graph_base_t, node_t,
     container_adapter<nodes_t>::remove(node, _root_nodes);
     node->set_graph(nullptr);
     container_adapter<nodes_t>::remove(node, _nodes);
+    delete node;
     return true;
 }
 
