@@ -110,7 +110,6 @@ auto node<node_base_t,
     if (outEdgeDst != nullptr) {
         observable_base_t::notify_out_node_removed(*reinterpret_cast<node_t*>(this),
                                                    *const_cast<node_t*>(outEdge->get_dst()), *outEdge);
-        return false;
     }
     container_adapter<edges_t>::remove(const_cast<edge_t*>(outEdge), _out_edges);
     container_adapter<nodes_t>::remove(const_cast<node_t*>(outEdge->get_dst()), _out_nodes);
