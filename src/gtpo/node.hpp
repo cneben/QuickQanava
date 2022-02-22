@@ -108,7 +108,6 @@ auto node<node_base_t,
 
     auto outEdgeDst = outEdge->get_dst();
     if (outEdgeDst != nullptr) {
-        std::cerr << "gtpo::node<>::remove_out_edge(): Error: Out edge destination is nullptr." << std::endl;
         observable_base_t::notify_out_node_removed(*reinterpret_cast<node_t*>(this),
                                                    *const_cast<node_t*>(outEdge->get_dst()), *outEdge);
         return false;

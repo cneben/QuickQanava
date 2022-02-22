@@ -346,6 +346,7 @@ auto    graph<graph_base_t, node_t,
     edge->set_graph(nullptr);
     container_adapter<edges_t>::remove(edge, _edges);
     container_adapter<edges_search_t>::remove(edge, _edges_search);
+    delete edge;
     return true;
 }
 

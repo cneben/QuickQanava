@@ -705,17 +705,17 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
     return edge;
 }
 
-qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge(qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent)
 {
     // PRECONDITION;
         // source and destination can't be nullptr
-    if ( source == nullptr ||
-         destination == nullptr )
+    if (source == nullptr ||
+        destination == nullptr)
         return nullptr;
     return insertEdge<qan::Edge>(*source, destination, edgeComponent);
 }
 
-void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
+void    Graph::bindEdgeSource(qan::Edge* edge, qan::PortItem* outPort) noexcept
 {
     // PRECONDITIONS:
         // edge and outport must be non nullptr
@@ -725,7 +725,7 @@ void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
     bindEdgeSource(*edge, *outPort);
 }
 
-void    Graph::bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept
+void    Graph::bindEdgeDestination(qan::Edge* edge, qan::PortItem* inPort ) noexcept
 {
     // PRECONDITIONS:
         // edge and outport must be non nullptr
@@ -811,14 +811,14 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
                              qan::Node& src, qan::Node* dst)
 {
     _styleManager.setStyleComponent(&style, &edgeComponent);
-    auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
-    if ( edgeItem == nullptr ) {
+    auto edgeItem = qobject_cast< qan::EdgeItem* >(createFromComponent(&edgeComponent, style, nullptr, &edge));
+    if (edgeItem == nullptr) {
         qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
         return false;
     }
     edge.setItem(edgeItem);
-    edgeItem->setSourceItem( src.getItem() );
-    if (dst != nullptr )
+    edgeItem->setSourceItem(src.getItem());
+    if (dst != nullptr)
         edgeItem->setDestinationItem(dst->getItem());
 
     edge.set_src(&src);
@@ -826,22 +826,22 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
         edge.set_dst(dst);
 
     auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeClicked(edgeItem->getEdge(), p);
     };
     connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
 
     auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeRightClicked(edgeItem->getEdge(), p);
     };
     connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
 
     auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
+    connect(edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked);
     return true;
 }
 
