@@ -67,10 +67,10 @@ Graph::Graph(QQuickItem* parent) noexcept :
 
 Graph::~Graph()
 {
-    std::cerr << "qan::Graph::~Graph()" << std::endl;
     // Force diconnection of node/edges signals, it avoid
-    // triggering code on this prtially deleted graph when a node or
-    // edge destroyed() signal is binded.
+    // triggering code on this partially deleted graph when a node or
+    // edge destroyed() signal is binded to something that try to access this
+    // partially destroyed graph (for example a nodes/edges model...!).
     for (const auto node: get_nodes())
         node->disconnect(node, 0, 0, 0);
     for (const auto edge: get_edges())

@@ -42,7 +42,6 @@ template <class graph_base_t,
 graph<graph_base_t, node_t,
       group_t, edge_t>::~graph()
 {
-    std::cerr << "gtpo::graph<>::~graph()" << std::endl;
     for (const auto node: _nodes) {
         node->_graph = nullptr;
         delete node;
