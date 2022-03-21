@@ -108,6 +108,11 @@ auto    graph<graph_base_t, node_t,
 {
     if (node == nullptr)
         return false;
+    // Do not insert an already inserted node
+    if (container_adapter<nodes_search_t>::contains(_nodes_search, node)) {
+        std::cerr << "gtpo::graph<>::insert_node(): Error: node has already been inserted in graph." << std::endl;
+        return false;
+    }
     try {
         node->set_graph(this);
         container_adapter<nodes_t>::insert(node, _nodes);
