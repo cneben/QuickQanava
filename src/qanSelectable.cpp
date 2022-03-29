@@ -156,7 +156,6 @@ void    Selectable::configureSelectionItem()
         _selectionItem->setVisible(true);
     }
 }
-
 //-----------------------------------------------------------------------------
 
 } // ::qan

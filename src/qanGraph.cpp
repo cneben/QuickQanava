@@ -1190,11 +1190,11 @@ void    addToSelectionImpl(Primitive_t& primitive,
     if (!selectedPrimitives.contains(&primitive)) {
         selectedPrimitives.append(&primitive);
         if (primitive.getItem() != nullptr) {
+            primitive.getItem()->setSelected(true);
             // Eventually, create and configure node item selection item
             if (primitive.getItem()->getSelectionItem() == nullptr)
                 primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()).data());   // Safe, any argument might be nullptr
-            primitive.getItem()->configureSelectionItem();
-            primitive.getItem()->setSelected(true);
+            // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
         }
     }
 }
