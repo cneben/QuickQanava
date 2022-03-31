@@ -86,7 +86,7 @@ void    Selectable::setSelected(bool selected) noexcept
         emitSelectedChanged();
     }
     if (getSelectionItem() != nullptr)    // Done outside of binding loop protection
-        getSelectionItem()->setState( selected ? "SELECTED" : "UNSELECTED" );
+        getSelectionItem()->setState(selected ? "SELECTED" : "UNSELECTED");
 }
 
 void    Selectable::setSelectionItem(QQuickItem* selectionItem) noexcept
@@ -146,7 +146,6 @@ void    Selectable::configureSelectionItem()
         const qreal y = -(selectionWeight / 2. + selectionMargin);
         const qreal width = _target->width() + selectionWeight + (selectionMargin * 2);
         const qreal height = _target->height() + selectionWeight + (selectionMargin * 2);
-        qWarning() << "configureSelectionItem(): w=" << width << "  h=" << height;
 
         _selectionItem->setX(x);
         _selectionItem->setY(y);

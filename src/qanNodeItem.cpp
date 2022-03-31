@@ -308,8 +308,9 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
         // Selection management
         if ((event->button() == Qt::LeftButton ||
              event->button() == Qt::RightButton) &&
-             getNode() &&
+             getNode() != nullptr &&
              isSelectable() &&
+             !getNode()->isGroup() &&  // Group selection is handled in qan::GroupItem::mousePressEvent()
              !getNode()->getLocked()) {
             if (_graph)
                 _graph->selectNode(*getNode(), event->modifiers());
