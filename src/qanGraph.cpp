@@ -626,19 +626,22 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
+        connect(nodeItem,   &qan::NodeItem::nodeClicked,
+                this,       notifyNodeClicked);
 
         auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeRightClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        connect(nodeItem,   &qan::NodeItem::nodeRightClicked,
+                this,       notifyNodeRightClicked);
 
         auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
+        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
+                this,     notifyNodeDoubleClicked);
         node->setItem(nodeItem);
         {   // Send item to front
             _maxZ += 1;
@@ -828,19 +831,22 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
         if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
+    connect(edgeItem, &qan::EdgeItem::edgeClicked,
+            this,     notifyEdgeClicked);
 
     auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
         if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeRightClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
+    connect(edgeItem,   &qan::EdgeItem::edgeRightClicked,
+            this,       notifyEdgeRightClicked);
 
     auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
         if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
     };
-    connect(edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked);
+    connect(edgeItem, &qan::EdgeItem::edgeDoubleClicked,
+            this,     notifyEdgeDoubleClicked);
     return true;
 }
 
@@ -902,19 +908,22 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
+    connect(groupItem,  &qan::GroupItem::groupClicked,
+            this,       notifyGroupClicked);
 
     auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupRightClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
+    connect(groupItem, &qan::GroupItem::groupRightClicked,
+            this,      notifyGroupRightClicked);
 
     auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupDoubleClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+    connect(groupItem, &qan::GroupItem::groupDoubleClicked,
+            this,      notifyGroupDoubleClicked);
 
     { // Send group item to front
         _maxZ += 1.0;
@@ -1408,7 +1417,8 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
                      portItem->getNode() != nullptr )
                     emit this->portClicked(portItem, p);
             };
-            connect( portItem, &qan::NodeItem::nodeClicked, notifyPortClicked );
+            connect(portItem, &qan::NodeItem::nodeClicked,
+                    this,     notifyPortClicked );
 
             const auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
@@ -1416,7 +1426,8 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
                      portItem->getNode() != nullptr )
                     emit this->portRightClicked(portItem, p);
             };
-            connect( portItem, &qan::NodeItem::nodeRightClicked, notifyPortRightClicked );
+            connect(portItem,   &qan::NodeItem::nodeRightClicked,
+                    this,       notifyPortRightClicked);
 
             if ( node->getItem() != nullptr ) {
                 portItem->setNode(node); // portitem node in fact map to this concrete node.

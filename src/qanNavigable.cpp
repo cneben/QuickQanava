@@ -48,7 +48,7 @@ Navigable::Navigable(QQuickItem* parent) :
     _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
     _containerItem->setAcceptTouchEvents(true);
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
-             [this]() {
+            this,   [this]() {
         if (this->_containerItem != nullptr) {
             const auto cr = this->_containerItem->childrenRect();
             this->_containerItem->setWidth(cr.width());
@@ -488,13 +488,13 @@ void    Navigable::setGrid(qan::Grid* grid) noexcept
 {
     if ( grid != _grid ) {
         if ( _grid ) {                    // Hide previous grid
-            disconnect( _grid, nullptr,
-                        this, nullptr );  // Disconnect every update signals from grid to this navigable
+            disconnect(_grid, nullptr,
+                       this, nullptr);  // Disconnect every update signals from grid to this navigable
         }
         _grid = grid;                       // Configure new grid
-        if ( _grid ) {
-            _grid->setParentItem( this );
-            _grid->setZ( -1.0 );
+        if (_grid) {
+            _grid->setParentItem(this);
+            _grid->setZ(-1.0);
             _grid->setAntialiasing(false);
             _grid->setScale(1.0);
             connect(grid,   &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually

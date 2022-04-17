@@ -74,19 +74,22 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeClicked(nodeItem->getNode(), p);
         };
-        connect(nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked);
+        connect(nodeItem, &qan::NodeItem::nodeClicked,
+                this,     notifyNodeClicked);
 
         auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeRightClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        connect(nodeItem, &qan::NodeItem::nodeRightClicked,
+                this,     notifyNodeRightClicked);
 
         auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
-        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked);
+        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
+                this,     notifyNodeDoubleClicked);
         {   // Send item to front
             _maxZ += 1;
             nodeItem->setZ(_maxZ);
