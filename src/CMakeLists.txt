@@ -7,6 +7,7 @@ set(qan_source_files
     qanDraggableCtrl.cpp
     qanEdge.cpp
     qanEdgeItem.cpp
+    qanEdgeDraggableCtrl.cpp
     qanGraph.cpp
     qanGraphView.cpp
     qanGrid.cpp
