@@ -62,19 +62,26 @@ template <class graph_base_t,
 void    graph<graph_base_t, node_t,
               group_t, edge_t>::clear() noexcept
 {
-    for (const auto node: _nodes) {
-        node->_graph = nullptr;
-        delete node;
-    }
+    // Note 20220424: First clear nodes/edges container, then delete
+    // their content since destroyed() signal from contained items might
+    // be catched trigerring uses of _nodes/_edges with already deleted content
+    nodes_t nodes;
+    std::copy(_nodes.begin(), _nodes.end(), std::back_inserter(nodes));
     _root_nodes.clear();
     _nodes_search.clear();
     _nodes.clear();
-    for (const auto edge: _edges) {
+    for (const auto node: nodes) {
+        node->_graph = nullptr;
+        delete node;
+    }
+    edges_t edges;
+    std::copy(_edges.begin(), _edges.end(), std::back_inserter(edges));
+    _edges_search.clear();
+    _edges.clear();
+    for (const auto edge: edges) {
         edge->_graph = nullptr;
         delete edge;
     }
-    _edges_search.clear();
-    _edges.clear();
 
     // Clearing groups and behaviours (Not: group->_graph is resetted with nodes)
     _groups.clear();
