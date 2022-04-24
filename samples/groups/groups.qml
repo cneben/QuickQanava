@@ -50,9 +50,9 @@ ApplicationWindow {
         function centerItem( item ) {
             if ( !item )
                 return
-            var windowCenter = Qt.point( ( window.contentItem.width - item.width ) / 2.,
-                                        ( window.contentItem.height - item.height ) / 2. )
-            var graphNodeCenter = window.contentItem.mapToItem( containerItem, windowCenter.x, windowCenter.y )
+            var windowCenter = Qt.point((window.contentItem.width - item.width) / 2.,
+                                        (window.contentItem.height - item.height) / 2.)
+            var graphNodeCenter = window.contentItem.mapToItem(containerItem, windowCenter.x, windowCenter.y)
             item.x = graphNodeCenter.x
             item.y = graphNodeCenter.y
         }
@@ -195,7 +195,7 @@ ApplicationWindow {
             ToolButton {
                 text: "Add Node"
                 onClicked: {
-                    var n = topology.insertNode( )
+                    var n = topology.insertNode()
                     if (n) {
                         n.label = "Node"
                         n.x = graphView
@@ -210,7 +210,7 @@ ApplicationWindow {
                 enabled: node !== undefined
                 onClicked: {
                     console.info("node.group=" + node.group)
-                    if ( node && node.group )
+                    if (node && node.group )
                         topology.ungroupNode(node)
                 }
             }
