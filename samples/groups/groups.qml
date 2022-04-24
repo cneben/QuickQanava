@@ -81,12 +81,12 @@ ApplicationWindow {
                 //g1.item.width = 250; g1.item.height = 270
                 //topology.insertEdge( n2, g1 )
             }
-            onGroupClicked: {
+            onGroupClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
                 groupEditor.group = group
             }
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: {
+            onGroupRightClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
                 contextMenu.group = group
 
@@ -98,12 +98,12 @@ ApplicationWindow {
                 contextMenu.y = globalPos.y
                 contextMenu.open()
             }
-            onNodeClicked: {
+            onNodeClicked: node => {
                 ungroupNodeButton.node = node
                 groupEditor.group = undefined;
                 contextMenu.node = node
             }
-            onNodeRightClicked: {
+            onNodeRightClicked: node => {
                 ungroupNodeButton.node = node
                 contextMenu.node = node
 
@@ -115,7 +115,7 @@ ApplicationWindow {
                 contextMenu.y = globalPos.y
                 contextMenu.open()
             }
-            onNodeMoved: {
+            onNodeMoved: node => {
                 if (node && node.isGroup)
                     window.notifyUser("Group <b>" + node.label + "</b> moved")
             }
