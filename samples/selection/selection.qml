@@ -122,144 +122,144 @@ ApplicationWindow {
             onAccepted: { topology.selectionColor = color; }
         }
 
-        Frame {
+        Pane {
             id: selectionSettings
-            anchors.bottom: parent.bottom;   anchors.bottomMargin: 10
-            anchors.right: parent.right;    anchors.rightMargin: 10
-            width: 250
-            height: 430
-            leftPadding: 0; rightPadding: 0
-            topPadding: 0;  bottomPadding: 0
-            Pane { anchors.fill: parent; anchors.margins: 1; opacity: 0.7 }
-            ColumnLayout {
-                anchors.fill: parent; anchors.margins: 10
-                ComboBox {
-                    model: ["Default", "Custom"]
-                    Component {
-                        id: customSelectionComponent
-                        CustomSelectionItem { }
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            padding: 0
+            Frame {
+                ColumnLayout {
+                    anchors.fill: parent; anchors.margins: 10
+                    ComboBox {
+                        model: ["Default", "Custom"]
+                        Component {
+                            id: customSelectionComponent
+                            CustomSelectionItem { }
+                        }
+                        onActivated: {
+                            if (currentIndex == 0)
+                                topology.selectionDelegate = null  // Use undefined to set back the default delegate
+                            else if (currentIndex == 1)
+                                topology.selectionDelegate = customSelectionComponent
+                        }
                     }
-                    onActivated: {
-                        if (currentIndex == 0)
-                            topology.selectionDelegate = null  // Use undefined to set back the default delegate
-                        else if (currentIndex == 1)
-                            topology.selectionDelegate = customSelectionComponent
-                    }
-                }
 
-                Label {
-                    Layout.margins: 3; text: "Selection:"
-                    font.bold: true; horizontalAlignment: Text.AlignLeft
-                }
-                ListView {
-                    id: selectionListView
-                    Layout.fillWidth: true; Layout.fillHeight: true
-                    clip: true
-                    model: topology.selectedNodes
-                    spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
-                    highlightFollowsCurrentItem: false
-                    highlight: Rectangle {
-                        x: 0
-                        y: selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0
-                        width: selectionListView.width
-                        height: selectionListView.currentItem ? selectionListView.currentItem.height : 0
-                        color: Material.accent; opacity: 0.7; radius: 3
-                        Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
+                    Label {
+                        Layout.margins: 3; text: "Selection:"
+                        font.bold: true; horizontalAlignment: Text.AlignLeft
                     }
-                    delegate: Item {
-                        id: selectedNodeDelegate
-                        width: ListView.view.width; height: 30;
-                        Label { text: "Label: " + itemData.label }
-                        MouseArea {
-                            anchors.fill: selectedNodeDelegate
-                            onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
+                    ListView {
+                        id: selectionListView
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                        clip: true
+                        model: topology.selectedNodes
+                        spacing: 4; focus: true; flickableDirection : Flickable.VerticalFlick
+                        highlightFollowsCurrentItem: false
+                        highlight: Rectangle {
+                            x: 0
+                            y: selectionListView.currentItem !== null ? selectionListView.currentItem.y : 0
+                            width: selectionListView.width
+                            height: selectionListView.currentItem ? selectionListView.currentItem.height : 0
+                            color: Material.accent; opacity: 0.7; radius: 3
+                            Behavior on y { SpringAnimation { duration: 200; spring: 2; damping: 0.1 } }
                         }
-                    }
-                }
-                RowLayout {
-                    Layout.margins: 2
-                    Label { text:"Policy:" }
-                    Item { Layout.fillWidth: true }
-                    ColumnLayout {
-                        CheckBox {
-                            Layout.preferredHeight: 25
-                            height: 15
-                            autoExclusive: true
-                            text: "NoSelection"
-                            checked: topology.selectionPolicy === Qan.Graph.NoSelection
-                            onCheckedChanged: {
-                                if (checked)
-                                    topology.selectionPolicy = Qan.Graph.NoSelection
-                            }
-                        }
-                        CheckBox {
-                            Layout.preferredHeight: 25
-                            height: 15
-                            autoExclusive: true
-                            text: "SelectOnClick"
-                            checked: topology.selectionPolicy === Qan.Graph.SelectOnClick
-                            onCheckedChanged: {
-                                if (checked)
-                                    topology.selectionPolicy = Qan.Graph.SelectOnClick
-                            }
-                        }
-                        CheckBox {
-                            Layout.preferredHeight: 25
-                            height: 15
-                            autoExclusive: true
-                            text: "SelectOnCtrlClick"
-                            checked: topology.selectionPolicy === Qan.Graph.SelectOnCtrlClick
-                            onCheckedChanged: {
-                                if (checked)
-                                    topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick
+                        delegate: Item {
+                            id: selectedNodeDelegate
+                            width: ListView.view.width; height: 30;
+                            Label { text: "Label: " + itemData.label }
+                            MouseArea {
+                                anchors.fill: selectedNodeDelegate
+                                onClicked: { selectedNodeDelegate.ListView.view.currentIndex = index }
                             }
                         }
                     }
-                }
-                RowLayout {
-                    Layout.margins: 2
-                    Label { text:"Color:" }
-                    Item { Layout.fillWidth: true }
-                    Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: topology.selectionColor; radius: 3; border.width: 1; border.color: Qt.lighter(topology.selectionColor) }
-                    Button {
-                        Layout.preferredHeight: 30; Layout.preferredWidth: 30
-                        text: "..."
-                        onClicked: {
-                            selectionColorDialog.color = topology.selectionColor
-                            selectionColorDialog.open();
+                    RowLayout {
+                        Layout.margins: 2
+                        Label { text:"Policy:" }
+                        Item { Layout.fillWidth: true }
+                        ColumnLayout {
+                            CheckBox {
+                                Layout.preferredHeight: 25
+                                height: 15
+                                autoExclusive: true
+                                text: "NoSelection"
+                                checked: topology.selectionPolicy === Qan.Graph.NoSelection
+                                onCheckedChanged: {
+                                    if (checked)
+                                        topology.selectionPolicy = Qan.Graph.NoSelection
+                                }
+                            }
+                            CheckBox {
+                                Layout.preferredHeight: 25
+                                height: 15
+                                autoExclusive: true
+                                text: "SelectOnClick"
+                                checked: topology.selectionPolicy === Qan.Graph.SelectOnClick
+                                onCheckedChanged: {
+                                    if (checked)
+                                        topology.selectionPolicy = Qan.Graph.SelectOnClick
+                                }
+                            }
+                            CheckBox {
+                                Layout.preferredHeight: 25
+                                height: 15
+                                autoExclusive: true
+                                text: "SelectOnCtrlClick"
+                                checked: topology.selectionPolicy === Qan.Graph.SelectOnCtrlClick
+                                onCheckedChanged: {
+                                    if (checked)
+                                        topology.selectionPolicy = Qan.Graph.SelectOnCtrlClick
+                                }
+                            }
                         }
                     }
-                }
-                RowLayout {
-                    Layout.margins: 2
-                    Label { text:"Weight:" }
-                    Slider {
-                        Layout.preferredHeight: 20
-                        Layout.fillWidth: true
-                        from: 1.0
-                        to: 15.
-                        stepSize: 0.1
-                        value: topology.selectionWeight
-                        onValueChanged: { topology.selectionWeight = value  }
+                    RowLayout {
+                        Layout.margins: 2
+                        Label { text:"Color:" }
+                        Item { Layout.fillWidth: true }
+                        Rectangle { Layout.preferredWidth: 25; Layout.preferredHeight: 25; color: topology.selectionColor; radius: 3; border.width: 1; border.color: Qt.lighter(topology.selectionColor) }
+                        Button {
+                            Layout.preferredHeight: 30; Layout.preferredWidth: 30
+                            text: "..."
+                            onClicked: {
+                                selectionColorDialog.color = topology.selectionColor
+                                selectionColorDialog.open();
+                            }
+                        }
                     }
-                }
-                RowLayout {
-                    Layout.margins: 2
-                    Label { text:"Margin:" }
-                    Slider {
-                        Layout.preferredHeight: 20
-                        Layout.fillWidth: true
-                        from: 1.0
-                        to: 15.
-                        stepSize: 0.1
-                        value: topology.selectionMargin
-                        onValueChanged: { topology.selectionMargin = value  }
+                    RowLayout {
+                        Layout.margins: 2
+                        Label { text:"Weight:" }
+                        Slider {
+                            Layout.preferredHeight: 20
+                            Layout.fillWidth: true
+                            from: 1.0
+                            to: 15.
+                            stepSize: 0.1
+                            value: topology.selectionWeight
+                            onValueChanged: { topology.selectionWeight = value  }
+                        }
                     }
-                }
-                CheckBox {
-                    text: 'Enable visual selection rect'
-                    checked: graphView.selectionRectEnabled
-                    onClicked: graphView.selectionRectEnabled = checked
+                    RowLayout {
+                        Layout.margins: 2
+                        Label { text:"Margin:" }
+                        Slider {
+                            Layout.preferredHeight: 20
+                            Layout.fillWidth: true
+                            from: 1.0
+                            to: 15.
+                            stepSize: 0.1
+                            value: topology.selectionMargin
+                            onValueChanged: { topology.selectionMargin = value  }
+                        }
+                    }
+                    CheckBox {
+                        text: 'Enable visual selection rect'
+                        checked: graphView.selectionRectEnabled
+                        onClicked: graphView.selectionRectEnabled = checked
+                    }
                 }
             }
         } // selectionSettings

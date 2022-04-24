@@ -224,66 +224,68 @@ ApplicationWindow {
                 }
             }
         }
-        Control {
+        Pane {
             id: groupEditor
             property var group: undefined
             onGroupChanged: groupItem = group ? group.item : undefined
 
             property var groupItem: undefined
-            anchors.bottom: parent.bottom; anchors.bottomMargin: 15
-            anchors.right: parent.right; anchors.rightMargin: 15
-
-            width: 220; height: 385; padding: 0
-            Pane { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
-            ColumnLayout {
-                Label {
-                    text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
-                }
-                CheckBox {
-                    text: "Draggable"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
-                    onClicked: groupEditor.groupItem.draggable = checked
-                }
-                CheckBox {
-                    text: "Resizable"
-                    enabled: groupEditor.groupItem != null
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
-                    onClicked: groupEditor.groupItem.resizable = checked
-                }
-                CheckBox {
-                    text: "Selected (read-only)"
-                    enabled: false
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
-                }
-                CheckBox {
-                    text: "Selectable"
-                    enabled: groupEditor.groupItem != null
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
-                    onClicked: groupEditor.groupItem.selectable = checked
-                }
-                CheckBox {
-                    text: "Label editor"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
-                    onClicked: groupEditor.groupItem.labelEditorVisible = checked
-                }
-                CheckBox {
-                    text: "Expand button"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
-                    onClicked: groupEditor.groupItem.expandButtonVisible = checked
-                }
-                ToolButton {
-                    text: "Remove group"
-                    enabled: groupEditor.groupItem !== undefined
-                    onClicked: {
-                        if (groupEditor.groupItem !== undefined) {
-                            topology.removeGroup(groupEditor.groupItem.group)
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 15
+            anchors.right: parent.right
+            anchors.rightMargin: 15
+            padding: 0
+            Frame {
+                ColumnLayout {
+                    Label {
+                        text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
+                    }
+                    CheckBox {
+                        text: "Draggable"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
+                        onClicked: groupEditor.groupItem.draggable = checked
+                    }
+                    CheckBox {
+                        text: "Resizable"
+                        enabled: groupEditor.groupItem != null
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
+                        onClicked: groupEditor.groupItem.resizable = checked
+                    }
+                    CheckBox {
+                        text: "Selected (read-only)"
+                        enabled: false
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
+                    }
+                    CheckBox {
+                        text: "Selectable"
+                        enabled: groupEditor.groupItem != null
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
+                        onClicked: groupEditor.groupItem.selectable = checked
+                    }
+                    CheckBox {
+                        text: "Label editor"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
+                        onClicked: groupEditor.groupItem.labelEditorVisible = checked
+                    }
+                    CheckBox {
+                        text: "Expand button"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
+                        onClicked: groupEditor.groupItem.expandButtonVisible = checked
+                    }
+                    ToolButton {
+                        text: "Remove group"
+                        enabled: groupEditor.groupItem !== undefined
+                        onClicked: {
+                            if (groupEditor.groupItem !== undefined) {
+                                topology.removeGroup(groupEditor.groupItem.group)
+                            }
                         }
                     }
-                }
-            } // groupEditor ColumnLayout
+                } // groupEditor ColumnLayout
+            }
         } // Control groupEditor
     } // Qan.GraphView
 }
