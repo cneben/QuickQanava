@@ -23,13 +23,18 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+import QtQuick.Window 2.2
 import QtQuick 2.13
+
+//import QtQuick.Controls 2.13
 import QtQuick.Controls 2.13
+
 import QtQuick.Layouts  1.3
-import QtQuick.Dialogs  1.2
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
-import QtGraphicalEffects   1.0
+
+import Qt.labs.platform     1.1
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan
@@ -55,7 +60,13 @@ ApplicationWindow {
         property var targetNode: undefined
         property var targetGroup: undefined
         property var targetEdge: undefined
-        onClosed: {
+        // FIXME....
+        /*onClosed: function() {
+            menu.targetNode = undefined
+            menu.targetGroup = undefined
+            menu.targetEdge = undefined
+        }*/
+        function resetMenu() {
             menu.targetNode = undefined
             menu.targetGroup = undefined
             menu.targetEdge = undefined
@@ -66,6 +77,7 @@ ApplicationWindow {
                 var n = topology.insertNode()
                 centerItem(n.item)
                 n.label = "Node #" + topology.getNodeCount()
+                menu.resetMenu()
             }
         }
         MenuItem {
@@ -244,29 +256,29 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorColor: Material.accent
             connectorEdgeColor: Material.accent
-            onConnectorEdgeInserted: {
+            onConnectorEdgeInserted: edge => {
                 if (edge)
                     edge.label = "My edge"
             }
             property Component faceNodeComponent: Qt.createComponent("qrc:/FaceNode.qml")
-            onNodeClicked: {
+            onNodeClicked: node => {
                 portsListView.model = node.item.ports
             }
-            onNodeRightClicked: {
+            onNodeRightClicked: node => {
                 var globalPos = node.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetNode = node
                 menu.open()
             }
-            onGroupRightClicked: {
+            onGroupRightClicked: group => {
                 var globalPos = group.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetGroup = group
                 menu.open()
             }
-            onEdgeRightClicked: {
+            onEdgeRightClicked: edge => {
                 if (!edge || !edge.item)
                     return
                 var globalPos = edge.item.mapToItem(topology, pos.x, pos.y)
@@ -275,7 +287,7 @@ ApplicationWindow {
                 menu.targetEdge = edge
                 menu.open()
             }
-            onPortRightClicked: {
+            onPortRightClicked: port => {
                 var globalPos = port.parent.mapToItem(topology, pos.x, pos.y)
                 menuRmPort.x = globalPos.x
                 menuRmPort.y = globalPos.y
@@ -400,52 +412,44 @@ ApplicationWindow {
                 var dd3p1 = topology.insertPort(dd3, Qan.NodeItem.Top)
                 dd3p1.label = "P#1"
 
-                // Generate random connections
-                //var e = topology.insertEdge(bw1, js1)
-                //console.error('e=' + e)
-                //topology.bindEdgeSource(e, bw1p1)
-                //topology.bindEdgeDestination(e, js1p1)
+                /* e = topology.insertEdge(bw2, bw1)
+                 topology.bindEdgeSource(e, bw2p1)
+                 topology.bindEdgeDestination(e, bw1p2)
+                 e = topology.insertEdge(bw3, bw1)
+                 topology.bindEdgeSource(e, bw3p1)
+                 topology.bindEdgeDestination(e, bw1p3)
 
-               /* e = topology.insertEdge(bw2, bw1)
-                topology.bindEdgeSource(e, bw2p1)
-                topology.bindEdgeDestination(e, bw1p2)
-                e = topology.insertEdge(bw3, bw1)
-                topology.bindEdgeSource(e, bw3p1)
-                topology.bindEdgeDestination(e, bw1p3)
+                 e = topology.insertEdge(js1, js2)
+                 topology.bindEdgeSource(e, js1p4)
+                 topology.bindEdgeDestination(e, js2p1)
 
-                e = topology.insertEdge(js1, js2)
-                topology.bindEdgeSource(e, js1p4)
-                topology.bindEdgeDestination(e, js2p1)
+                 e = topology.insertEdge(js1, vd1)
+                 topology.bindEdgeSource(e, js1p2)
+                 topology.bindEdgeDestination(e, vd1p1)
 
-                e = topology.insertEdge(js1, vd1)
-                topology.bindEdgeSource(e, js1p2)
-                topology.bindEdgeDestination(e, vd1p1)
+                 e = topology.insertEdge(js1, dd1)
+                 topology.bindEdgeSource(e, js1p3)
+                 topology.bindEdgeDestination(e, dd1p1)
 
-                e = topology.insertEdge(js1, dd1)
-                topology.bindEdgeSource(e, js1p3)
-                topology.bindEdgeDestination(e, dd1p1)
+                 e = topology.insertEdge(dd2, dd1)
+                 topology.bindEdgeSource(e, dd2p1)
+                 topology.bindEdgeDestination(e, dd1p2)
 
-                e = topology.insertEdge(dd2, dd1)
-                topology.bindEdgeSource(e, dd2p1)
-                topology.bindEdgeDestination(e, dd1p2)
+                 e = topology.insertEdge(dd3, dd1)
+                 topology.bindEdgeSource(e, dd3p1)
+                 topology.bindEdgeDestination(e, dd1p3)
 
-                e = topology.insertEdge(dd3, dd1)
-                topology.bindEdgeSource(e, dd3p1)
-                topology.bindEdgeDestination(e, dd1p3)
+                 e = topology.insertEdge(vd2, vd1)
+                 topology.bindEdgeSource(e, vd2p1)
+                 topology.bindEdgeDestination(e, vd1p2)
 
-                e = topology.insertEdge(vd2, vd1)
-                topology.bindEdgeSource(e, vd2p1)
-                topology.bindEdgeDestination(e, vd1p2)
-
-                e = topology.insertEdge(vd3, vd1)
-                topology.bindEdgeSource(e, vd3p1)
-                topology.bindEdgeDestination(e, vd1p3)*/
+                 e = topology.insertEdge(vd3, vd1)
+                 topology.bindEdgeSource(e, vd3p1)
+                 topology.bindEdgeDestination(e, vd1p3)*/
             }
         } // Qan.Graph: graph
-        onRightClicked: {
-            var globalPos = graphView.mapToItem(topology, pos.x, pos.y)
-            menu.x = globalPos.x
-            menu.y = globalPos.y
+        onRightClicked: pos => {
+            //let globalPos = graphView.mapToItem(topology, pos.x, pos.y)
             menu.targetNode = undefined
             menu.targetEdge = undefined
             menu.open()

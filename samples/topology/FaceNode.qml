@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	ImgNode.qml
+// \file	FaceNode.qml
 // \author	benoit@destrat.io
 // \date	2016 02 11
 //-----------------------------------------------------------------------------
@@ -35,7 +35,6 @@
 import QtQuick              2.7
 import QtQuick.Controls     2.0
 import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -47,7 +46,7 @@ Qan.NodeItem {
     width: Layout.preferredWidth
     height: Layout.preferredHeight
 
-    DropShadow {
+    Qan.DropShadow {
         id: backgroundShadow
         anchors.fill: parent
         source: image

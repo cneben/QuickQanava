@@ -33,6 +33,7 @@ if (${QUICK_QANAVA_BUILD_SAMPLES})
     add_subdirectory(samples/selection)
     add_subdirectory(samples/style)
     add_subdirectory(samples/dataflow)
+    add_subdirectory(samples/topology)
 endif()
 
 add_subdirectory(exports)
