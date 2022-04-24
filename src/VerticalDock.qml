@@ -38,7 +38,7 @@ import QtQuick.Layouts 1.1
 import QuickQanava 2.0 as Qan
 
 ColumnLayout {
-    id: root
+    id: verticalDock
     spacing: 20
     z: 1.5   // Selection item z=1.0, dock must be on top of selection
 
@@ -54,7 +54,7 @@ ColumnLayout {
                   dockType === Qan.NodeItem.Left
 
             AnchorChanges {
-                target: root
+                target: verticalDock
                 anchors {
                     right: hostNodeItem.left
                     verticalCenter: hostNodeItem.verticalCenter
@@ -62,16 +62,17 @@ ColumnLayout {
             }
 
             PropertyChanges {
-                target: root
-                rightMargin: root.rightMargin
+                target: verticalDock
+                rightMargin: verticalDock.rightMargin
             }
         },
         State {
             name: "right"
-            when: hostNodeItem && dockType === Qan.NodeItem.Right
+            when: verticalDock.hostNodeItem !== undefined &&
+                  dockType === Qan.NodeItem.Right
 
             AnchorChanges {
-                target: root
+                target: verticalDock
                 anchors {
                     left: hostNodeItem.right
                     verticalCenter: hostNodeItem.verticalCenter
@@ -79,8 +80,8 @@ ColumnLayout {
             }
 
             PropertyChanges {
-                target: root
-                leftMargin: root.leftMargin
+                target: verticalDock
+                leftMargin: verticalDock.leftMargin
             }
         }
     ]
