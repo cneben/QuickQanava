@@ -212,185 +212,183 @@ TEST(gtpo_graph, edge_circuits)
         EXPECT_TRUE(g.get_root_node_count() == 1);
     }
 }
-/*
-TEST(gtpo_graph, edgeInsertRootNode)
+
+TEST(gtpo_graph, edge_insert_root_node)
 {
     // TEST: inserting an existing edge must remove dst from the root node set
     qan::Graph g;
     auto n1 = g.create_node();
+    g.insert_node(n1);
     auto n2 = g.create_node();
-    auto e1 = std::make_shared<gtpo::edge<>>(n1, n2);
-    EXPECT_EQ( g.get_root_node_count(), 2 );
-    g.insert_edge(e1);
-    EXPECT_EQ( g.get_root_node_count(), 1 );   // n2 is no longer a root node
+    g.insert_node(n2);
+    EXPECT_EQ(g.get_root_node_count(), 2);
+    g.insert_edge(n1, n2);
+    EXPECT_EQ(g.get_root_node_count(), 1);   // n2 is no longer a root node
 }
 
-TEST(gtpo_graph, edgeCreateRootNode)
-{
-    // TEST: inserting an existing edge must remove dst from the root node set
-    qan::Graph g;
-    EXPECT_EQ( g.get_root_node_count(), 0 );
-    auto n1 = g.create_node();
-    auto n2 = g.create_node();
-    EXPECT_EQ( g.get_root_node_count(), 2 );
-    g.insert_edge(n1, n2);
-    EXPECT_EQ( g.get_root_node_count(), 1 );   // n2 is no longer a root node
-}
 
 TEST(gtpo_graph, edgeInsertBadTopology)
 {
     // TEST: Inserting an edge with no source and/or destination should throw a bad_topology_error
     qan::Graph g;
     auto n1 = g.create_node();
+    g.insert_node(n1);
     auto n2 = g.create_node();
-    EXPECT_THROW( g.insert_edge(gtpo::graph<>::shared_edge_t{}), gtpo::bad_topology_error );
-    auto e1 = std::make_shared<gtpo::edge<>>(n1, gtpo::graph<>::weak_node_t{});
-    auto e2 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node_t{}, gtpo::graph<>::weak_node_t{});
-    auto e3 = std::make_shared<gtpo::edge<>>(gtpo::graph<>::weak_node_t{}, n1);
+    g.insert_node(n2);
+    EXPECT_FALSE(g.insert_edge(nullptr));
+
+    auto e1 = new qan::Edge();
+    e1->set_src(n1);
+    auto e2 = new qan::Edge();
+    auto e3 = new qan::Edge();
+    e3->set_dst(n1);
 
     // Test error with insert_edge()
-    EXPECT_THROW( g.insert_edge(e1), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insert_edge(e2), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insert_edge(e3), gtpo::bad_topology_error );
-
-    // Test error with insert_edge()
-    EXPECT_THROW( g.insert_edge(n1, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insert_edge(gtpo::graph<>::weak_node_t{}, n1), gtpo::bad_topology_error );
-    EXPECT_THROW( g.insert_edge(gtpo::graph<>::weak_node_t{}, gtpo::graph<>::weak_node_t{}), gtpo::bad_topology_error );
+    EXPECT_FALSE(g.insert_edge(e1));
+    EXPECT_FALSE(g.insert_edge(e2));
+    EXPECT_FALSE(g.insert_edge(e3));
 
     // Test success with insert_edge()
-    auto e4 = std::make_shared<gtpo::edge<>>(n1, n2);
-    EXPECT_NO_THROW( g.insert_edge(e4) );
+    auto e4 = new qan::Edge();
+    e4->set_src(n1);
+    e4->set_dst(n2);
+    EXPECT_TRUE(g.insert_edge(e4));
 
     // Test success with insert_edge()
-    EXPECT_NO_THROW( g.insert_edge(n1, n2) );
+    EXPECT_NE(g.insert_edge(n1, n2), nullptr);
 }
 
-TEST(gtpo_graph, edgeInsertparallel)
+
+TEST(gtpo_graph, edge_insert_parallel)
 {
     { // Test if insert_edge() successfully generate parallel edges
         qan::Graph g;
         auto n1 = g.create_node();
+        g.insert_node(n1);
         auto n2 = g.create_node();
+        g.insert_node(n2);
         auto n3 = g.create_node();
-        auto n4 = g.create_node();
+        g.insert_node(n3);
         g.insert_edge(n1, n2);
-        EXPECT_EQ( g.get_edge_count(n1, n2), 1 );
+        EXPECT_EQ(g.get_edge_count(n1, n2), 1);
         g.insert_edge(n2, n3);
         g.insert_edge(n2, n3);
         g.insert_edge(n2, n3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
+        EXPECT_EQ(g.get_edge_count(n2, n3), 3);   // Do not require, it depend on selected graph data structure
         g.remove_edge(n2, n3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 2 ) ;
+        EXPECT_EQ(g.get_edge_count(n2, n3), 2) ;
         g.remove_all_edges(n2, n3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 0 ) ;
+        EXPECT_EQ(g.get_edge_count(n2, n3), 0) ;
         g.clear();
     }
 
     { // Test if insert_edge() successfully generate parallel edges
         qan::Graph g;
         auto n1 = g.create_node();
+        g.insert_node(n1);
         auto n2 = g.create_node();
+        g.insert_node(n2);
         auto n3 = g.create_node();
+        g.insert_node(n3);
         auto n4 = g.create_node();
+        g.insert_node(n4);
 
-        auto e1 = std::make_shared<gtpo::edge<>>(n1, n2);
-        g.insert_edge(e1);
-        EXPECT_EQ( g.get_edge_count(n1, n2), 1 );
-
-        auto e2 = std::make_shared<gtpo::edge<>>(n2, n3);
-        auto e3 = std::make_shared<gtpo::edge<>>(n2, n3);
-        auto e4 = std::make_shared<gtpo::edge<>>(n2, n3);
-        g.insert_edge(e2);
-        g.insert_edge(e3);
-        g.insert_edge(e3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 3 );   // Do not require, it depend on selected graph data structure
+        g.insert_edge(n1, n2);
+        EXPECT_EQ(g.get_edge_count(n1, n2), 1);
+        g.insert_edge(n2, n3);
+        g.insert_edge(n2, n3);
+        g.insert_edge(n2, n3);
+        EXPECT_EQ(g.get_edge_count(n2, n3), 3);   // Do not require, it depend on selected graph data structure
         g.remove_edge(n2, n3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 2 ) ;
+        EXPECT_EQ(g.get_edge_count(n2, n3), 2) ;
         g.remove_all_edges(n2, n3);
-        EXPECT_EQ( g.get_edge_count(n2, n3), 0 ) ;
+        EXPECT_EQ(g.get_edge_count(n2, n3), 0) ;
         g.clear();
     }
 }
 
-TEST(gtpo_graph, edgeRemoveContains)
+TEST(gtpo_graph, edge_remove_contains)
 {
     // Graph must no longer contains() an edge that has been removed
     qan::Graph g;
     auto n1 = g.create_node();
+    g.insert_node(n1);
     auto n2 = g.create_node();
-    EXPECT_EQ( g.get_edge_count(), 0 );
+    g.insert_node(n2);
+    EXPECT_EQ(g.get_edge_count(), 0);
     auto e1 = g.insert_edge(n1, n2);
-    EXPECT_EQ( g.get_edge_count(), 1 );
-    EXPECT_TRUE( g.contains(e1) );
+    EXPECT_EQ(g.get_edge_count(), 1);
+    EXPECT_TRUE(g.contains(e1));
     g.remove_edge(n1, n2);
-    EXPECT_FALSE( g.contains(e1) );
-    EXPECT_FALSE( g.has_edge(n1, n2) );
+    EXPECT_FALSE(g.contains(e1));
+    EXPECT_FALSE(g.has_edge(n1, n2));
 }
 
-TEST(gtpo_graph, edgeNodeInOutDegree)
+TEST(gtpo_graph, edge_node_degree)
 {
     qan::Graph g;
     auto n1 = g.create_node();
+    g.insert_node(n1);
     auto n2 = g.create_node();
+    g.insert_node(n2);
     auto n3 = g.create_node();
+    g.insert_node(n3);
     auto n4 = g.create_node();
-    EXPECT_EQ( g.get_root_node_count(), 4 );
+    g.insert_node(n4);
+    EXPECT_EQ(g.get_root_node_count(), 4);
     g.insert_edge(n1, n2);
-    EXPECT_EQ( g.get_root_node_count(), 3 );
+    EXPECT_EQ(g.get_root_node_count(), 3);
     g.insert_edge(n2, n3);
     g.insert_edge(n2, n4);
-    EXPECT_EQ( g.get_root_node_count(), 1 );
+    EXPECT_EQ(g.get_root_node_count(), 1);
 
     // Check in/out degree after multiple edge insertion
-    gtpo::graph<>::shared_node_t node2 = n2.lock();
-    EXPECT_TRUE( node2 );
-    EXPECT_EQ( node2->get_in_degree(), 1 );
-    EXPECT_EQ( node2->get_out_degree(), 2 );
-    EXPECT_EQ( node2->get_in_edges().size(), 1 );
-    EXPECT_EQ( node2->get_out_edges().size(), 2 );
-    EXPECT_EQ( node2->get_in_nodes().size(), 1 );
-    EXPECT_EQ( node2->get_out_nodes().size(), 2 );
+    EXPECT_EQ(n2->get_in_degree(), 1);
+    EXPECT_EQ(n2->get_out_degree(), 2);
+    EXPECT_EQ(n2->get_in_edges().size(), 1);
+    EXPECT_EQ(n2->get_out_edges().size(), 2);
+    EXPECT_EQ(n2->get_in_nodes().size(), 1);
+    EXPECT_EQ(n2->get_out_nodes().size(), 2);
 
     // Check in/out degree after multiple edge removal
-    ASSERT_THROW(g.remove_edge(n2, gtpo::graph<>::weak_node_t()), gtpo::bad_topology_error );
-    //INFO( "Incorrect remove_edge() calls successfully throw a gtpo::bad_topology_error" );
-    EXPECT_TRUE( g.has_edge( n2, n4 ) );
+    EXPECT_FALSE(g.remove_edge(n2, nullptr));
+
+    EXPECT_TRUE(g.has_edge(n2, n4));
     g.remove_edge(n2, n4);
-    EXPECT_FALSE( g.has_edge( n2, n4 ) );
+    EXPECT_FALSE(g.has_edge(n2, n4));
     g.remove_edge(n2, n3);
-    EXPECT_EQ( node2->get_out_degree(), 0 );
-    EXPECT_EQ( node2->get_out_edges().size(), 0 );
-    EXPECT_EQ( node2->get_out_nodes().size(), 0 );
-    EXPECT_EQ( g.get_root_node_count(), 3 );
-    EXPECT_TRUE( g.is_root_node( n3 ) );
-    EXPECT_TRUE( g.is_root_node( n4 ) );
+    EXPECT_EQ(n2->get_out_degree(), 0);
+    EXPECT_EQ(n2->get_out_edges().size(), 0);
+    EXPECT_EQ(n2->get_out_nodes().size(), 0);
+    EXPECT_EQ(g.get_root_node_count(), 3);
+    EXPECT_TRUE(g.is_root_node(n3));
+    EXPECT_TRUE(g.is_root_node(n4));
 
     g.clear();
 }
 
-TEST(gtpo_graph, remove_nodeInOutDegree)
+TEST(gtpo_graph, remove_node_degree)
 {
     // Note: Test GTpo remove_node() method:
     //    - Removing a node must also invalidate (ie remove) all its out/in orphants edges.
     qan::Graph g;
-    auto wn1 = g.create_node();
-    auto wn2 = g.create_node();
-    auto wn3 = g.create_node();
-    g.insert_edge(wn1, wn2);
-    g.insert_edge(wn2, wn3);
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+    auto n2 = g.create_node();
+    g.insert_node(n2);
+    auto n3 = g.create_node();
+    g.insert_node(n3);
+    g.insert_edge(n1, n2);
+    g.insert_edge(n2, n3);
+
     // n1 now has 1 in node and 1 out node
-    auto n2 = wn2.lock();
-    EXPECT_EQ( n2->get_out_degree(), 1 );
-    EXPECT_EQ( n2->get_in_degree(), 1 );
+    EXPECT_EQ(n2->get_out_degree(), 1);
+    EXPECT_EQ(n2->get_in_degree(), 1);
 
     // Removing node n2 should also remove all edges
-    g.remove_node( wn2 );
-    EXPECT_EQ( g.get_node_count(), 2 );
-    EXPECT_EQ( g.get_edge_count(), 0 );
-    auto n1 = wn1.lock();
-    auto n3 = wn3.lock();
-    EXPECT_EQ( n1->get_out_degree(), 0 );
-    EXPECT_EQ( n3->get_in_degree(), 0 );
+    g.remove_node(n2);
+    EXPECT_EQ(g.get_node_count(), 2);
+    EXPECT_EQ(g.get_edge_count(), 0);
+    EXPECT_EQ(n1->get_out_degree(), 0);
+    EXPECT_EQ(n3->get_in_degree(), 0);
 }
-*/

@@ -331,8 +331,13 @@ auto    graph<graph_base_t, node_t,
         destination == nullptr)
         return false;
 
-    while (get_edge_count(source, destination) > 0)
+    auto limit = _edges.size();
+    while (get_edge_count(source, destination) > 0 &&
+           limit >= 0) {
         remove_edge(source, destination);
+        limit--;
+    }
+    return true;
 }
 
 template <class graph_base_t,
