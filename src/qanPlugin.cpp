@@ -35,7 +35,6 @@
 
 // QuickQanava headers
 #include "./qanPlugin.h"
-#include "./qanGraphConfig.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
 #include "./qanNode.h"
