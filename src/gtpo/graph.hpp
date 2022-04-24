@@ -476,12 +476,14 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::group_node(node_t* node, group_t* group) -> void
+              group_t, edge_t>::group_node(node_t* node, group_t* group) -> bool
 {
-    if (node == nullptr || group == nullptr)
-        return;
+    if (node == nullptr ||
+        group == nullptr)
+        return false;
     node->set_group(group);
     container_adapter<nodes_t>::insert(node, group->get_nodes());
+    return true;
 }
 
 template <class graph_base_t,

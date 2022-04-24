@@ -295,12 +295,9 @@ public:
 
     /*! \brief Insert an existing node \c node in group \c group.
      *
-     * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
-     * node_inserted() will be called.
-     *
      * \note \c node get_group() will return \c group if grouping succeed.
      */
-    auto            group_node(node_t* node, group_t* group) -> void;
+    auto            group_node(node_t* node, group_t* group) -> bool;
 
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *
