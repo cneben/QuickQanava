@@ -146,7 +146,7 @@ protected:
  * method won't be notified of changes in topology.
  */
 template <class graph_t, class node_t, class edge_t, class group_t>
-class graph_observer : public observer<node_t>
+class graph_observer : public observer<graph_t>
 {
 public:
     template<class, class, class, class>

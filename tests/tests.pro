@@ -9,9 +9,9 @@ INCLUDEPATH += ../src
 include (../src/quickqanava.pri)
 
 SOURCES	+=  ./tests.cpp            \
-            ./topology_tests.cpp   #\
-            #./behaviours_tests.cpp \
-            #./groups_tests.cpp     \
+            #./topology_tests.cpp   \
+            ./behaviours_tests.cpp \
+            #./groups_tests.cpp
 
 CONFIG(debug, debug|release) {
     linux-g++*:     LIBS	+= -L../build/ -lgtest -lgmock

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2018, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the GTpo software.
 //
-// \file	gtpo_groups_tests.cpp
+// \file	groups_tests.cpp
 // \author	benoit@qanava.org
 // \date	2017 03 08
 //-----------------------------------------------------------------------------
@@ -38,7 +38,7 @@
 #include <iostream>
 
 // GTpo headers
-#include <GTpo>
+#include <QuickQanava>
 
 // Google Test
 #include <gtest/gtest.h>
@@ -47,7 +47,7 @@
 //-----------------------------------------------------------------------------
 // GTpo groups tests
 //-----------------------------------------------------------------------------
-
+/*
 TEST(GTpoGroups, basic)
 {
     gtpo::graph<> g;
@@ -300,4 +300,4 @@ TEST(GTpoGroups, adjacentEdges)
 
     g.clear();
 }
-
+*/
