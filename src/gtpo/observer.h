@@ -119,20 +119,20 @@ public:
     node_observer& operator=(node_observer<node_t, edge_t>&&) = delete;
 
 protected:
-    //! \brief Called immediatly after an in-edge with source \c weakInNode has been inserted.
-    virtual void    on_in_node_inserted(node_t& target, node_t& weakInNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    //! \brief Called immediatly after an in-edge with \c source has been inserted.
+    virtual void    on_in_node_inserted(node_t& target, node_t& source, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(source); static_cast<void>(edge); }
 
-    //! \brief Called when an in-edge with source \c weakInNode is about to be removed.
-    virtual void    on_in_node_removed(node_t& target, node_t& weakInNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakInNode); static_cast<void>(edge); }
+    //! \brief Called when an in-edge with \c source is about to be removed.
+    virtual void    on_in_node_removed(node_t& target, node_t& source, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(source); static_cast<void>(edge); }
 
     //! \brief Called immediatly after an in node has been removed.
     virtual void    on_in_node_removed(node_t& target)  noexcept { static_cast<void>(target); }
 
-    //! \brief Called immediatly after an out-edge with destination \c weakOutNode has been inserted.
-    virtual void    on_out_node_inserted(node_t& target, node_t& weakOutNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    //! \brief Called immediatly after an out-edge with \c destination has been inserted.
+    virtual void    on_out_node_inserted(node_t& target, node_t& destination, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(destination); static_cast<void>(edge); }
 
-    //! \brief Called when an out-edge with destination \c weakOutNode is about to be removed.
-    virtual void    on_out_node_removed(node_t& target, node_t& weakOutNode, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(weakOutNode); static_cast<void>(edge); }
+    //! \brief Called when an out-edge with \c destination is about to be removed.
+    virtual void    on_out_node_removed(node_t& target, node_t& destination, const edge_t& edge)  noexcept { static_cast<void>(target); static_cast<void>(destination); static_cast<void>(edge); }
 
     //! \brief Called immediatly after an out-edge has been removed.
     virtual void    on_out_node_removed(node_t& target)  noexcept { static_cast<void>(target); }
