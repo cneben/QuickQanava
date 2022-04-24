@@ -228,7 +228,7 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::create_edge(node_t* source, node_t* destination) -> edge_t*
+              group_t, edge_t>::insert_edge(node_t* source, node_t* destination) -> edge_t*
 {
     if (source == nullptr ||
         destination == nullptr) {
@@ -253,7 +253,7 @@ auto    graph<graph_base_t, node_t,
         if (source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
             container_adapter<nodes_t>::remove(destination, _root_nodes);    // Otherwise destination is no longer a root node
 
-        observable_base_t::notify_edge_inserted(edge);
+        observable_base_t::notify_edge_inserted(*edge);
     } catch ( ... ) {
         std::cerr << "gtpo::graph<>::create_edge(node,node): Insertion of edge "
                      "failed, source or destination nodes topology can't be modified." << std::endl;

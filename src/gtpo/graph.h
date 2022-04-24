@@ -185,12 +185,12 @@ private:
     /*! \name Graph Edge Management *///---------------------------------------
     //@{
 public:
-    /*! \brief Create a directed edge between \c source and \c destination node, then insert it into the graph.
+    /*! \brief Create and insert a directed edge between \c source and \c destination node.
      *
      * Complexity is O(1).
      * \return the inserted edge (if an error occurs return nullptr).
      */
-    auto        create_edge(node_t* source, node_t* destination) -> edge_t*;
+    auto        insert_edge(node_t* source, node_t* destination) -> edge_t*;
 
     /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *
