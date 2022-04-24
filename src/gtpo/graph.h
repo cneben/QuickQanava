@@ -155,7 +155,7 @@ public:
      *
      * \return true if \c node is a root node, false otherwise.
      */
-    auto    is_root_node(node_t* node) const -> bool;
+    auto    is_root_node(const node_t* node) const -> bool;
 
     //! Use fast search container to find if a given \c node is part of this graph.
     auto    contains(const node_t* node) const -> bool;

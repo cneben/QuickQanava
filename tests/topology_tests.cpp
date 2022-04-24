@@ -48,7 +48,7 @@
 // Graph node tests
 //-----------------------------------------------------------------------------
 
-TEST(topology, graph_empty)
+TEST(gtpo_graph, empty)
 {
     // A default empty graph should have no nodes nor root nodes
     qan::Graph g;
@@ -56,7 +56,7 @@ TEST(topology, graph_empty)
     EXPECT_EQ(g.get_root_node_count(), 0);
 }
 
-TEST(topology, graph_insert)
+TEST(gtpo_graph, insert)
 {
     // Inserting a node should increase node count and root node count
     qan::Graph g;
@@ -68,28 +68,26 @@ TEST(topology, graph_insert)
     g.clear();
 }
 
-/*TEST(GTpoTopology, remove_nodeCount)
+TEST(gtpo_graph, root_node)
 {
-    gtpo::graph<> g;
-    gtpo::graph<>::weak_node_t n = g.create_node();
-    auto nc = g.get_node_count();
-    auto rnc = g.get_root_node_count();
-    g.install_root_node( n ); // Just a test, it should not be called by the user directly
-    EXPECT_TRUE( g.is_root_node( n ) );
-    EXPECT_TRUE( g.contains( n ) );
-    g.remove_node( n );
-    EXPECT_FALSE( g.contains( n ) );
-    EXPECT_EQ( g.get_node_count(), nc - 1 );
-    EXPECT_EQ( g.get_root_node_count(), rnc - 1 ) ;
-    g.create_node();
-    g.clear();
+    qan::Graph g;
+    auto n = g.create_node();
+    EXPECT_TRUE(g.insert_node(n));
+    EXPECT_EQ(g.get_node_count(), 1);
+    EXPECT_EQ(g.get_root_node_count(), 1);
+    EXPECT_TRUE(g.is_root_node(n));
+    EXPECT_TRUE(g.contains(n));
+    g.remove_node(n);
+    EXPECT_FALSE(g.contains(n));
+    EXPECT_EQ(g.get_node_count(), 0);
+    EXPECT_EQ(g.get_root_node_count(), 0);
 }
 
 //-----------------------------------------------------------------------------
 // Graph clear tests
 //-----------------------------------------------------------------------------
-
-TEST(GTpoTopology, graphClear)
+/*
+TEST(gtpo_graph, clear)
 {
     // TEST: clearing an empty graph, expecting no node after clearing an empty graph
     gtpo::graph<> g;
@@ -98,7 +96,7 @@ TEST(GTpoTopology, graphClear)
     EXPECT_EQ( g.get_node_count(), 0 );
 }
 
-TEST(GTpoTopo, graphClearNode)
+TEST(gtpo_graph, clear_with_content)
 {
     // TEST: clearing a graph with one node should lead to an empty graph
     gtpo::graph<> g;
@@ -111,7 +109,7 @@ TEST(GTpoTopo, graphClearNode)
     EXPECT_TRUE( n.expired() );
 }
 
-TEST(GTpoTopology, graphClearNodeEdge)
+TEST(gtpo_graph, clear_edges)
 {
     // TEST: clearing a graph with two nodes linked by an edge should lead to an empty graph
     gtpo::graph<> g;
@@ -133,7 +131,7 @@ TEST(GTpoTopology, graphClearNodeEdge)
 // Graph edge tests
 //-----------------------------------------------------------------------------
 
-TEST(GTpoTopology, edgeBasic)
+TEST(gtpo_graph, edge_empty)
 {
     // A default empty graph should have no edges
     gtpo::graph<> g;

@@ -200,13 +200,13 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::is_root_node(node_t* node) const -> bool
+              group_t, edge_t>::is_root_node(const node_t* node) const -> bool
 {
     if (node == nullptr)
         return false;
     if (node->get_in_degree() != 0)   // Fast exit when node in degree != 0, it can't be a root node
         return false;
-    return _root_nodes.find(node) != _root_nodes.cend();
+    return _root_nodes.contains(const_cast<node_t*>(node));
 }
 
 template <class graph_base_t,
