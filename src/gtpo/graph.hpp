@@ -62,16 +62,17 @@ template <class graph_base_t,
 void    graph<graph_base_t, node_t,
               group_t, edge_t>::clear() noexcept
 {
-    // Note 20160104: First edges, then nodes (it helps maintaining topology if
-    // womething went wrong during destruction
-    for (auto& node: _nodes)   // Do not maintain topology during node deletion
-        node->set_graph(nullptr);
-    _root_nodes.clear();         // Remove weak_ptr containers first
+    for (const auto node: _nodes) {
+        node->_graph = nullptr;
+        delete node;
+    }
+    _root_nodes.clear();
     _nodes_search.clear();
     _nodes.clear();
-
-    for (auto& edge: _edges)   // Do not maintain topology during edge deletion
-        edge->set_graph(nullptr);
+    for (const auto edge: _edges) {
+        edge->_graph = nullptr;
+        delete edge;
+    }
     _edges_search.clear();
     _edges.clear();
 
