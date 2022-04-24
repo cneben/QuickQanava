@@ -40,10 +40,17 @@ ColumnLayout {
     id: root
     spacing: 20
     z: 1.5   // Selection item z=1.0, dock must be on top of selection
+
+    property var hostNodeItem: undefined
+    property int dockType: -1
+    property int leftMargin: 7
+    property int rightMargin: 7
+
     states: [
         State {
             name: "left"
-            when: hostNodeItem && dockType === Qan.NodeItem.Left
+            when: hostNodeItem !== null && hostNodeItem !== undefined &&
+                  dockType === Qan.NodeItem.Left
 
             AnchorChanges {
                 target: root
@@ -76,9 +83,4 @@ ColumnLayout {
             }
         }
     ]
-
-    property var hostNodeItem
-    property int dockType: -1
-    property int leftMargin: 7
-    property int rightMargin: 7
 }

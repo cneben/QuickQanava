@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -51,7 +51,7 @@ Qan.NodeItem {
 
     Connections {       // Observe "node item" "node" ouput value changes andupdate out port label
         target: node
-        onOutputChanged: {
+        function onOutputChanged() {
             if ( ports.itemCount > 0 )
                 ports.listReference.itemAt(0).label = "OUT=" + node.output.toFixed(1)
         }
