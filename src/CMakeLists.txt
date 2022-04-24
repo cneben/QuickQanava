@@ -29,18 +29,17 @@ set (qan_header_files
     qanBehaviour.h
     qanBottomRightResizer.h
     qanConnector.h
-    qanContainerAdapter.h
-    qanDraggableCtrl.h
     qanDraggable.h
+    qanDraggableCtrl.h
     qanEdge.h
+    qanEdgeDraggableCtrl.h
     qanEdgeItem.h
-    qanGraphConfig.h
     qanGraph.h
     qanGraphView.h
     qanGrid.h
-    qanGrid.h
     qanGroup.h
     qanGroupItem.h
+    qanLineGrid.h
     qanNavigable.h
     qanNavigablePreview.h
     qanNode.h
