@@ -37,6 +37,39 @@ import QtQuick.Layouts 1.1
 
 import QuickQanava 2.0 as Qan
 
+/*
+ColumnLayout {
+    id: verticalDock
+    spacing: 20
+    z: 1.5   // Selection item z=1.0, dock must be on top of selection
+    property var hostNodeItem: undefined
+    property int dockType: -1
+    property int leftMargin: 7
+    property int rightMargin: 7
+
+    default property alias  children : verticalDock.children
+
+    x: {
+        if (hostNodeItem === undefined)
+            return 0.
+        if (dockType == Qan.NodeItem.Right) {
+            return hostNodeItem.width + rightMargin
+        }
+        if (dockType == Qan.NodeItem.Left) {
+            console.error('!!!Recomputing layout hostNodeItem=' + hostNodeItem)
+            return -width - leftMargin
+        }
+        return 0.
+    }
+    onXChanged: {
+        console.error('!!!POST layout')
+        hostNodeItem.updatePortsEdges()
+    }
+    y: {
+        return -(height - hostNodeItem) / 2.
+    }
+}*/
+
 ColumnLayout {
     id: verticalDock
     spacing: 20
@@ -46,6 +79,12 @@ ColumnLayout {
     property int dockType: -1
     property int leftMargin: 7
     property int rightMargin: 7
+
+    // Note 20220426: Changing dock position actually do not modify
+    // docked port position, so no edge update is triggered, force update
+    // manually (fix #145)
+    onXChanged: hostNodeItem.updatePortsEdges()
+    onYChanged: hostNodeItem.updatePortsEdges()
 
     states: [
         State {

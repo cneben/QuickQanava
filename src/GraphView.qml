@@ -147,8 +147,8 @@ Qan.AbstractGraphView {
 
     // Port management ////////////////////////////////////////////////////////
     onPortClicked: function(port) {
-        if ( graph &&
-             port ) {
+        if (graph &&
+            port) {
             if (port.node)    // Force port host node on top
                 graph.sendToFront(port.node.item)
             if (graph.connector &&

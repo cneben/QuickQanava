@@ -32,8 +32,7 @@
 // \date	2017 08 10
 //-----------------------------------------------------------------------------
 
-#ifndef qanPortItem_h
-#define qanPortItem_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -133,7 +132,7 @@ public:
     void            setLabel( const QString& label ) noexcept;
     inline QString  getLabel() const noexcept { return _label; }
 private:
-    QString         _label{QStringLiteral("")};
+    QString         _label = "";
 signals:
     void            labelChanged();
 
@@ -141,7 +140,7 @@ public:
     void            setId(const QString& id) noexcept { _id = id; }
     const QString&  getId() const noexcept { return _id; }
 private:
-    QString         _id{QStringLiteral("")};
+    QString         _id = "";
 
 public:
     using EdgeItems =   qcm::Container<QVector, qan::EdgeItem*>;
@@ -161,14 +160,16 @@ protected:
 
     //! Used internally to automatically monitor in/out edges items destruction.
     void                onEdgeItemDestroyed(QObject* obj);
+
+public:
+    //! Force input/output edge update.
+    Q_INVOKABLE virtual void updateEdges();
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::PortItem )
-Q_DECLARE_METATYPE( qan::PortItem::Type )
-Q_DECLARE_METATYPE( qan::PortItem::Multiplicity )
-
-#endif // qanPortItem_h
+QML_DECLARE_TYPE(qan::PortItem)
+Q_DECLARE_METATYPE(qan::PortItem::Type)
+Q_DECLARE_METATYPE(qan::PortItem::Multiplicity)

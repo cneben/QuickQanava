@@ -230,7 +230,6 @@ auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> bool
 
 void    EdgeItem::updateItem() noexcept
 {
-    qWarning() << "EdgeItem::updateItem()";
     // Algorithm:
         // Generate cache step by step until it become invalid.
         // 1. Generate                 srcBr / dstBr / srcBrCenter / dstBrCenter / z
@@ -378,7 +377,6 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
             int p = 0;
             for (const auto& point: dstBs)
                 cache.dstBs[p++] = dstNodeItem->mapToItem(graphContainerItem, point);
-            qWarning() << "dstBs=" << dstBs;
         }
     }
 
@@ -416,25 +414,26 @@ void    EdgeItem::generateStraightEnds(GeometryCache& cache) const noexcept
     // PRECONDITIONS:
         // cache should be valid
         // cache srcBrCenter and dstBrCenter must be valid
-    if ( !cache.isValid() )
+    if (!cache.isValid())
         return;
 
-    const QLineF line = getLineIntersection( cache.srcBrCenter, cache.dstBrCenter, cache.srcBs, cache.dstBs );
+    const QLineF line = getLineIntersection(cache.srcBrCenter, cache.dstBrCenter,
+                                            cache.srcBs, cache.dstBs);
 
     // Update hidden: Edge is hidden if it's size is less than the src/dst shape size sum
     {
         {
             const auto arrowSize = getArrowSize();
             const auto arrowLength = arrowSize * 3.;
-            if ( line.length() < 2.0 + arrowLength )
+            if (line.length() < 2.0 + arrowLength)
                 cache.hidden = true;
-            if ( cache.hidden )  // Fast exit if edge is hidden
+            if (cache.hidden)  // Fast exit if edge is hidden
                 return;
         }
         const QRectF lineBr = QRectF{line.p1(), line.p2()}.normalized();  // Generate a Br with intersection points
-        cache.hidden = ( cache.srcBr.contains(lineBr) ||    // Hide edge if the whole line is contained in either src or dst BR
-                         cache.dstBr.contains(lineBr) );
-        if ( cache.hidden )  // Fast exit if edge is hidden
+        cache.hidden = (cache.srcBr.contains(lineBr) ||    // Hide edge if the whole line is contained in either src or dst BR
+                        cache.dstBr.contains(lineBr));
+        if (cache.hidden)  // Fast exit if edge is hidden
             return;
     }
 
@@ -458,29 +457,29 @@ void    EdgeItem::generateStraightEnds(GeometryCache& cache) const noexcept
         auto correctPortPoint = [](const auto& cache, auto dockType, const auto& p,
                                    const auto& brCenter, const auto& br) -> QPointF {
             QPointF c{p}; // c corrected point
-            if ( cache.lineType == qan::EdgeStyle::LineType::Straight ) {
-                switch ( dockType ) {
+            if (cache.lineType == qan::EdgeStyle::LineType::Straight) {
+                switch (dockType) {
                 case qan::NodeItem::Dock::Left:
-                    if ( p.x() > brCenter.x() )
+                    if (p.x() > brCenter.x())
                         c = QPointF{brCenter.x(), p.y() > brCenter.y() ? br.bottom() : br.top()};
                     break;
                 case qan::NodeItem::Dock::Top:
-                    if ( p.y() > brCenter.y() )
+                    if (p.y() > brCenter.y())
                         c = QPointF{p.x() > brCenter.x() ? br.right() : br.left(), brCenter.y()};
                     break;
                 case qan::NodeItem::Dock::Right:
-                    if ( p.x() < brCenter.x() )
+                    if (p.x() < brCenter.x())
                         c = QPointF{brCenter.x(), p.y() > brCenter.y() ? br.bottom() : br.top()};
                     break;
                 case qan::NodeItem::Dock::Bottom:
-                    if ( p.y() < brCenter.y() )
+                    if (p.y() < brCenter.y())
                         c = QPointF{p.x() > brCenter.x() ? br.right() : br.left(), brCenter.y()};
                     break;
                 }
              } else {    // qan::EdgeStyle::LineType::Curved, for curved line, do not intersect ports, generate point according to port type.
-                switch ( dockType ) {
+                switch (dockType) {
                     case qan::NodeItem::Dock::Left:
-                        c = QPointF{br.left(), brCenter.y() };
+                        c = QPointF{br.left(), brCenter.y()};
                         break;
                     case qan::NodeItem::Dock::Top:
                         c = QPointF{brCenter.x(), br.top()};
@@ -489,7 +488,7 @@ void    EdgeItem::generateStraightEnds(GeometryCache& cache) const noexcept
                         c = QPointF{br.right(), brCenter.y()};
                         break;
                     case qan::NodeItem::Dock::Bottom:
-                        c = QPointF{brCenter.x(), br.bottom() };
+                        c = QPointF{brCenter.x(), br.bottom()};
                         break;
                 }
             }
@@ -497,13 +496,13 @@ void    EdgeItem::generateStraightEnds(GeometryCache& cache) const noexcept
         }; // correctPortPoint()
 
         const auto srcPort = qobject_cast<const qan::PortItem*>(cache.srcItem);
-        if ( srcPort != nullptr )
+        if (srcPort != nullptr)
             cache.p1 = correctPortPoint(cache, srcPort->getDockType(), p1, cache.srcBrCenter, cache.srcBr );
 
         const auto dstPort = qobject_cast<const qan::PortItem*>(cache.dstItem);
-            if ( dstPort != nullptr )
-                cache.p2 = correctPortPoint(cache, dstPort->getDockType(), p2, cache.dstBrCenter, cache.dstBr );
-     } // dock configuration block
+        if (dstPort != nullptr)
+            cache.p2 = correctPortPoint(cache, dstPort->getDockType(), p2, cache.dstBrCenter, cache.dstBr );
+    } // dock configuration block
 }
 
 void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept

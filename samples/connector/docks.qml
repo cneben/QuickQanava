@@ -80,9 +80,8 @@ Qan.GraphView {
 
             var e1 = graph.insertEdge(n11, n2);
             graph.bindEdgeDestination(e1, n2p1)
-            //var e2 = graph.insertEdge(n12, n2);
-            //graph.bindEdgeDestination(e2, n2p2)
-
+            var e2 = graph.insertEdge(n12, n2);
+            graph.bindEdgeDestination(e2, n2p2)
 
             graph.setConnectorSource(n2)
         }

@@ -81,15 +81,15 @@ auto    PortItem::setType(Type type) noexcept -> void
 
 void    PortItem::setDockType(NodeItem::Dock dockType) noexcept
 {
-    if ( dockType != _dockType ) {
+    if (dockType != _dockType) {
         _dockType = dockType;
         emit dockTypeChanged();
     }
 }
 
-void    PortItem::setLabel( const QString& label ) noexcept
+void    PortItem::setLabel(const QString& label) noexcept
 {
-    if ( _label != label ) {
+    if (_label != label) {
         _label = label;
         emit labelChanged();
     }
@@ -117,6 +117,16 @@ void    PortItem::onEdgeItemDestroyed(QObject* obj)
         _inEdgeItems.removeAll(edgeItem);
         _outEdgeItems.removeAll(edgeItem);
     }
+}
+
+void    PortItem::updateEdges()
+{
+    for (auto inEdgeItem: _inEdgeItems)
+        if (inEdgeItem != nullptr)
+            inEdgeItem->updateItem();
+    for (auto outEdgeItem: _outEdgeItems)
+        if (outEdgeItem != nullptr)
+            outEdgeItem->updateItem();
 }
 //-----------------------------------------------------------------------------
 

@@ -138,7 +138,7 @@ signals:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto            setRect(const QRectF& r) noexcept -> void;
+    auto            setRect(const QRectF& r) noexcept -> void;    
     //@}
     //-------------------------------------------------------------------------
 
@@ -406,6 +406,9 @@ public:
     QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( _ports.getModel() ); }
     inline auto         getPorts() noexcept -> PortItems& { return _ports; }
     inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
+
+    //! Force update of all node ports edges (#145).
+    Q_INVOKABLE void    updatePortsEdges();
 private:
     PortItems           _ports;
 

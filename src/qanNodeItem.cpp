@@ -420,19 +420,28 @@ bool    NodeItem::isInsideBoundingShape(QPointF p)
 /* Port/Dock Management *///---------------------------------------------------
 qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
 {
-    for ( const auto port : qAsConst(_ports) ) {   // Note: std::as_const is officially c++17
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
-        if ( portItem &&
-             portItem->getId() == portId )
+        if (portItem != nullptr &&
+            portItem->getId() == portId)
             return portItem;
     }
     return nullptr;
 }
 
-void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
+void    NodeItem::updatePortsEdges()
 {
-    if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
-        if ( leftDock != nullptr ) {
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
+        const auto portItem = qobject_cast<qan::PortItem*>(port);
+        if (portItem != nullptr)
+            portItem->updateEdges();
+    }
+}
+
+void    NodeItem::setLeftDock(QQuickItem* leftDock) noexcept
+{
+    if (leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data()) {
+        if (leftDock != nullptr) {
             configureDock(*leftDock, Dock::Left);
             QQmlEngine::setObjectOwnership(leftDock, QQmlEngine::CppOwnership);
         }
@@ -479,9 +488,9 @@ void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 
 void    NodeItem::setDock(Dock dock, QQuickItem* dockItem) noexcept
 {
-    if ( dockItem != nullptr )
+    if (dockItem != nullptr)
         configureDock(*dockItem, dock);
-    switch ( dock ) {
+    switch (dock) {
         case Dock::Left: setLeftDock(dockItem); break;
         case Dock::Top: setTopDock(dockItem); break;
         case Dock::Right: setRightDock(dockItem); break;
