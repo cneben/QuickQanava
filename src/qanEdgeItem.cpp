@@ -48,7 +48,7 @@
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
-EdgeItem::EdgeItem( QQuickItem* parent ) :
+EdgeItem::EdgeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
     setParentItem(parent);
@@ -71,66 +71,66 @@ auto    EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.da
 auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
 {
     _edge = edge;
-    if ( edge != nullptr&&
-         edge->getItem() != this )
+    if (edge != nullptr &&
+        edge->getItem() != this)
         edge->setItem(this);
 }
 
-auto    EdgeItem::getGraph() const noexcept -> const qan::Graph* {
-    if ( _graph )
+auto    EdgeItem::getGraph() const noexcept -> const qan::Graph*
+{
+    if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::getGraph() noexcept -> qan::Graph* {
-    if ( _graph )
+auto    EdgeItem::getGraph() noexcept -> qan::Graph*
+{
+    if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void {
-    _graph = graph; emit graphChanged();
-}
+auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void { _graph = graph; emit graphChanged(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
-auto    EdgeItem::setSourceItem( qan::NodeItem* source ) -> void
+auto    EdgeItem::setSourceItem(qan::NodeItem* source) -> void
 {
-    if ( source == nullptr )
+    if (source == nullptr)
         return;
 
     // Connect dst x and y monitored properties change notify signal to slot updateEdge()
     QMetaMethod updateItemSlot = metaObject()->method( metaObject()->indexOfSlot( "updateItemSlot()" ) );
     if ( updateItemSlot.isValid() ) {  // Connect src and dst x and y monitored properties change notify signal to slot updateItemSlot()
         auto srcMetaObj = source->metaObject();
-        QMetaProperty srcX      = srcMetaObj->property( srcMetaObj->indexOfProperty( "x" ) );
-        QMetaProperty srcY      = srcMetaObj->property( srcMetaObj->indexOfProperty( "y" ) );
-        QMetaProperty srcZ      = srcMetaObj->property( srcMetaObj->indexOfProperty( "z" ) );
-        QMetaProperty srcWidth  = srcMetaObj->property( srcMetaObj->indexOfProperty( "width" ) );
-        QMetaProperty srcHeight = srcMetaObj->property( srcMetaObj->indexOfProperty( "height" ) );
-        if ( !srcX.isValid() || !srcX.hasNotifySignal() ) {
+        QMetaProperty srcX      = srcMetaObj->property(srcMetaObj->indexOfProperty("x"));
+        QMetaProperty srcY      = srcMetaObj->property(srcMetaObj->indexOfProperty("y"));
+        QMetaProperty srcZ      = srcMetaObj->property(srcMetaObj->indexOfProperty("z"));
+        QMetaProperty srcWidth  = srcMetaObj->property(srcMetaObj->indexOfProperty("width"));
+        QMetaProperty srcHeight = srcMetaObj->property(srcMetaObj->indexOfProperty("height"));
+        if (!srcX.isValid() || !srcX.hasNotifySignal()) {
             qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source x property.";
             return;
         }
-        if (  !srcY.isValid() || !srcY.hasNotifySignal() ) {
+        if (!srcY.isValid() || !srcY.hasNotifySignal()) {
             qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source y property.";
             return;
         }
-        if (  !srcWidth.isValid() || !srcWidth.hasNotifySignal() ) {
+        if (!srcWidth.isValid() || !srcWidth.hasNotifySignal()) {
             qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source width property.";
             return;
         }
-        if (  !srcHeight.isValid() || !srcHeight.hasNotifySignal() ) {
+        if (!srcHeight.isValid() || !srcHeight.hasNotifySignal()) {
             qWarning() << "qan::EdgeItem::setSourceItem(): Error: can't access source height property.";
             return;
         }
-        connect( source, srcX.notifySignal(),       this, updateItemSlot );
-        connect( source, srcY.notifySignal(),       this, updateItemSlot );
-        connect( source, srcZ.notifySignal(),       this, updateItemSlot );
-        connect( source, srcWidth.notifySignal(),   this, updateItemSlot );
-        connect( source, srcHeight.notifySignal(),  this, updateItemSlot );
+        connect(source, srcX.notifySignal(),       this, updateItemSlot);
+        connect(source, srcY.notifySignal(),       this, updateItemSlot);
+        connect(source, srcZ.notifySignal(),       this, updateItemSlot);
+        connect(source, srcWidth.notifySignal(),   this, updateItemSlot);
+        connect(source, srcHeight.notifySignal(),  this, updateItemSlot);
         _sourceItem = source;
         emit sourceItemChanged();
-        if ( source->z() < z() )
-            setZ( source->z() - 0.5 );
+        if (source->z() < z())
+            setZ(source->z() - 0.5);
         updateItem();
     }
 }
@@ -228,20 +228,21 @@ auto    EdgeItem::setDstShape(ArrowShape dstShape) noexcept -> bool
 
 void    EdgeItem::updateItem() noexcept
 {
+    qWarning() << "EdgeItem::updateItem()";
     // Algorithm:
         // Generate cache step by step until it become invalid.
         // 1. Generate                 srcBr / dstBr / srcBrCenter / dstBrCenter / z
         // 2. generate edge ends:      P1 / P2
         // 3. generate control points: C1 / C2
     auto cache = generateGeometryCache();       // 1.
-    if ( cache.isValid() ) {
+    if (cache.isValid()) {
         switch (cache.lineType) {               // 2.
         case qan::EdgeStyle::LineType::Undefined:       // [[fallthrough]] default to Straight
         case qan::EdgeStyle::LineType::Straight: generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Curved:   generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Ortho:    generateOrthoEnds(cache);    break;
         }
-        if ( cache.isValid() ) {
+        if (cache.isValid()) {
             switch (cache.lineType) {           // 3.
             case qan::EdgeStyle::LineType::Undefined:   // [[fallthrough]] default to Straight
             case qan::EdgeStyle::LineType::Straight: /* Nil */                           break;
@@ -255,7 +256,7 @@ void    EdgeItem::updateItem() noexcept
 
     // A valid geometry has been generated, generate a bounding box for edge,
     // and project all geometry in edge CS.
-    if ( cache.isValid() )
+    if (cache.isValid())
         applyGeometry(cache);
     else
         setHidden(true);
@@ -360,14 +361,15 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
 
     // Generate bounding shapes for source and destination in global CS
     {
-        if ( _sourceItem != nullptr ) {        // Generate source bounding shape polygon
+        if (_sourceItem != nullptr) {        // Generate source bounding shape polygon
+            // FIXME... cache getBoundingShape()...
             cache.srcBs.resize(_sourceItem->getBoundingShape().size());
             int p = 0;
             for (const auto& point: _sourceItem->getBoundingShape())
                 cache.srcBs[p++] = _sourceItem->mapToItem(graphContainerItem, point);
         }
         // Generate destination bounding shape polygon
-        if ( dstNodeItem != nullptr ) {        // Regular Node -> Node edge
+        if (dstNodeItem != nullptr) {        // Regular Node -> Node edge
             // Update edge z to source or destination maximum x
             cache.dstBs.resize(dstNodeItem->getBoundingShape().size());
             int p = 0;
@@ -377,8 +379,8 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     }
 
     // Verify source and destination bounding shapes
-    if ( cache.srcBs.isEmpty() ||
-         cache.dstBs.isEmpty() ) {
+    if (cache.srcBs.isEmpty() ||
+        cache.dstBs.isEmpty()) {
         qWarning() << "qan::EdgeItem::generateEdgeGeometry(): Invalid source or destination bounding shape.";
         return cache;    // Return INVALID geometry cache
     }
@@ -388,7 +390,7 @@ EdgeItem::GeometryCache  EdgeItem::generateGeometryCache() const noexcept
     const qreal dstZ = qan::getItemGlobalZ_rec(dstItem);
     cache.z = qMax(srcZ, dstZ) - 0.1;   // Edge z value should be less than src/dst value to ensure port item and selection is on top of edge
 
-    if ( _style )
+    if (_style)
         cache.lineType = _style->getLineType();
 
     // Generate edge line P1 and P2 in global graph CS
