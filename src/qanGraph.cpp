@@ -1399,12 +1399,12 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
         return nullptr;
     }
 
-    qan::PortItem* portItem{nullptr};
+    qan::PortItem* portItem = nullptr;
     const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
     if (nodeStyle) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
         // Note 20190501: CppOwnership is set in createFromComponen()
-        if ( portItem != nullptr ) {
+        if (portItem != nullptr) {
             portItem->setType(portType);
             portItem->setLabel(label);
             portItem->setId(id);
@@ -1413,8 +1413,8 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
             // Configure port mouse events forwarding to qan::Graph
             const auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
-                if ( portItem != nullptr &&
-                     portItem->getNode() != nullptr )
+                if (portItem != nullptr &&
+                    portItem->getNode() != nullptr)
                     emit this->portClicked(portItem, p);
             };
             connect(portItem, &qan::NodeItem::nodeClicked,
@@ -1422,24 +1422,24 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
 
             const auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
-                if ( portItem != nullptr &&
-                     portItem->getNode() != nullptr )
+                if (portItem != nullptr &&
+                    portItem->getNode() != nullptr)
                     emit this->portRightClicked(portItem, p);
             };
             connect(portItem,   &qan::NodeItem::nodeRightClicked,
                     this,       notifyPortRightClicked);
 
-            if ( node->getItem() != nullptr ) {
+            if (node->getItem() != nullptr) {
                 portItem->setNode(node); // portitem node in fact map to this concrete node.
                 node->getItem()->getPorts().append(portItem);
                 auto dockItem = node->getItem()->getDock(dockType);
-                if ( dockItem == nullptr ) {
+                if (dockItem == nullptr) {
                     // Create a dock item from the default dock delegate
                     dockItem = createDockFromDelegate(dockType, *node);
-                    if ( dockItem != nullptr )
+                    if (dockItem != nullptr)
                         node->getItem()->setDock(dockType, dockItem);
                 }
-                if ( dockItem != nullptr )
+                if (dockItem != nullptr)
                     portItem->setParentItem(dockItem);
                 else {
                     portItem->setParentItem(node->getItem());

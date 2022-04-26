@@ -30,6 +30,7 @@
 // \author	benoit@destrat.io
 // \date	2017 08 12
 //-----------------------------------------------------------------------------
+
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 
