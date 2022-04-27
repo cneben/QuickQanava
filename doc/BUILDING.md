@@ -2,8 +2,8 @@
 
 ## Dependencies
 
-- **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
+- **Qt > 5.12** _is mandatory_ for Qt Quick Shapes support.
+- **Google Test** is optional only to build and run tests ![Google Test GitHub](https://github.com/google/googletest).
 
 
 ## Building 
@@ -24,7 +24,7 @@ $ git submodule update
 
 QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
 
-| qmake                | cmake             | 
+| qmake (Qt5)          | CMake (Qt6)       | 
 | :---:                | :---:             | 
 | Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed, resources can be linked statically trough QRC | 
 
@@ -42,7 +42,7 @@ or with (CMake >= 3.5) and Qt Creator:
 
 1. Open _CMakeLists.txt_ in QtCreator.
 
-2. In 'Projects' panel, set DBUILD_SAMPLES option to true in CMake configuration panel.
+2. In 'Projects' panel, set DQUICK_QANAVA_BUILD_SAMPLES option to true in CMake configuration panel.
 
 3. Select a kit, build and launch samples.
 
@@ -54,10 +54,10 @@ $ mkdir build
 $ cd build
 
 # IF QT_DIR IS CONFIGURED AND QMAKE IN PATH
-$ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ..
+$ cmake -DCMAKE_BUILD_TYPE=Release -DQUICK_QANAVA_BUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ..
 
 # IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY
-$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DBUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ../QuickQanava/
+$ cmake -DCMAKE_PREFIX_PATH="/home/b/Qt/5.11.0/gcc_64" -DQT_QMAKE_EXECUTABLE="/home/b/Qt/5.11.0/gcc_64/bin/qmake"  -DQUICK_QANAVA_BUILD_SAMPLES=TRUE -DBUILD_STATIC_QRC=TRUE ../QuickQanava/
 
 $ cmake --build .
 # Then run the samples in ./samples
@@ -80,18 +80,3 @@ On Ubuntu system, the following dependencies must be isntalled:
 ```
 $ sudo apt install libopengl0 -y
 ```
-
-## Roadmap / Changelog
-
-  - **Done**:
-    - [X] Add full support for groups inside group (ie subgraphs).
-    - [X] Fix qan::LineGrid bugs
-  - **Todo**:
-    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
-    - [ ] Update geometry creation interface and delegate management.
-    - [ ] Add support for direct visual dragging of port items.
-    - [ ] Add "snap to grid" support.
-  - **v1.: Advanced edge visualization**
-    - [ ] Add better support for graph fine grained locking strategies.
-    - [ ] Add simple layout algorithms (force directed, tree).
-    - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).

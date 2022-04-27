@@ -1,39 +1,34 @@
 # QuickQanava 
 
-![Build linux master](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-master.yml/badge.svg) ![Build linux develop](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-develop.yml/badge.svg)
-![Build win64 master](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-master.yml/badge.svg) ![Build win64 develop](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-develop.yml/badge.svg)
+![Build linux Qt5.12](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
+![Build win64 Qt6.2](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
 
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-![](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![](https://img.shields.io/badge/version-2.0.0-blue.svg)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
-`QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. More advanced layouts algorithms might be integrated in future versions.
+`QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. QuickQanava focus on writing topology delegates in pure QML.
 
 QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
-QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2017 and g++7.5 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.2**)
+QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2019 and g++9 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.5**). 
 
-+ [CHANGELOG.md](CHANGELOG.md)
-+ Project homepage: http://cneben.github.io/QuickQanava/index.html
+- [CHANGELOG.md](CHANGELOG.md)
+- Project homepage: http://cneben.github.io/QuickQanava/index.html
+- [Building](./doc/BUILDING.md)
+-  [Installation](http://cneben.github.io/QuickQanava/installation.html)
+-  [Graph Data Model](http://cneben.github.io/QuickQanava/graph.html#data-model)
+    - [Ports and Docks](http://cneben.github.io/QuickQanava/nodes.html#docks-and-ports)
+    - [Visual node connection](http://cneben.github.io/QuickQanava/edges.html#visual-creation-of-edges)
+    -  [Selection](http://cneben.github.io/QuickQanava/nodes.html#selection)
+    - [Groups](http://cneben.github.io/QuickQanava/nodes.html#grouping-nodes)
+- [Styling](http://cneben.github.io/QuickQanava/styles.html)
+- [Advanced use, custom topology](http://cneben.github.io/QuickQanava/advanced.html)
 
-+ [Building](./doc/BUILDING.md)
-
-+ [Installation](http://cneben.github.io/QuickQanava/installation.html)
-+ [Graph Data Model](http://cneben.github.io/QuickQanava/graph.html#data-model)
-  + [Ports and Docks](http://cneben.github.io/QuickQanava/nodes.html#docks-and-ports)
-  + [Visual node connection](http://cneben.github.io/QuickQanava/edges.html#visual-creation-of-edges)
-  + [Selection](http://cneben.github.io/QuickQanava/nodes.html#selection)
-  + [Groups](http://cneben.github.io/QuickQanava/nodes.html#grouping-nodes)
-+ [Styling](http://cneben.github.io/QuickQanava/styles.html)
-+ [Advanced use, custom topology](http://cneben.github.io/QuickQanava/advanced.html)
-
-
-For any questions, please contact: benoit@destrat.io
-
-QuickQanava focus on writing content delegates in QML (even if they could be 100% defined in C++, a QML engine is still necessary in the background).
+:question: benoit_à_destrat.io
 
 ## QuickQanava Showcase
 
@@ -55,8 +50,6 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 **Styles:** User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles.html)
 
-![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif)
-
 ## Contributors
 
 ![GitHub Contributors Image](https://contrib.rocks/image?repo=cneben/QuickQanava)
@@ -72,5 +65,5 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017-2020 BA
+Copyright (c) 2017-2022 BA
 

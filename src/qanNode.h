@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -40,7 +40,7 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
+#include "./gtpo/node.h"
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
@@ -50,6 +50,7 @@ namespace qan { // ::qan
 class NodeBehaviour;
 class Graph;
 class Group;
+class Edge;
 class NodeItem;
 class PortItem;
 
@@ -60,12 +61,18 @@ class PortItem;
  *
  * \nosubgrouping
 */
-class Node : public gtpo::node<qan::Config>
+class Node : public gtpo::node<QObject,
+                               qan::Graph,
+                               qan::Node,
+                               qan::Edge,
+                               qan::Group>
 {
     /*! \name Node Object Management *///--------------------------------------
     //@{
     Q_OBJECT
 public:
+    using super_t = gtpo::node<QObject, qan::Graph, qan::Node, qan::Edge, qan::Group>;
+
     //! Node constructor.
     explicit Node(QObject* parent=nullptr);
     virtual ~Node();
@@ -150,7 +157,7 @@ public:
     /*! \name Behaviours Management *///---------------------------------------
     //@{
 public:
-    virtual void    installBehaviour( std::unique_ptr<qan::NodeBehaviour> behaviour );
+    virtual void    installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour);
     //@}
     //-------------------------------------------------------------------------
 
@@ -158,12 +165,12 @@ public:
     //@{
 public:
     Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
-    bool            setLabel( const QString& label ) noexcept;
+    bool            setLabel(const QString& label) noexcept;
     QString         getLabel() const noexcept { return _label; }
 private:
-    QString         _label{ QStringLiteral("") };
+    QString         _label = "";
 signals:
-    void            labelChanged( );
+    void            labelChanged();
 
 public:
     /*! \brief A locked node can't be selected / dragged by user (node are unlocked by default).
@@ -190,11 +197,11 @@ public:
      * \note nullptr if group or node is ungrouped.
      */
     Q_PROPERTY(qan::Group* group READ getGroup FINAL)
-    const qan::Group*    getGroup() const noexcept { return get_group().lock().get(); }
-    qan::Group*          getGroup() noexcept { return get_group().lock().get(); }
+    const qan::Group*    getGroup() const noexcept { return get_group(); }
+    qan::Group*          getGroup() noexcept { return get_group(); }
 
     //! Shortcut to base is_group() (ie return true if this node is a group and castable to qan::Group)..
-    Q_INVOKABLE bool     isGroup() const noexcept { return gtpo::node<qan::Config>::is_group(); }
+    Q_INVOKABLE bool     isGroup() const noexcept { return is_group(); }
     //@}
     //-------------------------------------------------------------------------
 };

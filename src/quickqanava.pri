@@ -2,7 +2,6 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
-include(../GTpo/gtpo.pri)
 include(../QuickContainers/quickcontainers.pri)
 
 # Note: Qmake and pri inclusion is reserved to Qt5.
@@ -16,7 +15,6 @@ RESOURCES       += $$PWD/GraphicalEffects5/QuickQanavaGraphicalEffects.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanUtils.h                \
-            $$PWD/qanGraphConfig.h          \
             $$PWD/qanGraphView.h            \
             $$PWD/qanEdge.h                 \
             $$PWD/qanEdgeItem.h             \
@@ -27,6 +25,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanDraggable.h            \
             $$PWD/qanAbstractDraggableCtrl.h\
             $$PWD/qanDraggableCtrl.h        \
+            $$PWD/qanEdgeDraggableCtrl.h    \
             $$PWD/qanConnector.h            \
             $$PWD/qanBehaviour.h            \
             $$PWD/qanGroup.h                \
@@ -40,7 +39,16 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGrid.h                 \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanContainerAdapter.h     \
-            $$PWD/qanBottomRightResizer.h
+            $$PWD/qanBottomRightResizer.h   \
+            $$PWD/gtpo/container_adapter.h  \  # GTPO
+            $$PWD/gtpo/edge.h               \
+            $$PWD/gtpo/node.h               \
+            $$PWD/gtpo/node.hpp             \
+            $$PWD/gtpo/graph.h              \
+            $$PWD/gtpo/graph.hpp            \
+            $$PWD/gtpo/graph_property.h     \
+            $$PWD/gtpo/observable.h         \
+            $$PWD/gtpo/observer.h
 
 SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanUtils.cpp              \
@@ -52,6 +60,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanSelectable.cpp         \
             $$PWD/qanDraggable.cpp          \
             $$PWD/qanDraggableCtrl.cpp      \
+            $$PWD/qanEdgeDraggableCtrl.cpp  \
             $$PWD/qanConnector.cpp          \
             $$PWD/qanBehaviour.cpp          \
             $$PWD/qanGraph.cpp              \

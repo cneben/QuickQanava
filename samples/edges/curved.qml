@@ -28,8 +28,9 @@ import QtQuick                   2.8
 import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
-import QtQuick.Dialogs           1.3
 import QtQuick.Shapes            1.0
+
+import Qt.labs.platform     1.1
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -219,132 +220,135 @@ Item {
         onAccepted: { defaultEdgeStyle.lineColor = color; }
     }
 
-    Control {
+    Pane {
         id: edgeStyleEditor
-        anchors.top: parent.top;        anchors.topMargin: 15
-        anchors.right: parent.right;    anchors.rightMargin: 15
-        width: 220; height: 395; padding: 0
-        Frame { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
-        ColumnLayout {
-            Label {
-                Layout.margins: 3; text: "Edge Style:"
-                font.bold: true; horizontalAlignment: Text.AlignLeft
-            }
-            RowLayout {
-                Layout.margins: 2
-                Label { text:"Edge type:" }
-                Item { Layout.fillWidth: true }
-                ComboBox {
-                    model: ["Straight", "Curved"]
-                    enabled: defaultEdgeStyle !== undefined
-                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                    onActivated: {
-                        if (index == 0 )
-                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
-                        else if ( index == 1 )
-                            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
-                    }
-                }
-            } // RowLayout: edgeType
-            RowLayout {
-                Layout.margins: 2
-                Label { text:"Src Shape:" }
-                Item { Layout.fillWidth: true }
-                ComboBox {
-                    model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
-                    currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                    onActivated: {
-                        var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
-                        defaultEdgeStyle.srcShape = shape[index]
-                    }
-                }
-            } // RowLayout: srcShape
-            RowLayout {
-                Layout.margins: 2
-                Label { text:"Dst shape:" }
-                Item { Layout.fillWidth: true }
-                ComboBox {
-                    model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
-                    currentIndex: 1
-                    onActivated: {
-                        var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
-                        defaultEdgeStyle.dstShape = shape[index]
-                    }
-                }
-            } // RowLayout: dstShape
-            RowLayout {
-                Layout.margins: 2
-                Label { text:"Line color:" }
-                Item { Layout.fillWidth: true }
-                Rectangle {
-                    Layout.preferredWidth: 25; Layout.preferredHeight: 25;
-                    color: defaultEdgeStyle.lineColor; radius: 5;
-                    border.width: 1; border.color: Qt.lighter(defaultEdgeStyle.lineColor)
-                }
-                ToolButton {
-                    Layout.preferredHeight: 30; Layout.preferredWidth: 30
-                    text: "..."
-                    onClicked: {
-                        edgeStyleColorDialog.color = defaultEdgeStyle.lineColor
-                        edgeStyleColorDialog.open();
-                    }
-                }
-            } // RowLayout: lineColor
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 15
+        anchors.right: parent.right
+        anchors.rightMargin: 15
+        padding: 0
+        Frame {
             ColumnLayout {
-                Layout.margins: 2
-                Label { text:"Line width:" }
-                SpinBox {
-                    value: defaultEdgeStyle.lineWidth
-                    from: 1; to: 7
-                    onValueModified: defaultEdgeStyle.lineWidth = value
+                Label {
+                    Layout.margins: 3; text: "Edge Style:"
+                    font.bold: true; horizontalAlignment: Text.AlignLeft
                 }
-            } // RowLayout: lineWidth
-            ColumnLayout {
-                Layout.margins: 2
-                Label { text:"Arrow size:" }
-                SpinBox {
-                    value: defaultEdgeStyle.arrowSize
-                    from: 1; to: 7
-                    onValueModified: defaultEdgeStyle.arrowSize = value
-                }
-            } // RowLayout: lineWidth
+                RowLayout {
+                    Layout.margins: 2
+                    Label { text:"Edge type:" }
+                    Item { Layout.fillWidth: true }
+                    ComboBox {
+                        model: ["Straight", "Curved"]
+                        enabled: defaultEdgeStyle !== undefined
+                        currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                        onActivated: {
+                            if (index == 0 )
+                                defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+                            else if ( index == 1 )
+                                defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+                        }
+                    }
+                } // RowLayout: edgeType
+                RowLayout {
+                    Layout.margins: 2
+                    Label { text:"Src Shape:" }
+                    Item { Layout.fillWidth: true }
+                    ComboBox {
+                        model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
+                        currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                        onActivated: {
+                            var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
+                            defaultEdgeStyle.srcShape = shape[index]
+                        }
+                    }
+                } // RowLayout: srcShape
+                RowLayout {
+                    Layout.margins: 2
+                    Label { text:"Dst shape:" }
+                    Item { Layout.fillWidth: true }
+                    ComboBox {
+                        model: ["None", "Arrow", "Open Arrow", "Circle", "Open Circle", "Rect", "Open Rect"]
+                        currentIndex: 1
+                        onActivated: {
+                            var shape = [Qan.EdgeStyle.None, Qan.EdgeStyle.Arrow, Qan.EdgeStyle.ArrowOpen, Qan.EdgeStyle.Circle, Qan.EdgeStyle.CircleOpen, Qan.EdgeStyle.Rect, Qan.EdgeStyle.RectOpen]
+                            defaultEdgeStyle.dstShape = shape[index]
+                        }
+                    }
+                } // RowLayout: dstShape
+                RowLayout {
+                    Layout.margins: 2
+                    Label { text:"Line color:" }
+                    Item { Layout.fillWidth: true }
+                    Rectangle {
+                        Layout.preferredWidth: 25; Layout.preferredHeight: 25;
+                        color: defaultEdgeStyle.lineColor; radius: 5;
+                        border.width: 1; border.color: Qt.lighter(defaultEdgeStyle.lineColor)
+                    }
+                    ToolButton {
+                        Layout.preferredHeight: 30; Layout.preferredWidth: 30
+                        text: "..."
+                        onClicked: {
+                            edgeStyleColorDialog.color = defaultEdgeStyle.lineColor
+                            edgeStyleColorDialog.open();
+                        }
+                    }
+                } // RowLayout: lineColor
+                ColumnLayout {
+                    Layout.margins: 2
+                    Label { text:"Line width:" }
+                    SpinBox {
+                        value: defaultEdgeStyle.lineWidth
+                        from: 1; to: 7
+                        onValueModified: defaultEdgeStyle.lineWidth = value
+                    }
+                } // RowLayout: lineWidth
+                ColumnLayout {
+                    Layout.margins: 2
+                    Label { text:"Arrow size:" }
+                    SpinBox {
+                        value: defaultEdgeStyle.arrowSize
+                        from: 1; to: 7
+                        onValueModified: defaultEdgeStyle.arrowSize = value
+                    }
+                } // RowLayout: lineWidth
 
-            ColumnLayout {
-                Layout.margins: 2
-                CheckBox {
-                    id: dashed
-                    text: "Dashed"
-                    checked: defaultEdgeStyle.dashed
-                    onClicked: {
-                        if (defaultEdgeStyle)
-                            defaultEdgeStyle.dashed = checked
+                ColumnLayout {
+                    Layout.margins: 2
+                    CheckBox {
+                        id: dashed
+                        text: "Dashed"
+                        checked: defaultEdgeStyle.dashed
+                        onClicked: {
+                            if (defaultEdgeStyle)
+                                defaultEdgeStyle.dashed = checked
+                        }
                     }
-                }
-                ComboBox {
-                    enabled: dashed.checked
-                    model: ["Dash", "Dot", "Dash Dot"]
-                    //currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                    onActivated: {
-                        if (index == 0 )
-                            defaultEdgeStyle.dashPattern = [2,2]
-                        else if ( index == 1 )
-                            defaultEdgeStyle.dashPattern = [1,1]
-                        else if ( index == 2 )
-                            defaultEdgeStyle.dashPattern = [2,2,4,2]
+                    ComboBox {
+                        enabled: dashed.checked
+                        model: ["Dash", "Dot", "Dash Dot"]
+                        //currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
+                        onActivated: {
+                            if (index == 0 )
+                                defaultEdgeStyle.dashPattern = [2,2]
+                            else if ( index == 1 )
+                                defaultEdgeStyle.dashPattern = [1,1]
+                            else if ( index == 2 )
+                                defaultEdgeStyle.dashPattern = [2,2,4,2]
+                        }
                     }
-                }
-            } // ColumneLayout: dashed
+                } // ColumneLayout: dashed
 
-            ColumnLayout {
-                Layout.margins: 2
-                Label { text:"Arrow size:" }
-                SpinBox {
-                    value: defaultEdgeStyle.arrowSize
-                    from: 1; to: 15
-                    onValueModified: defaultEdgeStyle.arrowSize = value
-                }
-            } // RowLayout: arrowSize
-        } // ColumnLayout
+                ColumnLayout {
+                    Layout.margins: 2
+                    Label { text:"Arrow size:" }
+                    SpinBox {
+                        value: defaultEdgeStyle.arrowSize
+                        from: 1; to: 15
+                        onValueModified: defaultEdgeStyle.arrowSize = value
+                    }
+                } // RowLayout: arrowSize
+            } // ColumnLayout
+        }
     } // edgeStyleEditor
 } // Root item
 

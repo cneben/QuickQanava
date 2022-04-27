@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -82,7 +82,7 @@ public:
 signals:
     void        nameChanged();
 private:
-    QString     _name = QStringLiteral("");
+    QString     _name = QString{};
     //@}
     //-------------------------------------------------------------------------
 };
@@ -380,7 +380,7 @@ public:
 public:
     //! Define edge line type: either plain line (Straight) or curved cubic path (Curved), default to Straight.
     Q_PROPERTY(LineType lineType READ getLineType WRITE setLineType NOTIFY lineTypeChanged FINAL)
-    void            setLineType(LineType lineType) noexcept;
+    bool            setLineType(LineType lineType) noexcept;
     inline LineType getLineType() const noexcept { return _lineType; }
 protected:
     LineType        _lineType = LineType::Straight;
@@ -389,7 +389,7 @@ signals:
 
 public:
     Q_PROPERTY(QColor lineColor READ getLineColor WRITE setLineColor NOTIFY lineColorChanged FINAL)
-    void                    setLineColor(const QColor& lineColor) noexcept;
+    bool                    setLineColor(const QColor& lineColor) noexcept;
     inline const QColor&    getLineColor() const noexcept { return _lineColor; }
 protected:
     QColor                  _lineColor = QColor{0, 0, 0, 255};
@@ -398,7 +398,7 @@ signals:
 
 public:
     Q_PROPERTY(qreal lineWidth READ getLineWidth WRITE setLineWidth NOTIFY lineWidthChanged FINAL)
-    void            setLineWidth(qreal lineWidth) noexcept;
+    bool            setLineWidth(qreal lineWidth) noexcept;
     inline qreal    getLineWidth() const noexcept { return _lineWidth; }
 protected:
     qreal           _lineWidth = 3.0;
@@ -407,7 +407,7 @@ signals:
 
 public:
     Q_PROPERTY(qreal arrowSize READ getArrowSize WRITE setArrowSize NOTIFY arrowSizeChanged FINAL)
-    void            setArrowSize(qreal arrowSize) noexcept;
+    bool            setArrowSize(qreal arrowSize) noexcept;
     inline qreal    getArrowSize() const noexcept { return _arrowSize; }
 protected:
     qreal           _arrowSize = 4.0;
@@ -421,7 +421,7 @@ public:
     //! \copydoc srcShape
     inline ArrowShape   getSrcShape() const noexcept { return _srcShape; }
     //! \copydoc srcShape
-    auto                setSrcShape(ArrowShape srcShape) noexcept -> void;
+    auto                setSrcShape(ArrowShape srcShape) noexcept -> bool;
 private:
     //! \copydoc srcShape
     ArrowShape          _srcShape = ArrowShape::None;
@@ -435,7 +435,7 @@ public:
     //! \copydoc dstShape
     inline ArrowShape   getDstShape() const noexcept { return _dstShape; }
     //! \copydoc dstShape
-    auto                setDstShape(ArrowShape dstShape) noexcept -> void;
+    auto                setDstShape(ArrowShape dstShape) noexcept -> bool;
 private:
     //! \copydoc dstShape
     ArrowShape          _dstShape = ArrowShape::Arrow;
@@ -446,7 +446,7 @@ public:
     //! Draw edge with dashed line (default to false), when set to true \c dashPattern is active.
     Q_PROPERTY(bool dashed READ getDashed WRITE setDashed NOTIFY dashedChanged FINAL)
     //! \copydoc dashed
-    void            setDashed(bool dashed) noexcept;
+    bool            setDashed(bool dashed) noexcept;
     //! \copydoc dashed
     inline bool     getDashed() const noexcept { return _dashed; }
 protected:
@@ -460,7 +460,7 @@ public:
     //! See QtQuick.Shape ShapePath.dashPattern property documentation, default to [2,2] ie regular dash line, used when dashed property is set to true.
     Q_PROPERTY(QVector<qreal> dashPattern READ getDashPattern WRITE setDashPattern NOTIFY dashPatternChanged FINAL)
     //! \copydoc dashPattern
-    void            setDashPattern(const QVector<qreal>& dashPattern) noexcept;
+    bool            setDashPattern(const QVector<qreal>& dashPattern) noexcept;
     //! \copydoc dashPattern
     const QVector<qreal>&   getDashPattern() const noexcept;
 protected:

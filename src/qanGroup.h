@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -40,9 +40,13 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
+
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+Q_MOC_INCLUDE("./qanGraph.h")
+Q_MOC_INCLUDE("./qanGroupItem.h")
+#endif
 
 namespace qan { // ::qan
 
@@ -67,7 +71,6 @@ public:
     virtual ~Group() override = default;
     Group(const Group&) = delete;
 
-    using gtpo_node_t = gtpo::node<qan::Config>;
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::group<>::getGraph().

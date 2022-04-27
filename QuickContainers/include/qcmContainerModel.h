@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -236,7 +236,7 @@ protected:
     //@{
 public:
     //! Similar to ES6 array.length.
-    Q_PROPERTY( int length READ getLength NOTIFY lengthChanged FINAL )
+    Q_PROPERTY(int length READ getLength NOTIFY lengthChanged FINAL)
     //! \copydoc length
     Q_INVOKABLE int getLength() const noexcept { return rowCount(QModelIndex{}); }
 protected:
@@ -261,7 +261,7 @@ template < class Container >
 class ContainerModelImpl : public qcm::ContainerModel
 {
 public:
-    explicit ContainerModelImpl( Container& container ) :
+    explicit ContainerModelImpl(Container& container) :
         qcm::ContainerModel{},
         _container( container ) { }
     ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
@@ -276,7 +276,7 @@ public:
     virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override {
         return ( parent.isValid() ? 0 : static_cast<int>(_container.size()) );
     }
-    virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override {
+    virtual QVariant    data(const QModelIndex& index, int role = Qt::DisplayRole) const override {
         if (index.row() >= 0 &&
             index.row() < static_cast<int>(_container.size())) {
             if (role == Qt::DisplayRole)

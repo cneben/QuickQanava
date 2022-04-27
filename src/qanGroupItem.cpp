@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -41,11 +41,9 @@
 
 namespace qan { // ::qan
 
-//using GroupDraggableCtrl = qan::DraggableCtrl<qan::Group, qan::GroupItem>;
-
 /* Group Object Management *///------------------------------------------------
-GroupItem::GroupItem( QQuickItem* parent ) :
-    qan::NodeItem{ parent }
+GroupItem::GroupItem(QQuickItem* parent) :
+    qan::NodeItem{parent}
 {
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
@@ -53,12 +51,13 @@ GroupItem::GroupItem( QQuickItem* parent ) :
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
     // Force group connected edges update when the group is moved
-    connect( this, &qan::GroupItem::xChanged,
-             this, &qan::GroupItem::groupMoved );
-    connect( this, &qan::GroupItem::yChanged,
-             this, &qan::GroupItem::groupMoved );
+    connect(this, &qan::GroupItem::xChanged,
+            this, &qan::GroupItem::groupMoved);
+    connect(this, &qan::GroupItem::yChanged,
+            this, &qan::GroupItem::groupMoved);
     // Update adjacent edges z when group item z is modified.
-    connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
+    connect(this, &qan::GroupItem::zChanged,
+            this, [this]() { this->groupMoved(); });
 
     setItemStyle(qan::Group::style(parent));
     setObjectName(QStringLiteral("qan::GroupItem"));

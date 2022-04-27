@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -67,20 +67,20 @@ struct adapter< QList, T > {
     inline static void  append(QList<T>& c, const T& t) { c.append(t); }
     inline static void  append(QList<T>& c, T&& t)      { c.append(t); }
 
-    inline static void  insert(QList<T>& c, const T& t) { c.append( t ); }
-    inline static void  insert(QList<T>& c, T&& t)      { c.append( t ); }
-    inline static void  insert( QList<T>& c, const T& t, std::size_t i ) { c.insert( i, t ); }
+    inline static void  insert(QList<T>& c, const T& t) { c.append(t); }
+    inline static void  insert(QList<T>& c, T&& t)      { c.append(t); }
+    inline static void  insert(QList<T>& c, const T& t, std::size_t i ) { c.insert(i, t); }
 
-    inline static void  remove(QList<T>& c, std::size_t i ) { c.removeAt(static_cast<int>(i)); }
-    inline static int   removeAll(QList<T>& c, const T& t ) { return c.removeAll(t); }
+    inline static void  remove(QList<T>& c, std::size_t i) { c.removeAt(static_cast<int>(i)); }
+    inline static int   removeAll(QList<T>& c, const T& t) { return c.removeAll(t); }
 
     inline static bool  contains(const QList<T>& c, const T& t) { return c.contains(t); }
     inline static int   indexOf(const QList<T>& c, const T& t) { return c.indexOf(t); }
 };
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template < typename T >
-struct adapter< QVector, T > {
+template <typename T>
+struct adapter<QVector, T> {
     inline static void  reserve(QVector<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
 
     inline static void  append(QVector<T>& c, const T& t)   { c.append(t); }
@@ -93,8 +93,8 @@ struct adapter< QVector, T > {
     inline static void  remove(QVector<T>& c, std::size_t i)    { c.remove(static_cast<int>(i)); }
     inline static int   removeAll(QVector<T>& c, const T& t )   { return c.removeAll(t); }
 
-    inline static bool      contains(const QVector<T>& c, const T& t) { return c.contains(t); }
-    inline static int       indexOf(const QVector<T>& c, const T& t) { return c.indexOf(t); }
+    inline static bool  contains(const QVector<T>& c, const T& t) { return c.contains(t); }
+    inline static int   indexOf(const QVector<T>& c, const T& t) { return c.indexOf(t); }
 };
 #endif
 
@@ -112,15 +112,15 @@ struct adapter< QSet, T > {
     inline static void  remove(QSet<T>& c, std::size_t i)   { c.erase(c.cbegin() + static_cast<int>(i)); }
     inline static int   removeAll(QSet<T>& c, const T& t )  { return c.remove(t); }
 
-    inline static bool      contains(const QSet<T>& c, const T& t) { return c.contains(t); }
-    inline static int       indexOf(const QSet<T>& c, const T& t) {
+    inline static bool  contains(const QSet<T>& c, const T& t) { return c.contains(t); }
+    inline static int   indexOf(const QSet<T>& c, const T& t) {
         const auto r = c.find(t);
         return r == c.cend() ? -1 : std::distance(c.cbegin(), r);
     }
 };
 
-template < typename T >
-struct adapter< std::vector, T > {
+template <typename T>
+struct adapter<std::vector, T> {
     inline static void  reserve(std::vector<T>& c, std::size_t size) { c.reserve(size); }
 
     inline static void  append(std::vector<T>& c, const T& t)   { c.push_back(t); }
@@ -138,11 +138,11 @@ struct adapter< std::vector, T > {
         return -1;
     }
 
-    inline static bool      contains(const std::vector<T>& c, const T& t) {
+    inline static bool  contains(const std::vector<T>& c, const T& t) {
         const auto r = std::find_if(c.cbegin(), c.cend(), [t](const auto& a) noexcept { return t == a; } );
         return r != c.cend();
     }
-    inline static int       indexOf(const std::vector<T>& c, const T& t) {
+    inline static int   indexOf(const std::vector<T>& c, const T& t) {
         const auto r = std::find_if(c.cbegin(), c.cend(), [t](const auto& a) noexcept { return t == a; } );
         return r == c.cend() ? -1 : std::distance(c.cbegin(), r);
     }

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -108,46 +108,49 @@ Qan.GraphView {
         anchors.bottom: parent.bottom; anchors.bottomMargin: 15
         text: "Use CTRL+Click to select multiples nodes"
     }
-    Frame {
+    Pane {
         id: nodeEditor
         property var node: undefined
         onNodeChanged: nodeItem = node ? node.item : undefined
         property var nodeItem: undefined
         anchors.bottom: parent.bottom; anchors.bottomMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 15
-        ColumnLayout {
-            Label {
-                text: nodeEditor.node ? "Editing node <b>" + nodeEditor.node.label + "</b>": "Select a node..."
-            }
-            CheckBox {
-                text: "Draggable"
-                enabled: nodeEditor.nodeItem !== undefined
-                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.draggable : false
-                onClicked: nodeEditor.nodeItem.draggable = checked
-            }
-            CheckBox {
-                text: "Resizable"
-                enabled: nodeEditor.nodeItem !== undefined
-                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.resizable : false
-                onClicked: nodeEditor.nodeItem.resizable = checked
-            }
-            CheckBox {
-                text: "Selected (read-only)"
-                enabled: false
-                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selected : false
-            }
-            CheckBox {
-                text: "Selectable"
-                enabled: nodeEditor.nodeItem != null
-                checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selectable : false
-                onClicked: nodeEditor.nodeItem.selectable = checked
-            }
-            Label { text: "style.backRadius" }
-            Slider {
-                from: 0.; to: 15.0;
-                value: defaultNodeStyle.backRadius
-                stepSize: 1.0
-                onMoved: defaultNodeStyle.backRadius = value
+        padding: 0
+        Frame {
+            ColumnLayout {
+                Label {
+                    text: nodeEditor.node ? "Editing node <b>" + nodeEditor.node.label + "</b>": "Select a node..."
+                }
+                CheckBox {
+                    text: "Draggable"
+                    enabled: nodeEditor.nodeItem !== undefined
+                    checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.draggable : false
+                    onClicked: nodeEditor.nodeItem.draggable = checked
+                }
+                CheckBox {
+                    text: "Resizable"
+                    enabled: nodeEditor.nodeItem !== undefined
+                    checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.resizable : false
+                    onClicked: nodeEditor.nodeItem.resizable = checked
+                }
+                CheckBox {
+                    text: "Selected (read-only)"
+                    enabled: false
+                    checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selected : false
+                }
+                CheckBox {
+                    text: "Selectable"
+                    enabled: nodeEditor.nodeItem != null
+                    checked: nodeEditor.nodeItem ? nodeEditor.nodeItem.selectable : false
+                    onClicked: nodeEditor.nodeItem.selectable = checked
+                }
+                Label { text: "style.backRadius" }
+                Slider {
+                    from: 0.; to: 15.0;
+                    value: defaultNodeStyle.backRadius
+                    stepSize: 1.0
+                    onMoved: defaultNodeStyle.backRadius = value
+                }
             }
         }
     }

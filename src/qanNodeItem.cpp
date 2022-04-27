@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -53,34 +53,34 @@ NodeItem::NodeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
     setStyle(qan::Node::style());
-    setObjectName( QStringLiteral("qan::NodeItem") );
+    setObjectName(QStringLiteral("qan::NodeItem"));
 
     qan::Draggable::configure(this);
     _draggableCtrl = std::unique_ptr<AbstractDraggableCtrl>{std::make_unique<qan::DraggableCtrl>()};
     const auto nodeDraggableCtrl = static_cast<qan::DraggableCtrl*>(_draggableCtrl.get());
     nodeDraggableCtrl->setTargetItem(this);
 
-    setFlag( QQuickItem::ItemAcceptsDrops, true );
-    setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+    setFlag(QQuickItem::ItemAcceptsDrops, true);
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptTouchEvents(true);
 
-    connect( this, &qan::NodeItem::widthChanged,
-             this, &qan::NodeItem::onWidthChanged );
-    connect( this, &qan::NodeItem::heightChanged,
-             this, &qan::NodeItem::onHeightChanged );
+    connect(this, &qan::NodeItem::widthChanged,
+            this, &qan::NodeItem::onWidthChanged);
+    connect(this, &qan::NodeItem::heightChanged,
+            this, &qan::NodeItem::onHeightChanged);
 }
 
 NodeItem::~NodeItem()
 {
     // Delete all dock items
-    for ( auto& dockItem : _dockItems ) {
-        if ( dockItem )
+    for (auto& dockItem : _dockItems) {
+        if (dockItem)
             dockItem->deleteLater();
     }
 
     // Delete all ports
     for (auto& port : _ports) {
-        if ( port && port->parent() == nullptr)
+        if (port && port->parent() == nullptr)
             port->deleteLater();
     }
 }
@@ -228,7 +228,7 @@ void    NodeItem::setConnectable(Connectable connectable) noexcept
 //-----------------------------------------------------------------------------
 
 /* Draggable Management *///---------------------------------------------------
-void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
+void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -237,12 +237,12 @@ void    NodeItem::dragEnterEvent( QDragEnterEvent* event )
         return;
     }
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
-    if ( !draggableCtrl->handleDragEnterEvent(event) )
+    if (!draggableCtrl->handleDragEnterEvent(event))
         event->ignore();
     QQuickItem::dragEnterEvent(event);
 }
 
-void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
+void	NodeItem::dragMoveEvent(QDragMoveEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -255,7 +255,7 @@ void	NodeItem::dragMoveEvent( QDragMoveEvent* event )
     QQuickItem::dragMoveEvent(event);
 }
 
-void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
+void	NodeItem::dragLeaveEvent(QDragLeaveEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -268,14 +268,14 @@ void	NodeItem::dragLeaveEvent( QDragLeaveEvent* event )
     QQuickItem::dragLeaveEvent(event);
 }
 
-void    NodeItem::dropEvent( QDropEvent* event )
+void    NodeItem::dropEvent(QDropEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleDropEvent(event);
-    QQuickItem::dropEvent( event );
+    QQuickItem::dropEvent(event);
 }
 
-void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
+void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseDoubleClickEvent(event);
@@ -283,7 +283,7 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event )
         emit nodeDoubleClicked( this, event->localPos());
 }
 
-void    NodeItem::mouseMoveEvent(QMouseEvent* event )
+void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 {
     if (getNode() != nullptr &&
         getNode()->getLocked()) {
@@ -308,8 +308,9 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
         // Selection management
         if ((event->button() == Qt::LeftButton ||
              event->button() == Qt::RightButton) &&
-             getNode() &&
+             getNode() != nullptr &&
              isSelectable() &&
+             !getNode()->isGroup() &&  // Group selection is handled in qan::GroupItem::mousePressEvent()
              !getNode()->getLocked()) {
             if (_graph)
                 _graph->selectNode(*getNode(), event->modifiers());
@@ -365,11 +366,11 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
+void    NodeItem::setComplexBoundingShape(bool complexBoundingShape) noexcept
 {
-    if ( complexBoundingShape != _complexBoundingShape ) {
+    if (complexBoundingShape != _complexBoundingShape) {
         _complexBoundingShape = complexBoundingShape;
-        if ( !complexBoundingShape )
+        if (!complexBoundingShape)
             setDefaultBoundingShape();
         else
             emit requestUpdateBoundingShape();
@@ -379,8 +380,8 @@ void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
 
 QPolygonF   NodeItem::getBoundingShape() noexcept
 {
-    if ( _boundingShape.isEmpty( ) )
-        _boundingShape = generateDefaultBoundingShape( );
+    if (_boundingShape.isEmpty())
+        _boundingShape = generateDefaultBoundingShape();
     return _boundingShape;
 }
 
@@ -419,19 +420,28 @@ bool    NodeItem::isInsideBoundingShape(QPointF p)
 /* Port/Dock Management *///---------------------------------------------------
 qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
 {
-    for ( const auto port : qAsConst(_ports) ) {   // Note: std::as_const is officially c++17
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
-        if ( portItem &&
-             portItem->getId() == portId )
+        if (portItem != nullptr &&
+            portItem->getId() == portId)
             return portItem;
     }
     return nullptr;
 }
 
-void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
+void    NodeItem::updatePortsEdges()
 {
-    if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
-        if ( leftDock != nullptr ) {
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
+        const auto portItem = qobject_cast<qan::PortItem*>(port);
+        if (portItem != nullptr)
+            portItem->updateEdges();
+    }
+}
+
+void    NodeItem::setLeftDock(QQuickItem* leftDock) noexcept
+{
+    if (leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data()) {
+        if (leftDock != nullptr) {
             configureDock(*leftDock, Dock::Left);
             QQmlEngine::setObjectOwnership(leftDock, QQmlEngine::CppOwnership);
         }
@@ -478,9 +488,9 @@ void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 
 void    NodeItem::setDock(Dock dock, QQuickItem* dockItem) noexcept
 {
-    if ( dockItem != nullptr )
+    if (dockItem != nullptr)
         configureDock(*dockItem, dock);
-    switch ( dock ) {
+    switch (dock) {
         case Dock::Left: setLeftDock(dockItem); break;
         case Dock::Top: setTopDock(dockItem); break;
         case Dock::Right: setRightDock(dockItem); break;

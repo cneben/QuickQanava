@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -226,7 +226,7 @@ private:
     //@{
 signals:
     //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
-    void    resizeStart(QSizeF targetSize );
+    void    resizeStart(QSizeF targetSize);
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd(QSizeF targetSize);
 protected:

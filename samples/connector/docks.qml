@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -79,10 +79,9 @@ Qan.GraphView {
             n3p2.label = "OUT #2"
 
             var e1 = graph.insertEdge(n11, n2);
-            var e2 = graph.insertEdge(n12, n2);
             graph.bindEdgeDestination(e1, n2p1)
+            var e2 = graph.insertEdge(n12, n2);
             graph.bindEdgeDestination(e2, n2p2)
-
 
             graph.setConnectorSource(n2)
         }

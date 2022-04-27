@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -41,14 +41,14 @@
 namespace qan { // ::qan
 
 /* Navigable Object Management *///--------------------------------------------
-Navigable::Navigable( QQuickItem* parent ) :
+Navigable::Navigable(QQuickItem* parent) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
     _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
     _containerItem->setAcceptTouchEvents(true);
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
-             [this]() {
+            this,   [this]() {
         if (this->_containerItem != nullptr) {
             const auto cr = this->_containerItem->childrenRect();
             this->_containerItem->setWidth(cr.width());
@@ -65,9 +65,9 @@ Navigable::Navigable( QQuickItem* parent ) :
 //-----------------------------------------------------------------------------
 
 /* Navigation Management *///--------------------------------------------------
-void    Navigable::setNavigable( bool navigable ) noexcept
+void    Navigable::setNavigable(bool navigable) noexcept
 {
-    if ( navigable != _navigable ) {
+    if (navigable != _navigable) {
         _navigable = navigable;
         emit navigableChanged();
     }
@@ -82,7 +82,7 @@ void    Navigable::centerOn(QQuickItem* item)
     // ALGORITHM:
         // 1. Map item center in container CS, then translate view by this scaled center to set
         //    the top left corner of item at view origin (0, 0)
-        // 2. Then compute a vector to move item at center of view using an (origin, view venter) vector
+        // 2. Then compute a vector to move item at center of view using an (origin, view center) vector
         //    in container item coordinate system.
 
     const qreal zoom = _containerItem->scale();
@@ -106,15 +106,23 @@ void    Navigable::centerOn(QQuickItem* item)
 
 void    Navigable::centerOnPosition(QPointF position)
 {
+    // ALGORITHM:
+        //  1. Compute a translation vector to move from current view center to the target position.
+        //     Take the zoom into account to scale the translation.
+
+    if (_containerItem == nullptr)
+        return;
+
     QPointF navigableCenter{ width() / 2., height() / 2. };
     QPointF navigableCenterContainerCs = mapToItem( _containerItem, navigableCenter );
     QPointF translation{ navigableCenterContainerCs - position };
-    _containerItem->setPosition(QPointF{_containerItem->x() + translation.x(),
-                                         _containerItem->y() + translation.y()});
+
+    const qreal zoom = _containerItem->scale();
+    _containerItem->setPosition(_containerItem->position() + (translation * zoom));
     updateGrid();
 }
 
-void    Navigable::fitInView( )
+void    Navigable::fitInView()
 {
     QRectF content = _containerItem->childrenRect();
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
@@ -154,10 +162,10 @@ void    Navigable::fitInView( )
     }
 }
 
-void    Navigable::setAutoFitMode( AutoFitMode autoFitMode )
+void    Navigable::setAutoFitMode(AutoFitMode autoFitMode)
 {
-    if ( _autoFitMode != AutoFit &&
-         autoFitMode == AutoFit )
+    if (_autoFitMode != AutoFit &&
+        autoFitMode == AutoFit)
         fitInView();    // When going to auto fit mode from another mode, force fitInView()
 
     _autoFitMode = autoFitMode;
@@ -222,14 +230,14 @@ bool    Navigable::isValidZoom(qreal zoom) const
 {
     if (qFuzzyCompare(1. + zoom - _zoom, 1.0))
         return false;
-    if ( ( zoom > _zoomMin ) &&    // Don't zoom less than zoomMin
-         ( _zoomMax < 0. ||   // Don't zoom more than zoomMax except if zoomMax is infinite
-           zoom < _zoomMax ) )
+    if ((zoom > _zoomMin) &&    // Don't zoom less than zoomMin
+         (_zoomMax < 0. ||   // Don't zoom more than zoomMax except if zoomMax is infinite
+          zoom < _zoomMax))
             return true;
     return false;
 }
 
-void    Navigable::setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin )
+void    Navigable::setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin)
 {
     if ( zoomOrigin != _zoomOrigin ) {
         _zoomOrigin = zoomOrigin;
@@ -237,15 +245,15 @@ void    Navigable::setZoomOrigin( QQuickItem::TransformOrigin zoomOrigin )
     }
 }
 
-void    Navigable::setZoomMax( qreal zoomMax )
+void    Navigable::setZoomMax(qreal zoomMax)
 {
-    if ( qFuzzyCompare( 1. + zoomMax - _zoomMax, 1.0 ) )
+    if (qFuzzyCompare(1. + zoomMax - _zoomMax, 1.0))
         return;
     _zoomMax = zoomMax;
     emit zoomMaxChanged();
 }
 
-void    Navigable::setZoomMin( qreal zoomMin )
+void    Navigable::setZoomMin(qreal zoomMin)
 {
     if ( qFuzzyCompare( 1. + zoomMin - _zoomMin, 1.0 ) )
         return;
@@ -332,9 +340,9 @@ void    Navigable::geometryChange( const QRectF& newGeometry, const QRectF& oldG
         updateGrid();
     }
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QQuickItem::geometryChanged( newGeometry, oldGeometry );
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 #else
-    QQuickItem::geometryChange( newGeometry, oldGeometry );
+    QQuickItem::geometryChange(newGeometry, oldGeometry);
 #endif
 }
 
@@ -440,7 +448,11 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 {
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
         zoomOn(event->position(), getZoom() + zoomFactor);
+#else // QWheelEvent::position was added in Qt 5.14; pos was deprecated in 5.15.
+        zoomOn(event->pos(), getZoom() + zoomFactor);
+#endif
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);
@@ -463,7 +475,11 @@ void    Navigable::setSelectionRectEnabled(bool selectionRectEnabled) noexcept
     }
 }
 
-void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem) noexcept { _selectionRectItem = selectionRectItem; }
+void    Navigable::setSelectionRectItem(QQuickItem* selectionRectItem)
+{
+    _selectionRectItem = selectionRectItem;
+    emit selectionRectChanged();
+}
 
 void    Navigable::selectionRectActivated(const QRectF& rect) { Q_UNUSED(rect); }
 
@@ -476,13 +492,13 @@ void    Navigable::setGrid(qan::Grid* grid) noexcept
 {
     if ( grid != _grid ) {
         if ( _grid ) {                    // Hide previous grid
-            disconnect( _grid, nullptr,
-                        this, nullptr );  // Disconnect every update signals from grid to this navigable
+            disconnect(_grid, nullptr,
+                       this, nullptr);  // Disconnect every update signals from grid to this navigable
         }
         _grid = grid;                       // Configure new grid
-        if ( _grid ) {
-            _grid->setParentItem( this );
-            _grid->setZ( -1.0 );
+        if (_grid) {
+            _grid->setParentItem(this);
+            _grid->setZ(-1.0);
             _grid->setAntialiasing(false);
             _grid->setScale(1.0);
             connect(grid,   &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually

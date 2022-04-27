@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -35,25 +35,34 @@
 #pragma once
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
+#include "./gtpo/edge.h"
 #include "./qanStyle.h"
 #include "./qanNode.h"
+
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+Q_MOC_INCLUDE("./qanGraph.h")
+Q_MOC_INCLUDE("./qanEdgeItem.h")
+Q_MOC_INCLUDE("./qanNode.h")
+#endif
 
 namespace qan { // ::qan
 
 class Graph;
 class EdgeItem;
+class Node;
 
-//! Weighted directed edge linking two nodes in a graph.
-/*!
-    \nosubgrouping
+/*! \brief Weighted directed edge linking two nodes in a graph.
+ *
+ * \nosubgrouping
  */
-class Edge : public gtpo::edge<qan::Config>
+class Edge : public gtpo::edge<QObject, qan::Graph, Node>
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
 public:
+    using super_t = gtpo::edge<QObject, qan::Graph, Node>;
+
     //! Edge constructor with source, destination and weight initialization.
     explicit Edge(QObject* parent = nullptr);
     Edge(const Edge&) = delete;
@@ -118,6 +127,19 @@ protected:
 signals:
     //! \copydoc _label
     void            labelChanged();
+
+public:
+    /*! \brief A locked edge can't be selected / dragged by user (default to false ie unlocked).
+     *
+     * Might be usefull to prevent user inputs when the edge is laid out automatically.
+     */
+    Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
+    bool            setLocked(bool locked) noexcept;
+    bool            getLocked() const noexcept { return _locked; }
+private:
+    bool            _locked = false;
+signals:
+    void            lockedChanged();
 
 public:
     //! \copydoc _weight

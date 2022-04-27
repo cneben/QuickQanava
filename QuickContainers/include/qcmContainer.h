@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,7 @@
 // \date    2015 06 20
 //-----------------------------------------------------------------------------
 
-#ifndef qcmContainer_h
-#define qcmContainer_h
+#pragma once
 
 // Qt headers
 #include <QQmlEngine>           // QQmlEngine::setObjectOwnership()
@@ -137,43 +136,48 @@ class Container : public AbstractContainer
     /*! \name Container Object Management *///------------------------
     //@{
 public:
-    explicit Container( QObject* parent = nullptr ) :
-        AbstractContainer( parent ) { }
-    virtual ~Container( ) { }
-    Container( const Container<C, T>& container ) = delete;
+    explicit Container(QObject* parent = nullptr) :
+        AbstractContainer{parent} { }
+    virtual ~Container() {
+        if (_model != nullptr) {
+            delete _model;
+            _model = nullptr;
+        }
+    }
+    Container(const Container<C, T>& container) = delete;
 
 protected:
-    using ModelImpl = qcm::ContainerModelImpl< qcm::Container<C, T> >;
+    using ModelImpl = qcm::ContainerModelImpl<qcm::Container<C, T>>;
     virtual void createModel() override {
-        _modelImpl = std::make_unique<ModelImpl>(*this);
-        _model = static_cast<qcm::ContainerModel*>(_modelImpl.get());
+        _modelImpl = new ModelImpl{*this};
+        _model = _modelImpl;
     }
 private:
-    std::unique_ptr<ModelImpl>    _modelImpl;
+    QPointer<ModelImpl> _modelImpl = nullptr;
 public:
-    using   Item_type = T;
+    using   Item_type = T;  // Reused from qcm::ContainerModel
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name STL Interface *///-----------------------------------------------
     //@{
 public:
-    using   const_pointer   = typename C< T >::const_pointer;
-    using   const_reference = typename C< T >::const_reference;
-    using   size_type       = typename C< T >::size_type;
-    using   value_type      = typename C< T >::value_type;
-    using   const_iterator  = typename C< T >::const_iterator;
-    using   iterator        = typename C< T >::iterator;
+    using   const_pointer   = typename C<T>::const_pointer;
+    using   const_reference = typename C<T>::const_reference;
+    using   size_type       = typename C<T>::size_type;
+    using   value_type      = typename C<T>::value_type;
+    using   const_iterator  = typename C<T>::const_iterator;
+    using   iterator        = typename C<T>::iterator;
 
 public:
-    inline auto    begin() const noexcept -> const_iterator { return _container.begin( ); }
-    inline auto    end() const noexcept -> const_iterator { return _container.end( ); }
+    inline auto    begin() const noexcept -> const_iterator { return _container.begin(); }
+    inline auto    end() const noexcept -> const_iterator { return _container.end(); }
 
-    inline auto    begin() noexcept -> iterator { return _container.begin( ); }
-    inline auto    end() noexcept -> iterator { return _container.end( ); }
+    inline auto    begin() noexcept -> iterator { return _container.begin(); }
+    inline auto    end() noexcept -> iterator { return _container.end(); }
 
-    inline auto    cbegin() const noexcept -> const_iterator { return _container.cbegin( ); }
-    inline auto    cend() const noexcept -> const_iterator { return _container.cend( ); }
+    inline auto    cbegin() const noexcept -> const_iterator { return _container.cbegin(); }
+    inline auto    cend() const noexcept -> const_iterator { return _container.cend(); }
 
     //! Define a cast operator to C<T>&.
     inline operator C<T>&() noexcept { return _container; }
@@ -182,42 +186,42 @@ public:
     inline operator const C<T>&() const noexcept { return _container; }
 
 public:
-    inline auto     push_back( const T& value ) -> void { append( value ); }
+    inline auto     push_back(const T& value) -> void { append(value); }
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Generic Interface *///-------------------------------------------
     //@{
 private:
-    inline auto     isNullPtr( T item, ItemDispatcherBase::unsupported_type )        const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::non_ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::non_ptr_type )            const noexcept -> bool { Q_UNUSED(item); return false; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::ptr_type )                const noexcept -> bool { return item == nullptr; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::ptr_qobject_type )        const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::q_ptr_type )              const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::shared_ptr_type )         const noexcept -> bool { return !item; }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::shared_ptr_qobject_type ) const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::shared_ptr_type{} ); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::weak_ptr_type )           const noexcept -> bool { return item.expired(); }
-    inline auto     isNullPtr( T item, ItemDispatcherBase::weak_ptr_qobject_type )   const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::weak_ptr_type{} ); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::unsupported_type )        const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::non_ptr_type{} ); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::non_ptr_type )            const noexcept -> bool { Q_UNUSED(item); return false; }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::ptr_type )                const noexcept -> bool { return item == nullptr; }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::ptr_qobject_type )        const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::q_ptr_type )              const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::ptr_type{} ); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::shared_ptr_type )         const noexcept -> bool { return !item; }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::shared_ptr_qobject_type ) const noexcept -> bool { return isNullPtr(item, ItemDispatcherBase::shared_ptr_type{} ); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::weak_ptr_type )           const noexcept -> bool { return item.expired(); }
+    inline auto     isNullPtr(T item, ItemDispatcherBase::weak_ptr_qobject_type )   const noexcept -> bool { return isNullPtr( item, ItemDispatcherBase::weak_ptr_type{} ); }
 private:
-    inline auto     getNullT( ItemDispatcherBase::unsupported_type )        const -> T { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::non_ptr_type )            const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::ptr_type )                const -> T  { return nullptr; }
-    inline auto     getNullT( ItemDispatcherBase::ptr_qobject_type )        const -> T  { return nullptr; }
-    inline auto     getNullT( ItemDispatcherBase::q_ptr_type )              const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::shared_ptr_type )         const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::shared_ptr_qobject_type ) const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::weak_ptr_type )           const -> T  { return T{}; }
-    inline auto     getNullT( ItemDispatcherBase::weak_ptr_qobject_type )   const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::unsupported_type )        const -> T { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::non_ptr_type )            const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::ptr_type )                const -> T  { return nullptr; }
+    inline auto     getNullT(ItemDispatcherBase::ptr_qobject_type )        const -> T  { return nullptr; }
+    inline auto     getNullT(ItemDispatcherBase::q_ptr_type )              const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::shared_ptr_type )         const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::shared_ptr_qobject_type ) const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::weak_ptr_type )           const -> T  { return T{}; }
+    inline auto     getNullT(ItemDispatcherBase::weak_ptr_qobject_type )   const -> T  { return T{}; }
 
 public:
     /*! \brief Shortcut to Container<T>::at() with bounding checking.
      *
      * \param i index of the element to access, if i < 0 std::out_of_range is thrown, if i >= container.size(), a nullptr or empty smart pointer is returned.
      */
-    auto at( int i ) const noexcept -> T {
-        if ( i < 0 )
-            return getNullT( typename ItemDispatcher<T>::type{} );
-        return atImpl( i, typename ItemDispatcher<T>::type{} );
+    auto at(int i) const noexcept -> T {
+        if (i < 0)
+            return getNullT(typename ItemDispatcher<T>::type{});
+        return atImpl(i, typename ItemDispatcher<T>::type{});
     }
 private:
     inline auto atImpl( int i, ItemDispatcherBase::non_ptr_type )           const -> T {
@@ -287,8 +291,8 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::unsupported_type ) noexcept  -> void {}
     inline auto appendImpl( const T&, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
-        if ( item != nullptr ) {
-            if ( _modelImpl  )
+        if (item != nullptr) {
+            if (_modelImpl )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
         }
     }
@@ -314,21 +318,21 @@ private:
 
 public:
     //! Shortcut to Container<T>::remove().
-    void        removeAll( const T& item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
+    void        removeAll(const T& item) {
+        if (isNullPtr(item, typename ItemDispatcher<T>::type{}))
             return;
         const auto itemIndex = qcm::adapter<C,T>::indexOf(_container, item);
-        if ( itemIndex < 0 )
+        if (itemIndex < 0)
             return;
-        if ( _model ) {
+        if (_model) {
             // FIXME: Model updating is actually quite buggy: removeAll might remove
             // items at multiple index, but model update is requested only for itemIndex...
-            fwdBeginRemoveRows( QModelIndex{},
-                                static_cast<int>(itemIndex),
-                                static_cast<int>(itemIndex) );
-            removeImpl( item, typename ItemDispatcher<T>::type{} );
+            fwdBeginRemoveRows(QModelIndex{},
+                               static_cast<int>(itemIndex),
+                               static_cast<int>(itemIndex));
+            removeImpl(item, typename ItemDispatcher<T>::type{});
             qcm::adapter<C,T>::removeAll(_container, item);
-            fwdEndRemoveRows( );
+            fwdEndRemoveRows();
             fwdEmitLengthChanged();
         } else {
             qcm::adapter<C,T>::removeAll(_container, item);
@@ -340,48 +344,47 @@ private:
     inline auto removeImpl( const T&, ItemDispatcherBase::non_ptr_type )                   -> void {}
     inline auto removeImpl( const T&, ItemDispatcherBase::ptr_type )                       -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::ptr_qobject_type )          -> void {
-        if ( _modelImpl &&
-             item != nullptr ) {
-            item->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( item );
+        if (_modelImpl &&
+            item != nullptr) {
+            item->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(item);
         }
     }
     inline auto removeImpl( const T& item, ItemDispatcherBase::q_ptr_type )                -> void {
         if ( _modelImpl && item != nullptr ) {
-            item->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( item.data() );
+            item->disconnect( 0, _modelImpl, 0 );
+            _modelImpl->_qObjectItemMap.erase(item.data());
         }
     }
     inline auto removeImpl( const T&, ItemDispatcherBase::shared_ptr_type )                -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::shared_ptr_qobject_type )   -> void {
         QObject* qObject = qobject_cast<QObject*>(item.get());
         if ( _modelImpl && qObject != nullptr ) {
-            qObject->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( qObject );
+            qObject->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(qObject);
         }
     }
     inline auto removeImpl( const T&, ItemDispatcherBase::weak_ptr_type )                  -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::weak_ptr_qobject_type )     -> void {
-        if ( !_modelImpl || item.expired() )
+        if (!_modelImpl || item.expired())
             return;
         QObject* qObject = qobject_cast<QObject*>(item.lock().get());
-        if ( qObject != nullptr ) {
-            qObject->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( qObject );
+        if (qObject != nullptr) {
+            qObject->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(qObject);
         }
     }
 
 public:
     inline  void    clear() noexcept {
-        if ( _model && _modelImpl ) {
+        if (_model && _modelImpl) {
             fwdBeginResetModel();
             _modelImpl->_qObjectItemMap.clear();
-            _container.clear( );
+            _container.clear();
             fwdEndResetModel();
             fwdEmitLengthChanged();
-        } else {
-            _container.clear( );
-        }
+        } else
+            _container.clear();
     }
 
 public:
@@ -424,13 +427,13 @@ public:
      *
      * \arg item    if nullptr, return false.
      */
-    inline auto    contains( T item ) const noexcept -> bool { return qcm::adapter<C, T>::contains(_container, item); }
+    inline auto    contains(const T item) const noexcept -> bool { return qcm::adapter<C, T>::contains(_container, item); }
 
     /*! \brief Shortcut to Container<T>::indexOf(), return index of a given \c item element in this model container.
      *
      * \arg item    if nullptr, return -1.
      */
-    inline auto    indexOf( T item ) const noexcept -> size_t { return qcm::adapter<C, T>::indexOf( _container, item ); }
+    inline auto    indexOf( T item ) const noexcept -> int { return qcm::adapter<C, T>::indexOf(_container, item); }
 
 private:
     C<T>                _container;
@@ -444,6 +447,3 @@ protected:
 };
 
 } // ::qcm
-
-#endif // qcmContainer_h
-

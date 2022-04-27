@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -45,8 +45,7 @@
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
-Edge::Edge(QObject* parent) :
-    gtpo::edge<qan::Config>{parent}
+Edge::Edge(QObject* parent) : super_t{parent}
 {
 }
 
@@ -56,13 +55,8 @@ Edge::~Edge()
         _item->deleteLater();
 }
 
-qan::Graph* Edge::getGraph() noexcept {
-    return qobject_cast< qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
-}
-
-const qan::Graph* Edge::getGraph() const noexcept {
-    return qobject_cast< const qan::Graph* >( gtpo::edge< qan::Config >::get_graph() );
-}
+qan::Graph*         Edge::getGraph() noexcept { return get_graph(); }
+const qan::Graph*   Edge::getGraph() const noexcept { return get_graph(); }
 
 qan::EdgeItem*   Edge::getItem() noexcept { return _item.data(); }
 
@@ -96,15 +90,8 @@ qan::EdgeStyle* Edge::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /*! \name Edge Topology Management *///------------------------------------
-qan::Node*  Edge::getSource() noexcept
-{
-    return qobject_cast<qan::Node*>(get_src().lock().get());
-}
-
-qan::Node*  Edge::getDestination() noexcept
-{
-    return qobject_cast<qan::Node*>(get_dst().lock().get());
-}
+qan::Node*  Edge::getSource() noexcept { return get_src(); }
+qan::Node*  Edge::getDestination() noexcept { return get_dst(); }
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------
@@ -113,6 +100,16 @@ bool    Edge::setLabel(const QString& label)
     if (label != _label) {
         _label = label;
         emit labelChanged();
+        return true;
+    }
+    return false;
+}
+
+bool    Edge::setLocked(bool locked) noexcept
+{
+    if (locked != _locked) {
+        _locked = locked;
+        emit lockedChanged();
         return true;
     }
     return false;

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -34,8 +34,8 @@
 
 #pragma once
 
-// GTpo headers
-#include "../GTpo/src/gtpo/GTpo"
+#include "./gtpo/node.h"
+#include "./gtpo/graph.h"
 
 // Qt headers
 #include <QString>
@@ -46,7 +46,6 @@
 
 // QuickQanava headers
 #include "./qanUtils.h"
-#include "./qanGraphConfig.h"
 #include "./qanStyleManager.h"
 #include "./qanEdge.h"
 #include "./qanNode.h"
@@ -60,6 +59,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class Node;
 class Connector;
 class PortItem;
 
@@ -71,13 +71,12 @@ class PortItem;
 
  * \nosubgrouping
  */
-class Graph : public gtpo::graph<qan::Config>
+class Graph : public gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
 
-    using gtpo_graph_t = gtpo::graph<qan::Config>;
-
+    using super_t = gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>;
     friend class qan::Selectable;
 
     /*! \name Graph Object Management *///-------------------------------------
@@ -90,7 +89,7 @@ public:
      * Graph is a factory for inserted nodes and edges, even if they have been created trought
      * QML delegates, they will be destroyed with the graph they have been created in.
      */
-    virtual ~Graph() override = default;
+    virtual ~Graph() override;
     Graph(const Graph&) = delete;
     Graph& operator=(const Graph&) = delete;
     Graph(Graph&&) = delete;
@@ -318,28 +317,22 @@ private:
     /*! \name Graph Node Management *///---------------------------------------
     //@{
 public:
-    using Node              = typename Config::final_node_t;
-    using WeakNode          = std::weak_ptr<typename Config::final_node_t>;
-    using SharedNode        = std::shared_ptr<typename Config::final_node_t>;
-
     /*! \brief Insert an already existing node, proxy to GTpo graph insertNode().
      *
      * \warning This method is mainly for tests purposes since inserted node delegate and style is
-     * left unconfigured. HAndle with a lot of care only to insert "pure topology" non visual nodes.
+     * left unconfigured. Handle with a lot of care only to insert "pure topology" non visual nodes.
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
-    auto    insertNonVisualNode(SharedNode node) noexcept(false) -> WeakNode;
+    auto    insertNonVisualNode(Node* node) -> bool;
 
     /*! \brief Insert a new node in this graph and return a pointer on it, or \c nullptr if creation fails.
-     *
-     * gtpo::bad_topology_error is thrown if node insertion fails.
      *
      * A default node delegate must have been registered with registerNodeDelegate() if
      * \c nodeComponent is unspecified (ie \c nullptr); it is done automatically if
      * Qan.Graph is used, with a rectangular node delegate for default node.
      *
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
-     * \note graph keep ownership of the returned node.
+     * \note graph has ownership for returned node.
      */
     Q_INVOKABLE qan::Node*  insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 
@@ -363,7 +356,9 @@ public:
      *
      * \return true if \c node has been successfully inserted.
      */
-    bool                    insertNode(const SharedNode& node, QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
+    bool                    insertNode(Node* node,
+                                       QQmlComponent* nodeComponent = nullptr,
+                                       qan::NodeStyle* nodeStyle = nullptr);
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
@@ -392,7 +387,7 @@ protected:
 
     /*! \brief Notify user immediately before a node \c node is removed.
      *
-     * \warning Since groups are node, onNodeInserted() is also emitted when removeGroup() is called.
+     * \warning Since groups are node, onNodeRemoved() is also emitted when removeGroup() is called.
      * \note Signal nodeRemoved() is emitted at the same time.
      * \note Default implementation is empty.
      */
@@ -423,16 +418,22 @@ signals:
     //! \brief Emitted _after_ a node (or a group...) has been un grouped.
     void            nodeUngrouped(qan::Node* node, qan::Group* group);
 
+    /*! \brief Emitted immediatly _before_ a node is moved.
+     */
+    void            nodeAboutToBeMoved(qan::Node* node);
+
     /*! \brief Emitted _after_ a node has been moved.
      */
     void            nodeMoved(qan::Node* node);
 
-    /*! \brief Emitted _after_ a node has been resized.
-     */
+    //! \brief Emitted immediately _before_ a node is resized.
+    void            nodeAboutToBeResized(qan::Node* node);
+    //! \brief Emitted _after_ a node has been resized.
     void            nodeResized(qan::Node* node);
 
-    /*! \brief Emitted _after_ a grouphas been resized.
-     */
+    //! \brief Emitted immediately _before_ a group is resized.
+    void            groupAboutToBeResized(qan::Group* group);
+    //! \brief Emitted _after_ a group has been resized.
     void            groupResized(qan::Group* group);
 
     //! Emitted when a node setLabel() method is called.
@@ -489,20 +490,20 @@ private:
      * \note insertEdgeImpl() will automatically create \c edge graphical delegate using \c edgeComponent and \c style.
      */
     bool                    configureEdge(qan::Edge& source, QQmlComponent& edgeComponent, qan::EdgeStyle& style,
-                                          qan::Node& src, qan::Node* dstNode);
+                                          qan::Node& src, qan::Node* dst);
 public:
     template <class Edge_t>
     qan::Edge*              insertNonVisualEdge(qan::Node& src, qan::Node* dstNode);
 
 public:
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE virtual void    removeEdge(qan::Node* source, qan::Node* destination);
+    Q_INVOKABLE virtual bool    removeEdge(qan::Node* source, qan::Node* destination);
 
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE virtual void    removeEdge(qan::Edge* edge);
+    Q_INVOKABLE virtual bool    removeEdge(qan::Edge* edge);
 
     //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
-    Q_INVOKABLE bool        hasEdge(qan::Node* source, qan::Node* destination) const;
+    Q_INVOKABLE bool        hasEdge(const qan::Node* source, const qan::Node* destination) const;
 
     //! Return true if edge is in graph.
     Q_INVOKABLE bool        hasEdge(const qan::Edge* edge) const;
@@ -538,9 +539,6 @@ signals:
     /*! \name Graph Group Management *///--------------------------------------
     //@{
 public:
-    using Group             = typename Config::final_group_t;
-    using SharedGroup       = std::shared_ptr<typename Config::final_group_t>;
-
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE virtual qan::Group* insertGroup();
 
@@ -554,20 +552,31 @@ public:
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      * \note graph keep ownership of the returned node.
      */
-    bool                    insertGroup(const SharedGroup& group, QQmlComponent* groupComponent = nullptr, qan::NodeStyle* groupStyle = nullptr);
+    bool                    insertGroup(Group* group,
+                                        QQmlComponent* groupComponent = nullptr,
+                                        qan::NodeStyle* groupStyle = nullptr);
 
     //! Insert a group using its static delegate() and style() factories.
     template <class Group_t>
     qan::Group*             insertGroup();
 
-    //! Shortcut to gtpo::GenGraph<>::removeGroup().
-    Q_INVOKABLE virtual void    removeGroup(qan::Group* group);
+    /*! Shortcut to gtpo::GenGraph<>::removeGroup().
+     *
+     *  \note When remove content is set to true group nodes (and any eventual subgroup
+     *  is removed too). When false (default behaviour), group nodes are reparented to
+     *  graph root.
+     */
+    Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false);
 
+protected:
+    void        removeGroupContent_rec(qan::Group* group);
+
+public:
     //! Return true if \c group is registered in graph.
     bool                    hasGroup(qan::Group* group) const;
 
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
-    Q_INVOKABLE int         getGroupCount() const { return gtpo_graph_t::get_group_count(); }
+    Q_INVOKABLE int         getGroupCount() const { return get_group_count(); }
 
     /*! \brief Group a node  \c node inside \c group group.
      *
@@ -697,7 +706,7 @@ public:
     Q_INVOKABLE void    clearSelection();
 
     //! Return true if multiple node are selected.
-    inline  bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
+    Q_INVOKABLE bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
 
 public:
     using SelectedNodes = qcm::Container<QVector, qan::Node*>;
@@ -891,8 +900,8 @@ public:
      * a plus item z.
      */
     Q_PROPERTY(qreal    maxZ READ getMaxZ WRITE setMaxZ NOTIFY maxZChanged FINAL)
-    qreal        getMaxZ() const noexcept;
-    void         setMaxZ(const qreal maxZ) noexcept;
+    qreal               getMaxZ() const noexcept;
+    void                setMaxZ(const qreal maxZ) noexcept;
 private:
     qreal               _maxZ = 0.;
 signals:
@@ -981,6 +990,17 @@ private:
                                               const qan::Node& candidate,
                                               std::unordered_set<const qan::Node*>& marks,
                                               bool collectGroup) const noexcept;
+
+public:
+    /*! Collect all nodes and groups contained in given groups.
+     *
+     * \note Recursively collect \c groups nodes and sub groups and group sub group nodes.
+     */
+    auto    collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>;
+protected:
+
+    // Recursive utility for collectGroupsNodes().
+    auto    collectGroupNodes_rec(const qan::Group* group, std::unordered_set<const qan::Node*>& nodes) const -> void;
     //@}
     //-------------------------------------------------------------------------
 };
@@ -992,4 +1012,3 @@ private:
 Q_DECLARE_METATYPE(QAbstractItemModel*)
 Q_DECLARE_METATYPE(QAbstractListModel*)
 QML_DECLARE_TYPE(qan::Graph)
-QML_DECLARE_TYPE(qan::Graph::WeakNode)

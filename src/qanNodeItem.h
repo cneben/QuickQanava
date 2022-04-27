@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -46,7 +46,6 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
 #include "./qanNode.h"
@@ -115,7 +114,7 @@ private:
 
 public:
     //! Secure shortcut to getNode().getGraph().
-    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
+    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT)
     //! \copydoc graph
     auto    setGraph(qan::Graph* graph) noexcept -> void;
 protected:
@@ -139,7 +138,7 @@ signals:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto            setRect(const QRectF& r) noexcept -> void;
+    auto            setRect(const QRectF& r) noexcept -> void;    
     //@}
     //-------------------------------------------------------------------------
 
@@ -151,7 +150,7 @@ public:
     inline bool     getCollapsed() const noexcept { return _collapsed; }
     virtual void    setCollapsed(bool collapsed) noexcept;
 private:
-    bool        _collapsed{false};
+    bool        _collapsed = false;
 signals:
     void        collapsedChanged();
 public:
@@ -338,7 +337,7 @@ signals:
     void            complexBoundingShapeChanged( );
 
 public:
-    /*! \brief Polygon used for mouse event clipping, and edge arrow clipping.
+    /*! \brief Polygon used for mouse event clipping, and edge arrow clipping (in item local coordinates).
      *
      * An intersection shape is automatically generated for rectangular nodes, it can be sets by the user
      * manually with setIntersectionShape() or setIntersectionShapeFromQml() if the node graphical representation is
@@ -407,6 +406,9 @@ public:
     QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( _ports.getModel() ); }
     inline auto         getPorts() noexcept -> PortItems& { return _ports; }
     inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
+
+    //! Force update of all node ports edges (#145).
+    Q_INVOKABLE void    updatePortsEdges();
 private:
     PortItems           _ports;
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,7 +42,6 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanGraphConfig.h"
 #include "./qanAbstractDraggableCtrl.h"
 #include "./qanStyle.h"         // Used in handleDropEvent()
 #include "./qanGroup.h"
@@ -77,6 +76,13 @@ public:
 private:
     QPointer<qan::NodeItem>    _targetItem{nullptr};
 
+public:
+    inline auto getTargetEdgeItem() noexcept -> qan::EdgeItem* { return _targetEdgeItem.data(); }
+    inline auto getTargetEdgeItem() const noexcept -> const qan::EdgeItem* { return _targetEdgeItem.data(); }
+    inline auto setTargetEdgeItem(qan::EdgeItem* targetEdgeItem) noexcept { _targetEdgeItem = targetEdgeItem; }
+private:
+    QPointer<qan::EdgeItem>    _targetEdgeItem{nullptr};
+
 protected:
     inline qan::Graph*  getGraph() noexcept { return _target ? _target->getGraph() : nullptr; }
     //@}
@@ -85,15 +91,15 @@ protected:
     /*! \name Node DnD Management *///-----------------------------------------
     //@{
 public:
-    bool    handleDragEnterEvent( QDragEnterEvent* event );
-    void    handleDragMoveEvent( QDragMoveEvent* event );
-    void    handleDragLeaveEvent( QDragLeaveEvent* event );
-    void    handleDropEvent( QDropEvent* event );
+    bool    handleDragEnterEvent(QDragEnterEvent* event);
+    void    handleDragMoveEvent(QDragMoveEvent* event);
+    void    handleDragLeaveEvent(QDragLeaveEvent* event);
+    void    handleDropEvent(QDropEvent* event);
 
-    void    handleMouseDoubleClickEvent( QMouseEvent* event );
-    bool    handleMouseMoveEvent( QMouseEvent* event );
-    void    handleMousePressEvent( QMouseEvent* event );
-    void    handleMouseReleaseEvent( QMouseEvent* event );
+    void    handleMouseDoubleClickEvent(QMouseEvent* event);
+    bool    handleMouseMoveEvent(QMouseEvent* event);
+    void    handleMousePressEvent(QMouseEvent* event);
+    void    handleMouseReleaseEvent(QMouseEvent* event);
 
 public:
     //! \c dragInitialMousePos in window coordinate system.
@@ -104,9 +110,9 @@ public:
 
 private:
     //! Internal position cache.
-    QPointF                 _dragLastPos{ 0., 0. };
+    QPointF                 _dragLastPos{0., 0.};
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
-    QPointer<qan::Group>    _lastProposedGroup{ nullptr };
+    QPointer<qan::Group>    _lastProposedGroup{nullptr};
     //@}
     //-------------------------------------------------------------------------
 };

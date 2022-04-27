@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -173,7 +173,7 @@ Item {
             strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
             strokeColor: edgeTemplate.color
             strokeStyle: edgeTemplate.dashed
-            dashPattern: style ? style.dashPattern : [4, 2]
+            dashPattern: edgeItem.style ? edgeItem.style.dashPattern : [2, 2]
             fillColor: Qt.rgba(0,0,0,0)
             PathLine {
                 x: edgeItem.p2.x

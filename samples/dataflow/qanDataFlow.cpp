@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -94,7 +94,7 @@ QQmlComponent*  OperationNode::delegate(QQmlEngine& engine) noexcept
 
 void    OperationNode::setOperation(Operation operation) noexcept
 {
-    if ( _operation != operation ) {
+    if (_operation != operation) {
         _operation = operation;
         emit operationChanged();
     }
@@ -103,20 +103,20 @@ void    OperationNode::setOperation(Operation operation) noexcept
 void    OperationNode::inNodeOutputChanged()
 {
     FlowNode::inNodeOutputChanged();
-    qreal o{0.}; // For the example sake we do not deal with overflow
+    qreal o = 0.; // For the example sake we do not deal with overflow
     bool oIsInitialized{false};
-    for ( const auto& inNode : get_in_nodes() ) {
-        const auto inFlowNode = qobject_cast<qan::FlowNode*>(inNode.lock().get());
-        if ( inFlowNode == nullptr ||
-             !inFlowNode->getOutput().isValid())
+    for (const auto inNode : get_in_nodes()) {
+        const auto inFlowNode = qobject_cast<qan::FlowNode*>(inNode);
+        if (inFlowNode == nullptr ||
+            !inFlowNode->getOutput().isValid())
             continue;
-        bool ok{false};
+        bool ok = false;
         const auto inOutput = inFlowNode->getOutput().toReal(&ok);
-        if ( ok ) {
-            switch ( _operation ) {
-            case Operation::Add:        o += inOutput; break;
+        if (ok) {
+            switch (_operation) {
+            case Operation::Add:    o += inOutput; break;
             case Operation::Multiply:
-                if ( !oIsInitialized ) {
+                if (!oIsInitialized) {
                     o = inOutput;
                     oIsInitialized = true;
                 } else
@@ -172,29 +172,28 @@ void    TintNode::inNodeOutputChanged()
 {
     FlowNode::inNodeOutputChanged();
     qDebug() << "TintNode::inNodeOutputValueChanged()";
-    if ( get_in_nodes().size() != 3 )
+    if (get_in_nodes().size() != 3)
         return;
 
     // FIXME: Do not find port item by index, but by id with qan::NodeItem::findPort()...
-
-    const auto inFactorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(0).lock().get());
-    const auto inColorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(1).lock().get());
-    const auto inImageNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(2).lock().get());
+    const auto inFactorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(0));
+    const auto inColorNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(1));
+    const auto inImageNode = qobject_cast<qan::FlowNode*>(get_in_nodes().at(2));
     qDebug() << "inFactorNode=" << inFactorNode << "\tinColorNode=" << inColorNode << "\tinImageNode=" << inImageNode;
-    if ( inFactorNode == nullptr ||
-         inColorNode == nullptr ||
-         inImageNode == nullptr )
+    if (inFactorNode == nullptr ||
+        inColorNode == nullptr ||
+        inImageNode == nullptr)
         return;
-    bool factorOk{false};
+    bool factorOk = false;
     const auto factor = inFactorNode->getOutput().toReal(&factorOk);
     auto       tint =   inColorNode->getOutput().value<QColor>();
     const auto source = inImageNode->getOutput().toUrl();
     qDebug() << "factor=" << factor;
     qDebug() << "tint=" << tint;
     qDebug() << "source=" << source.toString();
-    if ( factorOk &&
-         !source.isEmpty() &&
-         tint.isValid() ) {
+    if (factorOk &&
+        !source.isEmpty() &&
+        tint.isValid()) {
         tint.setAlpha(qBound(0., factor, 1.0) * 255);
         setSource(source);
         setTintColor(tint);

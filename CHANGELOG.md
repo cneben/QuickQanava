@@ -1,5 +1,13 @@
-CHANGELOG
----------
+# CHANGELOG
+
+## 20220427 v2.0.0:
+- Release v2.0.0.
+- Simplify and clean GTpo framework (which is no longer usefull outside of QuickQanava).
+- Simplify memory management, remove most c++ smartpointers (See #148)
+
+## 20201205:
+- Update copyright notice.
+- Multiple bug fixes.
 
 **20201205:** 
 + Update copyright notice.
