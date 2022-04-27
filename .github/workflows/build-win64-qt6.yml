@@ -10,15 +10,28 @@ jobs:
   test-build:
     runs-on: windows-2019
     steps:
+      - name: Clone QuickQanava
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
       - name: Cache Qt
         id: cache-qt
         uses: actions/cache@v1
         with:
           path: ../Qt
           key: ubuntu-latest-QtCache
+
+      - uses: lukka/get-cmake@latest
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: 'qtcore qtgui qtquickcontrols2'
           setup-python: false
+
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+          
+          
