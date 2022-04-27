@@ -7,6 +7,7 @@ set(qan_source_files
     qanDraggableCtrl.cpp
     qanEdge.cpp
     qanEdgeItem.cpp
+    qanEdgeDraggableCtrl.cpp
     qanGraph.cpp
     qanGraphView.cpp
     qanGrid.cpp
@@ -29,18 +30,17 @@ set (qan_header_files
     qanBehaviour.h
     qanBottomRightResizer.h
     qanConnector.h
-    qanContainerAdapter.h
-    qanDraggableCtrl.h
     qanDraggable.h
+    qanDraggableCtrl.h
     qanEdge.h
+    qanEdgeDraggableCtrl.h
     qanEdgeItem.h
-    qanGraphConfig.h
     qanGraph.h
     qanGraphView.h
     qanGrid.h
-    qanGrid.h
     qanGroup.h
     qanGroupItem.h
+    qanLineGrid.h
     qanNavigable.h
     qanNavigablePreview.h
     qanNode.h
@@ -51,6 +51,15 @@ set (qan_header_files
     qanStyleManager.h
     qanUtils.h
     QuickQanava.h
+    gtpo/container_adapter.h
+    gtpo/edge.h
+    gtpo/graph.h
+    gtpo/graph.hpp
+    gtpo/graph_property.h
+    gtpo/node.h
+    gtpo/node.hpp
+    gtpo/observable.h
+    gtpo/observer.h
     )
 
 source_group("Headers" FILES ${qan_header_files})
@@ -102,7 +111,7 @@ install(TARGETS QuickQanava
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-target_link_libraries(QuickQanava PUBLIC GTpo QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
+target_link_libraries(QuickQanava PUBLIC QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
 if(QUICK_QANAVA_BUILD_STATIC_QRC)
     target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)

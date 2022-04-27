@@ -308,8 +308,9 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
         // Selection management
         if ((event->button() == Qt::LeftButton ||
              event->button() == Qt::RightButton) &&
-             getNode() &&
+             getNode() != nullptr &&
              isSelectable() &&
+             !getNode()->isGroup() &&  // Group selection is handled in qan::GroupItem::mousePressEvent()
              !getNode()->getLocked()) {
             if (_graph)
                 _graph->selectNode(*getNode(), event->modifiers());
@@ -365,11 +366,11 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
+void    NodeItem::setComplexBoundingShape(bool complexBoundingShape) noexcept
 {
-    if ( complexBoundingShape != _complexBoundingShape ) {
+    if (complexBoundingShape != _complexBoundingShape) {
         _complexBoundingShape = complexBoundingShape;
-        if ( !complexBoundingShape )
+        if (!complexBoundingShape)
             setDefaultBoundingShape();
         else
             emit requestUpdateBoundingShape();
@@ -379,8 +380,8 @@ void    NodeItem::setComplexBoundingShape( bool complexBoundingShape ) noexcept
 
 QPolygonF   NodeItem::getBoundingShape() noexcept
 {
-    if ( _boundingShape.isEmpty( ) )
-        _boundingShape = generateDefaultBoundingShape( );
+    if (_boundingShape.isEmpty())
+        _boundingShape = generateDefaultBoundingShape();
     return _boundingShape;
 }
 
@@ -419,19 +420,28 @@ bool    NodeItem::isInsideBoundingShape(QPointF p)
 /* Port/Dock Management *///---------------------------------------------------
 qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
 {
-    for ( const auto port : qAsConst(_ports) ) {   // Note: std::as_const is officially c++17
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
-        if ( portItem &&
-             portItem->getId() == portId )
+        if (portItem != nullptr &&
+            portItem->getId() == portId)
             return portItem;
     }
     return nullptr;
 }
 
-void    NodeItem::setLeftDock( QQuickItem* leftDock ) noexcept
+void    NodeItem::updatePortsEdges()
 {
-    if ( leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data() ) {
-        if ( leftDock != nullptr ) {
+    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
+        const auto portItem = qobject_cast<qan::PortItem*>(port);
+        if (portItem != nullptr)
+            portItem->updateEdges();
+    }
+}
+
+void    NodeItem::setLeftDock(QQuickItem* leftDock) noexcept
+{
+    if (leftDock != _dockItems[static_cast<std::size_t>(Dock::Left)].data()) {
+        if (leftDock != nullptr) {
             configureDock(*leftDock, Dock::Left);
             QQmlEngine::setObjectOwnership(leftDock, QQmlEngine::CppOwnership);
         }
@@ -478,9 +488,9 @@ void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 
 void    NodeItem::setDock(Dock dock, QQuickItem* dockItem) noexcept
 {
-    if ( dockItem != nullptr )
+    if (dockItem != nullptr)
         configureDock(*dockItem, dock);
-    switch ( dock ) {
+    switch (dock) {
         case Dock::Left: setLeftDock(dockItem); break;
         case Dock::Top: setTopDock(dockItem); break;
         case Dock::Right: setRightDock(dockItem); break;

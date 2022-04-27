@@ -39,15 +39,21 @@
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+Q_MOC_INCLUDE("./qanGraph.h")
+Q_MOC_INCLUDE("./qanEdgeItem.h")
+Q_MOC_INCLUDE("./qanNode.h")
+#endif
+
 namespace qan { // ::qan
 
 class Graph;
 class EdgeItem;
 class Node;
 
-//! Weighted directed edge linking two nodes in a graph.
-/*!
-    \nosubgrouping
+/*! \brief Weighted directed edge linking two nodes in a graph.
+ *
+ * \nosubgrouping
  */
 class Edge : public gtpo::edge<QObject, qan::Graph, Node>
 {

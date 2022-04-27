@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -108,10 +108,8 @@ auto node<node_base_t,
 
     auto outEdgeDst = outEdge->get_dst();
     if (outEdgeDst != nullptr) {
-        std::cerr << "gtpo::node<>::remove_out_edge(): Error: Out edge destination is nullptr." << std::endl;
         observable_base_t::notify_out_node_removed(*reinterpret_cast<node_t*>(this),
                                                    *const_cast<node_t*>(outEdge->get_dst()), *outEdge);
-        return false;
     }
     container_adapter<edges_t>::remove(const_cast<edge_t*>(outEdge), _out_edges);
     container_adapter<nodes_t>::remove(const_cast<node_t*>(outEdge->get_dst()), _out_nodes);

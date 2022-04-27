@@ -163,13 +163,13 @@ ListView {
 In C++, `selectedNodes` could be iterated directly, the current node should be tested to ensure it is non nullptr, since the underlining model is thread-safe and could have been modified from another thread:
 ``` cpp
 	auto graph = std::make_unique<qan::Graph>();
-    for ( auto& node : graph->getSelectNodes() ) {
-        if ( node != nullptr )
+    for (auto node : graph->getSelectNodes()) {
+        if (node != nullptr)
             node->doWhateverYouWant();
     }
 	// Or better:
-    for ( const auto& node : qAsConst(graph->getSelectNodes()) ) {
-        if ( node != nullptr )
+    for (const auto node : qAsConst(graph->getSelectNodes())) {
+        if (node != nullptr)
             node->doWhateverYouWantConst();
     }
 ```

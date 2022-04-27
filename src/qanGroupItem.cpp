@@ -51,12 +51,13 @@ GroupItem::GroupItem(QQuickItem* parent) :
     setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
 
     // Force group connected edges update when the group is moved
-    connect( this, &qan::GroupItem::xChanged,
-             this, &qan::GroupItem::groupMoved );
-    connect( this, &qan::GroupItem::yChanged,
-             this, &qan::GroupItem::groupMoved );
+    connect(this, &qan::GroupItem::xChanged,
+            this, &qan::GroupItem::groupMoved);
+    connect(this, &qan::GroupItem::yChanged,
+            this, &qan::GroupItem::groupMoved);
     // Update adjacent edges z when group item z is modified.
-    connect( this, &qan::GroupItem::zChanged, [this]() { this->groupMoved(); } );
+    connect(this, &qan::GroupItem::zChanged,
+            this, [this]() { this->groupMoved(); });
 
     setItemStyle(qan::Group::style(parent));
     setObjectName(QStringLiteral("qan::GroupItem"));

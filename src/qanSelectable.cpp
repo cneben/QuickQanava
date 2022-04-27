@@ -86,7 +86,7 @@ void    Selectable::setSelected(bool selected) noexcept
         emitSelectedChanged();
     }
     if (getSelectionItem() != nullptr)    // Done outside of binding loop protection
-        getSelectionItem()->setState( selected ? "SELECTED" : "UNSELECTED" );
+        getSelectionItem()->setState(selected ? "SELECTED" : "UNSELECTED");
 }
 
 void    Selectable::setSelectionItem(QQuickItem* selectionItem) noexcept
@@ -125,37 +125,36 @@ void    Selectable::setSelectionItem(QQuickItem* selectionItem) noexcept
 
 void    Selectable::configureSelectionItem()
 {
-    if ( _target &&
-         _selectionItem &&
-         _graph ) {
+    if (_target &&
+        _selectionItem &&
+        _graph) {
         // If selection item support QuickQanava selection interface, try to configure properties directly
         const auto selectionColorProperty = _selectionItem->property("selectionColor");
-        if ( selectionColorProperty.isValid() )
+        if (selectionColorProperty.isValid())
             _selectionItem->setProperty("selectionColor", QVariant::fromValue(_graph->getSelectionColor()));
         const auto selectionWeightProperty = _selectionItem->property("selectionWeight");
-        if ( selectionWeightProperty.isValid() )
+        if (selectionWeightProperty.isValid())
             _selectionItem->setProperty("selectionWeight", QVariant::fromValue(_graph->getSelectionWeight()));
         const auto selectionMarginProperty = _selectionItem->property("selectionWeight");
-        if ( selectionMarginProperty.isValid() )
+        if (selectionMarginProperty.isValid())
             _selectionItem->setProperty("selectionMargin", QVariant::fromValue(_graph->getSelectionMargin()));
 
         const auto selectionMargin = _graph->getSelectionMargin();
         const auto selectionWeight = _graph->getSelectionWeight();
 
-        const qreal x = -( selectionWeight / 2. + selectionMargin );
-        const qreal y = -( selectionWeight / 2. + selectionMargin );
-        const qreal width = _target->width() + selectionWeight + ( selectionMargin * 2 );
-        const qreal height = _target->height() + selectionWeight + ( selectionMargin * 2 );
+        const qreal x = -(selectionWeight / 2. + selectionMargin);
+        const qreal y = -(selectionWeight / 2. + selectionMargin);
+        const qreal width = _target->width() + selectionWeight + (selectionMargin * 2);
+        const qreal height = _target->height() + selectionWeight + (selectionMargin * 2);
 
-        _selectionItem->setX( x );
-        _selectionItem->setY( y );
-        _selectionItem->setZ( 1.0 );
-        _selectionItem->setWidth( width );
-        _selectionItem->setHeight( height );
-        _selectionItem->setVisible( true );
+        _selectionItem->setX(x);
+        _selectionItem->setY(y);
+        _selectionItem->setZ(1.0);
+        _selectionItem->setWidth(width);
+        _selectionItem->setHeight(height);
+        _selectionItem->setVisible(true);
     }
 }
-
 //-----------------------------------------------------------------------------
 
 } // ::qan

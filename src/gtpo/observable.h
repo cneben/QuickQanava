@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -35,6 +35,7 @@
 #pragma once
 
 // STD headers
+#include <iostream>
 #include <cstddef>          // std::size_t
 #include <functional>       // std::function
 #include <vector>
@@ -43,7 +44,7 @@
 
 namespace gtpo { // ::gtpo
 
-/*! \brief Empty interface definition for graph primitives supporting behaviour concept.
+/*! \brief Empty interface definition for graph primitives supporting observable concept.
  */
 class abstract_observable {
 public:
@@ -56,18 +57,20 @@ public:
     abstract_observable& operator=(abstract_observable&&) = default;
 };
 
-/*! \brief Base class for all type supporting behaviours (actually gtpo::graph and gtpo::group).
+/*! \brief Base class for all type supporting observers (actually gtpo::graph and gtpo::group).
  *
  * \nosubgrouping
  */
 template <class observer_t>
 class observable : public abstract_observable
 {
-    /*! \name behaviourable Object Management *///-----------------------------
+    /*! \name observable Object Management *///--------------------------------
     //@{
 public:
     observable() : abstract_observable() { }
-    ~observable() noexcept { _observers.clear(); }
+    ~observable() noexcept {
+        _observers.clear();
+    }
     observable(const observable<observer_t>&) = default;
     observable& operator=(const observable<observer_t>&) = default;
 
@@ -101,7 +104,7 @@ public:
     inline auto    hasObservers() const noexcept -> bool { return _observers.size() > 0; }
 
     //! Return a read only container of actually registered observers.
-    inline auto    getObservers() const noexcept -> const observer_t& { return _observers; }
+    inline auto    getObservers() const noexcept -> const observers_t& { return _observers; }
 
 protected:
     observers_t    _observers;
@@ -123,7 +126,7 @@ class node_observer;
 template <class node_t, class edge_t>
 class observable_node : public observable<gtpo::node_observer<node_t, edge_t>>
 {
-    /*! \name behaviourable_node Object Management *///------------------------
+    /*! \name observable_node Object Management *///---------------------------
     //@{
 public:
     using node_observer_t = gtpo::node_observer<node_t, edge_t>;

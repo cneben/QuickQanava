@@ -65,6 +65,18 @@ Graph::Graph(QQuickItem* parent) noexcept :
     // GraphView containerItem.
 }
 
+Graph::~Graph()
+{
+    // Force diconnection of node/edges signals, it avoid
+    // triggering code on this partially deleted graph when a node or
+    // edge destroyed() signal is binded to something that try to access this
+    // partially destroyed graph (for example a nodes/edges model...!).
+    for (const auto node: get_nodes())
+        node->disconnect(node, 0, 0, 0);
+    for (const auto edge: get_edges())
+        edge->disconnect(edge, 0, 0, 0);
+}
+
 void    Graph::classBegin()
 {
     setPortDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Port.qml")));
@@ -470,15 +482,15 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
     }
 }
 
-QPointer<QQuickItem> Graph::createSelectionItem( QQuickItem* parent ) noexcept
+QPointer<QQuickItem> Graph::createSelectionItem(QQuickItem* parent) noexcept
 {
     const auto selectionItem = createItemFromComponent(_selectionDelegate.get());
-    if ( selectionItem ) {
+    if (selectionItem) {
         selectionItem->setEnabled(false); // Avoid node/edge/group selection problems
         selectionItem->setState("UNSELECTED");
         selectionItem->setVisible(true);
-        QQmlEngine::setObjectOwnership( selectionItem, QQmlEngine::CppOwnership );
-        if (parent != nullptr ) {
+        QQmlEngine::setObjectOwnership(selectionItem, QQmlEngine::CppOwnership);
+        if (parent != nullptr) {
             selectionItem->setParentItem(parent);
             selectionItem->setZ(1.0);
         }
@@ -614,19 +626,22 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked );
+        connect(nodeItem,   &qan::NodeItem::nodeClicked,
+                this,       notifyNodeClicked);
 
         auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeRightClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        connect(nodeItem,   &qan::NodeItem::nodeRightClicked,
+                this,       notifyNodeRightClicked);
 
         auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
                 emit this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked );
+        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
+                this,     notifyNodeDoubleClicked);
         node->setItem(nodeItem);
         {   // Send item to front
             _maxZ += 1;
@@ -652,29 +667,18 @@ void    Graph::removeNode(qan::Node* node)
 {
     // PRECONDITIONS:
         // node can't be nullptr
-    if (node == nullptr)
-        return;
-    try {
+    if (node != nullptr) {
         onNodeRemoved(*node);
         emit nodeRemoved(node);
         if (_selectedNodes.contains(node))
             _selectedNodes.removeAll(node);
-        super_t::remove_node(node);
-    } catch (const std::bad_weak_ptr&) {
-        qWarning() << "qan::Graph::removeNode(): Internal error for node " << node;
-        return;
+        super_t::remove_node(node);  // warning node pointer now invalid
     }
 }
 
 int     Graph::getNodeCount() const noexcept { return super_t::get_node_count(); }
 
-bool    Graph::hasNode(const qan::Node* node) const {
-    bool r = false;
-    try {
-        r = super_t::contains(node);
-    } catch (const std::bad_weak_ptr&) { /* Nil*/ }
-    return r;
-}
+bool    Graph::hasNode(const qan::Node* node) const { return super_t::contains(node); }
 
 void    Graph::onNodeInserted(qan::Node& node) { Q_UNUSED(node) /* Nil */ }
 
@@ -703,17 +707,17 @@ qan::Edge*  Graph::insertEdge(QObject* source, QObject* destination, QQmlCompone
     return edge;
 }
 
-qan::Edge*  Graph::insertEdge( qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent )
+qan::Edge*  Graph::insertEdge(qan::Node* source, qan::Node* destination, QQmlComponent* edgeComponent)
 {
     // PRECONDITION;
         // source and destination can't be nullptr
-    if ( source == nullptr ||
-         destination == nullptr )
+    if (source == nullptr ||
+        destination == nullptr)
         return nullptr;
     return insertEdge<qan::Edge>(*source, destination, edgeComponent);
 }
 
-void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
+void    Graph::bindEdgeSource(qan::Edge* edge, qan::PortItem* outPort) noexcept
 {
     // PRECONDITIONS:
         // edge and outport must be non nullptr
@@ -723,7 +727,7 @@ void    Graph::bindEdgeSource( qan::Edge* edge, qan::PortItem* outPort) noexcept
     bindEdgeSource(*edge, *outPort);
 }
 
-void    Graph::bindEdgeDestination( qan::Edge* edge, qan::PortItem* inPort ) noexcept
+void    Graph::bindEdgeDestination(qan::Edge* edge, qan::PortItem* inPort ) noexcept
 {
     // PRECONDITIONS:
         // edge and outport must be non nullptr
@@ -809,14 +813,14 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
                              qan::Node& src, qan::Node* dst)
 {
     _styleManager.setStyleComponent(&style, &edgeComponent);
-    auto edgeItem = qobject_cast< qan::EdgeItem* >( createFromComponent( &edgeComponent, style, nullptr, &edge ) );
-    if ( edgeItem == nullptr ) {
+    auto edgeItem = qobject_cast< qan::EdgeItem* >(createFromComponent(&edgeComponent, style, nullptr, &edge));
+    if (edgeItem == nullptr) {
         qWarning() << "qan::Graph::insertEdge(): Warning: Edge creation from QML delegate failed.";
         return false;
     }
     edge.setItem(edgeItem);
-    edgeItem->setSourceItem( src.getItem() );
-    if (dst != nullptr )
+    edgeItem->setSourceItem(src.getItem());
+    if (dst != nullptr)
         edgeItem->setDestinationItem(dst->getItem());
 
     edge.set_src(&src);
@@ -824,22 +828,25 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
         edge.set_dst(dst);
 
     auto notifyEdgeClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeClicked, notifyEdgeClicked );
+    connect(edgeItem, &qan::EdgeItem::edgeClicked,
+            this,     notifyEdgeClicked);
 
     auto notifyEdgeRightClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeRightClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeRightClicked, notifyEdgeRightClicked );
+    connect(edgeItem,   &qan::EdgeItem::edgeRightClicked,
+            this,       notifyEdgeRightClicked);
 
     auto notifyEdgeDoubleClicked = [this] (qan::EdgeItem* edgeItem, QPointF p) {
-        if ( edgeItem != nullptr && edgeItem->getEdge() != nullptr )
+        if (edgeItem != nullptr && edgeItem->getEdge() != nullptr)
             emit this->edgeDoubleClicked(edgeItem->getEdge(), p);
     };
-    connect( edgeItem, &qan::EdgeItem::edgeDoubleClicked, notifyEdgeDoubleClicked );
+    connect(edgeItem, &qan::EdgeItem::edgeDoubleClicked,
+            this,     notifyEdgeDoubleClicked);
     return true;
 }
 
@@ -901,19 +908,22 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupClicked, notifyGroupClicked );
+    connect(groupItem,  &qan::GroupItem::groupClicked,
+            this,       notifyGroupClicked);
 
     auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupRightClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupRightClicked, notifyGroupRightClicked );
+    connect(groupItem, &qan::GroupItem::groupRightClicked,
+            this,      notifyGroupRightClicked);
 
     auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
         if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
             emit this->groupDoubleClicked(groupItem->getGroup(), p);
     };
-    connect( groupItem, &qan::GroupItem::groupDoubleClicked, notifyGroupDoubleClicked );
+    connect(groupItem, &qan::GroupItem::groupDoubleClicked,
+            this,      notifyGroupDoubleClicked);
 
     { // Send group item to front
         _maxZ += 1.0;
@@ -932,8 +942,8 @@ void    Graph::removeGroup(qan::Group* group, bool removeContent)
         return;
 
     if (!removeContent) {
-        // Reparent all group childrens (ie node) to graph before destructing the group
-        // otherwise all child items get destructed too
+        // Reparent all group childrens (ie node) to graph before destructing
+        // the group otherwise all child items get destructed too
         for (auto node : group->get_nodes()) {
             auto qanNode = qobject_cast<qan::Node*>(node);
             if (qanNode != nullptr &&
@@ -1047,37 +1057,37 @@ bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transfo
 
 
 /* Selection Management *///---------------------------------------------------
-void    Graph::setSelectionPolicy( SelectionPolicy selectionPolicy ) noexcept
+void    Graph::setSelectionPolicy(SelectionPolicy selectionPolicy) noexcept
 {
-    if ( selectionPolicy == _selectionPolicy )  // Binding loop protection
+    if (selectionPolicy == _selectionPolicy)  // Binding loop protection
         return;
     _selectionPolicy = selectionPolicy;
-    if ( selectionPolicy == SelectionPolicy::NoSelection )
+    if (selectionPolicy == SelectionPolicy::NoSelection)
         clearSelection();
-    emit selectionPolicyChanged( );
+    emit selectionPolicyChanged();
 }
 
-void    Graph::setSelectionColor( QColor selectionColor ) noexcept
+void    Graph::setSelectionColor(QColor selectionColor) noexcept
 {
-    if ( selectionColor != _selectionColor ) {
+    if (selectionColor != _selectionColor) {
         _selectionColor = selectionColor;
         configureSelectionItems();
         emit selectionColorChanged();
     }
 }
 
-void    Graph::setSelectionWeight( qreal selectionWeight ) noexcept
+void    Graph::setSelectionWeight(qreal selectionWeight) noexcept
 {
-    if ( !qFuzzyCompare( 1. + selectionWeight, 1. + _selectionWeight ) ) {
+    if (!qFuzzyCompare(1. + selectionWeight, 1. + _selectionWeight)) {
         _selectionWeight = selectionWeight;
         configureSelectionItems();
         emit selectionWeightChanged();
     }
 }
 
-void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
+void    Graph::setSelectionMargin(qreal selectionMargin) noexcept
 {
-    if ( !qFuzzyCompare( 1.0 + selectionMargin, 1.0 + _selectionMargin ) ) {
+    if (!qFuzzyCompare(1.0 + selectionMargin, 1.0 + _selectionMargin)) {
         _selectionMargin = selectionMargin;
         configureSelectionItems();
         emit selectionMarginChanged();
@@ -1087,13 +1097,13 @@ void    Graph::setSelectionMargin( qreal selectionMargin ) noexcept
 void    Graph::configureSelectionItems() noexcept
 {
     // PRECONDITIONS: None
-    for ( auto node : _selectedNodes )
-        if ( node != nullptr &&
-             node->getItem() != nullptr )
+    for (auto node : _selectedNodes)
+        if (node != nullptr &&
+            node->getItem() != nullptr)
             node->getItem()->configureSelectionItem();
-    for ( auto group : _selectedGroups )
-        if ( group != nullptr &&
-             group->getItem() != nullptr )
+    for (auto group : _selectedGroups)
+        if (group != nullptr &&
+            group->getItem() != nullptr)
             group->getItem()->configureSelectionItem();
 }
 
@@ -1181,36 +1191,36 @@ void    Graph::setNodeSelected(qan::Node* node, bool selected)
 
 bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
 
-template < class Primitive_t >
-void    addToSelectionImpl( Primitive_t& primitive,
-                            qcm::Container< QVector, Primitive_t* >& selectedPrimitives,
-                            qan::Graph& graph )
+template <class Primitive_t>
+void    addToSelectionImpl(Primitive_t& primitive,
+                           qcm::Container<QVector, Primitive_t*>& selectedPrimitives,
+                           qan::Graph& graph)
 {
-    if ( !selectedPrimitives.contains( &primitive ) ) {
-        selectedPrimitives.append( &primitive );
-        if ( primitive.getItem() != nullptr ) {
-            // Eventually, create and configure node item selection item
-            if ( primitive.getItem()->getSelectionItem() == nullptr )
-                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()).data());   // Safe, any argument might be nullptr
-            primitive.getItem()->configureSelectionItem();
+    if (!selectedPrimitives.contains(&primitive)) {
+        selectedPrimitives.append(&primitive);
+        if (primitive.getItem() != nullptr) {
             primitive.getItem()->setSelected(true);
+            // Eventually, create and configure node item selection item
+            if (primitive.getItem()->getSelectionItem() == nullptr)
+                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()).data());   // Safe, any argument might be nullptr
+            // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
         }
     }
 }
 
-void    Graph::addToSelection( qan::Node& node ) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
-void    Graph::addToSelection( qan::Group& group ) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
+void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
 
-template < class Primitive_t >
-void    removeFromSelectionImpl( Primitive_t& primitive,
-                             qcm::Container< QVector, Primitive_t* >& selectedPrimitives )
+template <class Primitive_t>
+void    removeFromSelectionImpl(Primitive_t& primitive,
+                                qcm::Container< QVector, Primitive_t* >& selectedPrimitives)
 {
-    if ( selectedPrimitives.contains( &primitive ) )
-        selectedPrimitives.removeAll( &primitive );
+    if (selectedPrimitives.contains(&primitive))
+        selectedPrimitives.removeAll(&primitive);
 }
 
-void    Graph::removeFromSelection( qan::Node& node ) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
-void    Graph::removeFromSelection( qan::Group& group ) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
+void    Graph::removeFromSelection(qan::Node& node) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
+void    Graph::removeFromSelection(qan::Group& group) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
 
 // Note: Called from
 void    Graph::removeFromSelection( QQuickItem* item ) {
@@ -1389,12 +1399,12 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
         return nullptr;
     }
 
-    qan::PortItem* portItem{nullptr};
+    qan::PortItem* portItem = nullptr;
     const auto nodeStyle = node->getItem()->getStyle();     // Use node style for dock item
     if (nodeStyle) {
         portItem = qobject_cast<qan::PortItem*>(createFromComponent(_portDelegate.get(), *nodeStyle ));
         // Note 20190501: CppOwnership is set in createFromComponen()
-        if ( portItem != nullptr ) {
+        if (portItem != nullptr) {
             portItem->setType(portType);
             portItem->setLabel(label);
             portItem->setId(id);
@@ -1403,31 +1413,33 @@ qan::PortItem*  Graph::insertPort(qan::Node* node,
             // Configure port mouse events forwarding to qan::Graph
             const auto notifyPortClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
-                if ( portItem != nullptr &&
-                     portItem->getNode() != nullptr )
+                if (portItem != nullptr &&
+                    portItem->getNode() != nullptr)
                     emit this->portClicked(portItem, p);
             };
-            connect( portItem, &qan::NodeItem::nodeClicked, notifyPortClicked );
+            connect(portItem, &qan::NodeItem::nodeClicked,
+                    this,     notifyPortClicked );
 
             const auto notifyPortRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
                 const auto portItem = qobject_cast<qan::PortItem*>(nodeItem);
-                if ( portItem != nullptr &&
-                     portItem->getNode() != nullptr )
+                if (portItem != nullptr &&
+                    portItem->getNode() != nullptr)
                     emit this->portRightClicked(portItem, p);
             };
-            connect( portItem, &qan::NodeItem::nodeRightClicked, notifyPortRightClicked );
+            connect(portItem,   &qan::NodeItem::nodeRightClicked,
+                    this,       notifyPortRightClicked);
 
-            if ( node->getItem() != nullptr ) {
+            if (node->getItem() != nullptr) {
                 portItem->setNode(node); // portitem node in fact map to this concrete node.
                 node->getItem()->getPorts().append(portItem);
                 auto dockItem = node->getItem()->getDock(dockType);
-                if ( dockItem == nullptr ) {
+                if (dockItem == nullptr) {
                     // Create a dock item from the default dock delegate
                     dockItem = createDockFromDelegate(dockType, *node);
-                    if ( dockItem != nullptr )
+                    if (dockItem != nullptr)
                         node->getItem()->setDock(dockType, dockItem);
                 }
-                if ( dockItem != nullptr )
+                if (dockItem != nullptr)
                     portItem->setParentItem(dockItem);
                 else {
                     portItem->setParentItem(node->getItem());
@@ -1875,12 +1887,11 @@ auto    Graph::collectGroupNodes_rec(const qan::Group* group, std::unordered_set
         return;
 
     for (const auto& groupNode : group->get_nodes()) {
-        auto groupNodePtr = groupNode.lock();
-        if (!groupNodePtr)
+        if (groupNode == nullptr)
             continue;
-        nodes.insert(groupNodePtr.get());
-        if (groupNodePtr->isGroup()) {
-            const auto groupGroup = qobject_cast<const qan::Group*>(groupNodePtr.get());
+        nodes.insert(groupNode);
+        if (groupNode->isGroup()) {
+            const auto groupGroup = qobject_cast<const qan::Group*>(groupNode);
             if (groupGroup != nullptr)
                 collectGroupNodes_rec(groupGroup, nodes);
         }

@@ -138,17 +138,22 @@ class Container : public AbstractContainer
 public:
     explicit Container(QObject* parent = nullptr) :
         AbstractContainer{parent} { }
-    virtual ~Container() { }
+    virtual ~Container() {
+        if (_model != nullptr) {
+            delete _model;
+            _model = nullptr;
+        }
+    }
     Container(const Container<C, T>& container) = delete;
 
 protected:
-    using ModelImpl = qcm::ContainerModelImpl< qcm::Container<C, T> >;
+    using ModelImpl = qcm::ContainerModelImpl<qcm::Container<C, T>>;
     virtual void createModel() override {
-        _modelImpl = std::make_unique<ModelImpl>(*this);
-        _model = static_cast<qcm::ContainerModel*>(_modelImpl.get());
+        _modelImpl = new ModelImpl{*this};
+        _model = _modelImpl;
     }
 private:
-    std::unique_ptr<ModelImpl>    _modelImpl;
+    QPointer<ModelImpl> _modelImpl = nullptr;
 public:
     using   Item_type = T;  // Reused from qcm::ContainerModel
     //@}
@@ -286,8 +291,8 @@ private:
     inline auto appendImpl( const T&, ItemDispatcherBase::unsupported_type ) noexcept  -> void {}
     inline auto appendImpl( const T&, ItemDispatcherBase::non_ptr_type ) noexcept  -> void {}
     inline auto appendImpl( const T& item, ItemDispatcherBase::ptr_qobject_type ) noexcept  -> void {
-        if ( item != nullptr ) {
-            if ( _modelImpl  )
+        if (item != nullptr) {
+            if (_modelImpl )
                 _modelImpl->_qObjectItemMap.insert( { item, item } );
         }
     }
@@ -313,21 +318,21 @@ private:
 
 public:
     //! Shortcut to Container<T>::remove().
-    void        removeAll( const T& item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
+    void        removeAll(const T& item) {
+        if (isNullPtr(item, typename ItemDispatcher<T>::type{}))
             return;
         const auto itemIndex = qcm::adapter<C,T>::indexOf(_container, item);
-        if ( itemIndex < 0 )
+        if (itemIndex < 0)
             return;
-        if ( _model ) {
+        if (_model) {
             // FIXME: Model updating is actually quite buggy: removeAll might remove
             // items at multiple index, but model update is requested only for itemIndex...
-            fwdBeginRemoveRows( QModelIndex{},
-                                static_cast<int>(itemIndex),
-                                static_cast<int>(itemIndex) );
-            removeImpl( item, typename ItemDispatcher<T>::type{} );
+            fwdBeginRemoveRows(QModelIndex{},
+                               static_cast<int>(itemIndex),
+                               static_cast<int>(itemIndex));
+            removeImpl(item, typename ItemDispatcher<T>::type{});
             qcm::adapter<C,T>::removeAll(_container, item);
-            fwdEndRemoveRows( );
+            fwdEndRemoveRows();
             fwdEmitLengthChanged();
         } else {
             qcm::adapter<C,T>::removeAll(_container, item);
@@ -339,34 +344,34 @@ private:
     inline auto removeImpl( const T&, ItemDispatcherBase::non_ptr_type )                   -> void {}
     inline auto removeImpl( const T&, ItemDispatcherBase::ptr_type )                       -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::ptr_qobject_type )          -> void {
-        if ( _modelImpl &&
-             item != nullptr ) {
-            item->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( item );
+        if (_modelImpl &&
+            item != nullptr) {
+            item->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(item);
         }
     }
     inline auto removeImpl( const T& item, ItemDispatcherBase::q_ptr_type )                -> void {
         if ( _modelImpl && item != nullptr ) {
-            item->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( item.data() );
+            item->disconnect( 0, _modelImpl, 0 );
+            _modelImpl->_qObjectItemMap.erase(item.data());
         }
     }
     inline auto removeImpl( const T&, ItemDispatcherBase::shared_ptr_type )                -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::shared_ptr_qobject_type )   -> void {
         QObject* qObject = qobject_cast<QObject*>(item.get());
         if ( _modelImpl && qObject != nullptr ) {
-            qObject->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( qObject );
+            qObject->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(qObject);
         }
     }
     inline auto removeImpl( const T&, ItemDispatcherBase::weak_ptr_type )                  -> void {}
     inline auto removeImpl( const T& item, ItemDispatcherBase::weak_ptr_qobject_type )     -> void {
-        if ( !_modelImpl || item.expired() )
+        if (!_modelImpl || item.expired())
             return;
         QObject* qObject = qobject_cast<QObject*>(item.lock().get());
-        if ( qObject != nullptr ) {
-            qObject->disconnect( 0, _modelImpl.get(), 0 );
-            _modelImpl->_qObjectItemMap.erase( qObject );
+        if (qObject != nullptr) {
+            qObject->disconnect(0, _modelImpl, 0);
+            _modelImpl->_qObjectItemMap.erase(qObject);
         }
     }
 
@@ -375,7 +380,7 @@ public:
         if (_model && _modelImpl) {
             fwdBeginResetModel();
             _modelImpl->_qObjectItemMap.clear();
-            _container.clear( );
+            _container.clear();
             fwdEndResetModel();
             fwdEmitLengthChanged();
         } else

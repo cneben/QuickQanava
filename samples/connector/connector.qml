@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -45,20 +45,21 @@ ApplicationWindow {
         anchors.fill: parent
         TabBar {
             id: tabBar
-            Layout.preferredWidth: 450; Layout.fillHeight: false
-            TabButton { text: qsTr("Docking") }
-            TabButton { text: qsTr("Custom Docks") }
-            TabButton { text: qsTr("Default Connector") }
-            TabButton { text: qsTr("Custom Connector") }
+            Layout.preferredWidth: 750
+            Layout.fillHeight: false
+            TabButton { width: 170; text: qsTr("Docking") }
+            //TabButton { width: 170; text: qsTr("Custom Docks") }
+            //TabButton { width: 190; text: qsTr("Default Connector") }
+            //TabButton { width: 170; text: qsTr("Custom Connector") }
         }
         StackLayout {
             clip: true
             Layout.fillWidth: true; Layout.fillHeight: true
             currentIndex: tabBar.currentIndex
             Item { Loader { anchors.fill: parent; source: "qrc:/docks.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/customdocks.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
+            //Item { Loader { anchors.fill: parent; source: "qrc:/customdocks.qml"} }
+            //Item { Loader { anchors.fill: parent; source: "qrc:/default.qml"} }
+            //Item { Loader { anchors.fill: parent; source: "qrc:/custom.qml"} }
         }
     }
     RowLayout {

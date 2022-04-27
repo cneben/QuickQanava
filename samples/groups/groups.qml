@@ -50,9 +50,9 @@ ApplicationWindow {
         function centerItem( item ) {
             if ( !item )
                 return
-            var windowCenter = Qt.point( ( window.contentItem.width - item.width ) / 2.,
-                                        ( window.contentItem.height - item.height ) / 2. )
-            var graphNodeCenter = window.contentItem.mapToItem( containerItem, windowCenter.x, windowCenter.y )
+            var windowCenter = Qt.point((window.contentItem.width - item.width) / 2.,
+                                        (window.contentItem.height - item.height) / 2.)
+            var graphNodeCenter = window.contentItem.mapToItem(containerItem, windowCenter.x, windowCenter.y)
             item.x = graphNodeCenter.x
             item.y = graphNodeCenter.y
         }
@@ -81,12 +81,12 @@ ApplicationWindow {
                 //g1.item.width = 250; g1.item.height = 270
                 //topology.insertEdge( n2, g1 )
             }
-            onGroupClicked: {
+            onGroupClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
                 groupEditor.group = group
             }
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: {
+            onGroupRightClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
                 contextMenu.group = group
 
@@ -98,11 +98,12 @@ ApplicationWindow {
                 contextMenu.y = globalPos.y
                 contextMenu.open()
             }
-            onNodeClicked: {
+            onNodeClicked: node => {
                 ungroupNodeButton.node = node
+                groupEditor.group = undefined;
                 contextMenu.node = node
             }
-            onNodeRightClicked: {
+            onNodeRightClicked: node => {
                 ungroupNodeButton.node = node
                 contextMenu.node = node
 
@@ -114,7 +115,7 @@ ApplicationWindow {
                 contextMenu.y = globalPos.y
                 contextMenu.open()
             }
-            onNodeMoved: {
+            onNodeMoved: node => {
                 if (node && node.isGroup)
                     window.notifyUser("Group <b>" + node.label + "</b> moved")
             }
@@ -194,7 +195,7 @@ ApplicationWindow {
             ToolButton {
                 text: "Add Node"
                 onClicked: {
-                    var n = topology.insertNode( )
+                    var n = topology.insertNode()
                     if (n) {
                         n.label = "Node"
                         n.x = graphView
@@ -209,7 +210,7 @@ ApplicationWindow {
                 enabled: node !== undefined
                 onClicked: {
                     console.info("node.group=" + node.group)
-                    if ( node && node.group )
+                    if (node && node.group )
                         topology.ungroupNode(node)
                 }
             }
@@ -224,66 +225,68 @@ ApplicationWindow {
                 }
             }
         }
-        Control {
+        Pane {
             id: groupEditor
             property var group: undefined
             onGroupChanged: groupItem = group ? group.item : undefined
 
             property var groupItem: undefined
-            anchors.bottom: parent.bottom; anchors.bottomMargin: 15
-            anchors.right: parent.right; anchors.rightMargin: 15
-
-            width: 220; height: 385; padding: 0
-            Pane { anchors.fill: parent; opacity: 0.9; padding: 0; Pane { anchors.fill: parent } } // Background
-            ColumnLayout {
-                Label {
-                    text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
-                }
-                CheckBox {
-                    text: "Draggable"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
-                    onClicked: groupEditor.groupItem.draggable = checked
-                }
-                CheckBox {
-                    text: "Resizable"
-                    enabled: groupEditor.groupItem != null
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
-                    onClicked: groupEditor.groupItem.resizable = checked
-                }
-                CheckBox {
-                    text: "Selected (read-only)"
-                    enabled: false
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
-                }
-                CheckBox {
-                    text: "Selectable"
-                    enabled: groupEditor.groupItem != null
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
-                    onClicked: groupEditor.groupItem.selectable = checked
-                }
-                CheckBox {
-                    text: "Label editor"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
-                    onClicked: groupEditor.groupItem.labelEditorVisible = checked
-                }
-                CheckBox {
-                    text: "Expand button"
-                    enabled: groupEditor.groupItem !== undefined
-                    checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
-                    onClicked: groupEditor.groupItem.expandButtonVisible = checked
-                }
-                ToolButton {
-                    text: "Remove group"
-                    enabled: groupEditor.groupItem !== undefined
-                    onClicked: {
-                        if (groupEditor.groupItem !== undefined) {
-                            topology.removeGroup(groupEditor.groupItem.group)
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 15
+            anchors.right: parent.right
+            anchors.rightMargin: 15
+            padding: 0
+            Frame {
+                ColumnLayout {
+                    Label {
+                        text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
+                    }
+                    CheckBox {
+                        text: "Draggable"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
+                        onClicked: groupEditor.groupItem.draggable = checked
+                    }
+                    CheckBox {
+                        text: "Resizable"
+                        enabled: groupEditor.groupItem != null
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
+                        onClicked: groupEditor.groupItem.resizable = checked
+                    }
+                    CheckBox {
+                        text: "Selected (read-only)"
+                        enabled: false
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
+                    }
+                    CheckBox {
+                        text: "Selectable"
+                        enabled: groupEditor.groupItem != null
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
+                        onClicked: groupEditor.groupItem.selectable = checked
+                    }
+                    CheckBox {
+                        text: "Label editor"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
+                        onClicked: groupEditor.groupItem.labelEditorVisible = checked
+                    }
+                    CheckBox {
+                        text: "Expand button"
+                        enabled: groupEditor.groupItem !== undefined
+                        checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
+                        onClicked: groupEditor.groupItem.expandButtonVisible = checked
+                    }
+                    ToolButton {
+                        text: "Remove group"
+                        enabled: groupEditor.groupItem !== undefined
+                        onClicked: {
+                            if (groupEditor.groupItem !== undefined) {
+                                topology.removeGroup(groupEditor.groupItem.group)
+                            }
                         }
                     }
-                }
-            } // groupEditor ColumnLayout
+                } // groupEditor ColumnLayout
+            }
         } // Control groupEditor
     } // Qan.GraphView
 }

@@ -13,4 +13,4 @@ samples/build*
 *.o
 .idea
 .DS_Store
-
+build-tests-*

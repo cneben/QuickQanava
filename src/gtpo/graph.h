@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -155,7 +155,7 @@ public:
      *
      * \return true if \c node is a root node, false otherwise.
      */
-    auto    is_root_node(node_t* node) const -> bool;
+    auto    is_root_node(const node_t* node) const -> bool;
 
     //! Use fast search container to find if a given \c node is part of this graph.
     auto    contains(const node_t* node) const -> bool;
@@ -185,12 +185,12 @@ private:
     /*! \name Graph Edge Management *///---------------------------------------
     //@{
 public:
-    /*! \brief Create a directed edge between \c source and \c destination node, then insert it into the graph.
+    /*! \brief Create and insert a directed edge between \c source and \c destination node.
      *
      * Complexity is O(1).
      * \return the inserted edge (if an error occurs return nullptr).
      */
-    auto        create_edge(node_t* source, node_t* destination) -> edge_t*;
+    auto        insert_edge(node_t* source, node_t* destination) -> edge_t*;
 
     /*! \brief Insert a directed edge created outside of GTpo into the graph.
      *
@@ -254,7 +254,6 @@ public:
      *
      * This method only test a 1 degree relationship (ie a direct edge between \c source
      * and \c destination). Worst case complexity is O(edge count).
-     * \throw no GTpo exception (might throw a std::bad_weak_ptr).
      */
     auto        get_edge_count(node_t* source, node_t* destination) const -> unsigned int;
 
@@ -296,12 +295,9 @@ public:
 
     /*! \brief Insert an existing node \c node in group \c group.
      *
-     * \note If a behaviour has been installed with gtpo::group::add_dynamic_group_behaviour(), behaviour's
-     * node_inserted() will be called.
-     *
      * \note \c node get_group() will return \c group if grouping succeed.
      */
-    auto            group_node(node_t* node, group_t* group) -> void;
+    auto            group_node(node_t* node, group_t* group) -> bool;
 
     /*! \brief Insert an existing node \c weakNode in group \c weakGroup group.
      *

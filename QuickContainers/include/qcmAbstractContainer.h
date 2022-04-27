@@ -55,7 +55,7 @@ class AbstractContainer : public QObject
     Q_OBJECT
 public:
     explicit AbstractContainer(QObject* parent = nullptr) : QObject{parent} { /* Nil */ }
-    virtual ~AbstractContainer() { /* Nil */ }
+    virtual ~AbstractContainer() { /* _model destroyed in sub class */ }
 
     AbstractContainer(const AbstractContainer&) = delete;
     AbstractContainer& operator=(const AbstractContainer&) = delete;
@@ -74,7 +74,7 @@ public:
     inline void    fwdEndResetModel() noexcept { if (_model) _model->fwdEndResetModel(); }
 
 public:
-    Q_PROPERTY(ContainerModel*    model READ getModel CONSTANT FINAL)
+    Q_PROPERTY(ContainerModel*  model READ getModel CONSTANT FINAL)
     /*! \brief Return a Qt model for this container extended with a modification interface for the underlining container model from QML.
      *
      * \warning Underlying model is created \b synchronously on first \c model access, expect a quite slow first call (O(n), n beein container size).
@@ -88,10 +88,9 @@ public:
     }
     //! Shortcut to getModel().
     inline ContainerModel*      model() const noexcept { return const_cast<AbstractContainer*>(this)->getModel(); }
-
 protected:
     //! Create a concrete container model list reference for this abstract interface (called once).
-    virtual     void            createModel() { }
+    virtual void                createModel() { }
 protected:
     mutable QPointer<ContainerModel>    _model;
 };

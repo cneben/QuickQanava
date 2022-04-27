@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -74,19 +74,22 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeClicked(nodeItem->getNode(), p);
         };
-        connect(nodeItem, &qan::NodeItem::nodeClicked, notifyNodeClicked);
+        connect(nodeItem, &qan::NodeItem::nodeClicked,
+                this,     notifyNodeClicked);
 
         auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeRightClicked(nodeItem->getNode(), p);
         };
-        connect( nodeItem, &qan::NodeItem::nodeRightClicked, notifyNodeRightClicked );
+        connect(nodeItem, &qan::NodeItem::nodeRightClicked,
+                this,     notifyNodeRightClicked);
 
         auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
                 emit this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
-        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked, notifyNodeDoubleClicked);
+        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
+                this,     notifyNodeDoubleClicked);
         {   // Send item to front
             _maxZ += 1;
             nodeItem->setZ(_maxZ);
@@ -175,9 +178,9 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
 {
     if (dstNode == nullptr)
         return nullptr;
-    auto edge = std::make_shared<Edge_t>();
+    auto edge = new Edge_t();
     try {
-        QQmlEngine::setObjectOwnership(edge.get(), QQmlEngine::CppOwnership);
+        QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
         edge->set_src(&src);
         if (dstNode != nullptr)
             edge->set_dst(dstNode);
@@ -185,7 +188,7 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
     } catch (...) {
         qWarning() << "qan::Graph::insertNonVisualEdge<>(): Error: Topology error.";
     }
-    return edge.get();
+    return edge;
 }
 //-----------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,7 +42,17 @@ template <class graph_base_t,
 graph<graph_base_t, node_t,
       group_t, edge_t>::~graph()
 {
-    clear();
+    for (const auto node: _nodes) {
+        node->_graph = nullptr;
+        delete node;
+    }
+    for (const auto edge: _edges) {
+        edge->_graph = nullptr;
+        delete edge;
+    }
+    // Note: _nodes and _edges containers take care of deleting all ressources
+    // calling clear() here lead to very subtle notification bugs when container
+    // models are binded to view.
 }
 
 template <class graph_base_t,
@@ -52,18 +62,26 @@ template <class graph_base_t,
 void    graph<graph_base_t, node_t,
               group_t, edge_t>::clear() noexcept
 {
-    // Note 20160104: First edges, then nodes (it helps maintaining topology if
-    // womething went wrong during destruction
-    for (auto& node: _nodes)   // Do not maintain topology during node deletion
-        node->set_graph(nullptr);
-    _root_nodes.clear();         // Remove weak_ptr containers first
+    // Note 20220424: First clear nodes/edges container, then delete
+    // their content since destroyed() signal from contained items might
+    // be catched trigerring uses of _nodes/_edges with already deleted content
+    nodes_t nodes;
+    std::copy(_nodes.begin(), _nodes.end(), std::back_inserter(nodes));
+    _root_nodes.clear();
     _nodes_search.clear();
     _nodes.clear();
-
-    for (auto& edge: _edges)   // Do not maintain topology during edge deletion
-        edge->set_graph(nullptr);
+    for (const auto node: nodes) {
+        node->_graph = nullptr;
+        delete node;
+    }
+    edges_t edges;
+    std::copy(_edges.begin(), _edges.end(), std::back_inserter(edges));
     _edges_search.clear();
     _edges.clear();
+    for (const auto edge: edges) {
+        edge->_graph = nullptr;
+        delete edge;
+    }
 
     // Clearing groups and behaviours (Not: group->_graph is resetted with nodes)
     _groups.clear();
@@ -98,6 +116,11 @@ auto    graph<graph_base_t, node_t,
 {
     if (node == nullptr)
         return false;
+    // Do not insert an already inserted node
+    if (container_adapter<nodes_search_t>::contains(_nodes_search, node)) {
+        std::cerr << "gtpo::graph<>::insert_node(): Error: node has already been inserted in graph." << std::endl;
+        return false;
+    }
     try {
         node->set_graph(this);
         container_adapter<nodes_t>::insert(node, _nodes);
@@ -151,6 +174,7 @@ auto    graph<graph_base_t, node_t,
     container_adapter<nodes_t>::remove(node, _root_nodes);
     node->set_graph(nullptr);
     container_adapter<nodes_t>::remove(node, _nodes);
+    delete node;
     return true;
 }
 
@@ -176,13 +200,13 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::is_root_node(node_t* node) const -> bool
+              group_t, edge_t>::is_root_node(const node_t* node) const -> bool
 {
     if (node == nullptr)
         return false;
     if (node->get_in_degree() != 0)   // Fast exit when node in degree != 0, it can't be a root node
         return false;
-    return _root_nodes.find(node) != _root_nodes.cend();
+    return _root_nodes.contains(const_cast<node_t*>(node));
 }
 
 template <class graph_base_t,
@@ -204,7 +228,7 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::create_edge(node_t* source, node_t* destination) -> edge_t*
+              group_t, edge_t>::insert_edge(node_t* source, node_t* destination) -> edge_t*
 {
     if (source == nullptr ||
         destination == nullptr) {
@@ -229,7 +253,7 @@ auto    graph<graph_base_t, node_t,
         if (source != destination ) // If edge define is a trivial circuit, do not remove destination from root nodes
             container_adapter<nodes_t>::remove(destination, _root_nodes);    // Otherwise destination is no longer a root node
 
-        observable_base_t::notify_edge_inserted(edge);
+        observable_base_t::notify_edge_inserted(*edge);
     } catch ( ... ) {
         std::cerr << "gtpo::graph<>::create_edge(node,node): Insertion of edge "
                      "failed, source or destination nodes topology can't be modified." << std::endl;
@@ -307,8 +331,13 @@ auto    graph<graph_base_t, node_t,
         destination == nullptr)
         return false;
 
-    while (get_edge_count(source, destination) > 0)
+    auto limit = _edges.size();
+    while (get_edge_count(source, destination) > 0 &&
+           limit >= 0) {
         remove_edge(source, destination);
+        limit--;
+    }
+    return true;
 }
 
 template <class graph_base_t,
@@ -335,6 +364,7 @@ auto    graph<graph_base_t, node_t,
     edge->set_graph(nullptr);
     container_adapter<edges_t>::remove(edge, _edges);
     container_adapter<edges_search_t>::remove(edge, _edges_search);
+    delete edge;
     return true;
 }
 
@@ -446,12 +476,14 @@ template <class graph_base_t,
           class group_t,
           class edge_t>
 auto    graph<graph_base_t, node_t,
-              group_t, edge_t>::group_node(node_t* node, group_t* group) -> void
+              group_t, edge_t>::group_node(node_t* node, group_t* group) -> bool
 {
-    if (node == nullptr || group == nullptr)
-        return;
+    if (node == nullptr ||
+        group == nullptr)
+        return false;
     node->set_group(group);
     container_adapter<nodes_t>::insert(node, group->get_nodes());
+    return true;
 }
 
 template <class graph_base_t,

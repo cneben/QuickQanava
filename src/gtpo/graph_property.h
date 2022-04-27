@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2021, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -65,9 +65,9 @@ public:
     inline  void            set_graph(graph_t* graph) noexcept { _graph = graph; }
     inline  void            set_graph(void* graph) noexcept { _graph = reinterpret_cast<graph_t*>(graph); }
     inline  void            set_graph(std::nullptr_t) noexcept { _graph = nullptr; }
-protected:
+public:
     // Note: This is the only raw pointer in GTpo.
-    graph_t*                _graph{ nullptr };
+    graph_t*                _graph = nullptr;
 };
 
 } // ::gtpo
