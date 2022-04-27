@@ -44,18 +44,12 @@ Please refer to [Installation](installation.md) manual and [Graph](graph.md), [N
 
 ## Roadmap
 
-  - **v0.15.x:**
+  - **pre v2.0:**
     - [X] Add full support for groups inside group (ie subgraphs).
-    - [ ] Update geometry creation interface and delegate management.
-  - **v0.16.x:**
+    - [X] Update geometry creation interface and delegate management.
+    - [X] Rewrite CMake configuration, add install step, use QML plugins.
+  - **v2.1.x:**
     - [ ] Add support for direct visual dragging of port items.
-    - [X] Fix current qan::LineGrid bugs
     - [ ] Add "snap to grid" support.
-  - **v0.17.x:**
-    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
-  - **v1.: Advanced edge visualization**
-    - [ ] Add better support for graph fine grained locking strategies.
-    - [ ] Add simple layout algorithms (force directed, tree).
-    - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
 
 

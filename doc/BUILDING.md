@@ -80,18 +80,3 @@ On Ubuntu system, the following dependencies must be isntalled:
 ```
 $ sudo apt install libopengl0 -y
 ```
-
-## Roadmap / Changelog
-
-  - **Done**:
-    - [X] Add full support for groups inside group (ie subgraphs).
-    - [X] Fix qan::LineGrid bugs
-  - **Todo**:
-    - [X] Rewrite CMake configuration, add install step, use QML plugins.
-    - [X] Update geometry creation interface and delegate management.
-    - [ ] Add support for direct visual dragging of port items.
-    - [ ] Add "snap to grid" support.
-  - **v1.: Advanced edge visualization**
-    - [ ] Add better support for graph fine grained locking strategies.
-    - [ ] Add simple layout algorithms (force directed, tree).
-    - [ ] Publish the 4k sample (40k is probably too much for QML without dedicated culling and LOD code).
