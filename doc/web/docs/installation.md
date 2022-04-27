@@ -6,10 +6,9 @@ Dependencies
 
 | Dependency                | Mandatory         |   Included in source tree       |   Licence       |
 | ---                       | :---:             | :---:                           | :---:           |
-| GTpo                      | **Yes**           |       **Yes** (GIT submodule)   |   ![](https://img.shields.io/badge/license-MIT-blue.svg) MIT|
 | Google Test/Mock          | No                |       No                        |    Permissive   |
 
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until your intention is to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
+- **Google Test** is optional only to build and run tests ![Google Test GitHub](https://github.com/google/googletest).
 
 Building from sources
 ------------------

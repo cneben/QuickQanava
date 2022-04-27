@@ -2,8 +2,8 @@
 
 ## Dependencies
 
-- **Qt 5.10** _is mandatory_ for Qt Quick Shapes support.
-- **Google Test** is a *GTpo* dependency, it is optional for QuickQanava until you intent to use a graph with custom non-STL/non-Qt containers: ![Google Test GitHub](https://github.com/google/googletest)
+- **Qt > 5.12** _is mandatory_ for Qt Quick Shapes support.
+- **Google Test** is optional only to build and run tests ![Google Test GitHub](https://github.com/google/googletest).
 
 
 ## Building 
@@ -24,7 +24,7 @@ $ git submodule update
 
 QuickQanava could be used with either _qmake_ or _CMake_ build configuration system.
 
-| qmake                | cmake             | 
+| qmake (Qt5)          | CMake (Qt6)       | 
 | :---:                | :---:             | 
 | Static build, no QML module, all resources are linked statically trough QRC | Installable or embedable, QuickQanava is loaded using a QML module that need to be installed, resources can be linked statically trough QRC | 
 
