@@ -87,8 +87,8 @@ $ sudo apt install libopengl0 -y
     - [X] Add full support for groups inside group (ie subgraphs).
     - [X] Fix qan::LineGrid bugs
   - **Todo**:
-    - [ ] Rewrite CMake configuration, add install step, use QML plugins.
-    - [ ] Update geometry creation interface and delegate management.
+    - [X] Rewrite CMake configuration, add install step, use QML plugins.
+    - [X] Update geometry creation interface and delegate management.
     - [ ] Add support for direct visual dragging of port items.
     - [ ] Add "snap to grid" support.
   - **v1.: Advanced edge visualization**
