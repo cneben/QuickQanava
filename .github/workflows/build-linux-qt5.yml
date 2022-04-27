@@ -1,9 +1,7 @@
-name: Linux build master
+name: Linux build develop
 
 on:
   push:
-    branches: [master]
-  pull_request:
     branches: [master]
     
 jobs:
@@ -16,17 +14,9 @@ jobs:
         with:
           ref: master
 
-      #- name: Cache Qt
-      #  id: cache-qt
-      #  uses: actions/cache@v1
-      #  with:
-      #    path: ../Qt
-      #    key: ubuntu-latest-QtCache
-
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          #cached: ${{ steps.cache-qt.outputs.cache-hit }}
           modules: qtcore qttools qtgui qtquickcontrols2
           version: 5.15.2
           target: desktop
@@ -38,7 +28,7 @@ jobs:
         
       - name: Configure qmake
         run: |
-          QT_SELECT=5 qmake CONFIG+=release -spec linux-g++-64 -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro          
+          QT_SELECT=5 qmake CONFIG+=release -spec linux-g++-64 -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro
         working-directory: ${{runner.workspace}}/build
         shell: bash
 
