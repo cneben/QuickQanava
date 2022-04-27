@@ -1,11 +1,11 @@
 # QuickQanava 
 
-![Build linux master](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-master.yml/badge.svg) ![Build linux develop](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-develop.yml/badge.svg)
-![Build win64 master](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-master.yml/badge.svg) ![Build win64 develop](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-develop.yml/badge.svg)
+![Build linux Qt5.12](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-master.yml/badge.svg) 
+![Build win64 Qt6.2](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-master.yml/badge.svg) 
 
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://cneben.github.io/QuickQanava/)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-![](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![](https://img.shields.io/badge/version-2.0.0-blue.svg)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
@@ -14,7 +14,7 @@
 
 QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
-QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2017 and g++7.5 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.2**)
+QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2017 and g++7.5 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.5**)
 
 + [CHANGELOG.md](CHANGELOG.md)
 + Project homepage: http://cneben.github.io/QuickQanava/index.html
@@ -55,8 +55,6 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 **Styles:** User Doc:  [QuickStart - Using Styles](http://cneben.github.io/QuickQanava/styles.html)
 
-![Custom styles](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/sample-styles.gif)
-
 ## Contributors
 
 ![GitHub Contributors Image](https://contrib.rocks/image?repo=cneben/QuickQanava)
@@ -72,5 +70,5 @@ QuickQanava focus on writing content delegates in QML (even if they could be 100
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017-2020 BA
+Copyright (c) 2017-2022 BA
 
