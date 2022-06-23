@@ -455,6 +455,8 @@ auto    graph<graph_base_t, node_t,
         return false;
     observable_base_t::notify_group_removed(*group);
     group->set_graph(nullptr);
+    for (auto node : group->get_nodes())
+        node->set_group(nullptr);
     container_adapter<groups_t>::remove(group, _groups);
     return remove_node(group);   // Group destroyed here
 }
