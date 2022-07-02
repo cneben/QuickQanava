@@ -76,6 +76,30 @@ TEST(gtpo_group, remove)
     EXPECT_EQ(g.get_group_count(), 0);
 }
 
+TEST(gtpo_group, removeGroupNodes)
+{
+    qan::Graph g;
+    auto g1 = new qan::Group{};
+    g.insert_group(g1);
+    EXPECT_EQ(g.get_group_count(), 1);
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+    EXPECT_EQ(g.get_root_node_count(), 2);
+    g.group_node(n1, g1);
+
+    // Warning 20220702: that one is subject to change, actually nodes in
+    // groups are still handled as root nodes.
+    EXPECT_EQ(g.get_root_node_count(), 2);
+
+    // g1
+    //  +- n1
+    g.remove_group(g1);
+    EXPECT_EQ(g.get_group_count(), 0);
+
+    // EXPECT n1.get_group() to return nullptr
+    EXPECT_EQ(n1->getGroup(), nullptr);
+    EXPECT_EQ(g.get_root_node_count(), 1);
+}
 
 TEST(gtpo_group, group_nodeExcept)
 {
