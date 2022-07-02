@@ -86,7 +86,10 @@ TEST(gtpo_group, removeGroupNodes)
     g.insert_node(n1);
     EXPECT_EQ(g.get_root_node_count(), 2);
     g.group_node(n1, g1);
-    EXPECT_EQ(g.get_root_node_count(), 1);
+
+    // Warning 20220702: that one is subject to change, actually nodes in
+    // groups are still handled as root nodes.
+    EXPECT_EQ(g.get_root_node_count(), 2);
 
     // g1
     //  +- n1
