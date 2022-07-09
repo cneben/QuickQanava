@@ -177,6 +177,8 @@ public:
      *
      * Might be usefull to prevent user inputs when the node is laid out automatically.
      *
+     * Contrary to `enabled` property, using `locked` still allow to receive click events.
+     *
      * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
