@@ -122,6 +122,11 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     if (_targetItem->getCollapsed())
         return false;
 
+    if (_targetItem->getNode() != nullptr &&
+            (_targetItem->getNode()->getLocked() ||
+             _targetItem->getNode()->getIsProtected()))
+        return false;
+
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed

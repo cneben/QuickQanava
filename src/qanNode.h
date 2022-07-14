@@ -173,7 +173,7 @@ signals:
     void            labelChanged();
 
 public:
-    /*! \brief A protected node can't dragged by user (node are unprotected by default).
+    /*! \brief A protected node can't dragged by user (default to unprotected).
      *
      * Might be usefull to prevent user inputs when the node is laid out automatically.
      *
