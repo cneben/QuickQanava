@@ -134,7 +134,7 @@ signals:
 
 public:
     //! Read-only abstract item model of this node out nodes.
-    Q_PROPERTY( QAbstractItemModel* outNodes READ qmlGetOutNodes CONSTANT FINAL )
+    Q_PROPERTY(QAbstractItemModel* outNodes READ qmlGetOutNodes CONSTANT FINAL)
     QAbstractItemModel* qmlGetOutNodes() const;
 
 public:
@@ -145,7 +145,7 @@ signals:
 
 public:
     //! Read-only abstract item model of this node out nodes.
-    Q_PROPERTY( QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL )
+    Q_PROPERTY(QAbstractItemModel* outEdges READ qmlGetOutEdges CONSTANT FINAL)
     QAbstractItemModel* qmlGetOutEdges() const;
 
 public:
@@ -165,25 +165,44 @@ public:
     //@{
 public:
     Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
-    bool            setLabel(const QString& label) noexcept;
-    QString         getLabel() const noexcept { return _label; }
+    bool            setLabel(const QString& label);
+    QString         getLabel() const { return _label; }
 private:
     QString         _label = "";
 signals:
     void            labelChanged();
 
 public:
+    /*! \brief A protected node can't dragged by user (node are unprotected by default).
+     *
+     * Might be usefull to prevent user inputs when the node is laid out automatically.
+     *
+     * Contrary to `enabled` and 'locked' properties: double click, right click and selection is
+     * active when protected.
+     *
+     * \note nodeDoubleClicked(), nodeRightClicked() signal are still emitted from protected node.
+     */
+    Q_PROPERTY(bool isProtected READ getIsProtected WRITE setIsProtected NOTIFY isProtectedChanged FINAL)
+    bool            setIsProtected(bool isProtected);
+    bool            getIsProtected() const { return _isProtected; }
+private:
+    bool            _isProtected = false;
+signals:
+    void            isProtectedChanged();
+
+public:
     /*! \brief A locked node can't be selected / dragged by user (node are unlocked by default).
      *
      * Might be usefull to prevent user inputs when the node is laid out automatically.
      *
-     * Contrary to `enabled` property, using `locked` still allow to receive click events.
+     * Contrary to `enabled` property, using `locked` still allow to receive right click events, for
+     * example to use a context menu.
      *
-     * \note nodeDoubleClicked() signal is still emitted from locked node when node is double clicked.
+     * \note nodeRightClicked() signal is still emitted from locked node when node is double clicked.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    bool            setLocked(bool locked) noexcept;
-    bool            getLocked() const noexcept { return _locked; }
+    bool            setLocked(bool locked);
+    bool            getLocked() const { return _locked; }
 private:
     bool            _locked = false;
 signals:
