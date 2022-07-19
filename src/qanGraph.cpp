@@ -1330,8 +1330,12 @@ void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
     }
 
     qreal center = minLeft + (maxRight - minLeft) / 2.;
-    for (auto item: items)
+    for (auto item: items){
         item->setX(center - (item->width() / 2.));
+        const auto nodeItem = qobject_cast<qan::Node*>(item);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem);
+    }
 }
 
 void    Graph::alignRight(std::vector<QQuickItem*>&& items)
@@ -1341,8 +1345,12 @@ void    Graph::alignRight(std::vector<QQuickItem*>&& items)
     qreal maxRight = std::numeric_limits<qreal>::min();
     for (const auto item: items)
         maxRight = std::max(maxRight, item->x() + item->width());
-    for (auto item: items)
+    for (auto item: items) {
         item->setX(maxRight - item->width());
+        const auto nodeItem = qobject_cast<qan::Node*>(item);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem);
+    }
 }
 
 void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
@@ -1352,8 +1360,12 @@ void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
     qreal minLeft = std::numeric_limits<qreal>::max();
     for (const auto item: items)
         minLeft = std::min(minLeft, item->x());
-    for (auto item: items)
+    for (auto item: items) {
         item->setX(minLeft);
+        const auto nodeItem = qobject_cast<qan::Node*>(item);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem);
+    }
 }
 
 void    Graph::alignTop(std::vector<QQuickItem*>&& items)
@@ -1363,8 +1375,12 @@ void    Graph::alignTop(std::vector<QQuickItem*>&& items)
     qreal minTop = std::numeric_limits<qreal>::max();
     for (const auto item: items)
         minTop = std::min(minTop, item->y());
-    for (auto item: items)
+    for (auto item: items) {
         item->setY(minTop);
+        const auto nodeItem = qobject_cast<qan::Node*>(item);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem);
+    }
 }
 
 void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
@@ -1374,8 +1390,12 @@ void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
     qreal maxBottom = std::numeric_limits<qreal>::min();
     for (const auto item: items)
         maxBottom = std::max(maxBottom, item->y() + item->height());
-    for (auto item: items)
+    for (auto item: items) {
         item->setY(maxBottom - item->height());
+        const auto nodeItem = qobject_cast<qan::Node*>(item);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem);
+    }
 }
 //-----------------------------------------------------------------------------
 
