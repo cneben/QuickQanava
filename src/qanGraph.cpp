@@ -985,8 +985,6 @@ void    Graph::removeGroupContent_rec(qan::Group* group)
     if (_selectedNodes.contains(group))
         _selectedNodes.removeAll(group);
 
-    //auto nodeGroupPtr = std::static_pointer_cast<super_t::group_t>(group->shared_from_this());
-    //super_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
     super_t::remove_group(group);
 }
 
@@ -1001,8 +999,8 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
-    if ( group == nullptr ||
-         node == nullptr )
+    if (group == nullptr ||
+        node == nullptr)
         return false;
     if (static_cast<const QObject*>(group) == static_cast<const QObject*>(node)) {
         qWarning() << "qan::Graph::groupNode(): Error, can't group a group in itself.";
