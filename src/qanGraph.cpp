@@ -872,7 +872,7 @@ qan::Group* Graph::insertGroup()
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
 {
     // PRECONDITIONS:
-        // group must be dereferencable
+        // group can't be nullptr
         // groupComponent and groupStyle can be nullptr
     if (group == nullptr)
         return false;
@@ -894,45 +894,47 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
                                                                      nullptr, group));
     }
 
-    if (groupItem == nullptr) {
-        qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
-        return false;
-    }
     if (!super_t::insert_group(group))
         qWarning() << "qan::Graph::insertGroup(): Error: Internal topology error.";
-    groupItem->setGroup(group);
-    groupItem->setGraph(this);
-    group->setItem(groupItem);
 
-    auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem,  &qan::GroupItem::groupClicked,
-            this,       notifyGroupClicked);
+    if (groupItem != nullptr) {  // groupItem shouldn't be null, but throw only a warning to run concrete unit tests.
+        groupItem->setGroup(group);
+        groupItem->setGraph(this);
+        group->setItem(groupItem);
 
-    auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupRightClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem, &qan::GroupItem::groupRightClicked,
-            this,      notifyGroupRightClicked);
+        auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem,  &qan::GroupItem::groupClicked,
+                this,       notifyGroupClicked);
 
-    auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupDoubleClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem, &qan::GroupItem::groupDoubleClicked,
-            this,      notifyGroupDoubleClicked);
+        auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupRightClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem, &qan::GroupItem::groupRightClicked,
+                this,      notifyGroupRightClicked);
 
-    { // Send group item to front
-        _maxZ += 1.0;
-        groupItem->setZ(_maxZ);
-    }
+        auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupDoubleClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem, &qan::GroupItem::groupDoubleClicked,
+                this,      notifyGroupDoubleClicked);
+
+        { // Send group item to front
+            _maxZ += 1.0;
+            groupItem->setZ(_maxZ);
+        }
+    } else
+        qWarning() << "qan::Graph::insertGroup(): Warning: Either group delegate or group style is invalid or nullptr.";
+
     if (group != nullptr) {       // Notify user.
         onNodeInserted(*group);
         emit nodeInserted(group);
     }
+
     return true;
 }
 
