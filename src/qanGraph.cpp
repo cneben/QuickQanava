@@ -1331,8 +1331,10 @@ void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
 
     qreal center = minLeft + (maxRight - minLeft) / 2.;
     for (auto item: items){
-        item->setX(center - (item->width() / 2.));
         const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
+        item->setX(center - (item->width() / 2.));
         if (nodeItem != nullptr)
             emit nodeMoved(nodeItem->getNode());
     }
@@ -1346,8 +1348,10 @@ void    Graph::alignRight(std::vector<QQuickItem*>&& items)
     for (const auto item: items)
         maxRight = std::max(maxRight, item->x() + item->width());
     for (auto item: items) {
-        item->setX(maxRight - item->width());
         const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
+        item->setX(maxRight - item->width());
         if (nodeItem != nullptr)
             emit nodeMoved(nodeItem->getNode());
     }
@@ -1361,8 +1365,10 @@ void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
     for (const auto item: items)
         minLeft = std::min(minLeft, item->x());
     for (auto item: items) {
-        item->setX(minLeft);
         const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
+        item->setX(minLeft);
         if (nodeItem != nullptr)
             emit nodeMoved(nodeItem->getNode());
     }
@@ -1376,8 +1382,10 @@ void    Graph::alignTop(std::vector<QQuickItem*>&& items)
     for (const auto item: items)
         minTop = std::min(minTop, item->y());
     for (auto item: items) {
-        item->setY(minTop);
         const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
+        item->setY(minTop);
         if (nodeItem != nullptr)
             emit nodeMoved(nodeItem->getNode());
     }
@@ -1391,8 +1399,10 @@ void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
     for (const auto item: items)
         maxBottom = std::max(maxBottom, item->y() + item->height());
     for (auto item: items) {
-        item->setY(maxBottom - item->height());
         const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
+        item->setY(maxBottom - item->height());
         if (nodeItem != nullptr)
             emit nodeMoved(nodeItem->getNode());
     }
