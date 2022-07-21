@@ -1142,6 +1142,7 @@ void    EdgeItem::mouseMoveEvent(QMouseEvent* event)
 {
     // Early exits
     if (getEdge() == nullptr ||
+        getEdge()->getIsProtected() ||
         getEdge()->getLocked()) {
         QQuickItem::mouseMoveEvent(event);
         return;

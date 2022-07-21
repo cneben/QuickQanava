@@ -122,6 +122,11 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     if (_targetItem->getCollapsed())
         return false;
 
+    if (_targetItem->getNode() != nullptr &&
+            (_targetItem->getNode()->getLocked() ||
+             _targetItem->getNode()->getIsProtected()))
+        return false;
+
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
@@ -283,18 +288,23 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
     const auto graphContainerItem = graph->getContainerItem();
     if (graphContainerItem == nullptr)
         return;
-    emit graph->nodeMoved(_target);
 
+    bool nodeGrouped = false;
     if (_targetItem->getDroppable()) {
         const auto targetContainerPos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
         qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
-        if ( group != nullptr &&
-             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()) ) { // Do not drop a group in itself
-            if ( group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
-                 !group->getGroupItem()->getCollapsed() )    // group item
-                graph->groupNode( group, _target.data() );
+        if (group != nullptr &&
+            static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
+            if (group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
+                !group->getGroupItem()->getCollapsed()) {    // group item
+                graph->groupNode(group, _target.data());
+                nodeGrouped = true;
+            }
         }
     }
+    if (!nodeGrouped)  // Do not emit nodeMoved() if it has been grouped
+        emit graph->nodeMoved(_target);
+
     _targetItem->setDragged(false);
 
     if (dragSelection &&               // If there is a selection, end drag for the whole selection

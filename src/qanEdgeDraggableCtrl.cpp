@@ -78,7 +78,9 @@ bool    EdgeDraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     auto dst = _targetItem->getDestinationItem() != nullptr ? _targetItem->getDestinationItem()->getNode() :
                                                               nullptr;
     if ((src && src->getLocked()) ||
-        (dst && dst->getLocked()))
+        (src && src->getIsProtected()) ||
+        (dst && dst->getLocked()) ||
+        (dst && dst->getIsProtected()))
         return false;
 
     const auto rootItem = graph->getContainerItem();

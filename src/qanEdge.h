@@ -129,13 +129,29 @@ signals:
     void            labelChanged();
 
 public:
+    /*! \brief A protected edge can't be dragged by user (default to unprotected).
+     *
+     * Contrary to `enabled` and 'locked' properties: double click, right click and selection is
+     * active when protected.
+     *
+     * \note edgeDoubleClicked(), edgeRightClicked() signal are still emitted from protected edge.
+     */
+    Q_PROPERTY(bool isProtected READ getIsProtected WRITE setIsProtected NOTIFY isProtectedChanged FINAL)
+    bool            setIsProtected(bool isProtected);
+    bool            getIsProtected() const { return _isProtected; }
+private:
+    bool            _isProtected = false;
+signals:
+    void            isProtectedChanged();
+
+public:
     /*! \brief A locked edge can't be selected / dragged by user (default to false ie unlocked).
      *
      * Might be usefull to prevent user inputs when the edge is laid out automatically.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    bool            setLocked(bool locked) noexcept;
-    bool            getLocked() const noexcept { return _locked; }
+    bool            setLocked(bool locked);
+    bool            getLocked() const { return _locked; }
 private:
     bool            _locked = false;
 signals:

@@ -872,7 +872,7 @@ qan::Group* Graph::insertGroup()
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
 {
     // PRECONDITIONS:
-        // group must be dereferencable
+        // group can't be nullptr
         // groupComponent and groupStyle can be nullptr
     if (group == nullptr)
         return false;
@@ -894,45 +894,47 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
                                                                      nullptr, group));
     }
 
-    if (groupItem == nullptr) {
-        qWarning() << "qan::Graph::insertGroup(): Error: Either group delegate or group style is invalid or nullptr.";
-        return false;
-    }
     if (!super_t::insert_group(group))
         qWarning() << "qan::Graph::insertGroup(): Error: Internal topology error.";
-    groupItem->setGroup(group);
-    groupItem->setGraph(this);
-    group->setItem(groupItem);
 
-    auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem,  &qan::GroupItem::groupClicked,
-            this,       notifyGroupClicked);
+    if (groupItem != nullptr) {  // groupItem shouldn't be null, but throw only a warning to run concrete unit tests.
+        groupItem->setGroup(group);
+        groupItem->setGraph(this);
+        group->setItem(groupItem);
 
-    auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupRightClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem, &qan::GroupItem::groupRightClicked,
-            this,      notifyGroupRightClicked);
+        auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem,  &qan::GroupItem::groupClicked,
+                this,       notifyGroupClicked);
 
-    auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-        if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
-            emit this->groupDoubleClicked(groupItem->getGroup(), p);
-    };
-    connect(groupItem, &qan::GroupItem::groupDoubleClicked,
-            this,      notifyGroupDoubleClicked);
+        auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupRightClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem, &qan::GroupItem::groupRightClicked,
+                this,      notifyGroupRightClicked);
 
-    { // Send group item to front
-        _maxZ += 1.0;
-        groupItem->setZ(_maxZ);
-    }
+        auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
+            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+                emit this->groupDoubleClicked(groupItem->getGroup(), p);
+        };
+        connect(groupItem, &qan::GroupItem::groupDoubleClicked,
+                this,      notifyGroupDoubleClicked);
+
+        { // Send group item to front
+            _maxZ += 1.0;
+            groupItem->setZ(_maxZ);
+        }
+    } else
+        qWarning() << "qan::Graph::insertGroup(): Warning: Either group delegate or group style is invalid or nullptr.";
+
     if (group != nullptr) {       // Notify user.
         onNodeInserted(*group);
         emit nodeInserted(group);
     }
+
     return true;
 }
 
@@ -983,8 +985,6 @@ void    Graph::removeGroupContent_rec(qan::Group* group)
     if (_selectedNodes.contains(group))
         _selectedNodes.removeAll(group);
 
-    //auto nodeGroupPtr = std::static_pointer_cast<super_t::group_t>(group->shared_from_this());
-    //super_t::weak_group_t weakNodeGroupPtr = nodeGroupPtr;
     super_t::remove_group(group);
 }
 
@@ -999,8 +999,8 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
-    if ( group == nullptr ||
-         node == nullptr )
+    if (group == nullptr ||
+        node == nullptr)
         return false;
     if (static_cast<const QObject*>(group) == static_cast<const QObject*>(node)) {
         qWarning() << "qan::Graph::groupNode(): Error, can't group a group in itself.";
@@ -1330,8 +1330,14 @@ void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
     }
 
     qreal center = minLeft + (maxRight - minLeft) / 2.;
-    for (auto item: items)
+    for (auto item: items){
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
         item->setX(center - (item->width() / 2.));
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem->getNode());
+    }
 }
 
 void    Graph::alignRight(std::vector<QQuickItem*>&& items)
@@ -1341,8 +1347,14 @@ void    Graph::alignRight(std::vector<QQuickItem*>&& items)
     qreal maxRight = std::numeric_limits<qreal>::min();
     for (const auto item: items)
         maxRight = std::max(maxRight, item->x() + item->width());
-    for (auto item: items)
+    for (auto item: items) {
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
         item->setX(maxRight - item->width());
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem->getNode());
+    }
 }
 
 void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
@@ -1352,8 +1364,14 @@ void    Graph::alignLeft(std::vector<QQuickItem*>&& items)
     qreal minLeft = std::numeric_limits<qreal>::max();
     for (const auto item: items)
         minLeft = std::min(minLeft, item->x());
-    for (auto item: items)
+    for (auto item: items) {
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
         item->setX(minLeft);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem->getNode());
+    }
 }
 
 void    Graph::alignTop(std::vector<QQuickItem*>&& items)
@@ -1363,8 +1381,14 @@ void    Graph::alignTop(std::vector<QQuickItem*>&& items)
     qreal minTop = std::numeric_limits<qreal>::max();
     for (const auto item: items)
         minTop = std::min(minTop, item->y());
-    for (auto item: items)
+    for (auto item: items) {
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
         item->setY(minTop);
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem->getNode());
+    }
 }
 
 void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
@@ -1374,8 +1398,14 @@ void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
     qreal maxBottom = std::numeric_limits<qreal>::min();
     for (const auto item: items)
         maxBottom = std::max(maxBottom, item->y() + item->height());
-    for (auto item: items)
+    for (auto item: items) {
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(item);  // Works for qan::GroupItem*
+        if (nodeItem != nullptr)
+            emit nodeAboutToBeMoved(nodeItem->getNode());
         item->setY(maxBottom - item->height());
+        if (nodeItem != nullptr)
+            emit nodeMoved(nodeItem->getNode());
+    }
 }
 //-----------------------------------------------------------------------------
 

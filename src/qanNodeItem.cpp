@@ -231,7 +231,8 @@ void    NodeItem::setConnectable(Connectable connectable) noexcept
 void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     if (getNode() != nullptr &&
-        getNode()->getLocked()) {
+            (getNode()->getIsProtected() ||
+             getNode()->getLocked())) {
         event->setAccepted(false);
         QQuickItem::dragEnterEvent(event);
         return;
@@ -245,7 +246,8 @@ void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 void	NodeItem::dragMoveEvent(QDragMoveEvent* event)
 {
     if (getNode() != nullptr &&
-        getNode()->getLocked()) {
+            (getNode()->getIsProtected() ||
+             getNode()->getLocked())) {
         event->setAccepted(false);
         QQuickItem::dragMoveEvent(event);
         return;
@@ -258,7 +260,8 @@ void	NodeItem::dragMoveEvent(QDragMoveEvent* event)
 void	NodeItem::dragLeaveEvent(QDragLeaveEvent* event)
 {
     if (getNode() != nullptr &&
-        getNode()->getLocked()) {
+            (getNode()->getIsProtected() ||
+             getNode()->getLocked())) {
         event->setAccepted(false);
         QQuickItem::dragLeaveEvent(event);
         return;
@@ -286,7 +289,8 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 {
     if (getNode() != nullptr &&
-        getNode()->getLocked()) {
+            (getNode()->getIsProtected() ||
+             getNode()->getLocked())) {
         QQuickItem::mouseMoveEvent(event);
         return;
     }
@@ -310,8 +314,8 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
              event->button() == Qt::RightButton) &&
              getNode() != nullptr &&
              isSelectable() &&
-             !getNode()->isGroup() &&  // Group selection is handled in qan::GroupItem::mousePressEvent()
-             !getNode()->getLocked()) {
+             !getNode()->isGroup() &&    // Group selection is handled in qan::GroupItem::mousePressEvent()
+             !getNode()->getLocked()) {  // Selection allowed for protected
             if (_graph)
                 _graph->selectNode(*getNode(), event->modifiers());
         }

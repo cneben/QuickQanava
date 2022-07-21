@@ -105,7 +105,17 @@ bool    Edge::setLabel(const QString& label)
     return false;
 }
 
-bool    Edge::setLocked(bool locked) noexcept
+bool    Edge::setIsProtected(bool isProtected)
+{
+    if (isProtected != _isProtected) {
+        _isProtected = isProtected;
+        emit isProtectedChanged();
+        return true;
+    }
+    return false;
+}
+
+bool    Edge::setLocked(bool locked)
 {
     if (locked != _locked) {
         _locked = locked;
