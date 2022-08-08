@@ -42,9 +42,6 @@
 #include <QPointer>
 #include <QQuickItem>
 
-// QuickQanava headers
-/* Nil */
-
 namespace qan { // ::qan
 
 class Graph;
