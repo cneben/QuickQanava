@@ -351,10 +351,15 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
             break;
         }
         case QEvent::MouseMove: {
-            QMouseEvent* me = static_cast<QMouseEvent*>( event );
-            if ( me->buttons() |  Qt::LeftButton &&
-                 !_dragInitialPos.isNull() &&
-                 !_targetInitialSize.isEmpty() ) {
+            QMouseEvent* me = static_cast<QMouseEvent*>(event);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            const auto mePos = me->windowPos();
+#else
+            const auto mePos = me->scenePosition();
+#endif
+            if (me->buttons() |  Qt::LeftButton &&
+                !_dragInitialPos.isNull() &&
+                !_targetInitialSize.isEmpty()) {
                 // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
                 // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
                 // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
@@ -363,10 +368,11 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
                 QPointF curLocalPos;
                 if ( parentItem() != nullptr ) {
                     startLocalPos = parentItem()->mapFromScene( _dragInitialPos );
-                    curLocalPos = parentItem()->mapFromScene( me->windowPos() );
+                    //curLocalPos = parentItem()->mapFromScene( me->windowPos() );
+                    curLocalPos = parentItem()->mapFromScene(mePos);
                 } else {
                     startLocalPos = _dragInitialPos;
-                    curLocalPos = me->windowPos();
+                    curLocalPos = mePos;
                 }
                 const QPointF delta{curLocalPos - startLocalPos};
                 if (_target) {
