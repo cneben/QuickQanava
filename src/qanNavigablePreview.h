@@ -78,9 +78,7 @@ signals:
     void                        sourceChanged();
 
 protected:
-    //! Test if \c target is inside \c source
-    Q_INVOKABLE bool    rectInside(QRectF source, QRectF target) const;
-    //!.
+    //! Return union of rects \c a and \c b.
     Q_INVOKABLE QRectF  rectUnion(QRectF a, QRectF b) const;
 
 signals:

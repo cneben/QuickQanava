@@ -57,15 +57,7 @@ void    NavigablePreview::setSource(qan::Navigable* source) noexcept
     }
 }
 
-bool    NavigablePreview::rectInside(QRectF source, QRectF target) const
-{
-    return source.contains(target);
-}
-QRectF  NavigablePreview::rectUnion(QRectF a, QRectF b) const
-{
-    return a.united(b);
-}
-
+QRectF  NavigablePreview::rectUnion(QRectF a, QRectF b) const { return a.united(b); }
 //-----------------------------------------------------------------------------
 
 } // ::qan

@@ -63,12 +63,9 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
-            //var cr = preview.source.containerItem.childrenRect
-            const r = computeSourceRect()
-            if (r.width > 0 && r.height > 0)
-                sourcePreview.sourceRect = r
         } else
             sourcePreview.sourceItem = undefined
+        updatePreview()
         updateVisibleWindow()
     }
 
@@ -115,7 +112,8 @@ Qan.AbstractNavigablePreview {
                                                   Qt.rect(0, 0,
                                                           preview.source.width,
                                                           preview.source.height))*/
-        const initialRect = Qt.rect(-1280, -720, 1280 * 2, 720 * 2.)
+        const initialRect = Qt.rect(-1280 / 2., -720 / 2.,
+                                    1280, 720)
         let cr = preview.source.containerItem.childrenRect
         console.error('cr=' + cr)
         console.error('initialRect=' + initialRect)
@@ -189,11 +187,6 @@ Qan.AbstractNavigablePreview {
                                                        preview.source.width,
                                                        preview.source.height))
         console.error('viewR=' + viewR)
-        //const previewR = preview.source.containerItem.mapToItem(preview, r)
-        //const previewViewR = preview.source.containerItem.mapToItem(preview, viewR)
-        //console.error('previewR=' + previewR)
-        //console.error('previewViewR=' + previewViewR)
-
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
         console.error('previewXRatio=' + previewXRatio)
@@ -205,44 +198,11 @@ Qan.AbstractNavigablePreview {
         viewWindow.width = (previewXRatio * viewR.width) - border2
         viewWindow.height = (previewYRatio * viewR.height) - border2
 
-        /*const border = viewWindow.border.width
-        const border2 = border * 2.
-
-        viewWindow.visible = true
-        viewWindow.x = (previewXRatio * (viewRect.x - r.x)) + border
-        viewWindow.y = (previewYRatio * (viewRect.y - r.y)) + border
-        viewWindow.width = (previewXRatio * viewRect.width) - border2
-        viewWindow.height = (previewYRatio * viewRect.height) - border2*/
-
-/*        var windowTopLeft = source.mapToItem(containerItem, 0, 0)
-        var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
-        var previewXRatio = preview.width / r.width
-        var previewYRatio = preview.height / r.height
-
-        viewWindow.visible = true
-        viewWindow.x = previewXRatio * (windowTopLeft.x - r.x) + border
-        viewWindow.y = previewYRatio * (windowTopLeft.y - r.y) + border
-        viewWindow.width = previewXRatio * Math.abs(windowBottomRight.x - windowTopLeft.x) - border2
-        viewWindow.height = previewYRatio * Math.abs(windowBottomRight.y - windowTopLeft.y) - border2
-*/
-        /*viewWindowChanged(Qt.rect(viewWindow.x / preview.width,     viewWindow.y / preview.height,
-                                     viewWindow.width / preview.width, viewWindow.height / preview.height),
-                             source.zoom);*/
-
-        // 1. Map the window rect to containerItem.
-        // 2. Map this rect to preview
-        /*const viewRect = preview.source.mapToItem(preview.source.containerItem,
-                                                  Qt.rect(0, 0,
-                                                          preview.source.width,
-                                                          preview.source.height))
-        console.error('viewRect=' + viewRect)
-        const viewWindowRect = preview.source.containerItem.mapToItem(preview, viewRect)
-        console.error('viewWindowRect=' + viewWindowRect)
-        viewWindow.visible = true
-        viewWindow.x = viewWindowRect.x
-        viewWindow.y = viewWindowRect.y
-        viewWindow.width = viewWindowRect.width
-        viewWindow.height = viewWindowRect.height*/
+        visibleWindowChanged(Qt.rect(viewWindow.x / preview.width,
+                                  viewWindow.y / preview.height,
+                                  viewWindow.width / preview.width,
+                                  viewWindow.height / preview.height),
+                             source.zoom);
     }
     Item {
         id: overlayItem

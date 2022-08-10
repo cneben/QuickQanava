@@ -32,13 +32,13 @@
 // \date	2022 08 10
 //-----------------------------------------------------------------------------
 
-// QuickQanava headers
-#include "../../src/QuickQanava.h"
-
 // Qt headers
 #include <QApplication>
 #include <QQuickStyle>
 #include <QIcon>
+
+// QuickQanava headers
+#include "../../src/QuickQanava.h"
 
 using namespace qan;
 
