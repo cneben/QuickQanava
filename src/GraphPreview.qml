@@ -48,7 +48,7 @@ Control {
     // Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity
 
-    // PUBLIC /////////////////////////////////////////////////////////////////
+    // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
 
     property real   previewSize: 0.15

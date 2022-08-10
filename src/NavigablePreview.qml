@@ -147,6 +147,8 @@ Qan.AbstractNavigablePreview {
             preview.resetVisibleWindow()
             return
         }
+        if (!r)
+            return
         console.error('r=' + r)
         console.error('preview.source.width=' + preview.source.width)
         console.error('preview.source.height=' + preview.source.height)

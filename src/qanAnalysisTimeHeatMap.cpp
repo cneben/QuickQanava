@@ -43,14 +43,11 @@ AnalysisTimeHeatMap::AnalysisTimeHeatMap(QQuickItem* parent) :
     QQuickPaintedItem{parent},
     _image{QImage{{0,0}, QImage::Format_ARGB32_Premultiplied}}
 {
-//    _image = QImage{{0,0}, QImage::Format_ARGB32_Premultiplied};
 }
 
-AnalysisTimeHeatMap::~AnalysisTimeHeatMap() { /* Nil */ }
-
-void    AnalysisTimeHeatMap::paint( QPainter* painter )
+void    AnalysisTimeHeatMap::paint(QPainter* painter)
 {
-    if ( !_image.isNull() ) {
+    if (!_image.isNull()) {
         // Algorithm:
             // 1. Compute source image ratio: image.height = imageRatio * image.width
             // 2. Compute xScale ratio such that: item.width = xScale * image.width
@@ -61,20 +58,16 @@ void    AnalysisTimeHeatMap::paint( QPainter* painter )
         QRectF drawRect{};
         QSizeF imageSize{static_cast<qreal>(_image.width()),
                          static_cast<qreal>(_image.height())};  // Copy image size to FP
-        //qDebug() << "MemoryImage::paint(): item.size()=" << QSizeF{ width(), height() };
-        //qDebug() << "\timage.size()=" << _image.size();
 
         // 1.
         qreal imageRatio = imageSize.height() / imageSize.width();
-        //qDebug() << "\timageRatio=" << imageRatio;
 
         // 2.
-        qreal xScale = width( ) / imageSize.width();
+        qreal xScale = width() / imageSize.width();
 
         // 3.
         const auto candidateHeight = imageSize.height() * xScale;
-        //qDebug() << "candidateHeight=" << candidateHeight;
-        if ( candidateHeight > height() ) {     // Avoid an <= FP test
+        if (candidateHeight > height()) {     // Avoid an <= FP test
             // 3.2
             const auto scaledWidth = height() / imageRatio;
             drawRect.setTopLeft({ (width() - scaledWidth) / 2., 0. });
@@ -84,9 +77,7 @@ void    AnalysisTimeHeatMap::paint( QPainter* painter )
             drawRect.setTopLeft({0., (height() - candidateHeight) / 2. });   // Center height
             drawRect.setSize({ width(), candidateHeight });
         }
-        //qDebug() << "\tdrawRect=" << drawRect;
-        //qDebug() << "\timage=" << _image;
-        painter->drawImage( drawRect, _image );
+        painter->drawImage(drawRect, _image);
     }
 }
 
@@ -101,27 +92,27 @@ void    AnalysisTimeHeatMap::setImage(QImage image) noexcept
 /* Heatmap Generation Management *///------------------------------------------
 void    AnalysisTimeHeatMap::setSource(qan::NavigablePreview* source) noexcept
 {
-    if ( source != _source ) {
-        if ( _source )  // Disconnect previous source from this heatmap generator
+    if (source != _source) {
+        if (_source)  // Disconnect previous source from this heatmap generator
             disconnect(_source.data(), 0, this, 0);
         _source = source;
-        if ( _source )
-            connect( _source.data(),    &qan::NavigablePreview::visibleWindowChanged,
-                     this,              &AnalysisTimeHeatMap::onVisibleWindowChanged );
+        if (_source)
+            connect(_source.data(), &qan::NavigablePreview::visibleWindowChanged,
+                    this,           &AnalysisTimeHeatMap::onVisibleWindowChanged);
         emit sourceChanged();
     }
 }
 
 void    AnalysisTimeHeatMap::setColor(QColor color) noexcept
 {
-    if ( color != _color ) {
+    if (color != _color) {
         _color = color;
         // Update background image color (do not change alpha channel)
         QColor c{color};
         auto& heatMap = getImage();
-        for ( int x = 0; x < heatMap.width(); x++ )
-            for ( int y = 0; y < heatMap.width(); x++ ) {
-                c.setAlpha( heatMap.pixelColor(x, y).alpha() );    // Preserve original alpha value
+        for (int x = 0; x < heatMap.width(); x++)
+            for (int y = 0; y < heatMap.width(); x++) {
+                c.setAlpha(heatMap.pixelColor(x, y).alpha());    // Preserve original alpha value
                 heatMap.setPixelColor(x, y, c);
             }
         emit colorChanged();
@@ -131,11 +122,10 @@ void    AnalysisTimeHeatMap::setColor(QColor color) noexcept
 
 void    AnalysisTimeHeatMap::onVisibleWindowChanged(QRectF visibleWindowRect, qreal navigableZoom)
 {
-    //qDebug() << "AnalysisTimeHeatMap::onVisibleWindowChanged(): vwr=" << visibleWindowRect << "\tnavigableZoom=" << navigableZoom;
-    if ( !isVisible() )
+    if (!isVisible())
         return;
-    if ( navigableZoom > 0.999 &&
-         visibleWindowRect.isValid() ) {
+    if (navigableZoom > 1.0001 &&
+        visibleWindowRect.isValid()) {
         auto& heatMap = getImage();
         const QSizeF heatMapSize{static_cast<qreal>(heatMap.width()),
                                  static_cast<qreal>(heatMap.height())};
@@ -143,16 +133,16 @@ void    AnalysisTimeHeatMap::onVisibleWindowChanged(QRectF visibleWindowRect, qr
                                               visibleWindowRect.y() * heatMapSize.height(),
                                               visibleWindowRect.width() * heatMapSize.width(),
                                               visibleWindowRect.height() * heatMapSize.height() }.toRect()};
-        QRect _heatMapRect{{0,0}, heatMap.size()};
+        const auto heatMapRect = QRect{{0,0}, heatMap.size()};
         //qDebug() << "\tvisibleWindowRect=" << visibleWindowRect;
         //qDebug() << "\tscaledVisibleWindowRect=" << scaledVisibleWindowRect;
         //qDebug() << "\theatMapSize=" << heatMapSize;
 
         QColor c{_color};
-        if ( _heatMapRect.intersects(scaledVisibleWindowRect) ) { // Update pixels under visibleWindowRect
-            const auto updateRect = _heatMapRect.intersected(scaledVisibleWindowRect);
-            for ( int x = updateRect.left(); x < updateRect.right(); x++)
-                for ( int y = updateRect.top(); y < updateRect.bottom(); y++) {
+        if (heatMapRect.intersects(scaledVisibleWindowRect)) { // Update pixels under visibleWindowRect
+            const auto updateRect = heatMapRect.intersected(scaledVisibleWindowRect);
+            for (int x = updateRect.left(); x < updateRect.right(); x++)
+                for (int y = updateRect.top(); y < updateRect.bottom(); y++) {
                     const auto alpha = heatMap.pixelColor(x,y).alpha();
                     c.setAlpha(qMax(25, qMin(255, alpha+1)));
                     heatMap.setPixelColor(x, y, c);
@@ -175,22 +165,17 @@ void    AnalysisTimeHeatMap::clearHeatMap() noexcept
 
 void    AnalysisTimeHeatMap::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    //qDebug() << "AnalysisTimeHeatMap::geometryChanged(): newGeometry.size().toSize()=" << newGeometry.size().toSize();
-    if ( !newGeometry.size().toSize().isEmpty() &&
-         newGeometry.toRect() != oldGeometry.toRect() ) {
+    if (!newGeometry.size().toSize().isEmpty() &&
+        newGeometry.toRect() != oldGeometry.toRect()) {
         auto& heatMap = getImage();
-        if ( heatMap.isNull() ) {
-            //qDebug() << "\tanalysis heatmap init...";
+        if (heatMap.isNull()) {
             heatMap = QImage{newGeometry.size().toSize(), QImage::Format_ARGB32_Premultiplied};
             QColor c{_color}; c.setAlpha(0);
             heatMap.fill(c);
         } else {
-            if ( newGeometry.size().width() > oldGeometry.size().width() ||
-                 newGeometry.size().height() > oldGeometry.size().height() ) {
-                //qDebug() << "\tanalysis heat map size ++";
+            if (newGeometry.size().width() > oldGeometry.size().width() ||
+                newGeometry.size().height() > oldGeometry.size().height()) {
                 QImage scaled = heatMap.scaled(newGeometry.size().toSize()); // It should detach...
-                //qDebug() << "\tscaled.isNull()=" << scaled.isNull();
-                //qDebug() << "\tscaled.size()=" << scaled.size();
                 setImage(scaled);
             } // Otherwise, do not reduce image size, it will be scaled at display
         }

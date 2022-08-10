@@ -63,7 +63,7 @@ class AnalysisTimeHeatMap : public QQuickPaintedItem
     Q_OBJECT
 public:
     explicit AnalysisTimeHeatMap(QQuickItem* parent = nullptr);
-    virtual ~AnalysisTimeHeatMap();
+    virtual ~AnalysisTimeHeatMap() = default;
     AnalysisTimeHeatMap(const AnalysisTimeHeatMap&) = delete;
 
 public:

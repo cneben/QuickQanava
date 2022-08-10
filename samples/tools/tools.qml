@@ -157,7 +157,7 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         source: graphView
-
+        viewWindowColor: Material.accent
         Menu {
             id: heatMapMenu
             MenuItem {
@@ -165,25 +165,17 @@ ApplicationWindow {
                 onClicked: heatMapPreview.clearHeatMap()
             }
             MenuItem {
-                text: qsTr("Show background preview")
-                checkable: true
-                checked: heatMapPreview.backgroundPreviewVisible
-                onClicked: heatMapPreview.backgroundPreviewVisible = checked
-            }
-            MenuItem {
                 text: qsTr("Increase preview size")
                 onTriggered: {
                     heatMapPreview.width *= 1.15
                     heatMapPreview.height *= 1.15
-                    //heatMapPreview.previewSize = Math.min(0.5, analysisTimeHeatMapPreviewPane.previewSize + 0.1)
                 }
             }
             MenuItem {
                 text: qsTr("Decrease preview size")
                 onTriggered: {
-                    heatMapPreview.width *= 0.85
-                    heatMapPreview.height *= 0.85
-                    //heatMapPreview.previewSize = Math.max(0.1, analysisTimeHeatMapPreviewPane.previewSize - 0.1)
+                    heatMapPreview.width *= Math.max(50, heatMapPreview.width * 0.85)
+                    heatMapPreview.height *= Math.max(50, heatMapPreview.height * 0.85)
                 }
             }
         }
@@ -200,7 +192,7 @@ ApplicationWindow {
         }
     }  // Qan.HeatMapPreview
 
-    Control {
+    /*Control {
         id: analysisTimeHeatMapPreviewPane
         anchors.left: graphView.left; anchors.bottom: graphView.bottom
         padding: 0
@@ -209,7 +201,9 @@ ApplicationWindow {
         height: width * (graphView.containerItem.childrenRect.height /
                          graphView.containerItem.childrenRect.width)
         opacity: 0.8
-        hoverEnabled: true; ToolTip.visible: hovered; ToolTip.delay: 1500
+        hoverEnabled: true;
+        ToolTip.visible: hovered;
+        ToolTip.delay: 1500
         ToolTip.text: qsTr("Show image areas that have actually been viewed with 100% or more zoom")
         z: 3    // Avoid tooltips beeing generated on top of preview
         Qan.RectangularGlow {
@@ -242,5 +236,5 @@ ApplicationWindow {
                 }
             }
         }  // Qan.NavigablePreview
-    }  // Rectangle (pane) container for analysis time heatmap
+    }  // Rectangle (pane) container for analysis time heatmap*/
 }  // ApplicationWindow

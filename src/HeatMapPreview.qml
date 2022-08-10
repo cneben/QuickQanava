@@ -45,10 +45,13 @@ Control {
 
     property alias  viewWindowColor: navigablePreview.viewWindowColor
 
-    // Preview background panel opacity (default to 0.9).
+    //! Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity
 
-    // PUBLIC /////////////////////////////////////////////////////////////////
+    //! Clear actual heat map.
+    function    clearHeatMap() { analysisTimeHeatMap.clearHeatMap() }
+
+    // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
 
     property real   previewSize: 0.15
@@ -127,6 +130,14 @@ Control {
             id: navigablePreview
             anchors.centerIn: parent
             source: heatMapPreview.source
+
+            Qan.AnalysisTimeHeatMap {
+                id: analysisTimeHeatMap
+                parent: navigablePreview.overlay
+                anchors.fill: parent
+                source: navigablePreview
+                visible: true
+            }
         }  // Qan.NavigablePreview
     }
 }  // Control graph preview
