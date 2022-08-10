@@ -41,10 +41,12 @@ Qan.AbstractNavigablePreview {
     property var    overlay: overlayItem
 
     //! Color for the visible window rect border (default to red).
-    property color  visibleWindowColor: Qt.rgba(1, 0, 0, 1)
+    property color  viewWindowColor: Qt.rgba(1, 0, 0, 1)
 
     //! Show or hide the target navigable content as a background image (default to true).
     property alias  backgroundPreviewVisible: sourcePreview.visible
+
+    property rect   initialRect: Qt.rect(-1280, -720, 1280 * 2, 720 * 2.)
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     onSourceChanged: {
@@ -61,9 +63,10 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
-            var cr = preview.source.containerItem.childrenRect
-            if (cr.width > 0 && cr.height > 0)
-                sourcePreview.sourceRect = cr
+            //var cr = preview.source.containerItem.childrenRect
+            const r = computeSourceRect()
+            if (r.width > 0 && r.height > 0)
+                sourcePreview.sourceRect = r
         } else
             sourcePreview.sourceItem = undefined
         updateVisibleWindow()
@@ -85,10 +88,12 @@ Qan.AbstractNavigablePreview {
         const r = computeSourceRect()
         if (r &&
             r.width > 0. &&
-            r.height > 0)
+            r.height > 0) {
             sourcePreview.sourceRect = r
-
-        updateVisibleWindow(r)
+            viewWindow.visible = true
+            updateVisibleWindow(r)
+        } else
+            viewWindow.visible = false
     }
 
     function computeSourceRect(rect) {
@@ -106,27 +111,28 @@ Qan.AbstractNavigablePreview {
 
         // 1. If projected view rect is not inside scene rect, use view rect.
         // 2. Otherwise use scene rect
-        const viewRect = preview.source.mapToItem(preview.source.containerItem,
+        /*const viewRect = preview.source.mapToItem(preview.source.containerItem,
                                                   Qt.rect(0, 0,
                                                           preview.source.width,
-                                                          preview.source.height))
+                                                          preview.source.height))*/
+        const initialRect = Qt.rect(-1280, -720, 1280 * 2, 720 * 2.)
         let cr = preview.source.containerItem.childrenRect
-        console.error('cr=' + viewRect)
-        console.error('viewRect=' + viewRect)
-        console.error('viewRect in cr =' + preview.rectInside(cr, viewRect))
-        if (!preview.rectInside(cr, viewRect))
-            cr = viewRect
-        return cr
+        console.error('cr=' + cr)
+        console.error('initialRect=' + initialRect)
+        //console.error('initialRect in cr =' + preview.rectInside(cr, viewRect))
+        //if (!preview.rectInside(cr, initialRect))
+        let r = preview.rectUnion(cr, initialRect)
+        return r
     }
 
-    // Reset visibleWindow rect to preview dimension (taking rectangle border into account)
+    // Reset viewWindow rect to preview dimension (taking rectangle border into account)
     function    resetVisibleWindow() {
-        const border = visibleWindow.border.width
+        const border = viewWindow.border.width
         const border2 = border * 2
-        visibleWindow.x = border
-        visibleWindow.y = border
-        visibleWindow.width = preview.width - border2
-        visibleWindow.height = preview.height - border2
+        viewWindow.x = border
+        viewWindow.y = border
+        viewWindow.width = preview.width - border2
+        viewWindow.height = preview.height - border2
     }
 
     function    updateVisibleWindow(r) {
@@ -147,68 +153,123 @@ Qan.AbstractNavigablePreview {
         console.error('preview.source.width=' + preview.source.width)
         console.error('preview.source.height=' + preview.source.height)
 
-        if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
-            r.height < preview.source.height) {         // reset the preview window
-            r.width = preview.source.width
-            r.height = preview.source.height
-        }
-        if (r.width < 0.01 ||        // Do not update without a valid children rect
-            r.height < 0.01) {
-            preview.resetVisibleWindow()
-            return
-        }
-        if (r.width < r.width ||        // Reset the visible window is the whole containerItem content
-            r.height < r.height) {       // is smaller than graph view
-            preview.resetVisibleWindow()
-            return
-        }
-        if (r.width < preview.width && // If scene size is stricly inferior to preview size
-            r.height < preview.height) {         // reset the preview window
-            preview.resetVisibleWindow()
-            return
-        }
-        const border = visibleWindow.border.width
+        //if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
+        //    r.height < preview.source.height) {         // reset the preview window
+        //    r.width = preview.source.width
+        //    r.height = preview.source.height
+        //}
+        //if (r.width < 0.01 ||        // Do not update without a valid children rect
+        //    r.height < 0.01) {
+        //    preview.resetVisibleWindow()
+        //    return
+        //}
+        //if (r.width < r.width ||        // Reset the visible window is the whole containerItem content
+        //    r.height < r.height) {       // is smaller than graph view
+        //    preview.resetVisibleWindow()
+        //    return
+        //}
+        //if (r.width < preview.width && // If scene size is stricly inferior to preview size
+        //    r.height < preview.height) {         // reset the preview window
+        //    preview.resetVisibleWindow()
+        //    return
+        //}
+
+        // r is content rect
+        // viewR is window rect in content rect Cs
+        // Window is viewR in preview Cs
+
+        const border = viewWindow.border.width
         const border2 = border * 2.
-        var windowTopLeft = source.mapToItem(containerItem, 0, 0)
-        var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
+
+        // map r to preview
+        // map viewR to preview
+        // Apply scaling from r to preview
+        const viewR = preview.source.mapToItem(preview.source.containerItem,
+                                               Qt.rect(0, 0,
+                                                       preview.source.width,
+                                                       preview.source.height))
+        console.error('viewR=' + viewR)
+        //const previewR = preview.source.containerItem.mapToItem(preview, r)
+        //const previewViewR = preview.source.containerItem.mapToItem(preview, viewR)
+        //console.error('previewR=' + previewR)
+        //console.error('previewViewR=' + previewViewR)
 
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
+        console.error('previewXRatio=' + previewXRatio)
+        console.error('previewYRatio=' + previewYRatio)
 
-        visibleWindow.x = previewXRatio * (windowTopLeft.x - r.x) + border
-        visibleWindow.y = previewYRatio * (windowTopLeft.y - r.y) + border
-        visibleWindow.width = previewXRatio * Math.abs(windowBottomRight.x - windowTopLeft.x) - border2
-        visibleWindow.height = previewYRatio * Math.abs(windowBottomRight.y - windowTopLeft.y) - border2
+        viewWindow.visible = true
+        viewWindow.x = (previewXRatio * (viewR.x - r.x)) + border
+        viewWindow.y = (previewYRatio * (viewR.y - r.y)) + border
+        viewWindow.width = (previewXRatio * viewR.width) - border2
+        viewWindow.height = (previewYRatio * viewR.height) - border2
 
-        visibleWindowChanged(Qt.rect(visibleWindow.x / preview.width,     visibleWindow.y / preview.height,
-                                     visibleWindow.width / preview.width, visibleWindow.height / preview.height),
-                             source.zoom);
+        /*const border = viewWindow.border.width
+        const border2 = border * 2.
+
+        viewWindow.visible = true
+        viewWindow.x = (previewXRatio * (viewRect.x - r.x)) + border
+        viewWindow.y = (previewYRatio * (viewRect.y - r.y)) + border
+        viewWindow.width = (previewXRatio * viewRect.width) - border2
+        viewWindow.height = (previewYRatio * viewRect.height) - border2*/
+
+/*        var windowTopLeft = source.mapToItem(containerItem, 0, 0)
+        var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
+        var previewXRatio = preview.width / r.width
+        var previewYRatio = preview.height / r.height
+
+        viewWindow.visible = true
+        viewWindow.x = previewXRatio * (windowTopLeft.x - r.x) + border
+        viewWindow.y = previewYRatio * (windowTopLeft.y - r.y) + border
+        viewWindow.width = previewXRatio * Math.abs(windowBottomRight.x - windowTopLeft.x) - border2
+        viewWindow.height = previewYRatio * Math.abs(windowBottomRight.y - windowTopLeft.y) - border2
+*/
+        /*viewWindowChanged(Qt.rect(viewWindow.x / preview.width,     viewWindow.y / preview.height,
+                                     viewWindow.width / preview.width, viewWindow.height / preview.height),
+                             source.zoom);*/
+
+        // 1. Map the window rect to containerItem.
+        // 2. Map this rect to preview
+        /*const viewRect = preview.source.mapToItem(preview.source.containerItem,
+                                                  Qt.rect(0, 0,
+                                                          preview.source.width,
+                                                          preview.source.height))
+        console.error('viewRect=' + viewRect)
+        const viewWindowRect = preview.source.containerItem.mapToItem(preview, viewRect)
+        console.error('viewWindowRect=' + viewWindowRect)
+        viewWindow.visible = true
+        viewWindow.x = viewWindowRect.x
+        viewWindow.y = viewWindowRect.y
+        viewWindow.width = viewWindowRect.width
+        viewWindow.height = viewWindowRect.height*/
     }
     Item {
         id: overlayItem
         anchors.fill: parent; anchors.margins: 0
     }
     Rectangle {
-        id: visibleWindow
+        id: viewWindow
         color: Qt.rgba(0, 0, 0, 0)
-        smooth: true;   antialiasing: true
-        border.color: visibleWindowColor;
+        smooth: true
+        antialiasing: true
+        border.color: viewWindowColor
         border.width: 2
     }
     // Not active on 20201027
     /*MouseArea {
-        id: visibleWindowDragger
+        id: viewWindowDragger
         anchors.fill: parent
         drag.onActiveChanged: {
-            console.debug("dragging to:" + visibleWindow.x + ":" + visibleWindow.y );
+            console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y );
             if ( source ) {
             }
         }
-        drag.target: visibleWindow
+        drag.target: viewWindow
         drag.threshold: 1.      // Note 20170311: Avoid a nasty delay between mouse position and dragged item position
         // Do not allow dragging outside preview area
-        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - visibleWindow.width)
-        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - visibleWindow.height)
+        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - viewWindow.width)
+        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - viewWindow.height)
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         enabled: true

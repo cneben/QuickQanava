@@ -43,7 +43,7 @@ Control {
     //! Source Qan.GraphView that should be previewed.
     property var    source: undefined
 
-    property alias  visibleWindowColor: navigablePreview.visibleWindowColor
+    property alias  viewWindowColor: navigablePreview.viewWindowColor
 
     // Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity

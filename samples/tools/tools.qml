@@ -97,7 +97,7 @@ ApplicationWindow {
     Qan.GraphPreview {
         id: graphPreview
         source: graphView
-        visibleWindowColor: Material.accent
+        viewWindowColor: Material.accent
         anchors.right: graphView.right
         anchors.bottom: graphView.bottom
         anchors.rightMargin: 8

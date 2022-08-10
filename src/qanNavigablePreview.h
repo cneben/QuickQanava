@@ -80,6 +80,8 @@ signals:
 protected:
     //! Test if \c target is inside \c source
     Q_INVOKABLE bool    rectInside(QRectF source, QRectF target) const;
+    //!.
+    Q_INVOKABLE QRectF  rectUnion(QRectF a, QRectF b) const;
 
 signals:
     /*! \brief Emitted whenever the preview visible window position or size change.
