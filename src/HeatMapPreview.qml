@@ -48,6 +48,9 @@ Control {
     //! Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity
 
+    //! Initial (and minimum) scene rect (should usually fit your initial screen size).
+    property alias  initialRect: navigablePreview.initialRect
+
     //! Clear actual heat map.
     function    clearHeatMap() { analysisTimeHeatMap.clearHeatMap() }
 

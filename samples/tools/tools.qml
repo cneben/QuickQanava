@@ -90,6 +90,8 @@ ApplicationWindow {
                 n2.label = "n2"
                 n2.item.x = 150
                 n2.item.y = 55
+
+                graphView.centerOnPosition(Qt.point(0, 0));
             }
         } // Qan.Graph: graph
     }
