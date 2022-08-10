@@ -98,8 +98,10 @@ ApplicationWindow {
         id: graphPreview
         source: graphView
         visibleWindowColor: Material.accent
-        anchors.right: graphView.right; anchors.bottom: graphView.bottom
-        anchors.rightMargin: 8; anchors.bottomMargin: 8
+        anchors.right: graphView.right
+        anchors.bottom: graphView.bottom
+        anchors.rightMargin: 8
+        anchors.bottomMargin: 8
         width: previewMenu.mediumPreview.width
         height: previewMenu.mediumPreview.height
         Menu {
