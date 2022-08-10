@@ -79,6 +79,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
 OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/NavigablePreview.qml          \
                 $$PWD/GraphPreview.qml              \
+                $$PWD/HeatMapPreview.qml            \
                 $$PWD/LineGrid.qml                  \
                 $$PWD/GraphView.qml                 \
                 $$PWD/Graph.qml                     \

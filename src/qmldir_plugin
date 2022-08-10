@@ -7,6 +7,8 @@ Edge                2.0 Edge.qml
 EdgeTemplate        2.0 EdgeTemplate.qml
 Node                2.0 Node.qml
 GraphView           2.0 GraphView.qml
+GraphPreview        2.0 GraphPreview.qml
+HeatMapPreview      2.0 HeatMapPreview.qml
 Group               2.0 Group.qml
 RectNodeTemplate    2.0 RectNodeTemplate.qml
 RectSolidBackground 2.0 RectSolidBackground.qml

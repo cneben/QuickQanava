@@ -152,6 +152,54 @@ ApplicationWindow {
         }
     }
 
+    Qan.HeatMapPreview {
+        id: heatMapPreview
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        source: graphView
+
+        Menu {
+            id: heatMapMenu
+            MenuItem {
+                text: qsTr("Clear heat map")
+                onClicked: heatMapPreview.clearHeatMap()
+            }
+            MenuItem {
+                text: qsTr("Show background preview")
+                checkable: true
+                checked: heatMapPreview.backgroundPreviewVisible
+                onClicked: heatMapPreview.backgroundPreviewVisible = checked
+            }
+            MenuItem {
+                text: qsTr("Increase preview size")
+                onTriggered: {
+                    heatMapPreview.width *= 1.15
+                    heatMapPreview.height *= 1.15
+                    //heatMapPreview.previewSize = Math.min(0.5, analysisTimeHeatMapPreviewPane.previewSize + 0.1)
+                }
+            }
+            MenuItem {
+                text: qsTr("Decrease preview size")
+                onTriggered: {
+                    heatMapPreview.width *= 0.85
+                    heatMapPreview.height *= 0.85
+                    //heatMapPreview.previewSize = Math.max(0.1, analysisTimeHeatMapPreviewPane.previewSize - 0.1)
+                }
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton; preventStealing: true
+            onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                    heatMapMenu.x = mouse.x
+                    heatMapMenu.y = mouse.y
+                    heatMapMenu.open()
+                }
+            }
+        }
+    }  // Qan.HeatMapPreview
+
     Control {
         id: analysisTimeHeatMapPreviewPane
         anchors.left: graphView.left; anchors.bottom: graphView.bottom
@@ -191,38 +239,6 @@ ApplicationWindow {
                 Label {
                     text: (graphView.zoom * 100).toFixed(1) + "%"
                     font.pixelSize: 11
-                }
-            }
-            Menu {
-                id: analysisTimeHeatMapMenu
-                MenuItem {
-                    text: qsTr("Clear heat map")
-                    onClicked: analysisTimeHeatMap.clearHeatMap()
-                }
-                MenuItem {
-                    text: qsTr("Show background preview")
-                    checkable: true
-                    checked: analysisTimeHeatMapPreview.backgroundPreviewVisible
-                    onClicked: analysisTimeHeatMapPreview.backgroundPreviewVisible = checked
-                }
-                MenuItem {
-                    text: qsTr("Increase preview size")
-                    onTriggered: analysisTimeHeatMapPreviewPane.previewSize = Math.min(0.5, analysisTimeHeatMapPreviewPane.previewSize + 0.1)
-                }
-                MenuItem {
-                    text: qsTr("Decrease preview size")
-                    onTriggered: analysisTimeHeatMapPreviewPane.previewSize = Math.max(0.1, analysisTimeHeatMapPreviewPane.previewSize - 0.1)
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton; preventStealing: true
-                onClicked: {
-                    if (mouse.button === Qt.RightButton) {
-                        analysisTimeHeatMapMenu.x = mouse.x
-                        analysisTimeHeatMapMenu.y = mouse.y
-                        analysisTimeHeatMapMenu.open()
-                    }
                 }
             }
         }  // Qan.NavigablePreview

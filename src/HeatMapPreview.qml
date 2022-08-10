@@ -34,7 +34,7 @@ import "qrc:/QuickQanava" as Qan
  *
  */
 Control {
-    id: graphPreview
+    id: heatMapPreview
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
@@ -70,8 +70,8 @@ Control {
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
         if (!source)
             return
-        const pw = graphPreview.width
-        const ph = graphPreview.height
+        const pw = heatMapPreview.width
+        const ph = heatMapPreview.height
 
         const gw = source.containerItem.childrenRect.width
         const gh = source.containerItem.childrenRect.height
@@ -126,7 +126,7 @@ Control {
         Qan.NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
-            source: graphPreview.source
+            source: heatMapPreview.source
         }  // Qan.NavigablePreview
     }
 }  // Control graph preview

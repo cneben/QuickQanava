@@ -5,6 +5,8 @@
         <file>Edge.qml</file>
         <file>EdgeTemplate.qml</file>
         <file>GraphView.qml</file>
+        <file>GraphPreview.qml</file>
+        <file>HeatMapPreview.qml</file>
         <file>Node.qml</file>
         <file>Port.qml</file>
         <file>VerticalDock.qml</file>
