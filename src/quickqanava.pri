@@ -11,6 +11,7 @@ DEFINES         += QUICKQANAVA_STATIC   # use QML module (calling QuickQanava::i
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
 RESOURCES       += $$PWD/QuickQanava_static.qrc
+
 RESOURCES       += $$PWD/GraphicalEffects5/QuickQanavaGraphicalEffects.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
