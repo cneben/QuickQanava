@@ -32,8 +32,7 @@
 // \date	2017 06 02
 //-----------------------------------------------------------------------------
 
-#ifndef canNavigablePreview_h
-#define canNavigablePreview_h
+#pragma once
 
 // Qt headers
 #include <QQuickItem>
@@ -53,8 +52,8 @@ class NavigablePreview : public QQuickItem
     //@{
 Q_OBJECT
 public:
-    explicit NavigablePreview( QQuickItem* parent = nullptr );
-    virtual ~NavigablePreview() { /* Nil */ }
+    explicit NavigablePreview(QQuickItem* parent = nullptr);
+    virtual ~NavigablePreview() = default;
     NavigablePreview(const NavigablePreview&) = delete;
     //@}
     //-------------------------------------------------------------------------
@@ -66,7 +65,7 @@ public:
      *
      * \warning Can be nullptr.
      */
-    Q_PROPERTY( qan::Navigable* source READ getSource WRITE setSource NOTIFY sourceChanged FINAL )
+    Q_PROPERTY(qan::Navigable* source READ getSource WRITE setSource NOTIFY sourceChanged FINAL)
     //! \copydoc source
     inline qan::Navigable*      getSource() const noexcept { return _source.data(); }
     //! \copydoc source
@@ -93,7 +92,4 @@ signals:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::NavigablePreview )
-
-#endif // qanNavigablePreview_h
-
+QML_DECLARE_TYPE(qan::NavigablePreview)

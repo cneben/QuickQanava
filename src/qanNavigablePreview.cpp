@@ -41,7 +41,7 @@
 namespace qan { // ::qan
 
 /* NavigablePreview Object Management *///-------------------------------------
-NavigablePreview::NavigablePreview( QQuickItem* parent ) :
+NavigablePreview::NavigablePreview(QQuickItem* parent) :
     QQuickItem{parent}
 {
     setFlag(QQuickItem::ItemHasContents);
@@ -49,9 +49,9 @@ NavigablePreview::NavigablePreview( QQuickItem* parent ) :
 //-----------------------------------------------------------------------------
 
 /* Preview Management *///-----------------------------------------------------
-void    NavigablePreview::setSource( qan::Navigable* source ) noexcept
+void    NavigablePreview::setSource(qan::Navigable* source) noexcept
 {
-    if ( source != _source ) {
+    if (source != _source) {
         _source = source;
         emit sourceChanged();
     }

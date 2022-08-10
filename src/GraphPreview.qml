@@ -23,9 +23,9 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 import QtQuick 2.7
 import QtQuick.Controls 2.13
-//import QtGraphicalEffects   1.0
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -40,20 +40,24 @@ Control {
     width: 200
     height: 113
 
-    property alias source: navigablePreview.source
-    property alias visibleWindowColor: navigablePreview.visibleWindowColor
+    //! Source Qan.GraphView that should be previewed.
+    property var    source: undefined
+
+    property alias  visibleWindowColor: navigablePreview.visibleWindowColor
 
     // Preview background panel opacity (default to 0.9).
-    property alias previewOpactity: previewBackground.opacity
+    property alias  previewOpactity: previewBackground.opacity
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     padding: 0
 
     property real   previewSize: 0.15
-    property    real graphRatio: graphView.containerItem.childrenRect.width / graphView.containerItem.childrenRect.height
-    property    real previewRatio: graphView.width / graphView.height
+    property real   graphRatio: source.containerItem.childrenRect.width /
+                                source.containerItem.childrenRect.height
+    property real   previewRatio: source.width / source.height
     onGraphRatioChanged: updateNavigablePreviewSize()
     onPreviewRatioChanged: updateNavigablePreviewSize()
+    onSourceChanged: updateNavigablePreviewSize()
 
     function updateNavigablePreviewSize() {
         // Algorithm:
@@ -61,11 +65,12 @@ Control {
         // 2. If navigable preview height (nph) < preview height (ph), then use graphRatio to
         //    generate nph.
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
-
-        const pw = graphPreview.width
-        const ph = graphPreview.height
-        const gw = graphView.containerItem.childrenRect.width
-        const gh = graphView.containerItem.childrenRect.height
+        //if (!source)
+        //    return
+        const pw = source.width
+        const ph = source.height
+        const gw = source.containerItem.childrenRect.width
+        const gh = source.containerItem.childrenRect.height
 
         //console.error('')
         //console.error('graphRatio=' + graphRatio + '    previewRatio=' + previewRatio)
@@ -115,12 +120,14 @@ Control {
         Label {
             x: 4
             y: 2
-            text: (graphView.zoom * 100).toFixed(1) + "%"
+            text: source ? ((source.zoom * 100).toFixed(1) + "%") :
+                           ''
             font.pixelSize: 11
         }
         Qan.NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
+            source: graphPreview.source
         }  // Qan.NavigablePreview
     }
 }  // Control graph preview
