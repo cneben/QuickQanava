@@ -154,8 +154,8 @@ ApplicationWindow {
 
     Qan.HeatMapPreview {
         id: heatMapPreview
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: graphView.left
+        anchors.bottom: graphView.bottom
         source: graphView
         viewWindowColor: Material.accent
         Menu {
@@ -191,50 +191,4 @@ ApplicationWindow {
             }
         }
     }  // Qan.HeatMapPreview
-
-    /*Control {
-        id: analysisTimeHeatMapPreviewPane
-        anchors.left: graphView.left; anchors.bottom: graphView.bottom
-        padding: 0
-        property real   previewSize: 0.15
-        width: previewSize * graphView.width
-        height: width * (graphView.containerItem.childrenRect.height /
-                         graphView.containerItem.childrenRect.width)
-        opacity: 0.8
-        hoverEnabled: true;
-        ToolTip.visible: hovered;
-        ToolTip.delay: 1500
-        ToolTip.text: qsTr("Show image areas that have actually been viewed with 100% or more zoom")
-        z: 3    // Avoid tooltips beeing generated on top of preview
-        Qan.RectangularGlow {
-            anchors.fill: parent
-            cached: true
-            glowRadius:  8
-            cornerRadius: 8
-            spread: 0.5
-            color: "lightgrey"
-        }
-        Qan.NavigablePreview {
-            id: analysisTimeHeatMapPreview
-            anchors.fill: parent
-            source: graphView
-            visible: true
-            viewWindowColor: Material.accentColor
-            Qan.AnalysisTimeHeatMap {
-                id: analysisTimeHeatMap
-                parent: analysisTimeHeatMapPreview.overlay
-                anchors.fill: parent
-                source: analysisTimeHeatMapPreview
-                visible: true
-            }
-            Pane {
-                anchors.bottom: parent.bottom; anchors.right: parent.right
-                opacity: 0.8; padding: 1
-                Label {
-                    text: (graphView.zoom * 100).toFixed(1) + "%"
-                    font.pixelSize: 11
-                }
-            }
-        }  // Qan.NavigablePreview
-    }  // Rectangle (pane) container for analysis time heatmap*/
 }  // ApplicationWindow

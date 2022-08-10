@@ -46,7 +46,9 @@ Qan.AbstractNavigablePreview {
     //! Show or hide the target navigable content as a background image (default to true).
     property alias  backgroundPreviewVisible: sourcePreview.visible
 
-    property rect   initialRect: Qt.rect(-1280, -720, 1280 * 2, 720 * 2.)
+    //! Initial (and minimum) scene rect (should usually fit your initial screen size).
+    property rect   initialRect: Qt.rect(-1280 / 2., -720 / 2.,
+                                         1280, 720)
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     onSourceChanged: {
@@ -81,7 +83,6 @@ Qan.AbstractNavigablePreview {
     function updatePreview() {
         if (!source)
             return
-
         const r = computeSourceRect()
         if (r &&
             r.width > 0. &&
@@ -101,25 +102,9 @@ Qan.AbstractNavigablePreview {
             sourcePreview.sourceItem !== preview.source.containerItem)
             return undefined
 
-        console.error('computeSourceRect()')
-
-        // Project preview.source size (0, 0, width, height) to
-        // preview.source.containerItem to apply zoom.
-
-        // 1. If projected view rect is not inside scene rect, use view rect.
-        // 2. Otherwise use scene rect
-        /*const viewRect = preview.source.mapToItem(preview.source.containerItem,
-                                                  Qt.rect(0, 0,
-                                                          preview.source.width,
-                                                          preview.source.height))*/
-        const initialRect = Qt.rect(-1280 / 2., -720 / 2.,
-                                    1280, 720)
+        // Scene rect is union of initial rect and children rect.
         let cr = preview.source.containerItem.childrenRect
-        console.error('cr=' + cr)
-        console.error('initialRect=' + initialRect)
-        //console.error('initialRect in cr =' + preview.rectInside(cr, viewRect))
-        //if (!preview.rectInside(cr, initialRect))
-        let r = preview.rectUnion(cr, initialRect)
+        let r = preview.rectUnion(cr, preview.initialRect)
         return r
     }
 
@@ -137,7 +122,6 @@ Qan.AbstractNavigablePreview {
         // r is previewed rect in source.containerItem Cs
         if (!preview)
             return
-        console.error('updateVisibleWindow()')
         if (!source) {  // Reset the window when source is invalid
             preview.resetVisibleWindow()
             return
@@ -149,9 +133,6 @@ Qan.AbstractNavigablePreview {
         }
         if (!r)
             return
-        console.error('r=' + r)
-        console.error('preview.source.width=' + preview.source.width)
-        console.error('preview.source.height=' + preview.source.height)
 
         //if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
         //    r.height < preview.source.height) {         // reset the preview window
@@ -188,11 +169,8 @@ Qan.AbstractNavigablePreview {
                                                Qt.rect(0, 0,
                                                        preview.source.width,
                                                        preview.source.height))
-        console.error('viewR=' + viewR)
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
-        console.error('previewXRatio=' + previewXRatio)
-        console.error('previewYRatio=' + previewYRatio)
 
         viewWindow.visible = true
         viewWindow.x = (previewXRatio * (viewR.x - r.x)) + border
