@@ -38,7 +38,7 @@ Qan.AbstractNavigablePreview {
     // PUBLIC /////////////////////////////////////////////////////////////////
 
     //! Overlay item could be used to display a user defined item (for example an heat map image) between the background and the current visible window rectangle.
-    property var    overlay : overlayItem
+    property var    overlay: overlayItem
 
     //! Color for the visible window rect border (default to red).
     property color  visibleWindowColor: Qt.rgba(1, 0, 0, 1)
@@ -47,30 +47,18 @@ Qan.AbstractNavigablePreview {
     property alias  backgroundPreviewVisible: sourcePreview.visible
 
     // PRIVATE ////////////////////////////////////////////////////////////////
-    function updatePreviewSourceRect(rect) {
-        if (!source)
-            return
-        if (preview.source &&     // Manually update shader effect source source rect
-            preview.source.containerItem &&
-            sourcePreview.sourceItem === preview.source.containerItem ) {
-            var cr = preview.source.containerItem.childrenRect
-            if (cr.width > 0 && cr.height > 0)
-                sourcePreview.sourceRect = cr
-        }
-    }
-
     onSourceChanged: {
         if (source &&
             source.containerItem) {
             resetVisibleWindow()
 
             // Monitor source changes
-            source.containerItem.onWidthChanged.connect(updateVisibleWindow)
-            source.containerItem.onHeightChanged.connect(updateVisibleWindow)
-            source.containerItem.onScaleChanged.connect(updateVisibleWindow)
-            source.containerItem.onXChanged.connect(updateVisibleWindow)
-            source.containerItem.onYChanged.connect(updateVisibleWindow)
-            source.containerItem.onChildrenRectChanged.connect(updatePreviewSourceRect)
+            source.containerItem.onWidthChanged.connect(updatePreview)
+            source.containerItem.onHeightChanged.connect(updatePreview)
+            source.containerItem.onScaleChanged.connect(updatePreview)
+            source.containerItem.onXChanged.connect(updatePreview)
+            source.containerItem.onYChanged.connect(updatePreview)
+            source.containerItem.onChildrenRectChanged.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
             var cr = preview.source.containerItem.childrenRect
@@ -85,24 +73,67 @@ Qan.AbstractNavigablePreview {
         id: sourcePreview
         anchors.fill: parent
         anchors.margins: 0
-        live: true; recursive: false
-        sourceItem: source.containerItem
+        live: true
+        recursive: false
         textureSize: Qt.size(width, height)
+    }
+
+    function updatePreview() {
+        if (!source)
+            return
+
+        const r = computeSourceRect()
+        if (r &&
+            r.width > 0. &&
+            r.height > 0)
+            sourcePreview.sourceRect = r
+
+        updateVisibleWindow(r)
+    }
+
+    function computeSourceRect(rect) {
+        if (!source)
+            return undefined
+        if (!preview.source ||
+            !preview.source.containerItem ||
+            sourcePreview.sourceItem !== preview.source.containerItem)
+            return undefined
+
+        console.error('computeSourceRect()')
+
+        // Project preview.source size (0, 0, width, height) to
+        // preview.source.containerItem to apply zoom.
+
+        // 1. If projected view rect is not inside scene rect, use view rect.
+        // 2. Otherwise use scene rect
+        const viewRect = preview.source.mapToItem(preview.source.containerItem,
+                                                  Qt.rect(0, 0,
+                                                          preview.source.width,
+                                                          preview.source.height))
+        let cr = preview.source.containerItem.childrenRect
+        console.error('cr=' + viewRect)
+        console.error('viewRect=' + viewRect)
+        console.error('viewRect in cr =' + preview.rectInside(cr, viewRect))
+        if (!preview.rectInside(cr, viewRect))
+            cr = viewRect
+        return cr
     }
 
     // Reset visibleWindow rect to preview dimension (taking rectangle border into account)
     function    resetVisibleWindow() {
         const border = visibleWindow.border.width
-        const border2 = visibleWindow.border.width * 2
+        const border2 = border * 2
         visibleWindow.x = border
         visibleWindow.y = border
         visibleWindow.width = preview.width - border2
         visibleWindow.height = preview.height - border2
     }
 
-    function    updateVisibleWindow() {
+    function    updateVisibleWindow(r) {
+        // r is previewed rect in source.containerItem Cs
         if (!preview)
             return
+        console.error('updateVisibleWindow()')
         if (!source) {  // Reset the window when source is invalid
             preview.resetVisibleWindow()
             return
@@ -112,26 +143,27 @@ Qan.AbstractNavigablePreview {
             preview.resetVisibleWindow()
             return
         }
-        var containerItemCr = containerItem.childrenRect
-        if (containerItemCr.width < preview.source.width && // If scene size is stricly inferior to preview size
-            containerItemCr.height < preview.source.height) {         // reset the preview window
-            //preview.resetVisibleWindow()
-            //return
-            containerItemCr.width = preview.source.width
-            containerItemCr.height = preview.source.height
+        console.error('r=' + r)
+        console.error('preview.source.width=' + preview.source.width)
+        console.error('preview.source.height=' + preview.source.height)
+
+        if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
+            r.height < preview.source.height) {         // reset the preview window
+            r.width = preview.source.width
+            r.height = preview.source.height
         }
-        if (containerItemCr.width < 0.01 ||        // Do not update without a valid children rect
-            containerItemCr.height < 0.01) {
+        if (r.width < 0.01 ||        // Do not update without a valid children rect
+            r.height < 0.01) {
             preview.resetVisibleWindow()
             return
         }
-        if (containerItemCr.width < containerItemCr.width ||        // Reset the visible window is the whole containerItem content
-            containerItemCr.height < containerItemCr.height) {       // is smaller than graph view
+        if (r.width < r.width ||        // Reset the visible window is the whole containerItem content
+            r.height < r.height) {       // is smaller than graph view
             preview.resetVisibleWindow()
             return
         }
-        if (containerItemCr.width < preview.width && // If scene size is stricly inferior to preview size
-            containerItemCr.height < preview.height) {         // reset the preview window
+        if (r.width < preview.width && // If scene size is stricly inferior to preview size
+            r.height < preview.height) {         // reset the preview window
             preview.resetVisibleWindow()
             return
         }
@@ -140,11 +172,11 @@ Qan.AbstractNavigablePreview {
         var windowTopLeft = source.mapToItem(containerItem, 0, 0)
         var windowBottomRight = source.mapToItem(containerItem, source.width, source.height)
 
-        var previewXRatio = preview.width / containerItemCr.width
-        var previewYRatio = preview.height / containerItemCr.height
+        var previewXRatio = preview.width / r.width
+        var previewYRatio = preview.height / r.height
 
-        visibleWindow.x = previewXRatio * (windowTopLeft.x - containerItemCr.x) + border
-        visibleWindow.y = previewYRatio * (windowTopLeft.y - containerItemCr.y) + border
+        visibleWindow.x = previewXRatio * (windowTopLeft.x - r.x) + border
+        visibleWindow.y = previewYRatio * (windowTopLeft.y - r.y) + border
         visibleWindow.width = previewXRatio * Math.abs(windowBottomRight.x - windowTopLeft.x) - border2
         visibleWindow.height = previewYRatio * Math.abs(windowBottomRight.y - windowTopLeft.y) - border2
 
@@ -185,5 +217,4 @@ Qan.AbstractNavigablePreview {
         onPressed : {
         }
     }*/
-}
-
+}  // Qan.AbstractNavigablePreview: preview

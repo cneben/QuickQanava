@@ -77,6 +77,10 @@ signals:
     //! \copydoc source
     void                        sourceChanged();
 
+protected:
+    //! Test if \c target is inside \c source
+    Q_INVOKABLE bool    rectInside(QRectF source, QRectF target) const;
+
 signals:
     /*! \brief Emitted whenever the preview visible window position or size change.
      *

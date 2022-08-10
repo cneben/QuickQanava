@@ -52,14 +52,17 @@ Control {
     padding: 0
 
     property real   previewSize: 0.15
-    property real   graphRatio: source.containerItem.childrenRect.width /
-                                source.containerItem.childrenRect.height
-    property real   previewRatio: source.width / source.height
+    property real   graphRatio: source ? (source.containerItem.childrenRect.width /
+                                         source.containerItem.childrenRect.height) :
+                                         1.
+    property real   previewRatio: source ? (source.width / source.height) : 1.0
     onGraphRatioChanged: updateNavigablePreviewSize()
     onPreviewRatioChanged: updateNavigablePreviewSize()
     onSourceChanged: updateNavigablePreviewSize()
 
     function updateNavigablePreviewSize() {
+        // Update the navigable preview width/height such that it's aspect ratio
+        // is correct but fit in this graph preview size.
         // Algorithm:
         // 1. Compute navigable preview height (nph) given graph width (gw) and graphRatio.
         // 2. If navigable preview height (nph) < preview height (ph), then use graphRatio to
@@ -69,6 +72,7 @@ Control {
             return
         const pw = graphPreview.width
         const ph = graphPreview.height
+
         const gw = source.containerItem.childrenRect.width
         const gh = source.containerItem.childrenRect.height
 
@@ -97,6 +101,8 @@ Control {
         // Secure with boundary Check
         navigablePreview.width = Math.min(npw, pw)
         navigablePreview.height = Math.min(nph, ph)
+        //navigablePreview.width = pw
+        //navigablePreview.height = ph
     }
 
     opacity: 0.8

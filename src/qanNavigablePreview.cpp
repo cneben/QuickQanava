@@ -56,6 +56,11 @@ void    NavigablePreview::setSource(qan::Navigable* source) noexcept
         emit sourceChanged();
     }
 }
+
+bool    NavigablePreview::rectInside(QRectF source, QRectF target) const
+{
+    return source.contains(target);
+}
 //-----------------------------------------------------------------------------
 
 } // ::qan
