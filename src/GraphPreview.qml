@@ -102,8 +102,8 @@ Control {
     }
 
     opacity: 0.8
-    hoverEnabled: true; ToolTip.visible: hovered; ToolTip.delay: 1500
-    ToolTip.text: qsTr("Show parts of image that have actually been viewed with more than 100% zoom")
+    hoverEnabled: true
+
     z: 3    // Avoid tooltips beeing generated on top of preview
     Qan.RectangularGlow {
         anchors.fill: parent
