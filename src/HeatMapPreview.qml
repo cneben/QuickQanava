@@ -34,7 +34,7 @@ import "qrc:/QuickQanava" as Qan
  *
  */
 Control {
-    id: graphPreview
+    id: heatMapPreview
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
@@ -45,11 +45,14 @@ Control {
 
     property alias  viewWindowColor: navigablePreview.viewWindowColor
 
-    // Preview background panel opacity (default to 0.9).
+    //! Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity
 
     //! Initial (and minimum) scene rect (should usually fit your initial screen size).
     property alias  initialRect: navigablePreview.initialRect
+
+    //! Clear actual heat map.
+    function    clearHeatMap() { analysisTimeHeatMap.clearHeatMap() }
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
@@ -73,8 +76,8 @@ Control {
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
         if (!source)
             return
-        const pw = graphPreview.width
-        const ph = graphPreview.height
+        const pw = heatMapPreview.width
+        const ph = heatMapPreview.height
 
         const gw = source.containerItem.childrenRect.width
         const gh = source.containerItem.childrenRect.height
@@ -102,8 +105,8 @@ Control {
     }
 
     opacity: 0.8
-    hoverEnabled: true
-
+    hoverEnabled: true; ToolTip.visible: hovered; ToolTip.delay: 1500
+    ToolTip.text: qsTr("Show parts of image that have actually been viewed with more than 100% zoom")
     z: 3    // Avoid tooltips beeing generated on top of preview
     Qan.RectangularGlow {
         anchors.fill: parent
@@ -129,7 +132,15 @@ Control {
         Qan.NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
-            source: graphPreview.source
+            source: heatMapPreview.source
+
+            Qan.AnalysisTimeHeatMap {
+                id: analysisTimeHeatMap
+                parent: navigablePreview.overlay
+                anchors.fill: parent
+                source: navigablePreview
+                visible: true
+            }
         }  // Qan.NavigablePreview
     }
 }  // Control graph preview

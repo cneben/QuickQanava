@@ -42,8 +42,8 @@ namespace qan { // ::qan
 Selectable::Selectable() { /* Nil */ }
 
 Selectable::~Selectable() {
-    if ( _selectionItem &&  // Delete selection item if it has Cpp ownership
-         QQmlEngine::objectOwnership(_selectionItem.data()) == QQmlEngine::CppOwnership )
+    if (_selectionItem &&  // Delete selection item if it has Cpp ownership
+        QQmlEngine::objectOwnership(_selectionItem.data()) == QQmlEngine::CppOwnership)
         _selectionItem->deleteLater();
 }
 
@@ -51,8 +51,8 @@ void    Selectable::configure(QQuickItem* target, qan::Graph* graph)
 {
     _target = target;
     _graph = graph;
-    if ( _selectionItem )
-        _selectionItem->setParentItem( _target );
+    if (_selectionItem)
+        _selectionItem->setParentItem(_target);
 }
 //-----------------------------------------------------------------------------
 

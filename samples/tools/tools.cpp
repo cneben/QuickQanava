@@ -27,61 +27,33 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanFaceNode.h
+// \file	tools.cpp
 // \author	benoit@destrat.io
-// \date	2016 08 12
+// \date	2022 08 10
 //-----------------------------------------------------------------------------
 
-#pragma once
+// Qt headers
+#include <QApplication>
+#include <QQuickStyle>
+#include <QIcon>
 
 // QuickQanava headers
-#include <QuickQanava>
+#include "../../src/QuickQanava.h"
 
-// Qt headers
-#include <QQuickPaintedItem>
+using namespace qan;
 
-namespace qan { // ::qan
-
-class FaceNode : public qan::Node
+int	main(int argc, char** argv)
 {
-    Q_OBJECT
-public:
-    explicit FaceNode(QQuickItem* parent = nullptr);
-    virtual ~FaceNode() override = default;
-private:
-    Q_DISABLE_COPY(FaceNode)
-public:
-    Q_PROPERTY(QUrl image READ getImage WRITE setImage NOTIFY imageChanged)
-    const QUrl&     getImage() const noexcept { return _image; }
-    void            setImage(QUrl image) noexcept;
-private:
-    QUrl            _image;
-signals:
-    void            imageChanged();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(true);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/tools.qml"));
+    return app.exec();
+}
 
-    /*! \name Node Static Factories *///---------------------------------------
-    //@{
-public:
-    static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
-    //@}
-    //-------------------------------------------------------------------------
-};
-
-class FaceGraph : public qan::Graph
-{
-    Q_OBJECT
-public:
-    explicit FaceGraph(QQuickItem* parent = nullptr) noexcept :
-        qan::Graph(parent) { }
-
-public:
-    Q_INVOKABLE qan::Node* insertFaceNode() {
-        auto node = insertNode<FaceNode>(nullptr);
-        return node;
-    }
-};
-
-} // ::qan
-
-QML_DECLARE_TYPE(qan::FaceNode)
-QML_DECLARE_TYPE(qan::FaceGraph)

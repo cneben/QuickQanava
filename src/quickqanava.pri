@@ -11,6 +11,7 @@ DEFINES         += QUICKQANAVA_STATIC   # use QML module (calling QuickQanava::i
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
 RESOURCES       += $$PWD/QuickQanava_static.qrc
+
 RESOURCES       += $$PWD/GraphicalEffects5/QuickQanavaGraphicalEffects.qrc
 
 HEADERS +=  $$PWD/QuickQanava.h             \
@@ -36,6 +37,7 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanStyleManager.h         \
             $$PWD/qanNavigable.h            \
             $$PWD/qanNavigablePreview.h     \
+            $$PWD/qanAnalysisTimeHeatMap.h  \
             $$PWD/qanGrid.h                 \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanBottomRightResizer.h   \
@@ -69,6 +71,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
             $$PWD/qanNavigablePreview.cpp   \
+            $$PWD/qanAnalysisTimeHeatMap.cpp\
             $$PWD/qanGrid.cpp               \
             $$PWD/qanLineGrid.cpp           \
             $$PWD/qanBottomRightResizer.cpp
@@ -76,6 +79,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
 OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/NavigablePreview.qml          \
                 $$PWD/GraphPreview.qml              \
+                $$PWD/HeatMapPreview.qml            \
                 $$PWD/LineGrid.qml                  \
                 $$PWD/GraphView.qml                 \
                 $$PWD/Graph.qml                     \

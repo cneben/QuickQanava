@@ -2,6 +2,7 @@
     <qresource prefix="/QuickQanava">
         <file>NavigablePreview.qml</file>
         <file>GraphPreview.qml</file>
+        <file>HeatMapPreview.qml</file>
         <file>LineGrid.qml</file>
         <file>Edge.qml</file>
         <file>EdgeTemplate.qml</file>
@@ -26,6 +27,7 @@
         <file>StyleListView.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
+        <file>HeatMapPreview.qml</file>
         <file alias="qmldir">qmldir_static</file>
     </qresource>
 </RCC>

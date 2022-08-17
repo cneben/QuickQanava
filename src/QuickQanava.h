@@ -58,6 +58,7 @@
 #include "./qanStyleManager.h"
 #include "./qanBottomRightResizer.h"
 #include "./qanNavigablePreview.h"
+#include "./qanAnalysisTimeHeatMap.h"
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
@@ -88,6 +89,7 @@ struct QuickQanava {
         qmlRegisterType<qan::GraphView>("QuickQanava", 2, 0, "AbstractGraphView");
         qmlRegisterType<qan::Navigable>("QuickQanava", 2, 0, "Navigable");
         qmlRegisterType<qan::NavigablePreview>("QuickQanava", 2, 0, "AbstractNavigablePreview");
+        qmlRegisterType<qan::AnalysisTimeHeatMap>("QuickQanava", 2, 0, "AnalysisTimeHeatMap");
 
         qmlRegisterType<qan::Grid>("QuickQanava", 2, 0, "AbstractGrid");
         qmlRegisterType<qan::OrthoGrid>("QuickQanava", 2, 0, "OrthoGrid");
