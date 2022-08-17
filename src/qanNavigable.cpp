@@ -272,9 +272,9 @@ void    Navigable::setDragActive(bool dragActive) noexcept
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-void    Navigable::geometryChanged( const QRectF& newGeometry, const QRectF& oldGeometry )
+void    Navigable::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 #else
-void    Navigable::geometryChange( const QRectF& newGeometry, const QRectF& oldGeometry )
+void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry)
 #endif
 {
     if (getNavigable()) {

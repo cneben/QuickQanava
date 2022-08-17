@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-project(QuickQanava VERSION 0.11.0 LANGUAGES CXX)
+project(QuickQanava VERSION 2.1.0 LANGUAGES CXX)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)

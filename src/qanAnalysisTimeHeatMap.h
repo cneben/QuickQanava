@@ -126,8 +126,12 @@ private:
     qint64      _maximumAnalysisDuration = -1;
 
 protected:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //! Resize the internal heatmap image.
-    virtual void    geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
+    virtual void    geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+#else
+    virtual void    geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+#endif
     //@}
     //-------------------------------------------------------------------------
 };

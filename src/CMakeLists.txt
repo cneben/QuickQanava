@@ -22,6 +22,7 @@ set(qan_source_files
     qanSelectable.cpp
     qanStyle.cpp
     qanStyleManager.cpp
+    qanAnalysisTimeHeatMap.cpp
     qanUtils.cpp
     )
 
@@ -49,6 +50,7 @@ set (qan_header_files
     qanSelectable.h
     qanStyle.h
     qanStyleManager.h
+    qanAnalysisTimeHeatMap.cpp
     qanUtils.h
     QuickQanava.h
     gtpo/container_adapter.h
