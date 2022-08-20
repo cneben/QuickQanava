@@ -110,9 +110,9 @@ qan::NodeStyle* Node::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Topology Interface *///-----------------------------------------------------
-QAbstractItemModel* Node::qmlGetInNodes( ) const
+QAbstractItemModel* Node::qmlGetInNodes() const
 {
-    return const_cast<QAbstractItemModel*>( static_cast< const QAbstractItemModel* >( get_in_nodes().model() ) );
+    return const_cast<QAbstractItemModel*>(static_cast<const QAbstractItemModel*>(get_in_nodes().model()));
 }
 
 int     Node::getInDegree() const
@@ -123,7 +123,7 @@ int     Node::getInDegree() const
 
 QAbstractItemModel* Node::qmlGetOutNodes() const
 {
-    return const_cast< QAbstractItemModel* >( qobject_cast< const QAbstractItemModel* >( get_out_nodes().model() ) );
+    return const_cast< QAbstractItemModel* >(qobject_cast<const QAbstractItemModel*>(get_out_nodes().model()));
 }
 
 int     Node::getOutDegree() const
