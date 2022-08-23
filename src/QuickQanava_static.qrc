@@ -27,7 +27,6 @@
         <file>StyleListView.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
-        <file>HeatMapPreview.qml</file>
         <file alias="qmldir">qmldir_static</file>
     </qresource>
 </RCC>
