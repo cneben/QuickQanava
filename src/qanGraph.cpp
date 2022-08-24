@@ -1843,6 +1843,7 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
 
     std::vector<const qan::Node*> parents;
     std::unordered_set<const qan::Node*> marks;
+
     // Note: set collectParentGroup to false, since we don't want to collect nodes
     // directly in this node eventual group.
     collectAncestorsDfs_rec(&node, parents, marks,
