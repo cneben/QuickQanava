@@ -967,13 +967,6 @@ public:
      */
     std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
-    // FIXME #599
-/*private:
-    void                    collectAncestorsDfsRec(const qan::Node*,
-                                                   std::unordered_set<const qan::Node*>& marks,
-                                                   std::vector<const qan::Node*>& parents,
-                                                   bool collectGroup) const noexcept;
-*/
 public:
     //! \copydoc isAncestor()
     Q_INVOKABLE bool        isAncestor(qan::Node* node, qan::Node* candidate) const;
@@ -982,16 +975,17 @@ public:
      *
      * \warning this method is synchronous and recursive.
      * \return true if \c candidate is an ancestor of \c node (ie \c node is an out
-     * node of \c candidate at any degree.
+     * node of \c candidate at any degree).
      */
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
 
-private:
+    // FIXME #599
+/*private:
     bool                    isAncestorsDfsRec(const qan::Node*,
                                               const qan::Node& candidate,
                                               std::unordered_set<const qan::Node*>& marks,
                                               bool collectGroup) const noexcept;
-
+*/
 public:
     /*! Collect all nodes and groups contained in given groups.
      *

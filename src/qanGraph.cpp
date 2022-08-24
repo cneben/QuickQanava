@@ -1809,7 +1809,7 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
         // 1.3
         // 1.4 Recurse 1.1, 1.2, 1.3
 
-    auto collectAncestorsDfs_rec = [](const qan::Node* node,
+    const auto collectAncestorsDfs_rec = [](const qan::Node* node,
             std::vector<const qan::Node*>& parents,
             std::unordered_set<const qan::Node*>& marks,
             bool collectParentGroup,
@@ -1856,35 +1856,6 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
     return parents;
 }
 
-// FIXME #599
-/*void    Graph::collectAncestorsDfsRec(const qan::Node* node,
-                             std::unordered_set<const qan::Node*>& marks,
-                             std::vector<const qan::Node*>& parents,
-                             bool collectGroup) const noexcept
-{
-    if (node == nullptr)
-        return;
-    if (marks.find(node) != marks.end())    // Do not collect on already visited
-        return;                             // branchs
-    marks.insert(node);
-    parents.push_back(node);
-    if (collectGroup &&
-        node->isGroup()) {
-        const auto group = qobject_cast<const qan::Group*>(node);
-        if (group) {
-            for (const auto groupNode : group->get_nodes())
-                collectAncestorsDfsRec(qobject_cast<qan::Node*>(groupNode), marks,
-                                       parents, collectGroup);
-        }
-    }
-    const auto nodeGroup = node->getGroup();
-    if (nodeGroup != nullptr)
-        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
-    for (const auto& inNode : node->get_in_nodes())
-        collectAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), marks,
-                               parents, collectGroup);
-}
-*/
 bool    Graph::isAncestor(qan::Node* node, qan::Node* candidate) const
 {
     if (node != nullptr && candidate != nullptr)
@@ -1896,18 +1867,36 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
 {
     std::unordered_set<const qan::Node*> marks;
     marks.insert(&node);
+
+    const auto isAncestorDfs_rec = [](const qan::Node* node, const qan::Node& candidate,
+                                      std::unordered_set<const qan::Node*>& marks,
+                                      const auto& lambda) {
+        if (node == nullptr)
+            return false;
+        if (node == &candidate)
+            return true;
+        if (marks.find(node) != marks.end())    // Do not collect on already visited
+            return false;                       // branchs
+        marks.insert(node);
+        for (const auto& inNode : node->get_in_nodes())
+            if (lambda(qobject_cast<qan::Node*>(inNode), candidate,
+                                  marks, lambda))
+                return true;
+        return false;
+    };
+
     for (const auto& inNode : node.get_in_nodes()) {
-        if (isAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), candidate,
-                              marks, false))
+        if (isAncestorDfs_rec(qobject_cast<qan::Node*>(inNode), candidate,
+                              marks, isAncestorDfs_rec))
             return true;
     }
     return false;
 }
 
-bool    Graph::isAncestorsDfsRec(const qan::Node* node,
+// FIXME #599
+/*bool    Graph::isAncestorsDfsRec(const qan::Node* node,
                                  const qan::Node& candidate,
-                                 std::unordered_set<const qan::Node*>& marks,
-                                 bool collectGroup) const noexcept
+                                 std::unordered_set<const qan::Node*>& marks) const noexcept
 {
     if (node == nullptr)
         return false;
@@ -1916,23 +1905,12 @@ bool    Graph::isAncestorsDfsRec(const qan::Node* node,
     if (marks.find(node) != marks.end())    // Do not collect on already visited
         return false;                       // branchs
     marks.insert(node);
-/*    if (collectGroup &&
-        node->isGroup()) {
-        const auto group = qobject_cast<const qan::Group*>(node);
-        if (group) {
-            for (const auto& groupNode : group->get_nodes())
-                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
-        }
-    }*/
-    /*const auto nodeGroup = node->getGroup();
-    if (nodeGroup != nullptr)
-        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);*/
     for (const auto& inNode : node->get_in_nodes())
         if (isAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), candidate,
-                              marks, collectGroup))
+                              marks))
             return true;
     return false;
-}
+}*/
 
 auto    Graph::collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>
 {

@@ -404,11 +404,13 @@ TEST(qan_Graph, collectAncestorsDfs_basic)
     auto n1 = g.create_node();
     g.insert_node(n1);
 
-    //  +----------+
-    //  v          |
-    // n3 -> n2 -> n1 -> n4    n5
+    // g = n1
     const auto r1 = g.collectAncestorsDfs(*n1);
     ASSERT_EQ(r1.size(), 1);    // n1
+
+    //     +-----------+
+    //     v           |
+    // g = n3 -> n2 -> n1 -> n4    n5
 
     auto n2 = g.create_node();  // Ancestor level 1
     g.insert_node(n2);
@@ -431,3 +433,59 @@ TEST(qan_Graph, collectAncestorsDfs_basic)
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
 }
+
+
+// FIXME isAncestor test with circuit !
+TEST(qan_Graph, isAncestor_basic)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+
+    // g = n1
+    const auto r1 = g.collectAncestorsDfs(*n1);
+    ASSERT_FALSE(g.isAncestor(n1, nullptr));
+    ASSERT_FALSE(g.isAncestor(nullptr, n1));
+    ASSERT_FALSE(g.isAncestor(nullptr, nullptr));
+    ASSERT_FALSE(g.isAncestor(n1, n1));
+
+    //     +-+
+    //     v |
+    // g = n1
+    g.insert_edge(n1, n1);  // Add circuit
+    ASSERT_FALSE(g.isAncestor(n1, n1));
+}
+
+TEST(qan_Graph, isAncestor)
+{
+    qan::Graph g;
+    //     +-----------+
+    //     v           |
+    // g = n3 -> n2 -> n1 -> n4    n5
+
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+
+    auto n2 = g.create_node();  // Ancestor level 1
+    g.insert_node(n2);
+    g.insert_edge(n2, n1);
+    auto n3 = g.create_node();  // Ancestor level 2
+    g.insert_node(n3);
+    g.insert_edge(n3, n2);
+    g.insert_edge(n1, n3);      // Circuit from n1 to n3
+
+    auto n4 = g.create_node();  // Child node
+    g.insert_node(n4);
+    g.insert_edge(n1, n4);
+
+    auto n5 = g.create_node();  // Orphant node
+    g.insert_node(n5);
+
+    const auto r2 = g.collectAncestorsDfs(*n1);
+    ASSERT_EQ(r2.size(), 3);   // n3, n2 and n1
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n1) != r2.cend());
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
+}
+
+
