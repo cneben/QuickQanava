@@ -979,13 +979,6 @@ public:
      */
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
 
-    // FIXME #599
-/*private:
-    bool                    isAncestorsDfsRec(const qan::Node*,
-                                              const qan::Node& candidate,
-                                              std::unordered_set<const qan::Node*>& marks,
-                                              bool collectGroup) const noexcept;
-*/
 public:
     /*! Collect all nodes and groups contained in given groups.
      *

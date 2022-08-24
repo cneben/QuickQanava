@@ -434,8 +434,61 @@ TEST(qan_Graph, collectAncestorsDfs_basic)
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
 }
 
+TEST(qan_Graph, collectAncestorsDfs_groups)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+    auto n2 = g.create_node();
+    g.insert_node(n2);
+    auto n3 = g.create_node();
+    g.insert_node(n3);
+    auto n4 = g.create_node();
+    g.insert_node(n4);
+    auto n5 = g.create_node();
+    g.insert_node(n5);
 
-// FIXME isAncestor test with circuit !
+
+    auto g1 = g.insertGroup();
+    g.groupNode(g1, n1);
+    g.groupNode(g1, n2);
+
+    auto g2 = g.insertGroup();
+    g.groupNode(g2, n3);
+    g.groupNode(g2, g1);
+
+    auto g3 = g.insertGroup();
+    g.groupNode(g3, n4);
+    g.groupNode(g3, n5);
+
+    // g=
+    //             +---------------------------+
+    //             | G2                        |
+    // +--------+  |     +---------------+     |
+    // |G3      |  |     |G1             |     |
+    // |   N4---+--+-----+->N1       N2  | N3  |
+    // |        |  |     |               |     |
+    // |   N5   |  |     +---------------+     |
+    // +--------+  |                           |
+    //             +---------------------------+
+
+    // EXPECT: collectAncestorsDfs(*n1)
+    // with    collectGroup: [N1, N4, N5]
+    // without collectGroup: [N1, N4]
+
+    const auto r1 = g.collectAncestorsDfs(*n1, true);  // collectGroup = true
+
+    ASSERT_EQ(r1.size(), 3);
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n1) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n4) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
+
+    const auto r2 = g.collectAncestorsDfs(*n1, false);  // collectGroup = false
+    ASSERT_EQ(r2.size(), 2);
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n1) != r2.cend());
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n4) != r2.cend());
+}
+
 TEST(qan_Graph, isAncestor_basic)
 {
     qan::Graph g;
@@ -488,5 +541,3 @@ TEST(qan_Graph, isAncestor)
     EXPECT_TRUE(g.isAncestor(n1, n2));
     EXPECT_TRUE(g.isAncestor(n1, n3));
 }
-
-
