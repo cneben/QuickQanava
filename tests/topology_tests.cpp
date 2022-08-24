@@ -398,6 +398,46 @@ TEST(qan_Graph, remove_node_degree)
 // Graph topology tests
 //-----------------------------------------------------------------------------
 
+TEST(qan_Graph, collectNeighboursDfs_basic)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+    auto n2 = g.create_node();
+    g.insert_node(n2);
+    auto n3 = g.create_node();
+    g.insert_node(n3);
+    auto n4 = g.create_node();
+    g.insert_node(n4);
+    auto n5 = g.create_node();
+    g.insert_node(n5);
+
+    auto g1 = g.insertGroup();
+    g.group_node(n1, g1);
+    g.group_node(n2, g1);
+
+    auto g2 = g.insertGroup();
+    g.group_node(n3, g2);
+    g.group_node(g1, g2);
+
+    auto g3 = g.insertGroup();
+    g.group_node(n4, g3);
+    g.group_node(n5, g3);
+
+    // g=          +---------------------------+
+    //             | G2                        |
+    // +--------+  |     +---------------+     |
+    // |G3      |  |     |       G1      |     |
+    // |   N4   |  |     |  N1       N2  | N3  |
+    // |        |  |     |               |     |
+    // |   N5   |  |     +---------------+     |
+    // +--------+  |                           |
+    //             +---------------------------+
+
+    // EXPECT: neibours(N4) = [N5, G3]
+    // EXPECT: neighbours(N1) = [N2, G1, G2, N3]
+}
+
 TEST(qan_Graph, collectAncestorsDfs_basic)
 {
     qan::Graph g;
@@ -448,40 +488,48 @@ TEST(qan_Graph, collectAncestorsDfs_groups)
     auto n5 = g.create_node();
     g.insert_node(n5);
 
+    g.insert_edge(n4, n1);
 
     auto g1 = g.insertGroup();
-    g.groupNode(g1, n1);
-    g.groupNode(g1, n2);
+    g.group_node(n1, g1);
+    g.group_node(n2, g1);
 
     auto g2 = g.insertGroup();
-    g.groupNode(g2, n3);
-    g.groupNode(g2, g1);
+    g.group_node(n3, g2);
+    g.group_node(g1, g2);
 
     auto g3 = g.insertGroup();
-    g.groupNode(g3, n4);
-    g.groupNode(g3, n5);
+    g.group_node(n4, g3);
+    g.group_node(n5, g3);
 
-    // g=
-    //             +---------------------------+
+    // g=          +---------------------------+
     //             | G2                        |
     // +--------+  |     +---------------+     |
-    // |G3      |  |     |G1             |     |
+    // |G3      |  |     |       G1      |     |
     // |   N4---+--+-----+->N1       N2  | N3  |
     // |        |  |     |               |     |
     // |   N5   |  |     +---------------+     |
     // +--------+  |                           |
     //             +---------------------------+
 
+    // + simple:
+    // faire collectNeioghbours() (uniquement les co-group et co-group dans
+    // les parent group).
+    // Et lancer collectNei sur les in nodes.
+    // Du coup, c'est facile à coder et à tester...
+
     // EXPECT: collectAncestorsDfs(*n1)
-    // with    collectGroup: [N1, N4, N5]
+    // with    collectGroup: [N1, G3, N4, N5]
     // without collectGroup: [N1, N4]
 
-    const auto r1 = g.collectAncestorsDfs(*n1, true);  // collectGroup = true
+    /*const auto r1 = g.collectAncestorsDfs(*n1, true);  // collectGroup = true
 
-    ASSERT_EQ(r1.size(), 3);
+    EXPECT_EQ(r1.size(), 4);
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n1) != r1.cend());
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n4) != r1.cend());
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), g3) != r1.cend());
+    */
 
     const auto r2 = g.collectAncestorsDfs(*n1, false);  // collectGroup = false
     ASSERT_EQ(r2.size(), 2);

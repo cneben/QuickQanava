@@ -1768,7 +1768,7 @@ void    Graph::collectDfsRec(const qan::Node* node,
     }
 }
 
-auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
+auto    Graph::collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
 {
     // Algorithm:
         // 0. Index nodes
@@ -1799,7 +1799,43 @@ auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) cons
     return innerEdges;
 }
 
-std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const noexcept
+std::vector<const qan::Node*>   Graph::collectNeighbours(const qan::Node& node) const
+{
+    const auto collectNeighboursDfs_rec = [](const qan::Node* visited,
+            std::vector<const qan::Node*>& neighbours,
+            std::unordered_set<const qan::Node*>& marks,
+            const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return;                                // branchs
+        marks.insert(visited);
+        neighbours.push_back(visited);
+
+        // Collect group neighbours
+        const auto group = qobject_cast<const qan::Group*>(visited);
+        if (visited->isGroup() &&
+            group != nullptr) {
+            for (const auto groupNode : group->get_nodes())  // Collect all nodes in a group
+                lambda(qobject_cast<qan::Node*>(groupNode), neighbours, marks,
+                       lambda);
+        }
+        // Collect group parent group neighbours
+        const auto nodeGroup = visited->getGroup();
+        if (nodeGroup != nullptr)
+            lambda(nodeGroup, neighbours, marks,
+                   lambda);
+    };
+
+    std::vector<const qan::Node*> neighbours;
+    std::unordered_set<const qan::Node*> marks;
+    collectNeighboursDfs_rec(&node, neighbours, marks,
+                            collectNeighboursDfs_rec);
+
+    return neighbours;
+}
+
+std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const
 {
     // ALGORITHM:
       // 0. (INIT) Collect all node ancestors.
@@ -1812,7 +1848,6 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
     const auto collectAncestorsDfs_rec = [collectGroup](const qan::Node* visited,
             std::vector<const qan::Node*>& parents,
             std::unordered_set<const qan::Node*>& marks,
-            bool collectParentGroup,
             const auto& lambda) {
         if (visited == nullptr)
             return;
@@ -1824,9 +1859,9 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
         // 1.1 Collect ancestor
         for (const auto inNode : visited->get_in_nodes())
             lambda(qobject_cast<qan::Node*>(inNode), parents, marks,
-                   true, lambda);
+                   lambda);
 
-        // 1.2 If ancestor node is a group, collect its nodes.
+        // 1.2 If visited node is a group, collect its nodes.
         if (collectGroup &&
             visited->isGroup()) {
             // Collect all nodes in a group
@@ -1834,25 +1869,27 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
             if (group) {
                 for (const auto groupNode : group->get_nodes())
                     lambda(qobject_cast<qan::Node*>(groupNode), parents, marks,
-                           true, lambda);
+                           lambda);
             }
         }
         // 1.3
-        if (collectParentGroup) {  // Only used for first recursion initialization
+        if (collectGroup) {  // Only used for first recursion initialization
             const auto nodeGroup = visited->getGroup();
             if (nodeGroup != nullptr)
                 lambda(nodeGroup, parents, marks,
-                       true, lambda);
+                       lambda);
         }
     };
 
     std::vector<const qan::Node*> parents;
     std::unordered_set<const qan::Node*> marks;
 
-    // Note: set collectParentGroup to false, since we don't want to collect nodes
-    // directly in this node eventual group.
+    // Note: If node is a group,
+    /*for (const auto inNode : visited->get_in_nodes())
+        lambda(qobject_cast<qan::Node*>(inNode), parents, marks,
+               lambda);*/
     collectAncestorsDfs_rec(&node, parents, marks,
-                            false, collectAncestorsDfs_rec);
+                            collectAncestorsDfs_rec);
 
     return parents;
 }

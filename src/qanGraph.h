@@ -956,16 +956,18 @@ private:
 
 public:
     //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
-    auto    collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
+    auto    collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
+    std::vector<const qan::Node*>   collectNeighbours(const qan::Node& node) const;
+
     /*! \brief Synchronously collect all parent nodes of \c node using DFS on \c inNodes.
      *
      * \note \c node is automatically added to the result and returned as the first
      * node of the return set.  FIXME #599
      * \warning this method is synchronous and recursive.
      */
-    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
+    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const;
 
 public:
     //! \copydoc isAncestor()
