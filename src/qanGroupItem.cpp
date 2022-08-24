@@ -149,11 +149,17 @@ void    GroupItem::collapseAncestors(bool collapsed)
     if (group == nullptr)
         return;
 
+
+
     // ALGORITHM:
         // 1. Collect all ancestors of group
         // 2. Filter from ancestors every nodes that are part of this group
         // 3. Collect adjacent edges of selected nodes
         // 4. Hide selected edges and nodes
+
+    // X. Collect node parent groups
+      // X.1 Filter any ascendant who has node as child (to avoid hidding node!)
+
 
     // 1.
     const auto allAncestors = graph->collectAncestorsDfs(*group, true);

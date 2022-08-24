@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 20220824 v2.1.1:
+- 
+
+## 20220817 v2.1.0:
+- First Github release 
+- Multiple bug fixes on internal topology backend and memory management.
+- QuickQanava now build with Qt from Qt 5.15 to Qt 6.3 with g++, msvc and clang with both qmake and CMake.
+- Add Qan.HeatMapPreview component that could be used to help user explore large graphs:
+
 ## 20220427 v2.0.0:
 - Release v2.0.0.
 - Simplify and clean GTpo framework (which is no longer usefull outside of QuickQanava).
