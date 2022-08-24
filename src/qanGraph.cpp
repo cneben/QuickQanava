@@ -1816,6 +1816,10 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
             const auto& lambda) {
         if (node == nullptr)
             return;
+        if (marks.find(node) != marks.end())    // Do not collect on already visited
+            return;                             // branchs
+        marks.insert(node);
+        parents.push_back(node);
 
         // 1.1 Collect ancestor
         for (const auto inNode : node->get_in_nodes())
