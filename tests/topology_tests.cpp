@@ -481,11 +481,12 @@ TEST(qan_Graph, isAncestor)
     auto n5 = g.create_node();  // Orphant node
     g.insert_node(n5);
 
-    const auto r2 = g.collectAncestorsDfs(*n1);
-    ASSERT_EQ(r2.size(), 3);   // n3, n2 and n1
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n1) != r2.cend());
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
+    EXPECT_FALSE(g.isAncestor(n1, n4));
+    EXPECT_TRUE(g.isAncestor(n4, n1));
+    EXPECT_FALSE(g.isAncestor(n1, n5));
+    EXPECT_FALSE(g.isAncestor(n1, n1));
+    EXPECT_TRUE(g.isAncestor(n1, n2));
+    EXPECT_TRUE(g.isAncestor(n1, n3));
 }
 
 

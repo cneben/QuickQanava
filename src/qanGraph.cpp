@@ -1868,25 +1868,27 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
     std::unordered_set<const qan::Node*> marks;
     marks.insert(&node);
 
-    const auto isAncestorDfs_rec = [](const qan::Node* node, const qan::Node& candidate,
+    const auto isAncestorDfs_rec = [&node](const qan::Node* visited, const qan::Node& candidate,
                                       std::unordered_set<const qan::Node*>& marks,
                                       const auto& lambda) {
-        if (node == nullptr)
+        if (visited == nullptr)
             return false;
-        if (node == &candidate)
+        if (visited == &node)    // Circuit detection
+            return false;
+        if (visited == &candidate)
             return true;
-        if (marks.find(node) != marks.end())    // Do not collect on already visited
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
             return false;                       // branchs
-        marks.insert(node);
-        for (const auto& inNode : node->get_in_nodes())
-            if (lambda(qobject_cast<qan::Node*>(inNode), candidate,
-                                  marks, lambda))
+        marks.insert(visited);
+        for (const auto inNode : visited->get_in_nodes())
+            if (lambda(inNode, candidate,
+                       marks, lambda))
                 return true;
         return false;
     };
 
-    for (const auto& inNode : node.get_in_nodes()) {
-        if (isAncestorDfs_rec(qobject_cast<qan::Node*>(inNode), candidate,
+    for (const auto inNode : node.get_in_nodes()) {
+        if (isAncestorDfs_rec(inNode, candidate,
                               marks, isAncestorDfs_rec))
             return true;
     }
