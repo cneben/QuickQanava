@@ -151,6 +151,8 @@ void    NodeItem::collapseAncestors(bool collapsed)
     if (node == nullptr)
         return;
 
+    // FIXME #599
+
     // ALGORITHM:
         // 1. Collect all ancestors of group
         // 2. Filter from ancestors every nodes that are part of this group
@@ -158,7 +160,7 @@ void    NodeItem::collapseAncestors(bool collapsed)
         // 4. Hide selected edges and nodes
 
     // 1.
-    const auto allAncestors = graph->collectAncestorsDfs(*node, true);
+    const auto allAncestors = graph->collectAncestors(*node);
 
     // 2.
     std::vector<qan::Node*> ancestors;

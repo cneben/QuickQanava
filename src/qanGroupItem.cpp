@@ -160,9 +160,10 @@ void    GroupItem::collapseAncestors(bool collapsed)
     // X. Collect node parent groups
       // X.1 Filter any ascendant who has node as child (to avoid hidding node!)
 
+    // FIXME #599
 
     // 1.
-    const auto allAncestors = graph->collectAncestorsDfs(*group, true);
+    const auto allAncestors = graph->collectAncestors(*group);
 
     // 2.
     std::vector<qan::Node*> ancestors;

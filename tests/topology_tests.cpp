@@ -454,15 +454,15 @@ TEST(qan_Graph, collectNeighboursDfs_basic)
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
 }
 
-TEST(qan_Graph, collectAncestorsDfs_basic)
+TEST(qan_Graph, collectAncestors_basic)
 {
     qan::Graph g;
     auto n1 = g.create_node();
     g.insert_node(n1);
 
     // g = n1
-    const auto r1 = g.collectAncestorsDfs(*n1);
-    ASSERT_EQ(r1.size(), 1);    // n1
+    const auto r1 = g.collectAncestors(*n1);
+    ASSERT_EQ(r1.size(), 0);    // No ancestors
 
     //     +-----------+
     //     v           |
@@ -470,27 +470,30 @@ TEST(qan_Graph, collectAncestorsDfs_basic)
 
     auto n2 = g.create_node();  // Ancestor level 1
     g.insert_node(n2);
+    n2->setLabel("n2");
     g.insert_edge(n2, n1);
     auto n3 = g.create_node();  // Ancestor level 2
     g.insert_node(n3);
+    n3->setLabel("n3");
     g.insert_edge(n3, n2);
     g.insert_edge(n1, n3);      // Circuit from n1 to n3
 
     auto n4 = g.create_node();  // Child node
     g.insert_node(n4);
+    n4->setLabel("n4");
     g.insert_edge(n1, n4);
 
     auto n5 = g.create_node();  // Orphant node
     g.insert_node(n5);
+    n5->setLabel("n5");
 
-    const auto r2 = g.collectAncestorsDfs(*n1);
-    ASSERT_EQ(r2.size(), 3);   // n3, n2 and n1
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n1) != r2.cend());
+    const auto r2 = g.collectAncestors(*n1);
+    ASSERT_EQ(r2.size(), 2);   // n3, n2
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
     EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
 }
 
-TEST(qan_Graph, collectAncestorsDfs_groups)
+TEST(qan_Graph, collectAncestors_groups)
 {
     qan::Graph g;
     auto n1 = g.create_node();
@@ -528,29 +531,12 @@ TEST(qan_Graph, collectAncestorsDfs_groups)
     // +--------+  |                           |
     //             +---------------------------+
 
-    // + simple:
-    // faire collectNeioghbours() (uniquement les co-group et co-group dans
-    // les parent group).
-    // Et lancer collectNei sur les in nodes.
-    // Du coup, c'est facile à coder et à tester...
-
-    // EXPECT: collectAncestorsDfs(*n1)
-    // with    collectGroup: [N1, G3, N4, N5]
-    // without collectGroup: [N1, N4]
-
-    /*const auto r1 = g.collectAncestorsDfs(*n1, true);  // collectGroup = true
-
-    EXPECT_EQ(r1.size(), 4);
-    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n1) != r1.cend());
+    // EXPECT: collectAncestors(*n1): [G3, N4, N5]
+    const auto r1 = g.collectAncestors(*n1);
+    EXPECT_EQ(r1.size(), 3);
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n4) != r1.cend());
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
     EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), g3) != r1.cend());
-    */
-
-    const auto r2 = g.collectAncestorsDfs(*n1, false);  // collectGroup = false
-    ASSERT_EQ(r2.size(), 2);
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n1) != r2.cend());
-    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n4) != r2.cend());
 }
 
 TEST(qan_Graph, isAncestor_basic)
@@ -560,7 +546,7 @@ TEST(qan_Graph, isAncestor_basic)
     g.insert_node(n1);
 
     // g = n1
-    const auto r1 = g.collectAncestorsDfs(*n1);
+    const auto r1 = g.collectAncestors(*n1);
     ASSERT_FALSE(g.isAncestor(n1, nullptr));
     ASSERT_FALSE(g.isAncestor(nullptr, n1));
     ASSERT_FALSE(g.isAncestor(nullptr, nullptr));

@@ -963,11 +963,10 @@ public:
 
     /*! \brief Synchronously collect all parent nodes of \c node using DFS on \c inNodes.
      *
-     * \note \c node is automatically added to the result and returned as the first
-     * node of the return set.  FIXME #599
+     * \note \c node is not added to result.
      * \warning this method is synchronous and recursive.
      */
-    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const;
+    std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;
 
 public:
     //! \copydoc isAncestor()
