@@ -135,53 +135,6 @@ void    GroupItem::setCollapsed(bool collapsed) noexcept
             groupMoved();   // Force update of all adjacent edges
     }
 }
-
-void    GroupItem::collapseAncestors(bool collapsed)
-{
-    // Do not call base
-    // PRECONDITIONS:
-        // getNode() can't return nullptr
-        // getGraph() can't return nullptr
-    const auto graph = getGraph();
-    const auto group = getGroup();
-    if (graph == nullptr)
-        return;
-    if (group == nullptr)
-        return;
-
-    // ALGORITHM:
-        // 1. Collect all ancestors of group
-        // 2. Filter from ancestors every nodes that are part of this group
-        // 3. Collect adjacent edges of selected nodes
-        // 4. Hide selected edges and nodes
-
-    // 1.
-    const auto allAncestors = graph->collectAncestorsDfs(*group, true);
-
-    // 2.
-    std::vector<qan::Node*> ancestors;
-    for (const auto ancestor : allAncestors) {
-        if (!group->hasNode(ancestor) &&
-            ancestor != group)
-            ancestors.push_back(const_cast<qan::Node*>(ancestor));
-    }
-
-    // 3.
-    std::unordered_set<qan::Edge*> ancestorsEdges;
-    for (const auto ancestor: ancestors) {
-        const auto edges = ancestor->collectAdjacentEdges0();
-        //ancestorsEdges.insert(std::inserter += edges;
-        // FIXME use STL std::inserter here ?
-        for (const auto edge : edges)
-            ancestorsEdges.insert(edge);
-    }
-
-    // 4.
-    for (const auto ancestorEdge: ancestorsEdges)
-        ancestorEdge->getItem()->setVisible(collapsed);
-    for (const auto ancestor: ancestors)
-        ancestor->getItem()->setVisible(collapsed);
-}
 //-----------------------------------------------------------------------------
 
 /* Group DnD Management *///---------------------------------------------------

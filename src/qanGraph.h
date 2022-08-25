@@ -956,22 +956,39 @@ private:
 
 public:
     //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
-    auto    collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
+    auto    collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
-    /*! \brief Synchronously collect all parent nodes of \c node using DFS.
+    /*! \brief Recursively collect all "neighbours" of \c node, neighbours are nodes in the same group or the same parent groups.
      *
-     * \note \c node is automatically added to the result and returned as the first
-     * node of the return set.
+     * Neighbours are not linked from a topology point of view by edges, only by common group membership.
+     *
+     * Exemple:
+     *             +---------------------------+
+     *             | G2                        |
+     * +--------+  |     +---------------+     |
+     * |G3      |  |     |       G1      |     |
+     * |   N4---+--+-----+->N1       N2  | N3  |
+     * |        |  |     |               |     |
+     * |   N5   |  |     +---------------+     |
+     * +--------+  |                           |
+     *             +---------------------------+
+     *
+     * Neighbours of N1: [N1, N2, G1, G2, N3]  note presence of N3 in N1 parent group.
+     * Neighbours of N4: [N4, N5, G3]
+     *
      * \warning this method is synchronous and recursive.
      */
-    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
+    std::vector<const qan::Node*>   collectNeighbours(const qan::Node& node) const;
 
-private:
-    void                    collectAncestorsDfsRec(const qan::Node*,
-                                                   std::unordered_set<const qan::Node*>& marks,
-                                                   std::vector<const qan::Node*>& parents,
-                                                   bool collectGroup) const noexcept;
+    /*! \brief Synchronously collect all parent nodes of \c node using DFS on \c inNodes.
+     *
+     * \note All ancestors "neighbours" nodes are also added to set.
+     * \note \c node is _not_ added to result.
+     * \sa collectNeighbours()
+     * \warning this method is synchronous and recursive.
+     */
+    std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;
 
 public:
     //! \copydoc isAncestor()
@@ -981,15 +998,9 @@ public:
      *
      * \warning this method is synchronous and recursive.
      * \return true if \c candidate is an ancestor of \c node (ie \c node is an out
-     * node of \c candidate at any degree.
+     * node of \c candidate at any degree).
      */
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
-
-private:
-    bool                    isAncestorsDfsRec(const qan::Node*,
-                                              const qan::Node& candidate,
-                                              std::unordered_set<const qan::Node*>& marks,
-                                              bool collectGroup) const noexcept;
 
 public:
     /*! Collect all nodes and groups contained in given groups.
