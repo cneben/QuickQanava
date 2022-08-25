@@ -949,7 +949,6 @@ public:
     auto    collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept -> std::unordered_set<const qan::Node*>;
 
 private:
-    // FIXME #599
     void    collectDfsRec(const qan::Node*,
                           std::unordered_set<const qan::Node*>& marks,
                           std::vector<const qan::Node*>& childs,
@@ -960,11 +959,33 @@ public:
     auto    collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
+    /*! \brief Recursively collect all "neighbours" of \c node, neighbours are nodes in the same group or the same parent groups.
+     *
+     * Neighbours are not linked from a topology point of view by edges, only by common group membership.
+     *
+     * Exemple:
+     *             +---------------------------+
+     *             | G2                        |
+     * +--------+  |     +---------------+     |
+     * |G3      |  |     |       G1      |     |
+     * |   N4---+--+-----+->N1       N2  | N3  |
+     * |        |  |     |               |     |
+     * |   N5   |  |     +---------------+     |
+     * +--------+  |                           |
+     *             +---------------------------+
+     *
+     * Neighbours of N1: [N1, N2, G1, G2, N3]  note presence of N3 in N1 parent group.
+     * Neighbours of N4: [N4, N5, G3]
+     *
+     * \warning this method is synchronous and recursive.
+     */
     std::vector<const qan::Node*>   collectNeighbours(const qan::Node& node) const;
 
     /*! \brief Synchronously collect all parent nodes of \c node using DFS on \c inNodes.
      *
-     * \note \c node is not added to result.
+     * \note All ancestors "neighbours" nodes are also added to set.
+     * \note \c node is _not_ added to result.
+     * \sa collectNeighbours()
      * \warning this method is synchronous and recursive.
      */
     std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;

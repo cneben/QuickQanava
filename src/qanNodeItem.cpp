@@ -140,7 +140,6 @@ void    NodeItem::setCollapsed(bool collapsed) noexcept
 
 void    NodeItem::collapseAncestors(bool collapsed)
 {
-    // Do not call base
     // PRECONDITIONS:
         // getNode() can't return nullptr
         // getGraph() can't return nullptr
@@ -151,39 +150,26 @@ void    NodeItem::collapseAncestors(bool collapsed)
     if (node == nullptr)
         return;
 
-    // FIXME #599
-
     // ALGORITHM:
         // 1. Collect all ancestors of group
-        // 2. Filter from ancestors every nodes that are part of this group
-        // 3. Collect adjacent edges of selected nodes
-        // 4. Hide selected edges and nodes
+        // 2. Collect adjacent edges of ancestors nodes
+        // 3. Hide selected edges and nodes
 
     // 1.
-    const auto allAncestors = graph->collectAncestors(*node);
+    const auto ancestors = graph->collectAncestors(*node);
 
     // 2.
-    std::vector<qan::Node*> ancestors;
-    for (const auto ancestor : allAncestors) {
-        if (ancestor != node &&
-            ancestor != node->getGroup() &&                 // Do not collapse parent group for nodes
-            ancestor->getGroup() != node->getGroup() )
-            ancestors.push_back(const_cast<qan::Node*>(ancestor));
-    }
-
-    // 3.
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
         const auto edges = ancestor->collectAdjacentEdges0();
-        for (const auto edge : edges)
-            ancestorsEdges.insert(edge);
+        std::copy(edges.begin(), edges.end(), std::inserter(ancestorsEdges, ancestorsEdges.end()));
     }
 
-    // 4.
+    // 3.
     for (const auto ancestorEdge: ancestorsEdges)
         ancestorEdge->getItem()->setVisible(collapsed);
     for (const auto ancestor: ancestors)
-        ancestor->getItem()->setVisible(collapsed);
+        const_cast<qan::Node*>(ancestor)->getItem()->setVisible(collapsed);
 }
 //-----------------------------------------------------------------------------
 

@@ -65,9 +65,9 @@ class GroupItem : public qan::NodeItem
     Q_OBJECT
 public:
     //! Group constructor.
-    explicit GroupItem( QQuickItem* parent = nullptr );
+    explicit GroupItem(QQuickItem* parent = nullptr);
     virtual ~GroupItem() override = default;
-    GroupItem( const GroupItem& ) = delete;
+    GroupItem(const GroupItem&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -152,8 +152,6 @@ signals:
     //@{
 protected:
     virtual void    setCollapsed(bool collapsed) noexcept override;
-public:
-    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
     //@}
     //-------------------------------------------------------------------------
 
@@ -217,15 +215,15 @@ protected:
 
 signals:
     //! Emitted whenever the group is clicked (even at the start of a dragging operation).
-    void    groupClicked( qan::GroupItem* group, QPointF p );
+    void    groupClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is double clicked.
-    void    groupDoubleClicked( qan::GroupItem* group, QPointF p );
+    void    groupDoubleClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is right clicked.
-    void    groupRightClicked( qan::GroupItem* group, QPointF p );
+    void    groupRightClicked(qan::GroupItem* group, QPointF p);
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::GroupItem )
+QML_DECLARE_TYPE(qan::GroupItem)
