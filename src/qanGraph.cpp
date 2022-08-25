@@ -1817,7 +1817,7 @@ std::vector<const qan::Node*>   Graph::collectNeighbours(const qan::Node& node) 
         if (visited->isGroup() &&
             group != nullptr) {
             for (const auto groupNode : group->get_nodes())  // Collect all nodes in a group
-                lambda(qobject_cast<qan::Node*>(groupNode), neighbours, marks,
+                lambda(groupNode, neighbours, marks,
                        lambda);
         }
         // Collect group parent group neighbours
@@ -1858,7 +1858,7 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
 
         // 1.1 Collect ancestor
         for (const auto inNode : visited->get_in_nodes())
-            lambda(qobject_cast<qan::Node*>(inNode), parents, marks,
+            lambda(inNode, parents, marks,
                    lambda);
 
         // 1.2 If visited node is a group, collect its nodes.
@@ -1868,7 +1868,7 @@ std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node
             const auto group = qobject_cast<const qan::Group*>(visited);
             if (group) {
                 for (const auto groupNode : group->get_nodes())
-                    lambda(qobject_cast<qan::Node*>(groupNode), parents, marks,
+                    lambda(groupNode, parents, marks,
                            lambda);
             }
         }

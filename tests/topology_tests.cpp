@@ -402,25 +402,33 @@ TEST(qan_Graph, collectNeighboursDfs_basic)
 {
     qan::Graph g;
     auto n1 = g.create_node();
+    n1->setLabel("n1");
     g.insert_node(n1);
     auto n2 = g.create_node();
     g.insert_node(n2);
+    n2->setLabel("n2");
     auto n3 = g.create_node();
     g.insert_node(n3);
+    n3->setLabel("n3");
     auto n4 = g.create_node();
     g.insert_node(n4);
+    n4->setLabel("n4");
     auto n5 = g.create_node();
     g.insert_node(n5);
+    n5->setLabel("n5");
 
     auto g1 = g.insertGroup();
+    g1->setLabel("g1");
     g.group_node(n1, g1);
     g.group_node(n2, g1);
 
     auto g2 = g.insertGroup();
+    g2->setLabel("g2");
     g.group_node(n3, g2);
     g.group_node(g1, g2);
 
     auto g3 = g.insertGroup();
+    g3->setLabel("g3");
     g.group_node(n4, g3);
     g.group_node(n5, g3);
 
@@ -434,8 +442,16 @@ TEST(qan_Graph, collectNeighboursDfs_basic)
     // +--------+  |                           |
     //             +---------------------------+
 
-    // EXPECT: neibours(N4) = [N5, G3]
-    // EXPECT: neighbours(N1) = [N2, G1, G2, N3]
+    // EXPECT: neibours(N4) = [N4, N5, G3]
+    const auto r1 = g.collectNeighbours(*n4);
+    EXPECT_EQ(r1.size(), 3);    // [N4, N5, G3]
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), g3) != r1.cend());
+
+    // EXPECT: neighbours(N1) = [N1, N2, G1, G2, N3]
+    const auto r2 = g.collectNeighbours(*n1);
+    EXPECT_EQ(r2.size(), 5);    // [N1, N2, G1, G2, N3]
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
 }
 
 TEST(qan_Graph, collectAncestorsDfs_basic)
