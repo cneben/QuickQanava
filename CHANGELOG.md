@@ -1,7 +1,10 @@
 # CHANGELOG
 
 ## 20220824 v2.1.1:
-- 
+- Change signature of two public API methods (public but presumably mainly used internally):
+  - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().
+  - Rename qan::Graph::collectAncestorsDfs() to qan::Graph::collectAncestors().
+- Add qan::Graph::collectNeighbours() method.
 
 ## 20220817 v2.1.0:
 - First Github release 

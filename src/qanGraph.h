@@ -949,6 +949,7 @@ public:
     auto    collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept -> std::unordered_set<const qan::Node*>;
 
 private:
+    // FIXME #599
     void    collectDfsRec(const qan::Node*,
                           std::unordered_set<const qan::Node*>& marks,
                           std::vector<const qan::Node*>& childs,
