@@ -5,6 +5,7 @@
   - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().
   - Rename qan::Graph::collectAncestorsDfs() to qan::Graph::collectAncestors().
 - Add qan::Graph::collectNeighbours() method.
+- Debug and rename qan::Flickable::fitInView() to fitContentInView().
 
 ## 20220817 v2.1.0:
 - First Github release 

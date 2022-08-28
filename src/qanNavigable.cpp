@@ -88,7 +88,8 @@ void    Navigable::centerOn(QQuickItem* item)
     const qreal zoom = _containerItem->scale();
 
     // 1.
-    const QPointF itemPos = _containerItem->mapToItem(item, QPointF{-item->width() / 2., -item->height() / 2.});
+    const QPointF itemPos = _containerItem->mapToItem(item, QPointF{-item->width() / 2.,
+                                                                    -item->height() / 2.});
     QPointF containerPos{0., 0.};
     containerPos.rx() = itemPos.x() * zoom;
     containerPos.ry() = itemPos.y() * zoom;
@@ -113,52 +114,48 @@ void    Navigable::centerOnPosition(QPointF position)
     if (_containerItem == nullptr)
         return;
 
-    QPointF navigableCenter{ width() / 2., height() / 2. };
-    QPointF navigableCenterContainerCs = mapToItem( _containerItem, navigableCenter );
-    QPointF translation{ navigableCenterContainerCs - position };
+    QPointF navigableCenter{width() / 2., height() / 2.};
+    QPointF navigableCenterContainerCs = mapToItem(_containerItem, navigableCenter);
+    QPointF translation{navigableCenterContainerCs - position};
 
     const qreal zoom = _containerItem->scale();
     _containerItem->setPosition(_containerItem->position() + (translation * zoom));
     updateGrid();
 }
 
-void    Navigable::fitInView()
+void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
 {
+    qWarning() << "qan::Navigable::fitContentInView()";
     QRectF content = _containerItem->childrenRect();
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
-        const qreal viewWidth = width();
-        const qreal viewHeight = height();
+        const qreal viewWidth = forceWidth > 0. ? forceWidth : width();
+        const qreal viewHeight = forceHeight > 0. ? forceHeight : height();
+        qWarning() << "  viewWidth=" << viewWidth;
+        qWarning() << "  viewHeight=" << viewHeight;
+        qWarning() << "  content.width=" << content.width();
+        qWarning() << "  content.height=" << content.height();
 
         const qreal fitWidthZoom = viewWidth / content.width();
         const qreal fitHeightZoom = viewHeight / content.height();
 
+        qWarning() << "  fitWidthZoom=" << fitWidthZoom;
+        qWarning() << "  fitHeightZoom=" << fitHeightZoom;
+
         qreal fitZoom = fitWidthZoom;
+        qWarning() << "  content.height * fitWidthZoom=" << content.height() * fitWidthZoom;
         if (content.height() * fitWidthZoom > viewHeight)
             fitZoom = fitHeightZoom;
-        fitZoom -= 0.1; // Add margins
+        qWarning() << "  fitZoom=" << fitZoom;
+        if (qFuzzyCompare(1. + qAbs(fitZoom), 1.))
+            return;
 
-        // FIXME: Buggy, do something similar to  centerOn() 2.0...
-        QPointF contentPos{0., 0.};
-        /*if (content.width() * fitZoom < viewWidth)      // Center zoomed content horizontally
-            contentPos.rx() = ( viewWidth - (content.width() * fitZoom) ) / 2.;
-        if (content.height() * fitZoom < viewHeight)    // Center zoomed content horizontally
-            contentPos.ry() = ( viewHeight - (content.height() * fitZoom) ) / 2.;
-        //_containerItem->setPosition(contentPos);
-        */
-        contentPos = content.topLeft() * fitZoom;
-        _containerItem->setPosition(-contentPos);
-        _panModified = false;
-        _zoomModified = false;
-
-        // Don't use setZoom() because we force a TopLeft scale
-        if (isValidZoom(fitZoom)) {
-            _zoom = fitZoom;
-            _containerItem->setScale(_zoom);
-            emit zoomChanged();
-            emit containerItemModified();
-            navigableContainerItemModified();
-            updateGrid();
-        }
+        // Don't use setZoom() to avoid a isValidZoom() check
+        _zoom = fitZoom;
+        _containerItem->setScale(_zoom);
+        emit zoomChanged();
+        emit containerItemModified();
+        navigableContainerItemModified();
+        centerOnPosition(content.center());
     }
 }
 
@@ -166,7 +163,7 @@ void    Navigable::setAutoFitMode(AutoFitMode autoFitMode)
 {
     if (_autoFitMode != AutoFit &&
         autoFitMode == AutoFit)
-        fitInView();    // When going to auto fit mode from another mode, force fitInView()
+        fitContentInView();    // When going to auto fit mode from another mode, force fitContentInView()
 
     _autoFitMode = autoFitMode;
     emit autoFitModeChanged();
@@ -278,10 +275,10 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
 #endif
 {
     if (getNavigable()) {
-        // Apply fitInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
+        // Apply fitContentInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
         if ( _autoFitMode == AutoFit &&
              ( !_panModified || !_zoomModified ) ) {
-            fitInView();
+            fitContentInView();
         }
         // In AutoFit mode, try centering the content when the view is resized and the content
         // size is less than the view size (it is no fitting but centering...)

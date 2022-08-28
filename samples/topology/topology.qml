@@ -202,7 +202,7 @@ ApplicationWindow {
         }
         MenuItem {
             text: "Fit Graph in View"
-            onTriggered: graphView.fitInView()
+            onTriggered: graphView.fitContentInView()
         }
         MenuItem {
             text: "Clear Graph"
