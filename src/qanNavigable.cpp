@@ -313,8 +313,8 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
 
         // In AutoFit mode, try anchoring the content to the visible border when the content has
         // custom user zoom
-        if ( _autoFitMode == AutoFit &&
-             ( _panModified || _zoomModified ) ) {
+        if (_autoFitMode == AutoFit &&
+             (_panModified || _zoomModified)) {
             bool anchorRight = false;
             bool anchorLeft = false;
 

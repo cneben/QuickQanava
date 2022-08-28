@@ -118,6 +118,4 @@ private:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::GraphView )
-
-
+QML_DECLARE_TYPE(qan::GraphView)
