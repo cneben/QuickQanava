@@ -125,29 +125,21 @@ void    Navigable::centerOnPosition(QPointF position)
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
 {
-    qWarning() << "qan::Navigable::fitContentInView()";
     QRectF content = _containerItem->childrenRect();
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
         const qreal viewWidth = forceWidth > 0. ? forceWidth : width();
         const qreal viewHeight = forceHeight > 0. ? forceHeight : height();
-        qWarning() << "  viewWidth=" << viewWidth;
-        qWarning() << "  viewHeight=" << viewHeight;
-        qWarning() << "  content.width=" << content.width();
-        qWarning() << "  content.height=" << content.height();
 
         const qreal fitWidthZoom = viewWidth / content.width();
         const qreal fitHeightZoom = viewHeight / content.height();
 
-        qWarning() << "  fitWidthZoom=" << fitWidthZoom;
-        qWarning() << "  fitHeightZoom=" << fitHeightZoom;
-
         qreal fitZoom = fitWidthZoom;
-        qWarning() << "  content.height * fitWidthZoom=" << content.height() * fitWidthZoom;
         if (content.height() * fitWidthZoom > viewHeight)
             fitZoom = fitHeightZoom;
-        qWarning() << "  fitZoom=" << fitZoom;
         if (qFuzzyCompare(1. + qAbs(fitZoom), 1.))
             return;
+        if (fitZoom > 0.999999)
+            fitZoom = 1.0;
 
         // Don't use setZoom() to avoid a isValidZoom() check
         _zoom = fitZoom;
