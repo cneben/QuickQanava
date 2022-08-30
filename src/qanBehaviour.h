@@ -121,5 +121,5 @@ protected:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::NodeBehaviour )
+QML_DECLARE_TYPE(qan::NodeBehaviour)
 

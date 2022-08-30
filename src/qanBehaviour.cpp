@@ -68,7 +68,7 @@ void    NodeBehaviour::on_in_node_removed(qan::Node& target, qan::Node& inNode, 
     inNodeRemoved(inNode, const_cast<qan::Edge&>(edge));
 }
 
-void    NodeBehaviour::on_out_node_inserted( qan::Node& target, qan::Node& outNode, const qan::Edge& edge) noexcept
+void    NodeBehaviour::on_out_node_inserted(qan::Node& target, qan::Node& outNode, const qan::Edge& edge) noexcept
 {
     Q_UNUSED(target);
     outNodeInserted(outNode, const_cast<qan::Edge&>(edge));
