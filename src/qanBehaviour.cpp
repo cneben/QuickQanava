@@ -39,11 +39,13 @@
 
 namespace qan { // ::qan
 
+/* NodeBehaviour Management *///-----------------------------------------------
 NodeBehaviour::NodeBehaviour(const std::string& name, QObject* parent) :
     QObject{parent}
 {
     gtpo::node_observer<qan::Node, qan::Edge>::setName(name);
 }
+//-----------------------------------------------------------------------------
 
 /* Behaviour Host Management *///----------------------------------------------
 void    NodeBehaviour::setHost(qan::Node* host)

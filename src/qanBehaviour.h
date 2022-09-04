@@ -63,10 +63,14 @@ class NodeBehaviour : public QObject,
                       public gtpo::node_observer<qan::Node, qan::Edge>
 {
     Q_OBJECT
+    /*! \name NodeBehaviour Management *///------------------------------------
+    //@{
 public:
     explicit NodeBehaviour(const std::string& name, QObject* parent = nullptr);
     virtual ~NodeBehaviour() override { }
     NodeBehaviour(const NodeBehaviour&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
 
     /*! \name Behaviour Host Management *///-----------------------------------
     //@{
