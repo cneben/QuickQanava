@@ -98,7 +98,8 @@ Item {
         Item {
             id: labelEditorControl
             clip: false
-            Layout.fillWidth: true; Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             property int fontPointSize : groupItem.style.fontPointSize  // Do not set pointSize for -1 value
             onFontPointSizeChanged: {
                 if (fontPointSize != -1)
@@ -116,17 +117,21 @@ Item {
             Label {
                 id: groupLabel
                 anchors.fill: parent
-                text: groupItem && groupItem.group ? groupItem.group.label : "              "
+                text: groupItem &&
+                      groupItem.group ? groupItem.group.label :
+                                        "              "
                 visible: !labelEditor.visible
                 verticalAlignment: Text.AlignVCenter
                 font.bold: groupItem.style.fontBold
-                color: groupItem && groupItem.style && groupItem.style.labelColor ?
-                                                                        groupItem.style.labelColor : "black"
+                color: groupItem &&
+                       groupItem.style &&
+                       groupItem.style.labelColor ? groupItem.style.labelColor : "black"
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent
                     enabled: !groupItem.group.locked    // Do not allow dragging of locked groups
-                    preventStealing: true; propagateComposedEvents: true // Ensure event are forwarded to collapserArea
+                    preventStealing: true
+                    propagateComposedEvents: true // Ensure event are forwarded to collapserArea
                     drag.target: groupItem.draggable ? groupItem : null
                     onDoubleClicked: labelEditor.visible = true
                 }
@@ -134,7 +139,6 @@ Item {
         } // labelEditor Item
     } // RowLayout: collapser + label
 
-    // FIXME 0.75
     // Emitted by qan::GroupItem when node dragging start
     function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
     // Emitted by qan::GroupItem when node dragging ends

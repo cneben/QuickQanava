@@ -48,7 +48,7 @@ GroupItem::GroupItem(QQuickItem* parent) :
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
 
-    setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
 
     // Force group connected edges update when the group is moved
     connect(this, &qan::GroupItem::xChanged,
@@ -73,8 +73,8 @@ auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
 
     // Configuration specific to group
     _group = group;
-    if ( group != nullptr &&            // Warning: Do that after having set _group
-         group->getItem() != this )
+    if (group != nullptr &&            // Warning: Do that after having set _group
+        group->getItem() != this)
         group->setItem(this);
 }
 
@@ -160,8 +160,8 @@ void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
-    if ( nodeItem == nullptr ||
-         getContainer() == nullptr )   // A container must have configured in concrete QML group component
+    if (nodeItem == nullptr ||
+        getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
 
     // Note: no need for the container to be visible or open.
@@ -187,8 +187,8 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         if (transform)
             nodeItem->setPosition(nodeGlobalPos);
         nodeItem->setZ(z()+1.);
-        nodeItem->setDraggable( true );
-        nodeItem->setDroppable( true );
+        nodeItem->setDraggable(true);
+        nodeItem->setDroppable(true);
     }
 }
 void    GroupItem::setContainer(QQuickItem* container) noexcept
