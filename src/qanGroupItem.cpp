@@ -205,8 +205,11 @@ const QQuickItem*   GroupItem::getContainer() const noexcept { return _container
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     qan::NodeItem::mouseDoubleClickEvent(event);
-    if (event->button() == Qt::LeftButton)
-        emit groupDoubleClicked( this, event->localPos());
+    // FIXME #1013
+    if (event->button() == Qt::LeftButton &&
+        (getNode() != nullptr &&
+         !getNode()->getLocked()))
+        emit groupDoubleClicked(this, event->localPos());
 }
 
 void    GroupItem::mousePressEvent(QMouseEvent* event)

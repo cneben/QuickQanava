@@ -59,6 +59,9 @@ Item {
 
     property alias  header: headerLayout
 
+    enabled: groupItem &&
+             groupItem.group ? !groupItem.group.locked :   // FIXME #1013
+                               true
     Item {
         id: content
         x: 0; y: 0; z: 3
