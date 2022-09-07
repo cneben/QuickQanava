@@ -60,7 +60,7 @@ Item {
     property alias  header: headerLayout
 
     enabled: groupItem &&
-             groupItem.group ? !groupItem.group.locked :   // FIXME #1013
+             groupItem.group ? !groupItem.group.locked :
                                true
     Item {
         id: content

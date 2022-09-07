@@ -205,7 +205,6 @@ const QQuickItem*   GroupItem::getContainer() const noexcept { return _container
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     qan::NodeItem::mouseDoubleClickEvent(event);
-    // FIXME #1013
     if (event->button() == Qt::LeftButton &&
         (getNode() != nullptr &&
          !getNode()->getLocked()))
@@ -219,7 +218,8 @@ void    GroupItem::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton &&    // Selection management
          getGroup() &&
          isSelectable() &&
-         !getCollapsed()) {     // Collapsed group is not selectable
+         !getCollapsed() &&         // Locked/Collapsed group is not selectable
+         !getNode()->getLocked()) {
         if (getGraph())
             getGraph()->selectGroup(*getGroup(), event->modifiers());
     }

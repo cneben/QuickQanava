@@ -271,7 +271,7 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseDoubleClickEvent(event);
     if (event->button() == Qt::LeftButton &&
-        (getNode() != nullptr &&         // FIXME #1013
+        (getNode() != nullptr &&
          !getNode()->getLocked()))
         emit nodeDoubleClicked(this, event->localPos());
 }
