@@ -221,10 +221,12 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
             group->getItem() != nullptr &&
             group->getItem() != except) {
             const auto groupItem = group->getItem();
+            if (groupItem->getCollapsed())
+                continue;  // Do not return collapsed groups
 
-            const auto groupRect =  QRectF{ groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
-                                            QSizeF{ groupItem->width(), groupItem->height() } };
-            if ( groupRect.contains( QRectF{ p, s } ) )
+            const auto groupRect =  QRectF{groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
+                                           QSizeF{ groupItem->width(), groupItem->height()}};
+            if (groupRect.contains(QRectF{p, s}))
                  return group;
         }
     } // for all groups
