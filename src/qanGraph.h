@@ -887,6 +887,9 @@ public:
      */
     Q_INVOKABLE void    sendToFront(QQuickItem* item);
 
+    //! Send a graphic item (either a node or a group) to back.
+    Q_INVOKABLE void    sendToBack(QQuickItem* item);
+
     /*! \brief Iterate over all graph container items, find and update the maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update

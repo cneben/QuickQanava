@@ -905,21 +905,21 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
         group->setItem(groupItem);
 
         auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupClicked(groupItem->getGroup(), p);
         };
         connect(groupItem,  &qan::GroupItem::groupClicked,
                 this,       notifyGroupClicked);
 
         auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupRightClicked(groupItem->getGroup(), p);
         };
         connect(groupItem, &qan::GroupItem::groupRightClicked,
                 this,      notifyGroupRightClicked);
 
         auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupDoubleClicked(groupItem->getGroup(), p);
         };
         connect(groupItem, &qan::GroupItem::groupDoubleClicked,
@@ -1590,7 +1590,7 @@ void    Graph::sendToFront(QQuickItem* item)
             // 2.2 For all parents groups: get group parent item childs maximum (local) z, update group z to maximum value + 1.
 
     // Return a vector groups ordered from the outer group to the root group
-    const auto collectGroups_rec = [](qan::GroupItem* groupItem) -> std::vector<qan::GroupItem*> {
+    const auto collectParentGroups_rec = [](qan::GroupItem* groupItem) -> std::vector<qan::GroupItem*> {
 
         const auto impl = [](std::vector<qan::GroupItem*>& groups,      // Recursive implementation
                              qan::GroupItem* groupItem,
@@ -1606,10 +1606,7 @@ void    Graph::sendToFront(QQuickItem* item)
         };
 
         std::vector<qan::GroupItem*> groups;
-
-        // PRECONDITIONS:
-            // groupItem can't be nullptr
-        if (groupItem == nullptr)
+        if (groupItem == nullptr)   // PRECONDITIONS: groupItem can't be nullptr
             return groups;
         impl(groups, groupItem, impl);
         return groups;
@@ -1629,8 +1626,8 @@ void    Graph::sendToFront(QQuickItem* item)
         groupItem->setZ(nextMaxZ());
     } else if (groupItem != nullptr) {
         // 2. If item is a group (or is a node inside a group)
-        const auto groups = collectGroups_rec(groupItem);       // 2.1 Collect all parents groups.
-        for ( const auto groupItem : groups ) {
+        const auto groups = collectParentGroups_rec(groupItem);       // 2.1 Collect all parents groups.
+        for (const auto groupItem : groups) {
             if (groupItem == nullptr)
                 continue;
             const auto groupParentItem = groupItem->parentItem();
@@ -1645,6 +1642,19 @@ void    Graph::sendToFront(QQuickItem* item)
             }
         } // For all group items
     }
+}
+
+void    Graph::sendToBack(QQuickItem* item)
+{
+    if (item == nullptr)
+        return;
+
+    qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
+    qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
+    if (nodeItem == nullptr)
+        return;     // item must be a nodeItem or a groupItem
+
+    // FIXME
 }
 
 void    Graph::findMaxZ() noexcept

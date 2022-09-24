@@ -167,6 +167,23 @@ ApplicationWindow {
                     contextMenu.group = undefined
                 }
             }
+            MenuSeparator { }
+            MenuItem {
+                text: "Send to front"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.sendToFront(contextMenu.group.item)
+                    contextMenu.group = undefined
+                }
+            }
+            MenuItem {
+                text: "Send to back"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.sendToBack(contextMenu.group.item)
+                    contextMenu.group = undefined
+                }
+            }
             onClosed: { // Clean internal state when context menu us closed
                 contextMenu.node = undefined
                 contextMenu.group = undefined
