@@ -1653,7 +1653,7 @@ void    Graph::sendToBack(QQuickItem* item)
     qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
     if (nodeItem == nullptr)
         return;     // item must be a nodeItem or a groupItem
-
+    nodeItem->setZ(0.);
     // FIXME
 }
 
