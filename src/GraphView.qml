@@ -179,9 +179,10 @@ Qan.AbstractGraphView {
     onNodeClicked: function(node) {
         if (graph &&
             node && node.item) {
-            if (node.locked)                // Do not show any connector for locked node/groups
+            if (node.locked ||
+                node.isProtected)           // Do not show any connector for locked node/groups
                 return;
-            graph.sendToFront(node.item)    // Locked nodes are not re-ordered to front.
+            graph.sendToFront(node.item)    // Protected/Locked nodes are not re-ordered to front.
             if (graph.connector &&
                 graph.connectorEnabled &&
                  (node.item.connectable === Qan.NodeItem.Connectable ||
@@ -219,7 +220,8 @@ Qan.AbstractGraphView {
 
     // Group management ///////////////////////////////////////////////////////
     onGroupClicked: function(group) {
-        if (group && graph)
+        if (group && graph &&
+            !(group.locked || group.isProtected))  // Do not move locked/protected groups to front.
             graph.sendToFront(group.item)
 
         if (graph &&
