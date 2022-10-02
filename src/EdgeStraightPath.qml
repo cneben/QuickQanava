@@ -45,10 +45,22 @@ ShapePath {
     startX: edgeItem.p1.x
     startY: edgeItem.p1.y
     capStyle: ShapePath.FlatCap
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
-    strokeColor: edgeTemplate.color
+    strokeWidth: {
+        if (!edgeItem)
+            return 2
+        const selected = edgeItem ? edgeItem.selected : false
+        if (edgeItem.style)
+            return selected ? edgeItem.style.lineWidth + 2.:
+                              edgeItem.style.lineWidth
+        return selected ? 4. : 2.
+    }
+    strokeColor: {
+        if (edgeItem &&
+            edgeItem.selected)
+            return edgeItem.graph ? edgeItem.graph.selectionColor :
+                                    Qt.rgba(0.1176, 0.5647, 1., 1.)  // dodgerblue=rgb(30, 144, 255)
+        return edgeTemplate.color
+    }
     strokeStyle: edgeTemplate.dashed
     dashPattern: edgeItem &&
                  edgeItem.style ? edgeItem.style.dashPattern :

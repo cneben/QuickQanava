@@ -68,9 +68,6 @@ Item {
         onDstShapeTypeChanged: {
             switch (dstShapeType) {
             case Qan.EdgeStyle.None:
-                /*if (dstArrow) dstArrow.destroy()
-                if (dstCircle) dstCircle.destroy()
-                if (dstRect) dstRect.destroy()*/
                 break;
             case Qan.EdgeStyle.Arrow:       // falltrought
             case Qan.EdgeStyle.ArrowOpen:
@@ -94,7 +91,6 @@ Item {
         }
     }  // Shape: dstShape
 
-
     Shape {
         id: srcShape
         antialiasing: true
@@ -113,9 +109,6 @@ Item {
         onSrcShapeTypeChanged: {
             switch (srcShapeType) {
             case Qan.EdgeStyle.None:
-                /*if (srcArrow) srcArrow.destroy()
-                if (srcCircle) srcCircle.destroy()
-                if (srcRect) srcRect.destroy()*/
                 break;
             case Qan.EdgeStyle.Arrow:       // falltrought
             case Qan.EdgeStyle.ArrowOpen:
@@ -139,121 +132,37 @@ Item {
         }
     }  // Shape: srcShape
 
-
-    /*Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.dstAngle
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
-        visible: ((edgeItem.dstShape === Qan.EdgeStyle.Arrow) || (edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
-            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
-            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
-            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
-        }
-    }
     Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.dstAngle
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
-        visible: ((edgeItem.dstShape === Qan.EdgeStyle.Circle) || (edgeItem.dstShape === Qan.EdgeStyle.CircleOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeStyle.CircleOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: 0;   startY: 0
-            PathArc {
-                relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
-                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
-            }
-            PathArc {
-                relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
-                radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+        id: edgeSelectionShape
+        anchors.fill: parent
+        visible: edgeItem.visible && !edgeItem.hidden
+        antialiasing: true
+        smooth: true
+        property var curvedLine : undefined
+        property var straightLine : undefined
+        property var orthoLine : undefined
+        property var lineType: edgeTemplate.lineType
+        onLineTypeChanged: {
+            switch (lineType) {
+            case Qan.EdgeStyle.Undefined:   // falltrought
+            case Qan.EdgeStyle.Straight:
+                if (orthoLine) orthoLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
+                break;
+            case Qan.EdgeStyle.Ortho:
+                if (straightLine) straightLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                break;
+            case Qan.EdgeStyle.Curved:
+                if (straightLine) straightLine.destroy()
+                if (orthoLine) orthoLine.destroy()
+                edgeShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                break;
             }
         }
-    }
-    Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.dstAngle
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
-        visible: ((edgeItem.dstShape === Qan.EdgeStyle.Rect) || (edgeItem.dstShape === Qan.EdgeStyle.RectOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.dstShape === Qan.EdgeStyle.RectOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: edgeItem.dstA1.x;   startY: edgeItem.dstA1.y
-            PathLine { x: 0.;               y: 0.               }
-            PathLine { x: edgeItem.dstA3.x; y: edgeItem.dstA3.y }
-            PathLine { x: edgeItem.dstA2.x; y: edgeItem.dstA2.y }
-            PathLine { x: edgeItem.dstA1.x; y: edgeItem.dstA1.y }
-        }
-    }
-    Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.srcAngle
-        x: edgeItem.p1.x
-        y: edgeItem.p1.y
-        visible: ((edgeItem.srcShape === Qan.EdgeStyle.Arrow) || (edgeItem.srcShape === Qan.EdgeStyle.ArrowOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
-            PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
-            PathLine { x: edgeItem.srcA2.x; y: edgeItem.srcA2.y }
-            PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
-        }
-    }
-    Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.srcAngle
-        x: edgeItem.p1.x
-        y: edgeItem.p1.y
-        visible: ((edgeItem.srcShape === Qan.EdgeStyle.Circle) || (edgeItem.srcShape === Qan.EdgeStyle.CircleOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeStyle.CircleOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: 0;   startY: 0
-            PathArc {
-                relativeX: edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
-                radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
-            }
-            PathArc {
-                relativeX: -edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
-                radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
-            }
-        }
-    }
-    Shape {
-        transformOrigin: Item.TopLeft
-        rotation: edgeItem.srcAngle
-        x: edgeItem.p1.x
-        y: edgeItem.p1.y
-        visible: ((edgeItem.srcShape === Qan.EdgeStyle.Rect) || (edgeItem.srcShape === Qan.EdgeStyle.RectOpen))
-                 && edgeItem.visible && !edgeItem.hidden
-        ShapePath {
-            strokeColor: edgeTemplate.color
-            fillColor: edgeItem.srcShape === Qan.EdgeStyle.RectOpen ? Qt.rgba(0.,0.,0.,0.) : edgeTemplate.color
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            startX: edgeItem.srcA1.x;   startY: edgeItem.srcA1.y
-            PathLine { x: 0.;               y: 0.               }
-            PathLine { x: edgeItem.srcA3.x; y: edgeItem.srcA3.y }
-            PathLine { x: edgeItem.srcA2.x; y: edgeItem.srcA2.y }
-            PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
-        }
-    }*/
+    }  // Shape: edgeSelectionShape
 
     Shape {
         id: edgeShape
@@ -269,30 +178,19 @@ Item {
             switch (lineType) {
             case Qan.EdgeStyle.Undefined:   // falltrought
             case Qan.EdgeStyle.Straight:
-                if (orthoLine)
-                    orthoLine.destroy()
-                if (curvedLine)
-                    curvedLine.destroy()
-                straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
-                edgeShape.data = straightLine
+                if (orthoLine) orthoLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
                 break;
-
             case Qan.EdgeStyle.Ortho:
-                if (straightLine)
-                    straightLine.destroy()
-                if (curvedLine)
-                    curvedLine.destroy()
-                orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
-                edgeShape.data = orthoLine
+                if (straightLine) straightLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 break;
-
             case Qan.EdgeStyle.Curved:
-                if (straightLine)
-                    straightLine.destroy()
-                if (orthoLine)
-                    orthoLine.destroy()
-                curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
-                edgeShape.data = curvedLine
+                if (straightLine) straightLine.destroy()
+                if (orthoLine) orthoLine.destroy()
+                edgeShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 break;
             }
         }
