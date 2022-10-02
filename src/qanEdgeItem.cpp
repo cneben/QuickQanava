@@ -45,6 +45,8 @@
 #include "./qanGraph.h"
 #include "./qanEdgeDraggableCtrl.h"
 
+#include "./bezier/include/bezier.h"
+
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
@@ -1118,9 +1120,8 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 /* Mouse Management *///-------------------------------------------------------
 void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    const qreal d = distanceFromLine(event->localPos(), QLineF{_p1, _p2});
-    if (d > -0.0001 && d < 5. &&
-        event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton &&
+        contains(event->localPos())) {
         emit edgeDoubleClicked(this, event->localPos());
         event->accept();
     }
@@ -1302,7 +1303,25 @@ bool    EdgeItem::contains(const QPointF& point) const
         d = distanceFromLine(point, QLineF{_p1, _p2});
         r = (d > -0.001 && d < 6.001);
         break;
-    case qan::EdgeStyle::LineType::Curved:
+    case qan::EdgeStyle::LineType::Curved: {
+        Bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
+                                       {static_cast<float>(_c1.x()), static_cast<float>(_c1.y())},
+                                       {static_cast<float>(_c2.x()), static_cast<float>(_c2.y())},
+                                       {static_cast<float>(_p2.x()), static_cast<float>(_p2.y())}});
+        // FIXME: check p in cubicBezier.tbb() (aka Tight bounding box)
+        // FIXME: At least, adapt steps to tbb.length() / thresold (here 6)
+        const auto steps = 25;
+        const auto dStep = 1.0 / static_cast<float>(steps);
+        for (int step = 0; step < steps; step++) {
+            const auto pos = dStep * step;
+            auto curveP = cubicBezier.valueAt(pos);
+            const auto d = QLineF{point, QPointF{curveP.x, curveP.y}}.length();
+            if (d > -0.001 && d < 6.001) {
+                r = true;
+                break;
+            }
+        }
+    }
         break;
     case qan::EdgeStyle::LineType::Ortho:
         d = distanceFromLine(point, QLineF{_p1, _c1});
