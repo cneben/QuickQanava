@@ -47,7 +47,6 @@
 
 // QuickQanava headers
 #include "./qanStyle.h"
-#include "./qanBehaviour.h"
 #include "./qanNode.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
@@ -102,6 +101,7 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
@@ -142,6 +142,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Collapse Management *///-----------------------------------------
     //@{
 public:
@@ -157,6 +158,7 @@ public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Selection Management *///----------------------------------------
     //@{
@@ -180,6 +182,7 @@ protected slots:
     virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Node Configuration *///------------------------------------------
     //@{

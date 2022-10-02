@@ -1119,7 +1119,7 @@ bool    selectPrimitive(Primitive_t& primitive,
     if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
         return false;
 
-    bool selectPrimitive = false;
+    bool primitiveSelected = false;
     const bool ctrlPressed = modifiers & Qt::ControlModifier;
     if (primitive.getItem() == nullptr)
         return false;
@@ -1131,17 +1131,17 @@ bool    selectPrimitive(Primitive_t& primitive,
     } else {
         switch (graph.getSelectionPolicy()) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
-            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
+            primitiveSelected = true;        // Click on an unselected node with SelectOnClick = select node
             if (!ctrlPressed)
                 graph.clearSelection();
             break;
         case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
-            selectPrimitive = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+            primitiveSelected = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
             break;
         case qan::Graph::SelectionPolicy::NoSelection: break;
         }
     }
-    if (selectPrimitive) {
+    if (primitiveSelected) {
         graph.addToSelection(primitive);
         return true;
     }

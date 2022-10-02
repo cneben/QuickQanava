@@ -716,8 +716,8 @@ public:
     Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)  // In fact non-notifiable, avoid QML warning
     QAbstractItemModel* getSelectedNodesModel() { return qobject_cast<QAbstractItemModel*>(_selectedNodes.model()); }
 
-    inline auto         getSelectedNodes() noexcept -> SelectedNodes& { return _selectedNodes; }
-    inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
+    inline auto         getSelectedNodes() -> SelectedNodes& { return _selectedNodes; }
+    inline auto         getSelectedNodes() const -> const SelectedNodes& { return _selectedNodes; }
 private:
     SelectedNodes       _selectedNodes;
 signals:
@@ -730,12 +730,26 @@ public:
     Q_PROPERTY(QAbstractItemModel* selectedGroups READ getSelectedGroupsModel NOTIFY selectedGroupsChanged FINAL)   // In fact non-notifiable, avoid QML warning
     QAbstractItemModel* getSelectedGroupsModel() { return qobject_cast<QAbstractItemModel*>(_selectedGroups.model()); }
 
-    inline auto         getSelectedGroups() noexcept -> SelectedGroups& { return _selectedGroups; }
-    inline auto         getSelectedGroups() const noexcept -> const SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() -> SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() const -> const SelectedGroups& { return _selectedGroups; }
 private:
     SelectedGroups      _selectedGroups;
 signals:
     void                selectedGroupsChanged();
+
+public:
+    using SelectedEdges = QVector<QPointer<qan::Edge>>;
+
+    //! Read-only list model of currently selected edges.
+    //Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
+    //QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
+
+    inline auto         getSelectedEdges() -> SelectedEdges& { return _selectedEdges; }
+    inline auto         getSelectedEdges() const -> const SelectedEdges& { return _selectedEdges; }
+private:
+    SelectedEdges       _selectedEdges;
+signals:
+    void                selectedEdgesChanged();
 
 protected:
     //! \brief Return a vector of currently selected nodes/groups items.

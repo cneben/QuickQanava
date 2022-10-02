@@ -177,7 +177,7 @@ void    NodeItem::collapseAncestors(bool collapsed)
 void    NodeItem::onWidthChanged()
 {
     configureSelectionItem();
-    if ( _complexBoundingShape )            // Invalidate actual bounding shape
+    if (_complexBoundingShape)            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
 }
@@ -185,7 +185,7 @@ void    NodeItem::onWidthChanged()
 void    NodeItem::onHeightChanged()
 {
     configureSelectionItem();
-    if ( _complexBoundingShape )            // Invalidate actual bounding shape
+    if (_complexBoundingShape)            // Invalidate actual bounding shape
         emit requestUpdateBoundingShape();
     else setDefaultBoundingShape();
 }

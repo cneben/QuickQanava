@@ -1250,6 +1250,20 @@ void    EdgeItem::setDragged(bool dragged) noexcept
 }
 //-----------------------------------------------------------------------------
 
+
+/* Selection Management *///---------------------------------------------------
+void    EdgeItem::onWidthChanged()
+{
+    configureSelectionItem();
+}
+
+void    EdgeItem::onHeightChanged()
+{
+    configureSelectionItem();
+}
+//-----------------------------------------------------------------------------
+
+
 /* Drag'nDrop Management *///--------------------------------------------------
 void    EdgeItem::setAcceptDrops(bool acceptDrops)
 {
