@@ -485,6 +485,9 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
 
 QQuickItem* Graph::createSelectionItem(QQuickItem* parent)
 {
+    const auto edgeItem = qobject_cast<qan::EdgeItem*>(parent);
+    if (edgeItem != nullptr)    // Edge selection item is managed directly in EdgeTemplate.qml
+        return nullptr;
     const auto selectionItem = createItemFromComponent(_selectionDelegate.get());
     if (selectionItem != nullptr) {
         selectionItem->setEnabled(false); // Avoid node/edge/group selection problems

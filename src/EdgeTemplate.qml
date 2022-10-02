@@ -135,30 +135,52 @@ Item {
     Shape {
         id: edgeSelectionShape
         anchors.fill: parent
-        visible: edgeItem.visible && !edgeItem.hidden
+        visible: edgeItem.visible &&
+                 !edgeItem.hidden &&
+                 edgeItem.selected     // Not very efficient, use a Loader there...
         antialiasing: true
         smooth: true
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined
         property var lineType: edgeTemplate.lineType
-        onLineTypeChanged: {
+        property var lineWidth: edgeItem && edgeItem.style ? edgeItem.style.lineWidth + 2. : 4.
+        property var lineColor: edgeItem &&
+                                edgeItem.graph ? edgeItem.graph.selectionColor :
+                                                 Qt.rgba(0.1176, 0.5647, 1., 1.)  // dodgerblue=rgb(30, 144, 255)
+        onLineTypeChanged: updateSelectionShape()
+        onVisibleChanged: updateSelectionShape()
+        function updateSelectionShape() {
+            if (!visible)
+                return
             switch (lineType) {
             case Qan.EdgeStyle.Undefined:   // falltrought
             case Qan.EdgeStyle.Straight:
                 if (orthoLine) orthoLine.destroy()
                 if (curvedLine) curvedLine.destroy()
-                edgeShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
+                edgeSelectionShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeSelectionShape, {
+                                                                                              edgeTemplate: edgeTemplate,
+                                                                                              strokeWidth: lineWidth,
+                                                                                              strokeColor: lineColor
+                                                                                          });
                 break;
             case Qan.EdgeStyle.Ortho:
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
-                edgeShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                edgeSelectionShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeSelectionShape, {
+                                                                                                 edgeTemplate: edgeTemplate,
+                                                                                                 strokeWidth: lineWidth,
+                                                                                                 strokeColor: lineColor
+                                                                                             })
                 break;
             case Qan.EdgeStyle.Curved:
                 if (straightLine) straightLine.destroy()
                 if (orthoLine) orthoLine.destroy()
-                edgeShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                edgeSelectionShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeSelectionShape, {
+                                                                                                   edgeTemplate: edgeTemplate,
+                                                                                                   strokeWidth: lineWidth,
+                                                                                                   strokeColor: lineColor
+                                                                                               })
                 break;
             }
         }
