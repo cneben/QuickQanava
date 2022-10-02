@@ -75,7 +75,12 @@ Qan.GraphView {
                                         // to create edge, but instead emit requestEdgeCreation (see below) to allow user to create custom
                                         // edge (either specifying a custom edge component, or calling a user defined method on graph).
             onRequestEdgeCreation: {
-                notifyUser("Edge creation requested between " + src.label + " and " + dst.label )
+                if (src && dst && dstPortItem) {
+                    notifyUser("Edge creation requested between " + src.label + " and " + dstPortItem.label)
+                    let e = graph.insertEdge(src, dst);
+                    graph.bindEdgeDestination(e, dstPortItem)
+                } else
+                    notifyUser("Edge creation requested between " + src.label + " and " + dst.label)
             }
         }
         connectorEnabled: true
@@ -106,24 +111,27 @@ Qan.GraphView {
             }
         }
         Component.onCompleted: {
-            var d1 = graph.insertNode()
+            let d1 = graph.insertNode()
             d1.label = "D1"; d1.item.x = 250; d1.item.y = 50
-            var d2 = graph.insertNode()
+            let d2 = graph.insertNode()
             d2.label = "D2"; d2.item.x = 250; d2.item.y = 150
 
-            var s1 = graph.insertNode()
+            let s1 = graph.insertNode()
             s1.label = "S1"; s1.item.x = 15; s1.item.y = 85
 
             graph.insertEdge(s1, d1)
             graph.insertEdge(s1, d2)
 
-            var d3 = graph.insertNode()
+            let d3 = graph.insertNode()
             d3.label = "D3"; d3.item.x = 250; d3.item.y = 250
+            let d3p1 = graph.insertPort(d3, Qan.NodeItem.Left);
+            d3p1.label = "D3 IN #1"
+
             graph.setConnectorSource(s1)
             customConnector.sourceNode = s1
         }
         onNodeClicked: {
-            if ( node && node.item ) {
+            if (node && node.item) {
                 customConnector.sourceNode = node
             } else
                 customConnector.visible = false
