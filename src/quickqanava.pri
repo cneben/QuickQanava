@@ -106,6 +106,12 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/EdgeStraightPath.qml          \
                 $$PWD/EdgeOrthoPath.qml             \
                 $$PWD/EdgeCurvedPath.qml            \
+                $$PWD/EdgeSrcArrowPath.qml          \
+                $$PWD/EdgeSrcCirclePath.qml         \
+                $$PWD/EdgeSrcRectPath.qml           \
+                $$PWD/EdgeDstArrowPath.qml          \
+                $$PWD/EdgeDstCirclePath.qml         \
+                $$PWD/EdgeDstRectPath.qml           \
                 $$PWD/SelectionItem.qml             \
                 $$PWD/StyleListView.qml             \
                 $$PWD/VisualConnector.qml           \

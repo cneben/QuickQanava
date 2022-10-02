@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	EdgeStraightPath.qml
+// \file	EdgeDstCirclePath.qml
 // \author	benoit@destrat.io
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
@@ -35,27 +35,33 @@
 import QtQuick          2.7
 import QtQuick.Shapes   1.0
 
-ShapePath {
-    id: edgeShapePath
+import QuickQanava      2.0 as Qan
 
-    // Set in EdgeTemplate.qml createObject() from global qanEdgeStraightPathComponent
+ShapePath {
     property var edgeTemplate: undefined
     property var edgeItem: edgeTemplate.edgeItem
 
-    startX: edgeItem.p1.x
-    startY: edgeItem.p1.y
-    capStyle: ShapePath.FlatCap
+    strokeColor: edgeTemplate ? edgeTemplate.color : Qt.rgba(0,0,0,1)
+    fillColor: {
+        if (!edgeItem)
+            return Qt.rgba(0,0,0,1)
+        if (edgeTemplate &&
+            edgeItem.dstShape === Qan.EdgeStyle.CircleOpen)
+            return Qt.rgba(0.,0.,0.,0.);
+        return edgeTemplate ? edgeTemplate.color : Qt.rgba(0,0,0,1)
+    }
     strokeWidth: edgeItem &&
                  edgeItem.style ? edgeItem.style.lineWidth :
                                   2
-    strokeColor: edgeTemplate.color
-    strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem &&
-                 edgeItem.style ? edgeItem.style.dashPattern :
-                                  [2, 2]
-    fillColor: Qt.rgba(0,0,0,0)
-    PathLine {
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
+
+    startX: 0
+    startY: 0
+    PathArc {
+        relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+        radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+    }
+    PathArc {
+        relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+        radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
     }
 }

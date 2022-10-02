@@ -27,35 +27,35 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	EdgeStraightPath.qml
+// \file	EdgeSrcCirclePath.qml
 // \author	benoit@destrat.io
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
 
 import QtQuick          2.7
+import QtQuick.Layouts  1.3
 import QtQuick.Shapes   1.0
 
-ShapePath {
-    id: edgeShapePath
+import QuickQanava      2.0 as Qan
 
-    // Set in EdgeTemplate.qml createObject() from global qanEdgeStraightPathComponent
+ShapePath {
     property var edgeTemplate: undefined
     property var edgeItem: edgeTemplate.edgeItem
 
-    startX: edgeItem.p1.x
-    startY: edgeItem.p1.y
-    capStyle: ShapePath.FlatCap
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
     strokeColor: edgeTemplate.color
-    strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem &&
-                 edgeItem.style ? edgeItem.style.dashPattern :
-                                  [2, 2]
-    fillColor: Qt.rgba(0,0,0,0)
-    PathLine {
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
+    fillColor: edgeItem.srcShape === Qan.EdgeStyle.CircleOpen ? Qt.rgba(0.,0.,0.,0.) :
+                                                                edgeTemplate.color
+    strokeWidth: edgeItem.style ? edgeItem.style.lineWidth :
+                                  2
+
+    startX: 0
+    startY: 0
+    PathArc {
+        relativeX: edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
+        radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
+    }
+    PathArc {
+        relativeX: -edgeItem.srcA2.x; relativeY: edgeItem.srcA2.y
+        radiusX: edgeItem.srcA1.x; radiusY: edgeItem.srcA1.y;
     }
 }

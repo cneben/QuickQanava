@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	EdgeStraightPath.qml
+// \file	EdgeDstArrowPath.qml
 // \author	benoit@destrat.io
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
@@ -35,27 +35,23 @@
 import QtQuick          2.7
 import QtQuick.Shapes   1.0
 
-ShapePath {
-    id: edgeShapePath
+import QuickQanava      2.0 as Qan
 
-    // Set in EdgeTemplate.qml createObject() from global qanEdgeStraightPathComponent
+ShapePath {
     property var edgeTemplate: undefined
     property var edgeItem: edgeTemplate.edgeItem
 
-    startX: edgeItem.p1.x
-    startY: edgeItem.p1.y
-    capStyle: ShapePath.FlatCap
+    strokeColor: edgeTemplate.color
+    fillColor: edgeItem &&
+               edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) :
+                                                               edgeTemplate.color
     strokeWidth: edgeItem &&
                  edgeItem.style ? edgeItem.style.lineWidth :
                                   2
-    strokeColor: edgeTemplate.color
-    strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem &&
-                 edgeItem.style ? edgeItem.style.dashPattern :
-                                  [2, 2]
-    fillColor: Qt.rgba(0,0,0,0)
-    PathLine {
-        x: edgeItem.p2.x
-        y: edgeItem.p2.y
-    }
+
+    startX: edgeItem ? edgeItem.dstA1.x : 0
+    startY: edgeItem ? edgeItem.dstA1.y : 0
+    PathLine { x: edgeItem ? edgeItem.dstA3.x : 0; y: edgeItem ? edgeItem.dstA3.y : 0 }
+    PathLine { x: edgeItem ? edgeItem.dstA2.x : 0; y: edgeItem ? edgeItem.dstA2.y : 0 }
+    PathLine { x: edgeItem ? edgeItem.dstA1.x : 0; y: edgeItem ? edgeItem.dstA1.y : 0 }
 }

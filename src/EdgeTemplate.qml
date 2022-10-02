@@ -45,11 +45,102 @@ Item {
 
     property color color: edgeItem &&
                           edgeItem.style ? edgeItem.style.lineColor : Qt.rgba(0.,0.,0.,1.)
-    // Allow direct bypass of lstyle
+    // Allow direct bypass of style
     property var    lineType: edgeItem.style ? edgeItem.style.lineType : Qan.EdgeStyle.Straight
     property var    dashed  : edgeItem.style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
 
+    visible: edgeItem.visible && !edgeItem.hidden
+
     Shape {
+        id: dstShape
+        antialiasing: true
+        smooth: true
+        visible: dstShapeType !== Qan.EdgeStyle.None
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.dstAngle
+        x: edgeItem.p2.x
+        y: edgeItem.p2.y
+
+        property var dstArrow : undefined
+        property var dstCircle: undefined
+        property var dstRect  : undefined
+        property var dstShapeType: edgeItem.dstShape
+        onDstShapeTypeChanged: {
+            switch (dstShapeType) {
+            case Qan.EdgeStyle.None:
+                /*if (dstArrow) dstArrow.destroy()
+                if (dstCircle) dstCircle.destroy()
+                if (dstRect) dstRect.destroy()*/
+                break;
+            case Qan.EdgeStyle.Arrow:       // falltrought
+            case Qan.EdgeStyle.ArrowOpen:
+                if (dstCircle) dstCircle.destroy()
+                if (dstRect) dstRect.destroy()
+                dstShape.data = dstArrow = qanEdgeDstArrowPathComponent.createObject(dstShape, {edgeTemplate: edgeTemplate});
+                break;
+            case Qan.EdgeStyle.Circle:      // falltrought
+            case Qan.EdgeStyle.CircleOpen:
+                if (dstArrow) dstArrow.destroy()
+                if (dstRect) dstRect.destroy()
+                dstShape.data = dstCircle = qanEdgeDstCirclePathComponent.createObject(dstShape, {edgeTemplate: edgeTemplate})
+                break;
+            case Qan.EdgeStyle.Rect:        // falltrought
+            case Qan.EdgeStyle.RectOpen:
+                if (dstArrow) dstArrow.destroy()
+                if (dstCircle) dstCircle.destroy()
+                dstShape.data = dstRect = qanEdgeDstRectPathComponent.createObject(dstShape, {edgeTemplate: edgeTemplate})
+                break;
+            }
+        }
+    }  // Shape: dstShape
+
+
+    Shape {
+        id: srcShape
+        antialiasing: true
+        smooth: true
+        visible: srcShapeType !== Qan.EdgeStyle.None
+
+        transformOrigin: Item.TopLeft
+        rotation: edgeItem.srcAngle
+        x: edgeItem.p1.x
+        y: edgeItem.p1.y
+
+        property var srcArrow : undefined
+        property var srcCircle: undefined
+        property var srcRect  : undefined
+        property var srcShapeType: edgeItem.srcShape
+        onSrcShapeTypeChanged: {
+            switch (srcShapeType) {
+            case Qan.EdgeStyle.None:
+                /*if (srcArrow) srcArrow.destroy()
+                if (srcCircle) srcCircle.destroy()
+                if (srcRect) srcRect.destroy()*/
+                break;
+            case Qan.EdgeStyle.Arrow:       // falltrought
+            case Qan.EdgeStyle.ArrowOpen:
+                if (srcCircle) srcCircle.destroy()
+                if (srcRect) srcRect.destroy()
+                srcShape.data = srcArrow = qanEdgeSrcArrowPathComponent.createObject(srcShape, {edgeTemplate: edgeTemplate});
+                break;
+            case Qan.EdgeStyle.Circle:      // falltrought
+            case Qan.EdgeStyle.CircleOpen:
+                if (srcArrow) srcArrow.destroy()
+                if (srcRect) srcRect.destroy()
+                srcShape.data = srcCircle = qanEdgeSrcCirclePathComponent.createObject(dstShape, {edgeTemplate: edgeTemplate})
+                break;
+            case Qan.EdgeStyle.Rect:        // falltrought
+            case Qan.EdgeStyle.RectOpen:
+                if (srcArrow) srcArrow.destroy()
+                if (srcCircle) srcCircle.destroy()
+                srcShape.data = srcRect = qanEdgeSrcRectPathComponent.createObject(dstShape, {edgeTemplate: edgeTemplate})
+                break;
+            }
+        }
+    }  // Shape: srcShape
+
+
+    /*Shape {
         transformOrigin: Item.TopLeft
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
@@ -162,7 +253,7 @@ Item {
             PathLine { x: edgeItem.srcA2.x; y: edgeItem.srcA2.y }
             PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
         }
-    }
+    }*/
 
     Shape {
         id: edgeShape
@@ -182,7 +273,7 @@ Item {
                     orthoLine.destroy()
                 if (curvedLine)
                     curvedLine.destroy()
-                straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate});
+                straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
                 edgeShape.data = straightLine
                 break;
 
@@ -191,7 +282,7 @@ Item {
                     straightLine.destroy()
                 if (curvedLine)
                     curvedLine.destroy()
-                orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate})
+                orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 edgeShape.data = orthoLine
                 break;
 
@@ -200,7 +291,7 @@ Item {
                     straightLine.destroy()
                 if (orthoLine)
                     orthoLine.destroy()
-                curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate})
+                curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 edgeShape.data = curvedLine
                 break;
             }

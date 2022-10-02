@@ -39,16 +39,20 @@ ShapePath {
     id: edgeShapePath
 
     // Set in EdgeTemplate.qml createObject() from global qanEdgeCurvedPathComponent
-    property var edgeItem: undefined
     property var edgeTemplate: undefined
+    property var edgeItem: edgeTemplate.edgeItem
 
     startX: edgeItem.p1.x
     startY: edgeItem.p1.y
     capStyle: ShapePath.FlatCap
-    strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
+    strokeWidth: edgeItem &&
+                 edgeItem.style ? edgeItem.style.lineWidth :
+                                  2
     strokeColor: edgeTemplate.color
     strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem.style ? style.dashPattern : [4, 2]
+    dashPattern: edgeItem &&
+                 edgeItem.style ? edgeItem.style.dashPattern :
+                                  [4, 2]
     fillColor: Qt.rgba(0,0,0,0)
     PathCubic {
         x: edgeItem.p2.x
