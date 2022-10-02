@@ -44,7 +44,6 @@
 // QuickQanava headers
 #include "./qanUtils.h"
 #include "./qanGraph.h"
-#include "./qanNavigable.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
 #include "./qanEdgeItem.h"
@@ -1648,8 +1647,7 @@ void    Graph::sendToBack(QQuickItem* item)
 {
     if (item == nullptr)
         return;
-
-    qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
+    //qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
     qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
     if (nodeItem == nullptr)
         return;     // item must be a nodeItem or a groupItem

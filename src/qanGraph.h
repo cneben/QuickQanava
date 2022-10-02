@@ -157,7 +157,8 @@ public:
     Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
 signals:
     //! \copydoc hlg::Connector::requestEdgeCreation
-    void                connectorRequestEdgeCreation(qan::Node* src, QObject* dst);
+    void                connectorRequestEdgeCreation(qan::Node* src, QObject* dst,
+                                                     qan::PortItem* srcPortItem, qan::PortItem* dstPortItem);
     //! \copydoc hlg::Connector::edgeInserted
     void                connectorEdgeInserted(qan::Edge* edge);
 

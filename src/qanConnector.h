@@ -94,7 +94,8 @@ public:
     //@{
 signals:
     //! Emitted when \c createDefaultEdge is set to false to request creation of an edge after the visual connector has been dropped on a destination node or edge.
-    void    requestEdgeCreation(qan::Node* src, QObject* dst);
+    void    requestEdgeCreation(qan::Node* src, QObject* dst,
+                                qan::PortItem* srcPortItem, qan::PortItem* dstPortItem);
     //! Emitted after an edge has been created to allow user configuration (not Emitted when \c createDefaultEdge is set to false).
     void    edgeInserted(qan::Edge* edge);
 

@@ -136,7 +136,8 @@ void    Connector::connectorReleased(QQuickItem* target) noexcept
                     _graph->bindEdgeDestination(*createdEdge, *dstPortItem);   // Bind created edge to a destination port
             }
         } else
-            emit requestEdgeCreation(srcNode, dstNode);
+            emit requestEdgeCreation(srcNode, dstNode,
+                                     srcPortItem, dstPortItem);
     }
     if (createdEdge) // Notify user of the edge creation
         emit edgeInserted(createdEdge);
