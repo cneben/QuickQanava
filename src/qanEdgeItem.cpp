@@ -1126,6 +1126,17 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
     // otherwise onEdgeDoubleClicked() is no longer fired (and edge
     // can't be unlocked with a visual editor !
     if (contains(event->localPos())) {
+
+        // Selection management
+        if ((event->button() == Qt::LeftButton ||
+             event->button() == Qt::RightButton) &&
+             getEdge() != nullptr &&
+             isSelectable() &&
+             !getEdge()->getLocked()) {  // Selection allowed for protected
+            if (_graph)
+                _graph->selectEdge(*getEdge(), event->modifiers());
+        }
+
         if (event->button() == Qt::LeftButton) {
             emit edgeClicked(this, event->localPos());
             event->accept();

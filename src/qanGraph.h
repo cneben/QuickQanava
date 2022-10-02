@@ -295,7 +295,7 @@ public: // should be considered private
      * \arg parent Returned selection item is automatically reparented to \c parent (could be nullptr).
      * \return A selection item or nullptr if graph \c selectionDelegate is invalid, ownershipd goes to the caller with QmlEngine::CppOwnership, might be nullptr.
      */
-    QPointer<QQuickItem>    createSelectionItem(QQuickItem* parent) noexcept;
+    QQuickItem*             createSelectionItem(QQuickItem* parent);
 protected:
 
     struct QObjectDeleteLater {
@@ -309,9 +309,9 @@ protected:
     std::unique_ptr<QQmlComponent>  _selectionDelegate{nullptr};
 private:
     //! Secure factory for QML components, errors are reported on stderr.
-    std::unique_ptr<QQmlComponent>  createComponent(const QString& url) noexcept;
+    std::unique_ptr<QQmlComponent>  createComponent(const QString& url);
     //! Secure utility to create a QQuickItem from a given QML component \c component (might issue warning if component is nullptr or not successfully loaded).
-    QPointer<QQuickItem>            createItemFromComponent(QQmlComponent* component) noexcept;
+    QQuickItem*                     createItemFromComponent(QQmlComponent* component);
     //@}
     //-------------------------------------------------------------------------
 
@@ -684,11 +684,16 @@ public:
     //! Similar to selectNode() for qan::Group (internally group is a node).
     bool            selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
+    //! Similar to selectNode() for qan::Edge.
+    bool            selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+
     /*! \brief Add a node in the current selection.
      */
     void            addToSelection(qan::Node& node);
     //! \copydoc addToSelection
-    void            addToSelection(qan::Group& node);
+    void            addToSelection(qan::Group& group);
+    //! \copydoc addToSelection
+    void            addToSelection(qan::Edge& edge);
 
     //! Remove a node from the selection.
     void            removeFromSelection(qan::Node& node);
