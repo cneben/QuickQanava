@@ -103,6 +103,9 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/VerticalDock.qml              \
                 $$PWD/Edge.qml                      \
                 $$PWD/EdgeTemplate.qml              \
+                $$PWD/EdgeStraightPath.qml          \
+                $$PWD/EdgeOrthoPath.qml             \
+                $$PWD/EdgeCurvedPath.qml            \
                 $$PWD/SelectionItem.qml             \
                 $$PWD/StyleListView.qml             \
                 $$PWD/VisualConnector.qml           \

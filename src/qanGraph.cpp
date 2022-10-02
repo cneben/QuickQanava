@@ -504,19 +504,19 @@ std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url)
 {
     // PRECONDITIONS
         // url could not be empty
-    if ( url.isEmpty() ) {
+    if (url.isEmpty()) {
         qWarning() << "qan::Graph::createComponent(): Error: Empty url.";
         return std::unique_ptr<QQmlComponent>();
     }
 
-    QQmlEngine* engine = qmlEngine( this );
+    QQmlEngine* engine = qmlEngine(this);
     std::unique_ptr<QQmlComponent> component;
-    if ( engine != nullptr ) {
+    if (engine != nullptr) {
         try {
             component = std::make_unique<QQmlComponent>(engine, url);
-            if ( !component->isReady() ||
-                 component->isError() ||
-                 component->isNull()  ) {
+            if (!component->isReady()   ||
+                component->isError()    ||
+                component->isNull()) {
                 qWarning() << "qan::Graph::createComponent(): Error while creating component from URL " << url;
                 qWarning() << "\tQML Component status=" << component->status();
                 qWarning() << "\tQML Component errors=" << component->errors();

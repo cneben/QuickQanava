@@ -1300,16 +1300,16 @@ bool    EdgeItem::contains(const QPointF& point) const
     case qan::EdgeStyle::LineType::Undefined:  // [[fallthrough]]
     case qan::EdgeStyle::LineType::Straight:
         d = distanceFromLine(point, QLineF{_p1, _p2});
-        r = (d > -0.0001 && d < 5.);
+        r = (d > -0.001 && d < 6.001);
         break;
     case qan::EdgeStyle::LineType::Curved:
         break;
     case qan::EdgeStyle::LineType::Ortho:
         d = distanceFromLine(point, QLineF{_p1, _c1});
-        r = (d > 0. && d < 5.);
+        r = (d > -0.001 && d < 6.001);
         if (!r) {
             const qreal d2 = distanceFromLine(point, QLineF{_p2, _c1});
-            r = (d2 > 0. && d2 < 5.);
+            r = (d2 > -0.001 && d2 < 6.001);
         }
         break;
     }

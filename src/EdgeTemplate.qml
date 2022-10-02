@@ -163,68 +163,6 @@ Item {
             PathLine { x: edgeItem.srcA1.x; y: edgeItem.srcA1.y }
         }
     }
-    Component {
-        id: straightShapePath
-        ShapePath {
-            id: edgeShapePath
-            startX: edgeItem.p1.x
-            startY: edgeItem.p1.y
-            capStyle: ShapePath.FlatCap
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            strokeColor: edgeTemplate.color
-            strokeStyle: edgeTemplate.dashed
-            dashPattern: edgeItem.style ? edgeItem.style.dashPattern : [2, 2]
-            fillColor: Qt.rgba(0,0,0,0)
-            PathLine {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
-            }
-        }
-    }
-    Component {
-        id: orthoShapePath
-        ShapePath {
-            id: edgeShapePath
-            startX: edgeItem.p1.x
-            startY: edgeItem.p1.y
-            capStyle: ShapePath.FlatCap
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            strokeColor: edgeTemplate.color
-            strokeStyle: edgeTemplate.dashed
-            dashPattern: style ? style.dashPattern : [4, 2]
-            fillColor: Qt.rgba(0,0,0,0)
-            PathLine {
-                x: edgeItem.c1.x
-                y: edgeItem.c1.y
-            }
-            PathLine {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
-            }
-        }
-    }
-    Component {
-        id: curvedShapePath
-        ShapePath {
-            id: edgeShapePath
-            startX: edgeItem.p1.x
-            startY: edgeItem.p1.y
-            capStyle: ShapePath.FlatCap
-            strokeWidth: edgeItem.style ? edgeItem.style.lineWidth : 2
-            strokeColor: edgeTemplate.color
-            strokeStyle: edgeTemplate.dashed
-            dashPattern: edgeItem.style ? style.dashPattern : [4, 2]
-            fillColor: Qt.rgba(0,0,0,0)
-            PathCubic {
-                x: edgeItem.p2.x
-                y: edgeItem.p2.y
-                control1X: edgeItem.c1.x
-                control1Y: edgeItem.c1.y
-                control2X: edgeItem.c2.x
-                control2Y: edgeItem.c2.y
-            }
-        }
-    }
 
     Shape {
         id: edgeShape
@@ -244,7 +182,7 @@ Item {
                     orthoLine.destroy()
                 if (curvedLine)
                     curvedLine.destroy()
-                straightLine = straightShapePath.createObject(edgeShape)
+                straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate});
                 edgeShape.data = straightLine
                 break;
 
@@ -253,7 +191,7 @@ Item {
                     straightLine.destroy()
                 if (curvedLine)
                     curvedLine.destroy()
-                orthoLine = orthoShapePath.createObject(edgeShape)
+                orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate})
                 edgeShape.data = orthoLine
                 break;
 
@@ -262,7 +200,7 @@ Item {
                     straightLine.destroy()
                 if (orthoLine)
                     orthoLine.destroy()
-                curvedLine = curvedShapePath.createObject(edgeShape)
+                curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeItem: edgeTemplate.edgeItem, edgeTemplate: edgeTemplate})
                 edgeShape.data = curvedLine
                 break;
             }
