@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 20220824 v2.2.0:
+- #167: Reduce memory use by 7%/8% when lot of edges are used.
+- #167: Add partial edge selection support.
+- #164: Change signature of qan::Graph::connectorRequestEdgeCreation().
+
 ## 20220824 v2.1.1:
 - Change signature of two public API methods (public but presumably mainly used internally):
   - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().

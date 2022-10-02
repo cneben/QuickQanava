@@ -61,6 +61,8 @@ QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2019 and g++9
  - @walterbrebels
  - @chesnoksatan / Major connector feature, build configuration
 
+QuickQanava include `bezier` library distributed with MIT licence on https://github.com/oysteinmyrmo/bezier
+
 ## License
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)

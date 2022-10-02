@@ -77,7 +77,7 @@ void    Selectable::setSelected(bool selected) noexcept
         _graph) {  // Eventually create selection item
         if (selected &&
             getSelectionItem() == nullptr )
-            setSelectionItem(_graph->createSelectionItem(_target.data()).data());
+            setSelectionItem(_graph->createSelectionItem(_target.data()));
         else if (!selected)
             _graph->removeFromSelection(_target.data());
     }

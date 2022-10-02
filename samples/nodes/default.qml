@@ -59,7 +59,7 @@ Qan.GraphView {
             n2.label = "Node 2"; n2.item.x=15; n2.item.y= 125
 
             var e = graph.insertEdge(n1, n2);
-            defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
+            //defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
         }
         onNodeClicked: function(node) {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )

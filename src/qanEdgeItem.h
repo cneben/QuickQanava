@@ -40,7 +40,7 @@
 // QuickQanava headers
 #include "./qanStyle.h"
 #include "./qanNodeItem.h"
-#include "./qanNode.h"
+#include "./qanSelectable.h"
 
 namespace qan { // ::qan
 
@@ -54,11 +54,13 @@ class NodeItem;
  *
  * \nosubgrouping
  */
-class EdgeItem : public QQuickItem
+class EdgeItem : public QQuickItem,
+                 public qan::Selectable
 {
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
+    Q_INTERFACES(qan::Selectable)
 public:
     explicit EdgeItem(QQuickItem* parent = nullptr);
     virtual ~EdgeItem() override = default;
@@ -75,10 +77,10 @@ private:
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged)
     //! Secure shortcut to getEdge().getGraph().
-    auto    getGraph() const noexcept -> const qan::Graph*;
+    auto    getGraph() const -> const qan::Graph*;
     //! \copydoc getGraph()
-    auto    getGraph() noexcept -> qan::Graph*;
-    auto    setGraph(qan::Graph*) noexcept -> void;
+    auto    getGraph() -> qan::Graph*;
+    auto    setGraph(qan::Graph*) -> void;
 signals:
     void    graphChanged();
 private:
@@ -462,6 +464,31 @@ protected:
     std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
+
+
+    /*! \name Selection Management *///----------------------------------------
+    //@{
+public:
+    //! Set this property to false to disable node selection (default to true, ie node are selectable by default).
+    Q_PROPERTY(bool selectable READ getSelectable WRITE setSelectable NOTIFY selectableChanged FINAL)
+    Q_PROPERTY(bool selected READ getSelected WRITE setSelected NOTIFY selectedChanged FINAL)
+    //! \brief Item used to hilight selection (usually a Rectangle quick item).
+    Q_PROPERTY(QQuickItem* selectionItem READ getSelectionItem WRITE setSelectionItem NOTIFY selectionItemChanged FINAL)
+protected:
+    virtual void    emitSelectableChanged() override { emit selectableChanged(); }
+    virtual void    emitSelectedChanged() override { emit selectedChanged(); }
+    virtual void    emitSelectionItemChanged() override { emit selectionItemChanged(); }
+signals:
+    void            selectableChanged();
+    void            selectedChanged();
+    void            selectionItemChanged();
+
+protected slots:
+    virtual void    onWidthChanged();
+    virtual void    onHeightChanged();
+    //@}
+    //-------------------------------------------------------------------------
+
 
     /*! \name Drag'nDrop Management  *///--------------------------------------
     //@{

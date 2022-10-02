@@ -44,7 +44,6 @@
 // QuickQanava headers
 #include "./qanUtils.h"
 #include "./qanGraph.h"
-#include "./qanNavigable.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
 #include "./qanEdgeItem.h"
@@ -454,9 +453,9 @@ void Graph::setSelectionDelegate(QQmlComponent* selectionDelegate) noexcept
 
 void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegate) noexcept
 {
-    bool delegateChanged{false};
-    if ( selectionDelegate ) {
-        if ( selectionDelegate != _selectionDelegate ) {
+    auto delegateChanged = false;
+    if (selectionDelegate) {
+        if (selectionDelegate != _selectionDelegate) {
             _selectionDelegate = std::move(selectionDelegate);
             delegateChanged = true;
         }
@@ -464,7 +463,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
         _selectionDelegate = createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml"));
         delegateChanged = true;
     }
-    if ( delegateChanged ) {  // Update all existing delegates...
+    if (delegateChanged) {  // Update all existing delegates...
         // Note: It could be done in a more more 'generic' way!
         auto updateNodeSelectionItem = [this](auto& primitive) -> void {
             if (primitive != nullptr &&
@@ -484,10 +483,13 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
     }
 }
 
-QPointer<QQuickItem> Graph::createSelectionItem(QQuickItem* parent) noexcept
+QQuickItem* Graph::createSelectionItem(QQuickItem* parent)
 {
+    const auto edgeItem = qobject_cast<qan::EdgeItem*>(parent);
+    if (edgeItem != nullptr)    // Edge selection item is managed directly in EdgeTemplate.qml
+        return nullptr;
     const auto selectionItem = createItemFromComponent(_selectionDelegate.get());
-    if (selectionItem) {
+    if (selectionItem != nullptr) {
         selectionItem->setEnabled(false); // Avoid node/edge/group selection problems
         selectionItem->setState("UNSELECTED");
         selectionItem->setVisible(true);
@@ -498,26 +500,26 @@ QPointer<QQuickItem> Graph::createSelectionItem(QQuickItem* parent) noexcept
         }
         return selectionItem;
     }
-    return QPointer<QQuickItem>{nullptr};
+    return nullptr;
 }
 
-std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url) noexcept
+std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url)
 {
     // PRECONDITIONS
         // url could not be empty
-    if ( url.isEmpty() ) {
+    if (url.isEmpty()) {
         qWarning() << "qan::Graph::createComponent(): Error: Empty url.";
         return std::unique_ptr<QQmlComponent>();
     }
 
-    QQmlEngine* engine = qmlEngine( this );
+    QQmlEngine* engine = qmlEngine(this);
     std::unique_ptr<QQmlComponent> component;
-    if ( engine != nullptr ) {
+    if (engine != nullptr) {
         try {
             component = std::make_unique<QQmlComponent>(engine, url);
-            if ( !component->isReady() ||
-                 component->isError() ||
-                 component->isNull()  ) {
+            if (!component->isReady()   ||
+                component->isError()    ||
+                component->isNull()) {
                 qWarning() << "qan::Graph::createComponent(): Error while creating component from URL " << url;
                 qWarning() << "\tQML Component status=" << component->status();
                 qWarning() << "\tQML Component errors=" << component->errors();
@@ -531,7 +533,7 @@ std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url) noexc
     return component;
 }
 
-QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) noexcept
+QQuickItem* Graph::createItemFromComponent(QQmlComponent* component)
 {
     // PRECONDITIONS:
         // component should not be nullptr, warning issued
@@ -1120,7 +1122,7 @@ bool    selectPrimitive(Primitive_t& primitive,
     if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
         return false;
 
-    bool selectPrimitive = false;
+    bool primitiveSelected = false;
     const bool ctrlPressed = modifiers & Qt::ControlModifier;
     if (primitive.getItem() == nullptr)
         return false;
@@ -1132,17 +1134,17 @@ bool    selectPrimitive(Primitive_t& primitive,
     } else {
         switch (graph.getSelectionPolicy()) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
-            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
+            primitiveSelected = true;        // Click on an unselected node with SelectOnClick = select node
             if (!ctrlPressed)
                 graph.clearSelection();
             break;
         case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
-            selectPrimitive = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+            primitiveSelected = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
             break;
         case qan::Graph::SelectionPolicy::NoSelection: break;
         }
     }
-    if (selectPrimitive) {
+    if (primitiveSelected) {
         graph.addToSelection(primitive);
         return true;
     }
@@ -1193,6 +1195,8 @@ void    Graph::setNodeSelected(qan::Node* node, bool selected)
 
 bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
 
+bool    Graph::selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Edge>(edge, modifiers, *this); }
+
 template <class Primitive_t>
 void    addToSelectionImpl(Primitive_t& primitive,
                            qcm::Container<QVector, Primitive_t*>& selectedPrimitives,
@@ -1204,7 +1208,7 @@ void    addToSelectionImpl(Primitive_t& primitive,
             primitive.getItem()->setSelected(true);
             // Eventually, create and configure node item selection item
             if (primitive.getItem()->getSelectionItem() == nullptr)
-                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()).data());   // Safe, any argument might be nullptr
+                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()));   // Safe, any argument might be nullptr
             // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
         }
     }
@@ -1212,6 +1216,20 @@ void    addToSelectionImpl(Primitive_t& primitive,
 
 void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
 void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+void    Graph::addToSelection(qan::Edge& edge)
+{
+    // Note 20221002: Do not use addToSelectionImpl<>() since it has no support for QVector<QPointer<qan::Edge>>
+    if (!_selectedEdges.contains(&edge)) {
+        _selectedEdges.append(QPointer<qan::Edge>{&edge});
+        if (edge.getItem() != nullptr) {
+            edge.getItem()->setSelected(true);
+            // Eventually, create and configure node item selection item
+            if (edge.getItem()->getSelectionItem() == nullptr)
+                edge.getItem()->setSelectionItem(createSelectionItem(edge.getItem()));   // Safe, any argument might be nullptr
+            // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
+        }
+    }
+}
 
 template <class Primitive_t>
 void    removeFromSelectionImpl(Primitive_t& primitive,
@@ -1284,6 +1302,16 @@ void    Graph::clearSelection()
             group->getItem() != nullptr)
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
+
+    SelectedEdges selectedEdgesCopy;
+    std::copy(_selectedEdges.cbegin(),
+              _selectedEdges.cend(),
+              std::back_inserter(selectedEdgesCopy));
+    for (auto& edge : qAsConst(selectedEdgesCopy))
+        if (edge != nullptr &&
+            edge->getItem() != nullptr)
+            edge->getItem()->setSelected(false);
+    _selectedEdges.clear();
 }
 
 std::vector<QQuickItem*>    Graph::getSelectedItems() const
@@ -1648,8 +1676,7 @@ void    Graph::sendToBack(QQuickItem* item)
 {
     if (item == nullptr)
         return;
-
-    qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
+    //qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
     qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
     if (nodeItem == nullptr)
         return;     // item must be a nodeItem or a groupItem

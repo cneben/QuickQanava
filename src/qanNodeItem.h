@@ -47,7 +47,6 @@
 
 // QuickQanava headers
 #include "./qanStyle.h"
-#include "./qanBehaviour.h"
 #include "./qanNode.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
@@ -102,6 +101,7 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
@@ -116,10 +116,10 @@ public:
     //! Secure shortcut to getNode().getGraph().
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT)
     //! \copydoc graph
-    auto    setGraph(qan::Graph* graph) noexcept -> void;
+    auto    setGraph(qan::Graph* graph) -> void;
 protected:
-    auto    getGraph() const noexcept -> const qan::Graph*;
-    auto    getGraph() noexcept -> qan::Graph*;
+    auto    getGraph() const -> const qan::Graph*;
+    auto    getGraph() -> qan::Graph*;
 private:
     QPointer<qan::Graph>    _graph;
 
@@ -142,6 +142,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Collapse Management *///-----------------------------------------
     //@{
 public:
@@ -157,6 +158,7 @@ public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Selection Management *///----------------------------------------
     //@{
@@ -180,6 +182,7 @@ protected slots:
     virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Node Configuration *///------------------------------------------
     //@{

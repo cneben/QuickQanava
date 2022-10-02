@@ -257,13 +257,13 @@ public:
     //-------------------------------------------------------------------------
 };
 
-template < class Container >
+template <class Container >
 class ContainerModelImpl : public qcm::ContainerModel
 {
 public:
     explicit ContainerModelImpl(Container& container) :
         qcm::ContainerModel{},
-        _container( container ) { }
+        _container(container) { }
     ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
 private:
     Container&    _container;
@@ -273,8 +273,9 @@ private:
 public:
     using T = typename Container::Item_type;
 
-    virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override {
-        return ( parent.isValid() ? 0 : static_cast<int>(_container.size()) );
+    virtual int         rowCount(const QModelIndex& parent = QModelIndex{}) const override {
+        return (parent.isValid() ? 0 :
+                                   static_cast<int>(_container.size()));
     }
     virtual QVariant    data(const QModelIndex& index, int role = Qt::DisplayRole) const override {
         if (index.row() >= 0 &&
