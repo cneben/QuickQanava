@@ -122,7 +122,7 @@ signals:
 
 public:
     //! Graphical item used as a draggable destination node selector (initialized and owned from QML).
-    Q_PROPERTY( QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL )
+    Q_PROPERTY(QQuickItem* connectorItem READ getConnectorItem WRITE setConnectorItem NOTIFY connectorItemChanged FINAL)
     auto    getConnectorItem() noexcept -> QQuickItem*;
     auto    setConnectorItem(QQuickItem* connectorItem) noexcept -> void;
 signals:
@@ -131,7 +131,7 @@ protected:
     QPointer<QQuickItem>  _connectorItem;
 
 public:
-    Q_PROPERTY( QQmlComponent* edgeComponent READ getEdgeComponent WRITE setEdgeComponent NOTIFY edgeComponentChanged FINAL )
+    Q_PROPERTY(QQmlComponent* edgeComponent READ getEdgeComponent WRITE setEdgeComponent NOTIFY edgeComponentChanged FINAL)
     auto    getEdgeComponent() noexcept -> QQmlComponent*;
     auto    setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> void;
 signals:
@@ -140,7 +140,7 @@ protected:
     QPointer<QQmlComponent>  _edgeComponent;
 
 public:
-    Q_PROPERTY( qan::EdgeItem* edgeItem READ getEdgeItem NOTIFY edgeItemChanged FINAL )
+    Q_PROPERTY(qan::EdgeItem* edgeItem READ getEdgeItem NOTIFY edgeItemChanged FINAL)
     auto    getEdgeItem() noexcept -> qan::EdgeItem*;
 signals:
     void    edgeItemChanged();

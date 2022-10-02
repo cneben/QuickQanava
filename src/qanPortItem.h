@@ -61,11 +61,11 @@ class PortItem : public qan::NodeItem
     Q_OBJECT
 public:
     //! PortItem constructor.
-    explicit PortItem( QQuickItem* parent = nullptr );
+    explicit PortItem(QQuickItem* parent = nullptr);
     virtual ~PortItem() override = default;
-    PortItem( const PortItem& ) = delete;
+    PortItem(const PortItem&) = delete;
     PortItem& operator=(const PortItem&) = delete;
-    PortItem( PortItem&& ) = delete;
+    PortItem(PortItem&&) = delete;
     PortItem& operator=(PortItem&&) = delete;
     //@}
     //-------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public:
 
 public:
     //! \copydoc Node in or out or in/out (default to in/out).
-    Q_PROPERTY( Type type READ getType FINAL )
+    Q_PROPERTY(Type type READ getType CONSTANT FINAL)
     //! \copydoc Type
     inline Type      getType() const noexcept { return _type; }
     //! \copydoc Type
@@ -106,7 +106,7 @@ private:
 
 public:
     //! \copydoc Multiplicity
-    Q_PROPERTY( Multiplicity multiplicity READ getMultiplicity WRITE setMultiplicity NOTIFY multiplicityChanged FINAL )
+    Q_PROPERTY(Multiplicity multiplicity READ getMultiplicity WRITE setMultiplicity NOTIFY multiplicityChanged FINAL)
     //! \copydoc Multiplicity
     inline Multiplicity getMultiplicity() const noexcept { return _multiplicity; }
     //! \copydoc Multiplicity
@@ -119,7 +119,7 @@ signals:
 
 public:
     //!
-    Q_PROPERTY( qan::NodeItem::Dock dockType READ getDockType NOTIFY dockTypeChanged FINAL )
+    Q_PROPERTY(qan::NodeItem::Dock dockType READ getDockType NOTIFY dockTypeChanged FINAL)
     inline NodeItem::Dock   getDockType() const noexcept { return _dockType; }
     void                    setDockType(NodeItem::Dock dockType) noexcept;
 private:
@@ -128,7 +128,7 @@ signals:
     void                    dockTypeChanged();
 
 public:
-    Q_PROPERTY( QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL )
+    Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
     void            setLabel( const QString& label ) noexcept;
     inline QString  getLabel() const noexcept { return _label; }
 private:
