@@ -51,6 +51,9 @@ namespace qan { // ::qan
 EdgeItem::EdgeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
+    setStyle(qan::Edge::style(nullptr));
+    setObjectName(QStringLiteral("qan::EdgeItem"));
+
     setParentItem(parent);
     setAntialiasing(true);
     setFlag(QQuickItem::ItemHasContents, true);
@@ -62,8 +65,10 @@ EdgeItem::EdgeItem(QQuickItem* parent) :
     const auto edgeDraggableCtrl = static_cast<qan::EdgeDraggableCtrl*>(_draggableCtrl.get());
     edgeDraggableCtrl->setTargetItem(this);
 
-    setStyle(qan::Edge::style(nullptr));
-    setObjectName(QStringLiteral("qan::EdgeItem"));
+    connect(this,   &qan::EdgeItem::widthChanged,
+            this,   &qan::EdgeItem::onWidthChanged);
+    connect(this,   &qan::EdgeItem::heightChanged,
+            this,   &qan::EdgeItem::onHeightChanged);
 }
 
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
@@ -76,19 +81,23 @@ auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
         edge->setItem(this);
 }
 
-auto    EdgeItem::getGraph() const noexcept -> const qan::Graph*
+auto    EdgeItem::getGraph() const -> const qan::Graph*
 {
     if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::getGraph() noexcept -> qan::Graph*
+auto    EdgeItem::getGraph() -> qan::Graph*
 {
     if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void { _graph = graph; emit graphChanged(); }
+auto    EdgeItem::setGraph(qan::Graph* graph) -> void
+{
+    _graph = graph; emit graphChanged();
+    qan::Selectable::configure(this, graph);
+}
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
@@ -719,11 +728,11 @@ qreal   EdgeItem::generateCurvedArrowAngle(QPointF& p1, QPointF& p2,
     //               have very sharp orientation, average tangent at curve end AND line angle to avoid
     //               arrow orientation that does not fit the average curve angle.
     static constexpr auto averageDstAngleFactor = 4.0;
-    if ( line.length() > averageDstAngleFactor * arrowLength )      // General case
+    if (line.length() > averageDstAngleFactor * arrowLength)      // General case
         angle = cubicCurveAngleAt(0.99, p1, p2, c1, c2);
     else {                                                          // Special case
-        angle = ( 0.4 * cubicCurveAngleAt(0.99, p1, p2, c1, c2) +
-                  0.6 * lineAngle(line) );
+        angle = (0.4 * cubicCurveAngleAt(0.99, p1, p2, c1, c2) +
+                 0.6 * lineAngle(line));
     }
 
     // Use dst angle to generate an end point translated by -arrowLength except if there is no end shape
@@ -1126,7 +1135,6 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
     // otherwise onEdgeDoubleClicked() is no longer fired (and edge
     // can't be unlocked with a visual editor !
     if (contains(event->localPos())) {
-
         // Selection management
         if ((event->button() == Qt::LeftButton ||
              event->button() == Qt::RightButton) &&
@@ -1292,7 +1300,7 @@ bool    EdgeItem::contains(const QPointF& point) const
     case qan::EdgeStyle::LineType::Undefined:  // [[fallthrough]]
     case qan::EdgeStyle::LineType::Straight:
         d = distanceFromLine(point, QLineF{_p1, _p2});
-        r = (d > 0. && d < 5.);
+        r = (d > -0.0001 && d < 5.);
         break;
     case qan::EdgeStyle::LineType::Curved:
         break;

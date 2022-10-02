@@ -77,10 +77,10 @@ private:
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged)
     //! Secure shortcut to getEdge().getGraph().
-    auto    getGraph() const noexcept -> const qan::Graph*;
+    auto    getGraph() const -> const qan::Graph*;
     //! \copydoc getGraph()
-    auto    getGraph() noexcept -> qan::Graph*;
-    auto    setGraph(qan::Graph*) noexcept -> void;
+    auto    getGraph() -> qan::Graph*;
+    auto    setGraph(qan::Graph*) -> void;
 signals:
     void    graphChanged();
 private:

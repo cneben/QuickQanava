@@ -64,10 +64,10 @@ NodeItem::NodeItem(QQuickItem* parent) :
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptTouchEvents(true);
 
-    connect(this, &qan::NodeItem::widthChanged,
-            this, &qan::NodeItem::onWidthChanged);
-    connect(this, &qan::NodeItem::heightChanged,
-            this, &qan::NodeItem::onHeightChanged);
+    connect(this,   &qan::NodeItem::widthChanged,
+            this,   &qan::NodeItem::onWidthChanged);
+    connect(this,   &qan::NodeItem::heightChanged,
+            this,   &qan::NodeItem::onHeightChanged);
 }
 
 NodeItem::~NodeItem()
@@ -97,12 +97,13 @@ auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
     nodeDraggableCtrl->setTarget(node);
 }
 
-auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
+auto    NodeItem::setGraph(qan::Graph* graph) -> void
+{
     _graph = graph;
     qan::Selectable::configure(this, graph);
 }
-auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
-auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() const -> const qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() -> qan::Graph* { return _graph.data(); }
 
 bool    NodeItem::setMinimumSize(QSizeF minimumSize) noexcept
 {

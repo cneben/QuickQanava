@@ -1299,6 +1299,16 @@ void    Graph::clearSelection()
             group->getItem() != nullptr)
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
+
+    SelectedEdges selectedEdgesCopy;
+    std::copy(_selectedEdges.cbegin(),
+              _selectedEdges.cend(),
+              std::back_inserter(selectedEdgesCopy));
+    for (auto& edge : qAsConst(selectedEdgesCopy))
+        if (edge != nullptr &&
+            edge->getItem() != nullptr)
+            edge->getItem()->setSelected(false);
+    _selectedEdges.clear();
 }
 
 std::vector<QQuickItem*>    Graph::getSelectedItems() const
