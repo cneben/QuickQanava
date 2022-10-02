@@ -62,7 +62,7 @@ EdgeItem::EdgeItem(QQuickItem* parent) :
     const auto edgeDraggableCtrl = static_cast<qan::EdgeDraggableCtrl*>(_draggableCtrl.get());
     edgeDraggableCtrl->setTargetItem(this);
 
-    setStyle(qan::Edge::style(parent));
+    setStyle(qan::Edge::style(nullptr));
     setObjectName(QStringLiteral("qan::EdgeItem"));
 }
 
@@ -1185,7 +1185,7 @@ qreal   EdgeItem::distanceFromLine(const QPointF& p, const QLineF& line) const n
 //-----------------------------------------------------------------------------
 
 /* Style and Properties Management *///----------------------------------------
-void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
+void    EdgeItem::setStyle(EdgeStyle* style) noexcept
 {
     if (style != _style) {
         if (_style != nullptr)  // Every style that is non default is disconnect from this node
