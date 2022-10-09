@@ -83,16 +83,6 @@ private slots:
     void        onTargetHeightChanged();
 
 public:
-    //! When a resizer is used on an item that is _inside_ a Flickable QML component, bind the flickable to this property to automatically disable flicking during \c target resizing.
-    Q_PROPERTY(QQuickItem* flickable READ getFlickable WRITE setFlickable NOTIFY flickableChanged FINAL)
-    void        setFlickable(QQuickItem* flickable) { _flickable = flickable; emit flickableChanged(); }
-    QQuickItem* getFlickable() const { return _flickable.data(); }
-signals:
-    void        flickableChanged();
-private:
-    QPointer<QQuickItem>  _flickable{nullptr};
-
-public:
     //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no constrain).
     Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL)
     //! \sa minimumTargetSize

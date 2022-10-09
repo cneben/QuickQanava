@@ -410,8 +410,9 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
         case QEvent::MouseButtonRelease: {
             _dragInitialPos = QPointF{0., 0.};       // Invalid all cached coordinates when button is released
             _targetInitialSize = QSizeF{ 0., 0.};
-            emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :
-                                     QSizeF{});
+            if (_target)
+                emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :
+                                         QSizeF{});
             if (getFlickable() != nullptr)
                 getFlickable()->setProperty("interactive", QVariant{true});
         }

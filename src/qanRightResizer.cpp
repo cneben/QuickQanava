@@ -119,31 +119,34 @@ void    RightResizer::setTarget(QQuickItem* target)
 
 void    RightResizer::onTargetXChanged()
 {
-    if (_target)
-        setX(_target->x() + _target->width() - 2.5);  // FIXME #169 grip width...
-    // FIXME #169 map to global x...
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setX(sp.x() + _target->width() - 2.5);  // FIXME #169 grip width...
+    }
 }
 
 void    RightResizer::onTargetYChanged()
 {
-    if (_target && _handler)
-        setY(_target->y());
-    // FIXME #169 map to global y...
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setY(sp.y());
+    }
 }
 
 void    RightResizer::onTargetWidthChanged()
 {
-    if (_target) {
-        setX(_target->x() + _target->width() - 2.5);  // FIXME #169 grip width...
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setX(sp.x() + _target->width() - 2.5);  // FIXME #169 grip width...
         setWidth(5);
     }
 }
 
 void    RightResizer::onTargetHeightChanged()
 {
-    if (_target && _handler) {
-        _handler->setHeight(_target->height());
-        setHeight(_target->height());
+    if (_target) {
+        _handler->setHeight(_target->height() - 4);
+        setHeight(_target->height() - 4);   // Account for a potential bottom right resizer
     }
 }
 
@@ -183,13 +186,13 @@ void    RightResizer::setRatio(qreal ratio) noexcept
 /* Resizer Management *///-----------------------------------------------------
 void    RightResizer::hoverEnterEvent(QHoverEvent *event)
 {
-    qWarning() << "qan::RightResizer::hoverEnter()";
-    setCursor(Qt::SplitHCursor);
-    event->setAccepted(true);
+    if (isVisible()) {
+        setCursor(Qt::SplitHCursor);
+        event->setAccepted(true);
+    }
 }
 void    RightResizer::hoverLeaveEvent(QHoverEvent *event)
 {
-    qWarning() << "qan::RightResizer::hoverLeave()";
     setCursor(Qt::ArrowCursor);
     event->setAccepted(true);
 }
@@ -233,6 +236,8 @@ void    RightResizer::mouseMoveEvent(QMouseEvent* event)
 }
 void    RightResizer::mousePressEvent(QMouseEvent* event)
 {
+    if (!isVisible())
+        return;
     qWarning() << "qan::RightResizer::mousePress()";
     const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
     const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
@@ -240,10 +245,8 @@ void    RightResizer::mousePressEvent(QMouseEvent* event)
     if (target) {
         _dragInitialPos = event->windowPos();
         _targetInitialSize = {target->width(), target->height()};
-        emit resizeStart(_target ? QSizeF{target->width(), target->height()} :
-                                   QSizeF{});
-        if (getFlickable() != nullptr)
-            getFlickable()->setProperty("interactive", QVariant{false});
+        emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :  // Use of target ok.
+                                  QSizeF{});
         event->setAccepted(true);
     }
 }
@@ -252,10 +255,9 @@ void    RightResizer::mouseReleaseEvent(QMouseEvent* event)
     Q_UNUSED(event)
     _dragInitialPos = {0., 0.};       // Invalid all cached coordinates when button is released
     _targetInitialSize = {0., 0.};
-    emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :
-                             QSizeF{});
-    if (getFlickable() != nullptr)
-        getFlickable()->setProperty("interactive", QVariant{true});
+    if (_target)
+        emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :  // Use of _target ok.
+                                 QSizeF{});
 }
 //-------------------------------------------------------------------------
 

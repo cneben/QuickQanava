@@ -258,6 +258,7 @@ Qan.AbstractGraphView {
                 groupRightResizer.target = group.item
                 // FIXME #169 handle collapsed and resizable...
                 groupRightResizer.visible = true
+                groupResizer.minimumTargetSize = group.item.minimumSize
 
                 // Do not show resizer when group is collapsed
                 groupResizer.visible = Qt.binding( function() { // Resizer is visible :
