@@ -45,12 +45,12 @@
 namespace qan {  // ::qan
 
 /* BottomRightResizer Object Management *///-----------------------------------
-BottomRightResizer::BottomRightResizer( QQuickItem* parent ) :
-    QQuickItem{ parent }
+BottomRightResizer::BottomRightResizer(QQuickItem* parent) :
+    QQuickItem{parent}
 {
 }
 
-BottomRightResizer::~BottomRightResizer( )
+BottomRightResizer::~BottomRightResizer()
 {
     if (_handler &&
         QQmlEngine::objectOwnership(_handler.data()) == QQmlEngine::CppOwnership)
@@ -59,7 +59,7 @@ BottomRightResizer::~BottomRightResizer( )
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-void    BottomRightResizer::setHandler( QQuickItem* handler ) noexcept
+void    BottomRightResizer::setHandler(QQuickItem* handler) noexcept
 {
     if (handler != _handler.data()) {
         if (_handler) {     // Delete existing handler
@@ -80,35 +80,34 @@ QQuickItem* BottomRightResizer::getHandler() const noexcept
     return (_handler ? _handler.data() : nullptr);
 }
 
-void    BottomRightResizer::setTarget( QQuickItem* target )
+void    BottomRightResizer::setTarget(QQuickItem* target)
 {
-    if ( target == nullptr ) {  // Set a null target = disable the control
-        if ( _target )
-            disconnect( _target.data(), nullptr,
-                        this,           nullptr );  // Disconnect old target width/height monitoring
+    if (target == nullptr) {  // Set a null target = disable the control
+        if (_target)
+            disconnect(_target.data(),  nullptr,
+                       this,            nullptr );  // Disconnect old target width/height monitoring
         _target = nullptr;
         return;
     }
 
-    if ( !_handler ) {  // Eventually, create the handler component
-        QQmlEngine* engine = qmlEngine( this );
-        if ( engine != nullptr ) {
+    if (!_handler) {  // Eventually, create the handler component
+        QQmlEngine* engine = qmlEngine(this);
+        if (engine != nullptr) {
             QQmlComponent defaultHandlerComponent{engine};
-            QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
+            const QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
                         QStringLiteral("width:")    + QString::number(_handlerSize.width()) + QStringLiteral(";") +
                         QStringLiteral("height:")   + QString::number(_handlerSize.height()) + QStringLiteral(";") +
                         QStringLiteral("border.width:4;radius:3;") +
                         QStringLiteral("border.color:\"") + _handlerColor.name() + QStringLiteral("\";") +
                         QStringLiteral("color:Qt.lighter(border.color); }") };
-            defaultHandlerComponent.setData( handlerQml.toUtf8(), QUrl{} );
-            if ( defaultHandlerComponent.isReady() ) {
+            defaultHandlerComponent.setData(handlerQml.toUtf8(), QUrl{});
+            if (defaultHandlerComponent.isReady()) {
                 _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
-                if ( _handler ) {
-                    engine->setObjectOwnership( _handler.data(), QQmlEngine::CppOwnership );
+                if (_handler) {
+                    engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
                     _handler->setParentItem(this);
                     _handler->installEventFilter(this);
-                }
-                else {
+                } else {
                     qWarning() << "qan::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
                     qWarning() << "QML Component status=" << defaultHandlerComponent.status();
                 }
@@ -121,51 +120,51 @@ void    BottomRightResizer::setTarget( QQuickItem* target )
     }
 
     // Configure handler on given target
-    if ( _handler )
+    if (_handler)
         configureHandler(*_handler);
 
     _target = target;
-    if ( _target )
+    if (_target)
         configureTarget(*_target);
     emit targetChanged();
 }
 
 void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
 {
-    handler.setOpacity( _autoHideHandler ? 0. : 1. );
-    handler.setSize( _handlerSize );
-    handler.setZ( z() + 1. );
-    QObject* handlerBorder = handler.property( "border" ).value<QObject*>();
-    if ( handlerBorder != nullptr )
-        handlerBorder->setProperty( "color", _handlerColor );
-    handler.setVisible( true );
-    handler.setParentItem( this );
-    handler.setAcceptedMouseButtons( Qt::LeftButton );
-    handler.setAcceptHoverEvents( true );
+    handler.setOpacity(_autoHideHandler ? 0. : 1.);
+    handler.setSize(_handlerSize);
+    handler.setZ(z() + 1.);
+    QObject* handlerBorder = handler.property("border").value<QObject*>();
+    if (handlerBorder != nullptr)
+        handlerBorder->setProperty("color", _handlerColor);
+    handler.setVisible(true);
+    handler.setParentItem(this);
+    handler.setAcceptedMouseButtons(Qt::LeftButton);
+    handler.setAcceptHoverEvents(true);
 }
 
 void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
 {
-    if ( !_minimumTargetSize.isEmpty() ) { // Check that target size is not bellow resizer target minimum size
+    if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
         if (target.width() < _minimumTargetSize.width())
             target.setWidth(_minimumTargetSize.width());
-        if ( target.height() < _minimumTargetSize.height())
+        if (target.height() < _minimumTargetSize.height())
             target.setHeight(_minimumTargetSize.height());
     }
 
-    if ( &target != parentItem() ) { // Resizer is not in target sibling (ie is not a child of target)
-        connect( &target,   &QQuickItem::xChanged,
-                 this,      &BottomRightResizer::onTargetXChanged );
-        connect( &target,   &QQuickItem::yChanged,
-                 this,      &BottomRightResizer::onTargetYChanged );
-        setX( target.x() );
-        setY( target.y() );
+    if (&target != parentItem()) { // Resizer is not in target sibling (ie is not a child of target)
+        connect(&target,   &QQuickItem::xChanged,
+                this,      &BottomRightResizer::onTargetXChanged);
+        connect(&target,   &QQuickItem::yChanged,
+                this,      &BottomRightResizer::onTargetYChanged);
+        setX(target.x());
+        setY(target.y());
     }
 
-    connect( &target,   &QQuickItem::widthChanged,
-             this,      &BottomRightResizer::onTargetWidthChanged );
-    connect( &target,   &QQuickItem::heightChanged,
-             this,      &BottomRightResizer::onTargetHeightChanged );
+    connect(&target,   &QQuickItem::widthChanged,
+            this,      &BottomRightResizer::onTargetWidthChanged);
+    connect(&target,   &QQuickItem::heightChanged,
+            this,      &BottomRightResizer::onTargetHeightChanged);
 
     onTargetWidthChanged();
     onTargetHeightChanged();
@@ -173,106 +172,104 @@ void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
 
 void    BottomRightResizer::onTargetXChanged()
 {
-    if ( _target &&
-         _target != parentItem() )
-        setX( _target->x() );
+    if (_target &&
+        _target != parentItem())
+        setX(_target->x());
 }
 
 void    BottomRightResizer::onTargetYChanged()
 {
-    if ( _target &&
-         _target != parentItem() )
-        setY( _target->y() );
+    if (_target &&
+        _target != parentItem())
+        setY(_target->y());
 }
 
 void    BottomRightResizer::onTargetWidthChanged()
 {
-    if ( _target &&
-         _handler ) {
+    if (_target &&
+        _handler) {
         const qreal targetWidth = _target->width();
         const qreal handlerWidth2 = _handlerSize.width() / 2.;
-        _handler->setX( targetWidth - handlerWidth2 );
+        _handler->setX(targetWidth - handlerWidth2);
     }
 }
 
 void    BottomRightResizer::onTargetHeightChanged()
 {
-    if ( _target &&
-         _handler ) {
+    if (_target &&
+        _handler) {
         const qreal targetHeight = _target->height();
         const qreal handlerHeight2 = _handlerSize.height() / 2.;
-        _handler->setY( targetHeight - handlerHeight2 );
+        _handler->setY(targetHeight - handlerHeight2);
     }
 }
 
-void    BottomRightResizer::setHandlerSize( const QSizeF& handlerSize )
+void    BottomRightResizer::setHandlerSize(const QSizeF& handlerSize)
 {
-    if ( handlerSize.isEmpty() )
+    if (handlerSize.isEmpty())
         return;
-    if ( handlerSize == _handlerSize )  // Binding loop protection
+    if (handlerSize == _handlerSize)  // Binding loop protection
         return;
 
     forceHandlerSize(handlerSize);
 }
 
-void    BottomRightResizer::forceHandlerSize( const QSizeF& handlerSize )
+void    BottomRightResizer::forceHandlerSize(const QSizeF& handlerSize)
 {
     _handlerSize = handlerSize;
-    if ( _handler ) {
+    if (_handler) {
         onTargetWidthChanged();     // Force resize handler position change
         onTargetHeightChanged();    // to take new handler size
 
-        _handler->setSize( handlerSize );
+        _handler->setSize(handlerSize);
     }
 
     emit handlerSizeChanged();
 }
 
-void    BottomRightResizer::setHandlerColor( QColor handlerColor )
+void    BottomRightResizer::setHandlerColor(QColor handlerColor)
 {
-    if ( !handlerColor.isValid() )
+    if (!handlerColor.isValid())
         return;
-    if ( handlerColor == _handlerColor )    // Binding loop protection
+    if (handlerColor == _handlerColor)    // Binding loop protection
         return;
-    if ( _handler ) {
-        QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
-        if ( handlerBorder ) {
-            handlerBorder->setProperty( "color", handlerColor );
-        }
+    if (_handler) {
+        QObject* handlerBorder = _handler->property("border").value<QObject*>();
+        if (handlerBorder)
+            handlerBorder->setProperty("color", handlerColor);
     }
     _handlerColor = handlerColor;
     emit handlerColorChanged();
 }
 
-void    BottomRightResizer::setHandlerRadius( qreal handlerRadius )
+void    BottomRightResizer::setHandlerRadius(qreal handlerRadius)
 {
-    if ( qFuzzyCompare( 1.0 + handlerRadius, 1.0 + _handlerRadius ) )    // Binding loop protection
+    if (qFuzzyCompare(1.0 + handlerRadius, 1.0 + _handlerRadius))    // Binding loop protection
         return;
     forceHandlerRadius(handlerRadius);
 }
 
-void    BottomRightResizer::forceHandlerRadius( qreal handlerRadius )
+void    BottomRightResizer::forceHandlerRadius(qreal handlerRadius)
 {
-    if ( _handler )
-        _handler->setProperty( "radius", handlerRadius );
+    if (_handler)
+        _handler->setProperty("radius", handlerRadius);
     _handlerRadius = handlerRadius;
     emit handlerRadiusChanged();
 }
 
-void    BottomRightResizer::setHandlerWidth( qreal handlerWidth )
+void    BottomRightResizer::setHandlerWidth(qreal handlerWidth)
 {
-    if ( qFuzzyCompare( 1.0 + handlerWidth, 1.0 + _handlerWidth ) )    // Binding loop protection
+    if (qFuzzyCompare(1.0 + handlerWidth, 1.0 + _handlerWidth))    // Binding loop protection
         return;
     forceHandlerWidth(handlerWidth);
 }
 
-void    BottomRightResizer::forceHandlerWidth( qreal handlerWidth )
+void    BottomRightResizer::forceHandlerWidth(qreal handlerWidth)
 {
-    if ( _handler ) {
-        QObject* handlerBorder = _handler->property( "border" ).value<QObject*>();
-        if ( handlerBorder != nullptr ) {
-            handlerBorder->setProperty( "width", handlerWidth );
-        }
+    if (_handler) {
+        QObject* handlerBorder = _handler->property("border").value<QObject*>();
+        if (handlerBorder != nullptr)
+            handlerBorder->setProperty("width", handlerWidth);
     }
     _handlerWidth = handlerWidth;
     emit handlerWidthChanged();
@@ -294,14 +291,14 @@ void    BottomRightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
     }
 }
 
-void    BottomRightResizer::setAutoHideHandler( bool autoHideHandler )
+void    BottomRightResizer::setAutoHideHandler(bool autoHideHandler)
 {
-    if ( autoHideHandler == _autoHideHandler )    // Binding loop protection
+    if (autoHideHandler == _autoHideHandler)    // Binding loop protection
         return;
-    if ( _handler  &&
-         autoHideHandler &&
-         _handler->isVisible() )    // If autoHide is set to false and the handler is visible, hide it
-        _handler->setVisible( false );
+    if (_handler &&
+        autoHideHandler &&
+        _handler->isVisible())    // If autoHide is set to false and the handler is visible, hide it
+        _handler->setVisible(false);
     _autoHideHandler = autoHideHandler;
     emit autoHideHandlerChanged();
 }
@@ -326,26 +323,26 @@ void    BottomRightResizer::setRatio(qreal ratio) noexcept
 /* Resizer Management *///-----------------------------------------------------
 bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
 {
-    if ( item != _handler )
+    if (item != _handler)
         return QObject::eventFilter(item, event);
-    bool accepted{ false };
-    if ( _handler &&
-         item == _handler.data() ) {
-        switch ( event->type() ) {
+    bool accepted = false;
+    if (_handler &&
+        item == _handler.data()) {
+        switch (event->type()) {
         case QEvent::HoverEnter:
         {
-            _handler->setCursor( Qt::SizeFDiagCursor );
-            _handler->setOpacity( 1.0 );   // Handler is always visible when hovered
-            QMouseEvent* me = static_cast<QMouseEvent*>( event );
+            _handler->setCursor(Qt::SizeFDiagCursor);
+            _handler->setOpacity(1.0);   // Handler is always visible when hovered
+            QMouseEvent* me = static_cast<QMouseEvent*>(event);
             me->setAccepted(true);
             accepted = true;
         }
             break;
         case QEvent::HoverLeave:
         {
-            _handler->setCursor( Qt::ArrowCursor );
-            _handler->setOpacity( getAutoHideHandler() ? 0. : 1.0 );
-            QMouseEvent* me = static_cast<QMouseEvent*>( event );
+            _handler->setCursor(Qt::ArrowCursor);
+            _handler->setOpacity(getAutoHideHandler() ? 0. : 1.0);
+            QMouseEvent* me = static_cast<QMouseEvent*>(event);
             me->setAccepted(true);
             accepted = true;
             break;
@@ -366,9 +363,8 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
                 // BTW, this code is probably buggy for deep quick item hierarchy.
                 QPointF startLocalPos;
                 QPointF curLocalPos;
-                if ( parentItem() != nullptr ) {
-                    startLocalPos = parentItem()->mapFromScene( _dragInitialPos );
-                    //curLocalPos = parentItem()->mapFromScene( me->windowPos() );
+                if (parentItem() != nullptr) {
+                    startLocalPos = parentItem()->mapFromScene(_dragInitialPos);
                     curLocalPos = parentItem()->mapFromScene(mePos);
                 } else {
                     startLocalPos = _dragInitialPos;
@@ -399,7 +395,7 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
             break;
         case QEvent::MouseButtonPress: {
             QMouseEvent* me = static_cast<QMouseEvent*>( event );
-            if ( _target ) {
+            if (_target) {
                 _dragInitialPos = me->windowPos();
                 _targetInitialSize = { _target->width(), _target->height() };
                 emit resizeStart( _target ? QSizeF{ _target->width(), _target->height() } :
@@ -414,10 +410,10 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
         case QEvent::MouseButtonRelease: {
             _dragInitialPos = { 0., 0. };       // Invalid all cached coordinates when button is released
             _targetInitialSize = { 0., 0. };
-            emit resizeEnd( _target ? QSizeF{ _target->width(), _target->height() } :
-                                      QSizeF{} );
-            if ( getFlickable() != nullptr )
-                getFlickable()->setProperty( "interactive", QVariant{true} );
+            emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :
+                                     QSizeF{});
+            if (getFlickable() != nullptr)
+                getFlickable()->setProperty("interactive", QVariant{true});
         }
             break;
         default:

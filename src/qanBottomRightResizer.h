@@ -49,7 +49,7 @@ namespace qan {  // ::qan
  * Don't forget to register the component during application initialization:
  * \code
  *   // From c++:
- *   qmlRegisterType< qan::BottomRightResizer >( "QuickQanava", 2, 0, "BottomRightResizer" );
+ *   qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
  *
  *   // From QML:
  *   import QuickQanava 2.0 as Qan
