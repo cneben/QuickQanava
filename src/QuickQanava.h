@@ -58,6 +58,7 @@
 #include "./qanStyleManager.h"
 #include "./qanBottomRightResizer.h"
 #include "./qanRightResizer.h"
+#include "./qanBottomResizer.h"
 #include "./qanNavigablePreview.h"
 #include "./qanAnalysisTimeHeatMap.h"
 
@@ -115,6 +116,7 @@ struct QuickQanava {
         qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
         qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
         qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
+        qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
 #endif // QUICKQANAVA_STATIC
     } // initialize()
 };

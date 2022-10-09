@@ -212,7 +212,6 @@ void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void    GroupItem::mousePressEvent(QMouseEvent* event)
 {
-    qWarning() << "qan::GroupItem::mousePressEvent(): event=" << event;
     qan::NodeItem::mousePressEvent(event);
 
     if (event->button() == Qt::LeftButton &&    // Selection management
@@ -228,9 +227,6 @@ void    GroupItem::mousePressEvent(QMouseEvent* event)
         emit groupClicked(this, event->localPos());
     else if (event->button() == Qt::RightButton)
         emit groupRightClicked(this, event->localPos());
-
-    // FIXME #169
-    //event->ignore();
 }
 //-----------------------------------------------------------------------------
 

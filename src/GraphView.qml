@@ -136,6 +136,29 @@ Qan.AbstractGraphView {
             border.color: 'violet'
         }*/
     }
+    Qan.BottomResizer {
+        id: groupBottomResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupAboutToBeResized(target.groupItem.group);
+        }
+        onResizeEnd: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupResized(target.groupItem.group);
+        }
+        // FIXME #169
+        /*Rectangle {
+            anchors.fill: parent
+            color: 'transparent'
+            border.width: 1
+            border.color: 'red'
+        }*/
+    }
 
     Rectangle {
         id: selectionRect
@@ -156,6 +179,7 @@ Qan.AbstractGraphView {
         groupResizer.target = null
         groupResizer.visible = false      // FIXME #169 let bottom right resizer handle that...
         groupRightResizer.target = null
+        groupBottomResizer.target = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -263,9 +287,11 @@ Qan.AbstractGraphView {
                 groupResizer.target = Qt.binding( function() { return group.item.container } )
 
                 groupRightResizer.target = group.item
+                groupBottomResizer.target = group.item
                 // FIXME #169 handle collapsed and resizable...
-                //groupRightResizer.visible = true
                 groupRightResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                                        Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+                groupBottomResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
                                                                                         Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
                 groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
                                                                                    Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
@@ -279,10 +305,12 @@ Qan.AbstractGraphView {
                 groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 groupResizer.preserveRatio = false
                 groupRightResizer.z = group.item.z + 4.
+                groupBottomResizer.z = group.item.z + 4.
             } else {
                 groupResizer.target = null
                 groupResizer.visible = false
                 groupRightResizer.target = null
+                groupBottomResizer.target = null
             } // group.item.resizable
         } else {
             console.error("Qan.GraphView.onGroupClicked(): Invalid group container, can't configure resizer")
