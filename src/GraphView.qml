@@ -113,6 +113,23 @@ Qan.AbstractGraphView {
                 graph.groupResized(target.groupItem.group);
         }
     }
+    Qan.RightResizer {
+        id: groupRightResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupAboutToBeResized(target.groupItem.group);
+        }
+        onResizeEnd: {
+            if (target &&
+                target.groupItem &&
+                target.groupItem.group)
+                graph.groupResized(target.groupItem.group);
+        }
+    }
+
     Rectangle {
         id: selectionRect
         x: 0; y: 0
@@ -130,7 +147,8 @@ Qan.AbstractGraphView {
         nodeResizer.target = null
         nodeResizer.visible = false
         groupResizer.target = null
-        groupResizer.visible = false
+        groupResizer.visible = false      // FIXME #169 let bottom right resizer handle that...
+        groupRightResizer.target = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -230,10 +248,16 @@ Qan.AbstractGraphView {
             if (group.item.resizable) {
                 groupResizer.parent = group.item
 
+                // FIXME #169 Should no longer be necessary to reset...
                 groupResizer.target = null  // See previous note in onNodeClicked()
                 groupResizer.minimumTargetSize = Qt.binding(
                             function() { return group.item.minimumSize; })
+                // FIXME #169 binding should not be necessary here !!!!
                 groupResizer.target = Qt.binding( function() { return group.item.container } )
+
+                groupRightResizer.target = group.item
+                // FIXME #169 handle collapsed and resizable...
+                groupRightResizer.visible = true
 
                 // Do not show resizer when group is collapsed
                 groupResizer.visible = Qt.binding( function() { // Resizer is visible :
@@ -243,9 +267,11 @@ Qan.AbstractGraphView {
                 } )
                 groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 groupResizer.preserveRatio = false
+                groupRightResizer.z = group.item.z + 4.
             } else {
                 groupResizer.target = null
                 groupResizer.visible = false
+                groupRightResizer.target = null
             } // group.item.resizable
         } else {
             console.error("Qan.GraphView.onGroupClicked(): Invalid group container, can't configure resizer")

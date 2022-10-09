@@ -41,6 +41,8 @@
 namespace qan {  // ::qan
 
 /*! \brief Add a resize handler ont the right of a target QML Item.
+ * FIXME #169
+ * \warning This component must not be reparented to it's target.
  *
  * \nosubgrouping
  */
@@ -74,9 +76,9 @@ signals:
     void        targetChanged();
 private:
     QPointer<QQuickItem>  _target = nullptr;
-private:
-    void        configureTarget(QQuickItem& target);
 private slots:
+    void        onTargetXChanged();
+    void        onTargetYChanged();
     void        onTargetWidthChanged();
     void        onTargetHeightChanged();
 
@@ -135,7 +137,11 @@ signals:
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void        resizeEnd(QSizeF targetSize);
 protected:
-     virtual bool   eventFilter(QObject* obj, QEvent* event) override;
+    virtual void    hoverEnterEvent(QHoverEvent *event) override;
+    virtual void    hoverLeaveEvent(QHoverEvent *event) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual void    mousePressEvent(QMouseEvent* event) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
     QPointF     _dragInitialPos{0., 0.};

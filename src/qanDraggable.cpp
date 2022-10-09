@@ -38,10 +38,7 @@
 namespace qan { // ::qan
 
 /* Node Object Management *///-------------------------------------------------
-Draggable::Draggable() { /* Nil */ }
-Draggable::~Draggable() { /* Nil */ }
-
-void    Draggable::configure(QQuickItem* target )
+void    Draggable::configure(QQuickItem* target)
 {
     _target = target;
 }

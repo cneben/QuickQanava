@@ -331,13 +331,13 @@ signals:
 
 public:
     //! Set to true if the node item has a complex non rounded rectangle bounding shape (and manually install a \c onRequestUpdateBoundingShape() handler in QML delegate).
-    Q_PROPERTY( bool complexBoundingShape READ getComplexBoundingShape WRITE setComplexBoundingShape NOTIFY complexBoundingShapeChanged FINAL )
-    void            setComplexBoundingShape( bool complexBoundingShape ) noexcept;
+    Q_PROPERTY(bool complexBoundingShape READ getComplexBoundingShape WRITE setComplexBoundingShape NOTIFY complexBoundingShapeChanged FINAL)
+    void            setComplexBoundingShape(bool complexBoundingShape) noexcept;
     inline bool     getComplexBoundingShape() const noexcept { return _complexBoundingShape; }
 private:
-    bool            _complexBoundingShape{false};
+    bool            _complexBoundingShape = false;
 signals:
-    void            complexBoundingShapeChanged( );
+    void            complexBoundingShapeChanged();
 
 public:
     /*! \brief Polygon used for mouse event clipping, and edge arrow clipping (in item local coordinates).
@@ -347,7 +347,7 @@ public:
      * not a rectangle.
      * \sa \ref custom
      */
-    Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL )
+    Q_PROPERTY(QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL)
     QPolygonF           getBoundingShape() noexcept;
     void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
 signals:

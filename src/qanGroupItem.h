@@ -40,10 +40,6 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanSelectable.h"
-#include "./qanDraggable.h"
-#include "./qanAbstractDraggableCtrl.h"
-#include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanGroup.h"
 
