@@ -60,19 +60,23 @@ public:
     /*! \name Resizer Management *///------------------------------------------
     //@{
 public:
+    Q_PROPERTY(QQuickItem*  handler READ getHandler CONSTANT FINAL)
+    QQuickItem*             getHandler() const;
+private:
+    QPointer<QQuickItem>    _handler = nullptr;
+
+public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
     Q_PROPERTY(QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL)
     void        setTarget(QQuickItem* target);
-    QQuickItem* getTarget() const noexcept { return _target.data(); }
+    QQuickItem* getTarget() const { return _target.data(); }
 signals:
     void        targetChanged();
 private:
-    QPointer<QQuickItem>  _target{ nullptr };
+    QPointer<QQuickItem>  _target = nullptr;
 private:
-    void        configureTarget(QQuickItem& target) noexcept;
+    void        configureTarget(QQuickItem& target);
 private slots:
-    void        onTargetXChanged();
-    void        onTargetYChanged();
     void        onTargetWidthChanged();
     void        onTargetHeightChanged();
 
@@ -131,7 +135,7 @@ signals:
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void        resizeEnd(QSizeF targetSize);
 protected:
-     virtual bool   eventFilter(QObject *obj, QEvent *event) override;
+     virtual bool   eventFilter(QObject* obj, QEvent* event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
     QPointF     _dragInitialPos{0., 0.};

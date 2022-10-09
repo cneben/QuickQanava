@@ -49,6 +49,11 @@ RightResizer::RightResizer(QQuickItem* parent) :
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
+QQuickItem* RightResizer::getHandler() const
+{
+    return (_handler ? _handler.data() : nullptr);
+}
+
 void    RightResizer::setTarget(QQuickItem* target)
 {
     if (target == nullptr) {  // Set a null target = disable the control
@@ -58,28 +63,43 @@ void    RightResizer::setTarget(QQuickItem* target)
         _target = nullptr;
         return;
     }
+
+    if (!_handler) {  // Eventually, create the handler component
+        QQmlEngine* engine = qmlEngine(this);
+        if (engine != nullptr) {
+            QQmlComponent defaultHandlerComponent{engine};
+            const QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
+                        QStringLiteral("width: 5;") +
+                        QStringLiteral("height: 10;") +
+                        QStringLiteral("color:Qt.rgba(0,0,0,0); }") };
+            defaultHandlerComponent.setData(handlerQml.toUtf8(), QUrl{});
+            if (defaultHandlerComponent.isReady()) {
+                _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
+                if (_handler) {
+                    engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
+                    _handler->setParentItem(this);
+                    _handler->installEventFilter(this);
+                } else {
+                    qWarning() << "qan::RightResizer::setTarget(): Error: Can't create resize handler QML component:";
+                    qWarning() << "QML Component status=" << defaultHandlerComponent.status();
+                }
+            }
+        }
+    }
+
     _target = target;
     if (_target)
         configureTarget(*_target);
     emit targetChanged();
 }
 
-void    RightResizer::configureTarget(QQuickItem& target) noexcept
+void    RightResizer::configureTarget(QQuickItem& target)
 {
     if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
         if (target.width() < _minimumTargetSize.width())
             target.setWidth(_minimumTargetSize.width());
         if (target.height() < _minimumTargetSize.height())
             target.setHeight(_minimumTargetSize.height());
-    }
-
-    if (&target != parentItem()) { // Resizer is not in target sibling (ie is not a child of target)
-        connect(&target,   &QQuickItem::xChanged,
-                this,      &RightResizer::onTargetXChanged);
-        connect(&target,   &QQuickItem::yChanged,
-                this,      &RightResizer::onTargetYChanged);
-        setX(target.x());
-        setY(target.y());
     }
 
     connect(&target,   &QQuickItem::widthChanged,
@@ -91,41 +111,18 @@ void    RightResizer::configureTarget(QQuickItem& target) noexcept
     onTargetHeightChanged();
 }
 
-void    RightResizer::onTargetXChanged()
-{
-    if (_target &&
-        _target != parentItem())
-        setX(_target->x());
-}
-
-void    RightResizer::onTargetYChanged()
-{
-    if (_target &&
-        _target != parentItem())
-        setY(_target->y());
-}
-
 void    RightResizer::onTargetWidthChanged()
 {
-    // FIXME
-/*    if (_target &&
-        _handler) {
-        const qreal targetWidth = _target->width();
-        const qreal handlerWidth2 = _handlerSize.width() / 2.;
-        _handler->setX(targetWidth - handlerWidth2);
+    if (_target && _handler) {
+        const qreal handlerWidth2 = 5 / 2.;
+        _handler->setX(_target->width() - handlerWidth2);
     }
-    */
 }
 
 void    RightResizer::onTargetHeightChanged()
 {
-    // FIXME
-    /*if (_target &&
-        _handler) {
-        const qreal targetHeight = _target->height();
-        const qreal handlerHeight2 = _handlerSize.height() / 2.;
-        _handler->setY(targetHeight - handlerHeight2);
-    }*/
+    if (_target && _handler)
+        _handler->setHeight(_target->height());
 }
 
 void    RightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
@@ -162,17 +159,15 @@ void    RightResizer::setRatio(qreal ratio) noexcept
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-bool   RightResizer::eventFilter(QObject *item, QEvent *event)
+bool   RightResizer::eventFilter(QObject* item, QEvent* event)
 {
     bool accepted = false;
-    if (/*_handler &&
-        item == _handler.data()*/ false /* FIXME */) {
+    if (_handler &&
+        item == _handler.data()) {
         switch (event->type()) {
         case QEvent::HoverEnter:
         {
-            // FIXME
-            //_handler->setCursor(Qt::SizeFDiagCursor);
-            //_handler->setOpacity(1.0);   // Handler is always visible when hovered
+            _handler->setCursor(Qt::SplitHCursor);
             QMouseEvent* me = static_cast<QMouseEvent*>(event);
             me->setAccepted(true);
             accepted = true;
@@ -180,9 +175,7 @@ bool   RightResizer::eventFilter(QObject *item, QEvent *event)
             break;
         case QEvent::HoverLeave:
         {
-            // FIXME
-            //_handler->setCursor(Qt::ArrowCursor);
-            //_handler->setOpacity(getAutoHideHandler() ? 0. : 1.0);
+            _handler->setCursor(Qt::ArrowCursor);
             QMouseEvent* me = static_cast<QMouseEvent*>(event);
             me->setAccepted(true);
             accepted = true;
@@ -216,15 +209,11 @@ bool   RightResizer::eventFilter(QObject *item, QEvent *event)
                     // Do not resize below minimumSize
                     const qreal targetWidth = _targetInitialSize.width() + delta.x();
                     if (targetWidth > _minimumTargetSize.width())
-                            _target->setWidth(targetWidth);
+                        _target->setWidth(targetWidth);
                     if (_preserveRatio) {
                         const qreal finalTargetWidth = targetWidth > _minimumTargetSize.width() ? targetWidth :
                                                                                                   _minimumTargetSize.width();
                         const qreal targetHeight = finalTargetWidth * getRatio();
-                        if (targetHeight > _minimumTargetSize.height())
-                            _target->setHeight(targetHeight);
-                    } else {
-                        const qreal targetHeight = _targetInitialSize.height() + delta.y();
                         if (targetHeight > _minimumTargetSize.height())
                             _target->setHeight(targetHeight);
                     }
@@ -261,7 +250,8 @@ bool   RightResizer::eventFilter(QObject *item, QEvent *event)
             accepted = false;
         }
     }
-    return accepted ? true : QObject::eventFilter(item, event);
+    return accepted ? true :
+                      QObject::eventFilter(item, event);
 }
 //-------------------------------------------------------------------------
 

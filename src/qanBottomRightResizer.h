@@ -100,7 +100,7 @@ public:
 signals:
     void        targetChanged();
 private:
-    QPointer<QQuickItem>  _target{ nullptr };
+    QPointer<QQuickItem>  _target = nullptr;
 private:
     void        configureHandler(QQuickItem& handler) noexcept;
     void        configureTarget(QQuickItem& target) noexcept;

@@ -394,12 +394,12 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
         }
             break;
         case QEvent::MouseButtonPress: {
-            QMouseEvent* me = static_cast<QMouseEvent*>( event );
+            QMouseEvent* me = static_cast<QMouseEvent*>(event);
             if (_target) {
                 _dragInitialPos = me->windowPos();
-                _targetInitialSize = { _target->width(), _target->height() };
-                emit resizeStart( _target ? QSizeF{ _target->width(), _target->height() } :
-                                            QSizeF{} );
+                _targetInitialSize = QSizeF{_target->width(), _target->height()};
+                emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :
+                                           QSizeF{});
                 if ( getFlickable() != nullptr )
                     getFlickable()->setProperty( "interactive", QVariant{false} );
                 me->setAccepted(true);
@@ -408,8 +408,8 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
         }
             break;
         case QEvent::MouseButtonRelease: {
-            _dragInitialPos = { 0., 0. };       // Invalid all cached coordinates when button is released
-            _targetInitialSize = { 0., 0. };
+            _dragInitialPos = QPointF{0., 0.};       // Invalid all cached coordinates when button is released
+            _targetInitialSize = QSizeF{ 0., 0.};
             emit resizeEnd(_target ? QSizeF{_target->width(), _target->height()} :
                                      QSizeF{});
             if (getFlickable() != nullptr)
