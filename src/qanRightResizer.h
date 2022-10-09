@@ -41,8 +41,8 @@
 namespace qan {  // ::qan
 
 /*! \brief Add a resize handler ont the right of a target QML Item.
- * FIXME #169
- * \warning This component must not be reparented to it's target.
+ *
+ * \warning This component must not be parented to it's target.
  *
  * \nosubgrouping
  */
@@ -62,12 +62,6 @@ public:
     /*! \name Resizer Management *///------------------------------------------
     //@{
 public:
-    Q_PROPERTY(QQuickItem*  handler READ getHandler CONSTANT FINAL)
-    QQuickItem*             getHandler() const;
-private:
-    QPointer<QQuickItem>    _handler = nullptr;
-
-public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
     Q_PROPERTY(QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL)
     void        setTarget(QQuickItem* target);
@@ -81,6 +75,7 @@ private slots:
     void        onTargetYChanged();
     void        onTargetWidthChanged();
     void        onTargetHeightChanged();
+    void        onUpdate();
 
 public:
     //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no constrain).

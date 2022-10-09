@@ -52,43 +52,14 @@ RightResizer::RightResizer(QQuickItem* parent) :
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-QQuickItem* RightResizer::getHandler() const
-{
-    return (_handler ? _handler.data() : nullptr);
-}
-
 void    RightResizer::setTarget(QQuickItem* target)
 {
     if (_target != target) {
         if (_target)
             disconnect(_target.data(),  nullptr,
-                       this,            nullptr );  // Disconnect old target width/height monitoring
+                       this,            nullptr);  // Disconnect old target width/height monitoring
         _target = target;
         emit targetChanged();
-    }
-
-    if (!_handler) {  // Eventually, create the handler component
-        QQmlEngine* engine = qmlEngine(this);
-        if (engine != nullptr) {
-            QQmlComponent defaultHandlerComponent{engine};
-            const QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
-                        QStringLiteral("width: 5;") +
-                        QStringLiteral("height: 10; border.width: 1; border.color: 'red';") +
-                        QStringLiteral("color:Qt.rgba(0,0,0,0); }") };
-            defaultHandlerComponent.setData(handlerQml.toUtf8(), QUrl{});
-            if (defaultHandlerComponent.isReady()) {
-                _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
-                if (_handler) {
-                    engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
-                    _handler->setParentItem(this);
-                    // FIXME #169 NO !
-                    //_handler->installEventFilter(this);
-                } else {
-                    qWarning() << "qan::RightResizer::setTarget(): Error: Can't create resize handler QML component:";
-                    qWarning() << "QML Component status=" << defaultHandlerComponent.status();
-                }
-            }
-        }
     }
     if (_target) {
         if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
@@ -106,22 +77,18 @@ void    RightResizer::setTarget(QQuickItem* target)
                 this,       &RightResizer::onTargetWidthChanged);
         connect(_target,    &QQuickItem::heightChanged,
                 this,       &RightResizer::onTargetHeightChanged);
-        onTargetXChanged();
-        onTargetYChanged();
-        onTargetWidthChanged();
-        onTargetHeightChanged();
-        if (_handler)
-            _handler->setVisible(true);
+        connect(_target,    &QQuickItem::parentChanged, // When a selected group is dragged in another
+                this,       &RightResizer::onUpdate);   // parent group, resize area has to be updated
+        onUpdate();
     }
-    if (!_target && _handler)
-        _handler->setVisible(false);
+    setVisible(_target != nullptr);
 }
 
 void    RightResizer::onTargetXChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setX(sp.x() + _target->width() - 2.5);  // FIXME #169 grip width...
+        setX(sp.x() + _target->width() - 2.5);
     }
 }
 
@@ -137,17 +104,23 @@ void    RightResizer::onTargetWidthChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setX(sp.x() + _target->width() - 2.5);  // FIXME #169 grip width...
+        setX(sp.x() + _target->width() - 2.5);
         setWidth(5);
     }
 }
 
 void    RightResizer::onTargetHeightChanged()
 {
-    if (_target) {
-        _handler->setHeight(_target->height() - 4);
+    if (_target)
         setHeight(_target->height() - 4);   // Account for a potential bottom right resizer
-    }
+}
+
+void    RightResizer::onUpdate()
+{
+    onTargetXChanged();
+    onTargetYChanged();
+    onTargetWidthChanged();
+    onTargetHeightChanged();
 }
 
 void    RightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
@@ -198,7 +171,6 @@ void    RightResizer::hoverLeaveEvent(QHoverEvent *event)
 }
 void    RightResizer::mouseMoveEvent(QMouseEvent* event)
 {
-    qWarning() << "qan::RightResizer::mouseMove()";
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     const auto mePos = event->windowPos();
 #else
@@ -238,7 +210,6 @@ void    RightResizer::mousePressEvent(QMouseEvent* event)
 {
     if (!isVisible())
         return;
-    qWarning() << "qan::RightResizer::mousePress()";
     const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
     const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
                                                  _target.data();

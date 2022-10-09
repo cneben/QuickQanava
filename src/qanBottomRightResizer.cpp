@@ -400,8 +400,8 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
                 _targetInitialSize = QSizeF{_target->width(), _target->height()};
                 emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :
                                            QSizeF{});
-                if ( getFlickable() != nullptr )
-                    getFlickable()->setProperty( "interactive", QVariant{false} );
+                if (getFlickable() != nullptr)
+                    getFlickable()->setProperty("interactive", QVariant{false});
                 me->setAccepted(true);
                 accepted = true;
             }

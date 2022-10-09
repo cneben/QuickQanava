@@ -128,6 +128,13 @@ Qan.AbstractGraphView {
                 target.groupItem.group)
                 graph.groupResized(target.groupItem.group);
         }
+        // FIXME #169
+        /*Rectangle {
+            anchors.fill: parent
+            color: 'transparent'
+            border.width: 1
+            border.color: 'violet'
+        }*/
     }
 
     Rectangle {
@@ -257,8 +264,11 @@ Qan.AbstractGraphView {
 
                 groupRightResizer.target = group.item
                 // FIXME #169 handle collapsed and resizable...
-                groupRightResizer.visible = true
-                groupResizer.minimumTargetSize = group.item.minimumSize
+                //groupRightResizer.visible = true
+                groupRightResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                                        Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+                groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                                   Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
 
                 // Do not show resizer when group is collapsed
                 groupResizer.visible = Qt.binding( function() { // Resizer is visible :
