@@ -231,7 +231,7 @@ Qan.AbstractGraphView {
                 nodeResizer.minimumTargetSize = Qt.binding(     // target size to avoid old target beeing eventually resized
                             function() { return node.item.minimumSize; })                       // to new target min size...
                 nodeResizer.target = node.item
-                nodeResizer.visible = Qt.binding(function() { return nodeResizer.target.resizable; })
+                nodeResizer.visible = Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.resizable : false; })
                 nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
                 nodeResizer.preserveRatio = (node.item.ratio > 0.)
                 if (node.item.ratio > 0.) {
@@ -263,12 +263,15 @@ Qan.AbstractGraphView {
             groupResizer.parent = group.item
 
             // Set minimumTargetSize _before_ setting target
-            groupRightResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                                    Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
-            groupBottomResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                                     Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
-            groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                               Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+            groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
+                                                                                        group.item.minimumSize.width),
+                                                                               Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
+                                                                                        group.item.minimumSize.height)) })
+            groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize =
+                    Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
+                                                               group.item.minimumSize.width),
+                                                      Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
+                                                               group.item.minimumSize.height)) })
 
             groupResizer.target = group.item.container
             groupRightResizer.target = groupBottomResizer.target = group.item

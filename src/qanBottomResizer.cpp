@@ -62,12 +62,13 @@ void    BottomResizer::setTarget(QQuickItem* target)
         emit targetChanged();
     }
     if (_target) {
-        if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
+        // FIXME #169
+        /*if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
             if (_target->width() < _minimumTargetSize.width())
                 _target->setWidth(_minimumTargetSize.width());
             if (_target->height() < _minimumTargetSize.height())
                 _target->setHeight(_minimumTargetSize.height());
-        }
+        }*/
         connect(_target,    &QQuickItem::xChanged,
                 this,       &BottomResizer::onTargetXChanged);
         connect(_target,    &QQuickItem::yChanged,
@@ -125,16 +126,15 @@ void    BottomResizer::onUpdate()
 
 void    BottomResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
 {
-    if (minimumTargetSize.isEmpty())
-        return;
     if (minimumTargetSize != _minimumTargetSize) {
         _minimumTargetSize = minimumTargetSize;
-        if (_target) { // Eventually, resize target if its actual size is below minimum
+        // FIXME #169
+        /*if (_target) { // Eventually, resize target if its actual size is below minimum
             if (_target->width() < minimumTargetSize.width())
                 _target->setWidth(minimumTargetSize.width());
             if (_target->height() < minimumTargetSize.height())
                 _target->setHeight(minimumTargetSize.height());
-        }
+        }*/
         emit minimumTargetSizeChanged();
     }
 }
@@ -182,15 +182,12 @@ void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
         const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
         const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
                                                      _target.data();
-        QPointF startLocalPos;
-        QPointF curLocalPos;
-        if (parentItem() != nullptr) {
-            startLocalPos = parentItem()->mapFromScene(_dragInitialPos);
-            curLocalPos = parentItem()->mapFromScene(mePos);
-        } else
-            qWarning() << "qan::BottomResizer::mouseMoveEvent(): Internal error, no parent item.";
+        const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
+                                                                QPointF{.0, 0.};
+        const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
+                                                              QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
-        if (target) {
+        if (target != nullptr) {
             // FIXME #169 take ratio into account
             // Do not resize below minimumSize
             const qreal targetHeight = _targetInitialSize.height() + delta.y();

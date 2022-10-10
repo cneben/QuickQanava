@@ -62,12 +62,13 @@ void    RightResizer::setTarget(QQuickItem* target)
         emit targetChanged();
     }
     if (_target) {
-        if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
+        // FIXME #169
+        /*if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
             if (_target->width() < _minimumTargetSize.width())
                 _target->setWidth(_minimumTargetSize.width());
             if (_target->height() < _minimumTargetSize.height())
                 _target->setHeight(_minimumTargetSize.height());
-        }
+        }*/
         connect(_target,    &QQuickItem::xChanged,
                 this,       &RightResizer::onTargetXChanged);
         connect(_target,    &QQuickItem::yChanged,
@@ -125,16 +126,16 @@ void    RightResizer::onUpdate()
 
 void    RightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
 {
-    if (minimumTargetSize.isEmpty())
-        return;
+    //if (minimumTargetSize.isEmpty())
+    //    return;
     if (minimumTargetSize != _minimumTargetSize) {
         _minimumTargetSize = minimumTargetSize;
-        if (_target) { // Eventually, resize target if its actual size is below minimum
+        /*if (_target) { // Eventually, resize target if its actual size is below minimum
             if (_target->width() < minimumTargetSize.width())
                 _target->setWidth(minimumTargetSize.width());
             if (_target->height() < minimumTargetSize.height())
                 _target->setHeight(minimumTargetSize.height());
-        }
+        }*/
         emit minimumTargetSizeChanged();
     }
 }

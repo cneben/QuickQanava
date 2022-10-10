@@ -145,12 +145,14 @@ void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
 
 void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
 {
+    // FIXME #169 remove that...
+    /*
     if (!_minimumTargetSize.isEmpty()) { // Check that target size is not bellow resizer target minimum size
         if (target.width() < _minimumTargetSize.width())
             target.setWidth(_minimumTargetSize.width());
         if (target.height() < _minimumTargetSize.height())
             target.setHeight(_minimumTargetSize.height());
-    }
+    }*/
 
     if (&target != parentItem()) { // Resizer is not in target sibling (ie is not a child of target)
         connect(&target,   &QQuickItem::xChanged,
@@ -277,16 +279,18 @@ void    BottomRightResizer::forceHandlerWidth(qreal handlerWidth)
 
 void    BottomRightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
 {
-    if (minimumTargetSize.isEmpty())
-        return;
+    qWarning() << "qan::BottomRightResizer::setMinimumTargetSize(): size=" << minimumTargetSize;
+    //if (minimumTargetSize.isEmpty())
+    //    return;
     if (minimumTargetSize != _minimumTargetSize) {
         _minimumTargetSize = minimumTargetSize;
-        if (_target) { // Eventually, resize target if its actual size is below minimum
+        // FIXME #169
+        /*if (_target) { // Eventually, resize target if its actual size is below minimum
             if (_target->width() < minimumTargetSize.width())
                 _target->setWidth(minimumTargetSize.width());
             if (_target->height() < minimumTargetSize.height())
                 _target->setHeight(minimumTargetSize.height());
-        }
+        }*/
         emit minimumTargetSizeChanged();
     }
 }
@@ -374,8 +378,10 @@ bool   BottomRightResizer::eventFilter(QObject *item, QEvent *event)
                 if (_target) {
                     // Do not resize below minimumSize
                     const qreal targetWidth = _targetInitialSize.width() + delta.x();
+                    qWarning() << "_target->childrenRect=" << _target->childrenRect();
+                    qWarning() << "targetWidth" << targetWidth << "    minimumWidth=" << _minimumTargetSize.width();
                     if (targetWidth > _minimumTargetSize.width())
-                            _target->setWidth(targetWidth);
+                        _target->setWidth(targetWidth);
                     if (_preserveRatio) {
                         const qreal finalTargetWidth = targetWidth > _minimumTargetSize.width() ? targetWidth :
                                                                                                   _minimumTargetSize.width();
