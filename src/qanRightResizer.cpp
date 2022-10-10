@@ -195,11 +195,16 @@ void    RightResizer::mousePressEvent(QMouseEvent* event)
 {
     if (!isVisible())
         return;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    const auto mePos = event->windowPos();
+#else
+    const auto mePos = event->scenePosition();
+#endif
     const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
     const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
                                                  _target.data();
     if (target) {
-        _dragInitialPos = event->windowPos();
+        _dragInitialPos = mePos;
         _targetInitialSize = {target->width(), target->height()};
         emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :  // Use of target ok.
                                   QSizeF{});
