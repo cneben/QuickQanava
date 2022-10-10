@@ -82,51 +82,51 @@ QQuickItem* BottomRightResizer::getHandler() const noexcept
 
 void    BottomRightResizer::setTarget(QQuickItem* target)
 {
-    if (target == nullptr) {  // Set a null target = disable the control
-        if (_target)
+    if (target != _target) {
+        if (_target != nullptr)
             disconnect(_target.data(),  nullptr,
                        this,            nullptr );  // Disconnect old target width/height monitoring
-        _target = nullptr;
-        return;
-    }
 
-    if (!_handler) {  // Eventually, create the handler component
-        QQmlEngine* engine = qmlEngine(this);
-        if (engine != nullptr) {
-            QQmlComponent defaultHandlerComponent{engine};
-            const QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
-                        QStringLiteral("width:")    + QString::number(_handlerSize.width()) + QStringLiteral(";") +
-                        QStringLiteral("height:")   + QString::number(_handlerSize.height()) + QStringLiteral(";") +
-                        QStringLiteral("border.width:4;radius:3;") +
-                        QStringLiteral("border.color:\"") + _handlerColor.name() + QStringLiteral("\";") +
-                        QStringLiteral("color:Qt.lighter(border.color); }") };
-            defaultHandlerComponent.setData(handlerQml.toUtf8(), QUrl{});
-            if (defaultHandlerComponent.isReady()) {
-                _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
-                if (_handler) {
-                    engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
-                    _handler->setParentItem(this);
-                    _handler->installEventFilter(this);
-                } else {
-                    qWarning() << "qan::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
-                    qWarning() << "QML Component status=" << defaultHandlerComponent.status();
+
+        if (!_handler) {  // Eventually, create the handler component
+            QQmlEngine* engine = qmlEngine(this);
+            if (engine != nullptr) {
+                QQmlComponent defaultHandlerComponent{engine};
+                const QString handlerQml{ QStringLiteral("import QtQuick 2.7\n  Rectangle {") +
+                            QStringLiteral("width:")    + QString::number(_handlerSize.width()) + QStringLiteral(";") +
+                            QStringLiteral("height:")   + QString::number(_handlerSize.height()) + QStringLiteral(";") +
+                            QStringLiteral("border.width:4;radius:3;") +
+                            QStringLiteral("border.color:\"") + _handlerColor.name() + QStringLiteral("\";") +
+                            QStringLiteral("color:Qt.lighter(border.color); }") };
+                defaultHandlerComponent.setData(handlerQml.toUtf8(), QUrl{});
+                if (defaultHandlerComponent.isReady()) {
+                    _handler = qobject_cast<QQuickItem*>(defaultHandlerComponent.create());
+                    if (_handler) {
+                        engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
+                        _handler->setParentItem(this);
+                        _handler->installEventFilter(this);
+                    } else {
+                        qWarning() << "qan::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
+                        qWarning() << "QML Component status=" << defaultHandlerComponent.status();
+                    }
                 }
             }
+
+            forceHandlerWidth(_handlerWidth);       // Force taking into account handler
+            forceHandlerRadius(_handlerRadius);     // setting if they have been modified before
+            forceHandlerSize(_handlerSize);         // _handler item has been created
         }
 
-        forceHandlerWidth(_handlerWidth);       // Force taking into account handler
-        forceHandlerRadius(_handlerRadius);     // setting if they have been modified before
-        forceHandlerSize(_handlerSize);         // _handler item has been created
+        _target = target;
+        emit targetChanged();
+
+        // Configure handler on given target
+        if (_handler)
+            configureHandler(*_handler);
+        if (_target)
+            configureTarget(*_target);
     }
-
-    // Configure handler on given target
-    if (_handler)
-        configureHandler(*_handler);
-
-    _target = target;
-    if (_target)
-        configureTarget(*_target);
-    emit targetChanged();
+    setVisible(_target != nullptr);
 }
 
 void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept

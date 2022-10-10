@@ -128,13 +128,6 @@ Qan.AbstractGraphView {
                 target.groupItem.group)
                 graph.groupResized(target.groupItem.group);
         }
-        // FIXME #169
-        /*Rectangle {
-            anchors.fill: parent
-            color: 'transparent'
-            border.width: 1
-            border.color: 'violet'
-        }*/
     }
     Qan.BottomResizer {
         id: groupBottomResizer
@@ -151,13 +144,7 @@ Qan.AbstractGraphView {
                 target.groupItem.group)
                 graph.groupResized(target.groupItem.group);
         }
-        // FIXME #169
-        /*Rectangle {
-            anchors.fill: parent
-            color: 'transparent'
-            border.width: 1
-            border.color: 'red'
-        }*/
+
     }
 
     Rectangle {
@@ -175,11 +162,8 @@ Qan.AbstractGraphView {
     onClicked: {
         // Hide resizers when view background is clicked
         nodeResizer.target = null
-        nodeResizer.visible = false
         groupResizer.target = null
-        groupResizer.visible = false      // FIXME #169 let bottom right resizer handle that...
-        groupRightResizer.target = null
-        groupBottomResizer.target = null
+        groupRightResizer.target = groupBottomResizer.target = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -203,9 +187,8 @@ Qan.AbstractGraphView {
             if (graph.connector &&
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
-        } else if (graph) {
+        } else if (graph)
             graph.connector.visible = false
-        }
     }
     onPortRightClicked: { }
 
@@ -258,7 +241,6 @@ Qan.AbstractGraphView {
                     nodeResizer.preserveRatio = false
             } else {
                 nodeResizer.target = null
-                nodeResizer.visible = false
             }
         } else if (graph) {
             nodeItemRatioWatcher.target = null
@@ -269,53 +251,45 @@ Qan.AbstractGraphView {
 
     // Group management ///////////////////////////////////////////////////////
     onGroupClicked: function(group) {
-        if (group && graph &&
-            !(group.locked || group.isProtected))  // Do not move locked/protected groups to front.
+        if (!graphView.graph ||
+            !group)
+            return
+        if (!group.locked && !group.isProtected)  // Do not move locked/protected groups to front.
             graph.sendToFront(group.item)
 
-        if (graph &&
-            group && group.item &&
-            group.item.container) {
-            if (group.item.resizable) {
-                groupResizer.parent = group.item
+        if (group.item &&
+            group.item.container &&
+            group.item.resizable) {
+            groupResizer.parent = group.item
 
-                // FIXME #169 Should no longer be necessary to reset...
-                groupResizer.target = null  // See previous note in onNodeClicked()
-                groupResizer.minimumTargetSize = Qt.binding(
-                            function() { return group.item.minimumSize; })
-                // FIXME #169 binding should not be necessary here !!!!
-                groupResizer.target = Qt.binding( function() { return group.item.container } )
+            // Set minimumTargetSize _before_ setting target
+            groupRightResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                                    Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+            groupBottomResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                                     Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+            groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
+                                                                               Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
 
-                groupRightResizer.target = group.item
-                groupBottomResizer.target = group.item
-                // FIXME #169 handle collapsed and resizable...
-                groupRightResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                                        Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
-                groupBottomResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                                        Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
-                groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.width, group.item.minimumSize.width),
-                                                                                   Math.max(group.item.container.childrenRect.height, group.item.minimumSize.height)) })
+            groupResizer.target = group.item.container
+            groupRightResizer.target = groupBottomResizer.target = group.item
 
-                // Do not show resizer when group is collapsed
-                groupResizer.visible = Qt.binding( function() { // Resizer is visible :
-                    return group && group.item      &&  // If group and group.item are valid
-                            (!group.item.collapsed)  &&  // And if group is not collapsed
-                            group.item.resizable;       // And if group is resizeable
-                } )
-                groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
-                groupResizer.preserveRatio = false
-                groupRightResizer.z = group.item.z + 4.
-                groupBottomResizer.z = group.item.z + 4.
-            } else {
-                groupResizer.target = null
-                groupResizer.visible = false
-                groupRightResizer.target = null
-                groupBottomResizer.target = null
-            } // group.item.resizable
+            // Do not show resizers when group is collapsed
+            groupRightResizer.visible = groupBottomResizer.visible =
+                    groupResizer.visible = Qt.binding(() => { // Resizer is visible :
+                                                          return group && group.item      &&      // If group and group.item are valid
+                                                          (!group.item.collapsed) &&      // And if group is not collapsed
+                                                          group.item.resizable;           // And if group is resizeable
+                                                      })
+
+            groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
+            groupResizer.preserveRatio = false
+            groupRightResizer.z = groupBottomResizer.z = group.item.z + 4.
+            groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
-            console.error("Qan.GraphView.onGroupClicked(): Invalid group container, can't configure resizer")
-        }
-    }
+            groupResizer.target = null
+            groupRightResizer.target = groupBottomResizer.target = null
+        } // group.item.resizable
+    }  // onGroupClicked()
 
     onGroupRightClicked: function(group) {
         if (group && group.item)
