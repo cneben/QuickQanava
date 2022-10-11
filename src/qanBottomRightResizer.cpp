@@ -114,7 +114,7 @@ void    BottomRightResizer::setTarget(QQuickItem* target)
 
             forceHandlerWidth(_handlerWidth);       // Force taking into account handler
             forceHandlerRadius(_handlerRadius);     // setting if they have been modified before
-            forceHandlerSize(_handlerSize);         // _handler item has been created
+            //forceHandlerSize(_handlerSize);         // _handler item has been created
         }
 
         _target = target;
@@ -150,8 +150,6 @@ void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
                 this,      &BottomRightResizer::onTargetXChanged);
         connect(&target,   &QQuickItem::yChanged,
                 this,      &BottomRightResizer::onTargetYChanged);
-        setX(target.x());
-        setY(target.y());
     }
 
     connect(&target,   &QQuickItem::widthChanged,
@@ -159,65 +157,71 @@ void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
     connect(&target,   &QQuickItem::heightChanged,
             this,      &BottomRightResizer::onTargetHeightChanged);
 
+    onTargetXChanged();
+    onTargetYChanged();
     onTargetWidthChanged();
     onTargetHeightChanged();
 }
 
 void    BottomRightResizer::onTargetXChanged()
 {
-    if (_target &&
-        _target != parentItem())
-        setX(_target->x());
+    // FIXME #169
+    //if (_target &&
+    //    _target != parentItem())
+    if (_target)
+        setX(_target->x() + _target->width() - (getHandlerWidth() / 2.));
 }
 
 void    BottomRightResizer::onTargetYChanged()
 {
-    if (_target &&
-        _target != parentItem())
-        setY(_target->y());
+    // FIXME #169
+//    if (_target &&
+//        _target != parentItem())
+    if (_target)
+        setY(_target->y() + _target->height() - (getHandlerWidth() / 2.));
 }
 
 void    BottomRightResizer::onTargetWidthChanged()
 {
-    if (_target &&
+    if (_target)
+        setX(_target->x() + _target->width() - (getHandlerWidth() / 2.));
+    // FIXME #169
+    /*if (_target &&
         _handler) {
         const qreal targetWidth = _target->width();
         const qreal handlerWidth2 = _handlerSize.width() / 2.;
         _handler->setX(targetWidth - handlerWidth2);
-    }
+    }*/
 }
 
 void    BottomRightResizer::onTargetHeightChanged()
 {
-    if (_target &&
+    // FIXME #169
+    /*if (_target &&
         _handler) {
         const qreal targetHeight = _target->height();
         const qreal handlerHeight2 = _handlerSize.height() / 2.;
         _handler->setY(targetHeight - handlerHeight2);
-    }
+    }*/
+    if (_target)
+        setY(_target->y() + _target->height() - (getHandlerWidth() / 2.));
 }
 
 void    BottomRightResizer::setHandlerSize(const QSizeF& handlerSize)
 {
     if (handlerSize.isEmpty())
         return;
-    if (handlerSize == _handlerSize)  // Binding loop protection
-        return;
-
-    forceHandlerSize(handlerSize);
-}
-
-void    BottomRightResizer::forceHandlerSize(const QSizeF& handlerSize)
-{
-    _handlerSize = handlerSize;
-    if (_handler) {
-        onTargetWidthChanged();     // Force resize handler position change
-        onTargetHeightChanged();    // to take new handler size
-
-        _handler->setSize(handlerSize);
+    if (handlerSize != _handlerSize) {
+        _handlerSize = handlerSize;
+        if (_handler) {
+            _handler->setSize(handlerSize);
+            setSize(handlerSize);
+            // FIXME #169 add an onUpdate()...
+            onTargetWidthChanged();     // Force resize handler position change
+            onTargetHeightChanged();    // to take new handler size
+        }
+        emit handlerSizeChanged();
     }
-
-    emit handlerSizeChanged();
 }
 
 void    BottomRightResizer::setHandlerColor(QColor handlerColor)

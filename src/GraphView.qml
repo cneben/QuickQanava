@@ -112,6 +112,12 @@ Qan.AbstractGraphView {
                 target.groupItem.group)
                 graph.groupResized(target.groupItem.group);
         }
+        Rectangle {
+            anchors.fill: parent
+            color: 'transparent'
+            border.width: 1
+            border.color: 'violet'
+        }
     }
     Qan.RightResizer {
         id: groupRightResizer
@@ -260,7 +266,9 @@ Qan.AbstractGraphView {
         if (group.item &&
             group.item.container &&
             group.item.resizable) {
-            groupResizer.parent = group.item
+
+            // FIXME #169 Finally remove that !
+            //groupResizer.parent = group.item
 
             // Set minimumTargetSize _before_ setting target
             groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
@@ -273,7 +281,7 @@ Qan.AbstractGraphView {
                                                       Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
                                                                group.item.minimumSize.height)) })
 
-            groupResizer.target = group.item.container
+            groupResizer.target = group.item
             groupRightResizer.target = groupBottomResizer.target = group.item
 
             // Do not show resizers when group is collapsed

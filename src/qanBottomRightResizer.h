@@ -133,7 +133,8 @@ signals:
     void        handlerSizeChanged();
 private:
     //! Internally used to force handler width value despite previous value set.
-    void        forceHandlerSize(const QSizeF& handlerSize);
+    // FIXME #169
+    //void        forceHandlerSize(const QSizeF& handlerSize);
     QSizeF      _handlerSize{ 9.0, 9.0 };
 
 public:
