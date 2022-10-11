@@ -41,7 +41,6 @@
 
 // QuickQanava headers
 #include "./qanBottomRightResizer.h"
-#include "./qanGroupItem.h"
 
 namespace qan {  // ::qan
 
@@ -316,10 +315,6 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
             !_dragInitialPos.isNull() &&
             !_targetInitialSize.isEmpty()) {
 
-        const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-        const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                     _target.data();
-
         // Inspired by void QQuickMouseArea::mouseMoveEvent(QMouseEvent *event)
         // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
         // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
@@ -329,20 +324,20 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
-        if (target) {
+        if (_target) {
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
             if (targetWidth > _minimumTargetSize.width())       // Do not resize below minimumSize
-                target->setWidth(targetWidth);
+                _target->setWidth(targetWidth);
             if (_preserveRatio) {
                 const qreal finalTargetWidth = targetWidth > _minimumTargetSize.width() ? targetWidth :
                                                                                           _minimumTargetSize.width();
                 const qreal targetHeight = finalTargetWidth * getRatio();
                 if (targetHeight > _minimumTargetSize.height())
-                    target->setHeight(targetHeight);
+                    _target->setHeight(targetHeight);
             } else {
                 const qreal targetHeight = _targetInitialSize.height() + delta.y();
                 if (targetHeight > _minimumTargetSize.height())
-                    target->setHeight(targetHeight);
+                    _target->setHeight(targetHeight);
             }
             event->setAccepted(true);
         }
@@ -358,12 +353,9 @@ void    BottomRightResizer::mousePressEvent(QMouseEvent* event)
 #else
     const auto mePos = event->scenePosition();
 #endif
-    const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-    const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                 _target.data();
-    if (target) {
+    if (_target) {
         _dragInitialPos = mePos;
-        _targetInitialSize = QSizeF{target->width(), _target->height()};
+        _targetInitialSize = QSizeF{_target->width(), _target->height()};
         emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :
                                    QSizeF{});
         event->setAccepted(true);

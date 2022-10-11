@@ -38,7 +38,6 @@
 
 // QuickQanava headers
 #include "./qanBottomResizer.h"
-#include "./qanGroupItem.h"
 
 namespace qan {  // ::qan
 
@@ -165,22 +164,19 @@ void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
     if (event->buttons() |  Qt::LeftButton &&
             !_dragInitialPos.isNull() &&
             !_targetInitialSize.isEmpty()) {
-        const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-        const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                     _target.data();
         const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
                                                                 QPointF{.0, 0.};
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
-        if (target != nullptr) {
+        if (_target != nullptr) {
             const qreal targetHeight = _targetInitialSize.height() + delta.y();
             if (targetHeight > _minimumTargetSize.height()) {   // Do not resize below minimumSize
-                target->setHeight(targetHeight);
+                _target->setHeight(targetHeight);
                 if (_preserveRatio) {
                     const qreal targetWidth = targetHeight / getRatio();
                     if (targetWidth > _minimumTargetSize.width())
-                        target->setWidth(targetWidth);
+                        _target->setWidth(targetWidth);
                 }
             }
             event->setAccepted(true);
@@ -191,12 +187,9 @@ void    BottomResizer::mousePressEvent(QMouseEvent* event)
 {
     if (!isVisible())
         return;
-    const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-    const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                 _target.data();
-    if (target) {
+    if (_target) {
         _dragInitialPos = event->windowPos();
-        _targetInitialSize = {target->width(), target->height()};
+        _targetInitialSize = {_target->width(), _target->height()};
         emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :  // Use of target ok.
                                   QSizeF{});
         event->setAccepted(true);

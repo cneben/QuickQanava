@@ -42,18 +42,11 @@ Qan.GroupItem {
     id: groupItem
 
     minimumSize: Qt.size(150., 100.)
+    width: 200
+    height: 150
+
     default property alias children : template
     container: template.content   // See qan::GroupItem::container property documentation
-    onContainerChanged: {
-        if (container) {
-            groupItem.width = Qt.binding(function() {
-                return Math.max(groupItem.minimumGroupWidth, template.content.width)
-            })
-            groupItem.height = Qt.binding(function() {
-                return Math.max(groupItem.minimumGroupHeight, template.content.height)
-            })
-        }
-    }
 
     //! Show or hide group top left label editor (default to visible).
     property alias labelEditorVisible : template.labelEditorVisible
@@ -66,9 +59,6 @@ Qan.GroupItem {
         anchors.fill: parent
         groupItem: parent
         z: 1
-
-        preferredGroupWidth: parent.preferredGroupWidth
-        preferredGroupHeight: parent.preferredGroupHeight
     }
 
     // Emitted by qan::GroupItem when node dragging start

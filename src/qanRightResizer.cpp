@@ -38,7 +38,6 @@
 
 // QuickQanava headers
 #include "./qanRightResizer.h"
-#include "./qanGroupItem.h"
 
 namespace qan {  // ::qan
 
@@ -165,23 +164,20 @@ void    RightResizer::mouseMoveEvent(QMouseEvent* event)
     if (event->buttons() |  Qt::LeftButton &&
             !_dragInitialPos.isNull() &&
             !_targetInitialSize.isEmpty()) {
-        const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-        const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                     _target.data();
         const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
                                                                 QPointF{.0, 0.};
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
-        if (target) {
+        if (_target) {
             // Do not resize below minimumSize
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
             if (targetWidth > _minimumTargetSize.width()) {
-                target->setWidth(targetWidth);
+                _target->setWidth(targetWidth);
                 if (_preserveRatio) {
                     const qreal targetHeight = targetWidth * getRatio();
                     if (targetHeight > _minimumTargetSize.height())
-                        target->setHeight(targetHeight);
+                        _target->setHeight(targetHeight);
                 }
             }
             event->setAccepted(true);
@@ -197,9 +193,7 @@ void    RightResizer::mousePressEvent(QMouseEvent* event)
 #else
     const auto mePos = event->scenePosition();
 #endif
-    const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
-    const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
-                                                 _target.data();
+    const auto target = _target.data();
     if (target) {
         _dragInitialPos = mePos;
         _targetInitialSize = {target->width(), target->height()};

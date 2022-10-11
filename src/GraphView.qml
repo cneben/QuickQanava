@@ -129,48 +129,37 @@ Qan.AbstractGraphView {
         handlerSize: resizeHandlerSize
 
         onResizeStart: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupAboutToBeResized(target.groupItem.group);
+            // FIXME #169 check that (for node resizer too...)
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group)
         }
         onResizeEnd: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupResized(target.group)
         }
     }
     Qan.RightResizer {
         id: groupRightResizer
         parent: graph.containerItem
         onResizeStart: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupAboutToBeResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group);
         }
         onResizeEnd: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupResized(target.group);
         }
     }
     Qan.BottomResizer {
         id: groupBottomResizer
         parent: graph.containerItem
         onResizeStart: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupAboutToBeResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group);
         }
         onResizeEnd: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupResized(target.group);
         }
     }
 
@@ -188,7 +177,7 @@ Qan.AbstractGraphView {
     // View Click management //////////////////////////////////////////////////
     onClicked: {
         // Hide resizers when view background is clicked
-        nodeResizer.target = null
+        nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
         groupResizer.target = groupRightResizer.target = groupBottomResizer.target = null
 
         // Hide the default visual edge connector
@@ -287,6 +276,9 @@ Qan.AbstractGraphView {
             !group ||
             !group.item)
             return
+
+        // Disable node resizing
+        nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
 
         if (!group.locked && !group.isProtected)  // Do not move locked/protected groups to front.
             graph.sendToFront(group.item)

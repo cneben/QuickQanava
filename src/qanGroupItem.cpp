@@ -85,35 +85,6 @@ auto    GroupItem::setRect(const QRectF& r) noexcept -> void
         return;
     setX(r.left());
     setY(r.top());
-    setPreferredGroupWidth(r.width());
-    setPreferredGroupHeight(r.height());
-}
-//-----------------------------------------------------------------------------
-
-
-/* Selection and Sizing Management *///----------------------------------------
-void    GroupItem::setPreferredGroupWidth(qreal preferredGroupWidth) noexcept
-{
-    _preferredGroupWidth = preferredGroupWidth;
-    emit preferredGroupWidthChanged();
-}
-
-void    GroupItem::setPreferredGroupHeight(qreal preferredGroupHeight) noexcept
-{
-    _preferredGroupHeight = preferredGroupHeight;
-    emit preferredGroupHeightChanged();
-}
-
-void    GroupItem::setMinimumGroupWidth(qreal minimumGroupWidth) noexcept
-{
-    _minimumGroupWidth = minimumGroupWidth;
-    emit minimumGroupWidthChanged();
-}
-
-void    GroupItem::setMinimumGroupHeight(qreal minimumGroupHeight) noexcept
-{
-    _minimumGroupHeight = minimumGroupHeight;
-    emit minimumGroupHeightChanged();
 }
 //-----------------------------------------------------------------------------
 
