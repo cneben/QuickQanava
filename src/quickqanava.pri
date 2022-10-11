@@ -41,6 +41,8 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGrid.h                 \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanBottomRightResizer.h   \
+            $$PWD/qanRightResizer.h         \
+            $$PWD/qanBottomResizer.h        \
             $$PWD/gtpo/container_adapter.h  \  # GTPO
             $$PWD/gtpo/edge.h               \
             $$PWD/gtpo/node.h               \
@@ -74,7 +76,9 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanAnalysisTimeHeatMap.cpp\
             $$PWD/qanGrid.cpp               \
             $$PWD/qanLineGrid.cpp           \
-            $$PWD/qanBottomRightResizer.cpp
+            $$PWD/qanBottomRightResizer.cpp \
+            $$PWD/qanRightResizer.cpp       \
+            $$PWD/qanBottomResizer.cpp
 
 OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/QuickQanava                   \

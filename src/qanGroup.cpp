@@ -37,9 +37,6 @@
 #include <QPainter>
 #include <QPainterPath>
 
-// GTpo headers
-//#include "gtpo/algorithm.h"
-
 // QuickQanava headers
 #include "./qanNode.h"
 #include "./qanGroup.h"
@@ -90,8 +87,8 @@ void    Group::setItem(qan::NodeItem* item) noexcept
 {
     qan::Node::setItem(item);
     const auto groupItem = qobject_cast<qan::GroupItem*>(item);
-    if ( groupItem != nullptr ) {
-        if ( groupItem->getGroup() != this )
+    if (groupItem != nullptr) {
+        if (groupItem->getGroup() != this)
             groupItem->setGroup(this);
     }
 }
@@ -99,14 +96,14 @@ void    Group::setItem(qan::NodeItem* item) noexcept
 void    Group::itemProposeNodeDrop()
 {
     const auto groupItem = getGroupItem();
-    if ( groupItem )
+    if (groupItem)
         groupItem->proposeNodeDrop();
 }
 
 void    Group::itemEndProposeNodeDrop()
 {
     const auto groupItem = getGroupItem();
-    if ( groupItem )
+    if (groupItem)
         groupItem->endProposeNodeDrop();
 }
 //-----------------------------------------------------------------------------
@@ -143,7 +140,7 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
 bool    Group::hasNode(const qan::Node* node) const { return qan::Node::has_node(node); }
 //-----------------------------------------------------------------------------
 
-/*! \name Group DnD Management *///----------------------------------------
+/* Group DnD Management *///---------------------------------------------------
 bool    Group::setDraggable(bool draggable) noexcept
 {
     if (draggable != _draggable) {

@@ -397,16 +397,19 @@ public:
      *
      * \arg deleteContent if true, delete will eventually be called on each container item before the container is cleared.
      */
-    void    clear( bool deleteContent ) {
-        if ( _model && _modelImpl) {
-            fwdBeginResetModel();
-            clearImpl( deleteContent, typename ItemDispatcher<T>::type{} );
+    void    clear(bool deleteContent, bool notify = true) {
+        if (_model && _modelImpl) {
+            if (notify)
+                fwdBeginResetModel();
+            clearImpl(deleteContent, typename ItemDispatcher<T>::type{});
             _modelImpl->_qObjectItemMap.clear();
             _container.clear();
-            fwdEndResetModel();
-            fwdEmitLengthChanged();
+            if (notify) {
+                fwdEndResetModel();
+                fwdEmitLengthChanged();
+            }
         } else {
-            clearImpl( deleteContent, typename ItemDispatcher<T>::type{} );
+            clearImpl(deleteContent, typename ItemDispatcher<T>::type{});
             _container.clear();
         }
     }

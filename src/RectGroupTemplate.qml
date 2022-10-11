@@ -54,9 +54,6 @@ Item {
     //! Show or hide group top left expand button (default to visible).
     property alias  expandButtonVisible : collapser.visible
 
-    property real   preferredGroupWidth: 200
-    property real   preferredGroupHeight: 150
-
     property alias  header: headerLayout
 
     enabled: groupItem &&
@@ -64,14 +61,10 @@ Item {
                                true
     Item {
         id: content
-        x: 0; y: 0; z: 3
-        width: preferredGroupWidth
-        height: preferredGroupHeight
+        anchors.fill: parent
+        z: 3
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
-
-        // Necessary for Qan.GraphView
-        property var groupItem: template.groupItem
     }
     RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground

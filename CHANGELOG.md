@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## 20220824 v2.2.0:
+## 20221011 v2.2.0:
+- #169: Create qan::RightResizer and qan::BottomResizer.
+- By default, nodes and groups are resizable from their right and bottom borders.
+- Refactor qan::BottomRightResizer completely.
+
+## 20221002 v2.2.0:
 - #167: Reduce memory use by 7%/8% when lot of edges are used.
 - #167: Add partial edge selection support.
 - #164: Change signature of qan::Graph::connectorRequestEdgeCreation().

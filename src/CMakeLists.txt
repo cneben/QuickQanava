@@ -2,6 +2,8 @@
 set(qan_source_files
     qanBehaviour.cpp
     qanBottomRightResizer.cpp
+    qanRightResizer.cpp
+    qanBottomResizer.cpp
     qanConnector.cpp
     qanDraggable.cpp
     qanDraggableCtrl.cpp
@@ -30,6 +32,8 @@ set (qan_header_files
     qanAbstractDraggableCtrl.h
     qanBehaviour.h
     qanBottomRightResizer.h
+    qanRightResizer.h
+    qanBottomResizer.h
     qanConnector.h
     qanDraggable.h
     qanDraggableCtrl.h

@@ -32,9 +32,9 @@
 // \date	2018 03 25
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
+import QtQuick  2.7
 
-import QuickQanava          2.0 as Qan
+import QuickQanava    2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with gradient fill, no effect and backOpacity style support
