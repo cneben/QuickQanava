@@ -112,12 +112,6 @@ Qan.AbstractGraphView {
                 target.groupItem.group)
                 graph.groupResized(target.groupItem.group);
         }
-        Rectangle {
-            anchors.fill: parent
-            color: 'transparent'
-            border.width: 1
-            border.color: 'violet'
-        }
     }
     Qan.RightResizer {
         id: groupRightResizer
@@ -168,8 +162,7 @@ Qan.AbstractGraphView {
     onClicked: {
         // Hide resizers when view background is clicked
         nodeResizer.target = null
-        groupResizer.target = null
-        groupRightResizer.target = groupBottomResizer.target = null
+        groupResizer.target = groupRightResizer.target = groupBottomResizer.target = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -232,8 +225,6 @@ Qan.AbstractGraphView {
             }
             if (node.item.resizable) {
                 nodeItemRatioWatcher.target = node.item
-                nodeResizer.parent = node.item
-                nodeResizer.target = null                       // Note: set resizer target to null _before_ settings minimum
                 nodeResizer.minimumTargetSize = Qt.binding(     // target size to avoid old target beeing eventually resized
                             function() { return node.item.minimumSize; })                       // to new target min size...
                 nodeResizer.target = node.item
@@ -266,10 +257,6 @@ Qan.AbstractGraphView {
         if (group.item &&
             group.item.container &&
             group.item.resizable) {
-
-            // FIXME #169 Finally remove that !
-            //groupResizer.parent = group.item
-
             // Set minimumTargetSize _before_ setting target
             groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
                                                                                         group.item.minimumSize.width),

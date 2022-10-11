@@ -147,43 +147,51 @@ void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
 
 void    BottomRightResizer::configureTarget(QQuickItem& target) noexcept
 {
-    if (&target != parentItem()) { // Resizer is not in target sibling (ie is not a child of target)
-        connect(&target,   &QQuickItem::xChanged,
-                this,      &BottomRightResizer::onTargetXChanged);
-        connect(&target,   &QQuickItem::yChanged,
-                this,      &BottomRightResizer::onTargetYChanged);
-    }
+    connect(&target,    &QQuickItem::xChanged,
+            this,       &BottomRightResizer::onTargetXChanged);
+    connect(&target,    &QQuickItem::yChanged,
+            this,       &BottomRightResizer::onTargetYChanged);
 
-    connect(&target,   &QQuickItem::widthChanged,
-            this,      &BottomRightResizer::onTargetWidthChanged);
-    connect(&target,   &QQuickItem::heightChanged,
-            this,      &BottomRightResizer::onTargetHeightChanged);
+    connect(&target,    &QQuickItem::widthChanged,
+            this,       &BottomRightResizer::onTargetWidthChanged);
+    connect(&target,    &QQuickItem::heightChanged,
+            this,       &BottomRightResizer::onTargetHeightChanged);
+    connect(_target,    &QQuickItem::parentChanged,         // When a selected target is dragged in another
+            this,       &BottomRightResizer::onUpdate);     // parent target, resize area has to be updated
 
     onUpdate();
 }
 
 void    BottomRightResizer::onTargetXChanged()
 {
-    if (_target)
-        setX(_target->x() + _target->width() - (getHandlerWidth() / 2.));
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setX(sp.x() + _target->width() - (getHandlerWidth() / 2.));
+    }
 }
 
 void    BottomRightResizer::onTargetYChanged()
 {
-    if (_target)
-        setY(_target->y() + _target->height() - (getHandlerWidth() / 2.));
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setY(sp.y() + _target->height() - (getHandlerWidth() / 2.));
+    }
 }
 
 void    BottomRightResizer::onTargetWidthChanged()
 {
-    if (_target)
-        setX(_target->x() + _target->width() - (getHandlerWidth() / 2.));
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setX(sp.x() + _target->width() - (getHandlerWidth() / 2.));
+    }
 }
 
 void    BottomRightResizer::onTargetHeightChanged()
 {
-    if (_target)
-        setY(_target->y() + _target->height() - (getHandlerWidth() / 2.));
+    if (_target && parentItem() != nullptr) {
+        const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
+        setY(sp.y() + _target->height() - (getHandlerWidth() / 2.));
+    }
 }
 
 void    BottomRightResizer::onUpdate()
@@ -316,16 +324,10 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
         // https://code.woboq.org/qt5/qtdeclarative/src/quick/items/qquickmousearea.cpp.html#47curLocalPos
         // Coordinate mapping in qt quick is even more a nightmare than with graphics view...
         // BTW, this code is probably buggy for deep quick item hierarchy.
-        QPointF startLocalPos;
-        QPointF curLocalPos;
-        // FIXME #169 check parentItem()... remove else...
-        if (parentItem() != nullptr) {
-            startLocalPos = parentItem()->mapFromScene(_dragInitialPos);
-            curLocalPos = parentItem()->mapFromScene(mePos);
-        } else {
-            startLocalPos = _dragInitialPos;
-            curLocalPos = mePos;
-        }
+        const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
+                                                                QPointF{.0, 0.};
+        const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
+                                                              QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
         if (target) {
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
@@ -361,7 +363,7 @@ void    BottomRightResizer::mousePressEvent(QMouseEvent* event)
                                                  _target.data();
     if (target) {
         _dragInitialPos = mePos;
-        _targetInitialSize = QSizeF{_target->width(), _target->height()};
+        _targetInitialSize = QSizeF{target->width(), _target->height()};
         emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :
                                    QSizeF{});
         event->setAccepted(true);

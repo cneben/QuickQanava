@@ -168,13 +168,10 @@ void    RightResizer::mouseMoveEvent(QMouseEvent* event)
         const auto groupTarget = qobject_cast<qan::GroupItem*>(_target.data());
         const auto target = groupTarget != nullptr ? groupTarget->getContainer() :
                                                      _target.data();
-        QPointF startLocalPos;
-        QPointF curLocalPos;
-        if (parentItem() != nullptr) {
-            startLocalPos = parentItem()->mapFromScene(_dragInitialPos);
-            curLocalPos = parentItem()->mapFromScene(mePos);
-        } else
-            qWarning() << "qan::RightResizer::mouseMoveEvent(): Internal error, no parent item.";
+        const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
+                                                                QPointF{.0, 0.};
+        const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
+                                                              QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
         if (target) {
             // Do not resize below minimumSize
