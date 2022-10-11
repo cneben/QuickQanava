@@ -79,13 +79,11 @@ Qan.AbstractGraphView {
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
         onResizeStart: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
         }
         onResizeEnd: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeResized(target.node);
         }
     }
@@ -93,13 +91,11 @@ Qan.AbstractGraphView {
         id: nodeRightResizer
         parent: graph.containerItem
         onResizeStart: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
         }
         onResizeEnd: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeResized(target.node);
         }
     }
@@ -107,13 +103,11 @@ Qan.AbstractGraphView {
         id: nodeBottomResizer
         parent: graph.containerItem
         onResizeStart: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
         }
         onResizeEnd: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeResized(target.node);
         }
     }
@@ -129,7 +123,6 @@ Qan.AbstractGraphView {
         handlerSize: resizeHandlerSize
 
         onResizeStart: {
-            // FIXME #169 check that (for node resizer too...)
             if (target && target.group)
                 graph.groupAboutToBeResized(target.group)
         }
@@ -291,9 +284,9 @@ Qan.AbstractGraphView {
                                                                                Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height + 5,
                                                                                         group.item.minimumSize.height)) })
             groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize =
-                    Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width + 5,
+                    Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
                                                                group.item.minimumSize.width),
-                                                      Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height + 5,
+                                                      Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
                                                                group.item.minimumSize.height)) })
 
             groupResizer.target = group.item

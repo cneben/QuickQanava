@@ -65,9 +65,6 @@ Item {
         z: 3
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
-
-        // Necessary for Qan.GraphView
-        property var groupItem: template.groupItem
     }
     RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
