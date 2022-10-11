@@ -98,7 +98,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Static Factories *///---------------------------------------
+    /*! \name Group Static Factories *///--------------------------------------
     //@{
 public:
     /*! \brief Return the default delegate QML component that should be used to generate group \c item.

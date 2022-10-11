@@ -89,7 +89,7 @@ void    BottomResizer::onTargetYChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setY(sp.y() + _target->height() - 2.5);
+        setY(sp.y() + _target->height() - 3.5);
     }
 }
 
@@ -103,8 +103,8 @@ void    BottomResizer::onTargetHeightChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setY(sp.y() + _target->height() - 2.5);
-        setHeight(5);
+        setY(sp.y() + _target->height() - 3.5);
+        setHeight(7.);
     }
 }
 

@@ -81,7 +81,7 @@ void    RightResizer::onTargetXChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setX(sp.x() + _target->width() - 2.5);
+        setX(sp.x() + _target->width() - 3.5);
     }
 }
 
@@ -97,8 +97,8 @@ void    RightResizer::onTargetWidthChanged()
 {
     if (_target && parentItem() != nullptr) {
         const auto sp = _target->mapToItem(parentItem(), QPointF{0, 0});
-        setX(sp.x() + _target->width() - 2.5);
-        setWidth(5);
+        setX(sp.x() + _target->width() - 3.5);
+        setWidth(7);
     }
 }
 

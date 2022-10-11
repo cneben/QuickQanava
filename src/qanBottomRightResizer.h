@@ -214,9 +214,6 @@ signals:
     void    resizeStart(QSizeF targetSize);
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd(QSizeF targetSize);
-    // FIXME #169
-//protected:
-//     virtual bool   eventFilter(QObject *obj, QEvent *event) override;
 protected:
     virtual void    hoverEnterEvent(QHoverEvent *event) override;
     virtual void    hoverLeaveEvent(QHoverEvent *event) override;
