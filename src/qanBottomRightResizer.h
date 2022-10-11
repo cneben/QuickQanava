@@ -85,8 +85,8 @@ public:
     //@{
 public:
     Q_PROPERTY(QQuickItem*  handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL)
-    void                    setHandler(QQuickItem* handler) noexcept;
-    QQuickItem*             getHandler() const noexcept;
+    void                    setHandler(QQuickItem* handler);
+    QQuickItem*             getHandler() const;
 signals:
     void                    handlerChanged();
 private:
@@ -109,16 +109,7 @@ private slots:
     void        onTargetYChanged();
     void        onTargetWidthChanged();
     void        onTargetHeightChanged();
-
-public:
-    //! When a resizer is used on an item that is _inside_ a Flickable QML component, bind the flickable to this property to automatically disable flicking during \c target resizing.
-    Q_PROPERTY(QQuickItem* flickable READ getFlickable WRITE setFlickable NOTIFY flickableChanged FINAL)
-    void        setFlickable(QQuickItem* flickable) { _flickable = flickable; emit flickableChanged(); }
-    QQuickItem* getFlickable() const { return _flickable.data(); }
-signals:
-    void        flickableChanged();
-private:
-    QPointer<QQuickItem>  _flickable{nullptr};
+    void        onUpdate();
 
 public:
     /*! \brief Size of the bottom right handler component (default to \c 9x9).
@@ -132,10 +123,7 @@ public:
 signals:
     void        handlerSizeChanged();
 private:
-    //! Internally used to force handler width value despite previous value set.
-    // FIXME #169
-    //void        forceHandlerSize(const QSizeF& handlerSize);
-    QSizeF      _handlerSize{ 9.0, 9.0 };
+    QSizeF      _handlerSize{9.0, 9.0};
 
 public:
     /*! \brief Color of the bottom right handler component (default to \c Qt::black).
@@ -160,8 +148,6 @@ public:
 signals:
     void        handlerRadiusChanged();
 private:
-    //! Internally used to force handler width value despite previous value set.
-    void        forceHandlerRadius(qreal handlerRadius);
     qreal       _handlerRadius = 4.0;
 
 public:
@@ -173,8 +159,6 @@ public:
 signals:
     void        handlerWidthChanged();
 private:
-    //! Internally used to force handler width value despite previous value set.
-    void        forceHandlerWidth(qreal handlerWidth);
     qreal       _handlerWidth = 4.0;
 
 public:
@@ -230,8 +214,15 @@ signals:
     void    resizeStart(QSizeF targetSize);
     //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
     void    resizeEnd(QSizeF targetSize);
+    // FIXME #169
+//protected:
+//     virtual bool   eventFilter(QObject *obj, QEvent *event) override;
 protected:
-     virtual bool   eventFilter(QObject *obj, QEvent *event) override;
+    virtual void    hoverEnterEvent(QHoverEvent *event) override;
+    virtual void    hoverLeaveEvent(QHoverEvent *event) override;
+    virtual void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual void    mousePressEvent(QMouseEvent* event) override;
+    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
     QPointF         _dragInitialPos{0., 0.};

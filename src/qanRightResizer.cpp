@@ -143,14 +143,14 @@ void    RightResizer::setRatio(qreal ratio) noexcept
 //-----------------------------------------------------------------------------
 
 /* Resizer Management *///-----------------------------------------------------
-void    RightResizer::hoverEnterEvent(QHoverEvent *event)
+void    RightResizer::hoverEnterEvent(QHoverEvent* event)
 {
     if (isVisible()) {
         setCursor(Qt::SplitHCursor);
         event->setAccepted(true);
     }
 }
-void    RightResizer::hoverLeaveEvent(QHoverEvent *event)
+void    RightResizer::hoverLeaveEvent(QHoverEvent* event)
 {
     setCursor(Qt::ArrowCursor);
     event->setAccepted(true);
