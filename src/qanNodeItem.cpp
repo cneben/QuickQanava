@@ -175,21 +175,9 @@ void    NodeItem::collapseAncestors(bool collapsed)
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
-void    NodeItem::onWidthChanged()
-{
-    configureSelectionItem();
-    if (_complexBoundingShape)            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();
-}
+void    NodeItem::onWidthChanged() { configureSelectionItem(); }
 
-void    NodeItem::onHeightChanged()
-{
-    configureSelectionItem();
-    if (_complexBoundingShape)            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();
-}
+void    NodeItem::onHeightChanged() { configureSelectionItem(); }
 //-----------------------------------------------------------------------------
 
 /* Node Configuration *///-----------------------------------------------------
@@ -361,37 +349,31 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::setComplexBoundingShape(bool complexBoundingShape) noexcept
-{
-    if (complexBoundingShape != _complexBoundingShape) {
-        _complexBoundingShape = complexBoundingShape;
-        if (!complexBoundingShape)
-            setDefaultBoundingShape();
-        else
-            emit requestUpdateBoundingShape();
-        emit complexBoundingShapeChanged();
-    }
-}
-
-QPolygonF   NodeItem::getBoundingShape() noexcept
+QPolygonF   NodeItem::getBoundingShape()
 {
     if (_boundingShape.isEmpty())
         _boundingShape = generateDefaultBoundingShape();
     return _boundingShape;
 }
 
-QPolygonF    NodeItem::generateDefaultBoundingShape() const
+void    NodeItem::setBoundingShape(const QPolygonF& boundingShape)
 {
-    // Generate a rounded rectangular intersection shape for this node rect new geometry
-    QPainterPath path;
-    qreal shapeRadius = 5.;
-    path.addRoundedRect(QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius);
-    return path.toFillPolygon(QTransform{});
+    _boundingShape = boundingShape;
+    emit boundingShapeChanged();
 }
 
 void    NodeItem::setDefaultBoundingShape()
 {
     setBoundingShape(generateDefaultBoundingShape());
+}
+
+QPolygonF    NodeItem::generateDefaultBoundingShape() const
+{
+    // Generate a rounded rectangular intersection shape for this node rect new geometry
+    QPainterPath path;
+    qreal shapeRadius = 5.;   // In percentage = 5% !
+    path.addRoundedRect(QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius);
+    return path.toFillPolygon(QTransform{});
 }
 
 void    NodeItem::setBoundingShape(QVariantList boundingShape)
@@ -406,7 +388,7 @@ void    NodeItem::setBoundingShape(QVariantList boundingShape)
 
 bool    NodeItem::isInsideBoundingShape(QPointF p)
 {
-    if ( _boundingShape.isEmpty() )
+    if (_boundingShape.isEmpty())
         setBoundingShape(generateDefaultBoundingShape());
     return _boundingShape.containsPoint(p, Qt::OddEvenFill);
 }

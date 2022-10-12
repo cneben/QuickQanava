@@ -46,8 +46,11 @@ Qan.NodeItem {
     height: Layout.preferredHeight
 
     property var symbolPolygon: new Array(5)
-    complexBoundingShape: true                  // SAMPLE: Do not forget to set complexBoundingShape to true for non
-    onRequestUpdateBoundingShape: {             // rectangular node otherwise requestUpdateBoundingShape() will never be
+
+    // Manually update node bounding shape (used for node selection and edge intersection)
+    onWidthChanged: updateBoundingShape()
+    onHeightChanged: updateBoundingShape()
+    function updateBoundingShape() {             // rectangular node otherwise requestUpdateBoundingShape() will never be
         var w = width - 1                       // called (an a rectangular BS will be generated more efficietly from c++)
         var w2 = w / 2
         var w5 = w / 4
@@ -58,7 +61,7 @@ Qan.NodeItem {
         symbolPolygon[2] = Qt.point( w2, h )
         symbolPolygon[3] = Qt.point( w2 - h2, h2 )
         symbolPolygon[4] = Qt.point( w2, 1 )
-        setBoundingShape( symbolPolygon )
+        diamondNode.setBoundingShape(symbolPolygon)
     }
 
     Qan.CanvasNodeTemplate {
