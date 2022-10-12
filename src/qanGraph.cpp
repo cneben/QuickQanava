@@ -1314,6 +1314,14 @@ void    Graph::clearSelection()
     _selectedEdges.clear();
 }
 
+bool    Graph::hasMultipleSelection() const
+{
+    return _selectedNodes.size() > 0 ||
+            _selectedGroups.size() > 0 ||
+            _selectedEdges.size() > 0;
+}
+
+
 std::vector<QQuickItem*>    Graph::getSelectedItems() const
 {
     using item_vector_t = std::vector<QQuickItem*>;

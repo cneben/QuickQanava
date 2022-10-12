@@ -712,7 +712,7 @@ public:
     Q_INVOKABLE void    clearSelection();
 
     //! Return true if multiple node are selected.
-    Q_INVOKABLE bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
+    Q_INVOKABLE bool    hasMultipleSelection() const;
 
 public:
     using SelectedNodes = qcm::Container<QVector, qan::Node*>;
