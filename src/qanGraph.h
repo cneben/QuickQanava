@@ -674,6 +674,7 @@ public:
      * method will always return false.
      */
     bool                selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    Q_INVOKABLE bool    selectNode(qan::Node* node, Qt::KeyboardModifiers modifiers);
     Q_INVOKABLE bool    selectNode(qan::Node* node);
 
     //! Set the node selection state (graph selectionPolicy is not taken into account).

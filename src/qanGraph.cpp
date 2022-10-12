@@ -1170,10 +1170,8 @@ void    setPrimitiveSelected(Primitive_t& primitive,
 } // qan::impl
 
 bool    Graph::selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Node>(node, modifiers, *this); }
-bool    Graph::selectNode(qan::Node* node)
-{
-    return (node != nullptr ? selectNode(*node) : false);
-}
+bool    Graph::selectNode(qan::Node* node, Qt::KeyboardModifiers modifiers) { return (node != nullptr ? selectNode(*node, modifiers) : false); }
+bool    Graph::selectNode(qan::Node* node) { return (node != nullptr ? selectNode(*node) : false); }
 
 void    Graph::setNodeSelected(qan::Node& node, bool selected)
 {
