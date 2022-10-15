@@ -284,10 +284,14 @@ Qan.AbstractGraphView {
                                                                                Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height + 5,
                                                                                         group.item.minimumSize.height)) })
             groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize =
-                    Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
+                    Qt.binding(() => {
+                                   if (!group || !group.item || !group.item.container)
+                                       return Qt.point(0., 0.)
+                                   return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
                                                                group.item.minimumSize.width),
                                                       Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
-                                                               group.item.minimumSize.height)) })
+                                                               group.item.minimumSize.height))
+                               })
 
             groupResizer.target = group.item
             groupRightResizer.target = groupBottomResizer.target = group.item
