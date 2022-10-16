@@ -1915,10 +1915,18 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
 
     // 0. Collect node neighbours
     const auto neighbours = collectNeighbours(node);
+    std::vector<const qan::Node*> targetNodes;
+    if (node.isGroup())
+        targetNodes = neighbours;
+    else {
+        const auto& inNodes = node.get_in_nodes();
+        for (const auto& inNode: inNodes)
+            targetNodes.push_back(const_cast<const qan::Node*>(inNode));
+    }
 
-    // 1. Collect neighbours ancestors
-    for (const auto neighbour: neighbours)
-        collectAncestorsDfs_rec(neighbour, parents, marks,
+    // 1. Collect node ancestors or group neighbours ancestors
+    for (const auto targetNode: targetNodes)
+        collectAncestorsDfs_rec(targetNode, parents, marks,
                                 collectAncestorsDfs_rec);
 
     // 2. Remove original neighbours from ancestors
@@ -1926,6 +1934,63 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
         return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
     }), parents.end());
     return parents;
+}
+
+std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) const
+{
+    // ALGORITHM:
+      // 0. Collect node neighbour.
+      // 1. Collect childs of neighbours.
+      // 2. Remove original neighbour from childs.
+
+    const auto collectChildsDfs_rec = [this](const qan::Node* visited,
+            std::vector<const qan::Node*>& childs,
+            std::unordered_set<const qan::Node*>& marks,
+            const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return;                                // branchs
+        marks.insert(visited);
+        childs.push_back(visited);
+
+        // 1.1 Collect childs
+        for (const auto outNode : visited->get_out_nodes())
+            lambda(outNode, childs, marks,
+                   lambda);
+
+        // 1.2 Collect neighbours, then collect neighbours ancestors
+        const auto neighbours = this->collectNeighbours(*visited);
+        for (auto neighbour: neighbours)
+            lambda(neighbour, childs, marks,
+                   lambda);
+    };
+
+    std::vector<const qan::Node*> childs;
+    std::unordered_set<const qan::Node*> marks;
+
+    // 0. Collect node neighbours
+    const auto neighbours = collectNeighbours(node);
+
+    std::vector<const qan::Node*> targetNodes;
+    if (node.isGroup())
+        targetNodes = neighbours;
+    else {
+        const auto& outNodes = node.get_out_nodes();
+        for (const auto& outNode: outNodes)
+            targetNodes.push_back(const_cast<const qan::Node*>(outNode));
+    }
+
+    // 1. Collect node childs
+    for (const auto target: targetNodes)
+        collectChildsDfs_rec(target, childs, marks,
+                             collectChildsDfs_rec);
+
+    // 2. Remove original neighbours from child
+    childs.erase(std::remove_if(childs.begin(), childs.end(), [&neighbours](auto e) -> bool {
+        return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
+    }), childs.end());
+    return childs;
 }
 
 bool    Graph::isAncestor(qan::Node* node, qan::Node* candidate) const

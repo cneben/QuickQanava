@@ -172,6 +172,41 @@ void    NodeItem::collapseAncestors(bool collapsed)
     for (const auto ancestor: ancestors)
         const_cast<qan::Node*>(ancestor)->getItem()->setVisible(collapsed);
 }
+
+void    NodeItem::collapseChilds(bool collapsed)
+{
+    // PRECONDITIONS:
+        // getNode() can't return nullptr
+        // getGraph() can't return nullptr
+    const auto graph = getGraph();
+    const auto node = getNode();
+    if (graph == nullptr)
+        return;
+    if (node == nullptr)
+        return;
+
+    // ALGORITHM:
+        // 1. Collect all ancestors of group
+        // 2. Collect adjacent edges of ancestors nodes
+        // 3. Hide selected edges and nodes
+
+    // 1.
+    const auto childs = graph->collectChilds(*node);
+
+    // 2.
+    std::unordered_set<qan::Edge*> childsEdges;
+    for (const auto child: childs) {
+        const auto edges = child->collectAdjacentEdges0();
+        std::copy(edges.begin(), edges.end(),
+                  std::inserter(childsEdges, childsEdges.end()));
+    }
+
+    // 3.
+    for (const auto childEdge: childsEdges)
+        childEdge->getItem()->setVisible(collapsed);
+    for (const auto child: childs)
+        const_cast<qan::Node*>(child)->getItem()->setVisible(collapsed);
+}
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------

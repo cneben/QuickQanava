@@ -1014,6 +1014,8 @@ public:
      */
     std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;
 
+    std::vector<const qan::Node*>   collectChilds(const qan::Node& node) const;
+
 public:
     //! \copydoc isAncestor()
     Q_INVOKABLE bool        isAncestor(qan::Node* node, qan::Node* candidate) const;

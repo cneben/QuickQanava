@@ -156,6 +156,7 @@ signals:
     void        collapsedChanged();
 public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
+    Q_INVOKABLE virtual void    collapseChilds(bool collapsed = true);
     //@}
     //-------------------------------------------------------------------------
 
