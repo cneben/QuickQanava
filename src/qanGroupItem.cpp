@@ -58,6 +58,11 @@ GroupItem::GroupItem(QQuickItem* parent) :
     connect(this, &qan::GroupItem::zChanged,
             this, [this]() { this->groupMoved(); });
 
+    connect(this, &qan::GroupItem::widthChanged,
+            this, &qan::GroupItem::setDefaultBoundingShape);
+    connect(this, &qan::GroupItem::heightChanged,
+            this, &qan::GroupItem::setDefaultBoundingShape);
+
     setItemStyle(qan::Group::style(parent));
     setObjectName(QStringLiteral("qan::GroupItem"));
     // Note: Do not set width and height
@@ -152,7 +157,7 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
     if (getGraph() &&
         getGraph()->getContainerItem() != nullptr) {
-        QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
+        const QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
             nodeItem->setPosition(nodeGlobalPos);

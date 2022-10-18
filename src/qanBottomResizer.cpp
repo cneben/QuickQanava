@@ -41,7 +41,7 @@
 
 namespace qan {  // ::qan
 
-/* BottomResizer Object Management *///-----------------------------------------
+/* BottomResizer Object Management *///----------------------------------------
 BottomResizer::BottomResizer(QQuickItem* parent) :
     QQuickItem{parent}
 {
@@ -75,6 +75,14 @@ void    BottomResizer::setTarget(QQuickItem* target)
         onUpdate();
     }
     setVisible(_target != nullptr);
+}
+
+void    BottomResizer::setTargetContent(QQuickItem* targetContent)
+{
+    if (_targetContent != targetContent) {
+        _targetContent = targetContent;
+        emit targetChanged();
+    }
 }
 
 void    BottomResizer::onTargetXChanged()
@@ -171,11 +179,17 @@ void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
         const QPointF delta{curLocalPos - startLocalPos};
         if (_target != nullptr) {
             const qreal targetHeight = _targetInitialSize.height() + delta.y();
-            if (targetHeight > _minimumTargetSize.height()) {   // Do not resize below minimumSize
+
+            const auto targetContentMinHeight = _targetContent ? _targetContent->childrenRect().y() + _targetContent->childrenRect().height() : 0;
+            const auto minimumTargetHeight = qMax(_minimumTargetSize.height(), targetContentMinHeight);
+            const auto targetContentMinWidth = _targetContent ? _targetContent->childrenRect().x() + _targetContent->childrenRect().width() : 0;
+            const auto minimumTargetWidth = qMax(_minimumTargetSize.width(), targetContentMinWidth);
+
+            if (targetHeight > minimumTargetHeight) {   // Do not resize below minimumTargetSize
                 _target->setHeight(targetHeight);
                 if (_preserveRatio) {
                     const qreal targetWidth = targetHeight / getRatio();
-                    if (targetWidth > _minimumTargetSize.width())
+                    if (targetWidth > minimumTargetWidth)
                         _target->setWidth(targetWidth);
                 }
             }

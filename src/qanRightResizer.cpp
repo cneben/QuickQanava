@@ -77,6 +77,14 @@ void    RightResizer::setTarget(QQuickItem* target)
     setVisible(_target != nullptr);
 }
 
+void    RightResizer::setTargetContent(QQuickItem* targetContent)
+{
+    if (_targetContent != targetContent) {
+        _targetContent = targetContent;
+        emit targetChanged();
+    }
+}
+
 void    RightResizer::onTargetXChanged()
 {
     if (_target && parentItem() != nullptr) {
@@ -172,11 +180,15 @@ void    RightResizer::mouseMoveEvent(QMouseEvent* event)
         if (_target) {
             // Do not resize below minimumSize
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
-            if (targetWidth > _minimumTargetSize.width()) {
+
+            const auto targetContentMinWidth = _targetContent ? _targetContent->childrenRect().x() + _targetContent->childrenRect().width() : 0;
+            const auto minimumTargetWidth = qMax(_minimumTargetSize.width(), targetContentMinWidth);
+
+            if (targetWidth > minimumTargetWidth) {
                 _target->setWidth(targetWidth);
                 if (_preserveRatio) {
                     const qreal targetHeight = targetWidth * getRatio();
-                    if (targetHeight > _minimumTargetSize.height())
+                    if (targetHeight > minimumTargetWidth)
                         _target->setHeight(targetHeight);
                 }
             }

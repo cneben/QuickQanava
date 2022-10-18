@@ -102,7 +102,7 @@ void    BottomRightResizer::setTarget(QQuickItem* target)
                     if (_handler) {
                         engine->setObjectOwnership(_handler.data(), QQmlEngine::CppOwnership);
                         _handler->setParentItem(this);
-                        _handler->installEventFilter(this);
+                        //_handler->installEventFilter(this);
                     } else {
                         qWarning() << "qan::BottomRightResizer::setTarget(): Error: Can't create resize handler QML component:";
                         qWarning() << "QML Component status=" << defaultHandlerComponent.status();
@@ -128,6 +128,14 @@ void    BottomRightResizer::setTarget(QQuickItem* target)
             configureTarget(*_target);
     }
     setVisible(_target != nullptr);
+}
+
+void    BottomRightResizer::setTargetContent(QQuickItem* targetContent)
+{
+    if (_targetContent != targetContent) {
+        _targetContent = targetContent;
+        emit targetChanged();
+    }
 }
 
 void    BottomRightResizer::configureHandler(QQuickItem& handler) noexcept
@@ -324,19 +332,25 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
+
         if (_target) {
+            const auto targetContentMinHeight = _targetContent ? _targetContent->childrenRect().y() + _targetContent->childrenRect().height() : 0;
+            const auto minimumTargetHeight = qMax(_minimumTargetSize.height(), targetContentMinHeight);
+            const auto targetContentMinWidth = _targetContent ? _targetContent->childrenRect().x() + _targetContent->childrenRect().width() : 0;
+            const auto minimumTargetWidth = qMax(_minimumTargetSize.width(), targetContentMinWidth);
+
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
-            if (targetWidth > _minimumTargetSize.width())       // Do not resize below minimumSize
+            if (targetWidth > minimumTargetWidth)       // Do not resize below minimumSize
                 _target->setWidth(targetWidth);
             if (_preserveRatio) {
-                const qreal finalTargetWidth = targetWidth > _minimumTargetSize.width() ? targetWidth :
-                                                                                          _minimumTargetSize.width();
+                const qreal finalTargetWidth = targetWidth > minimumTargetWidth ? targetWidth :
+                                                                                  minimumTargetWidth;
                 const qreal targetHeight = finalTargetWidth * getRatio();
-                if (targetHeight > _minimumTargetSize.height())
+                if (targetHeight > minimumTargetHeight)
                     _target->setHeight(targetHeight);
             } else {
                 const qreal targetHeight = _targetInitialSize.height() + delta.y();
-                if (targetHeight > _minimumTargetSize.height())
+                if (targetHeight > minimumTargetHeight)
                     _target->setHeight(targetHeight);
             }
             event->setAccepted(true);

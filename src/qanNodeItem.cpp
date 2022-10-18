@@ -216,9 +216,9 @@ void    NodeItem::onHeightChanged() { configureSelectionItem(); }
 //-----------------------------------------------------------------------------
 
 /* Node Configuration *///-----------------------------------------------------
-void    NodeItem::setResizable( bool resizable ) noexcept
+void    NodeItem::setResizable(bool resizable) noexcept
 {
-    if ( resizable != _resizable ) {
+    if (resizable != _resizable) {
         _resizable = resizable;
         emit resizableChanged();
     }
@@ -368,14 +368,14 @@ void    NodeItem::setStyle(qan::NodeStyle* style) noexcept
     }
 }
 
-void    NodeItem::setItemStyle( qan::Style* style ) noexcept
+void    NodeItem::setItemStyle(qan::Style* style) noexcept
 {
     auto nodeStyle = qobject_cast<qan::NodeStyle*>(style);
-    if ( nodeStyle != nullptr )
-        setStyle( nodeStyle );
+    if (nodeStyle != nullptr)
+        setStyle(nodeStyle);
 }
 
-void    NodeItem::styleDestroyed( QObject* style )
+void    NodeItem::styleDestroyed(QObject* style)
 {
     if (style != nullptr)
         setStyle(nullptr);   // Set default style when current style is destroyed
@@ -462,10 +462,10 @@ void    NodeItem::setLeftDock(QQuickItem* leftDock) noexcept
     }
 }
 
-void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
+void    NodeItem::setTopDock(QQuickItem* topDock) noexcept
 {
-    if ( topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data() ) {
-        if ( topDock != nullptr ) {
+    if (topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data()) {
+        if (topDock != nullptr) {
             configureDock(*topDock, Dock::Top);
             QQmlEngine::setObjectOwnership(topDock, QQmlEngine::CppOwnership);
         }
@@ -474,10 +474,10 @@ void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
     }
 }
 
-void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
+void    NodeItem::setRightDock(QQuickItem* rightDock) noexcept
 {
-    if ( rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data() ) {
-        if ( rightDock != nullptr ) {
+    if (rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data()) {
+        if (rightDock != nullptr) {
             configureDock(*rightDock, Dock::Right);
             QQmlEngine::setObjectOwnership(rightDock, QQmlEngine::CppOwnership);
         }
@@ -488,8 +488,8 @@ void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
 
 void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 {
-    if ( bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data() ) {
-        if ( bottomDock != nullptr ) {
+    if (bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data()) {
+        if (bottomDock != nullptr) {
             configureDock(*bottomDock, Dock::Bottom);
             QQmlEngine::setObjectOwnership(bottomDock, QQmlEngine::CppOwnership);
         }

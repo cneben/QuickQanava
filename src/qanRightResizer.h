@@ -70,6 +70,17 @@ signals:
     void        targetChanged();
 private:
     QPointer<QQuickItem>  _target = nullptr;
+
+public:
+    //! FIXME
+    Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY targetContentChanged FINAL)
+    void        setTargetContent(QQuickItem* targetContent);
+    QQuickItem* getTargetContent() const { return _targetContent.data(); }
+signals:
+    void        targetContentChanged();
+private:
+    QPointer<QQuickItem>  _targetContent = nullptr;
+
 private slots:
     void        onTargetXChanged();
     void        onTargetYChanged();

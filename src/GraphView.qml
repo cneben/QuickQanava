@@ -172,6 +172,7 @@ Qan.AbstractGraphView {
         // Hide resizers when view background is clicked
         nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
         groupResizer.target = groupRightResizer.target = groupBottomResizer.target = null
+        groupResizer.targetContent = groupRightResizer.targetContent = groupBottomResizer.targetContent = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -196,7 +197,7 @@ Qan.AbstractGraphView {
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
         } else if (graph)
-            graph.connector.visible = false
+            graph.connector.vgroupRightResizer.target = groupBottomResizer.target = nullisible = false
     }
     onPortRightClicked: { }
 
@@ -239,9 +240,8 @@ Qan.AbstractGraphView {
         if (node.item.resizable) {
             nodeItemRatioWatcher.target = node.item
 
-            nodeResizer.minimumTargetSize = Qt.binding(() => { return node.item.minimumSize; })
-            nodeRightResizer.minimumTargetSize = nodeBottomResizer.minimumTargetSize =
-                    Qt.binding(() => { return node.item.minimumSize; })
+            nodeResizer.minimumTargetSize = node.item.minimumSize
+            nodeRightResizer.minimumTargetSize = nodeBottomResizer.minimumTargetSize = node.item.minimumSize
 
             nodeResizer.target = node.item
             nodeRightResizer.target = nodeBottomResizer.target = node.item
@@ -279,22 +279,12 @@ Qan.AbstractGraphView {
         if (group.item.container &&
             group.item.resizable) {
             // Set minimumTargetSize _before_ setting target
-            groupResizer.minimumTargetSize = Qt.binding(() => { return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width + 5,
-                                                                                        group.item.minimumSize.width),
-                                                                               Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height + 5,
-                                                                                        group.item.minimumSize.height)) })
-            groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize =
-                    Qt.binding(() => {
-                                   if (!group || !group.item || !group.item.container)
-                                       return Qt.point(0., 0.)
-                                   return Qt.size(Math.max(group.item.container.childrenRect.x + group.item.container.childrenRect.width,
-                                                               group.item.minimumSize.width),
-                                                      Math.max(group.item.container.childrenRect.y + group.item.container.childrenRect.height,
-                                                               group.item.minimumSize.height))
-                               })
-
+            groupResizer.minimumTargetSize = group.item.minimumSize
             groupResizer.target = group.item
+            groupResizer.targetContent = group.item.container
+            groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize = group.item.minimumSize
             groupRightResizer.target = groupBottomResizer.target = group.item
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.item.container
 
             // Do not show resizers when group is collapsed
             groupRightResizer.visible = groupBottomResizer.visible =
@@ -309,8 +299,9 @@ Qan.AbstractGraphView {
             groupRightResizer.z = groupBottomResizer.z = group.item.z + 4.
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
-            groupResizer.target = null
+            groupResizer.target = groupResizer.targetContent = null
             groupRightResizer.target = groupBottomResizer.target = null
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = null
         } // group.item.resizable
     }  // onGroupClicked()
 

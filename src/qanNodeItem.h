@@ -342,6 +342,7 @@ public:
     QPolygonF           getBoundingShape();
     Q_INVOKABLE void    setBoundingShape(const QPolygonF& boundingShape);
 
+public slots:
     //! Generate a default bounding shape (rounded rectangle) and set it as current bounding shape.
     Q_INVOKABLE void    setDefaultBoundingShape();
 signals:
