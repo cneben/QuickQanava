@@ -1915,7 +1915,7 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
       // 1. Collect ancestors of neighbours.
       // 2. Remove original neighbour from ancestors.
 
-    const auto collectAncestorsDfs_rec = [this](const qan::Node* visited,
+    const auto collectAncestorsDfs_rec = [](const qan::Node* visited,
             std::vector<const qan::Node*>& parents,
             std::unordered_set<const qan::Node*>& marks,
             const auto& lambda) {
@@ -1933,12 +1933,6 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
         for (const auto inNode : visited->get_in_nodes())
             lambda(inNode, parents, marks,
                    lambda);
-
-        // 1.2 Collect neighbours, then collect neighbours ancestors
-        /*const auto neighbours = this->collectNeighbours(*visited);
-        for (auto neighbour: neighbours)
-            lambda(neighbour, parents, marks,
-                   lambda);*/
     };
 
     std::vector<const qan::Node*> parents;
@@ -1964,11 +1958,7 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
         collectAncestorsDfs_rec(targetNode, parents, marks,
                                 collectAncestorsDfs_rec);
 
-    // 2. Remove original neighbours from ancestors
-    // FIXME #1105
-    //parents.erase(std::remove_if(parents.begin(), parents.end(), [&neighbours](auto e) -> bool {
-    //    return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
-    //}), parents.end());
+    // 2. Remove protected nodes from ancestors
     parents.erase(std::remove_if(parents.begin(), parents.end(),
                                  [&excepts](auto e) -> bool {
         return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
@@ -1981,9 +1971,9 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
     // ALGORITHM:
       // 0. Collect node neighbour.
       // 1. Collect childs of neighbours.
-      // 2. Remove original neighbour from childs.
+      // 2. Remove protected nodes from childs.
 
-    const auto collectChildsDfs_rec = [this](const qan::Node* visited,
+    const auto collectChildsDfs_rec = [](const qan::Node* visited,
             std::vector<const qan::Node*>& childs,
             std::unordered_set<const qan::Node*>& marks,
             const auto& lambda) {
@@ -2001,12 +1991,6 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
         for (const auto outNode : visited->get_out_nodes())
             lambda(outNode, childs, marks,
                    lambda);
-
-        // 1.2 Collect neighbours, then collect neighbours ancestors
-        //const auto neighbours = this->collectNeighbours(*visited);
-        //for (auto neighbour: neighbours)
-        //    lambda(neighbour, childs, marks,
-        //           lambda);
     };
 
     std::vector<const qan::Node*> childs;
@@ -2033,11 +2017,7 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
         collectChildsDfs_rec(target, childs, marks,
                              collectChildsDfs_rec);
 
-    // 2. Remove original neighbours from child
-    //childs.erase(std::remove_if(childs.begin(), childs.end(), [&neighbours](auto e) -> bool {
-    //    return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
-    //}), childs.end());
-    // FIXME #
+    // 2. Remove protected nodes from child
     childs.erase(std::remove_if(childs.begin(), childs.end(),
                                 [&excepts](auto e) -> bool {
         return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
