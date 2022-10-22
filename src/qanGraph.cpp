@@ -1880,6 +1880,34 @@ std::vector<const qan::Node*>   Graph::collectNeighbours(const qan::Node& node) 
     return neighbours;
 }
 
+std::vector<const qan::Node*>   Graph::collectGroups(const qan::Node& node) const
+{
+    std::unordered_set<const qan::Node*> marks;
+    std::vector<const qan::Node*> groups;
+
+    const auto collectGroups_rec = [](const qan::Node* visited,
+                                      std::vector<const qan::Node*>& groups,
+                                      std::unordered_set<const qan::Node*>& marks,
+                                      const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end()) // Do not collect on already visited
+            return;                             // group
+        marks.insert(visited);
+        if (visited->isGroup())
+            groups.push_back(visited);
+        if (visited->getGroup() != nullptr)
+            lambda(visited->getGroup(), groups,
+                   marks, lambda);
+    };
+
+    const auto group = node.getGroup();
+    if (group != nullptr)
+        collectGroups_rec(group, groups,
+                          marks, collectGroups_rec);
+    return groups;
+}
+
 std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) const
 {
     // ALGORITHM:
@@ -1898,40 +1926,52 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
         marks.insert(visited);
         parents.push_back(visited);
 
+        if (visited->getGroup() != nullptr)
+            parents.push_back(visited->getGroup());
+
         // 1.1 Collect ancestor
         for (const auto inNode : visited->get_in_nodes())
             lambda(inNode, parents, marks,
                    lambda);
 
         // 1.2 Collect neighbours, then collect neighbours ancestors
-        const auto neighbours = this->collectNeighbours(*visited);
+        /*const auto neighbours = this->collectNeighbours(*visited);
         for (auto neighbour: neighbours)
             lambda(neighbour, parents, marks,
-                   lambda);
+                   lambda);*/
     };
 
     std::vector<const qan::Node*> parents;
     std::unordered_set<const qan::Node*> marks;
+    auto excepts = collectGroups(node);
+    excepts.push_back(&node);
+    qWarning() << "qan::Graph::collectAncestors(): excepts.size=" << excepts.size();
 
-    // 0. Collect node neighbours
-    const auto neighbours = collectNeighbours(node);
+    // 0. Collect target nodes
     std::vector<const qan::Node*> targetNodes;
-    if (node.isGroup())
+    if (node.isGroup()) {
+        const auto neighbours = collectNeighbours(node);
         targetNodes = neighbours;
-    else {
+        std::copy(neighbours.cbegin(), neighbours.cend(), std::back_inserter(excepts));
+    } else {
         const auto& inNodes = node.get_in_nodes();
         for (const auto& inNode: inNodes)
             targetNodes.push_back(const_cast<const qan::Node*>(inNode));
     }
 
-    // 1. Collect node ancestors or group neighbours ancestors
+    // 1. Collect target nodes ancestors or group neighbours ancestors
     for (const auto targetNode: targetNodes)
         collectAncestorsDfs_rec(targetNode, parents, marks,
                                 collectAncestorsDfs_rec);
 
     // 2. Remove original neighbours from ancestors
-    parents.erase(std::remove_if(parents.begin(), parents.end(), [&neighbours](auto e) -> bool {
-        return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
+    // FIXME #1105
+    //parents.erase(std::remove_if(parents.begin(), parents.end(), [&neighbours](auto e) -> bool {
+    //    return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
+    //}), parents.end());
+    parents.erase(std::remove_if(parents.begin(), parents.end(),
+                                 [&excepts](auto e) -> bool {
+        return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
     }), parents.end());
     return parents;
 }
@@ -1954,28 +1994,35 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
         marks.insert(visited);
         childs.push_back(visited);
 
+        if (visited->getGroup() != nullptr)
+            childs.push_back(visited->getGroup());
+
         // 1.1 Collect childs
         for (const auto outNode : visited->get_out_nodes())
             lambda(outNode, childs, marks,
                    lambda);
 
         // 1.2 Collect neighbours, then collect neighbours ancestors
-        const auto neighbours = this->collectNeighbours(*visited);
-        for (auto neighbour: neighbours)
-            lambda(neighbour, childs, marks,
-                   lambda);
+        //const auto neighbours = this->collectNeighbours(*visited);
+        //for (auto neighbour: neighbours)
+        //    lambda(neighbour, childs, marks,
+        //           lambda);
     };
 
     std::vector<const qan::Node*> childs;
     std::unordered_set<const qan::Node*> marks;
 
     // 0. Collect node neighbours
-    const auto neighbours = collectNeighbours(node);
+    auto excepts = collectGroups(node);
+    excepts.push_back(&node);
+    qWarning() << "qan::Graph::collectChilds(): excepts.size=" << excepts.size();
 
     std::vector<const qan::Node*> targetNodes;
-    if (node.isGroup())
+    if (node.isGroup()) {
+        const auto neighbours = collectNeighbours(node);
         targetNodes = neighbours;
-    else {
+        std::copy(neighbours.cbegin(), neighbours.cend(), std::back_inserter(excepts));
+    } else {
         const auto& outNodes = node.get_out_nodes();
         for (const auto& outNode: outNodes)
             targetNodes.push_back(const_cast<const qan::Node*>(outNode));
@@ -1987,8 +2034,13 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
                              collectChildsDfs_rec);
 
     // 2. Remove original neighbours from child
-    childs.erase(std::remove_if(childs.begin(), childs.end(), [&neighbours](auto e) -> bool {
-        return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
+    //childs.erase(std::remove_if(childs.begin(), childs.end(), [&neighbours](auto e) -> bool {
+    //    return std::find(neighbours.begin(), neighbours.end(), e) != neighbours.end();
+    //}), childs.end());
+    // FIXME #
+    childs.erase(std::remove_if(childs.begin(), childs.end(),
+                                [&excepts](auto e) -> bool {
+        return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
     }), childs.end());
     return childs;
 }

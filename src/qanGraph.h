@@ -1005,7 +1005,10 @@ public:
      */
     std::vector<const qan::Node*>   collectNeighbours(const qan::Node& node) const;
 
-    /*! \brief Synchronously collect all parent nodes of \c node using DFS on \c inNodes.
+    //! FIXME.
+    std::vector<const qan::Node*>   collectGroups(const qan::Node& node) const;
+
+    /*! \brief Synchronously collect all parent nodes of \c node.
      *
      * \note All ancestors "neighbours" nodes are also added to set.
      * \note \c node is _not_ added to result.
@@ -1014,6 +1017,7 @@ public:
      */
     std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;
 
+    //! FIXME.
     std::vector<const qan::Node*>   collectChilds(const qan::Node& node) const;
 
 public:
