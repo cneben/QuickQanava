@@ -1202,6 +1202,12 @@ void    addToSelectionImpl(Primitive_t& primitive,
 {
     if (!selectedPrimitives.contains(&primitive)) {
         selectedPrimitives.append(&primitive);
+
+        QObject::connect(&primitive, &Primitive_t::destroyed,
+                         &graph,     [&selectedPrimitives, &primitive]() {
+            selectedPrimitives.removeAll(&primitive);
+        } );
+
         if (primitive.getItem() != nullptr) {
             primitive.getItem()->setSelected(true);
             // Eventually, create and configure node item selection item
