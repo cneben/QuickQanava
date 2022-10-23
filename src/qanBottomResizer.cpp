@@ -47,6 +47,7 @@ BottomResizer::BottomResizer(QQuickItem* parent) :
 {
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptHoverEvents(true);
+    setZ(100000000.);
 }
 //-----------------------------------------------------------------------------
 
@@ -72,9 +73,21 @@ void    BottomResizer::setTarget(QQuickItem* target)
                 this,       &BottomResizer::onTargetHeightChanged);
         connect(_target,    &QQuickItem::parentChanged, // When a selected group is dragged in another
                 this,       &BottomResizer::onUpdate);   // parent group, resize area has to be updated
+
+        connect(_target,    &QQuickItem::visibleChanged,
+                this,       &BottomResizer::onUpdate);
+        connect(_target,    &QQuickItem::zChanged,
+                this,       &BottomResizer::onUpdate);
+        connect(_target,    &QObject::destroyed,
+                this,       [this]() {
+            setTarget(nullptr);
+            this->setVisible(false);
+        });
+
         onUpdate();
     }
-    setVisible(_target != nullptr);
+    setVisible(_target != nullptr &&
+               _target->isVisible());
 }
 
 void    BottomResizer::setTargetContent(QQuickItem* targetContent)
@@ -122,6 +135,8 @@ void    BottomResizer::onUpdate()
     onTargetYChanged();
     onTargetWidthChanged();
     onTargetHeightChanged();
+    setVisible(_target != nullptr &&
+               _target->isVisible());
 }
 
 void    BottomResizer::setMinimumTargetSize(QSizeF minimumTargetSize)

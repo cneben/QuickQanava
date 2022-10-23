@@ -247,10 +247,12 @@ Qan.AbstractGraphView {
             nodeRightResizer.target = nodeBottomResizer.target = node.item
 
             nodeResizer.visible = nodeRightResizer.visible = nodeBottomResizer.visible =
-                    Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.resizable : false; })
+                    Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
+                                                                   false; })
 
-            nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
-            nodeRightResizer.z = nodeBottomResizer.z = node.item.z + 4.
+
+            nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)
             if (node.item.ratio > 0.) {
@@ -260,6 +262,7 @@ Qan.AbstractGraphView {
                 nodeResizer.preserveRatio = false
         } else {
             nodeResizer.target = null
+            nodeRightResizer.target = nodeBottomResizer.target = null
         }
     }
 
@@ -289,14 +292,15 @@ Qan.AbstractGraphView {
             // Do not show resizers when group is collapsed
             groupRightResizer.visible = groupBottomResizer.visible =
                     groupResizer.visible = Qt.binding(() => { // Resizer is visible :
-                                                          return group && group.item      &&      // If group and group.item are valid
-                                                          (!group.item.collapsed) &&      // And if group is not collapsed
+                                                          return group && group.item &&   // If group and group.item are valid
+                                                          group.item.visible         &&
+                                                          (!group.item.collapsed)    &&   // And if group is not collapsed
                                                           group.item.resizable;           // And if group is resizeable
                                                       })
 
-            groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
+            groupResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
             groupResizer.preserveRatio = false
-            groupRightResizer.z = groupBottomResizer.z = group.item.z + 4.
+            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 4
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
             groupResizer.target = groupResizer.targetContent = null

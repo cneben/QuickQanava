@@ -47,6 +47,7 @@ RightResizer::RightResizer(QQuickItem* parent) :
 {
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptHoverEvents(true);
+    setZ(100000000.);
 }
 //-----------------------------------------------------------------------------
 
@@ -72,9 +73,21 @@ void    RightResizer::setTarget(QQuickItem* target)
                 this,       &RightResizer::onTargetHeightChanged);
         connect(_target,    &QQuickItem::parentChanged, // When a selected group is dragged in another
                 this,       &RightResizer::onUpdate);   // parent group, resize area has to be updated
+
+        connect(_target,    &QQuickItem::visibleChanged,
+                this,       &RightResizer::onUpdate);
+        connect(_target,    &QQuickItem::zChanged,
+                this,       &RightResizer::onUpdate);
+        connect(_target,    &QObject::destroyed,
+                this,       [this]() {
+            setTarget(nullptr);
+            this->setVisible(false);
+        });
+
         onUpdate();
     }
-    setVisible(_target != nullptr);
+    setVisible(_target != nullptr &&
+               _target->isVisible());
 }
 
 void    RightResizer::setTargetContent(QQuickItem* targetContent)
@@ -122,6 +135,8 @@ void    RightResizer::onUpdate()
     onTargetYChanged();
     onTargetWidthChanged();
     onTargetHeightChanged();
+    setVisible(_target != nullptr &&
+               _target->isVisible());
 }
 
 void    RightResizer::setMinimumTargetSize(QSizeF minimumTargetSize)
