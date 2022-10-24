@@ -125,7 +125,8 @@ Item {
                 elide:  Text.ElideRight
                 MouseArea {
                     anchors.fill: parent
-                    enabled: !groupItem.group.locked    // Do not allow dragging of locked groups
+                    enabled: !groupItem.group.isProtected &&
+                             !groupItem.group.locked    // Do not allow dragging of locked groups
                     preventStealing: true
                     propagateComposedEvents: true // Ensure event are forwarded to collapserArea
                     drag.target: groupItem.draggable ? groupItem : null
