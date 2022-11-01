@@ -772,14 +772,7 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
 
     if ( srcPort == nullptr ||      // If there is a connection to a non-port item, generate a control point for it
          dstPort == nullptr ) {
-        // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
-        // Heuristic: bounded to ]0;40.], larger when line length is large (line.length()), small when
-        //            line is either vertical or horizontal (xDelta/yDelta near 0)
-        const auto distance = std::min( line.length(), std::min(xDeltaAbs / 2., yDeltaAbs / 2.) );
-        const auto controlPointDistance = qBound( 0.001, distance, 40. );
 
-        const QPointF center{ ( cache.p1.x() + cache.p2.x() ) / 2.,           // (P1,P2) Line center
-                              ( cache.p1.y() + cache.p2.y() ) / 2. };
         // Invert if:
             // Top left quarter:     do not invert (xDelta < 0 && yDelta < 0)
             // Top right quarter:    xDelta > 0 && yDelta < 0
@@ -787,12 +780,27 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
             // Bottom left quarter:  xDelta < 0 && yDelta > 0
         const auto invert =  ( xDelta > 0 && yDelta < 0 ) ||
                              ( xDelta < 0 && yDelta > 0 ) ? -1. : 1.;
-        const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
+
+        const bool lengthIsZero = std::abs(lineLength) < std::numeric_limits<qreal>::epsilon();
+        QPointF offset { 0., 0. };
+        if (!lengthIsZero) {
+            const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
+            // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
+            // Heuristic: bounded to [0;40.], larger when line length is large (line.length()), small when
+            //            line is either vertical or horizontal (xDelta/yDelta near 0)
+            const auto distance = std::min( line.length(), std::min(xDeltaAbs / 2., yDeltaAbs / 2.) );
+            const auto controlPointDistance = qBound( 0.001, distance, 40. );
+
+            offset = normal * controlPointDistance;
+        }
+
+        const QPointF center{ ( cache.p1.x() + cache.p2.x() ) / 2.,           // (P1,P2) Line center
+                              ( cache.p1.y() + cache.p2.y() ) / 2. };
 
         if ( srcPort == nullptr )
-            cache.c1 = center + ( normal * controlPointDistance );
+            cache.c1 = center + offset;
         if ( dstPort == nullptr )
-            cache.c2 = center - ( normal * controlPointDistance );
+            cache.c2 = center - offset;
     }
     if ( srcPort != nullptr ||      // If there is a connection to a port item, generate a control point for it
          dstPort != nullptr ) {
@@ -819,9 +827,9 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
 
         // Heuristics:
             // 1. xCorrection should be really small when xDeltaAbs is small (small == < average bounding rect width)
-                // otherwise, it should be proportionnal to one fitfh of xDeltaAbs and always less than maxOffset.
+                // otherwise, it should be proportional to one fifth of xDeltaAbs and always less than maxOffset.
             // 2. yCorrection should be really small when yDeltaAbs is small (small == < average bounding rect height)
-                // otherwise, it should be proportionnal to one fitfh of yDeltaAbs and always less than maxOffset.
+                // otherwise, it should be proportional to one fifth of yDeltaAbs and always less than maxOffset.
             // 3. Do not apply correction on out port
         const auto xOffset = offset(xDeltaAbs);
         const auto yOffset = offset(yDeltaAbs);
