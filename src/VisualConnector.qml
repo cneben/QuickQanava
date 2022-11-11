@@ -80,13 +80,15 @@ Qan.Connector {
     }
 
     // Private ////////////////////////////////////////////////////////////////
-    width: radius * 2;  height: radius * 2
+    width: radius * 2
+    height: radius * 2
     x: connectorMargin
     y: topMargin
 
     visible: false
     selectable: false
-    clip: false; antialiasing: true
+    clip: false
+    antialiasing: true
 
     /*! \brief Internally used to reset correct connector position according to current node
      *  or port configuration, also restore position bindings to source.

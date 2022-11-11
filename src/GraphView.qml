@@ -197,7 +197,7 @@ Qan.AbstractGraphView {
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
         } else if (graph)
-            graph.connector.vgroupRightResizer.target = groupBottomResizer.target = nullisible = false
+            graph.connector.visible = false
     }
     onPortRightClicked: { }
 

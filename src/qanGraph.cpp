@@ -140,37 +140,39 @@ void    Graph::clear() noexcept
 
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
-    if ( getContainerItem() == nullptr )
+    if (getContainerItem() == nullptr)
         return nullptr;
     const QList<QQuickItem*> children = getContainerItem()->childItems();
     for (int i = children.count()-1; i >= 0; --i) {
-        QQuickItem *child = children.at(i);
-        QPointF point = mapToItem( child, QPointF(x, y) );  // Map coordinates to the child element's coordinate space
-        if ( child->isVisible() &&
-             child->contains( point ) &&    // Note 20160508: childAt do not call contains()
-             point.x() > -0.0001 &&
-             child->width() > point.x() &&
-             point.y() > -0.0001 &&
-             child->height() > point.y() ) {
-            if ( child->inherits( "qan::GroupItem" ) ) {  // For group, look in group childs
+        QQuickItem* child = children.at(i);
+        const QPointF point = mapToItem(child, QPointF(x, y));  // Map coordinates to the child element's coordinate space
+        if (child->isVisible() &&
+            child->contains( point ) &&    // Note 20160508: childAt do not call contains()
+            point.x() > -0.0001 &&
+            child->width() > point.x() &&
+            point.y() > -0.0001 &&
+            child->height() > point.y() ) {
+            if (child->inherits("qan::GroupItem")) {  // For group, look in group childs
                 const auto groupItem = qobject_cast<qan::GroupItem*>( child );
-                if ( groupItem != nullptr &&
-                     groupItem->getContainer() != nullptr ) {
+                if (groupItem != nullptr &&
+                    groupItem->getContainer() != nullptr) {
                     const QList<QQuickItem *> groupChildren = groupItem->getContainer()->childItems();
-                    for (int gc = groupChildren.count()-1; gc >= 0; --gc) {
-                        QQuickItem *groupChild = groupChildren.at(gc);
-                        point = mapToItem( groupChild, QPointF(x, y) ); // Map coordinates to group child element's coordinate space
-                        if ( groupChild->isVisible() &&
-                             groupChild->contains( point ) &&
-                             point.x() > -0.0001 &&
-                             groupChild->width() > point.x() &&
-                             point.y() > -0.0001 &&
-                             groupChild->height() > point.y() ) {
+                    for (int gc = groupChildren.count() - 1; gc >= 0; --gc) {
+                        QQuickItem* groupChild = groupChildren.at(gc);
+                        const auto point = mapToItem(groupChild, QPointF(x, y)); // Map coordinates to group child element's coordinate space
+                        if (groupChild->isVisible() &&
+                            groupChild->contains( point ) &&
+                            point.x() > -0.0001 &&
+                            groupChild->width() > point.x() &&
+                            point.y() > -0.0001 &&
+                            groupChild->height() > point.y() ) {
+                            QQmlEngine::setObjectOwnership(groupChild, QQmlEngine::CppOwnership);
                             return groupChild;
                         }
                     }
                 }
             }
+            QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
             return child;
         }
     }
@@ -225,8 +227,10 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
 
             const auto groupRect =  QRectF{groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
                                            QSizeF{ groupItem->width(), groupItem->height()}};
-            if (groupRect.contains(QRectF{p, s}))
-                 return group;
+            if (groupRect.contains(QRectF{p, s})) {
+                QQmlEngine::setObjectOwnership(group, QQmlEngine::CppOwnership);
+                return group;
+            }
         }
     } // for all groups
     return nullptr;

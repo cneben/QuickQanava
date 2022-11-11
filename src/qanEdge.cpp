@@ -90,8 +90,16 @@ qan::EdgeStyle* Edge::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /*! \name Edge Topology Management *///------------------------------------
-qan::Node*  Edge::getSource() noexcept { return get_src(); }
-qan::Node*  Edge::getDestination() noexcept { return get_dst(); }
+qan::Node*  Edge::getSource() {
+    auto src = get_src();
+    QQmlEngine::setObjectOwnership(src, QQmlEngine::CppOwnership);
+    return src;
+}
+qan::Node*  Edge::getDestination() {
+    auto dst = get_dst();
+    QQmlEngine::setObjectOwnership(dst, QQmlEngine::CppOwnership);
+    return dst;
+}
 //-----------------------------------------------------------------------------
 
 /* Edge Properties Management *///---------------------------------------------

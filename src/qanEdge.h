@@ -107,8 +107,8 @@ public:
     /*! \name Edge Topology Management *///------------------------------------
     //@{
 public:
-    Q_INVOKABLE qan::Node* getSource() noexcept;
-    Q_INVOKABLE qan::Node* getDestination() noexcept;
+    Q_INVOKABLE qan::Node* getSource();
+    Q_INVOKABLE qan::Node* getDestination();
     //@}
     //-------------------------------------------------------------------------
 
