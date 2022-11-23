@@ -37,11 +37,11 @@ jobs:
         run: |
           cmake -S '${{ github.workspace }}/' -B '${{ github.workspace }}/Build' -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release 
          
-      - name: Compiling Holograph
+      - name: Compiling QuickQanava
         shell: cmd
         run: |
           echo "Calling vcvarsall.exe..."
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{matrix.config.platform}}
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           echo "Moving to build folder..."
           echo "NMAKE..."
           set CL=/MP & rem "Enabling multi-threading (max. available)"
