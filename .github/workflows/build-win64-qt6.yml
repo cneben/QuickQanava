@@ -34,7 +34,7 @@ jobs:
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-           cmakeListsTxtPath: '${{ github.workspace }}/QuickQanava/CMakeLists.txt'
+           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
            configurePreset: 'ninja-multi-vcpkg'
            buildPreset: 'ninja-multi-vcpkg'
          
