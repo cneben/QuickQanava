@@ -43,6 +43,7 @@ jobs:
           echo "Calling vcvarsall.exe..."
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
           echo "Moving to build folder..."
+          cd Build
           echo "NMAKE..."
           set CL=/MP & rem "Enabling multi-threading (max. available)"
           nmake 
