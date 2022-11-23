@@ -430,21 +430,21 @@ public:
      *
      * \arg item    if nullptr, return false.
      */
-    inline auto    contains(const T item) const noexcept -> bool { return qcm::adapter<C, T>::contains(_container, item); }
+    inline auto    contains(const T item) const -> bool { return qcm::adapter<C, T>::contains(_container, item); }
 
     /*! \brief Shortcut to Container<T>::indexOf(), return index of a given \c item element in this model container.
      *
      * \arg item    if nullptr, return -1.
      */
-    inline auto    indexOf( T item ) const noexcept -> int { return qcm::adapter<C, T>::indexOf(_container, item); }
+    inline auto    indexOf(T item) const -> int { return qcm::adapter<C, T>::indexOf(_container, item); }
 
 private:
     C<T>                _container;
 public:
     //! The preffered way of accessing internal list is to use cast operator with static_cast<const Container<T>>( Container ).
-    inline const C<T>&  getContainer( ) const noexcept { return _container; }
+    inline const C<T>&  getContainer() const { return _container; }
 protected:
-    inline C<T>&        getContainer( ) noexcept { return _container; }
+    inline C<T>&        getContainer() { return _container; }
     //@}
     //-------------------------------------------------------------------------
 };
