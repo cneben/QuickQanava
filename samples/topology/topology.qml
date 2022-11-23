@@ -27,14 +27,13 @@
 import QtQuick.Window 2.2
 import QtQuick 2.13
 
-//import QtQuick.Controls 2.13
-import QtQuick.Controls 2.13
+import QtQuick.Controls 2.15
 
 import QtQuick.Layouts  1.3
 import QtQuick.Controls.Material 2.1
 import QtQuick.Shapes            1.0
 
-import Qt.labs.platform     1.1
+import Qt.labs.platform 1.1 as Labs
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan
@@ -57,15 +56,11 @@ ApplicationWindow {
     Menu {
         id: menu
         title: "Main Menu"
+        closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
         property var targetNode: undefined
         property var targetGroup: undefined
         property var targetEdge: undefined
-        // FIXME....
-        /*onClosed: function() {
-            menu.targetNode = undefined
-            menu.targetGroup = undefined
-            menu.targetEdge = undefined
-        }*/
+        onClosed: resetMenu()
         function resetMenu() {
             menu.targetNode = undefined
             menu.targetGroup = undefined
@@ -202,7 +197,7 @@ ApplicationWindow {
         }
         MenuItem {
             text: "Fit Graph in View"
-            onTriggered: graphView.fitInView()
+            onTriggered: graphView.fitContentInView()
         }
         MenuItem {
             text: "Clear Graph"
@@ -264,30 +259,30 @@ ApplicationWindow {
             onNodeClicked: node => {
                 portsListView.model = node.item.ports
             }
-            onNodeRightClicked: node => {
-                var globalPos = node.item.mapToItem(topology, pos.x, pos.y)
+            onNodeRightClicked: (node, pos) => {
+                const globalPos = node.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetNode = node
                 menu.open()
             }
-            onGroupRightClicked: group => {
-                var globalPos = group.item.mapToItem(topology, pos.x, pos.y)
+            onGroupRightClicked: (group, pos) => {
+                const globalPos = group.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetGroup = group
                 menu.open()
             }
-            onEdgeRightClicked: edge => {
+            onEdgeRightClicked: (edge, pos) => {
                 if (!edge || !edge.item)
                     return
-                var globalPos = edge.item.mapToItem(topology, pos.x, pos.y)
+                const globalPos = edge.item.mapToItem(topology, pos.x, pos.y)
                 menu.x = globalPos.x
                 menu.y = globalPos.y
                 menu.targetEdge = edge
                 menu.open()
             }
-            onPortRightClicked: port => {
+            onPortRightClicked: (port, pos) => {
                 var globalPos = port.parent.mapToItem(topology, pos.x, pos.y)
                 menuRmPort.x = globalPos.x
                 menuRmPort.y = globalPos.y
@@ -580,7 +575,7 @@ ApplicationWindow {
         } // portList
     }  // RowLayout nodes / nodes ports / edge debug control
 
-    ColorDialog {
+    Labs.ColorDialog {
         id: selectionColorDialog
         title: "Selection hilight color"
         onAccepted: {
@@ -803,7 +798,7 @@ ApplicationWindow {
     Qan.GraphPreview {
         id: graphPreview
         source: graphView
-        visibleWindowColor: Material.accent
+        viewWindowColor: Material.accent
         anchors.right: graphView.right; anchors.bottom: graphView.bottom
         anchors.rightMargin: 8; anchors.bottomMargin: 8
         width: previewMenu.mediumPreview.width

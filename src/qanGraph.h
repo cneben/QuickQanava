@@ -157,7 +157,8 @@ public:
     Q_INVOKABLE void    setConnectorSource(qan::Node* sourceNode) noexcept;
 signals:
     //! \copydoc hlg::Connector::requestEdgeCreation
-    void                connectorRequestEdgeCreation(qan::Node* src, QObject* dst);
+    void                connectorRequestEdgeCreation(qan::Node* src, QObject* dst,
+                                                     qan::PortItem* srcPortItem, qan::PortItem* dstPortItem);
     //! \copydoc hlg::Connector::edgeInserted
     void                connectorEdgeInserted(qan::Edge* edge);
 
@@ -294,7 +295,7 @@ public: // should be considered private
      * \arg parent Returned selection item is automatically reparented to \c parent (could be nullptr).
      * \return A selection item or nullptr if graph \c selectionDelegate is invalid, ownershipd goes to the caller with QmlEngine::CppOwnership, might be nullptr.
      */
-    QPointer<QQuickItem>    createSelectionItem(QQuickItem* parent) noexcept;
+    QQuickItem*             createSelectionItem(QQuickItem* parent);
 protected:
 
     struct QObjectDeleteLater {
@@ -308,9 +309,9 @@ protected:
     std::unique_ptr<QQmlComponent>  _selectionDelegate{nullptr};
 private:
     //! Secure factory for QML components, errors are reported on stderr.
-    std::unique_ptr<QQmlComponent>  createComponent(const QString& url) noexcept;
+    std::unique_ptr<QQmlComponent>  createComponent(const QString& url);
     //! Secure utility to create a QQuickItem from a given QML component \c component (might issue warning if component is nullptr or not successfully loaded).
-    QPointer<QQuickItem>            createItemFromComponent(QQmlComponent* component) noexcept;
+    QQuickItem*                     createItemFromComponent(QQmlComponent* component);
     //@}
     //-------------------------------------------------------------------------
 
@@ -673,6 +674,7 @@ public:
      * method will always return false.
      */
     bool                selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    Q_INVOKABLE bool    selectNode(qan::Node* node, Qt::KeyboardModifiers modifiers);
     Q_INVOKABLE bool    selectNode(qan::Node* node);
 
     //! Set the node selection state (graph selectionPolicy is not taken into account).
@@ -683,11 +685,16 @@ public:
     //! Similar to selectNode() for qan::Group (internally group is a node).
     bool            selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
+    //! Similar to selectNode() for qan::Edge.
+    bool            selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+
     /*! \brief Add a node in the current selection.
      */
     void            addToSelection(qan::Node& node);
     //! \copydoc addToSelection
-    void            addToSelection(qan::Group& node);
+    void            addToSelection(qan::Group& group);
+    //! \copydoc addToSelection
+    void            addToSelection(qan::Edge& edge);
 
     //! Remove a node from the selection.
     void            removeFromSelection(qan::Node& node);
@@ -706,7 +713,7 @@ public:
     Q_INVOKABLE void    clearSelection();
 
     //! Return true if multiple node are selected.
-    Q_INVOKABLE bool    hasMultipleSelection() const noexcept { return _selectedNodes.size() > 0 || _selectedGroups.size() > 0; }
+    Q_INVOKABLE bool    hasMultipleSelection() const;
 
 public:
     using SelectedNodes = qcm::Container<QVector, qan::Node*>;
@@ -715,8 +722,8 @@ public:
     Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)  // In fact non-notifiable, avoid QML warning
     QAbstractItemModel* getSelectedNodesModel() { return qobject_cast<QAbstractItemModel*>(_selectedNodes.model()); }
 
-    inline auto         getSelectedNodes() noexcept -> SelectedNodes& { return _selectedNodes; }
-    inline auto         getSelectedNodes() const noexcept -> const SelectedNodes& { return _selectedNodes; }
+    inline auto         getSelectedNodes() -> SelectedNodes& { return _selectedNodes; }
+    inline auto         getSelectedNodes() const -> const SelectedNodes& { return _selectedNodes; }
 private:
     SelectedNodes       _selectedNodes;
 signals:
@@ -729,12 +736,26 @@ public:
     Q_PROPERTY(QAbstractItemModel* selectedGroups READ getSelectedGroupsModel NOTIFY selectedGroupsChanged FINAL)   // In fact non-notifiable, avoid QML warning
     QAbstractItemModel* getSelectedGroupsModel() { return qobject_cast<QAbstractItemModel*>(_selectedGroups.model()); }
 
-    inline auto         getSelectedGroups() noexcept -> SelectedGroups& { return _selectedGroups; }
-    inline auto         getSelectedGroups() const noexcept -> const SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() -> SelectedGroups& { return _selectedGroups; }
+    inline auto         getSelectedGroups() const -> const SelectedGroups& { return _selectedGroups; }
 private:
     SelectedGroups      _selectedGroups;
 signals:
     void                selectedGroupsChanged();
+
+public:
+    using SelectedEdges = QVector<QPointer<qan::Edge>>;
+
+    //! Read-only list model of currently selected edges.
+    //Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
+    //QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
+
+    inline auto         getSelectedEdges() -> SelectedEdges& { return _selectedEdges; }
+    inline auto         getSelectedEdges() const -> const SelectedEdges& { return _selectedEdges; }
+private:
+    SelectedEdges       _selectedEdges;
+signals:
+    void                selectedEdgesChanged();
 
 protected:
     //! \brief Return a vector of currently selected nodes/groups items.
@@ -887,6 +908,9 @@ public:
      */
     Q_INVOKABLE void    sendToFront(QQuickItem* item);
 
+    //! Send a graphic item (either a node or a group) to back.
+    Q_INVOKABLE void    sendToBack(QQuickItem* item);
+
     /*! \brief Iterate over all graph container items, find and update the maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
@@ -956,22 +980,45 @@ private:
 
 public:
     //! Return a set of all edges strongly connected to a set of nodes (ie where source AND destination is in \c nodes).
-    auto    collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
+    auto    collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>;
 
 public:
-    /*! \brief Synchronously collect all parent nodes of \c node using DFS.
+    /*! \brief Recursively collect all "neighbours" of \c node, neighbours are nodes in the same group or the same parent groups.
      *
-     * \note \c node is automatically added to the result and returned as the first
-     * node of the return set.
+     * Neighbours are not linked from a topology point of view by edges, only by common group membership.
+     *
+     * Exemple:
+     *             +---------------------------+
+     *             | G2                        |
+     * +--------+  |     +---------------+     |
+     * |G3      |  |     |       G1      |     |
+     * |   N4---+--+-----+->N1       N2  | N3  |
+     * |        |  |     |               |     |
+     * |   N5   |  |     +---------------+     |
+     * +--------+  |                           |
+     *             +---------------------------+
+     *
+     * Neighbours of N1: [N1, N2, G1, G2, N3]  note presence of N3 in N1 parent group.
+     * Neighbours of N4: [N4, N5, G3]
+     *
      * \warning this method is synchronous and recursive.
      */
-    std::vector<const qan::Node*>   collectAncestorsDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
+    std::vector<const qan::Node*>   collectNeighbours(const qan::Node& node) const;
 
-private:
-    void                    collectAncestorsDfsRec(const qan::Node*,
-                                                   std::unordered_set<const qan::Node*>& marks,
-                                                   std::vector<const qan::Node*>& parents,
-                                                   bool collectGroup) const noexcept;
+    //! FIXME.
+    std::vector<const qan::Node*>   collectGroups(const qan::Node& node) const;
+
+    /*! \brief Synchronously collect all parent nodes of \c node.
+     *
+     * \note All ancestors "neighbours" nodes are also added to set.
+     * \note \c node is _not_ added to result.
+     * \sa collectNeighbours()
+     * \warning this method is synchronous and recursive.
+     */
+    std::vector<const qan::Node*>   collectAncestors(const qan::Node& node) const;
+
+    //! FIXME.
+    std::vector<const qan::Node*>   collectChilds(const qan::Node& node) const;
 
 public:
     //! \copydoc isAncestor()
@@ -981,15 +1028,9 @@ public:
      *
      * \warning this method is synchronous and recursive.
      * \return true if \c candidate is an ancestor of \c node (ie \c node is an out
-     * node of \c candidate at any degree.
+     * node of \c candidate at any degree).
      */
     bool                    isAncestor(const qan::Node& node, const qan::Node& candidate) const noexcept;
-
-private:
-    bool                    isAncestorsDfsRec(const qan::Node*,
-                                              const qan::Node& candidate,
-                                              std::unordered_set<const qan::Node*>& marks,
-                                              bool collectGroup) const noexcept;
 
 public:
     /*! Collect all nodes and groups contained in given groups.

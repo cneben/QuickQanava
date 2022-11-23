@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 20221011 v2.2.0:
+- #169: Create qan::RightResizer and qan::BottomResizer.
+- By default, nodes and groups are resizable from their right and bottom borders.
+- Refactor qan::BottomRightResizer completely.
+
+## 20221002 v2.2.0:
+- #167: Reduce memory use by 7%/8% when lot of edges are used.
+- #167: Add partial edge selection support.
+- #164: Change signature of qan::Graph::connectorRequestEdgeCreation().
+
+## 20220824 v2.1.1:
+- Change signature of two public API methods (public but presumably mainly used internally):
+  - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().
+  - Rename qan::Graph::collectAncestorsDfs() to qan::Graph::collectAncestors().
+- Add qan::Graph::collectNeighbours() method.
+- Debug and rename qan::Flickable::fitInView() to fitContentInView().
+
+## 20220817 v2.1.0:
+- First Github release 
+- Multiple bug fixes on internal topology backend and memory management.
+- QuickQanava now build with Qt from Qt 5.15 to Qt 6.3 with g++, msvc and clang with both qmake and CMake.
+- Add Qan.HeatMapPreview component that could be used to help user explore large graphs:
+
 ## 20220427 v2.0.0:
 - Release v2.0.0.
 - Simplify and clean GTpo framework (which is no longer usefull outside of QuickQanava).

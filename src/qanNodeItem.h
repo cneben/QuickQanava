@@ -47,7 +47,6 @@
 
 // QuickQanava headers
 #include "./qanStyle.h"
-#include "./qanBehaviour.h"
 #include "./qanNode.h"
 #include "./qanSelectable.h"
 #include "./qanDraggable.h"
@@ -102,6 +101,7 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Topology Management *///-----------------------------------------
     //@{
 public:
@@ -116,10 +116,10 @@ public:
     //! Secure shortcut to getNode().getGraph().
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT)
     //! \copydoc graph
-    auto    setGraph(qan::Graph* graph) noexcept -> void;
+    auto    setGraph(qan::Graph* graph) -> void;
 protected:
-    auto    getGraph() const noexcept -> const qan::Graph*;
-    auto    getGraph() noexcept -> qan::Graph*;
+    auto    getGraph() const -> const qan::Graph*;
+    auto    getGraph() -> qan::Graph*;
 private:
     QPointer<qan::Graph>    _graph;
 
@@ -142,6 +142,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
+
     /*! \name Collapse Management *///-----------------------------------------
     //@{
 public:
@@ -155,8 +156,10 @@ signals:
     void        collapsedChanged();
 public:
     Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true);
+    Q_INVOKABLE virtual void    collapseChilds(bool collapsed = true);
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Selection Management *///----------------------------------------
     //@{
@@ -180,6 +183,7 @@ protected slots:
     virtual void    onHeightChanged();
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Node Configuration *///------------------------------------------
     //@{
@@ -327,16 +331,6 @@ signals:
     void    nodeRightClicked(qan::NodeItem* node, QPointF p);
 
 public:
-    //! Set to true if the node item has a complex non rounded rectangle bounding shape (and manually install a \c onRequestUpdateBoundingShape() handler in QML delegate).
-    Q_PROPERTY( bool complexBoundingShape READ getComplexBoundingShape WRITE setComplexBoundingShape NOTIFY complexBoundingShapeChanged FINAL )
-    void            setComplexBoundingShape( bool complexBoundingShape ) noexcept;
-    inline bool     getComplexBoundingShape() const noexcept { return _complexBoundingShape; }
-private:
-    bool            _complexBoundingShape{false};
-signals:
-    void            complexBoundingShapeChanged( );
-
-public:
     /*! \brief Polygon used for mouse event clipping, and edge arrow clipping (in item local coordinates).
      *
      * An intersection shape is automatically generated for rectangular nodes, it can be sets by the user
@@ -344,17 +338,19 @@ public:
      * not a rectangle.
      * \sa \ref custom
      */
-    Q_PROPERTY( QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL )
-    QPolygonF           getBoundingShape() noexcept;
-    void                setBoundingShape( const QPolygonF& boundingShape ) { _boundingShape = boundingShape; emit boundingShapeChanged(); }
+    Q_PROPERTY(QPolygonF boundingShape READ getBoundingShape WRITE setBoundingShape NOTIFY boundingShapeChanged FINAL)
+    QPolygonF           getBoundingShape();
+    Q_INVOKABLE void    setBoundingShape(const QPolygonF& boundingShape);
+
+public slots:
+    //! Generate a default bounding shape (rounded rectangle) and set it as current bounding shape.
+    Q_INVOKABLE void    setDefaultBoundingShape();
 signals:
     void                boundingShapeChanged();
     //! signal is Emitted when the bounding shape become invalid and should be regenerated from QML.
     void                requestUpdateBoundingShape();
 protected:
     QPolygonF           generateDefaultBoundingShape() const;
-    //! Generate a default bounding shape (rounded rectangle) and set it as current bounding shape.
-    Q_INVOKABLE void    setDefaultBoundingShape();
 private:
     QPolygonF           _boundingShape;
 protected:
@@ -376,7 +372,7 @@ protected:
      *
      * \sa isInsideBoundingShape()
      */
-    Q_INVOKABLE virtual void    setBoundingShape( QVariantList boundingPolygon );
+    Q_INVOKABLE virtual void    setBoundingShape(QVariantList boundingPolygon);
 
     /*! \brief Test if a point in the node local CCS is inside the current intersection shape.
      *
@@ -389,7 +385,7 @@ protected:
      * \endcode
      *  \sa setBoundShapeFrom()
      */
-    Q_INVOKABLE virtual bool    isInsideBoundingShape( QPointF p );
+    Q_INVOKABLE virtual bool    isInsideBoundingShape(QPointF p);
     //@}
     //-------------------------------------------------------------------------
 

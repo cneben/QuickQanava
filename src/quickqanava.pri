@@ -41,6 +41,8 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanGrid.h                 \
             $$PWD/qanLineGrid.h             \
             $$PWD/qanBottomRightResizer.h   \
+            $$PWD/qanRightResizer.h         \
+            $$PWD/qanBottomResizer.h        \
             $$PWD/gtpo/container_adapter.h  \  # GTPO
             $$PWD/gtpo/edge.h               \
             $$PWD/gtpo/node.h               \
@@ -74,9 +76,12 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanAnalysisTimeHeatMap.cpp\
             $$PWD/qanGrid.cpp               \
             $$PWD/qanLineGrid.cpp           \
-            $$PWD/qanBottomRightResizer.cpp
+            $$PWD/qanBottomRightResizer.cpp \
+            $$PWD/qanRightResizer.cpp       \
+            $$PWD/qanBottomResizer.cpp
 
-OTHER_FILES +=  $$PWD/QuickQanava                   \
+OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
+                $$PWD/QuickQanava                   \
                 $$PWD/NavigablePreview.qml          \
                 $$PWD/GraphPreview.qml              \
                 $$PWD/HeatMapPreview.qml            \
@@ -102,6 +107,15 @@ OTHER_FILES +=  $$PWD/QuickQanava                   \
                 $$PWD/VerticalDock.qml              \
                 $$PWD/Edge.qml                      \
                 $$PWD/EdgeTemplate.qml              \
+                $$PWD/EdgeStraightPath.qml          \
+                $$PWD/EdgeOrthoPath.qml             \
+                $$PWD/EdgeCurvedPath.qml            \
+                $$PWD/EdgeSrcArrowPath.qml          \
+                $$PWD/EdgeSrcCirclePath.qml         \
+                $$PWD/EdgeSrcRectPath.qml           \
+                $$PWD/EdgeDstArrowPath.qml          \
+                $$PWD/EdgeDstCirclePath.qml         \
+                $$PWD/EdgeDstRectPath.qml           \
                 $$PWD/SelectionItem.qml             \
                 $$PWD/StyleListView.qml             \
                 $$PWD/VisualConnector.qml           \

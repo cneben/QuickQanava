@@ -97,7 +97,9 @@ Loader {
         id: labelEditorComponent
         TextField {
             id: labelTextField
-            anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
             text: target ? target.label : ""
             font.bold: labelEditorLoader.bold
             font.pixelSize: labelEditorLoader.pixelSize

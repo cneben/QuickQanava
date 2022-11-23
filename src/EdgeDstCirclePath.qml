@@ -27,60 +27,41 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanBehaviour.cpp
+// \file	EdgeDstCirclePath.qml
 // \author	benoit@destrat.io
-// \date	2016 04 04
+// \date	2022 10 02
 //-----------------------------------------------------------------------------
 
-// QuickQanava headers
-#include "./qanBehaviour.h"
-#include "./qanNode.h"
-#include "./qanEdge.h"
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-namespace qan { // ::qan
+import QuickQanava      2.0 as Qan
 
-/* NodeBehaviour Management *///-----------------------------------------------
-NodeBehaviour::NodeBehaviour(const std::string& name, QObject* parent) :
-    QObject{parent}
-{
-    gtpo::node_observer<qan::Node, qan::Edge>::setName(name);
-}
-//-----------------------------------------------------------------------------
+ShapePath {
+    property var edgeTemplate: undefined
+    property var edgeItem: edgeTemplate.edgeItem
 
-/* Behaviour Host Management *///----------------------------------------------
-void    NodeBehaviour::setHost(qan::Node* host)
-{
-    if ( _host != host ) {
-        _host = host;
-        emit hostChanged();
+    strokeColor: edgeTemplate ? edgeTemplate.color : Qt.rgba(0,0,0,1)
+    fillColor: {
+        if (!edgeItem)
+            return Qt.rgba(0,0,0,1)
+        if (edgeTemplate &&
+            edgeItem.dstShape === Qan.EdgeStyle.CircleOpen)
+            return Qt.rgba(0.,0.,0.,0.);
+        return edgeTemplate ? edgeTemplate.color : Qt.rgba(0,0,0,1)
+    }
+    strokeWidth: edgeItem &&
+                 edgeItem.style ? edgeItem.style.lineWidth :
+                                  2
+
+    startX: 0
+    startY: 0
+    PathArc {
+        relativeX: edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+        radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
+    }
+    PathArc {
+        relativeX: -edgeItem.dstA2.x; relativeY: edgeItem.dstA2.y
+        radiusX: edgeItem.dstA1.x; radiusY: edgeItem.dstA1.y;
     }
 }
-//-----------------------------------------------------------------------------
-
-/* Notification Interface *///-------------------------------------------------
-void    NodeBehaviour::on_in_node_inserted(qan::Node& target, qan::Node& inNode, const qan::Edge& edge) noexcept
-{
-    Q_UNUSED(target);
-    inNodeInserted(inNode, const_cast<qan::Edge&>(edge));
-}
-
-void    NodeBehaviour::on_in_node_removed(qan::Node& target, qan::Node& inNode, const qan::Edge& edge) noexcept
-{
-    Q_UNUSED(target);
-    inNodeRemoved(inNode, const_cast<qan::Edge&>(edge));
-}
-
-void    NodeBehaviour::on_out_node_inserted(qan::Node& target, qan::Node& outNode, const qan::Edge& edge) noexcept
-{
-    Q_UNUSED(target);
-    outNodeInserted(outNode, const_cast<qan::Edge&>(edge));
-}
-
-void    NodeBehaviour::on_out_node_removed(qan::Node& target, qan::Node& outNode, const qan::Edge& edge) noexcept
-{
-    Q_UNUSED(target);
-    outNodeRemoved(outNode, const_cast<qan::Edge&>(edge));
-}
-//-----------------------------------------------------------------------------
-
-} // ::qan

@@ -44,7 +44,6 @@
 // QuickQanava headers
 #include "./qanUtils.h"
 #include "./qanGraph.h"
-#include "./qanNavigable.h"
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
 #include "./qanEdgeItem.h"
@@ -141,37 +140,39 @@ void    Graph::clear() noexcept
 
 QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
-    if ( getContainerItem() == nullptr )
+    if (getContainerItem() == nullptr)
         return nullptr;
     const QList<QQuickItem*> children = getContainerItem()->childItems();
     for (int i = children.count()-1; i >= 0; --i) {
-        QQuickItem *child = children.at(i);
-        QPointF point = mapToItem( child, QPointF(x, y) );  // Map coordinates to the child element's coordinate space
-        if ( child->isVisible() &&
-             child->contains( point ) &&    // Note 20160508: childAt do not call contains()
-             point.x() > -0.0001 &&
-             child->width() > point.x() &&
-             point.y() > -0.0001 &&
-             child->height() > point.y() ) {
-            if ( child->inherits( "qan::GroupItem" ) ) {  // For group, look in group childs
+        QQuickItem* child = children.at(i);
+        const QPointF point = mapToItem(child, QPointF(x, y));  // Map coordinates to the child element's coordinate space
+        if (child->isVisible() &&
+            child->contains( point ) &&    // Note 20160508: childAt do not call contains()
+            point.x() > -0.0001 &&
+            child->width() > point.x() &&
+            point.y() > -0.0001 &&
+            child->height() > point.y() ) {
+            if (child->inherits("qan::GroupItem")) {  // For group, look in group childs
                 const auto groupItem = qobject_cast<qan::GroupItem*>( child );
-                if ( groupItem != nullptr &&
-                     groupItem->getContainer() != nullptr ) {
+                if (groupItem != nullptr &&
+                    groupItem->getContainer() != nullptr) {
                     const QList<QQuickItem *> groupChildren = groupItem->getContainer()->childItems();
-                    for (int gc = groupChildren.count()-1; gc >= 0; --gc) {
-                        QQuickItem *groupChild = groupChildren.at(gc);
-                        point = mapToItem( groupChild, QPointF(x, y) ); // Map coordinates to group child element's coordinate space
-                        if ( groupChild->isVisible() &&
-                             groupChild->contains( point ) &&
-                             point.x() > -0.0001 &&
-                             groupChild->width() > point.x() &&
-                             point.y() > -0.0001 &&
-                             groupChild->height() > point.y() ) {
+                    for (int gc = groupChildren.count() - 1; gc >= 0; --gc) {
+                        QQuickItem* groupChild = groupChildren.at(gc);
+                        const auto point = mapToItem(groupChild, QPointF(x, y)); // Map coordinates to group child element's coordinate space
+                        if (groupChild->isVisible() &&
+                            groupChild->contains( point ) &&
+                            point.x() > -0.0001 &&
+                            groupChild->width() > point.x() &&
+                            point.y() > -0.0001 &&
+                            groupChild->height() > point.y() ) {
+                            QQmlEngine::setObjectOwnership(groupChild, QQmlEngine::CppOwnership);
                             return groupChild;
                         }
                     }
                 }
             }
+            QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
             return child;
         }
     }
@@ -221,11 +222,15 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
             group->getItem() != nullptr &&
             group->getItem() != except) {
             const auto groupItem = group->getItem();
+            if (groupItem->getCollapsed())
+                continue;  // Do not return collapsed groups
 
-            const auto groupRect =  QRectF{ groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
-                                            QSizeF{ groupItem->width(), groupItem->height() } };
-            if ( groupRect.contains( QRectF{ p, s } ) )
-                 return group;
+            const auto groupRect =  QRectF{groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
+                                           QSizeF{ groupItem->width(), groupItem->height()}};
+            if (groupRect.contains(QRectF{p, s})) {
+                QQmlEngine::setObjectOwnership(group, QQmlEngine::CppOwnership);
+                return group;
+            }
         }
     } // for all groups
     return nullptr;
@@ -452,9 +457,9 @@ void Graph::setSelectionDelegate(QQmlComponent* selectionDelegate) noexcept
 
 void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegate) noexcept
 {
-    bool delegateChanged{false};
-    if ( selectionDelegate ) {
-        if ( selectionDelegate != _selectionDelegate ) {
+    auto delegateChanged = false;
+    if (selectionDelegate) {
+        if (selectionDelegate != _selectionDelegate) {
             _selectionDelegate = std::move(selectionDelegate);
             delegateChanged = true;
         }
@@ -462,7 +467,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
         _selectionDelegate = createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml"));
         delegateChanged = true;
     }
-    if ( delegateChanged ) {  // Update all existing delegates...
+    if (delegateChanged) {  // Update all existing delegates...
         // Note: It could be done in a more more 'generic' way!
         auto updateNodeSelectionItem = [this](auto& primitive) -> void {
             if (primitive != nullptr &&
@@ -482,10 +487,13 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
     }
 }
 
-QPointer<QQuickItem> Graph::createSelectionItem(QQuickItem* parent) noexcept
+QQuickItem* Graph::createSelectionItem(QQuickItem* parent)
 {
+    const auto edgeItem = qobject_cast<qan::EdgeItem*>(parent);
+    if (edgeItem != nullptr)    // Edge selection item is managed directly in EdgeTemplate.qml
+        return nullptr;
     const auto selectionItem = createItemFromComponent(_selectionDelegate.get());
-    if (selectionItem) {
+    if (selectionItem != nullptr) {
         selectionItem->setEnabled(false); // Avoid node/edge/group selection problems
         selectionItem->setState("UNSELECTED");
         selectionItem->setVisible(true);
@@ -496,26 +504,26 @@ QPointer<QQuickItem> Graph::createSelectionItem(QQuickItem* parent) noexcept
         }
         return selectionItem;
     }
-    return QPointer<QQuickItem>{nullptr};
+    return nullptr;
 }
 
-std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url) noexcept
+std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url)
 {
     // PRECONDITIONS
         // url could not be empty
-    if ( url.isEmpty() ) {
+    if (url.isEmpty()) {
         qWarning() << "qan::Graph::createComponent(): Error: Empty url.";
         return std::unique_ptr<QQmlComponent>();
     }
 
-    QQmlEngine* engine = qmlEngine( this );
+    QQmlEngine* engine = qmlEngine(this);
     std::unique_ptr<QQmlComponent> component;
-    if ( engine != nullptr ) {
+    if (engine != nullptr) {
         try {
             component = std::make_unique<QQmlComponent>(engine, url);
-            if ( !component->isReady() ||
-                 component->isError() ||
-                 component->isNull()  ) {
+            if (!component->isReady()   ||
+                component->isError()    ||
+                component->isNull()) {
                 qWarning() << "qan::Graph::createComponent(): Error while creating component from URL " << url;
                 qWarning() << "\tQML Component status=" << component->status();
                 qWarning() << "\tQML Component errors=" << component->errors();
@@ -529,7 +537,7 @@ std::unique_ptr<QQmlComponent>  Graph::createComponent(const QString& url) noexc
     return component;
 }
 
-QPointer<QQuickItem> Graph::createItemFromComponent(QQmlComponent* component) noexcept
+QQuickItem* Graph::createItemFromComponent(QQmlComponent* component)
 {
     // PRECONDITIONS:
         // component should not be nullptr, warning issued
@@ -903,21 +911,21 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
         group->setItem(groupItem);
 
         auto notifyGroupClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupClicked(groupItem->getGroup(), p);
         };
         connect(groupItem,  &qan::GroupItem::groupClicked,
                 this,       notifyGroupClicked);
 
         auto notifyGroupRightClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupRightClicked(groupItem->getGroup(), p);
         };
         connect(groupItem, &qan::GroupItem::groupRightClicked,
                 this,      notifyGroupRightClicked);
 
         auto notifyGroupDoubleClicked = [this] (qan::GroupItem* groupItem, QPointF p) {
-            if ( groupItem != nullptr && groupItem->getGroup() != nullptr )
+            if (groupItem != nullptr && groupItem->getGroup() != nullptr)
                 emit this->groupDoubleClicked(groupItem->getGroup(), p);
         };
         connect(groupItem, &qan::GroupItem::groupDoubleClicked,
@@ -1118,7 +1126,7 @@ bool    selectPrimitive(Primitive_t& primitive,
     if (graph.getSelectionPolicy() == qan::Graph::SelectionPolicy::NoSelection)
         return false;
 
-    bool selectPrimitive = false;
+    bool primitiveSelected = false;
     const bool ctrlPressed = modifiers & Qt::ControlModifier;
     if (primitive.getItem() == nullptr)
         return false;
@@ -1130,17 +1138,17 @@ bool    selectPrimitive(Primitive_t& primitive,
     } else {
         switch (graph.getSelectionPolicy()) {
         case qan::Graph::SelectionPolicy::SelectOnClick:
-            selectPrimitive = true;        // Click on an unselected node with SelectOnClick = select node
+            primitiveSelected = true;        // Click on an unselected node with SelectOnClick = select node
             if (!ctrlPressed)
                 graph.clearSelection();
             break;
         case qan::Graph::SelectionPolicy::SelectOnCtrlClick:
-            selectPrimitive = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
+            primitiveSelected = ctrlPressed; // Click on an unselected node with CTRL pressed and SelectOnCtrlClick = select node
             break;
         case qan::Graph::SelectionPolicy::NoSelection: break;
         }
     }
-    if (selectPrimitive) {
+    if (primitiveSelected) {
         graph.addToSelection(primitive);
         return true;
     }
@@ -1166,10 +1174,8 @@ void    setPrimitiveSelected(Primitive_t& primitive,
 } // qan::impl
 
 bool    Graph::selectNode(qan::Node& node, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Node>(node, modifiers, *this); }
-bool    Graph::selectNode(qan::Node* node)
-{
-    return (node != nullptr ? selectNode(*node) : false);
-}
+bool    Graph::selectNode(qan::Node* node, Qt::KeyboardModifiers modifiers) { return (node != nullptr ? selectNode(*node, modifiers) : false); }
+bool    Graph::selectNode(qan::Node* node) { return (node != nullptr ? selectNode(*node) : false); }
 
 void    Graph::setNodeSelected(qan::Node& node, bool selected)
 {
@@ -1191,6 +1197,8 @@ void    Graph::setNodeSelected(qan::Node* node, bool selected)
 
 bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
 
+bool    Graph::selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Edge>(edge, modifiers, *this); }
+
 template <class Primitive_t>
 void    addToSelectionImpl(Primitive_t& primitive,
                            qcm::Container<QVector, Primitive_t*>& selectedPrimitives,
@@ -1198,11 +1206,17 @@ void    addToSelectionImpl(Primitive_t& primitive,
 {
     if (!selectedPrimitives.contains(&primitive)) {
         selectedPrimitives.append(&primitive);
+
+        QObject::connect(&primitive, &Primitive_t::destroyed,
+                         &graph,     [&selectedPrimitives, &primitive]() {
+            selectedPrimitives.removeAll(&primitive);
+        } );
+
         if (primitive.getItem() != nullptr) {
             primitive.getItem()->setSelected(true);
             // Eventually, create and configure node item selection item
             if (primitive.getItem()->getSelectionItem() == nullptr)
-                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()).data());   // Safe, any argument might be nullptr
+                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()));   // Safe, any argument might be nullptr
             // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
         }
     }
@@ -1210,6 +1224,20 @@ void    addToSelectionImpl(Primitive_t& primitive,
 
 void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
 void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+void    Graph::addToSelection(qan::Edge& edge)
+{
+    // Note 20221002: Do not use addToSelectionImpl<>() since it has no support for QVector<QPointer<qan::Edge>>
+    if (!_selectedEdges.contains(&edge)) {
+        _selectedEdges.append(QPointer<qan::Edge>{&edge});
+        if (edge.getItem() != nullptr) {
+            edge.getItem()->setSelected(true);
+            // Eventually, create and configure node item selection item
+            if (edge.getItem()->getSelectionItem() == nullptr)
+                edge.getItem()->setSelectionItem(createSelectionItem(edge.getItem()));   // Safe, any argument might be nullptr
+            // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
+        }
+    }
+}
 
 template <class Primitive_t>
 void    removeFromSelectionImpl(Primitive_t& primitive,
@@ -1282,7 +1310,25 @@ void    Graph::clearSelection()
             group->getItem() != nullptr)
             group->getItem()->setSelected(false);
     _selectedGroups.clear();
+
+    SelectedEdges selectedEdgesCopy;
+    std::copy(_selectedEdges.cbegin(),
+              _selectedEdges.cend(),
+              std::back_inserter(selectedEdgesCopy));
+    for (auto& edge : qAsConst(selectedEdgesCopy))
+        if (edge != nullptr &&
+            edge->getItem() != nullptr)
+            edge->getItem()->setSelected(false);
+    _selectedEdges.clear();
 }
+
+bool    Graph::hasMultipleSelection() const
+{
+    return _selectedNodes.size() > 0 ||
+            _selectedGroups.size() > 0 ||
+            _selectedEdges.size() > 0;
+}
+
 
 std::vector<QQuickItem*>    Graph::getSelectedItems() const
 {
@@ -1588,7 +1634,7 @@ void    Graph::sendToFront(QQuickItem* item)
             // 2.2 For all parents groups: get group parent item childs maximum (local) z, update group z to maximum value + 1.
 
     // Return a vector groups ordered from the outer group to the root group
-    const auto collectGroups_rec = [](qan::GroupItem* groupItem) -> std::vector<qan::GroupItem*> {
+    const auto collectParentGroups_rec = [](qan::GroupItem* groupItem) -> std::vector<qan::GroupItem*> {
 
         const auto impl = [](std::vector<qan::GroupItem*>& groups,      // Recursive implementation
                              qan::GroupItem* groupItem,
@@ -1604,10 +1650,7 @@ void    Graph::sendToFront(QQuickItem* item)
         };
 
         std::vector<qan::GroupItem*> groups;
-
-        // PRECONDITIONS:
-            // groupItem can't be nullptr
-        if (groupItem == nullptr)
+        if (groupItem == nullptr)   // PRECONDITIONS: groupItem can't be nullptr
             return groups;
         impl(groups, groupItem, impl);
         return groups;
@@ -1627,8 +1670,8 @@ void    Graph::sendToFront(QQuickItem* item)
         groupItem->setZ(nextMaxZ());
     } else if (groupItem != nullptr) {
         // 2. If item is a group (or is a node inside a group)
-        const auto groups = collectGroups_rec(groupItem);       // 2.1 Collect all parents groups.
-        for ( const auto groupItem : groups ) {
+        const auto groups = collectParentGroups_rec(groupItem);       // 2.1 Collect all parents groups.
+        for (const auto groupItem : groups) {
             if (groupItem == nullptr)
                 continue;
             const auto groupParentItem = groupItem->parentItem();
@@ -1643,6 +1686,18 @@ void    Graph::sendToFront(QQuickItem* item)
             }
         } // For all group items
     }
+}
+
+void    Graph::sendToBack(QQuickItem* item)
+{
+    if (item == nullptr)
+        return;
+    //qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
+    qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
+    if (nodeItem == nullptr)
+        return;     // item must be a nodeItem or a groupItem
+    nodeItem->setZ(0.);
+    // FIXME
 }
 
 void    Graph::findMaxZ() noexcept
@@ -1768,7 +1823,7 @@ void    Graph::collectDfsRec(const qan::Node* node,
     }
 }
 
-auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
+auto    Graph::collectInnerEdges(const std::vector<const qan::Node*>& nodes) const -> std::unordered_set<const qan::Edge*>
 {
     // Algorithm:
         // 0. Index nodes
@@ -1799,58 +1854,185 @@ auto    Graph::collectInerEdges(const std::vector<const qan::Node*>& nodes) cons
     return innerEdges;
 }
 
-std::vector<const qan::Node*>   Graph::collectAncestorsDfs(const qan::Node& node, bool collectGroup) const noexcept
+std::vector<const qan::Node*>   Graph::collectNeighbours(const qan::Node& node) const
 {
+    const auto collectNeighboursDfs_rec = [](const qan::Node* visited,
+            std::vector<const qan::Node*>& neighbours,
+            std::unordered_set<const qan::Node*>& marks,
+            const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return;                                // branchs
+        marks.insert(visited);
+        neighbours.push_back(visited);
+
+        // Collect group neighbours
+        const auto group = qobject_cast<const qan::Group*>(visited);
+        if (visited->isGroup() &&
+            group != nullptr) {
+            for (const auto groupNode : group->get_nodes())  // Collect all nodes in a group
+                lambda(groupNode, neighbours, marks,
+                       lambda);
+        }
+        // Collect group parent group neighbours
+        const auto nodeGroup = visited->getGroup();
+        if (nodeGroup != nullptr)
+            lambda(nodeGroup, neighbours, marks,
+                   lambda);
+    };
+
+    std::vector<const qan::Node*> neighbours;
+    std::unordered_set<const qan::Node*> marks;
+    collectNeighboursDfs_rec(&node, neighbours, marks,
+                            collectNeighboursDfs_rec);
+
+    return neighbours;
+}
+
+std::vector<const qan::Node*>   Graph::collectGroups(const qan::Node& node) const
+{
+    std::unordered_set<const qan::Node*> marks;
+    std::vector<const qan::Node*> groups;
+
+    const auto collectGroups_rec = [](const qan::Node* visited,
+                                      std::vector<const qan::Node*>& groups,
+                                      std::unordered_set<const qan::Node*>& marks,
+                                      const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end()) // Do not collect on already visited
+            return;                             // group
+        marks.insert(visited);
+        if (visited->isGroup())
+            groups.push_back(visited);
+        if (visited->getGroup() != nullptr)
+            lambda(visited->getGroup(), groups,
+                   marks, lambda);
+    };
+
+    const auto group = node.getGroup();
+    if (group != nullptr)
+        collectGroups_rec(group, groups,
+                          marks, collectGroups_rec);
+    return groups;
+}
+
+std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) const
+{
+    // ALGORITHM:
+      // 0. Collect node neighbour.
+      // 1. Collect ancestors of neighbours.
+      // 2. Remove original neighbour from ancestors.
+
+    const auto collectAncestorsDfs_rec = [](const qan::Node* visited,
+            std::vector<const qan::Node*>& parents,
+            std::unordered_set<const qan::Node*>& marks,
+            const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return;                                // branchs
+        marks.insert(visited);
+        parents.push_back(visited);
+
+        if (visited->getGroup() != nullptr)
+            parents.push_back(visited->getGroup());
+
+        // 1.1 Collect ancestor
+        for (const auto inNode : visited->get_in_nodes())
+            lambda(inNode, parents, marks,
+                   lambda);
+    };
+
     std::vector<const qan::Node*> parents;
     std::unordered_set<const qan::Node*> marks;
-    if (collectGroup &&
-        node.isGroup()) {
-        // Collect all nodes in a group
-        const auto group = qobject_cast<const qan::Group*>(&node);
-        if (group) {
-            for (const auto groupNode : group->get_nodes())
-                collectAncestorsDfsRec(qobject_cast<qan::Node*>(groupNode), marks,
-                                       parents, collectGroup);
-        }
+    auto excepts = collectGroups(node);
+    excepts.push_back(&node);
+    qWarning() << "qan::Graph::collectAncestors(): excepts.size=" << excepts.size();
+
+    // 0. Collect target nodes
+    std::vector<const qan::Node*> targetNodes;
+    if (node.isGroup()) {
+        const auto neighbours = collectNeighbours(node);
+        targetNodes = neighbours;
+        std::copy(neighbours.cbegin(), neighbours.cend(), std::back_inserter(excepts));
+    } else {
+        const auto& inNodes = node.get_in_nodes();
+        for (const auto& inNode: inNodes)
+            targetNodes.push_back(const_cast<const qan::Node*>(inNode));
     }
-    // Collect the parent group of a node
-    /*if (collectGroup) {
-        const auto nodeGroup = node.getGroup();
-        if (nodeGroup != nullptr)
-            collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
-    }*/
-    for (const auto inNode : node.get_in_nodes())
-        collectAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), marks,
-                               parents, collectGroup);
+
+    // 1. Collect target nodes ancestors or group neighbours ancestors
+    for (const auto targetNode: targetNodes)
+        collectAncestorsDfs_rec(targetNode, parents, marks,
+                                collectAncestorsDfs_rec);
+
+    // 2. Remove protected nodes from ancestors
+    parents.erase(std::remove_if(parents.begin(), parents.end(),
+                                 [&excepts](auto e) -> bool {
+        return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
+    }), parents.end());
     return parents;
 }
 
-void    Graph::collectAncestorsDfsRec(const qan::Node* node,
-                             std::unordered_set<const qan::Node*>& marks,
-                             std::vector<const qan::Node*>& parents,
-                             bool collectGroup) const noexcept
+std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) const
 {
-    if (node == nullptr)
-        return;
-    if (marks.find(node) != marks.end())    // Do not collect on already visited
-        return;                             // branchs
-    marks.insert(node);
-    parents.push_back(node);
-    if (collectGroup &&
-        node->isGroup()) {
-        const auto group = qobject_cast<const qan::Group*>(node);
-        if (group) {
-            for (const auto groupNode : group->get_nodes())
-                collectAncestorsDfsRec(qobject_cast<qan::Node*>(groupNode), marks,
-                                       parents, collectGroup);
-        }
+    // ALGORITHM:
+      // 0. Collect node neighbour.
+      // 1. Collect childs of neighbours.
+      // 2. Remove protected nodes from childs.
+
+    const auto collectChildsDfs_rec = [](const qan::Node* visited,
+            std::vector<const qan::Node*>& childs,
+            std::unordered_set<const qan::Node*>& marks,
+            const auto& lambda) {
+        if (visited == nullptr)
+            return;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return;                                // branchs
+        marks.insert(visited);
+        childs.push_back(visited);
+
+        if (visited->getGroup() != nullptr)
+            childs.push_back(visited->getGroup());
+
+        // 1.1 Collect childs
+        for (const auto outNode : visited->get_out_nodes())
+            lambda(outNode, childs, marks,
+                   lambda);
+    };
+
+    std::vector<const qan::Node*> childs;
+    std::unordered_set<const qan::Node*> marks;
+
+    // 0. Collect node neighbours
+    auto excepts = collectGroups(node);
+    excepts.push_back(&node);
+    qWarning() << "qan::Graph::collectChilds(): excepts.size=" << excepts.size();
+
+    std::vector<const qan::Node*> targetNodes;
+    if (node.isGroup()) {
+        const auto neighbours = collectNeighbours(node);
+        targetNodes = neighbours;
+        std::copy(neighbours.cbegin(), neighbours.cend(), std::back_inserter(excepts));
+    } else {
+        const auto& outNodes = node.get_out_nodes();
+        for (const auto& outNode: outNodes)
+            targetNodes.push_back(const_cast<const qan::Node*>(outNode));
     }
-    const auto nodeGroup = node->getGroup();
-    if (nodeGroup != nullptr)
-        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);
-    for (const auto& inNode : node->get_in_nodes())
-        collectAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), marks,
-                               parents, collectGroup);
+
+    // 1. Collect node childs
+    for (const auto target: targetNodes)
+        collectChildsDfs_rec(target, childs, marks,
+                             collectChildsDfs_rec);
+
+    // 2. Remove protected nodes from child
+    childs.erase(std::remove_if(childs.begin(), childs.end(),
+                                [&excepts](auto e) -> bool {
+        return std::find(excepts.begin(), excepts.end(), e) != excepts.end();
+    }), childs.end());
+    return childs;
 }
 
 bool    Graph::isAncestor(qan::Node* node, qan::Node* candidate) const
@@ -1864,41 +2046,31 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
 {
     std::unordered_set<const qan::Node*> marks;
     marks.insert(&node);
-    for (const auto& inNode : node.get_in_nodes()) {
-        if (isAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), candidate,
-                              marks, false))
+
+    const auto isAncestorDfs_rec = [&node](const qan::Node* visited, const qan::Node& candidate,
+                                      std::unordered_set<const qan::Node*>& marks,
+                                      const auto& lambda) {
+        if (visited == nullptr)
+            return false;
+        if (visited == &node)    // Circuit detection
+            return false;
+        if (visited == &candidate)
+            return true;
+        if (marks.find(visited) != marks.end())    // Do not collect on already visited
+            return false;                       // branchs
+        marks.insert(visited);
+        for (const auto inNode : visited->get_in_nodes())
+            if (lambda(inNode, candidate,
+                       marks, lambda))
+                return true;
+        return false;
+    };
+
+    for (const auto inNode : node.get_in_nodes()) {
+        if (isAncestorDfs_rec(inNode, candidate,
+                              marks, isAncestorDfs_rec))
             return true;
     }
-    return false;
-}
-
-bool    Graph::isAncestorsDfsRec(const qan::Node* node,
-                                 const qan::Node& candidate,
-                                 std::unordered_set<const qan::Node*>& marks,
-                                 bool collectGroup) const noexcept
-{
-    if (node == nullptr)
-        return false;
-    if (node == &candidate)
-        return true;
-    if (marks.find(node) != marks.end())    // Do not collect on already visited
-        return false;                       // branchs
-    marks.insert(node);
-/*    if (collectGroup &&
-        node->isGroup()) {
-        const auto group = qobject_cast<const qan::Group*>(node);
-        if (group) {
-            for (const auto& groupNode : group->get_nodes())
-                collectAncestorsDfsRec(groupNode.lock().get(), marks, parents, collectGroup);
-        }
-    }*/
-    /*const auto nodeGroup = node->getGroup();
-    if (nodeGroup != nullptr)
-        collectAncestorsDfsRec(nodeGroup, marks, parents, collectGroup);*/
-    for (const auto& inNode : node->get_in_nodes())
-        if (isAncestorsDfsRec(qobject_cast<qan::Node*>(inNode), candidate,
-                              marks, collectGroup))
-            return true;
     return false;
 }
 

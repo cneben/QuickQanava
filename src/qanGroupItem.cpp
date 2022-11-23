@@ -37,7 +37,6 @@
 #include "./qanGroupItem.h"
 #include "./qanEdgeItem.h"
 #include "./qanGroup.h"
-#include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -48,7 +47,7 @@ GroupItem::GroupItem(QQuickItem* parent) :
     qan::Draggable::configure(this);
     qan::Draggable::setAcceptDrops(true);
 
-    setAcceptedMouseButtons( Qt::LeftButton | Qt::RightButton );
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
 
     // Force group connected edges update when the group is moved
     connect(this, &qan::GroupItem::xChanged,
@@ -58,6 +57,11 @@ GroupItem::GroupItem(QQuickItem* parent) :
     // Update adjacent edges z when group item z is modified.
     connect(this, &qan::GroupItem::zChanged,
             this, [this]() { this->groupMoved(); });
+
+    connect(this, &qan::GroupItem::widthChanged,
+            this, &qan::GroupItem::setDefaultBoundingShape);
+    connect(this, &qan::GroupItem::heightChanged,
+            this, &qan::GroupItem::setDefaultBoundingShape);
 
     setItemStyle(qan::Group::style(parent));
     setObjectName(QStringLiteral("qan::GroupItem"));
@@ -73,8 +77,8 @@ auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
 
     // Configuration specific to group
     _group = group;
-    if ( group != nullptr &&            // Warning: Do that after having set _group
-         group->getItem() != this )
+    if (group != nullptr &&            // Warning: Do that after having set _group
+        group->getItem() != this)
         group->setItem(this);
 }
 
@@ -86,35 +90,6 @@ auto    GroupItem::setRect(const QRectF& r) noexcept -> void
         return;
     setX(r.left());
     setY(r.top());
-    setPreferredGroupWidth(r.width());
-    setPreferredGroupHeight(r.height());
-}
-//-----------------------------------------------------------------------------
-
-
-/* Selection and Sizing Management *///----------------------------------------
-void    GroupItem::setPreferredGroupWidth(qreal preferredGroupWidth) noexcept
-{
-    _preferredGroupWidth = preferredGroupWidth;
-    emit preferredGroupWidthChanged();
-}
-
-void    GroupItem::setPreferredGroupHeight(qreal preferredGroupHeight) noexcept
-{
-    _preferredGroupHeight = preferredGroupHeight;
-    emit preferredGroupHeightChanged();
-}
-
-void    GroupItem::setMinimumGroupWidth(qreal minimumGroupWidth) noexcept
-{
-    _minimumGroupWidth = minimumGroupWidth;
-    emit minimumGroupWidthChanged();
-}
-
-void    GroupItem::setMinimumGroupHeight(qreal minimumGroupHeight) noexcept
-{
-    _minimumGroupHeight = minimumGroupHeight;
-    emit minimumGroupHeightChanged();
 }
 //-----------------------------------------------------------------------------
 
@@ -134,53 +109,6 @@ void    GroupItem::setCollapsed(bool collapsed) noexcept
         if (!getCollapsed())
             groupMoved();   // Force update of all adjacent edges
     }
-}
-
-void    GroupItem::collapseAncestors(bool collapsed)
-{
-    // Do not call base
-    // PRECONDITIONS:
-        // getNode() can't return nullptr
-        // getGraph() can't return nullptr
-    const auto graph = getGraph();
-    const auto group = getGroup();
-    if (graph == nullptr)
-        return;
-    if (group == nullptr)
-        return;
-
-    // ALGORITHM:
-        // 1. Collect all ancestors of group
-        // 2. Filter from ancestors every nodes that are part of this group
-        // 3. Collect adjacent edges of selected nodes
-        // 4. Hide selected edges and nodes
-
-    // 1.
-    const auto allAncestors = graph->collectAncestorsDfs(*group, true);
-
-    // 2.
-    std::vector<qan::Node*> ancestors;
-    for (const auto ancestor : allAncestors) {
-        if (!group->hasNode(ancestor) &&
-            ancestor != group)
-            ancestors.push_back(const_cast<qan::Node*>(ancestor));
-    }
-
-    // 3.
-    std::unordered_set<qan::Edge*> ancestorsEdges;
-    for (const auto ancestor: ancestors) {
-        const auto edges = ancestor->collectAdjacentEdges0();
-        //ancestorsEdges.insert(std::inserter += edges;
-        // FIXME use STL std::inserter here ?
-        for (const auto edge : edges)
-            ancestorsEdges.insert(edge);
-    }
-
-    // 4.
-    for (const auto ancestorEdge: ancestorsEdges)
-        ancestorEdge->getItem()->setVisible(collapsed);
-    for (const auto ancestor: ancestors)
-        ancestor->getItem()->setVisible(collapsed);
 }
 //-----------------------------------------------------------------------------
 
@@ -207,8 +135,8 @@ void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
-    if ( nodeItem == nullptr ||
-         getContainer() == nullptr )   // A container must have configured in concrete QML group component
+    if (nodeItem == nullptr ||
+        getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
 
     // Note: no need for the container to be visible or open.
@@ -229,13 +157,13 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
     if (getGraph() &&
         getGraph()->getContainerItem() != nullptr) {
-        QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
+        const QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
             nodeItem->setPosition(nodeGlobalPos);
         nodeItem->setZ(z()+1.);
-        nodeItem->setDraggable( true );
-        nodeItem->setDroppable( true );
+        nodeItem->setDraggable(true);
+        nodeItem->setDroppable(true);
     }
 }
 void    GroupItem::setContainer(QQuickItem* container) noexcept
@@ -252,8 +180,10 @@ const QQuickItem*   GroupItem::getContainer() const noexcept { return _container
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     qan::NodeItem::mouseDoubleClickEvent(event);
-    if (event->button() == Qt::LeftButton)
-        emit groupDoubleClicked( this, event->localPos());
+    if (event->button() == Qt::LeftButton &&
+        (getNode() != nullptr &&
+         !getNode()->getLocked()))
+        emit groupDoubleClicked(this, event->localPos());
 }
 
 void    GroupItem::mousePressEvent(QMouseEvent* event)
@@ -263,7 +193,8 @@ void    GroupItem::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton &&    // Selection management
          getGroup() &&
          isSelectable() &&
-         !getCollapsed()) {     // Collapsed group is not selectable
+         !getCollapsed() &&         // Locked/Collapsed group is not selectable
+         !getNode()->getLocked()) {
         if (getGraph())
             getGraph()->selectGroup(*getGroup(), event->modifiers());
     }

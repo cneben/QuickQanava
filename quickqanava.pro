@@ -15,16 +15,16 @@ test-cpp.subdir         = samples/cpp
 test-tools.subdir       = samples/tools
 
 # Uncomment to activate samples projects:
-#SUBDIRS +=  test-nodes
+SUBDIRS +=  test-nodes
 #SUBDIRS +=  test-edges
 #SUBDIRS +=  test-connector
-#SUBDIRS +=  test-groups
+SUBDIRS +=  test-groups
 #SUBDIRS +=  test-selection
 #SUBDIRS +=  test-style
 #SUBDIRS +=  test-topology
 #SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
-SUBDIRS +=  test-tools
+#SUBDIRS +=  test-tools
 
 # Theses ones are test projects, not sample:
 #SUBDIRS +=  test-resizer

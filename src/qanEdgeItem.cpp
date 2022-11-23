@@ -45,12 +45,17 @@
 #include "./qanGraph.h"
 #include "./qanEdgeDraggableCtrl.h"
 
+#include "./bezier/include/bezier.h"
+
 namespace qan { // ::qan
 
 /* Edge Object Management *///-------------------------------------------------
 EdgeItem::EdgeItem(QQuickItem* parent) :
     QQuickItem{parent}
 {
+    setStyle(qan::Edge::style(nullptr));
+    setObjectName(QStringLiteral("qan::EdgeItem"));
+
     setParentItem(parent);
     setAntialiasing(true);
     setFlag(QQuickItem::ItemHasContents, true);
@@ -62,8 +67,10 @@ EdgeItem::EdgeItem(QQuickItem* parent) :
     const auto edgeDraggableCtrl = static_cast<qan::EdgeDraggableCtrl*>(_draggableCtrl.get());
     edgeDraggableCtrl->setTargetItem(this);
 
-    setStyle(qan::Edge::style(parent));
-    setObjectName(QStringLiteral("qan::EdgeItem"));
+    connect(this,   &qan::EdgeItem::widthChanged,
+            this,   &qan::EdgeItem::onWidthChanged);
+    connect(this,   &qan::EdgeItem::heightChanged,
+            this,   &qan::EdgeItem::onHeightChanged);
 }
 
 auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
@@ -76,19 +83,23 @@ auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
         edge->setItem(this);
 }
 
-auto    EdgeItem::getGraph() const noexcept -> const qan::Graph*
+auto    EdgeItem::getGraph() const -> const qan::Graph*
 {
     if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::getGraph() noexcept -> qan::Graph*
+auto    EdgeItem::getGraph() -> qan::Graph*
 {
     if (_graph)
         return _graph;
     return _edge ? _edge->getGraph() : nullptr;
 }
-auto    EdgeItem::setGraph(qan::Graph* graph) noexcept -> void { _graph = graph; emit graphChanged(); }
+auto    EdgeItem::setGraph(qan::Graph* graph) -> void
+{
+    _graph = graph; emit graphChanged();
+    qan::Selectable::configure(this, graph);
+}
 //-----------------------------------------------------------------------------
 
 /* Edge Topology Management *///-----------------------------------------------
@@ -719,11 +730,11 @@ qreal   EdgeItem::generateCurvedArrowAngle(QPointF& p1, QPointF& p2,
     //               have very sharp orientation, average tangent at curve end AND line angle to avoid
     //               arrow orientation that does not fit the average curve angle.
     static constexpr auto averageDstAngleFactor = 4.0;
-    if ( line.length() > averageDstAngleFactor * arrowLength )      // General case
+    if (line.length() > averageDstAngleFactor * arrowLength)      // General case
         angle = cubicCurveAngleAt(0.99, p1, p2, c1, c2);
     else {                                                          // Special case
-        angle = ( 0.4 * cubicCurveAngleAt(0.99, p1, p2, c1, c2) +
-                  0.6 * lineAngle(line) );
+        angle = (0.4 * cubicCurveAngleAt(0.99, p1, p2, c1, c2) +
+                 0.6 * lineAngle(line));
     }
 
     // Use dst angle to generate an end point translated by -arrowLength except if there is no end shape
@@ -761,14 +772,7 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
 
     if ( srcPort == nullptr ||      // If there is a connection to a non-port item, generate a control point for it
          dstPort == nullptr ) {
-        // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
-        // Heuristic: bounded to ]0;40.], larger when line length is large (line.length()), small when
-        //            line is either vertical or horizontal (xDelta/yDelta near 0)
-        const auto distance = std::min( line.length(), std::min(xDeltaAbs / 2., yDeltaAbs / 2.) );
-        const auto controlPointDistance = qBound( 0.001, distance, 40. );
 
-        const QPointF center{ ( cache.p1.x() + cache.p2.x() ) / 2.,           // (P1,P2) Line center
-                              ( cache.p1.y() + cache.p2.y() ) / 2. };
         // Invert if:
             // Top left quarter:     do not invert (xDelta < 0 && yDelta < 0)
             // Top right quarter:    xDelta > 0 && yDelta < 0
@@ -776,12 +780,27 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
             // Bottom left quarter:  xDelta < 0 && yDelta > 0
         const auto invert =  ( xDelta > 0 && yDelta < 0 ) ||
                              ( xDelta < 0 && yDelta > 0 ) ? -1. : 1.;
-        const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
+
+        const bool lengthIsZero = std::abs(lineLength) < std::numeric_limits<qreal>::epsilon();
+        QPointF offset { 0., 0. };
+        if (!lengthIsZero) {
+            const QPointF normal = QPointF{ -line.dy(), line.dx() } / ( lineLength * invert );
+            // SIMPLE CASE: Generate cubic curve control points with no dock, just use line center and normal
+            // Heuristic: bounded to [0;40.], larger when line length is large (line.length()), small when
+            //            line is either vertical or horizontal (xDelta/yDelta near 0)
+            const auto distance = std::min( line.length(), std::min(xDeltaAbs / 2., yDeltaAbs / 2.) );
+            const auto controlPointDistance = qBound( 0.001, distance, 40. );
+
+            offset = normal * controlPointDistance;
+        }
+
+        const QPointF center{ ( cache.p1.x() + cache.p2.x() ) / 2.,           // (P1,P2) Line center
+                              ( cache.p1.y() + cache.p2.y() ) / 2. };
 
         if ( srcPort == nullptr )
-            cache.c1 = center + ( normal * controlPointDistance );
+            cache.c1 = center + offset;
         if ( dstPort == nullptr )
-            cache.c2 = center - ( normal * controlPointDistance );
+            cache.c2 = center - offset;
     }
     if ( srcPort != nullptr ||      // If there is a connection to a port item, generate a control point for it
          dstPort != nullptr ) {
@@ -808,9 +827,9 @@ void    EdgeItem::generateCurvedControlPoints(GeometryCache& cache) const noexce
 
         // Heuristics:
             // 1. xCorrection should be really small when xDeltaAbs is small (small == < average bounding rect width)
-                // otherwise, it should be proportionnal to one fitfh of xDeltaAbs and always less than maxOffset.
+                // otherwise, it should be proportional to one fifth of xDeltaAbs and always less than maxOffset.
             // 2. yCorrection should be really small when yDeltaAbs is small (small == < average bounding rect height)
-                // otherwise, it should be proportionnal to one fitfh of yDeltaAbs and always less than maxOffset.
+                // otherwise, it should be proportional to one fifth of yDeltaAbs and always less than maxOffset.
             // 3. Do not apply correction on out port
         const auto xOffset = offset(xDeltaAbs);
         const auto yOffset = offset(yDeltaAbs);
@@ -1109,9 +1128,8 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 /* Mouse Management *///-------------------------------------------------------
 void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    const qreal d = distanceFromLine(event->localPos(), QLineF{_p1, _p2});
-    if (d > -0.0001 && d < 5. &&
-        event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton &&
+        contains(event->localPos())) {
         emit edgeDoubleClicked(this, event->localPos());
         event->accept();
     }
@@ -1126,6 +1144,16 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
     // otherwise onEdgeDoubleClicked() is no longer fired (and edge
     // can't be unlocked with a visual editor !
     if (contains(event->localPos())) {
+        // Selection management
+        if ((event->button() == Qt::LeftButton ||
+             event->button() == Qt::RightButton) &&
+             getEdge() != nullptr &&
+             isSelectable() &&
+             !getEdge()->getLocked()) {  // Selection allowed for protected
+            if (_graph)
+                _graph->selectEdge(*getEdge(), event->modifiers());
+        }
+
         if (event->button() == Qt::LeftButton) {
             emit edgeClicked(this, event->localPos());
             event->accept();
@@ -1185,7 +1213,7 @@ qreal   EdgeItem::distanceFromLine(const QPointF& p, const QLineF& line) const n
 //-----------------------------------------------------------------------------
 
 /* Style and Properties Management *///----------------------------------------
-void    EdgeItem::setStyle( EdgeStyle* style ) noexcept
+void    EdgeItem::setStyle(EdgeStyle* style) noexcept
 {
     if (style != _style) {
         if (_style != nullptr)  // Every style that is non default is disconnect from this node
@@ -1250,6 +1278,20 @@ void    EdgeItem::setDragged(bool dragged) noexcept
 }
 //-----------------------------------------------------------------------------
 
+
+/* Selection Management *///---------------------------------------------------
+void    EdgeItem::onWidthChanged()
+{
+    configureSelectionItem();
+}
+
+void    EdgeItem::onHeightChanged()
+{
+    configureSelectionItem();
+}
+//-----------------------------------------------------------------------------
+
+
 /* Drag'nDrop Management *///--------------------------------------------------
 void    EdgeItem::setAcceptDrops(bool acceptDrops)
 {
@@ -1267,16 +1309,34 @@ bool    EdgeItem::contains(const QPointF& point) const
     case qan::EdgeStyle::LineType::Undefined:  // [[fallthrough]]
     case qan::EdgeStyle::LineType::Straight:
         d = distanceFromLine(point, QLineF{_p1, _p2});
-        r = (d > 0. && d < 5.);
+        r = (d > -0.001 && d < 6.001);
         break;
-    case qan::EdgeStyle::LineType::Curved:
+    case qan::EdgeStyle::LineType::Curved: {
+        Bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
+                                       {static_cast<float>(_c1.x()), static_cast<float>(_c1.y())},
+                                       {static_cast<float>(_c2.x()), static_cast<float>(_c2.y())},
+                                       {static_cast<float>(_p2.x()), static_cast<float>(_p2.y())}});
+        // FIXME: check p in cubicBezier.tbb() (aka Tight bounding box)
+        // FIXME: At least, adapt steps to tbb.length() / thresold (here 6)
+        const auto steps = 25;
+        const auto dStep = 1.0 / static_cast<float>(steps);
+        for (int step = 0; step < steps; step++) {
+            const auto pos = dStep * step;
+            auto curveP = cubicBezier.valueAt(pos);
+            const auto d = QLineF{point, QPointF{curveP.x, curveP.y}}.length();
+            if (d > -0.001 && d < 6.001) {
+                r = true;
+                break;
+            }
+        }
+    }
         break;
     case qan::EdgeStyle::LineType::Ortho:
         d = distanceFromLine(point, QLineF{_p1, _c1});
-        r = (d > 0. && d < 5.);
+        r = (d > -0.001 && d < 6.001);
         if (!r) {
             const qreal d2 = distanceFromLine(point, QLineF{_p2, _c1});
-            r = (d2 > 0. && d2 < 5.);
+            r = (d2 > -0.001 && d2 < 6.001);
         }
         break;
     }

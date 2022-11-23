@@ -136,7 +136,7 @@ public:
      *       id: image
      *       source: "qrc:/myimage.png"
      *       Component.onCompleted: {
-     *         // Eventually, fit the image in view: navigable.fitInView(), where navigable is Navigable id
+     *         // Eventually, fit the image in view: navigable.fitContentInView(), where navigable is Navigable id
      *       }
      *   }
      * }
@@ -160,8 +160,12 @@ public:
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.
      * \sa autoFitMode
+     *
+     * \note When fitting an invisible view, this method might be unable to
+     * find real width/height, \c forceWidth and \c forceHeight might be
+     * used to provide a valid size, < 0. are automatically ignored.
      */
-    Q_INVOKABLE void    fitInView();
+    Q_INVOKABLE void    fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
 
 public:
     //! \brief Auto fitting mode.
@@ -196,9 +200,9 @@ signals:
     //! \sa autoFitMode
     void        autoFitModeChanged();
 private:
-    //! Flag set to true if area panning has been modified since the last fitInView() call.
+    //! Flag set to true if area panning has been modified since the last fitContentInView() call.
     bool        _panModified = false;
-    //! Flag set to true if area zoom has been modified since the last fitInView() call.
+    //! Flag set to true if area zoom has been modified since the last fitContentInView() call.
     bool        _zoomModified = false;
 
 public:

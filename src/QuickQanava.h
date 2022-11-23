@@ -57,6 +57,8 @@
 #include "./qanStyle.h"
 #include "./qanStyleManager.h"
 #include "./qanBottomRightResizer.h"
+#include "./qanRightResizer.h"
+#include "./qanBottomResizer.h"
 #include "./qanNavigablePreview.h"
 #include "./qanAnalysisTimeHeatMap.h"
 
@@ -76,6 +78,18 @@ struct QuickQanava {
             engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
             engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
+
+            engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeStraightPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeOrthoPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeCurvedPath.qml"));
+
+            engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcArrowPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeSrcCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcCirclePath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeSrcRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcRectPath.qml"));
+
+            engine->rootContext()->setContextProperty("qanEdgeDstArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstArrowPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml"));
         }
         qmlRegisterType<qan::NodeItem>("QuickQanava", 2, 0, "NodeItem");
         qmlRegisterType<qan::PortItem>("QuickQanava", 2, 0, "PortItem");
@@ -100,7 +114,9 @@ struct QuickQanava {
         qmlRegisterType<qan::NodeStyle>("QuickQanava", 2, 0, "NodeStyle");
         qmlRegisterType<qan::EdgeStyle>("QuickQanava", 2, 0, "EdgeStyle");
         qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
-        qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer" );
+        qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
+        qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
+        qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
 #endif // QUICKQANAVA_STATIC
     } // initialize()
 };

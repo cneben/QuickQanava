@@ -48,7 +48,7 @@
 // Graph node tests
 //-----------------------------------------------------------------------------
 
-TEST(gtpo_graph, empty)
+TEST(qan_Graph, empty)
 {
     // A default empty graph should have no nodes nor root nodes
     qan::Graph g;
@@ -56,7 +56,7 @@ TEST(gtpo_graph, empty)
     EXPECT_EQ(g.get_root_node_count(), 0);
 }
 
-TEST(gtpo_graph, insert)
+TEST(qan_Graph, insert)
 {
     // Inserting a node should increase node count and root node count
     qan::Graph g;
@@ -68,7 +68,7 @@ TEST(gtpo_graph, insert)
     g.clear();
 }
 
-TEST(gtpo_graph, root_node)
+TEST(qan_Graph, root_node)
 {
     qan::Graph g;
     auto n = g.create_node();
@@ -87,7 +87,7 @@ TEST(gtpo_graph, root_node)
 // Graph clear tests
 //-----------------------------------------------------------------------------
 
-TEST(gtpo_graph, clear)
+TEST(qan_Graph, clear)
 {
     // TEST: clearing an empty graph, expecting no node after clearing an empty graph
     qan::Graph g;
@@ -97,7 +97,7 @@ TEST(gtpo_graph, clear)
 }
 
 
-TEST(gtpo_graph, clear_nodes)
+TEST(qan_Graph, clear_nodes)
 {
     // TEST: clearing a graph with one node should lead to an empty graph
     qan::Graph g;
@@ -110,7 +110,7 @@ TEST(gtpo_graph, clear_nodes)
     EXPECT_EQ(g.get_node_count(), 0);
 }
 
-TEST(gtpo_graph, clear_edges)
+TEST(qan_Graph, clear_edges)
 {
     // TEST: clearing a graph with two nodes linked by an edge should lead to an empty graph
     qan::Graph g;
@@ -133,14 +133,14 @@ TEST(gtpo_graph, clear_edges)
 // Graph edge tests
 //-----------------------------------------------------------------------------
 
-TEST(gtpo_graph, edge_empty)
+TEST(qan_Graph, edge_empty)
 {
     // A default empty graph should have no edges
     qan::Graph g;
     EXPECT_EQ(g.get_edge_count(), 0);
 }
 
-TEST(gtpo_graph, insert_edge_error)
+TEST(qan_Graph, insert_edge_error)
 {
     // TEST: Creating an edge with no source and/or destination should return nullptr
     qan::Graph g;
@@ -171,7 +171,7 @@ TEST(gtpo_graph, insert_edge_error)
     //EXPECT_TRUE(g.insert_edge(e1));
 }
 
-TEST(gtpo_graph, edge_insert)
+TEST(qan_Graph, edge_insert)
 {
     // TEST: Creating an edge should remove dst from the root node set
     qan::Graph g;
@@ -186,7 +186,7 @@ TEST(gtpo_graph, edge_insert)
 }
 
 
-TEST(gtpo_graph, edge_circuits)
+TEST(qan_Graph, edge_circuits)
 {
     // TEST: Creating an edge that is a circuit to a root node does not remove destination
     // from root nodes
@@ -213,7 +213,7 @@ TEST(gtpo_graph, edge_circuits)
     }
 }
 
-TEST(gtpo_graph, edge_insert_root_node)
+TEST(qan_Graph, edge_insert_root_node)
 {
     // TEST: inserting an existing edge must remove dst from the root node set
     qan::Graph g;
@@ -227,7 +227,7 @@ TEST(gtpo_graph, edge_insert_root_node)
 }
 
 
-TEST(gtpo_graph, edgeInsertBadTopology)
+TEST(qan_Graph, edgeInsertBadTopology)
 {
     // TEST: Inserting an edge with no source and/or destination should throw a bad_topology_error
     qan::Graph g;
@@ -259,7 +259,7 @@ TEST(gtpo_graph, edgeInsertBadTopology)
 }
 
 
-TEST(gtpo_graph, edge_insert_parallel)
+TEST(qan_Graph, edge_insert_parallel)
 {
     { // Test if insert_edge() successfully generate parallel edges
         qan::Graph g;
@@ -307,7 +307,7 @@ TEST(gtpo_graph, edge_insert_parallel)
     }
 }
 
-TEST(gtpo_graph, edge_remove_contains)
+TEST(qan_Graph, edge_remove_contains)
 {
     // Graph must no longer contains() an edge that has been removed
     qan::Graph g;
@@ -324,7 +324,7 @@ TEST(gtpo_graph, edge_remove_contains)
     EXPECT_FALSE(g.has_edge(n1, n2));
 }
 
-TEST(gtpo_graph, edge_node_degree)
+TEST(qan_Graph, edge_node_degree)
 {
     qan::Graph g;
     auto n1 = g.create_node();
@@ -367,7 +367,7 @@ TEST(gtpo_graph, edge_node_degree)
     g.clear();
 }
 
-TEST(gtpo_graph, remove_node_degree)
+TEST(qan_Graph, remove_node_degree)
 {
     // Note: Test GTpo remove_node() method:
     //    - Removing a node must also invalidate (ie remove) all its out/in orphants edges.
@@ -391,4 +391,203 @@ TEST(gtpo_graph, remove_node_degree)
     EXPECT_EQ(g.get_edge_count(), 0);
     EXPECT_EQ(n1->get_out_degree(), 0);
     EXPECT_EQ(n3->get_in_degree(), 0);
+}
+
+
+//-----------------------------------------------------------------------------
+// Graph topology tests
+//-----------------------------------------------------------------------------
+
+TEST(qan_Graph, collectNeighboursDfs_basic)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    n1->setLabel("n1");
+    g.insert_node(n1);
+    auto n2 = g.create_node();
+    g.insert_node(n2);
+    n2->setLabel("n2");
+    auto n3 = g.create_node();
+    g.insert_node(n3);
+    n3->setLabel("n3");
+    auto n4 = g.create_node();
+    g.insert_node(n4);
+    n4->setLabel("n4");
+    auto n5 = g.create_node();
+    g.insert_node(n5);
+    n5->setLabel("n5");
+
+    auto g1 = g.insertGroup();
+    g1->setLabel("g1");
+    g.group_node(n1, g1);
+    g.group_node(n2, g1);
+
+    auto g2 = g.insertGroup();
+    g2->setLabel("g2");
+    g.group_node(n3, g2);
+    g.group_node(g1, g2);
+
+    auto g3 = g.insertGroup();
+    g3->setLabel("g3");
+    g.group_node(n4, g3);
+    g.group_node(n5, g3);
+
+    // g=          +---------------------------+
+    //             | G2                        |
+    // +--------+  |     +---------------+     |
+    // |G3      |  |     |       G1      |     |
+    // |   N4   |  |     |  N1       N2  | N3  |
+    // |        |  |     |               |     |
+    // |   N5   |  |     +---------------+     |
+    // +--------+  |                           |
+    //             +---------------------------+
+
+    // EXPECT: neibours(N4) = [N4, N5, G3]
+    const auto r1 = g.collectNeighbours(*n4);
+    EXPECT_EQ(r1.size(), 3);    // [N4, N5, G3]
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), g3) != r1.cend());
+
+    // EXPECT: neighbours(N1) = [N1, N2, G1, G2, N3]
+    const auto r2 = g.collectNeighbours(*n1);
+    EXPECT_EQ(r2.size(), 5);    // [N1, N2, G1, G2, N3]
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
+}
+
+TEST(qan_Graph, collectAncestors_basic)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+
+    // g = n1
+    const auto r1 = g.collectAncestors(*n1);
+    ASSERT_EQ(r1.size(), 0);    // No ancestors
+
+    //     +-----------+
+    //     v           |
+    // g = n3 -> n2 -> n1 -> n4    n5
+
+    auto n2 = g.create_node();  // Ancestor level 1
+    g.insert_node(n2);
+    n2->setLabel("n2");
+    g.insert_edge(n2, n1);
+    auto n3 = g.create_node();  // Ancestor level 2
+    g.insert_node(n3);
+    n3->setLabel("n3");
+    g.insert_edge(n3, n2);
+    g.insert_edge(n1, n3);      // Circuit from n1 to n3
+
+    auto n4 = g.create_node();  // Child node
+    g.insert_node(n4);
+    n4->setLabel("n4");
+    g.insert_edge(n1, n4);
+
+    auto n5 = g.create_node();  // Orphant node
+    g.insert_node(n5);
+    n5->setLabel("n5");
+
+    const auto r2 = g.collectAncestors(*n1);
+    ASSERT_EQ(r2.size(), 2);   // n3, n2
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n2) != r2.cend());
+    EXPECT_TRUE(std::find(r2.cbegin(), r2.cend(), n3) != r2.cend());
+}
+
+TEST(qan_Graph, collectAncestors_groups)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+    auto n2 = g.create_node();
+    g.insert_node(n2);
+    auto n3 = g.create_node();
+    g.insert_node(n3);
+    auto n4 = g.create_node();
+    g.insert_node(n4);
+    auto n5 = g.create_node();
+    g.insert_node(n5);
+
+    g.insert_edge(n4, n1);
+
+    auto g1 = g.insertGroup();
+    g.group_node(n1, g1);
+    g.group_node(n2, g1);
+
+    auto g2 = g.insertGroup();
+    g.group_node(n3, g2);
+    g.group_node(g1, g2);
+
+    auto g3 = g.insertGroup();
+    g.group_node(n4, g3);
+    g.group_node(n5, g3);
+
+    // g=          +---------------------------+
+    //             | G2                        |
+    // +--------+  |     +---------------+     |
+    // |G3      |  |     |       G1      |     |
+    // |   N4---+--+-----+->N1       N2  | N3  |
+    // |        |  |     |               |     |
+    // |   N5   |  |     +---------------+     |
+    // +--------+  |                           |
+    //             +---------------------------+
+
+    // EXPECT: collectAncestors(*n1): [G3, N4, N5]
+    const auto r1 = g.collectAncestors(*n1);
+    EXPECT_EQ(r1.size(), 3);
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n4) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), n5) != r1.cend());
+    EXPECT_TRUE(std::find(r1.cbegin(), r1.cend(), g3) != r1.cend());
+}
+
+TEST(qan_Graph, isAncestor_basic)
+{
+    qan::Graph g;
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+
+    // g = n1
+    const auto r1 = g.collectAncestors(*n1);
+    ASSERT_FALSE(g.isAncestor(n1, nullptr));
+    ASSERT_FALSE(g.isAncestor(nullptr, n1));
+    ASSERT_FALSE(g.isAncestor(nullptr, nullptr));
+    ASSERT_FALSE(g.isAncestor(n1, n1));
+
+    //     +-+
+    //     v |
+    // g = n1
+    g.insert_edge(n1, n1);  // Add circuit
+    ASSERT_FALSE(g.isAncestor(n1, n1));
+}
+
+TEST(qan_Graph, isAncestor)
+{
+    qan::Graph g;
+    //     +-----------+
+    //     v           |
+    // g = n3 -> n2 -> n1 -> n4    n5
+
+    auto n1 = g.create_node();
+    g.insert_node(n1);
+
+    auto n2 = g.create_node();  // Ancestor level 1
+    g.insert_node(n2);
+    g.insert_edge(n2, n1);
+    auto n3 = g.create_node();  // Ancestor level 2
+    g.insert_node(n3);
+    g.insert_edge(n3, n2);
+    g.insert_edge(n1, n3);      // Circuit from n1 to n3
+
+    auto n4 = g.create_node();  // Child node
+    g.insert_node(n4);
+    g.insert_edge(n1, n4);
+
+    auto n5 = g.create_node();  // Orphant node
+    g.insert_node(n5);
+
+    EXPECT_FALSE(g.isAncestor(n1, n4));
+    EXPECT_TRUE(g.isAncestor(n4, n1));
+    EXPECT_FALSE(g.isAncestor(n1, n5));
+    EXPECT_FALSE(g.isAncestor(n1, n1));
+    EXPECT_TRUE(g.isAncestor(n1, n2));
+    EXPECT_TRUE(g.isAncestor(n1, n3));
 }

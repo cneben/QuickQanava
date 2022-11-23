@@ -40,10 +40,6 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanSelectable.h"
-#include "./qanDraggable.h"
-#include "./qanAbstractDraggableCtrl.h"
-#include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanGroup.h"
 
@@ -65,9 +61,9 @@ class GroupItem : public qan::NodeItem
     Q_OBJECT
 public:
     //! Group constructor.
-    explicit GroupItem( QQuickItem* parent = nullptr );
+    explicit GroupItem(QQuickItem* parent = nullptr);
     virtual ~GroupItem() override = default;
-    GroupItem( const GroupItem& ) = delete;
+    GroupItem(const GroupItem&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
@@ -87,73 +83,10 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-
-    /*! \name Selection and Sizing Management *///-----------------------------
-    //@{
-public:
-    //! \brief Group preferred initial size, default to "200 x 150".
-    Q_PROPERTY( qreal preferredGroupWidth READ getPreferredGroupWidth WRITE setPreferredGroupWidth NOTIFY preferredGroupWidthChanged FINAL )
-    //! \copydoc preferredGroupWidth
-    inline qreal    getPreferredGroupWidth() const noexcept { return _preferredGroupWidth; }
-    //! \copydoc preferredGroupWidth
-    void            setPreferredGroupWidth(qreal preferredGroupWidth) noexcept;
-private:
-    //! \copydoc preferredGroupWidth
-    qreal           _preferredGroupWidth = 250;
-signals:
-    //! \copydoc preferredGroupWidth
-    void            preferredGroupWidthChanged();
-
-public:
-    //! \brief Group preferred initial size, default to "200 x 150".
-    Q_PROPERTY( qreal preferredGroupHeight READ getPreferredGroupHeight WRITE setPreferredGroupHeight NOTIFY preferredGroupHeightChanged FINAL )
-    //! \copydoc preferredGroupHeight
-    inline qreal    getPreferredGroupHeight() const noexcept { return _preferredGroupHeight; }
-    //! \copydoc preferredGroupHeight
-    void            setPreferredGroupHeight(qreal preferredGroupHeight) noexcept;
-private:
-    //! \copydoc preferredGroupHeight
-    qreal           _preferredGroupHeight = 200;
-signals:
-    //! \copydoc preferredGroupHeight
-    void            preferredGroupHeightChanged();
-
-public:
-    //! \brief Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
-    Q_PROPERTY( qreal minimumGroupWidth READ getMinimumGroupWidth WRITE setMinimumGroupWidth NOTIFY minimumGroupWidthChanged FINAL )
-    //! \copydoc minimumGroupWidth
-    inline qreal    getMinimumGroupWidth() const noexcept { return _minimumGroupWidth; }
-    //! \copydoc minimumGroupWidth
-    void            setMinimumGroupWidth(qreal minimumGroupWidth) noexcept;
-private:
-    //! \copydoc minimumGroupWidth
-    qreal           _minimumGroupWidth = 150;
-signals:
-    //! \copydoc minimumGroupWidth
-    void            minimumGroupWidthChanged();
-
-public:
-    //! \brief Group minimum size, default to "150 x 100" (group could not be visually resized below this size if \c resizable property is true).
-    Q_PROPERTY( qreal minimumGroupHeight READ getMinimumGroupHeight WRITE setMinimumGroupHeight NOTIFY minimumGroupHeightChanged FINAL )
-    //! \copydoc minimumGroupHeight
-    inline qreal    getMinimumGroupHeight() const noexcept { return _minimumGroupHeight; }
-    //! \copydoc minimumGroupHeight
-    void            setMinimumGroupHeight(qreal minimumGroupHeight) noexcept;
-private:
-    //! \copydoc minimumGroupHeight
-    qreal           _minimumGroupHeight = 80.;
-signals:
-    //! \copydoc minimumGroupHeight
-    void            minimumGroupHeightChanged();
-    //@}
-    //-------------------------------------------------------------------------
-
     /*! \name Collapse Management *///-----------------------------------------
     //@{
 protected:
     virtual void    setCollapsed(bool collapsed) noexcept override;
-public:
-    Q_INVOKABLE virtual void    collapseAncestors(bool collapsed = true) override;
     //@}
     //-------------------------------------------------------------------------
 
@@ -217,15 +150,15 @@ protected:
 
 signals:
     //! Emitted whenever the group is clicked (even at the start of a dragging operation).
-    void    groupClicked( qan::GroupItem* group, QPointF p );
+    void    groupClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is double clicked.
-    void    groupDoubleClicked( qan::GroupItem* group, QPointF p );
+    void    groupDoubleClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is right clicked.
-    void    groupRightClicked( qan::GroupItem* group, QPointF p );
+    void    groupRightClicked(qan::GroupItem* group, QPointF p);
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::GroupItem )
+QML_DECLARE_TYPE(qan::GroupItem)

@@ -10,8 +10,8 @@ include (../src/quickqanava.pri)
 
 SOURCES	+=  ./tests.cpp             \
             ./topology_tests.cpp    \
-            ./observers_tests.cpp   \
-            ./groups_tests.cpp
+            #./observers_tests.cpp   \
+            #./groups_tests.cpp
 
 CONFIG(debug, debug|release) {
     linux-g++*: LIBS += -L../build/ -lgtest -lgmock

@@ -79,13 +79,35 @@ Qan.AbstractGraphView {
         handlerWidth: resizeHandlerWidth
         handlerSize: resizeHandlerSize
         onResizeStart: {
-            if (target &&
-                target.node)
+            if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
         }
         onResizeEnd: {
-            if (target &&
-                target.node)
+            if (target && target.node)
+                graph.nodeResized(target.node);
+        }
+    }
+    Qan.RightResizer {
+        id: nodeRightResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target && target.node)
+                graph.nodeAboutToBeResized(target.node);
+        }
+        onResizeEnd: {
+            if (target && target.node)
+                graph.nodeResized(target.node);
+        }
+    }
+    Qan.BottomResizer {
+        id: nodeBottomResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target && target.node)
+                graph.nodeAboutToBeResized(target.node);
+        }
+        onResizeEnd: {
+            if (target && target.node)
                 graph.nodeResized(target.node);
         }
     }
@@ -101,18 +123,39 @@ Qan.AbstractGraphView {
         handlerSize: resizeHandlerSize
 
         onResizeStart: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupAboutToBeResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group)
         }
         onResizeEnd: {
-            if (target &&
-                target.groupItem &&
-                target.groupItem.group)
-                graph.groupResized(target.groupItem.group);
+            if (target && target.group)
+                graph.groupResized(target.group)
         }
     }
+    Qan.RightResizer {
+        id: groupRightResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group);
+        }
+        onResizeEnd: {
+            if (target && target.group)
+                graph.groupResized(target.group);
+        }
+    }
+    Qan.BottomResizer {
+        id: groupBottomResizer
+        parent: graph.containerItem
+        onResizeStart: {
+            if (target && target.group)
+                graph.groupAboutToBeResized(target.group);
+        }
+        onResizeEnd: {
+            if (target && target.group)
+                graph.groupResized(target.group);
+        }
+    }
+
     Rectangle {
         id: selectionRect
         x: 0; y: 0
@@ -127,10 +170,9 @@ Qan.AbstractGraphView {
     // View Click management //////////////////////////////////////////////////
     onClicked: {
         // Hide resizers when view background is clicked
-        nodeResizer.target = null
-        nodeResizer.visible = false
-        groupResizer.target = null
-        groupResizer.visible = false
+        nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
+        groupResizer.target = groupRightResizer.target = groupBottomResizer.target = null
+        groupResizer.targetContent = groupRightResizer.targetContent = groupBottomResizer.targetContent = null
 
         // Hide the default visual edge connector
         if (graph &&
@@ -154,9 +196,8 @@ Qan.AbstractGraphView {
             if (graph.connector &&
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
-        } else if (graph) {
+        } else if (graph)
             graph.connector.visible = false
-        }
     }
     onPortRightClicked: { }
 
@@ -177,78 +218,96 @@ Qan.AbstractGraphView {
     }
 
     onNodeClicked: function(node) {
-        if (graph &&
-            node && node.item) {
-            if (node.locked)                // Do not show any connector for locked node/groups
-                return;
-            graph.sendToFront(node.item)    // Locked nodes are not re-ordered to front.
-            if (graph.connector &&
+        if (!graphView.graph ||
+            !node ||
+            !node.item)
+            return
+
+        if (node.locked ||
+                node.isProtected)           // Do not show any connector for locked node/groups
+            return;
+
+        graph.sendToFront(node.item)    // Protected/Locked nodes are not re-ordered to front.
+        if (graph.connector &&
                 graph.connectorEnabled &&
-                 (node.item.connectable === Qan.NodeItem.Connectable ||
-                  node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
-                graph.connector.visible = true
-                graph.connector.sourceNode = node
-                // Connector should be half on top of node
-                graph.connector.y = -graph.connector.height / 2
-            }
-            if (node.item.resizable) {
-                nodeItemRatioWatcher.target = node.item
-                nodeResizer.parent = node.item
-                nodeResizer.target = null                       // Note: set resizer target to null _before_ settings minimum
-                nodeResizer.minimumTargetSize = Qt.binding(     // target size to avoid old target beeing eventually resized
-                            function() { return node.item.minimumSize; })                       // to new target min size...
-                nodeResizer.target = node.item
-                nodeResizer.visible = Qt.binding(function() { return nodeResizer.target.resizable; })
-                nodeResizer.z = node.item.z + 4.    // We want resizer to stay on top of selection item and ports.
-                nodeResizer.preserveRatio = (node.item.ratio > 0.)
-                if (node.item.ratio > 0.) {
-                    nodeResizer.ratio = node.item.ratio
-                    nodeResizer.preserveRatio = true
-                } else
-                    nodeResizer.preserveRatio = false
-            } else {
-                nodeResizer.target = null
-                nodeResizer.visible = false
-            }
-        } else if (graph) {
-            nodeItemRatioWatcher.target = null
-            graph.connector.visible = false
-            resizer.visible = false
+                (node.item.connectable === Qan.NodeItem.Connectable ||
+                 node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
+            graph.connector.visible = true
+            graph.connector.sourceNode = node
+            // Connector should be half on top of node
+            graph.connector.y = -graph.connector.height / 2
+        }
+        if (node.item.resizable) {
+            nodeItemRatioWatcher.target = node.item
+
+            nodeResizer.minimumTargetSize = node.item.minimumSize
+            nodeRightResizer.minimumTargetSize = nodeBottomResizer.minimumTargetSize = node.item.minimumSize
+
+            nodeResizer.target = node.item
+            nodeRightResizer.target = nodeBottomResizer.target = node.item
+
+            nodeResizer.visible = nodeRightResizer.visible = nodeBottomResizer.visible =
+                    Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
+                                                                   false; })
+
+
+            nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
+
+            nodeResizer.preserveRatio = (node.item.ratio > 0.)
+            if (node.item.ratio > 0.) {
+                nodeResizer.ratio = node.item.ratio
+                nodeResizer.preserveRatio = true
+            } else
+                nodeResizer.preserveRatio = false
+        } else {
+            nodeResizer.target = null
+            nodeRightResizer.target = nodeBottomResizer.target = null
         }
     }
 
     // Group management ///////////////////////////////////////////////////////
     onGroupClicked: function(group) {
-        if (group && graph)
+        if (!graphView.graph ||
+            !group ||
+            !group.item)
+            return
+
+        // Disable node resizing
+        nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
+
+        if (!group.locked && !group.isProtected)  // Do not move locked/protected groups to front.
             graph.sendToFront(group.item)
 
-        if (graph &&
-            group && group.item &&
-            group.item.container) {
-            if (group.item.resizable) {
-                groupResizer.parent = group.item
+        if (group.item.container &&
+            group.item.resizable) {
+            // Set minimumTargetSize _before_ setting target
+            groupResizer.minimumTargetSize = group.item.minimumSize
+            groupResizer.target = group.item
+            groupResizer.targetContent = group.item.container
+            groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize = group.item.minimumSize
+            groupRightResizer.target = groupBottomResizer.target = group.item
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.item.container
 
-                groupResizer.target = null  // See previous note in onNodeClicked()
-                groupResizer.minimumTargetSize = Qt.binding(
-                            function() { return group.item.minimumSize; })
-                groupResizer.target = Qt.binding( function() { return group.item.container } )
+            // Do not show resizers when group is collapsed
+            groupRightResizer.visible = groupBottomResizer.visible =
+                    groupResizer.visible = Qt.binding(() => { // Resizer is visible :
+                                                          return group && group.item &&   // If group and group.item are valid
+                                                          group.item.visible         &&
+                                                          (!group.item.collapsed)    &&   // And if group is not collapsed
+                                                          group.item.resizable;           // And if group is resizeable
+                                                      })
 
-                // Do not show resizer when group is collapsed
-                groupResizer.visible = Qt.binding( function() { // Resizer is visible :
-                    return group && group.item      &&  // If group and group.item are valid
-                            (!group.item.collapsed)  &&  // And if group is not collapsed
-                            group.item.resizable;       // And if group is resizeable
-                } )
-                groupResizer.z = group.item.z + 4.    // We want resizer to stay on top of selection item and ports.
-                groupResizer.preserveRatio = false
-            } else {
-                groupResizer.target = null
-                groupResizer.visible = false
-            } // group.item.resizable
+            groupResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+            groupResizer.preserveRatio = false
+            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 4
+            groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
-            console.error("Qan.GraphView.onGroupClicked(): Invalid group container, can't configure resizer")
-        }
-    }
+            groupResizer.target = groupResizer.targetContent = null
+            groupRightResizer.target = groupBottomResizer.target = null
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = null
+        } // group.item.resizable
+    }  // onGroupClicked()
 
     onGroupRightClicked: function(group) {
         if (group && group.item)

@@ -32,8 +32,7 @@
 // \date	2017 03 15
 //-----------------------------------------------------------------------------
 
-#ifndef qanDraggable_h
-#define qanDraggable_h
+#pragma once
 
 // Std headers
 #include <memory>
@@ -42,9 +41,6 @@
 #include <QObject>      // Q_DECLARE_INTERFACE
 #include <QPointer>
 #include <QQuickItem>
-
-// QuickQanava headers
-/* Nil */
 
 namespace qan { // ::qan
 
@@ -59,8 +55,8 @@ class Draggable
     /*! \name Draggable Object Management *///---------------------------------
     //@{
 public:
-    explicit Draggable();
-    virtual ~Draggable();
+    explicit Draggable() = default;
+    virtual ~Draggable() = default;
     Draggable(const Draggable&) = delete;
 
 protected:
@@ -135,5 +131,3 @@ Q_DECLARE_INTERFACE(
     qan::Draggable,
     "com.destrat.io.QuickQanava.Draggable/3.0"
 )
-
-#endif // qanDraggable_h

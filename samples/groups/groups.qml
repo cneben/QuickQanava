@@ -71,22 +71,17 @@ ApplicationWindow {
                 var n3 = topology.insertNode()
                 n3.label = "N3"
                 n3.item.x = 80; n3.item.y = 225
-                //topology.insertEdge( n1, n2 )
-                //topology.insertEdge( n2, n3 )
 
                 var g1 = topology.insertGroup()
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80
-
-                //g1.item.width = 250; g1.item.height = 270
-                //topology.insertEdge( n2, g1 )
             }
             onGroupClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
                 groupEditor.group = group
             }
             onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
-            onGroupRightClicked: group => {
+            onGroupRightClicked: (group, pos) => {
                 window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
                 contextMenu.group = group
 
@@ -103,7 +98,7 @@ ApplicationWindow {
                 groupEditor.group = undefined;
                 contextMenu.node = node
             }
-            onNodeRightClicked: node => {
+            onNodeRightClicked: (node, pos) => {
                 ungroupNodeButton.node = node
                 contextMenu.node = node
 
@@ -169,6 +164,23 @@ ApplicationWindow {
                 enabled: contextMenu.group !== undefined
                 onClicked: {
                     topology.removeGroup(contextMenu.group, true)
+                    contextMenu.group = undefined
+                }
+            }
+            MenuSeparator { }
+            MenuItem {
+                text: "Send to front"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.sendToFront(contextMenu.group.item)
+                    contextMenu.group = undefined
+                }
+            }
+            MenuItem {
+                text: "Send to back"
+                enabled: contextMenu.group !== undefined
+                onClicked: {
+                    topology.sendToBack(contextMenu.group.item)
                     contextMenu.group = undefined
                 }
             }

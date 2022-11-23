@@ -55,8 +55,8 @@ namespace std
 template<>
 struct default_delete<QQmlComponent> {
     void operator()(QQmlComponent* ptr) {
-        if ( ptr &&
-             QQmlEngine::objectOwnership(ptr) == QQmlEngine::CppOwnership )
+        if (ptr != nullptr &&
+            QQmlEngine::objectOwnership(ptr) == QQmlEngine::CppOwnership)
             ptr->deleteLater();
     }
 };

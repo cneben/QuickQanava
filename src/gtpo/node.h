@@ -76,8 +76,8 @@ public:
     virtual ~node() noexcept {
         _in_edges.clear();
         _out_edges.clear();
-        _in_nodes.clear();
-        _out_nodes.clear();
+        _in_nodes.clear(/*clearContent=*/false, /*notify=*/false);
+        _out_nodes.clear(/*clearContent=*/false, /*notify=*/false);
         if (this->_graph != nullptr) {
             std::cerr << "gtpo::node<>::~node(): Warning: Node has been destroyed before beeing removed from the graph." << std::endl;
         }

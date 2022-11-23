@@ -64,10 +64,10 @@ NodeItem::NodeItem(QQuickItem* parent) :
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptTouchEvents(true);
 
-    connect(this, &qan::NodeItem::widthChanged,
-            this, &qan::NodeItem::onWidthChanged);
-    connect(this, &qan::NodeItem::heightChanged,
-            this, &qan::NodeItem::onHeightChanged);
+    connect(this,   &qan::NodeItem::widthChanged,
+            this,   &qan::NodeItem::onWidthChanged);
+    connect(this,   &qan::NodeItem::heightChanged,
+            this,   &qan::NodeItem::onHeightChanged);
 }
 
 NodeItem::~NodeItem()
@@ -97,12 +97,13 @@ auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
     nodeDraggableCtrl->setTarget(node);
 }
 
-auto    NodeItem::setGraph(qan::Graph* graph) noexcept -> void {
+auto    NodeItem::setGraph(qan::Graph* graph) -> void
+{
     _graph = graph;
     qan::Selectable::configure(this, graph);
 }
-auto    NodeItem::getGraph() const noexcept -> const qan::Graph* { return _graph.data(); }
-auto    NodeItem::getGraph() noexcept -> qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() const -> const qan::Graph* { return _graph.data(); }
+auto    NodeItem::getGraph() -> qan::Graph* { return _graph.data(); }
 
 bool    NodeItem::setMinimumSize(QSizeF minimumSize) noexcept
 {
@@ -140,7 +141,6 @@ void    NodeItem::setCollapsed(bool collapsed) noexcept
 
 void    NodeItem::collapseAncestors(bool collapsed)
 {
-    // Do not call base
     // PRECONDITIONS:
         // getNode() can't return nullptr
         // getGraph() can't return nullptr
@@ -153,60 +153,72 @@ void    NodeItem::collapseAncestors(bool collapsed)
 
     // ALGORITHM:
         // 1. Collect all ancestors of group
-        // 2. Filter from ancestors every nodes that are part of this group
-        // 3. Collect adjacent edges of selected nodes
-        // 4. Hide selected edges and nodes
+        // 2. Collect adjacent edges of ancestors nodes
+        // 3. Hide selected edges and nodes
 
     // 1.
-    const auto allAncestors = graph->collectAncestorsDfs(*node, true);
+    const auto ancestors = graph->collectAncestors(*node);
 
     // 2.
-    std::vector<qan::Node*> ancestors;
-    for (const auto ancestor : allAncestors) {
-        if (ancestor != node &&
-            ancestor != node->getGroup() &&                 // Do not collapse parent group for nodes
-            ancestor->getGroup() != node->getGroup() )
-            ancestors.push_back(const_cast<qan::Node*>(ancestor));
-    }
-
-    // 3.
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
         const auto edges = ancestor->collectAdjacentEdges0();
-        for (const auto edge : edges)
-            ancestorsEdges.insert(edge);
+        std::copy(edges.begin(), edges.end(), std::inserter(ancestorsEdges, ancestorsEdges.end()));
     }
 
-    // 4.
+    // 3.
     for (const auto ancestorEdge: ancestorsEdges)
         ancestorEdge->getItem()->setVisible(collapsed);
     for (const auto ancestor: ancestors)
-        ancestor->getItem()->setVisible(collapsed);
+        const_cast<qan::Node*>(ancestor)->getItem()->setVisible(collapsed);
+}
+
+void    NodeItem::collapseChilds(bool collapsed)
+{
+    // PRECONDITIONS:
+        // getNode() can't return nullptr
+        // getGraph() can't return nullptr
+    const auto graph = getGraph();
+    const auto node = getNode();
+    if (graph == nullptr)
+        return;
+    if (node == nullptr)
+        return;
+
+    // ALGORITHM:
+        // 1. Collect all ancestors of group
+        // 2. Collect adjacent edges of ancestors nodes
+        // 3. Hide selected edges and nodes
+
+    // 1.
+    const auto childs = graph->collectChilds(*node);
+
+    // 2.
+    std::unordered_set<qan::Edge*> childsEdges;
+    for (const auto child: childs) {
+        const auto edges = child->collectAdjacentEdges0();
+        std::copy(edges.begin(), edges.end(),
+                  std::inserter(childsEdges, childsEdges.end()));
+    }
+
+    // 3.
+    for (const auto childEdge: childsEdges)
+        childEdge->getItem()->setVisible(collapsed);
+    for (const auto child: childs)
+        const_cast<qan::Node*>(child)->getItem()->setVisible(collapsed);
 }
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
-void    NodeItem::onWidthChanged()
-{
-    configureSelectionItem();
-    if ( _complexBoundingShape )            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();
-}
+void    NodeItem::onWidthChanged() { configureSelectionItem(); }
 
-void    NodeItem::onHeightChanged()
-{
-    configureSelectionItem();
-    if ( _complexBoundingShape )            // Invalidate actual bounding shape
-        emit requestUpdateBoundingShape();
-    else setDefaultBoundingShape();
-}
+void    NodeItem::onHeightChanged() { configureSelectionItem(); }
 //-----------------------------------------------------------------------------
 
 /* Node Configuration *///-----------------------------------------------------
-void    NodeItem::setResizable( bool resizable ) noexcept
+void    NodeItem::setResizable(bool resizable) noexcept
 {
-    if ( resizable != _resizable ) {
+    if (resizable != _resizable) {
         _resizable = resizable;
         emit resizableChanged();
     }
@@ -282,8 +294,10 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseDoubleClickEvent(event);
-    if (event->button() == Qt::LeftButton)
-        emit nodeDoubleClicked( this, event->localPos());
+    if (event->button() == Qt::LeftButton &&
+        (getNode() != nullptr &&
+         !getNode()->getLocked()))
+        emit nodeDoubleClicked(this, event->localPos());
 }
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event)
@@ -354,14 +368,14 @@ void    NodeItem::setStyle(qan::NodeStyle* style) noexcept
     }
 }
 
-void    NodeItem::setItemStyle( qan::Style* style ) noexcept
+void    NodeItem::setItemStyle(qan::Style* style) noexcept
 {
     auto nodeStyle = qobject_cast<qan::NodeStyle*>(style);
-    if ( nodeStyle != nullptr )
-        setStyle( nodeStyle );
+    if (nodeStyle != nullptr)
+        setStyle(nodeStyle);
 }
 
-void    NodeItem::styleDestroyed( QObject* style )
+void    NodeItem::styleDestroyed(QObject* style)
 {
     if (style != nullptr)
         setStyle(nullptr);   // Set default style when current style is destroyed
@@ -370,37 +384,31 @@ void    NodeItem::styleDestroyed( QObject* style )
 
 
 /* Intersection Shape Management *///------------------------------------------
-void    NodeItem::setComplexBoundingShape(bool complexBoundingShape) noexcept
-{
-    if (complexBoundingShape != _complexBoundingShape) {
-        _complexBoundingShape = complexBoundingShape;
-        if (!complexBoundingShape)
-            setDefaultBoundingShape();
-        else
-            emit requestUpdateBoundingShape();
-        emit complexBoundingShapeChanged();
-    }
-}
-
-QPolygonF   NodeItem::getBoundingShape() noexcept
+QPolygonF   NodeItem::getBoundingShape()
 {
     if (_boundingShape.isEmpty())
         _boundingShape = generateDefaultBoundingShape();
     return _boundingShape;
 }
 
-QPolygonF    NodeItem::generateDefaultBoundingShape() const
+void    NodeItem::setBoundingShape(const QPolygonF& boundingShape)
 {
-    // Generate a rounded rectangular intersection shape for this node rect new geometry
-    QPainterPath path;
-    qreal shapeRadius = 5.;
-    path.addRoundedRect(QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius);
-    return path.toFillPolygon(QTransform{});
+    _boundingShape = boundingShape;
+    emit boundingShapeChanged();
 }
 
 void    NodeItem::setDefaultBoundingShape()
 {
     setBoundingShape(generateDefaultBoundingShape());
+}
+
+QPolygonF    NodeItem::generateDefaultBoundingShape() const
+{
+    // Generate a rounded rectangular intersection shape for this node rect new geometry
+    QPainterPath path;
+    qreal shapeRadius = 5.;   // In percentage = 5% !
+    path.addRoundedRect(QRectF{ 0., 0., width(), height() }, shapeRadius, shapeRadius);
+    return path.toFillPolygon(QTransform{});
 }
 
 void    NodeItem::setBoundingShape(QVariantList boundingShape)
@@ -415,7 +423,7 @@ void    NodeItem::setBoundingShape(QVariantList boundingShape)
 
 bool    NodeItem::isInsideBoundingShape(QPointF p)
 {
-    if ( _boundingShape.isEmpty() )
+    if (_boundingShape.isEmpty())
         setBoundingShape(generateDefaultBoundingShape());
     return _boundingShape.containsPoint(p, Qt::OddEvenFill);
 }
@@ -427,8 +435,10 @@ qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
     for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
         if (portItem != nullptr &&
-            portItem->getId() == portId)
+            portItem->getId() == portId) {
+            QQmlEngine::setObjectOwnership(portItem, QQmlEngine::CppOwnership);
             return portItem;
+        }
     }
     return nullptr;
 }
@@ -454,10 +464,10 @@ void    NodeItem::setLeftDock(QQuickItem* leftDock) noexcept
     }
 }
 
-void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
+void    NodeItem::setTopDock(QQuickItem* topDock) noexcept
 {
-    if ( topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data() ) {
-        if ( topDock != nullptr ) {
+    if (topDock != _dockItems[static_cast<std::size_t>(Dock::Top)].data()) {
+        if (topDock != nullptr) {
             configureDock(*topDock, Dock::Top);
             QQmlEngine::setObjectOwnership(topDock, QQmlEngine::CppOwnership);
         }
@@ -466,10 +476,10 @@ void    NodeItem::setTopDock( QQuickItem* topDock ) noexcept
     }
 }
 
-void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
+void    NodeItem::setRightDock(QQuickItem* rightDock) noexcept
 {
-    if ( rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data() ) {
-        if ( rightDock != nullptr ) {
+    if (rightDock != _dockItems[static_cast<std::size_t>(Dock::Right)].data()) {
+        if (rightDock != nullptr) {
             configureDock(*rightDock, Dock::Right);
             QQmlEngine::setObjectOwnership(rightDock, QQmlEngine::CppOwnership);
         }
@@ -480,8 +490,8 @@ void    NodeItem::setRightDock( QQuickItem* rightDock ) noexcept
 
 void    NodeItem::setBottomDock( QQuickItem* bottomDock ) noexcept
 {
-    if ( bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data() ) {
-        if ( bottomDock != nullptr ) {
+    if (bottomDock != _dockItems[static_cast<std::size_t>(Dock::Bottom)].data()) {
+        if (bottomDock != nullptr) {
             configureDock(*bottomDock, Dock::Bottom);
             QQmlEngine::setObjectOwnership(bottomDock, QQmlEngine::CppOwnership);
         }
