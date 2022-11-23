@@ -2,7 +2,7 @@ name: Win64 build master
 
 on:
   push:
-    branches: [master, b/#175-msvc-build]
+    branches: [master develop]
   pull_request:
     branches: [master]
 
