@@ -17,23 +17,24 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.4.1'
+          version: '6.4.*'
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2019_64'
-          dir: '${{ github.workspace }}/example/'
+          dir: '${{ github.workspace }}/Qt/'
           install-deps: 'true'
           modules: 'qtcore qtgui qtquickcontrols2 core5compat'
           cache: 'false'
           cache-key-prefix: 'install-qt-action'
+          setup-python: 'false'
 
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+      
       - name: Run CMake
-        shell: bash
-        run: cmake
-        working-directory: ${{runner.workspace}}
- 
+        uses: lukka/run-cmake@v10
+         
       - name: Compiling Holograph
-        if: steps.hlg-build-cache.outputs.cache-hit != 'true'
         shell: cmd
         run: |
           echo "Calling vcvarsall.exe..."
