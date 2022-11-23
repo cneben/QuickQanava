@@ -30,13 +30,12 @@ jobs:
 
       - name: Install CMake
         uses: lukka/get-cmake@latest
+        
+      - uses: ilammy/msvc-dev-cmd@v1
       
-      - name: Run CMake
-        uses: lukka/run-cmake@v10
-        with:
-           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-           configurePreset: 'ninja-multi-vcpkg'
-           buildPreset: 'ninja-multi-vcpkg'
+      - name: Install dependencies and generate project files
+        run: |
+          cmake -S '${{ github.workspace }}/' -B '${{ github.workspace }}/Build' -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release 
          
       - name: Compiling Holograph
         shell: cmd
