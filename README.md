@@ -1,7 +1,7 @@
 # QuickQanava 
 
-![Build linux Qt5.12](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
-![Build win64 Qt6.2](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
+![Build linux Qt5.15](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
+![Build win64 Qt6.4](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
