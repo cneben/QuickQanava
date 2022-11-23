@@ -32,8 +32,7 @@
 // \date    2016 11 28
 //-----------------------------------------------------------------------------
 
-#ifndef qcmContainerConcept_h
-#define qcmContainerConcept_h
+#pragma once
 
 // Qt headers
 #include <QList>
@@ -57,11 +56,11 @@ namespace qcm { // ::qcm
  * Qt containers (QList, QVector, QSet) the number of removed is returned, for Std lib (std::vector, etc.)
  * it _always_ return -1.
  */
-template < template<typename...CArgs> class Container, typename T >
+template <template<typename...CArgs> class Container, typename T >
 struct adapter { };
 
-template < typename T >
-struct adapter< QList, T > {
+template <typename T>
+struct adapter<QList, T> {
     inline static void  reserve(QList<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
 
     inline static void  append(QList<T>& c, const T& t) { c.append(t); }
@@ -78,7 +77,7 @@ struct adapter< QList, T > {
     inline static int   indexOf(const QList<T>& c, const T& t) { return c.indexOf(t); }
 };
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0)) || defined(__clang__)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0)) || defined(__clang__) || defined(_MSC_VER)
 template <typename T>
 struct adapter<QVector, T> {
     inline static void  reserve(QVector<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
@@ -98,8 +97,8 @@ struct adapter<QVector, T> {
 };
 #endif
 
-template < typename T >
-struct adapter< QSet, T > {
+template <typename T>
+struct adapter<QSet, T> {
     inline static void  reserve(QSet<T>& c, std::size_t size) { c.reserve(static_cast<int>(size)); }
 
     inline static void  append(QSet<T>& c, const T& t)  { c.insert(t); }
@@ -149,6 +148,3 @@ struct adapter<std::vector, T> {
 };
 
 } // ::qcm
-
-#endif // qcmContainerConcept_h
-
