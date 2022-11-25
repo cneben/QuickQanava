@@ -45,4 +45,5 @@ jobs:
           echo "NMAKE..."
           set CL=/MP & rem "Enabling multi-threading (max. available)"
           nmake
+        shell: cmd
         working-directory: ${{runner.workspace}}/build
