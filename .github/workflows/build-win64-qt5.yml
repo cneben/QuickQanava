@@ -41,5 +41,8 @@ jobs:
         shell: bash
 
       - name: Build Project
-        run: nmake -j$(nproc)
+        run: | 
+          echo "NMAKE..."
+          set CL=/MP & rem "Enabling multi-threading (max. available)"
+          nmake
         working-directory: ${{runner.workspace}}/build
