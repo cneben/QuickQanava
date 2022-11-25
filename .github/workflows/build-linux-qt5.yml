@@ -1,8 +1,8 @@
-name: Linux build develop
+name: Linux Qt5 QMake g++
 
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
     
 jobs:
   test-build:

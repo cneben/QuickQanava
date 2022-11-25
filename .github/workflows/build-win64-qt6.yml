@@ -1,4 +1,4 @@
-name: Win64 build master
+name: Win64 Qt6 CMake msvc2019
 
 on:
   push:

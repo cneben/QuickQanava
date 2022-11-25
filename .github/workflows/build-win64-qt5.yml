@@ -1,8 +1,8 @@
-name: Linux build develop
+name: Win64 Qt5 QMake msvc2019
 
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
     
 jobs:
   test-build:
