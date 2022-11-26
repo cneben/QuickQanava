@@ -252,6 +252,7 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
                                            {_targetItem->width(), _targetItem->height()},
                                            _targetItem /* except _targetItem */);
         if (group != nullptr &&
+            !group->getLocked() &&
             group->getItem() != nullptr &&
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()))  { // Do not drop a group in itself
             group->itemProposeNodeDrop();
@@ -295,8 +296,9 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
         qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
         if (group != nullptr &&
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
-            if (group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
-                !group->getGroupItem()->getCollapsed()) {    // group item
+            if (group->getGroupItem() != nullptr &&             // Do not allow grouping a node in a collapsed
+                !group->getGroupItem()->getCollapsed() &&       // or locked group item
+                !group->getLocked() ) {
                 graph->groupNode(group, _target.data());
                 nodeGrouped = true;
             }
