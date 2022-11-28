@@ -262,13 +262,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
-    Roadmap
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -480,13 +473,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#roadmap" class="md-nav__link">
-    Roadmap
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -504,13 +490,14 @@
   <h1>QuickQanava</h1>
 
 <p><img alt="home" src="images/home.png" /></p>
-<p><a href="https://travis-ci.org/cneben/QuickQanava"><img alt="Build Status" src="https://travis-ci.org/cneben/QuickQanava.svg?branch=master" /></a>  (Linux/g++6/Qt5.12.1 - OSX/Clang/Qt5.12.1)</p>
-<p><a href="https://ci.appveyor.com/project/cneben/quickqanava"><img alt="Build status" src="https://ci.appveyor.com/api/projects/status/ghpiaqqew63er8ea?svg=true" /></a> (Windows MSVC 2015 x64/Qt5.10.1)</p>
+<p><img alt="Linux Qt5 g++ qmake" src="https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg" />  (Linux, g++, Qt5.15, qmake)
+<img alt="Win64 Qt5 msvc qmake" src="https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt5.yml/badge.svg" /> (Windows, msvc2019, Qt5.15, qmake)
+<img alt="Win64 Qt6 msvc CMake" src="https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg" /> (Windows, msvc2019, Qt6.4, CMake)</p>
 <p><a href="http://www.destrat.io/quickqanava/doc"><img alt="Documentation" src="https://img.shields.io/badge/docs-doxygen-blue.svg" /></a>
 <a href="https://opensource.org/licenses/BSD-3-Clause"><img alt="License" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" /></a>
 <a href="https://twitter.com/QuickQanava"><img alt="Twitter URL" src="https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&amp;label=Follow%20%40QuickQanava" /></a></p>
 <div class="admonition warning">
-<p class="admonition-title">QuickQanava is alpha, interface may change before 1.0.0 release, but QuickQanava is already used extensively in production code.</p>
+<p class="admonition-title">QuickQanava is still alpha, but QuickQanava is already used extensively in production code.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">QuickQanava is licensed under BSD-3, specific features or support is available on demand: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#98;&#101;&#110;&#111;&#105;&#116;&#64;&#100;&#101;&#115;&#116;&#114;&#97;&#116;&#46;&#105;&#111;">&#98;&#101;&#110;&#111;&#105;&#116;&#64;&#100;&#101;&#115;&#116;&#114;&#97;&#116;&#46;&#105;&#111;</a></p>
@@ -518,7 +505,7 @@
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <p><code>QuickQanava</code> is a C++14 library designed to display graphs and relational content in a QtQuick application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava does not provide advanced layout algorithms, but rather focus on displaying relational content in advanced dynamic user interfaces (with DnD support, resizable content, visual connection of nodes).</p>
 <p>QuickQanava main repository is hosted on GitHub: <a href="https://github.com/cneben/quickqanava">https://github.com/cneben/quickqanava</a></p>
-<p>QuickQanava is primarily developed with Qt &gt;= 5.13 with MSVC2015 and g++7. minimal required Qt version is <strong>Qt 5.10</strong>.</p>
+<p>QuickQanava is primarily developed on Linux and Qt 5.15. minimal required Qt version is <strong>Qt 5.10</strong>.</p>
 <ul>
 <li>Project homepage: <a href="http://cneben.github.io/QuickQanava/index.html">http://cneben.github.io/QuickQanava/index.html</a></li>
 </ul>
@@ -544,20 +531,6 @@
 </tbody>
 </table>
 <p><img alt="styles" src="samples/topology.png" /></p>
-<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>pre v2.0:</strong><ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Add full support for groups inside group (ie subgraphs).</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Update geometry creation interface and delegate management.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Rewrite CMake configuration, add install step, use QML plugins.</li>
-</ul>
-</li>
-<li><strong>v2.1.x:</strong><ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add support for direct visual dragging of port items.</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add "snap to grid" support.</li>
-</ul>
-</li>
-</ul>
 
               
             </article>
