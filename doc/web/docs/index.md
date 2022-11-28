@@ -8,7 +8,9 @@ weight: 0
 
 
 ![Linux Qt5 g++ qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg)  (Linux, g++, Qt5.15, qmake)
+
 ![Win64 Qt5 msvc qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt5.yml/badge.svg) (Windows, msvc2019, Qt5.15, qmake)
+
 ![Win64 Qt6 msvc CMake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) (Windows, msvc2019, Qt6.4, CMake)
 
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://www.destrat.io/quickqanava/doc)
