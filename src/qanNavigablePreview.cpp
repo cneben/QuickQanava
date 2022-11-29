@@ -32,9 +32,6 @@
 // \date	2017 06 02
 //-----------------------------------------------------------------------------
 
-// Qt headers
-// Nil
-
 // QuickQanava headers
 #include "./qanNavigablePreview.h"
 

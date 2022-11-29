@@ -134,28 +134,7 @@ Qan.AbstractNavigablePreview {
         if (!r)
             return
 
-        //if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
-        //    r.height < preview.source.height) {         // reset the preview window
-        //    r.width = preview.source.width
-        //    r.height = preview.source.height
-        //}
-        //if (r.width < 0.01 ||        // Do not update without a valid children rect
-        //    r.height < 0.01) {
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-        //if (r.width < r.width ||        // Reset the visible window is the whole containerItem content
-        //    r.height < r.height) {       // is smaller than graph view
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-        //if (r.width < preview.width && // If scene size is stricly inferior to preview size
-        //    r.height < preview.height) {         // reset the preview window
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-
-        // r is content rect
+        // r is content rect in scene Cs
         // viewR is window rect in content rect Cs
         // Window is viewR in preview Cs
 
@@ -184,6 +163,20 @@ Qan.AbstractNavigablePreview {
                                   viewWindow.height / preview.height),
                              source.zoom);
     }
+
+    // Map from preview Cs to graph Cs
+    function    mapFromPreview(p) {
+        if (!p)
+            return;
+        let r = sourcePreview.sourceRect
+        // preview window origin is (r.x, r.y)
+        var previewXRatio = preview.width / r.width
+        var previewYRatio = preview.height / r.height
+
+        return Qt.point((p.x / previewXRatio) + r.x,
+                        (p.y / previewYRatio) + r.y)
+    }
+
     Item {
         id: overlayItem
         anchors.fill: parent; anchors.margins: 0
@@ -195,27 +188,32 @@ Qan.AbstractNavigablePreview {
         antialiasing: true
         border.color: viewWindowColor
         border.width: 2
-    }
-    // Not active on 20201027
-    /*MouseArea {
-        id: viewWindowDragger
-        anchors.fill: parent
-        drag.onActiveChanged: {
-            console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y );
-            if ( source ) {
+        // Not active on 20201027
+        MouseArea {
+            id: viewWindowDragger
+            anchors.fill: parent
+            drag.onActiveChanged: {
+                console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y );
+                // Convert viewWindow coordinate to source graph view CCS
+                if (source) {
+                    let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
+                    source.centerOnPosition(sceneP)
+                }
             }
+            drag.target: viewWindow
+            //drag.threshold: 1.
+            // Do not allow dragging outside preview area
+            drag.minimumX: 0
+            //drag.maximumX: Math.max(0, preview.width - viewWindow.width)
+            drag.minimumY: 0
+            //drag.maximumY: Math.max(0, preview.height - viewWindow.height)
+            acceptedButtons: Qt.LeftButton/* | Qt.RightButton*/
+            //hoverEnabled: true
+            enabled: true
+            /*onReleased: {
+            }
+            onPressed : {
+            }*/
         }
-        drag.target: viewWindow
-        drag.threshold: 1.      // Note 20170311: Avoid a nasty delay between mouse position and dragged item position
-        // Do not allow dragging outside preview area
-        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - viewWindow.width)
-        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - viewWindow.height)
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        hoverEnabled: true
-        enabled: true
-        onReleased: {
-        }
-        onPressed : {
-        }
-    }*/
+    }  // Rectangle: viewWindow
 }  // Qan.AbstractNavigablePreview: preview
