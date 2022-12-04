@@ -185,6 +185,7 @@ Qan.AbstractNavigablePreview {
     }
     Rectangle {
         id: viewWindow
+        z: 1
         color: Qt.rgba(0, 0, 0, 0)
         smooth: true
         antialiasing: true
@@ -193,18 +194,16 @@ Qan.AbstractNavigablePreview {
         onXChanged: viewWindowDragged()
         onYChanged: viewWindowDragged()
         function viewWindowDragged() {
-            console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y )
-            console.debug('pressedButtons=' + viewWindowDragger.pressedButtons)
-            if (viewWindowDragger.pressedButtons & Qt.LeftButton ||
-                viewWindowDragger.active) {
+            if (source &&
+                (viewWindowController.pressedButtons & Qt.LeftButton ||
+                 viewWindowController.active)) {
                 // Convert viewWindow coordinate to source graph view CCS
                 let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
                 source.centerOnPosition(sceneP)
             }
         }
-        // Not active on 20201027
-        MouseArea {
-            id: viewWindowDragger
+        MouseArea { // Manage dragging of "view window"
+            id: viewWindowController
             anchors.fill: parent
             drag.target: viewWindow
             drag.threshold: 1.
@@ -217,4 +216,25 @@ Qan.AbstractNavigablePreview {
             cursorShape: Qt.SizeAllCursor
         }
     }  // Rectangle: viewWindow
+    MouseArea {  // Manage move on click and zoom on double click
+        id: navigationController
+        anchors.fill: parent
+        z: 0
+        acceptedButtons: Qt.LeftButton
+        enabled: true
+        cursorShape: Qt.CrossCursor
+        onClicked: {
+            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
+            source.centerOnPosition(sceneP)
+            mouse.accepted = true
+            updatePreview()
+        }
+        onDoubleClicked: {
+            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
+            source.setZoom(1.0)
+            source.centerOnPosition(sceneP)
+            mouse.accepted = true
+            updatePreview()
+        }
+    }
 }  // Qan.AbstractNavigablePreview: preview
