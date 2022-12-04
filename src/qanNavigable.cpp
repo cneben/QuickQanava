@@ -32,9 +32,6 @@
 // \date	2015 07 19
 //-----------------------------------------------------------------------------
 
-// Qt headers
-// Nil
-
 // QuickQanava headers
 #include "./qanNavigable.h"
 
@@ -110,7 +107,6 @@ void    Navigable::centerOnPosition(QPointF position)
     // ALGORITHM:
         //  1. Compute a translation vector to move from current view center to the target position.
         //     Take the zoom into account to scale the translation.
-
     if (_containerItem == nullptr)
         return;
 
@@ -186,15 +182,15 @@ void    Navigable::zoomOn(QPointF center, qreal zoom)
 {
     // Get center coordinates in container CS, it is our
     // zoom application point
-    qreal containerCenterX = center.x() - _containerItem->x();
-    qreal containerCenterY = center.y() - _containerItem->y();
-    qreal lastZoom = _zoom;
+    const qreal containerCenterX = center.x() - _containerItem->x();
+    const qreal containerCenterY = center.y() - _containerItem->y();
+    const qreal lastZoom = _zoom;
 
     // Don't apply modification if new zoom is not valid (probably because it is not in zoomMin, zoomMax range)
-    if ( isValidZoom( zoom ) ) {
+    if (isValidZoom(zoom)) {
         // Get center coordinate in container CS with the new zoom
-        qreal oldZoomX = containerCenterX * ( zoom / lastZoom );
-        qreal oldZoomY = containerCenterY * ( zoom / lastZoom );
+        qreal oldZoomX = containerCenterX * (zoom / lastZoom);
+        qreal oldZoomY = containerCenterY * (zoom / lastZoom);
 
         // Compute a container position correction to have a fixed "zoom
         // application point"
@@ -202,9 +198,9 @@ void    Navigable::zoomOn(QPointF center, qreal zoom)
         qreal zoomCorrectionY = containerCenterY - oldZoomY;
 
         // Correct container position and set the appropriate scaling
-        _containerItem->setX( _containerItem->x() + zoomCorrectionX );
-        _containerItem->setY( _containerItem->y() + zoomCorrectionY );
-        _containerItem->setScale( zoom );
+        _containerItem->setX(_containerItem->x() + zoomCorrectionX);
+        _containerItem->setY(_containerItem->y() + zoomCorrectionY);
+        _containerItem->setScale(zoom);
         _zoom = zoom;
         _zoomModified = true;
         _panModified = true;
@@ -228,7 +224,7 @@ bool    Navigable::isValidZoom(qreal zoom) const
 
 void    Navigable::setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin)
 {
-    if ( zoomOrigin != _zoomOrigin ) {
+    if (zoomOrigin != _zoomOrigin) {
         _zoomOrigin = zoomOrigin;
         emit zoomOriginChanged();
     }
@@ -244,9 +240,9 @@ void    Navigable::setZoomMax(qreal zoomMax)
 
 void    Navigable::setZoomMin(qreal zoomMin)
 {
-    if ( qFuzzyCompare( 1. + zoomMin - _zoomMin, 1.0 ) )
+    if (qFuzzyCompare(1. + zoomMin - _zoomMin, 1.0))
         return;
-    if ( zoomMin < 0.01 )
+    if (zoomMin < 0.01)
         return;
     _zoomMin = zoomMin;
     emit zoomMinChanged();
@@ -268,35 +264,35 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
 {
     if (getNavigable()) {
         // Apply fitContentInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
-        if ( _autoFitMode == AutoFit &&
-             ( !_panModified || !_zoomModified ) ) {
+        if (_autoFitMode == AutoFit &&
+            (!_panModified || !_zoomModified)) {
             fitContentInView();
         }
         // In AutoFit mode, try centering the content when the view is resized and the content
         // size is less than the view size (it is no fitting but centering...)
-        if ( _autoFitMode == AutoFit ) {
+        if (_autoFitMode == AutoFit) {
             bool centerWidth = false;
             bool centerHeight = false;
             // Container item children Br mapped in root CS.
-            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect( ) );
-            if ( newGeometry.contains( contentBr ) ) {
+            const QRectF contentBr = mapRectFromItem(_containerItem, _containerItem->childrenRect());
+            if (newGeometry.contains(contentBr)) {
                 centerWidth = true;
                 centerHeight = true;
             } else {
-                if ( contentBr.top() > newGeometry.top() &&
-                     contentBr.bottom() < newGeometry.bottom() )
+                if (contentBr.top() > newGeometry.top() &&
+                    contentBr.bottom() < newGeometry.bottom())
                     centerHeight = true;
-                if ( contentBr.left() > newGeometry.left() &&
-                     contentBr.right() < newGeometry.right() )
+                if (contentBr.left() > newGeometry.left() &&
+                    contentBr.right() < newGeometry.right())
                     centerWidth = true;
             }
             if (centerWidth) {
-                qreal cx = ( newGeometry.width() - contentBr.width() ) / 2.;
-                _containerItem->setX( cx );
+                const qreal cx = (newGeometry.width() - contentBr.width()) / 2.;
+                _containerItem->setX(cx);
             }
             if (centerHeight) {
-                qreal cy = ( newGeometry.height() - contentBr.height() ) / 2.;
-                _containerItem->setY( cy );
+                const qreal cy = (newGeometry.height() - contentBr.height()) / 2.;
+                _containerItem->setY(cy);
             }
         }
 
@@ -308,21 +304,21 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
             bool anchorLeft = false;
 
             // Container item children Br mapped in root CS.
-            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect() );
-            if ( contentBr.width() > newGeometry.width() &&
-                 contentBr.right() < newGeometry.right() ) {
+            const QRectF contentBr = mapRectFromItem(_containerItem, _containerItem->childrenRect());
+            if (contentBr.width() > newGeometry.width() &&
+                contentBr.right() < newGeometry.right()) {
                 anchorRight = true;
             }
-            if ( contentBr.width() > newGeometry.width() &&
-                 contentBr.left() > newGeometry.left() ) {
+            if (contentBr.width() > newGeometry.width() &&
+                contentBr.left() > newGeometry.left()) {
                 anchorLeft = true;
             }
-            if ( anchorRight ) {
-                qreal xd = newGeometry.right() - contentBr.right();
-                _containerItem->setX( _containerItem->x() + xd );
-            } else if ( anchorLeft ) {  // Right anchoring has priority over left anchoring...
-                qreal xd = newGeometry.left( ) - contentBr.left( );
-                _containerItem->setX( _containerItem->x() + xd );
+            if (anchorRight) {
+                const qreal xd = newGeometry.right() - contentBr.right();
+                _containerItem->setX(_containerItem->x() + xd);
+            } else if (anchorLeft) {  // Right anchoring has priority over left anchoring...
+                const qreal xd = newGeometry.left() - contentBr.left();
+                _containerItem->setX(_containerItem->x() + xd);
             }
         }
 
@@ -408,7 +404,7 @@ void    Navigable::mousePressEvent(QMouseEvent* event)
     event->ignore();
 }
 
-void    Navigable::mouseReleaseEvent( QMouseEvent* event )
+void    Navigable::mouseReleaseEvent(QMouseEvent* event)
 {
     if (getNavigable()) {
         if (event->button() == Qt::LeftButton &&
@@ -479,10 +475,10 @@ void    Navigable::selectionRectEnd() { }
 /* Grid Management *///--------------------------------------------------------
 void    Navigable::setGrid(qan::Grid* grid) noexcept
 {
-    if ( grid != _grid ) {
-        if ( _grid ) {                    // Hide previous grid
-            disconnect(_grid, nullptr,
-                       this, nullptr);  // Disconnect every update signals from grid to this navigable
+    if (grid != _grid) {
+        if (_grid) {                        // Hide previous grid
+            disconnect(_grid,   nullptr,
+                       this,    nullptr);   // Disconnect every update signals from grid to this navigable
         }
         _grid = grid;                       // Configure new grid
         if (_grid) {
@@ -502,13 +498,13 @@ void    Navigable::setGrid(qan::Grid* grid) noexcept
 
 void    Navigable::updateGrid() noexcept
 {
-    if ( _grid &&
-         _containerItem != nullptr ) {
+    if (_grid &&
+        _containerItem != nullptr) {
         // Generate a view rect to update grid
-        QRectF viewRect{ _containerItem->mapFromItem(this, {0.,0.}),
-                         _containerItem->mapFromItem(this, {width(), height()}) };
+        QRectF viewRect{_containerItem->mapFromItem(this, {0.,0.}),
+                        _containerItem->mapFromItem(this, {width(), height()})};
         if (!viewRect.isEmpty())
-            _grid->updateGrid(viewRect, *_containerItem, *this );
+            _grid->updateGrid(viewRect, *_containerItem, *this);
     }
 }
 //-----------------------------------------------------------------------------
