@@ -175,8 +175,8 @@ Qan.AbstractNavigablePreview {
         let r = sourcePreview.sourceRect
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
-        return Qt.point(p.x / previewXRatio,
-                        p.y / previewYRatio)
+        return Qt.point(p.x / previewXRatio / source.zoom,
+                        p.y / previewYRatio / source.zoom)
     }
 
     Item {
@@ -223,16 +223,33 @@ Qan.AbstractNavigablePreview {
         acceptedButtons: Qt.LeftButton
         enabled: true
         cursorShape: Qt.CrossCursor
+        // Note 20221204: Hack for onClicked/onDoubleClicked(), see:
+        // https://forum.qt.io/topic/103829/providing-precedence-for-ondoubleclicked-over-onclicked-in-qml/2
+        // onClicked trigger a centerOnPosition(), hidding this mouse area
+        // with viewWindow, thus not triggering any double click
+        Timer {
+            id: timer
+            interval: 100
+            running: false
+            property point p: Qt.point(0, 0)
+            onTriggered: {
+                let sceneP = mapFromPreview(Qt.point(p.x - (preview.width / 2.),
+                                                     p.y - (preview.height / 2.)))
+                source.centerOnPosition(sceneP)
+                updatePreview()
+            }
+        }
         onClicked: {
-            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
-            source.centerOnPosition(sceneP)
+            timer.p = Qt.point(mouse.x, mouse.y)
+            timer.start()
             mouse.accepted = true
-            updatePreview()
         }
         onDoubleClicked: {
-            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
-            source.setZoom(1.0)
+            timer.stop()
+            let sceneP = mapFromPreview(Qt.point(mouse.x - (preview.width / 2.),
+                                                 mouse.y - (preview.height / 2.)))
             source.centerOnPosition(sceneP)
+            source.zoom = 1.0
             mouse.accepted = true
             updatePreview()
         }
