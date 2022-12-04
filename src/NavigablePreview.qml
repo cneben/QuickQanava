@@ -190,32 +190,31 @@ Qan.AbstractNavigablePreview {
         antialiasing: true
         border.color: viewWindowColor
         border.width: 2
+        onXChanged: viewWindowDragged()
+        onYChanged: viewWindowDragged()
+        function viewWindowDragged() {
+            console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y )
+            console.debug('pressedButtons=' + viewWindowDragger.pressedButtons)
+            if (viewWindowDragger.pressedButtons & Qt.LeftButton ||
+                viewWindowDragger.active) {
+                // Convert viewWindow coordinate to source graph view CCS
+                let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
+                source.centerOnPosition(sceneP)
+            }
+        }
         // Not active on 20201027
         MouseArea {
             id: viewWindowDragger
             anchors.fill: parent
-            drag.onActiveChanged: {
-                console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y );
-                // Convert viewWindow coordinate to source graph view CCS
-                if (source) {
-                    let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
-                    source.centerOnPosition(sceneP)
-                }
-            }
             drag.target: viewWindow
-            //drag.threshold: 1.
-            // Do not allow dragging outside preview area
-            drag.minimumX: 0
-            //drag.maximumX: Math.max(0, preview.width - viewWindow.width)
+            drag.threshold: 1.
+            drag.minimumX: 0    // Do not allow dragging outside preview area
             drag.minimumY: 0
+            //drag.maximumX: Math.max(0, preview.width - viewWindow.width)
             //drag.maximumY: Math.max(0, preview.height - viewWindow.height)
-            acceptedButtons: Qt.LeftButton/* | Qt.RightButton*/
-            //hoverEnabled: true
+            acceptedButtons: Qt.LeftButton
             enabled: true
-            /*onReleased: {
-            }
-            onPressed : {
-            }*/
+            cursorShape: Qt.SizeAllCursor
         }
     }  // Rectangle: viewWindow
 }  // Qan.AbstractNavigablePreview: preview
