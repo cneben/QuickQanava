@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 20221204 v2.2.0:
+- #161: Add graph dynamic graph preview (move, center on, zoom on).
+
 ## 20221011 v2.2.0:
 - #169: Create qan::RightResizer and qan::BottomResizer.
 - By default, nodes and groups are resizable from their right and bottom borders.
