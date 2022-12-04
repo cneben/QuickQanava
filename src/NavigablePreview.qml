@@ -60,8 +60,8 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onWidthChanged.connect(updatePreview)
             source.containerItem.onHeightChanged.connect(updatePreview)
             source.containerItem.onScaleChanged.connect(updatePreview)
-            source.containerItem.onXChanged.connect(updatePreview)
-            source.containerItem.onYChanged.connect(updatePreview)
+            //source.containerItem.onXChanged.connect(updatePreview)
+            //source.containerItem.onYChanged.connect(updatePreview)
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
@@ -169,12 +169,13 @@ Qan.AbstractNavigablePreview {
         if (!p)
             return;
         let r = sourcePreview.sourceRect
+
         // preview window origin is (r.x, r.y)
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
 
-        return Qt.point((p.x / previewXRatio) + r.x,
-                        (p.y / previewYRatio) + r.y)
+        return Qt.point(/*r.x + */(p.x / previewXRatio),
+                        /*r.y + */(p.y / previewYRatio))
     }
 
     Item {
