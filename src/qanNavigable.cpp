@@ -308,21 +308,21 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
             bool anchorLeft = false;
 
             // Container item children Br mapped in root CS.
-            QRectF contentBr = mapRectFromItem( _containerItem, _containerItem->childrenRect() );
-            if ( contentBr.width() > newGeometry.width() &&
-                 contentBr.right() < newGeometry.right() ) {
+            const QRectF contentBr = mapRectFromItem(_containerItem, _containerItem->childrenRect());
+            if (contentBr.width() > newGeometry.width() &&
+                contentBr.right() < newGeometry.right()) {
                 anchorRight = true;
             }
-            if ( contentBr.width() > newGeometry.width() &&
-                 contentBr.left() > newGeometry.left() ) {
+            if (contentBr.width() > newGeometry.width() &&
+                contentBr.left() > newGeometry.left()) {
                 anchorLeft = true;
             }
-            if ( anchorRight ) {
-                qreal xd = newGeometry.right() - contentBr.right();
-                _containerItem->setX( _containerItem->x() + xd );
-            } else if ( anchorLeft ) {  // Right anchoring has priority over left anchoring...
-                qreal xd = newGeometry.left( ) - contentBr.left( );
-                _containerItem->setX( _containerItem->x() + xd );
+            if (anchorRight) {
+                const qreal xd = newGeometry.right() - contentBr.right();
+                _containerItem->setX(_containerItem->x() + xd);
+            } else if (anchorLeft) {  // Right anchoring has priority over left anchoring...
+                const qreal xd = newGeometry.left() - contentBr.left();
+                _containerItem->setX(_containerItem->x() + xd);
             }
         }
 

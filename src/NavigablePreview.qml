@@ -60,9 +60,12 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onWidthChanged.connect(updatePreview)
             source.containerItem.onHeightChanged.connect(updatePreview)
             source.containerItem.onScaleChanged.connect(updatePreview)
-            //source.containerItem.onXChanged.connect(updatePreview)
-            //source.containerItem.onYChanged.connect(updatePreview)
+            // Note 20221204: Do not connect on containerItem on(X/Y)Changed(),
+            // wait for user initiated onContainerItemModified since dragging
+            // view window also modify container x/y
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
+            // Emitted only on user initiaited navitable view changes.
+            source.containerItemModified.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
         } else
@@ -168,14 +171,12 @@ Qan.AbstractNavigablePreview {
     function    mapFromPreview(p) {
         if (!p)
             return;
-        let r = sourcePreview.sourceRect
-
         // preview window origin is (r.x, r.y)
+        let r = sourcePreview.sourceRect
         var previewXRatio = preview.width / r.width
         var previewYRatio = preview.height / r.height
-
-        return Qt.point(/*r.x + */(p.x / previewXRatio),
-                        /*r.y + */(p.y / previewYRatio))
+        return Qt.point(p.x / previewXRatio,
+                        p.y / previewYRatio)
     }
 
     Item {
