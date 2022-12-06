@@ -110,12 +110,21 @@ void    Navigable::centerOnPosition(QPointF position)
     if (_containerItem == nullptr)
         return;
 
-    QPointF navigableCenter{width() / 2., height() / 2.};
-    QPointF navigableCenterContainerCs = mapToItem(_containerItem, navigableCenter);
-    QPointF translation{navigableCenterContainerCs - position};
+    const QPointF navigableCenter{width() / 2., height() / 2.};
+    const QPointF navigableCenterContainerCs = mapToItem(_containerItem, navigableCenter);
+    const QPointF translation{navigableCenterContainerCs - position};
 
     const qreal zoom = _containerItem->scale();
     _containerItem->setPosition(_containerItem->position() + (translation * zoom));
+    updateGrid();
+}
+
+void    Navigable::moveTo(QPointF position)
+{
+    if (_containerItem == nullptr)
+        return;
+    const qreal zoom = _containerItem->scale();
+    _containerItem->setPosition(-position * zoom);
     updateGrid();
 }
 

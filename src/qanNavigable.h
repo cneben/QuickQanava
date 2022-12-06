@@ -156,6 +156,9 @@ public:
     //! Center the view on a given position
     Q_INVOKABLE void    centerOnPosition(QPointF position);
 
+    //! Move to \c position (position will be be at top left corner).
+    Q_INVOKABLE void    moveTo(QPointF position);
+
     /*! Fit the area content (\c containerItem children) in view and update current zoom level.
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.

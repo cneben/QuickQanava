@@ -173,10 +173,11 @@ Qan.AbstractNavigablePreview {
             return;
         // preview window origin is (r.x, r.y)
         let r = sourcePreview.sourceRect
-        var previewXRatio = preview.width / r.width
-        var previewYRatio = preview.height / r.height
-        return Qt.point(p.x / previewXRatio / source.zoom,
-                        p.y / previewYRatio / source.zoom)
+        var previewXRatio = r.width / preview.width
+        var previewYRatio = r.height / preview.height
+        let sourceP = Qt.point((p.x * previewXRatio) + r.x,
+                               (p.y * previewYRatio) + r.y)
+        return sourceP
     }
 
     Item {
@@ -199,7 +200,7 @@ Qan.AbstractNavigablePreview {
                  viewWindowController.active)) {
                 // Convert viewWindow coordinate to source graph view CCS
                 let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
-                source.centerOnPosition(sceneP)
+                source.moveTo(sceneP)
             }
         }
         MouseArea { // Manage dragging of "view window"
@@ -233,8 +234,7 @@ Qan.AbstractNavigablePreview {
             running: false
             property point p: Qt.point(0, 0)
             onTriggered: {
-                let sceneP = mapFromPreview(Qt.point(p.x - (preview.width / 2.),
-                                                     p.y - (preview.height / 2.)))
+                let sceneP = mapFromPreview(Qt.point(p.x, p.y))
                 source.centerOnPosition(sceneP)
                 updatePreview()
             }
@@ -246,8 +246,7 @@ Qan.AbstractNavigablePreview {
         }
         onDoubleClicked: {
             timer.stop()
-            let sceneP = mapFromPreview(Qt.point(mouse.x - (preview.width / 2.),
-                                                 mouse.y - (preview.height / 2.)))
+            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
             source.centerOnPosition(sceneP)
             source.zoom = 1.0
             mouse.accepted = true
