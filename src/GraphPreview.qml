@@ -38,7 +38,7 @@ Control {
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
-    height: 113
+    height: 135
 
     //! Source Qan.GraphView that should be previewed.
     property var    source: undefined
