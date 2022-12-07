@@ -210,8 +210,8 @@ Qan.AbstractNavigablePreview {
             drag.threshold: 1.
             drag.minimumX: 0    // Do not allow dragging outside preview area
             drag.minimumY: 0
-            //drag.maximumX: Math.max(0, preview.width - viewWindow.width)
-            //drag.maximumY: Math.max(0, preview.height - viewWindow.height)
+            drag.maximumX: Math.max(0, preview.width - viewWindow.width)
+            drag.maximumY: Math.max(0, preview.height - viewWindow.height)
             acceptedButtons: Qt.LeftButton
             enabled: true
             cursorShape: Qt.SizeAllCursor
