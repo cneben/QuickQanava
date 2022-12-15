@@ -1078,6 +1078,7 @@ void    Graph::setSelectionPolicy(SelectionPolicy selectionPolicy)
 auto    Graph::setMultipleSelectionEnabled(bool multipleSelectionEnabled) -> bool
 {
     if (multipleSelectionEnabled != _multipleSelectionEnabled) {
+        _multipleSelectionEnabled = multipleSelectionEnabled;
         if (multipleSelectionEnabled == false)
             clearSelection();
         emit multipleSelectionEnabledChanged();
@@ -1160,6 +1161,8 @@ bool    selectPrimitive(Primitive_t& primitive,
         }
     }
     if (primitiveSelected) {
+        if (!graph.getMultipleSelectionEnabled())
+            graph.clearSelection();
         graph.addToSelection(primitive);
         return true;
     }

@@ -175,6 +175,11 @@ ApplicationWindow {
                             }
                         }
                     }
+                    Switch {
+                        text: "Multiple selection enabled"
+                        checked: topology.multipleSelectionEnabled
+                        onClicked: topology.multipleSelectionEnabled = checked
+                    }
                     RowLayout {
                         Layout.margins: 2
                         Label { text:"Policy:" }
