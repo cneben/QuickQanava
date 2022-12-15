@@ -1065,7 +1065,7 @@ bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transfo
 
 
 /* Selection Management *///---------------------------------------------------
-void    Graph::setSelectionPolicy(SelectionPolicy selectionPolicy) noexcept
+void    Graph::setSelectionPolicy(SelectionPolicy selectionPolicy)
 {
     if (selectionPolicy == _selectionPolicy)  // Binding loop protection
         return;
@@ -1073,6 +1073,17 @@ void    Graph::setSelectionPolicy(SelectionPolicy selectionPolicy) noexcept
     if (selectionPolicy == SelectionPolicy::NoSelection)
         clearSelection();
     emit selectionPolicyChanged();
+}
+
+auto    Graph::setMultipleSelectionEnabled(bool multipleSelectionEnabled) -> bool
+{
+    if (multipleSelectionEnabled != _multipleSelectionEnabled) {
+        if (multipleSelectionEnabled == false)
+            clearSelection();
+        emit multipleSelectionEnabledChanged();
+        return true;
+    }
+    return false;
 }
 
 void    Graph::setSelectionColor(QColor selectionColor) noexcept

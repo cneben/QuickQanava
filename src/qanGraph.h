@@ -613,7 +613,11 @@ public:
      * \li \c SelectOnClick (default): Node is selected when clicked, multiple selection is allowed with CTRL.
      * \li \c SelectOnCtrlClick: Node is selected only when CTRL is pressed, multiple selection is allowed with CTRL.
      */
-    enum SelectionPolicy { NoSelection, SelectOnClick, SelectOnCtrlClick };
+    enum class SelectionPolicy : int {
+        NoSelection         = 1,
+        SelectOnClick       = 2,
+        SelectOnCtrlClick   = 4
+    };
     Q_ENUM(SelectionPolicy)
 
 public:
@@ -622,12 +626,25 @@ public:
      * \warning setting NoSeleciton will clear the actual \c selectedNodes model.
      */
     Q_PROPERTY(SelectionPolicy selectionPolicy READ getSelectionPolicy WRITE setSelectionPolicy NOTIFY selectionPolicyChanged FINAL)
-    void                    setSelectionPolicy(SelectionPolicy selectionPolicy) noexcept;
-    inline SelectionPolicy  getSelectionPolicy() const noexcept { return _selectionPolicy; }
+    void                    setSelectionPolicy(SelectionPolicy selectionPolicy);
+    SelectionPolicy         getSelectionPolicy() const { return _selectionPolicy; }
 private:
     SelectionPolicy         _selectionPolicy = SelectionPolicy::SelectOnClick;
 signals:
     void                    selectionPolicyChanged();
+
+public:
+    /*! \brief Enable mutliple selection (default to true ie multiple selection with CTRL is enabled).
+     *
+     * \warning setting \c multipleSelectionEnabled to \c false will clear the actual \c selectedNodes model.
+     */
+    Q_PROPERTY(bool multipleSelectionEnabled READ getMultipleSelectionEnabled WRITE setMultipleSelectionEnabled NOTIFY multipleSelectionEnabledChanged FINAL)
+    auto                setMultipleSelectionEnabled(bool multipleSelectionEnabled) -> bool;
+    auto                getMultipleSelectionEnabled() const -> bool { return _multipleSelectionEnabled; }
+private:
+    bool                _multipleSelectionEnabled = true;
+signals:
+    void                multipleSelectionEnabledChanged();
 
 
 public:
