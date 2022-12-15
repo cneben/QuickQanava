@@ -264,32 +264,32 @@ void    Graph::setConnectorSource(qan::Node* sourceNode) noexcept
     }
 }
 
-void    Graph::setConnectorEdgeColor( QColor connectorEdgeColor ) noexcept
+void    Graph::setConnectorEdgeColor(QColor connectorEdgeColor) noexcept
 {
-    if ( connectorEdgeColor != _connectorEdgeColor ) {
+    if (connectorEdgeColor != _connectorEdgeColor) {
         _connectorEdgeColor = connectorEdgeColor;
-        if ( _connector )
-            _connector->setProperty( "edgeColor", connectorEdgeColor );
+        if (_connector)
+            _connector->setProperty("edgeColor", connectorEdgeColor);
         emit connectorEdgeColorChanged();
     }
 }
 
-void    Graph::setConnectorColor( QColor connectorColor ) noexcept
+void    Graph::setConnectorColor(QColor connectorColor) noexcept
 {
-    if ( connectorColor != _connectorColor ) {
+    if (connectorColor != _connectorColor) {
         _connectorColor = connectorColor;
-        if ( _connector )
-            _connector->setProperty( "connectorColor", connectorColor );
+        if (_connector)
+            _connector->setProperty("connectorColor", connectorColor);
         emit connectorColorChanged();
     }
 }
 
-void    Graph::setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) noexcept
+void    Graph::setConnectorCreateDefaultEdge(bool connectorCreateDefaultEdge) noexcept
 {
-    if ( connectorCreateDefaultEdge != _connectorCreateDefaultEdge ) {
+    if (connectorCreateDefaultEdge != _connectorCreateDefaultEdge) {
         _connectorCreateDefaultEdge = connectorCreateDefaultEdge;
-        if ( _connector )
-            _connector->setProperty( "createDefaultEdge", connectorCreateDefaultEdge );
+        if (_connector)
+            _connector->setProperty("createDefaultEdge", connectorCreateDefaultEdge);
         emit connectorCreateDefaultEdgeChanged();
     }
 }
@@ -344,8 +344,8 @@ void    Graph::setEdgeDelegate(QQmlComponent* edgeDelegate) noexcept
 
 void    Graph::setEdgeDelegate(std::unique_ptr<QQmlComponent> edgeDelegate) noexcept
 {
-    if ( edgeDelegate &&
-         edgeDelegate != _edgeDelegate ) {
+    if (edgeDelegate &&
+        edgeDelegate != _edgeDelegate) {
         _edgeDelegate = std::move(edgeDelegate);
         emit edgeDelegateChanged();
     }
@@ -353,10 +353,10 @@ void    Graph::setEdgeDelegate(std::unique_ptr<QQmlComponent> edgeDelegate) noex
 
 void    Graph::setGroupDelegate(QQmlComponent* groupDelegate) noexcept
 {
-    if ( groupDelegate != nullptr ) {
-        if ( groupDelegate != _groupDelegate.get() ) {
+    if (groupDelegate != nullptr) {
+        if (groupDelegate != _groupDelegate.get()) {
             _groupDelegate.reset(groupDelegate);
-            QQmlEngine::setObjectOwnership( groupDelegate, QQmlEngine::CppOwnership );
+            QQmlEngine::setObjectOwnership(groupDelegate, QQmlEngine::CppOwnership);
             emit groupDelegateChanged();
         }
     }
