@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 20221215 v2.2.0:
+- #183: Add a `multipleSelectionEnabled` property to `qan::Graph` to enable or disable multiple selection.
+
 ## 20221204 v2.2.0:
 - #161: Add graph dynamic graph preview (move, center on, zoom on).
 
