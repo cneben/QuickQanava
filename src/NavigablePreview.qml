@@ -157,8 +157,9 @@ Qan.AbstractNavigablePreview {
         viewWindow.visible = true
         viewWindow.x = (previewXRatio * (viewR.x - r.x)) + border
         viewWindow.y = (previewYRatio * (viewR.y - r.y)) + border
-        viewWindow.width = (previewXRatio * viewR.width) - border2
-        viewWindow.height = (previewYRatio * viewR.height) - border2
+        // Set a minimum view window size to avoid users beeing lost in large graphs
+        viewWindow.width = Math.max(12, (previewXRatio * viewR.width) - border2)
+        viewWindow.height = Math.max(9, (previewYRatio * viewR.height) - border2)
 
         visibleWindowChanged(Qt.rect(viewWindow.x / preview.width,
                                   viewWindow.y / preview.height,
@@ -215,6 +216,35 @@ Qan.AbstractNavigablePreview {
             acceptedButtons: Qt.LeftButton
             enabled: true
             cursorShape: Qt.SizeAllCursor
+            // Note 20221221: Surprisingly, onClicked and onDoubleClicked are activated without interferences
+            // while dragging is enabled. Activate zoom on click and double click just as in navigation controller,
+            // usefull when scene is fully de-zommed and view window take the full control space.
+            Timer {  // See Note 20221204
+                id: viewWindowTimer
+                interval: 100
+                running: false
+                property point p: Qt.point(0, 0)
+                onTriggered: {
+                    let sceneP = mapFromPreview(Qt.point(p.x, p.y))
+                    source.centerOnPosition(sceneP)
+                    updatePreview()
+                }
+            }
+            onClicked: {
+                let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
+                viewWindowTimer.p = p
+                viewWindowTimer.start()
+                mouse.accepted = true
+            }
+            onDoubleClicked: {
+                viewWindowTimer.stop()
+                let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
+                let sceneP = mapFromPreview(p)
+                source.centerOnPosition(sceneP)
+                source.zoom = 1.0
+                mouse.accepted = true
+                updatePreview()
+            }
         }
     }  // Rectangle: viewWindow
     MouseArea {  // Manage move on click and zoom on double click
