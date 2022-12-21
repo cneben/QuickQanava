@@ -215,6 +215,25 @@ Qan.AbstractNavigablePreview {
             acceptedButtons: Qt.LeftButton
             enabled: true
             cursorShape: Qt.SizeAllCursor
+            // Note 20221221: Surprisingly, onClicked and onDoubleClicked are activated without interferences
+            // while dragging is enabled. Activate zoom on click and double click just as in navigation controller,
+            // usefull when scene is fully de-zommed and view window take the full control space.
+            onClicked: {
+                console.error('on clicked')
+                let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
+                let sceneP = mapFromPreview(Qt.point(p.x, p.y))
+                source.centerOnPosition(sceneP)
+                mouse.accepted = true
+                updatePreview()
+            }
+            onDoubleClicked: {
+                console.error('on double clicked')
+                let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
+                source.centerOnPosition(sceneP)
+                source.zoom = 1.0
+                mouse.accepted = true
+                updatePreview()
+            }
         }
     }  // Rectangle: viewWindow
     MouseArea {  // Manage move on click and zoom on double click
