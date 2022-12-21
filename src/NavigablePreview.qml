@@ -157,8 +157,9 @@ Qan.AbstractNavigablePreview {
         viewWindow.visible = true
         viewWindow.x = (previewXRatio * (viewR.x - r.x)) + border
         viewWindow.y = (previewYRatio * (viewR.y - r.y)) + border
-        viewWindow.width = (previewXRatio * viewR.width) - border2
-        viewWindow.height = (previewYRatio * viewR.height) - border2
+        // Set a minimum view window size to avoid users beeing lost in large graphs
+        viewWindow.width = Math.max(12, (previewXRatio * viewR.width) - border2)
+        viewWindow.height = Math.max(9, (previewYRatio * viewR.height) - border2)
 
         visibleWindowChanged(Qt.rect(viewWindow.x / preview.width,
                                   viewWindow.y / preview.height,
@@ -230,14 +231,12 @@ Qan.AbstractNavigablePreview {
                 }
             }
             onClicked: {
-                console.error('on clicked')
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 viewWindowTimer.p = p
                 viewWindowTimer.start()
                 mouse.accepted = true
             }
             onDoubleClicked: {
-                console.error('on double clicked')
                 viewWindowTimer.stop()
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 let sceneP = mapFromPreview(p)
