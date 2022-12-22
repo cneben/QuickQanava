@@ -139,11 +139,11 @@ public:
     //! \sa containerItem
     inline QQuickItem*          getContainerItem() noexcept { return _containerItem.data(); }
     inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
-    void                        setContainerItem( QQuickItem* containerItem );
+    void                        setContainerItem(QQuickItem* containerItem);
 signals:
     void                        containerItemChanged();
 private:
-    QPointer< QQuickItem >      _containerItem{nullptr};
+    QPointer<QQuickItem>        _containerItem;
     //@}
     //-------------------------------------------------------------------------
 
