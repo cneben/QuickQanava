@@ -21,8 +21,8 @@ SUBDIRS +=  test-nodes
 SUBDIRS +=  test-groups
 SUBDIRS +=  test-selection
 #SUBDIRS +=  test-style
-#SUBDIRS +=  test-topology
-#SUBDIRS +=  test-dataflow
+SUBDIRS +=  test-topology
+SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
 #SUBDIRS +=  test-tools
 
