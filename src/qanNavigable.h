@@ -156,6 +156,9 @@ public:
     //! Center the view on a given position
     Q_INVOKABLE void    centerOnPosition(QPointF position);
 
+    //! Move to \c position (position will be be at top left corner).
+    Q_INVOKABLE void    moveTo(QPointF position);
+
     /*! Fit the area content (\c containerItem children) in view and update current zoom level.
      *
      * Area content will be fitted in view even if current AutoFitMode is NoAutoFit.
@@ -235,7 +238,7 @@ public:
      * \note To avoid QML binding loops, this setter is protected against setting the same value multiple times.
      * \sa zoom
      */
-    Q_INVOKABLE void                setZoom(qreal zoom);
+    Q_INVOKABLE void    setZoom(qreal zoom);
     //! Set area current zoom centered on a given \c center point.
     Q_INVOKABLE void    zoomOn(QPointF center, qreal zoom);
     //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom, maxZoom) range.

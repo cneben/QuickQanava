@@ -292,7 +292,8 @@ Qan.AbstractGraphView {
             // Do not show resizers when group is collapsed
             groupRightResizer.visible = groupBottomResizer.visible =
                     groupResizer.visible = Qt.binding(() => { // Resizer is visible :
-                                                          return group && group.item &&   // If group and group.item are valid
+                                                          return group && ! group.locked &&
+                                                          group.item &&   // If group and group.item are valid
                                                           group.item.visible         &&
                                                           (!group.item.collapsed)    &&   // And if group is not collapsed
                                                           group.item.resizable;           // And if group is resizeable

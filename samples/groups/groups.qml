@@ -301,5 +301,15 @@ ApplicationWindow {
             }
         } // Control groupEditor
     } // Qan.GraphView
-}
+    Qan.GraphPreview {
+        id: graphPreview
+        source: graphView
+        viewWindowColor: Material.accent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: graphView.bottom
+        anchors.bottomMargin: 8
+        width: 350
+        height: 198
+    }  // Qan.GraphPreview
+}  // ApplicationWindow: window
 

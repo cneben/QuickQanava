@@ -1,11 +1,12 @@
 # QuickQanava 
 
-![Build linux Qt5.15](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
-![Build win64 Qt6.4](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
+![Linux Qt5 g++ qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
+![Win64 Qt5 msvc qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt5.yml/badge.svg) 
+![Win64 Qt6 msvc CMake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-![](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![](https://img.shields.io/badge/version-2.1.0-blue.svg)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)

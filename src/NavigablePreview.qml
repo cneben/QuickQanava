@@ -60,9 +60,12 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onWidthChanged.connect(updatePreview)
             source.containerItem.onHeightChanged.connect(updatePreview)
             source.containerItem.onScaleChanged.connect(updatePreview)
-            source.containerItem.onXChanged.connect(updatePreview)
-            source.containerItem.onYChanged.connect(updatePreview)
+            // Note 20221204: Do not connect on containerItem on(X/Y)Changed(),
+            // wait for user initiated onContainerItemModified since dragging
+            // view window also modify container x/y
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
+            // Emitted only on user initiaited navitable view changes.
+            source.containerItemModified.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
         } else
@@ -134,28 +137,7 @@ Qan.AbstractNavigablePreview {
         if (!r)
             return
 
-        //if (r.width < preview.source.width && // If scene size is stricly inferior to preview size
-        //    r.height < preview.source.height) {         // reset the preview window
-        //    r.width = preview.source.width
-        //    r.height = preview.source.height
-        //}
-        //if (r.width < 0.01 ||        // Do not update without a valid children rect
-        //    r.height < 0.01) {
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-        //if (r.width < r.width ||        // Reset the visible window is the whole containerItem content
-        //    r.height < r.height) {       // is smaller than graph view
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-        //if (r.width < preview.width && // If scene size is stricly inferior to preview size
-        //    r.height < preview.height) {         // reset the preview window
-        //    preview.resetVisibleWindow()
-        //    return
-        //}
-
-        // r is content rect
+        // r is content rect in scene Cs
         // viewR is window rect in content rect Cs
         // Window is viewR in preview Cs
 
@@ -175,8 +157,9 @@ Qan.AbstractNavigablePreview {
         viewWindow.visible = true
         viewWindow.x = (previewXRatio * (viewR.x - r.x)) + border
         viewWindow.y = (previewYRatio * (viewR.y - r.y)) + border
-        viewWindow.width = (previewXRatio * viewR.width) - border2
-        viewWindow.height = (previewYRatio * viewR.height) - border2
+        // Set a minimum view window size to avoid users beeing lost in large graphs
+        viewWindow.width = Math.max(12, (previewXRatio * viewR.width) - border2)
+        viewWindow.height = Math.max(9, (previewYRatio * viewR.height) - border2)
 
         visibleWindowChanged(Qt.rect(viewWindow.x / preview.width,
                                   viewWindow.y / preview.height,
@@ -184,38 +167,120 @@ Qan.AbstractNavigablePreview {
                                   viewWindow.height / preview.height),
                              source.zoom);
     }
+
+    // Map from preview Cs to graph Cs
+    function    mapFromPreview(p) {
+        if (!p)
+            return;
+        // preview window origin is (r.x, r.y)
+        let r = sourcePreview.sourceRect
+        var previewXRatio = r.width / preview.width
+        var previewYRatio = r.height / preview.height
+        let sourceP = Qt.point((p.x * previewXRatio) + r.x,
+                               (p.y * previewYRatio) + r.y)
+        return sourceP
+    }
+
     Item {
         id: overlayItem
         anchors.fill: parent; anchors.margins: 0
     }
     Rectangle {
         id: viewWindow
+        z: 1
         color: Qt.rgba(0, 0, 0, 0)
         smooth: true
         antialiasing: true
         border.color: viewWindowColor
         border.width: 2
-    }
-    // Not active on 20201027
-    /*MouseArea {
-        id: viewWindowDragger
-        anchors.fill: parent
-        drag.onActiveChanged: {
-            console.debug("dragging to:" + viewWindow.x + ":" + viewWindow.y );
-            if ( source ) {
+        onXChanged: viewWindowDragged()
+        onYChanged: viewWindowDragged()
+        function viewWindowDragged() {
+            if (source &&
+                (viewWindowController.pressedButtons & Qt.LeftButton ||
+                 viewWindowController.active)) {
+                // Convert viewWindow coordinate to source graph view CCS
+                let sceneP = mapFromPreview(Qt.point(viewWindow.x, viewWindow.y))
+                source.moveTo(sceneP)
             }
         }
-        drag.target: viewWindow
-        drag.threshold: 1.      // Note 20170311: Avoid a nasty delay between mouse position and dragged item position
-        // Do not allow dragging outside preview area
-        drag.minimumX: 0; drag.maximumX: Math.max(0, preview.width - viewWindow.width)
-        drag.minimumY: 0; drag.maximumY: Math.max(0, preview.height - viewWindow.height)
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        hoverEnabled: true
+        MouseArea { // Manage dragging of "view window"
+            id: viewWindowController
+            anchors.fill: parent
+            drag.target: viewWindow
+            drag.threshold: 1.
+            drag.minimumX: 0    // Do not allow dragging outside preview area
+            drag.minimumY: 0
+            drag.maximumX: Math.max(0, preview.width - viewWindow.width)
+            drag.maximumY: Math.max(0, preview.height - viewWindow.height)
+            acceptedButtons: Qt.LeftButton
+            enabled: true
+            cursorShape: Qt.SizeAllCursor
+            // Note 20221221: Surprisingly, onClicked and onDoubleClicked are activated without interferences
+            // while dragging is enabled. Activate zoom on click and double click just as in navigation controller,
+            // usefull when scene is fully de-zommed and view window take the full control space.
+            Timer {  // See Note 20221204
+                id: viewWindowTimer
+                interval: 100
+                running: false
+                property point p: Qt.point(0, 0)
+                onTriggered: {
+                    let sceneP = mapFromPreview(Qt.point(p.x, p.y))
+                    source.centerOnPosition(sceneP)
+                    updatePreview()
+                }
+            }
+            onClicked: {
+                let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
+                viewWindowTimer.p = p
+                viewWindowTimer.start()
+                mouse.accepted = true
+            }
+            onDoubleClicked: {
+                viewWindowTimer.stop()
+                let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
+                let sceneP = mapFromPreview(p)
+                source.centerOnPosition(sceneP)
+                source.zoom = 1.0
+                mouse.accepted = true
+                updatePreview()
+            }
+        }
+    }  // Rectangle: viewWindow
+    MouseArea {  // Manage move on click and zoom on double click
+        id: navigationController
+        anchors.fill: parent
+        z: 0
+        acceptedButtons: Qt.LeftButton
         enabled: true
-        onReleased: {
+        cursorShape: Qt.CrossCursor
+        // Note 20221204: Hack for onClicked/onDoubleClicked(), see:
+        // https://forum.qt.io/topic/103829/providing-precedence-for-ondoubleclicked-over-onclicked-in-qml/2
+        // onClicked trigger a centerOnPosition(), hidding this mouse area
+        // with viewWindow, thus not triggering any double click
+        Timer {
+            id: timer
+            interval: 100
+            running: false
+            property point p: Qt.point(0, 0)
+            onTriggered: {
+                let sceneP = mapFromPreview(Qt.point(p.x, p.y))
+                source.centerOnPosition(sceneP)
+                updatePreview()
+            }
         }
-        onPressed : {
+        onClicked: {
+            timer.p = Qt.point(mouse.x, mouse.y)
+            timer.start()
+            mouse.accepted = true
         }
-    }*/
+        onDoubleClicked: {
+            timer.stop()
+            let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
+            source.centerOnPosition(sceneP)
+            source.zoom = 1.0
+            mouse.accepted = true
+            updatePreview()
+        }
+    }
 }  // Qan.AbstractNavigablePreview: preview

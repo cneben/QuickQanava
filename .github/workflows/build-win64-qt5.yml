@@ -1,0 +1,49 @@
+name: Win64 Qt5 QMake msvc2019
+
+on:
+  push:
+    branches: [master, develop]
+    
+jobs:
+  test-build:
+    runs-on: windows-2019
+    timeout-minutes: 120
+    steps:
+      - name: Clone QuickQanava
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.*'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          dir: '${{ github.workspace }}/'
+          install-deps: 'true'
+          modules: 'qtwebengine'
+          cache: 'false'
+          cache-key-prefix: 'install-qt-action'
+          setup-python: 'false'
+
+      - name: Create Build Dir
+        run: mkdir build
+        working-directory: ${{runner.workspace}}
+      
+      - uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Configure qmake
+        run: |
+          QT_SELECT=5 qmake CONFIG+=release -o Makefile ${GITHUB_WORKSPACE}/quickqanava.pro
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+
+      - name: Build Project
+        run: | 
+          echo "NMAKE..."
+          set CL=/MP & rem "Enabling multi-threading (max. available)"
+          nmake
+        shell: cmd
+        working-directory: ${{runner.workspace}}/build

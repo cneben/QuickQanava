@@ -38,7 +38,7 @@ Control {
 
     // PUBLIC /////////////////////////////////////////////////////////////////
     width: 200
-    height: 113
+    height: 135
 
     //! Source Qan.GraphView that should be previewed.
     property var    source: undefined
@@ -54,7 +54,6 @@ Control {
     // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
 
-    property real   previewSize: 0.15
     property real   graphRatio: source ? (source.containerItem.childrenRect.width /
                                          source.containerItem.childrenRect.height) :
                                          1.
@@ -62,6 +61,8 @@ Control {
     onGraphRatioChanged: updateNavigablePreviewSize()
     onPreviewRatioChanged: updateNavigablePreviewSize()
     onSourceChanged: updateNavigablePreviewSize()
+    onWidthChanged: updateNavigablePreviewSize()
+    onHeightChanged: updateNavigablePreviewSize()
 
     function updateNavigablePreviewSize() {
         // Update the navigable preview width/height such that it's aspect ratio

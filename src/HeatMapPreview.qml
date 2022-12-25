@@ -57,7 +57,6 @@ Control {
     // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
 
-    property real   previewSize: 0.15
     property real   graphRatio: source ? (source.containerItem.childrenRect.width /
                                          source.containerItem.childrenRect.height) :
                                          1.

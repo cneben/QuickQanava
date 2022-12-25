@@ -248,22 +248,23 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     // Eventually, propose a node group drop after move
     if (!movedInsideGroup &&
         _targetItem->getDroppable()) {
-        qan::Group* group = graph->groupAt( _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.}),
-                                            { _targetItem->width(), _targetItem->height() },
-                                            _targetItem /* except _targetItem */ );
+        qan::Group* group = graph->groupAt(_targetItem->mapToItem(graphContainerItem, QPointF{0., 0.}),
+                                           {_targetItem->width(), _targetItem->height()},
+                                           _targetItem /* except _targetItem */);
         if (group != nullptr &&
+            !group->getLocked() &&
             group->getItem() != nullptr &&
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data()))  { // Do not drop a group in itself
             group->itemProposeNodeDrop();
 
-            if ( _lastProposedGroup &&              // When a node is already beeing proposed in a group (ie _lastProposedGroup is non nullptr), it
-                 _lastProposedGroup->getItem() != nullptr &&    // might also end up beeing dragged over a sub group of _lastProposedGroup, so
-                 group != _lastProposedGroup )                  // notify endProposeNodeDrop() for last proposed group
+            if (_lastProposedGroup &&              // When a node is already beeing proposed in a group (ie _lastProposedGroup is non nullptr), it
+                _lastProposedGroup->getItem() != nullptr &&     // might also end up beeing dragged over a sub group of _lastProposedGroup, so
+                group != _lastProposedGroup)                    // notify endProposeNodeDrop() for last proposed group
                 _lastProposedGroup->itemEndProposeNodeDrop();
             _lastProposedGroup = group;
-        } else if ( group == nullptr &&
-                    _lastProposedGroup != nullptr &&
-                    _lastProposedGroup->getItem() != nullptr ) {
+        } else if (group == nullptr &&
+                   _lastProposedGroup != nullptr &&
+                   _lastProposedGroup->getItem() != nullptr) {
             _lastProposedGroup->itemEndProposeNodeDrop();
             _lastProposedGroup = nullptr;
         }
@@ -272,7 +273,7 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
 
 void    DraggableCtrl::endDragMove(bool dragSelection)
 {
-    _dragLastPos = QPointF{ 0., 0. };  // Invalid all cached coordinates when drag ends
+    _dragLastPos = QPointF{0., 0.};  // Invalid all cached coordinates when drag ends
     _lastProposedGroup = nullptr;
 
     // PRECONDITIONS:
@@ -295,8 +296,9 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
         qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
         if (group != nullptr &&
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
-            if (group->getGroupItem() != nullptr &&        // Do not allow grouping a node in a collapsed
-                !group->getGroupItem()->getCollapsed()) {    // group item
+            if (group->getGroupItem() != nullptr &&             // Do not allow grouping a node in a collapsed
+                !group->getGroupItem()->getCollapsed() &&       // or locked group item
+                !group->getLocked() ) {
                 graph->groupNode(group, _target.data());
                 nodeGrouped = true;
             }
