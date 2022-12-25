@@ -129,7 +129,9 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
         const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
-            _initialTargetPos = _targetItem->position();
+            // Project in scene rect (for example is a node is part of a group)
+            const auto sceneTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
+            _initialTargetPos = sceneTargetPos;
             beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         } else {
@@ -209,69 +211,66 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
         // 3. If the node is ungroupped and the drag is not an inside group dragging, propose
         //    the node for grouping (ie just hilight the potential target group item).
 
+    const auto delta = (sceneDragPos - _initialDragPos);
+    const auto targetUnsnapPos = _initialTargetPos + delta;
+
     const auto targetGroup = _target->get_group();
     auto movedInsideGroup = false;
     if (targetGroup &&
         targetGroup->getItem() != nullptr) {
-        // FIXME #185 pb ici
-        const QRectF targetRect{_targetItem->position() + sceneDragPos /*delta*/,
-                                QSizeF{ _targetItem->width(), _targetItem->height() }};
-        const QRectF groupRect{QPointF{0., 0.},
-                               QSizeF{ targetGroup->getItem()->width(), targetGroup->getItem()->height() }};
+        const QRectF targetRect{
+            targetUnsnapPos,
+            QSizeF{_targetItem->width(),
+                   _targetItem->height()}
+        };
+        const QRectF groupRect{
+            QPointF{0., 0.},
+            QSizeF{targetGroup->getItem()->width(),
+                   targetGroup->getItem()->height()}
+        };
 
         movedInsideGroup = groupRect.contains(targetRect);
-        if (!movedInsideGroup) {
+        if (!movedInsideGroup)
             graph->ungroupNode(_target, _target->get_group());
-        }
     }
 
-    // FIXME #185
-    // Cache initial position "somewhere"
-    // Cache un-snapped delta "somewhere"
-    // Only move if fmod(delta, gridsize)==0
-
-    // Algorithm:
-    // 1. Convert the mouse drag position to "target item" space
-    // 2. If target position is "centered" on grid
+    // Drag algorithm:
+    // 2.1. Convert the mouse drag position to "target item" space unspaned pos
+    // 2.2. If target position is "centered" on grid
     //    or mouse delta > grid
-    //   2.1 Compute snapped position, apply it
-
-    const auto delta = (sceneDragPos - _initialDragPos);
-    const auto targetUnsnapPos = _initialTargetPos + delta;
+    //   2.2.1 Compute snapped position, apply it
     const auto gridSize = QSizeF{10., 10.};
     bool applyX = std::fabs(delta.x()) > (gridSize.width() / 2.001);
     bool applyY = std::fabs(delta.y()) > (gridSize.height() / 2.001);
 
-    qWarning() << "--------";
-    qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
-    if (!applyX || !applyY) {   // FIXME Split that... handle x and if in <> branchers (small gain)
+    //qWarning() << "--------";
+    //qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
+    if (!applyX) {
         const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
-        const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
-        qWarning() << "posModGridX=" << posModGridX << "   posModGridY=" << posModGridY;
+        //qWarning() << "posModGridX=" << posModGridX;
         applyX = qFuzzyIsNull(posModGridX);
+    }
+    if (!applyY) {
+        const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
+        //qWarning() << "posModGridY=" << posModGridY;
         applyY = qFuzzyIsNull(posModGridY);
     }
-    qWarning() << "applyX=" << applyX << "   applyY=" << applyY;
+    //qWarning() << "applyX=" << applyX << "   applyY=" << applyY;
     if (applyX || applyY) {
         const auto targetSnapPosX = gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width());
         const auto targetSnapPosY = gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height());
-        //qWarning() << "snapPos=" << QPointF{snapPosX, snapPosY};
         _targetItem->setPosition(QPointF{targetSnapPosX,
                                          targetSnapPosY});
     }
-
-    // FIXME #185 old working code, remove...
-    //const auto localPos = _targetItem->position();
-    //_targetItem->setPosition(localPos + delta);
-
+    // FIXME #185 Selection move does not works...
     if (dragSelection) {
-        auto dragMoveSelected = [this, &delta] (auto primitive) { // Call dragMove() on a given node or group
+        auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=
                                             static_cast<QQuickItem*>(this->_targetItem.data());
             if ( primitive != nullptr &&
                  primitive->getItem() != nullptr &&
                  primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
-                primitive->getItem()->draggableCtrl().dragMove(delta, false);
+                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
         };
 
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
