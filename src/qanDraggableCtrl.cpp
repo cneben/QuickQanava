@@ -242,28 +242,32 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
     // 2.2. If target position is "centered" on grid
     //    or mouse delta > grid
     //   2.2.1 Compute snapped position, apply it
-    const auto gridSize = QSizeF{10., 10.};
-    bool applyX = std::fabs(delta.x()) > (gridSize.width() / 2.001);
-    bool applyY = std::fabs(delta.y()) > (gridSize.height() / 2.001);
+    if (getGraph()->getSnapToGrid()) {
+        const auto& gridSize = getGraph()->getSnapToGridSize();
+        bool applyX = std::fabs(delta.x()) > (gridSize.width() / 2.001);
+        bool applyY = std::fabs(delta.y()) > (gridSize.height() / 2.001);
 
-    //qWarning() << "--------";
-    //qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
-    if (!applyX) {
-        const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
-        //qWarning() << "posModGridX=" << posModGridX;
-        applyX = qFuzzyIsNull(posModGridX);
-    }
-    if (!applyY) {
-        const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
-        //qWarning() << "posModGridY=" << posModGridY;
-        applyY = qFuzzyIsNull(posModGridY);
-    }
-    //qWarning() << "applyX=" << applyX << "   applyY=" << applyY;
-    if (applyX || applyY) {
-        const auto targetSnapPosX = gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width());
-        const auto targetSnapPosY = gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height());
-        _targetItem->setPosition(QPointF{targetSnapPosX,
-                                         targetSnapPosY});
+        //qWarning() << "--------";
+        //qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
+        if (!applyX) {
+            const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
+            //qWarning() << "posModGridX=" << posModGridX;
+            applyX = qFuzzyIsNull(posModGridX);
+        }
+        if (!applyY) {
+            const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
+            //qWarning() << "posModGridY=" << posModGridY;
+            applyY = qFuzzyIsNull(posModGridY);
+        }
+        //qWarning() << "applyX=" << applyX << "   applyY=" << applyY;
+        if (applyX || applyY) {
+            const auto targetSnapPosX = gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width());
+            const auto targetSnapPosY = gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height());
+            _targetItem->setPosition(QPointF{targetSnapPosX,
+                                             targetSnapPosY});
+        }
+    } else { // Do not snap to grid
+        _targetItem->setPosition(targetUnsnapPos);
     }
     // FIXME #185 Selection move does not works...
     if (dragSelection) {

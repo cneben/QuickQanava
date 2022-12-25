@@ -193,7 +193,7 @@ ApplicationWindow {
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 200
+            width: 550
             ToolButton {
                 text: "Add Group"
                 onClicked: {
@@ -221,7 +221,6 @@ ApplicationWindow {
                 property var node: undefined
                 enabled: node !== undefined
                 onClicked: {
-                    console.info("node.group=" + node.group)
                     if (node && node.group )
                         topology.ungroupNode(node)
                 }
@@ -235,6 +234,21 @@ ApplicationWindow {
                 onClicked: {
                     ;
                 }
+            }
+
+            Switch {
+                text: "Snap to Grid"
+                checked: topology.snapToGrid
+                onClicked: topology.snapToGrid = checked
+            }
+            Label { text: "Grid size:" }
+            SpinBox {
+                enabled: topology.snapToGrid
+                from: 1
+                to: 100
+                stepSize: 5
+                value: topology.snapToGridSize.width
+                onValueModified: { topology.snapToGridSize = Qt.size(value, value) }
             }
         }
         Pane {

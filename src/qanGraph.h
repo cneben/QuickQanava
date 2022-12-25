@@ -780,8 +780,28 @@ protected:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Alignment Management *///----------------------------------------
+    /*! \name Grid and Alignment Management *///-------------------------------
     //@{
+public:
+    //! Snap dragged objects (both groups and nodes) to grid based on \c snapGridSize (default to false is no snap).
+    Q_PROPERTY(bool snapToGrid READ getSnapToGrid WRITE setSnapToGrid NOTIFY snapToGridChanged FINAL)
+    bool            setSnapToGrid(bool snapToGrid) noexcept;
+    bool            getSnapToGrid() const noexcept { return _snapToGrid; }
+private:
+    bool            _snapToGrid = false;
+signals:
+    void            snapToGridChanged();
+
+public:
+    //! Snap to grid size (default to 10x10), active only when \c snapToGrid is true.
+    Q_PROPERTY(QSizeF snapToGridSize READ getSnapToGridSize WRITE setSnapToGridSize NOTIFY snapToGridSizeChanged FINAL)
+    bool            setSnapToGridSize(QSizeF snapToGridSize) noexcept;
+    QSizeF          getSnapToGridSize() const noexcept { return _snapToGridSize; }
+private:
+    QSizeF          _snapToGridSize{10., 10.};
+signals:
+    void            snapToGridSizeChanged();
+
 public:
     //! \brief Align selected nodes/groups items horizontal center.
     Q_INVOKABLE void    alignSelectionHorizontalCenter();
@@ -812,11 +832,11 @@ protected:
 public:
     /*! \brief Graph style manager (ie list of style applicable to graph primitive).
      */
-    Q_PROPERTY( qan::StyleManager* styleManager READ getStyleManager CONSTANT FINAL )
-    inline qan::StyleManager*       getStyleManager() noexcept { return &_styleManager; }
-    inline const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
+    Q_PROPERTY(qan::StyleManager* styleManager READ getStyleManager CONSTANT FINAL)
+    qan::StyleManager*       getStyleManager() noexcept { return &_styleManager; }
+    const qan::StyleManager* getStyleManager() const noexcept { return &_styleManager; }
 private:
-    qan::StyleManager   _styleManager;
+    qan::StyleManager       _styleManager;
     //@}
     //-------------------------------------------------------------------------
 
@@ -851,7 +871,7 @@ public:
 
 public:
     //! Default delegate for node in/out port.
-    Q_PROPERTY( QQmlComponent* portDelegate READ getPortDelegate WRITE qmlSetPortDelegate NOTIFY portDelegateChanged FINAL )
+    Q_PROPERTY(QQmlComponent* portDelegate READ getPortDelegate WRITE qmlSetPortDelegate NOTIFY portDelegateChanged FINAL)
     //! \copydoc portDelegate
     inline QQmlComponent*   getPortDelegate() noexcept { return _portDelegate.get(); }
 protected:

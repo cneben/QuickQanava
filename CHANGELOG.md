@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 20221225 prev2.3.0:
+- #185: Add support for "snap to grid" when moving node or groups.
+- Add |qan::Graph`, `snapToGrid` and `snapToGridSize` properties.
+
+## 20221225 v2.2.0:
+- Release v2.2.0
+
 ## 20221215 v2.2.0:
 - #183: Add a `multipleSelectionEnabled` property to `qan::Graph` to enable or disable multiple selection.
 
@@ -16,7 +23,7 @@
 - #167: Add partial edge selection support.
 - #164: Change signature of qan::Graph::connectorRequestEdgeCreation().
 
-## 20220824 v2.1.1:
+## 20220824 v2*$.1.1:
 - Change signature of two public API methods (public but presumably mainly used internally):
   - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().
   - Rename qan::Graph::collectAncestorsDfs() to qan::Graph::collectAncestors().
