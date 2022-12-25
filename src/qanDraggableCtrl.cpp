@@ -127,14 +127,13 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto globalPos = rootItem->mapFromGlobal(event->globalPos());
+        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
-            beginDragMove(globalPos, _targetItem->getSelected());
+            _initialTargetPos = _targetItem->position();
+            beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         } else {
-            const auto delta = globalPos - _dragLastPos;
-            _dragLastPos = globalPos;
-            dragMove(delta, _targetItem->getSelected());
+            dragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         }
     }
@@ -154,7 +153,7 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
         endDragMove();
 }
 
-void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection)
+void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
 {
     if (_targetItem == nullptr)
         return;
@@ -163,7 +162,7 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
         _target != nullptr)
         emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
-    _dragLastPos = dragInitialMousePos;
+    _initialDragPos = sceneDragPos;
 
     // If there is a selection, keep start position for all selected nodes.
     if (dragSelection) {
@@ -171,12 +170,12 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
         if (graph != nullptr &&
             graph->hasMultipleSelection()) {
 
-            auto beginDragMoveSelected = [this, &dragInitialMousePos] (auto primitive) {    // Call beginDragMove() on a given node or group
+            auto beginDragMoveSelected = [this, &sceneDragPos] (auto primitive) {    // Call beginDragMove() on a given node or group
                 if (primitive != nullptr &&
                     primitive->getItem() != nullptr &&
                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
                     primitive->get_group() == nullptr)      // Do not drag nodes that are inside a group
-                    primitive->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
+                    primitive->getItem()->draggableCtrl().beginDragMove(sceneDragPos, false);
             };
 
             // Call beginDragMove on all selected nodes and groups.
@@ -186,7 +185,7 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
     }
 }
 
-void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
+void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
 {
     // PRECONDITIONS:
         // _graph must be configured (non nullptr)
@@ -214,7 +213,8 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     auto movedInsideGroup = false;
     if (targetGroup &&
         targetGroup->getItem() != nullptr) {
-        const QRectF targetRect{_targetItem->position() + delta,
+        // FIXME #185 pb ici
+        const QRectF targetRect{_targetItem->position() + sceneDragPos /*delta*/,
                                 QSizeF{ _targetItem->width(), _targetItem->height() }};
         const QRectF groupRect{QPointF{0., 0.},
                                QSizeF{ targetGroup->getItem()->width(), targetGroup->getItem()->height() }};
@@ -226,16 +226,42 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
     }
 
     // FIXME #185
+    // Cache initial position "somewhere"
+    // Cache un-snapped delta "somewhere"
+    // Only move if fmod(delta, gridsize)==0
+
+    // Algorithm:
+    // 1. Convert the mouse drag position to "target item" space
+    // 2. If target position is "centered" on grid
+    //    or mouse delta > grid
+    //   2.1 Compute snapped position, apply it
+
+    const auto delta = (sceneDragPos - _initialDragPos);
+    const auto targetUnsnapPos = _initialTargetPos + delta;
     const auto gridSize = QSizeF{10., 10.};
-    const auto localPos = _targetItem->position();
-    qWarning() << "delta=" << delta;
-    qWarning() << "std::fmod(delta.x(), gridSize.width())=" << std::fmod(delta.x(), gridSize.width());
-    qWarning() << "std::fmod(delta.y(), gridSize.height())=" << std::fmod(delta.x(), gridSize.width());
-    const auto snappedDelta = QPointF{
-            std::trunc(delta.x() / gridSize.width()) * gridSize.width(),
-            std::trunc(delta.y() / gridSize.height()) * gridSize.height(),
-    };
-    _targetItem->setPosition(localPos + snappedDelta);
+    bool applyX = std::fabs(delta.x()) > (gridSize.width() / 2.001);
+    bool applyY = std::fabs(delta.y()) > (gridSize.height() / 2.001);
+
+    qWarning() << "--------";
+    qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
+    if (!applyX || !applyY) {   // FIXME Split that... handle x and if in <> branchers (small gain)
+        const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
+        const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
+        qWarning() << "posModGridX=" << posModGridX << "   posModGridY=" << posModGridY;
+        applyX = qFuzzyIsNull(posModGridX);
+        applyY = qFuzzyIsNull(posModGridY);
+    }
+    qWarning() << "applyX=" << applyX << "   applyY=" << applyY;
+    if (applyX || applyY) {
+        const auto targetSnapPosX = gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width());
+        const auto targetSnapPosY = gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height());
+        //qWarning() << "snapPos=" << QPointF{snapPosX, snapPosY};
+        _targetItem->setPosition(QPointF{targetSnapPosX,
+                                         targetSnapPosY});
+    }
+
+    // FIXME #185 old working code, remove...
+    //const auto localPos = _targetItem->position();
     //_targetItem->setPosition(localPos + delta);
 
     if (dragSelection) {
@@ -280,7 +306,8 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
 
 void    DraggableCtrl::endDragMove(bool dragSelection)
 {
-    _dragLastPos = QPointF{0., 0.};  // Invalid all cached coordinates when drag ends
+    _initialDragPos = QPointF{0., 0.};    // Invalid all cached coordinates when drag ends
+    _initialTargetPos = QPointF{0., 0.};
     _lastProposedGroup = nullptr;
 
     // PRECONDITIONS:
