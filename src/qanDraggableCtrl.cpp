@@ -130,8 +130,8 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
         const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
             // Project in scene rect (for example is a node is part of a group)
-            const auto sceneTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
-            _initialTargetPos = sceneTargetPos;
+            //const auto sceneTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
+            //_initialTargetPos = sceneTargetPos;
             beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         } else {
@@ -165,6 +165,9 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
     _initialDragPos = sceneDragPos;
+    const auto rootItem = getGraph()->getContainerItem();
+    if (rootItem != nullptr)   // Project in scene rect (for example is a node is part of a group)
+        _initialTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
 
     // If there is a selection, keep start position for all selected nodes.
     if (dragSelection) {
@@ -267,9 +270,9 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
         auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=
                                             static_cast<QQuickItem*>(this->_targetItem.data());
-            if ( primitive != nullptr &&
-                 primitive->getItem() != nullptr &&
-                 primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
+            if (primitive != nullptr &&
+                primitive->getItem() != nullptr &&
+                primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
                 primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
         };
 

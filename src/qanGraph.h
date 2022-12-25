@@ -164,19 +164,19 @@ signals:
 
 public:
     //! Alias to VisualConnector::edgeColor property (default to Black).
-    Q_PROPERTY( QColor connectorEdgeColor READ getConnectorEdgeColor WRITE setConnectorEdgeColor NOTIFY connectorEdgeColorChanged FINAL )
-    inline QColor   getConnectorEdgeColor() const noexcept { return _connectorEdgeColor; }
-    void            setConnectorEdgeColor( QColor connectorEdgeColor ) noexcept;
+    Q_PROPERTY(QColor connectorEdgeColor READ getConnectorEdgeColor WRITE setConnectorEdgeColor NOTIFY connectorEdgeColorChanged FINAL)
+    QColor      getConnectorEdgeColor() const noexcept { return _connectorEdgeColor; }
+    void        setConnectorEdgeColor(QColor connectorEdgeColor) noexcept;
 signals:
-    void            connectorEdgeColorChanged();
+    void        connectorEdgeColorChanged();
 private:
-    QColor          _connectorEdgeColor{Qt::black};
+    QColor      _connectorEdgeColor{Qt::black};
 
 public:
     //! Alias to VisualConnector::connectorColor property (default to DodgerBlue).
-    Q_PROPERTY( QColor connectorColor READ getConnectorColor WRITE setConnectorColor NOTIFY connectorColorChanged FINAL )
+    Q_PROPERTY(QColor connectorColor READ getConnectorColor WRITE setConnectorColor NOTIFY connectorColorChanged FINAL)
     inline QColor   getConnectorColor() const noexcept { return _connectorColor; }
-    void            setConnectorColor( QColor connectorColor ) noexcept;
+    void            setConnectorColor(QColor connectorColor) noexcept;
 signals:
     void            connectorColorChanged();
 private:
@@ -184,13 +184,13 @@ private:
 
 public:
     //! Alias to VisualConnector::createDefaultEdge (default to true).
-    Q_PROPERTY( bool connectorCreateDefaultEdge READ getConnectorCreateDefaultEdge WRITE setConnectorCreateDefaultEdge NOTIFY connectorCreateDefaultEdgeChanged FINAL )
+    Q_PROPERTY(bool connectorCreateDefaultEdge READ getConnectorCreateDefaultEdge WRITE setConnectorCreateDefaultEdge NOTIFY connectorCreateDefaultEdgeChanged FINAL)
     inline bool     getConnectorCreateDefaultEdge() const noexcept { return _connectorCreateDefaultEdge; }
-    void            setConnectorCreateDefaultEdge( bool connectorCreateDefaultEdge ) noexcept;
+    void            setConnectorCreateDefaultEdge(bool connectorCreateDefaultEdge) noexcept;
 signals:
     void            connectorCreateDefaultEdgeChanged();
 private:
-    bool            _connectorCreateDefaultEdge{true};
+    bool            _connectorCreateDefaultEdge = true;
 
 public:
     //! Alias to qan::Connector::connectorItem property (default to nullptr, ie default connector item).
@@ -204,13 +204,13 @@ private:
 
 public:
     //! Enable or disable visual connector of nodes in the graph (default to false).
-    Q_PROPERTY( bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL )
+    Q_PROPERTY(bool connectorEnabled READ getConnectorEnabled WRITE setConnectorEnabled NOTIFY connectorEnabledChanged FINAL)
     inline bool     getConnectorEnabled() const noexcept { return _connectorEnabled; }
-    void            setConnectorEnabled( bool connectorEnabled ) noexcept;
+    void            setConnectorEnabled(bool connectorEnabled) noexcept;
 signals:
     void            connectorEnabledChanged();
 private:
-    bool            _connectorEnabled{false};
+    bool            _connectorEnabled = false;
 
 public:
     //! Control node used as a connector when \c connectorEnabled is set to true (might be nullptr).
@@ -227,7 +227,7 @@ signals:
     //@{
 public:
     //! Default delegate for qan::Node and Qan.Node nodes.
-    Q_PROPERTY( QQmlComponent* nodeDelegate READ getNodeDelegate WRITE setNodeDelegate NOTIFY nodeDelegateChanged FINAL )
+    Q_PROPERTY(QQmlComponent* nodeDelegate READ getNodeDelegate WRITE setNodeDelegate NOTIFY nodeDelegateChanged FINAL)
     inline QQmlComponent*   getNodeDelegate() noexcept { return _nodeDelegate.get(); }
 protected:
     void                    setNodeDelegate(QQmlComponent* nodeDelegate) noexcept;
@@ -239,7 +239,7 @@ private:
 
 public:
     //! Default delegate for qan::Edge and Qan.Edge edges.
-    Q_PROPERTY( QQmlComponent* edgeDelegate READ getEdgeDelegate WRITE setEdgeDelegate NOTIFY edgeDelegateChanged FINAL )
+    Q_PROPERTY(QQmlComponent* edgeDelegate READ getEdgeDelegate WRITE setEdgeDelegate NOTIFY edgeDelegateChanged FINAL)
     inline QQmlComponent*   getEdgeDelegate() noexcept { return _edgeDelegate.get(); }
 protected:
     void                    setEdgeDelegate(QQmlComponent* edgeDelegate) noexcept;
@@ -251,7 +251,7 @@ private:
 
 public:
     //! Default delegate for qan::Group and Qan.Group groups.
-    Q_PROPERTY( QQmlComponent* groupDelegate READ getGroupDelegate WRITE setGroupDelegate NOTIFY groupDelegateChanged FINAL )
+    Q_PROPERTY(QQmlComponent* groupDelegate READ getGroupDelegate WRITE setGroupDelegate NOTIFY groupDelegateChanged FINAL)
     inline QQmlComponent*   getGroupDelegate() noexcept { return _groupDelegate.get(); }
 protected:
     void                    setGroupDelegate(QQmlComponent* groupDelegate) noexcept;
@@ -263,14 +263,14 @@ private:
 
 protected:
     //! Create a _styleable_ graph primitive using the given delegate \c component with either a source \c node or \c edge.
-    QQuickItem*             createFromComponent( QQmlComponent* component,
-                                                 qan::Style& style,
-                                                 qan::Node* node = nullptr,
-                                                 qan::Edge* edge = nullptr,
-                                                 qan::Group* group = nullptr ) noexcept;
+    QQuickItem*             createFromComponent(QQmlComponent* component,
+                                                qan::Style& style,
+                                                qan::Node* node = nullptr,
+                                                qan::Edge* edge = nullptr,
+                                                qan::Group* group = nullptr ) noexcept;
 
     //! Shortcut to createComponent(), mainly used in Qan.StyleList View to generate item for style pre visualization.
-    Q_INVOKABLE QQuickItem* createFromComponent( QQmlComponent* component, qan::Style* style );
+    Q_INVOKABLE QQuickItem* createFromComponent(QQmlComponent* component, qan::Style* style);
 
 public:
     /*! \brief QML component used to create qan::NodeItem or qan::GroupItem \c selectionItem, could be dynamically changed from either c++ or QML.
