@@ -32,9 +32,6 @@
 // \date	2017 03 15
 //-----------------------------------------------------------------------------
 
-// Qt headers
-// Nil
-
 // QuickQanava headers
 #include "./qanDraggableCtrl.h"
 #include "./qanNodeItem.h"
@@ -228,8 +225,18 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
         }
     }
 
+    // FIXME #185
+    const auto gridSize = QSizeF{10., 10.};
     const auto localPos = _targetItem->position();
-    _targetItem->setPosition(localPos + delta);
+    qWarning() << "delta=" << delta;
+    qWarning() << "std::fmod(delta.x(), gridSize.width())=" << std::fmod(delta.x(), gridSize.width());
+    qWarning() << "std::fmod(delta.y(), gridSize.height())=" << std::fmod(delta.x(), gridSize.width());
+    const auto snappedDelta = QPointF{
+            std::trunc(delta.x() / gridSize.width()) * gridSize.width(),
+            std::trunc(delta.y() / gridSize.height()) * gridSize.height(),
+    };
+    _targetItem->setPosition(localPos + snappedDelta);
+    //_targetItem->setPosition(localPos + delta);
 
     if (dragSelection) {
         auto dragMoveSelected = [this, &delta] (auto primitive) { // Call dragMove() on a given node or group
