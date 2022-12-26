@@ -133,9 +133,10 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
         dst->draggableCtrl().beginDragMove(sceneDragPos, false);
 }
 
-void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
+void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection, bool disableSnapToGrid)
 {
     Q_UNUSED(dragSelection)
+    Q_UNUSED(disableSnapToGrid)
     // PRECONDITIONS:
         // _targetItem must be configured
     if (!_targetItem)
@@ -148,9 +149,9 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelect
                _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
                                                                          nullptr;
     if (src != nullptr)
-        src->draggableCtrl().dragMove(sceneDragPos, false);
+        src->draggableCtrl().dragMove(sceneDragPos, false, true);       // disableSnapToGrid=true
     if (dst != nullptr)
-        dst->draggableCtrl().dragMove(sceneDragPos, false);
+        dst->draggableCtrl().dragMove(sceneDragPos, false, true);       // disableSnapToGrid=true
 }
 
 void    EdgeDraggableCtrl::endDragMove(bool dragSelection)

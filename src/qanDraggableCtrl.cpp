@@ -80,16 +80,16 @@ void	DraggableCtrl::handleDragLeaveEvent(QDragLeaveEvent* event)
 
 void    DraggableCtrl::handleDropEvent(QDropEvent* event)
 {
-    if ( _targetItem &&
-         _targetItem->getAcceptDrops() &&
-         event->source() != nullptr ) { // Get the source item from the quick drag attached object received
+    if (_targetItem &&
+        _targetItem->getAcceptDrops() &&
+        event->source() != nullptr) { // Get the source item from the quick drag attached object received
         QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-        if ( sourceItem != nullptr ) {
-            QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
-            if ( draggedStyle.isValid() ) {
+        if (sourceItem != nullptr) {
+            QVariant draggedStyle = sourceItem->property("draggedStyle"); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
+            if (draggedStyle.isValid()) {
                 auto style = draggedStyle.value<qan::Style*>();
-                if ( style != nullptr )
-                    _targetItem->setItemStyle( style );
+                if (style != nullptr)
+                    _targetItem->setItemStyle(style);
             }
         }
     }
@@ -188,7 +188,7 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     }
 }
 
-void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
+void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection, bool disableSnapToGrid)
 {
     // PRECONDITIONS:
         // _graph must be configured (non nullptr)
@@ -245,7 +245,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
                                 (targetDragOrientation == qan::NodeItem::DragOrientation::DragHorizontal);
     const auto dragVertically = (targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
                                 (targetDragOrientation == qan::NodeItem::DragOrientation::DragVertical);
-    if (getGraph()->getSnapToGrid()) {
+    if (!disableSnapToGrid && getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
         bool applyX = dragHorizontally &&
                       std::fabs(delta.x()) > (gridSize.width() / 2.001);
@@ -271,7 +271,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
         _targetItem->setPosition(QPointF{dragHorizontally ? targetUnsnapPos.x() : _initialTargetPos.x(),
                                          dragVertically   ? targetUnsnapPos.y() : _initialTargetPos.y()});
     }
-    // FIXME #185 Selection move does not works...
+
     if (dragSelection) {
         auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=

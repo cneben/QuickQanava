@@ -51,7 +51,7 @@ public:
     //! \c dragInitialMousePos in window coordinate system.
     virtual void    beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection = true) = 0;
     //! \c delta in scene coordinate system.
-    virtual void    dragMove(const QPointF& delta, bool dragSelection = true) = 0;
+    virtual void    dragMove(const QPointF& delta, bool dragSelection = true, bool disableSnapToGrid = false) = 0;
     virtual void    endDragMove(bool dragSelection = true) = 0;
 };
 

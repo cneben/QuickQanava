@@ -92,7 +92,7 @@ public:
     //! \c dragInitialMousePos in window coordinate system.
     virtual void    beginDragMove(const QPointF& sceneDragPos, bool dragSelection = true) override;
     //! \c delta in scene coordinate system.
-    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true) override;
+    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true, bool disableSnapToGrid = false) override;
     virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
