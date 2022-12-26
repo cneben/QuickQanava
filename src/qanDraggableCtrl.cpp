@@ -243,10 +243,10 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection)
     //    or mouse delta > grid
     //   2.2.1 Compute snapped position, apply it
     const auto targetDragOrientation = _targetItem->getDragOrientation();
-    const auto dragHorizontally = (targetDragOrientation == qan::NodeItem::DragOrientation::All) ||
-                                (targetDragOrientation == qan::NodeItem::DragOrientation::Horizontal);
-    const auto dragVertically = (targetDragOrientation == qan::NodeItem::DragOrientation::All) ||
-                                (targetDragOrientation == qan::NodeItem::DragOrientation::Vertical);
+    const auto dragHorizontally = (targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
+                                (targetDragOrientation == qan::NodeItem::DragOrientation::DragHorizontal);
+    const auto dragVertically = (targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
+                                (targetDragOrientation == qan::NodeItem::DragOrientation::DragVertical);
     if (getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
         bool applyX = dragHorizontally &&

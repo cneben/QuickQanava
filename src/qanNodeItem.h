@@ -284,9 +284,9 @@ signals:
 public:
     //! Define an orientation contrain on node dragging.
     enum class DragOrientation: unsigned int {
-        All         = 0,  //! All is no constrain on dragging: drag in all directions
-        Vertical    = 1,  //! Drag only horizontally
-        Horizontal  = 2   //! Drag only vertically
+        DragAll         = 0,  //! All is no constrain on dragging: drag in all directions
+        DragVertical    = 1,  //! Drag only horizontally
+        DragHorizontal  = 2   //! Drag only vertically
     };
     Q_ENUM(DragOrientation)
     //! \copydoc getDragOrientation()
