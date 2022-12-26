@@ -130,8 +130,6 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
         const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
             // Project in scene rect (for example is a node is part of a group)
-            //const auto sceneTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
-            //_initialTargetPos = sceneTargetPos;
             beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         } else {

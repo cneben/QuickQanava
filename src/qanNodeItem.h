@@ -297,7 +297,7 @@ public:
     DragOrientation         getDragOrientation() const noexcept { return _dragOrientation; }
 protected:
     //! \copydoc getDragOrientation()
-    DragOrientation         _dragOrientation = DragOrientation::All;
+    DragOrientation         _dragOrientation = DragOrientation::DragAll;
 signals:
     //! \copydoc getDragOrientation()
     void                    dragOrientationChanged();
