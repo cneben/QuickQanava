@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 20221226 prev2.3.0:
+- #185: Add horizontal or vertical constrain on node/group dragging, see new property `qan::NodeItem::dragOrientation`.
+
 ## 20221225 prev2.3.0:
 - #185: Add support for "snap to grid" when moving node or groups.
 - Add |qan::Graph`, `snapToGrid` and `snapToGridSize` properties.
