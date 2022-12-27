@@ -104,7 +104,8 @@ public:
     //! \c sceneDragPos is current mouse drag position in scene coordinate system.
     virtual void    beginDragMove(const QPointF& sceneDragPos, bool dragSelection = true) override;
     //! \c sceneDragPos is current mouse drag position in scene coordinate system.
-    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true, bool disableSnapToGrid = false) override;
+    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true,
+                             bool disableSnapToGrid = false, bool disableOrientation = false) override;
     virtual void    endDragMove(bool dragSelection = true) override;
 
 private:

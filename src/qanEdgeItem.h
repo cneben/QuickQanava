@@ -445,7 +445,6 @@ private:
      *
      * Default to false.
      */
-    // FIXME #185
     bool            _draggable = true;
 
 public:
