@@ -93,11 +93,6 @@ public:
     NodeItem& operator=(const NodeItem&) = delete;
     NodeItem(NodeItem&&) = delete;
     NodeItem& operator=(NodeItem&&) = delete;
-
-public:
-    qan::AbstractDraggableCtrl&                 draggableCtrl();
-protected:
-    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
 
@@ -261,6 +256,10 @@ signals:
     /*! \name Draggable Management *///----------------------------------------
     //@{
 public:
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
+protected:
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+public:
     //! \copydoc qan::Draggable::_draggable
     Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
     //! \copydoc qan::Draggable::_dragged
@@ -269,16 +268,39 @@ public:
     Q_PROPERTY(bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL)
     //! \copydoc qan::Draggable::_acceptDrops
     Q_PROPERTY(bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL)
+
 protected:
     virtual void    emitDraggableChanged() override { emit draggableChanged(); }
     virtual void    emitDraggedChanged() override { emit draggedChanged(); }
     virtual void    emitAcceptDropsChanged() override { emit acceptDropsChanged(); }
     virtual void    emitDroppableChanged() override { emit droppableChanged(); }
+
 signals:
     void            draggableChanged();
     void            draggedChanged();
     void            droppableChanged();
     void            acceptDropsChanged();
+
+public:
+    //! Define an orientation contrain on node dragging.
+    enum class DragOrientation: unsigned int {
+        DragAll         = 0,  //! All is no constrain on dragging: drag in all directions
+        DragVertical    = 1,  //! Drag only horizontally
+        DragHorizontal  = 2   //! Drag only vertically
+    };
+    Q_ENUM(DragOrientation)
+    //! \copydoc getDragOrientation()
+    Q_PROPERTY(DragOrientation dragOrientation READ getDragOrientation WRITE setDragOrientation NOTIFY dragOrientationChanged FINAL)
+    //! \copydoc getDragOrientation()
+    bool                    setDragOrientation(DragOrientation dragOrientation) noexcept;
+    //! Define a constrain on node/group dragging, default to no constrain, set to horizontal or vertical to constrain dragging on one orientation.
+    DragOrientation         getDragOrientation() const noexcept { return _dragOrientation; }
+protected:
+    //! \copydoc getDragOrientation()
+    DragOrientation         _dragOrientation = DragOrientation::DragAll;
+signals:
+    //! \copydoc getDragOrientation()
+    void                    dragOrientationChanged();
 
 protected:
     //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.

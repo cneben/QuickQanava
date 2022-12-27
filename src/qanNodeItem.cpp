@@ -240,6 +240,16 @@ void    NodeItem::setConnectable(Connectable connectable) noexcept
 //-----------------------------------------------------------------------------
 
 /* Draggable Management *///---------------------------------------------------
+bool    NodeItem::setDragOrientation(DragOrientation dragOrientation) noexcept
+{
+    if (dragOrientation != _dragOrientation) {
+        _dragOrientation = dragOrientation;
+        emit dragOrientationChanged();
+        return true;
+    }
+    return false;
+}
+
 void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     if (getNode() != nullptr &&

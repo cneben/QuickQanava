@@ -32,9 +32,6 @@
 // \date	2017 03 15
 //-----------------------------------------------------------------------------
 
-// Qt headers
-// Nil
-
 // QuickQanava headers
 #include "./qanDraggableCtrl.h"
 #include "./qanNodeItem.h"
@@ -83,16 +80,16 @@ void	DraggableCtrl::handleDragLeaveEvent(QDragLeaveEvent* event)
 
 void    DraggableCtrl::handleDropEvent(QDropEvent* event)
 {
-    if ( _targetItem &&
-         _targetItem->getAcceptDrops() &&
-         event->source() != nullptr ) { // Get the source item from the quick drag attached object received
+    if (_targetItem &&
+        _targetItem->getAcceptDrops() &&
+        event->source() != nullptr) { // Get the source item from the quick drag attached object received
         QQuickItem* sourceItem = qobject_cast<QQuickItem*>(event->source());
-        if ( sourceItem != nullptr ) {
-            QVariant draggedStyle = sourceItem->property( "draggedStyle" ); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
-            if ( draggedStyle.isValid() ) {
+        if (sourceItem != nullptr) {
+            QVariant draggedStyle = sourceItem->property("draggedStyle"); // The source item (usually a style node or edge delegate must expose a draggedStyle property).
+            if (draggedStyle.isValid()) {
                 auto style = draggedStyle.value<qan::Style*>();
-                if ( style != nullptr )
-                    _targetItem->setItemStyle( style );
+                if (style != nullptr)
+                    _targetItem->setItemStyle(style);
             }
         }
     }
@@ -130,14 +127,13 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto globalPos = rootItem->mapFromGlobal(event->globalPos());
+        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
-            beginDragMove(globalPos, _targetItem->getSelected());
+            // Project in scene rect (for example is a node is part of a group)
+            beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         } else {
-            const auto delta = globalPos - _dragLastPos;
-            _dragLastPos = globalPos;
-            dragMove(delta, _targetItem->getSelected());
+            dragMove(sceneDragPos, _targetItem->getSelected());
             return true;
         }
     }
@@ -157,7 +153,7 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
         endDragMove();
 }
 
-void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection)
+void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
 {
     if (_targetItem == nullptr)
         return;
@@ -166,7 +162,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
         _target != nullptr)
         emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
-    _dragLastPos = dragInitialMousePos;
+    _initialDragPos = sceneDragPos;
+    const auto rootItem = getGraph()->getContainerItem();
+    if (rootItem != nullptr)   // Project in scene rect (for example is a node is part of a group)
+        _initialTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
 
     // If there is a selection, keep start position for all selected nodes.
     if (dragSelection) {
@@ -174,12 +173,12 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
         if (graph != nullptr &&
             graph->hasMultipleSelection()) {
 
-            auto beginDragMoveSelected = [this, &dragInitialMousePos] (auto primitive) {    // Call beginDragMove() on a given node or group
+            auto beginDragMoveSelected = [this, &sceneDragPos] (auto primitive) {    // Call beginDragMove() on a given node or group
                 if (primitive != nullptr &&
                     primitive->getItem() != nullptr &&
                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data()) &&
                     primitive->get_group() == nullptr)      // Do not drag nodes that are inside a group
-                    primitive->getItem()->draggableCtrl().beginDragMove( dragInitialMousePos, false );
+                    primitive->getItem()->draggableCtrl().beginDragMove(sceneDragPos, false);
             };
 
             // Call beginDragMove on all selected nodes and groups.
@@ -189,7 +188,8 @@ void    DraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dr
     }
 }
 
-void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
+void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
+                                bool disableSnapToGrid, bool disableOrientation)
 {
     // PRECONDITIONS:
         // _graph must be configured (non nullptr)
@@ -213,32 +213,76 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
         // 3. If the node is ungroupped and the drag is not an inside group dragging, propose
         //    the node for grouping (ie just hilight the potential target group item).
 
+    const auto delta = (sceneDragPos - _initialDragPos);
+    const auto targetUnsnapPos = _initialTargetPos + delta;
+
     const auto targetGroup = _target->get_group();
     auto movedInsideGroup = false;
     if (targetGroup &&
         targetGroup->getItem() != nullptr) {
-        const QRectF targetRect{_targetItem->position() + delta,
-                                QSizeF{ _targetItem->width(), _targetItem->height() }};
-        const QRectF groupRect{QPointF{0., 0.},
-                               QSizeF{ targetGroup->getItem()->width(), targetGroup->getItem()->height() }};
+        const QRectF targetRect{
+            targetUnsnapPos,
+            QSizeF{_targetItem->width(),
+                   _targetItem->height()}
+        };
+        const QRectF groupRect{
+            QPointF{0., 0.},
+            QSizeF{targetGroup->getItem()->width(),
+                   targetGroup->getItem()->height()}
+        };
 
         movedInsideGroup = groupRect.contains(targetRect);
-        if (!movedInsideGroup) {
+        if (!movedInsideGroup)
             graph->ungroupNode(_target, _target->get_group());
-        }
     }
 
-    const auto localPos = _targetItem->position();
-    _targetItem->setPosition(localPos + delta);
+    // Drag algorithm:
+    // 2.1. Convert the mouse drag position to "target item" space unspaned pos
+    // 2.2. If target position is "centered" on grid
+    //    or mouse delta > grid
+    //   2.2.1 Compute snapped position, apply it
+    const auto targetDragOrientation = _targetItem->getDragOrientation();
+    const auto dragHorizontally = disableOrientation ||
+                                  ((targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
+                                   (targetDragOrientation == qan::NodeItem::DragOrientation::DragHorizontal));
+    const auto dragVertically = disableOrientation ||
+                                ((targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
+                                 (targetDragOrientation == qan::NodeItem::DragOrientation::DragVertical));
+    if (!disableSnapToGrid && getGraph()->getSnapToGrid()) {
+        const auto& gridSize = getGraph()->getSnapToGridSize();
+        bool applyX = dragHorizontally &&
+                      std::fabs(delta.x()) > (gridSize.width() / 2.001);
+        bool applyY = dragVertically &&
+                      std::fabs(delta.y()) > (gridSize.height() / 2.001);
+        if (!applyX && dragHorizontally) {
+            const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
+            applyX = qFuzzyIsNull(posModGridX);
+        }
+        if (!applyY && dragVertically) {
+            const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
+            applyY = qFuzzyIsNull(posModGridY);
+        }
+        if (applyX || applyY) {
+            const auto targetSnapPosX = dragHorizontally ? gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width()) :
+                                                           _initialTargetPos.x();
+            const auto targetSnapPosY = dragVertically ? gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height()) :
+                                                         _initialTargetPos.y();
+            _targetItem->setPosition(QPointF{targetSnapPosX,
+                                             targetSnapPosY});
+        }
+    } else { // Do not snap to grid
+        _targetItem->setPosition(QPointF{dragHorizontally ? targetUnsnapPos.x() : _initialTargetPos.x(),
+                                         dragVertically   ? targetUnsnapPos.y() : _initialTargetPos.y()});
+    }
 
     if (dragSelection) {
-        auto dragMoveSelected = [this, &delta] (auto primitive) { // Call dragMove() on a given node or group
+        auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=
                                             static_cast<QQuickItem*>(this->_targetItem.data());
-            if ( primitive != nullptr &&
-                 primitive->getItem() != nullptr &&
-                 primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
-                primitive->getItem()->draggableCtrl().dragMove(delta, false);
+            if (primitive != nullptr &&
+                primitive->getItem() != nullptr &&
+                primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
+                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
         };
 
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
@@ -273,7 +317,8 @@ void    DraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
 
 void    DraggableCtrl::endDragMove(bool dragSelection)
 {
-    _dragLastPos = QPointF{0., 0.};  // Invalid all cached coordinates when drag ends
+    _initialDragPos = QPointF{0., 0.};    // Invalid all cached coordinates when drag ends
+    _initialTargetPos = QPointF{0., 0.};
     _lastProposedGroup = nullptr;
 
     // PRECONDITIONS:

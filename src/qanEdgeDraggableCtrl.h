@@ -43,7 +43,6 @@
 
 // QuickQanava headers
 #include "./qanAbstractDraggableCtrl.h"
-#include "./qanStyle.h"         // Used in handleDropEvent()
 #include "./qanGroup.h"
 
 namespace qan { // ::qan
@@ -67,7 +66,7 @@ public:
     inline auto getTargetItem() const noexcept -> const qan::EdgeItem* { return _targetItem.data(); }
     inline auto setTargetItem(qan::EdgeItem* targetItem) noexcept { _targetItem = targetItem; }
 private:
-    QPointer<qan::EdgeItem>    _targetItem{nullptr};
+    QPointer<qan::EdgeItem>    _targetItem;
 
 protected:
     //! Utility to return a safe _targetItem->getGraph().
@@ -90,14 +89,17 @@ public:
 
 public:
     //! \c dragInitialMousePos in window coordinate system.
-    virtual void    beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection = true) override;
+    virtual void    beginDragMove(const QPointF& sceneDragPos, bool dragSelection = true) override;
     //! \c delta in scene coordinate system.
-    virtual void    dragMove(const QPointF& delta, bool dragSelection = true) override;
+    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true,
+                             bool disableSnapToGrid = false, bool disableOrientation = false) override;
     virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
-    //! Internal position cache.
-    QPointF                 _dragLastPos{0., 0.};
+    //! Internal (mouse) initial dragging position.
+    QPointF                 _initialDragPos{0., 0.};
+    //! Internal (target) initial dragging position.
+    QPointF                 _initialTargetPos{0., 0.};
     //@}
     //-------------------------------------------------------------------------
 };

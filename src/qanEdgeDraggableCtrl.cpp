@@ -86,14 +86,12 @@ bool    EdgeDraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = graph->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto globalPos = rootItem->mapFromGlobal(event->globalPos());
+        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
         if (!_targetItem->getDragged()) {
-            beginDragMove(globalPos, false);  // false = no selection (no edge selection support)
+            beginDragMove(sceneDragPos, false);  // false = no selection (no edge selection support)
             return true;
         } else {
-            const auto delta = globalPos - _dragLastPos;
-            _dragLastPos = globalPos;
-            dragMove(delta, false);  // false = no selection (no edge selection support)
+            dragMove(sceneDragPos, false);  // false = no selection (no edge selection support)
             return true;
         }
     }
@@ -110,14 +108,17 @@ void    EdgeDraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
         endDragMove();
 }
 
-void    EdgeDraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection)
+void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
 {
     Q_UNUSED(dragSelection)
     if (!_targetItem)
         return;
 
     _targetItem->setDragged(true);
-    _dragLastPos = dragInitialMousePos;
+    _initialDragPos = sceneDragPos;
+    const auto rootItem = getGraph()->getContainerItem();
+    if (rootItem != nullptr)   // Project in scene rect (for example is a node is part of a group)
+        _initialTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
 
     // Get target edge adjacent nodes
     auto src = _targetItem->getSourceItem() != nullptr &&
@@ -127,29 +128,44 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& dragInitialMousePos, boo
                _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
                                                                          nullptr;
     if (src != nullptr)
-        src->draggableCtrl().beginDragMove(dragInitialMousePos, false);
+        src->draggableCtrl().beginDragMove(sceneDragPos, false);
     if (dst != nullptr)
-        dst->draggableCtrl().beginDragMove(dragInitialMousePos, false);
+        dst->draggableCtrl().beginDragMove(sceneDragPos, false);
 }
 
-void    EdgeDraggableCtrl::dragMove(const QPointF& delta, bool dragSelection)
+void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
+                                    bool disableSnapToGrid, bool disableOrientation)
 {
     Q_UNUSED(dragSelection)
+    Q_UNUSED(disableSnapToGrid)
+    Q_UNUSED(disableOrientation)
     // PRECONDITIONS:
         // _targetItem must be configured
     if (!_targetItem)
         return;
+    if (_targetItem->getSourceItem() == nullptr ||
+        _targetItem->getDestinationItem() == nullptr)
+                return;
     // Get target edge adjacent nodes
-    auto src = _targetItem->getSourceItem() != nullptr &&
-               _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
+    auto src = _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
                                                                     nullptr;
-    auto dst = _targetItem->getDestinationItem() != nullptr &&
-               _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
+    auto dst = _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
                                                                          nullptr;
+    // Polish snapToGrid:
+    // When edge src|dst is not vertically or horizontally aligned: disable hook.
+    // If they are vertically/horizontally aligned: allow move snapToGrid it won't generate jiterring.
+    const auto disableHooksSnapToGrid = _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
+                                        _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
+                                        (_targetItem->getSourceItem()->getDragOrientation() != _targetItem->getDestinationItem()->getDragOrientation());
+    const auto disableHooksDragOrientation = (_targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragHorizontal ||
+                                              _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragVertical) &&
+                                             (_targetItem->getSourceItem()->getDragOrientation() == _targetItem->getDestinationItem()->getDragOrientation());
     if (src != nullptr)
-        src->draggableCtrl().dragMove(delta, false);
+        src->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false,
+                                      /*disableSnapToGrid=*/disableHooksSnapToGrid, disableHooksDragOrientation);
     if (dst != nullptr)
-        dst->draggableCtrl().dragMove(delta, false);
+        dst->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false,
+                                      /*disableSnapToGrid=*/disableHooksSnapToGrid, disableHooksDragOrientation);
 }
 
 void    EdgeDraggableCtrl::endDragMove(bool dragSelection)

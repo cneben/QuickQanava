@@ -43,7 +43,6 @@
 
 // QuickQanava headers
 #include "./qanAbstractDraggableCtrl.h"
-#include "./qanStyle.h"         // Used in handleDropEvent()
 #include "./qanGroup.h"
 
 namespace qan { // ::qan
@@ -102,15 +101,19 @@ public:
     void    handleMouseReleaseEvent(QMouseEvent* event);
 
 public:
-    //! \c dragInitialMousePos in window coordinate system.
-    virtual void    beginDragMove(const QPointF& dragInitialMousePos, bool dragSelection = true) override;
-    //! \c delta in scene coordinate system.
-    virtual void    dragMove(const QPointF& delta, bool dragSelection = true) override;
+    //! \c sceneDragPos is current mouse drag position in scene coordinate system.
+    virtual void    beginDragMove(const QPointF& sceneDragPos, bool dragSelection = true) override;
+    //! \c sceneDragPos is current mouse drag position in scene coordinate system.
+    virtual void    dragMove(const QPointF& sceneDragPos, bool dragSelection = true,
+                             bool disableSnapToGrid = false, bool disableOrientation = false) override;
     virtual void    endDragMove(bool dragSelection = true) override;
 
 private:
-    //! Internal position cache.
-    QPointF                 _dragLastPos{0., 0.};
+    //! Internal (mouse) initial dragging position.
+    QPointF                 _initialDragPos{0., 0.};
+    //! Internal (target) initial dragging position.
+    QPointF                 _initialTargetPos{0., 0.};
+
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer<qan::Group>    _lastProposedGroup{nullptr};
     //@}

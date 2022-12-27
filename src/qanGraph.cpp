@@ -1363,6 +1363,25 @@ std::vector<QQuickItem*>    Graph::getSelectedItems() const
 
 
 /* Alignment Management *///---------------------------------------------------
+bool    Graph::setSnapToGrid(bool snapToGrid) noexcept
+{
+    if (snapToGrid != _snapToGrid) {
+        _snapToGrid = snapToGrid;
+        emit snapToGridChanged();
+        return true;
+    }
+    return false;
+}
+bool    Graph::setSnapToGridSize(QSizeF snapToGridSize) noexcept
+{
+    if (snapToGridSize != _snapToGridSize) {
+        _snapToGridSize = snapToGridSize;
+        emit snapToGridSizeChanged();
+        return true;
+    }
+    return false;
+}
+
 void    Graph::alignSelectionHorizontalCenter() { alignHorizontalCenter(getSelectedItems()); }
 
 void    Graph::alignSelectionRight() { alignRight(getSelectedItems()); }
