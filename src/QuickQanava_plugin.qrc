@@ -33,7 +33,6 @@
         <file>RectGradientShadowBackground.qml</file>
         <file>RectGradientGlowBackground.qml</file>
         <file>SelectionItem.qml</file>
-        <file>StyleListView.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
         <file alias="qmldir">qmldir_plugin</file>

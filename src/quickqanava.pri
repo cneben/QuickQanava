@@ -117,7 +117,6 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/EdgeDstCirclePath.qml         \
                 $$PWD/EdgeDstRectPath.qml           \
                 $$PWD/SelectionItem.qml             \
-                $$PWD/StyleListView.qml             \
                 $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml               \
                 $$PWD/qmldir_static
