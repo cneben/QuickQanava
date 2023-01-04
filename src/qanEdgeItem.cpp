@@ -1128,7 +1128,8 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 /* Mouse Management *///-------------------------------------------------------
 void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton &&
+    if ((getEdge() != nullptr && !getEdge()->getLocked()) &&
+        event->button() == Qt::LeftButton &&
         contains(event->localPos())) {
         emit edgeDoubleClicked(this, event->localPos());
         event->accept();
