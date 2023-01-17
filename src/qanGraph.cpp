@@ -1982,7 +1982,7 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
     std::unordered_set<const qan::Node*> marks;
     auto excepts = collectGroups(node);
     excepts.push_back(&node);
-    qWarning() << "qan::Graph::collectAncestors(): excepts.size=" << excepts.size();
+    //qWarning() << "qan::Graph::collectAncestors(): excepts.size=" << excepts.size();
 
     // 0. Collect target nodes
     std::vector<const qan::Node*> targetNodes;
@@ -2042,7 +2042,7 @@ std::vector<const qan::Node*>   Graph::collectChilds(const qan::Node& node) cons
     // 0. Collect node neighbours
     auto excepts = collectGroups(node);
     excepts.push_back(&node);
-    qWarning() << "qan::Graph::collectChilds(): excepts.size=" << excepts.size();
+    //qWarning() << "qan::Graph::collectChilds(): excepts.size=" << excepts.size();
 
     std::vector<const qan::Node*> targetNodes;
     if (node.isGroup()) {
