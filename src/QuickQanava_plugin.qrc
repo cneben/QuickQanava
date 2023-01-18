@@ -35,6 +35,11 @@
         <file>SelectionItem.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
+		<file>LinearGradient.qml</file>
+        <file>OpacityMask.qml</file>
+        <file>DropShadow.qml</file>
+        <file>Glow.qml</file>
+        <file>RectangularGlow.qml</file>
         <file alias="qmldir">qmldir_plugin</file>
     </qresource>
 </RCC>

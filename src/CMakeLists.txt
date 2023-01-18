@@ -89,7 +89,6 @@ else()
     list(APPEND qan_resources QuickQanava_plugin.qrc)
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
-list(APPEND qan_resources GraphicalEffects${QT_VERSION_MAJOR}/QuickQanavaGraphicalEffects.qrc)
 add_library(QuickQanava STATIC ${qan_source_files} ${qan_header_files} ${qan_resources})
 
 target_include_directories(QuickQanava

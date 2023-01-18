@@ -24,3 +24,4 @@ LinearGradient      2.0 LinearGradient.qml
 OpacityMask         2.0 OpacityMask.qml
 DropShadow          2.0 DropShadow.qml
 Glow                2.0 Glow.qml
+RectangularGlow     2.0 RectangularGlow.qml

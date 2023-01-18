@@ -50,6 +50,8 @@
 #include "./qanGroup.h"
 #include "./qanNavigable.h"
 #include "./qanNode.h"
+#include "./qanNodeItem.h"
+#include "./qanPortItem.h"
 #include "./qanSelectable.h"
 #include "./qanStyleManager.h"
 #include "./qanUtils.h"
@@ -58,9 +60,7 @@
 namespace qan { // ::qan
 
 class Graph;
-class Node;
 class Connector;
-class PortItem;
 
 /*! \brief Main interface to manage graph topology.
  *
