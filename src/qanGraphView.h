@@ -41,19 +41,19 @@
 #include "./qanPortItem.h"
 
 // Qt headers
-#include <QQuickItem>
 #include <QPointer>
+#include <QQuickItem>
 
 namespace qan { // ::qan
 
 /*! \brief Abstract view component for the qan::Graph class.
  *
  * \nosubgrouping
-*/
+ */
 class GraphView : public qan::Navigable
 {
     Q_OBJECT
-    /*! \name GraphView Object Management *///---------------------------------
+    /*! \name GraphView Object Management */ //---------------------------------
     //@{
 public:
     //! GraphView default constructor.
@@ -63,55 +63,57 @@ public:
 
 public:
     //! Graph that should be displayed in this graph view.
-    Q_PROPERTY(qan::Graph*  graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL)
-    void                    setGraph(qan::Graph* graph);
-    inline qan::Graph*      getGraph() const noexcept { return _graph.data(); }
+    Q_PROPERTY(qan::Graph* graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL)
+    void setGraph(qan::Graph* graph);
+    inline qan::Graph* getGraph() const noexcept { return _graph.data(); }
+
 private:
-    QPointer<qan::Graph>    _graph = nullptr;
-signals:
-    void                    graphChanged();
+    QPointer<qan::Graph> _graph = nullptr;
+Q_SIGNALS:
+    void graphChanged();
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
-    virtual void    navigableClicked(QPointF pos) override;
-    virtual void    navigableRightClicked(QPointF pos) override;
+    virtual void navigableClicked(QPointF pos) override;
+    virtual void navigableRightClicked(QPointF pos) override;
 
-    //! Utilisty method to convert a given \c url to a local file path (if possible, otherwise return an empty string).
+    //! Utilisty method to convert a given \c url to a local file path (if possible, otherwise
+    //! return an empty string).
     Q_INVOKABLE QString urlToLocalFile(QUrl url) const noexcept;
 
-signals:
-    void            connectorChanged();
+Q_SIGNALS:
+    void connectorChanged();
 
-    void            rightClicked(QPointF pos);
+    void rightClicked(QPointF pos);
 
-    void            nodeClicked(qan::Node* node, QPointF pos);
-    void            nodeRightClicked(qan::Node* node, QPointF pos);
-    void            nodeDoubleClicked(qan::Node* node, QPointF pos);
+    void nodeClicked(qan::Node* node, QPointF pos);
+    void nodeRightClicked(qan::Node* node, QPointF pos);
+    void nodeDoubleClicked(qan::Node* node, QPointF pos);
 
-    void            portClicked(qan::PortItem* port, QPointF pos);
-    void            portRightClicked(qan::PortItem* port, QPointF pos);
+    void portClicked(qan::PortItem* port, QPointF pos);
+    void portRightClicked(qan::PortItem* port, QPointF pos);
 
-    void            edgeClicked(qan::Edge* edge, QPointF pos);
-    void            edgeRightClicked(qan::Edge* edge, QPointF pos);
-    void            edgeDoubleClicked(qan::Edge* edge, QPointF pos);
+    void edgeClicked(qan::Edge* edge, QPointF pos);
+    void edgeRightClicked(qan::Edge* edge, QPointF pos);
+    void edgeDoubleClicked(qan::Edge* edge, QPointF pos);
 
-    void            groupClicked(qan::Group* group, QPointF pos);
-    void            groupRightClicked(qan::Group* group, QPointF pos);
-    void            groupDoubleClicked(qan::Group* group, QPointF pos);
+    void groupClicked(qan::Group* group, QPointF pos);
+    void groupRightClicked(qan::Group* group, QPointF pos);
+    void groupDoubleClicked(qan::Group* group, QPointF pos);
     //@}
     //-------------------------------------------------------------------------
 
-
-    /*! \name Selection Rectangle Management *///------------------------------
+    /*! \name Selection Rectangle Management */ //------------------------------
     //@{
 protected:
     //! \copydoc qan::Navigable::selectionRectActivated()
-    virtual void    selectionRectActivated(const QRectF& rect) override;
+    virtual void selectionRectActivated(const QRectF& rect) override;
 
     //! \copydoc qan::Navigable::selectionRectEnd()
-    virtual void    selectionRectEnd() override;
+    virtual void selectionRectEnd() override;
+
 private:
-    QSet<QQuickItem*>   _selectedItems;
+    QSet<QQuickItem*> _selectedItems;
     //@}
     //-------------------------------------------------------------------------
 };

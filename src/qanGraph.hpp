@@ -72,21 +72,21 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         node->setItem(nodeItem);
         auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                emit this->nodeClicked(nodeItem->getNode(), p);
+                Q_EMIT this->nodeClicked(nodeItem->getNode(), p);
         };
         connect(nodeItem, &qan::NodeItem::nodeClicked,
                 this,     notifyNodeClicked);
 
         auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                emit this->nodeRightClicked(nodeItem->getNode(), p);
+                Q_EMIT this->nodeRightClicked(nodeItem->getNode(), p);
         };
         connect(nodeItem, &qan::NodeItem::nodeRightClicked,
                 this,     notifyNodeRightClicked);
 
         auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
             if (nodeItem != nullptr && nodeItem->getNode() != nullptr)
-                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+                Q_EMIT this->nodeDoubleClicked(nodeItem->getNode(), p);
         };
         connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
                 this,     notifyNodeDoubleClicked);
@@ -105,7 +105,7 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
     }
     if (node != nullptr) {       // Notify user.
         onNodeInserted(*node);
-        emit nodeInserted(node);
+        Q_EMIT nodeInserted(node);
     }
     return node;
 }
@@ -124,7 +124,7 @@ qan::Node*  Graph::insertNonVisualNode()
     }
     if (node != nullptr) {       // Notify user.
         onNodeInserted(*node);
-        emit nodeInserted(node);
+        Q_EMIT nodeInserted(node);
     }
     return node;
 }
@@ -169,7 +169,7 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
         // Note: edge is cleaned automatically if it has still not been inserted to graph
     }
     if (configuredEdge != nullptr)
-        emit edgeInserted(configuredEdge);
+        Q_EMIT edgeInserted(configuredEdge);
     return configuredEdge;
 }
 

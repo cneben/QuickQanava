@@ -35,13 +35,13 @@
 #pragma once
 
 // Qt headers
-#include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>
+#include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanNodeItem.h"
 #include "./qanGroup.h"
+#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -50,13 +50,14 @@ class Graph;
 /*! \brief Model a visual group of nodes.
  *
  * \note Groups are styled with qan::NodeStyle.
- * \warning \c objectName property is set to "qan::GroupItem" and should not be changed in subclasses.
+ * \warning \c objectName property is set to "qan::GroupItem" and should not be changed in
+ * subclasses.
  *
  * \nosubgrouping
  */
 class GroupItem : public qan::NodeItem
 {
-    /*! \name Group Object Management *///-------------------------------------
+    /*! \name Group Object Management */ //-------------------------------------
     //@{
     Q_OBJECT
 public:
@@ -67,54 +68,62 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Topology Management *///-----------------------------------------
+    /*! \name Topology Management */ //-----------------------------------------
     //@{
 public:
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
-    auto        getGroup() noexcept -> qan::Group*;
-    auto        getGroup() const noexcept -> const qan::Group*;
-    auto        setGroup(qan::Group* group) noexcept -> void;
+    auto getGroup() noexcept -> qan::Group*;
+    auto getGroup() const noexcept -> const qan::Group*;
+    auto setGroup(qan::Group* group) noexcept -> void;
+
 private:
-    QPointer<qan::Group> _group{nullptr};
+    QPointer<qan::Group> _group{ nullptr };
 
 public:
-    //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto        setRect(const QRectF& r) noexcept -> void;
+    //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and
+    //! setHEight() with the content of \c rect bounding rect.
+    auto setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Collapse Management *///-----------------------------------------
+    /*! \name Collapse Management */ //-----------------------------------------
     //@{
 protected:
-    virtual void    setCollapsed(bool collapsed) noexcept override;
+    virtual void setCollapsed(bool collapsed) noexcept override;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Dragging Support Management *///---------------------------------
+    /*! \name Dragging Support Management */ //---------------------------------
     //@{
-protected slots:
-    //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
-    void            groupMoved();
+protected Q_SLOTS:
+    //! Group is monitored for position change, since group's nodes edges should be updated manually
+    //! in that case.
+    void groupMoved();
 
 public:
-    /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
+    /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep
+     * same visual position).
      */
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
+    virtual void groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
-    //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
-    virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
+    //! Configure \c nodeItem outside this group item (modify parentship, keep same visual
+    //! position).
+    virtual void ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
 
-    //! Call at the beginning of another group or node hover operation on this group (usually trigger a visual change to notify user that insertion is possible trought DND).
-    inline void     proposeNodeDrop() noexcept { emit nodeDragEnter( ); }
+    //! Call at the beginning of another group or node hover operation on this group (usually
+    //! trigger a visual change to notify user that insertion is possible trought DND).
+    inline void proposeNodeDrop() noexcept { Q_EMIT nodeDragEnter(); }
 
     //! End an operation started with proposeNodeDrop().
-    inline void     endProposeNodeDrop() noexcept { emit nodeDragLeave( ); }
+    inline void endProposeNodeDrop() noexcept { Q_EMIT nodeDragLeave(); }
 
 public:
-    /*! \brief Should be set from the group concrete QML component to indicate the group content item (otherwise, this will be used).
+    /*! \brief Should be set from the group concrete QML component to indicate the group content
+     * item (otherwise, this will be used).
      *
-     * For example, if the actual container for node is a child of the concrete group component (most of the time, an Item or a Rectangle, use the
-     * following code to set 'container' property:
+     * For example, if the actual container for node is a child of the concrete group component
+     * (most of the time, an Item or a Rectangle, use the following code to set 'container'
+     * property:
      *
      * \code
      * Qan.GroupItem {
@@ -129,32 +138,36 @@ public:
      * }
      * \endcode
      */
-    Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
-    void                    setContainer(QQuickItem* container) noexcept;
-    QQuickItem*             getContainer() noexcept;
-    const QQuickItem*       getContainer() const noexcept;
-protected:
-    QPointer<QQuickItem>    _container = nullptr;
-signals:
-    void                    containerChanged();
-
-signals:
-    //! Emitted whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragEnter();
-    //! Emitted whenever a dragged node leave the group area (could be usefull to hilight it in a qan::Group concrete QML component).
-    void            nodeDragLeave();
+    Q_PROPERTY(
+      QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
+    void setContainer(QQuickItem* container) noexcept;
+    QQuickItem* getContainer() noexcept;
+    const QQuickItem* getContainer() const noexcept;
 
 protected:
-    virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;
-    virtual void    mousePressEvent(QMouseEvent* event ) override;
+    QPointer<QQuickItem> _container = nullptr;
+Q_SIGNALS:
+    void containerChanged();
 
-signals:
+Q_SIGNALS:
+    //! Emitted whenever a dragged node enter the group area (could be usefull to hilight it in a
+    //! qan::Group concrete QML component).
+    void nodeDragEnter();
+    //! Emitted whenever a dragged node leave the group area (could be usefull to hilight it in a
+    //! qan::Group concrete QML component).
+    void nodeDragLeave();
+
+protected:
+    virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+    virtual void mousePressEvent(QMouseEvent* event) override;
+
+Q_SIGNALS:
     //! Emitted whenever the group is clicked (even at the start of a dragging operation).
-    void    groupClicked(qan::GroupItem* group, QPointF p);
+    void groupClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is double clicked.
-    void    groupDoubleClicked(qan::GroupItem* group, QPointF p);
+    void groupDoubleClicked(qan::GroupItem* group, QPointF p);
     //! Emitted whenever the group is right clicked.
-    void    groupRightClicked(qan::GroupItem* group, QPointF p);
+    void groupRightClicked(qan::GroupItem* group, QPointF p);
     //@}
     //-------------------------------------------------------------------------
 };

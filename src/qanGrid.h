@@ -35,10 +35,10 @@
 #pragma once
 
 // Qt headers
-#include <QtQml>
 #include <QQuickItem>
+#include <QtQml>
 
-namespace qan {  // ::qan
+namespace qan { // ::qan
 
 /*! \brief Abstract grid interface compatbile with qan::Navigable::grid.
  *
@@ -48,7 +48,7 @@ namespace qan {  // ::qan
  */
 class Grid : public QQuickItem
 {
-    /*! \name Grid Interface *///----------------------------------------------
+    /*! \name Grid Interface */ //----------------------------------------------
     //@{
     Q_OBJECT
 public:
@@ -58,69 +58,78 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Grid Management *///---------------------------------------------
+    /*! \name Grid Management */ //---------------------------------------------
     //@{
 public:
-    /*! \brief Update the grid for a given \c viewRect in \c container coordinate system and project to \c navigable CS.
+    /*! \brief Update the grid for a given \c viewRect in \c container coordinate system and project
+     * to \c navigable CS.
      *
      * Default implementation return false and should _not_ be called in concrete
      * implementation
      *
      * \return \c false return value for incorrect arguments or grid configuration.
      */
-    virtual bool    updateGrid(const QRectF& viewRect,
-                               const QQuickItem& container,
-                               const QQuickItem& navigable) noexcept;
+    virtual bool updateGrid(const QRectF& viewRect,
+                            const QQuickItem& container,
+                            const QQuickItem& navigable) noexcept;
+
 protected:
     /*!\brief  Update the grid using cached settings when a grid property change.
      *
      * Default implementation return false, do not call base in overridden members.
      */
-    virtual bool    updateGrid() noexcept;
+    virtual bool updateGrid() noexcept;
 
 public:
     //! Color for major thicks (usually a point with qan::PointGrid), default to \c lightgrey.
-    Q_PROPERTY( QColor thickColor READ getThickColor WRITE setThickColor NOTIFY thickColorChanged FINAL )
-    void            setThickColor( QColor thickColor ) noexcept;
-    inline QColor   getThickColor() const noexcept { return _thickColor; }
-signals:
-    void            thickColorChanged();
+    Q_PROPERTY(
+      QColor thickColor READ getThickColor WRITE setThickColor NOTIFY thickColorChanged FINAL)
+    void setThickColor(QColor thickColor) noexcept;
+    inline QColor getThickColor() const noexcept { return _thickColor; }
+Q_SIGNALS:
+    void thickColorChanged();
+
 private:
-    QColor          _thickColor{211,211,211};    // lightgrey #D3D3D3 / rgb(211,211,211)
+    QColor _thickColor{ 211, 211, 211 }; // lightgrey #D3D3D3 / rgb(211,211,211)
 
 public:
     //! Grid thicks width (width for lines, diameter for points), default to 3.0.
-    Q_PROPERTY( qreal gridWidth READ getGridWidth WRITE setGridWidth NOTIFY gridWidthChanged FINAL )
-    void            setGridWidth( qreal gridWidth ) noexcept;
-    inline qreal    getGridWidth() const noexcept { return _gridWidth; }
-signals:
-    void            gridWidthChanged();
+    Q_PROPERTY(qreal gridWidth READ getGridWidth WRITE setGridWidth NOTIFY gridWidthChanged FINAL)
+    void setGridWidth(qreal gridWidth) noexcept;
+    inline qreal getGridWidth() const noexcept { return _gridWidth; }
+Q_SIGNALS:
+    void gridWidthChanged();
+
 private:
-    qreal           _gridWidth{ 3. };
+    qreal _gridWidth{ 3. };
 
 public:
-    //! Grid "scale" define how much points or thicks will be drawn, for a value of 100.0, a thicks will be drawn every 100. width or height intervals (at 1.0 zoom).
-    Q_PROPERTY( qreal gridScale READ getGridScale WRITE setGridScale NOTIFY gridScaleChanged FINAL )
-    void            setGridScale( qreal gridScale ) noexcept;
-    inline qreal    getGridScale() const noexcept { return _gridScale; }
-signals:
-    void            gridScaleChanged();
+    //! Grid "scale" define how much points or thicks will be drawn, for a value of 100.0, a thicks
+    //! will be drawn every 100. width or height intervals (at 1.0 zoom).
+    Q_PROPERTY(qreal gridScale READ getGridScale WRITE setGridScale NOTIFY gridScaleChanged FINAL)
+    void setGridScale(qreal gridScale) noexcept;
+    inline qreal getGridScale() const noexcept { return _gridScale; }
+Q_SIGNALS:
+    void gridScaleChanged();
+
 private:
-    qreal           _gridScale{ 100. };
+    qreal _gridScale{ 100. };
 
 public:
-    //! A major thick (or point or line) will be drawn every \c gridMajor thicks (for a \c gridScale of 100 with \c gridMajor set to 5, a major thick will be drawn every 500. points).
-    Q_PROPERTY( int gridMajor READ getGridMajor WRITE setGridMajor NOTIFY gridMajorChanged FINAL )
-    void            setGridMajor( int gridMajor ) noexcept;
-    inline int      getGridMajor() const noexcept { return _gridMajor; }
-signals:
-    void            gridMajorChanged();
+    //! A major thick (or point or line) will be drawn every \c gridMajor thicks (for a \c gridScale
+    //! of 100 with \c gridMajor set to 5, a major thick will be drawn every 500. points).
+    Q_PROPERTY(int gridMajor READ getGridMajor WRITE setGridMajor NOTIFY gridMajorChanged FINAL)
+    void setGridMajor(int gridMajor) noexcept;
+    inline int getGridMajor() const noexcept { return _gridMajor; }
+Q_SIGNALS:
+    void gridMajorChanged();
+
 private:
-    int             _gridMajor{ 5 };
+    int _gridMajor{ 5 };
     //@}
     //-------------------------------------------------------------------------
 };
 
-}  // ::qan
+} // ::qan
 
 QML_DECLARE_TYPE(qan::Grid);

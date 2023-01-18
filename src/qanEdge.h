@@ -36,8 +36,8 @@
 
 // QuickQanava headers
 #include "./gtpo/edge.h"
-#include "./qanStyle.h"
 #include "./qanNode.h"
+#include "./qanStyle.h"
 
 #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
@@ -57,7 +57,7 @@ class Node;
  */
 class Edge : public gtpo::edge<QObject, qan::Graph, Node>
 {
-    /*! \name Edge Object Management *///--------------------------------------
+    /*! \name Edge Object Management */ //--------------------------------------
     //@{
     Q_OBJECT
 public:
@@ -71,40 +71,44 @@ public:
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::edge<>::getGraph().
-    qan::Graph*         getGraph() noexcept;
+    qan::Graph* getGraph() noexcept;
     //! \copydoc getGraph()
-    const qan::Graph*   getGraph() const noexcept;
+    const qan::Graph* getGraph() const noexcept;
 
 public:
     friend class qan::EdgeItem;
 
     Q_PROPERTY(qan::EdgeItem* item READ getItem CONSTANT)
-    qan::EdgeItem*   getItem() noexcept;
-    void             setItem(qan::EdgeItem* edgeItem) noexcept;
+    qan::EdgeItem* getItem() noexcept;
+    void setItem(qan::EdgeItem* edgeItem) noexcept;
+
 private:
     QPointer<qan::EdgeItem> _item;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Edge Static Factories *///---------------------------------------
+    /*! \name Edge Static Factories */ //---------------------------------------
     //@{
 public:
-    /*! \brief Return the default delegate QML component that should be used to generate edge \c item.
+    /*! \brief Return the default delegate QML component that should be used to generate edge \c
+     * item.
      *
      *  \arg engine QML engine used to create delegate component.
-     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Edge component).
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default
+     * to Qan.Edge component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
+    static QQmlComponent* delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Edge.
      *
-     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default edge style will be used).
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default edge
+     * style will be used).
      */
-    static  qan::EdgeStyle*     style(QObject* parent = nullptr) noexcept;
+    static qan::EdgeStyle* style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Edge Topology Management *///------------------------------------
+    /*! \name Edge Topology Management */ //------------------------------------
     //@{
 public:
     Q_INVOKABLE qan::Node* getSource();
@@ -112,21 +116,22 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Edge Properties Management *///----------------------------------
+    /*! \name Edge Properties Management */ //----------------------------------
     //@{
 public:
     //! \copydoc _label
     Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
     //! \copydoc _label
-    bool            setLabel(const QString& label);
+    bool setLabel(const QString& label);
     //! \copydoc _label
-    const QString&  getLabel() const { return _label; }
+    const QString& getLabel() const { return _label; }
+
 protected:
     //! Edge label.
-    QString         _label = QStringLiteral("");
-signals:
+    QString _label = QStringLiteral("");
+Q_SIGNALS:
     //! \copydoc _label
-    void            labelChanged();
+    void labelChanged();
 
 public:
     /*! \brief A protected edge can't be dragged by user (default to unprotected).
@@ -136,13 +141,15 @@ public:
      *
      * \note edgeDoubleClicked(), edgeRightClicked() signal are still emitted from protected edge.
      */
-    Q_PROPERTY(bool isProtected READ getIsProtected WRITE setIsProtected NOTIFY isProtectedChanged FINAL)
-    bool            setIsProtected(bool isProtected);
-    bool            getIsProtected() const { return _isProtected; }
+    Q_PROPERTY(
+      bool isProtected READ getIsProtected WRITE setIsProtected NOTIFY isProtectedChanged FINAL)
+    bool setIsProtected(bool isProtected);
+    bool getIsProtected() const { return _isProtected; }
+
 private:
-    bool            _isProtected = false;
-signals:
-    void            isProtectedChanged();
+    bool _isProtected = false;
+Q_SIGNALS:
+    void isProtectedChanged();
 
 public:
     /*! \brief A locked edge can't be selected / dragged by user (default to false ie unlocked).
@@ -150,26 +157,29 @@ public:
      * Might be usefull to prevent user inputs when the edge is laid out automatically.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    bool            setLocked(bool locked);
-    bool            getLocked() const { return _locked; }
+    bool setLocked(bool locked);
+    bool getLocked() const { return _locked; }
+
 private:
-    bool            _locked = false;
-signals:
-    void            lockedChanged();
+    bool _locked = false;
+Q_SIGNALS:
+    void lockedChanged();
 
 public:
     //! \copydoc _weight
     Q_PROPERTY(qreal weight READ getWeight WRITE setWeight NOTIFY weightChanged FINAL)
     //! \copydoc _weight
-    qreal           getWeight() const { return _weight; }
+    qreal getWeight() const { return _weight; }
     //! \copydoc _weight
-    bool            setWeight(qreal weight);
+    bool setWeight(qreal weight);
+
 protected:
-    //! Edge weight (default to 1.0, range [-1., 1.0] is safe, otherwise setWeight() might not work).
-    qreal           _weight = 1.0;
-signals:
+    //! Edge weight (default to 1.0, range [-1., 1.0] is safe, otherwise setWeight() might not
+    //! work).
+    qreal _weight = 1.0;
+Q_SIGNALS:
     //! \copydoc _weight
-    void            weightChanged();
+    void weightChanged();
     //@}
     //-------------------------------------------------------------------------
 };

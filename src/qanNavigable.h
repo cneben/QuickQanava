@@ -74,9 +74,9 @@ namespace qan { // ::qan
  *     width: navigable.width / 2
  *     maximumValue: navigable.zoomMax > 0. ? navigable.zoomMax : 10.
  *     minimumValue: navigable.zoomMin
- *     stepSize: 0.0   // Non 0 stepSize will create binding loops until you protect the onValueChanged with a fuzzyCompare against zoom+-stepSize
- *     value: navigable.zoom
- *     onValueChanged: { navigable.zoom = value }
+ *     stepSize: 0.0   // Non 0 stepSize will create binding loops until you protect the
+ * onValueChanged with a fuzzyCompare against zoom+-stepSize value: navigable.zoom onValueChanged: {
+ * navigable.zoom = value }
  *   }
  * }
  * \endcode
@@ -91,9 +91,9 @@ namespace qan { // ::qan
  */
 class Navigable : public QQuickItem
 {
-    /*! \name Navigable Object Management *///---------------------------------
+    /*! \name Navigable Object Management */ //---------------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
     virtual ~Navigable() override = default;
@@ -101,27 +101,29 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Navigation Management *///---------------------------------------
+    /*! \name Navigation Management */ //---------------------------------------
     //@{
 public:
     /*! \brief Enable or disable navigation (navigation is enabled by default).
      */
     Q_PROPERTY(bool navigable READ getNavigable WRITE setNavigable NOTIFY navigableChanged FINAL)
     //! \sa navigable
-    inline bool     getNavigable() const noexcept { return _navigable; }
+    inline bool getNavigable() const noexcept { return _navigable; }
     //! \sa navigable
-    void            setNavigable(bool navigable) noexcept;
+    void setNavigable(bool navigable) noexcept;
+
 private:
     //! \copydoc navigable
-    bool            _navigable = true;
-signals:
+    bool _navigable = true;
+Q_SIGNALS:
     //! \sa navigable
-    void            navigableChanged();
+    void navigableChanged();
 
 public:
     /*! \brief Parent container for area child items.
      *
-     * Items added as child of the area must manually update their parents property to \c containerItem
+     * Items added as child of the area must manually update their parents property to \c
+     * containerItem
      *
      * Example code for navigating an image:
      * \code
@@ -132,11 +134,10 @@ public:
      *   anchors.fill: parent
      *   clip: true     // Don't set clipping if Navigable is anchored directly to your main window
      *   Image {
-     *       parent: imageView.containerItem    // Any direct child must manually set its parent item
-     *       id: image
-     *       source: "qrc:/myimage.png"
-     *       Component.onCompleted: {
-     *         // Eventually, fit the image in view: navigable.fitContentInView(), where navigable is Navigable id
+     *       parent: imageView.containerItem    // Any direct child must manually set its parent
+     * item id: image source: "qrc:/myimage.png" Component.onCompleted: {
+     *         // Eventually, fit the image in view: navigable.fitContentInView(), where navigable
+     * is Navigable id
      *       }
      *   }
      * }
@@ -145,19 +146,20 @@ public:
      */
     Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
     //! \sa containerItem
-    inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
+    inline QQuickItem* getContainerItem() noexcept { return _containerItem.data(); }
+
 private:
-    QPointer<QQuickItem>    _containerItem = nullptr;
+    QPointer<QQuickItem> _containerItem = nullptr;
 
 public:
     //! Center the view on a given child item (zoom level is not modified).
-    Q_INVOKABLE void    centerOn(QQuickItem* item);
+    Q_INVOKABLE void centerOn(QQuickItem* item);
 
     //! Center the view on a given position
-    Q_INVOKABLE void    centerOnPosition(QPointF position);
+    Q_INVOKABLE void centerOnPosition(QPointF position);
 
     //! Move to \c position (position will be be at top left corner).
-    Q_INVOKABLE void    moveTo(QPointF position);
+    Q_INVOKABLE void moveTo(QPointF position);
 
     /*! Fit the area content (\c containerItem children) in view and update current zoom level.
      *
@@ -168,7 +170,7 @@ public:
      * find real width/height, \c forceWidth and \c forceHeight might be
      * used to provide a valid size, < 0. are automatically ignored.
      */
-    Q_INVOKABLE void    fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
+    Q_INVOKABLE void fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
 
 public:
     //! \brief Auto fitting mode.
@@ -176,52 +178,62 @@ public:
     {
         //! No auto-fitting (default).
         NoAutoFit,
-        /*! Auto fit area content when the area is resized without user modified zoom or pan, and eventually auto center content.
+        /*! Auto fit area content when the area is resized without user modified zoom or pan, and
+         * eventually auto center content.
          *
          * Setting \c autoFitMode to \c AutoFit has the following effects:
-         * \li Content will be fitted automatically when the view is resized if user has not already applied a custom zoom
-         * or pan.
-         * \li If the user has applied a custom zoom or pan, the content will be automatically centered if the transformed
-         * container item is smaller than navigable area.
-         * \li Content will be anchored to the left or the right view borders when its width is larger than the navigable area, but there
-         * is a space "in panning" between content and view border.
+         * \li Content will be fitted automatically when the view is resized if user has not already
+         * applied a custom zoom or pan. \li If the user has applied a custom zoom or pan, the
+         * content will be automatically centered if the transformed container item is smaller than
+         * navigable area. \li Content will be anchored to the left or the right view borders when
+         * its width is larger than the navigable area, but there is a space "in panning" between
+         * content and view border.
          */
         AutoFit
     };
     Q_ENUM(AutoFitMode)
 
     /*! \brief Current auto-fit mode (default to NoAutoFit).    */
-    Q_PROPERTY(AutoFitMode autoFitMode READ getAutoFitMode WRITE setAutoFitMode NOTIFY autoFitModeChanged FINAL)
+    Q_PROPERTY(AutoFitMode autoFitMode READ getAutoFitMode WRITE setAutoFitMode NOTIFY
+                 autoFitModeChanged FINAL)
     //! \sa autoFitMode
     AutoFitMode getAutoFitMode() const { return _autoFitMode; }
     //! \sa autoFitMode
-    void        setAutoFitMode(AutoFitMode autoFitMode);
+    void setAutoFitMode(AutoFitMode autoFitMode);
+
 private:
     //! \copydoc autoFitMode
-    AutoFitMode _autoFitMode{NoAutoFit};
-signals:
+    AutoFitMode _autoFitMode{ NoAutoFit };
+Q_SIGNALS:
     //! \sa autoFitMode
-    void        autoFitModeChanged();
+    void autoFitModeChanged();
+
 private:
     //! Flag set to true if area panning has been modified since the last fitContentInView() call.
-    bool        _panModified = false;
+    bool _panModified = false;
     //! Flag set to true if area zoom has been modified since the last fitContentInView() call.
-    bool        _zoomModified = false;
+    bool _zoomModified = false;
 
 public:
     /*! \brief Zoom incrementation delta (default to 0.05,ie 5%).
      */
-    Q_PROPERTY(qreal zoomIncrement READ getZoomIncrement WRITE setZoomIncrement NOTIFY zoomIncrementChanged FINAL)
+    Q_PROPERTY(qreal zoomIncrement READ getZoomIncrement WRITE setZoomIncrement NOTIFY
+                 zoomIncrementChanged FINAL)
     //! \sa zoomIncrement
-    qreal       getZoomIncrement() const { return _zoomIncrement; }
+    qreal getZoomIncrement() const { return _zoomIncrement; }
     //! \sa zoomIncrement
-    void        setZoomIncrement(qreal zoomIncrement) noexcept { _zoomIncrement = zoomIncrement; emit zoomIncrementChanged(); }
+    void setZoomIncrement(qreal zoomIncrement) noexcept
+    {
+        _zoomIncrement = zoomIncrement;
+        Q_EMIT zoomIncrementChanged();
+    }
+
 private:
     //! \copydoc zoomIncrement
-    qreal       _zoomIncrement = 0.05;
-signals:
+    qreal _zoomIncrement = 0.05;
+Q_SIGNALS:
     //! \sa zoomIncrement
-    void        zoomIncrementChanged();
+    void zoomIncrementChanged();
 
 public:
     /*! \brief Area current zoom level (default to 1.0).
@@ -232,177 +244,199 @@ public:
      */
     Q_PROPERTY(qreal zoom READ getZoom WRITE setZoom NOTIFY zoomChanged FINAL)
     //! \sa zoom
-    inline qreal        getZoom() const noexcept { return _zoom; }
+    inline qreal getZoom() const noexcept { return _zoom; }
     /*! \brief Set navigable area current zoom (zoom is applied on current \c zoomOrigin).
      *
-     * \note To avoid QML binding loops, this setter is protected against setting the same value multiple times.
-     * \sa zoom
+     * \note To avoid QML binding loops, this setter is protected against setting the same value
+     * multiple times. \sa zoom
      */
-    Q_INVOKABLE void    setZoom(qreal zoom);
+    Q_INVOKABLE void setZoom(qreal zoom);
     //! Set area current zoom centered on a given \c center point.
-    Q_INVOKABLE void    zoomOn(QPointF center, qreal zoom);
-    //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom, maxZoom) range.
-    bool                isValidZoom(qreal zoom) const;
+    Q_INVOKABLE void zoomOn(QPointF center, qreal zoom);
+    //! Return true if zoom is valid (ie it is different from the actual zoom and in the (minZoom,
+    //! maxZoom) range.
+    bool isValidZoom(qreal zoom) const;
+
 private:
     //! \copydoc zoom
-    qreal       _zoom = 1.0;
-signals:
+    qreal _zoom = 1.0;
+Q_SIGNALS:
     //! \sa zoom
-    void        zoomChanged();
+    void zoomChanged();
 
 public:
-    /*! \brief Origin point where any zoom set view setZoom or \c zoom will be applied (default to QQuickItem::Center).
+    /*! \brief Origin point where any zoom set view setZoom or \c zoom will be applied (default to
+     * QQuickItem::Center).
      */
-    Q_PROPERTY(QQuickItem::TransformOrigin zoomOrigin READ getZoomOrigin WRITE setZoomOrigin NOTIFY zoomOriginChanged FINAL)
+    Q_PROPERTY(QQuickItem::TransformOrigin zoomOrigin READ getZoomOrigin WRITE setZoomOrigin NOTIFY
+                 zoomOriginChanged FINAL)
     //! \sa zoomOrigin
-    QQuickItem::TransformOrigin       getZoomOrigin() const noexcept { return _zoomOrigin; }
-    /*! \brief Set navigable area current zoom origin (either QQuickItem::TopLeft or QQuickItem::Center).
+    QQuickItem::TransformOrigin getZoomOrigin() const noexcept { return _zoomOrigin; }
+    /*! \brief Set navigable area current zoom origin (either QQuickItem::TopLeft or
+     * QQuickItem::Center).
      *
      * \note Zooming initiated via mouse wheel is always applied at current mouse position.
      * \sa zoom
      */
-    void        setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin);
+    void setZoomOrigin(QQuickItem::TransformOrigin zoomOrigin);
+
 private:
     //! \copydoc zoomOrigin
     QQuickItem::TransformOrigin _zoomOrigin = QQuickItem::Center;
-signals:
+Q_SIGNALS:
     //! \sa zoomOrigin
-    void        zoomOriginChanged();
+    void zoomOriginChanged();
 
 public:
-    //! Area maximum zoom level (-1 = no maximum zoom limitation, 1.0 = no zoom allowed, >1.0 = zoomMax*100% maximum zoom).
+    //! Area maximum zoom level (-1 = no maximum zoom limitation, 1.0 = no zoom allowed, >1.0 =
+    //! zoomMax*100% maximum zoom).
     Q_PROPERTY(qreal zoomMax READ getZoomMax WRITE setZoomMax NOTIFY zoomMaxChanged FINAL)
     //! \sa zoomMax
-    qreal       getZoomMax() const noexcept { return _zoomMax; }
+    qreal getZoomMax() const noexcept { return _zoomMax; }
     //! \sa zoomMax
-    void        setZoomMax(qreal zoomMax);
+    void setZoomMax(qreal zoomMax);
+
 private:
     //! \copydoc zoomMax
-    qreal       _zoomMax = -1.0;
-signals:
+    qreal _zoomMax = -1.0;
+Q_SIGNALS:
     //! \sa zoomMax
-    void        zoomMaxChanged();
+    void zoomMaxChanged();
 
 public:
     //! Area minimum zoom level, default to 0.1 (10% zoom), zoomMin can't be <= 0.
     Q_PROPERTY(qreal zoomMin READ getZoomMin WRITE setZoomMin NOTIFY zoomMinChanged FINAL)
     //! \sa zoomMin
-    qreal       getZoomMin() const noexcept { return _zoomMin; }
+    qreal getZoomMin() const noexcept { return _zoomMin; }
     //! \sa zoomMin
-    void        setZoomMin(qreal zoomMin);
+    void setZoomMin(qreal zoomMin);
+
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
-signals:
+    qreal _zoomMin = 0.04; // Max 5% zoom with default zoom in/out thresold
+Q_SIGNALS:
     //! \sa zoomMin
-    void        zoomMinChanged();
+    void zoomMinChanged();
 
-signals:
+Q_SIGNALS:
     //! Emitted whenever the mouse is clicked in the container.
-    void    clicked(QVariant pos);
+    void clicked(QVariant pos);
 
     //! Emitted whenever the mouse is right clicked in the container.
-    void    rightClicked(QVariant pos);
+    void rightClicked(QVariant pos);
 
     //! Emitted whenever the container item is scaled (zoomed) or panned.
-    void    containerItemModified();
+    void containerItemModified();
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
-    virtual void    navigableClicked(QPointF pos) { Q_UNUSED(pos); }
+    virtual void navigableClicked(QPointF pos) { Q_UNUSED(pos); }
     //! Called when the mouse is right clicked in the container (base implementation empty).
-    virtual void    navigableRightClicked(QPointF pos) { Q_UNUSED(pos); }
+    virtual void navigableRightClicked(QPointF pos) { Q_UNUSED(pos); }
     //! Called when the container item is scaled (zoomed) or panned (base implementation empty).
-    virtual void    navigableContainerItemModified() { }
+    virtual void navigableContainerItemModified() {}
 
 public:
     //! True when the navigable conctent area is actually dragged.
-    Q_PROPERTY(bool dragActive READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL)
+    Q_PROPERTY(
+      bool dragActive READ getDragActive WRITE setDragActive NOTIFY dragActiveChanged FINAL)
     //! \copydoc dragActive
     inline bool getDragActive() const noexcept { return _dragActive; }
     //! \copydoc dragActive
-    void        setDragActive(bool dragActive) noexcept;
+    void setDragActive(bool dragActive) noexcept;
+
 private:
     //! \copydoc dragActive
-    bool        _dragActive{false};
-signals:
+    bool _dragActive{ false };
+Q_SIGNALS:
     //! \copydoc dragActive
-    void        dragActiveChanged();
+    void dragActiveChanged();
 
 protected:
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    virtual void    geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+    virtual void geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) override;
 #else
-    virtual void    geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
+    virtual void geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
 #endif
-    virtual void    mouseMoveEvent(QMouseEvent* event) override;
-    virtual void    mousePressEvent(QMouseEvent* event) override;
-    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
-    virtual void    wheelEvent(QWheelEvent* event) override;
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
 
 protected:
-    bool        _leftButtonPressed = false;
-    QPointF     _lastPan{};
+    bool _leftButtonPressed = false;
+    QPointF _lastPan{};
     //@}
     //-------------------------------------------------------------------------
 
-
-    /*! \name Selection Rectangle Management *///------------------------------
+    /*! \name Selection Rectangle Management */ //------------------------------
     //@{
 public:
     /*! \brief Enable or disable visual selection rect (default to true, ie selection is enabled).
      */
-    Q_PROPERTY(bool selectionRectEnabled READ getSelectionRectEnabled WRITE setSelectionRectEnabled NOTIFY selectionRectEnabledChanged FINAL)
+    Q_PROPERTY(bool selectionRectEnabled READ getSelectionRectEnabled WRITE setSelectionRectEnabled
+                 NOTIFY selectionRectEnabledChanged FINAL)
     //! \sa selectionRectEnabled
-    inline bool     getSelectionRectEnabled() const noexcept { return _selectionRectEnabled; }
+    inline bool getSelectionRectEnabled() const noexcept
+    {
+        return _selectionRectEnabled;
+    }
     //! \sa selectionRectEnabled
-    void            setSelectionRectEnabled(bool selectionRectEnabled) noexcept;
+    void setSelectionRectEnabled(bool selectionRectEnabled) noexcept;
+
 private:
     //! \copydoc selectionRectEnabled
-    bool            _selectionRectEnabled = true;
-signals:
+    bool _selectionRectEnabled = true;
+Q_SIGNALS:
     //! \sa selectionRectEnabled
-    void            selectionRectEnabledChanged();
+    void selectionRectEnabledChanged();
 
 public:
-    /*! \brief Selection rectangle is activated instead of view panning when CTRL key is used while clicking and dragging.
+    /*! \brief Selection rectangle is activated instead of view panning when CTRL key is used while
+     * clicking and dragging.
      *
-     * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized in a concrete component or subclass.
-     * Selection rectangle is not owned by this qan::Navigable object, it might be a QML owned object.
+     * Selection rectangle can be any QQuickItem* but is usually a Rectangle component initialized
+     * in a concrete component or subclass. Selection rectangle is not owned by this qan::Navigable
+     * object, it might be a QML owned object.
      */
-    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem NOTIFY selectionRectChanged FINAL)
+    Q_PROPERTY(QQuickItem* selectionRectItem READ getSelectionRectItem WRITE setSelectionRectItem
+                 NOTIFY selectionRectChanged FINAL)
     //! \copydoc selectionRectItem
-    inline QQuickItem*  getSelectionRectItem() { return _selectionRectItem; }
+    inline QQuickItem* getSelectionRectItem()
+    {
+        return _selectionRectItem;
+    }
     //! \copydoc selectionRectItem
-    void                setSelectionRectItem(QQuickItem* selectionRectItem);
-private:
-    //! \copydoc selectionRectItem
-    QPointer<QQuickItem>    _selectionRectItem = nullptr;
-signals:
-    void    selectionRectChanged();
+    void setSelectionRectItem(QQuickItem* selectionRectItem);
 
 private:
     //! \copydoc selectionRectItem
-    bool        _ctrlLeftButtonPressed = false;
+    QPointer<QQuickItem> _selectionRectItem = nullptr;
+Q_SIGNALS:
+    void selectionRectChanged();
+
+private:
+    //! \copydoc selectionRectItem
+    bool _ctrlLeftButtonPressed = false;
 
     //! \copydoc selectionRectItem
-    bool        _selectRectActive = false;
+    bool _selectRectActive = false;
 
     //! \copydoc selectionRectItem
-    QPointF     _lastSelectRect{};
-    QPointF     _startSelectRect{};
+    QPointF _lastSelectRect{};
+    QPointF _startSelectRect{};
 
 protected:
-    //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in containerItem space.
-    virtual void    selectionRectActivated(const QRectF& rect);
+    //! Called when the selectionRectItem is activated, ie it's geometry has changed, \c rect is in
+    //! containerItem space.
+    virtual void selectionRectActivated(const QRectF& rect);
 
     //! Called when the selectionRectItem interaction ends.
-    virtual void    selectionRectEnd();
+    virtual void selectionRectEnd();
     //@}
     //-------------------------------------------------------------------------
 
-
-    /*! \name Grid Management *///---------------------------------------------
+    /*! \name Grid Management */ //---------------------------------------------
     //@{
 public:
     /*! \brief User defined background grid.
@@ -413,19 +447,26 @@ public:
      */
     Q_PROPERTY(qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL)
     //! \copydoc grid
-    qan::Grid*          getGrid() noexcept { return _grid.data(); }
-    const qan::Grid*    getGrid() const noexcept { return _grid.data(); }
-    void                setGrid(qan::Grid* grid) noexcept;
+    qan::Grid* getGrid() noexcept
+    {
+        return _grid.data();
+    }
+    const qan::Grid* getGrid() const noexcept
+    {
+        return _grid.data();
+    }
+    void setGrid(qan::Grid* grid) noexcept;
+
 private:
     //! Force update of grid.
-    void                updateGrid() noexcept;
+    void updateGrid() noexcept;
     //! \copydoc grid
     QPointer<qan::Grid> _grid;
 
-    std::unique_ptr<qan::Grid>   _defaultGrid;
-signals:
+    std::unique_ptr<qan::Grid> _defaultGrid;
+Q_SIGNALS:
     //! \copydoc grid
-    void                gridChanged();
+    void gridChanged();
     //@}
     //-------------------------------------------------------------------------
 };

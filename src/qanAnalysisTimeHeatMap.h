@@ -76,7 +76,7 @@ public:
     void                    setImage(QImage image) noexcept;
 private:
     QImage                  _image;
-signals:
+Q_SIGNALS:
     void                    imageChanged();
     //@}
     //-------------------------------------------------------------------------
@@ -96,7 +96,7 @@ public:
 private:
     //! \copydoc source
     QPointer<qan::NavigablePreview> _source;
-signals:
+Q_SIGNALS:
     //! \copydoc source
     void                            sourceChanged();
 
@@ -110,11 +110,11 @@ public:
 private:
     //! \copydoc color
     QColor          _color{0,255,0};
-signals:
+Q_SIGNALS:
     //! \copydoc color
     void            colorChanged();
 
-protected slots:
+protected Q_SLOTS:
     //! Update heatmap when \c source qan::NavigablePreview::visibleWindowChanged() signal is emitted.
     void        onVisibleWindowChanged(QRectF visibleWindowRect, qreal navigableZoom);
 

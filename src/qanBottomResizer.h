@@ -35,10 +35,10 @@
 #pragma once
 
 // Qt headers
-#include <QtQml>
 #include <QQuickItem>
+#include <QtQml>
 
-namespace qan {  // ::qan
+namespace qan { // ::qan
 
 /*! \brief Add a resize handler ont the right of a target QML Item.
  *
@@ -48,7 +48,7 @@ namespace qan {  // ::qan
  */
 class BottomResizer : public QQuickItem
 {
-    /*! \name BottomResizer Object Management *///------------------------------
+    /*! \name BottomResizer Object Management */ //------------------------------
     //@{
     Q_OBJECT
 public:
@@ -59,93 +59,108 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Resizer Management *///------------------------------------------
+    /*! \name Resizer Management */ //------------------------------------------
     //@{
 public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
     Q_PROPERTY(QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL)
-    void        setTarget(QQuickItem* target);
+    void setTarget(QQuickItem* target);
     QQuickItem* getTarget() const { return _target.data(); }
-signals:
-    void        targetChanged();
+Q_SIGNALS:
+    void targetChanged();
+
 private:
-    QPointer<QQuickItem>  _target = nullptr;
+    QPointer<QQuickItem> _target = nullptr;
 
 public:
     //! FIXME
-    Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY targetContentChanged FINAL)
-    void        setTargetContent(QQuickItem* targetContent);
+    Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY
+                 targetContentChanged FINAL)
+    void setTargetContent(QQuickItem* targetContent);
     QQuickItem* getTargetContent() const { return _targetContent.data(); }
-signals:
-    void        targetContentChanged();
-private:
-    QPointer<QQuickItem>  _targetContent = nullptr;
+Q_SIGNALS:
+    void targetContentChanged();
 
-private slots:
-    void        onTargetXChanged();
-    void        onTargetYChanged();
-    void        onTargetWidthChanged();
-    void        onTargetHeightChanged();
-    void        onUpdate();
+private:
+    QPointer<QQuickItem> _targetContent = nullptr;
+
+private Q_SLOTS:
+    void onTargetXChanged();
+    void onTargetYChanged();
+    void onTargetWidthChanged();
+    void onTargetHeightChanged();
+    void onUpdate();
 
 public:
-    //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no constrain).
-    Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL)
+    //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no
+    //! constrain).
+    Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY
+                 minimumTargetSizeChanged FINAL)
     //! \sa minimumTargetSize
-    void        setMinimumTargetSize(QSizeF minimumTargetSize);
+    void setMinimumTargetSize(QSizeF minimumTargetSize);
     //! \sa minimumTargetSize
-    QSizeF      getMinimumTargetSize() const { return _minimumTargetSize; }
-signals:
+    QSizeF getMinimumTargetSize() const { return _minimumTargetSize; }
+Q_SIGNALS:
     //! \sa minimumTargetSize
-    void        minimumTargetSizeChanged();
+    void minimumTargetSizeChanged();
+
 private:
     //! \sa minimumTargetSize
-    QSizeF      _minimumTargetSize{};
+    QSizeF _minimumTargetSize{};
 
 public:
-    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
-    Q_PROPERTY(bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY preserveRatioChanged FINAL)
-    void        setPreserveRatio(bool preserveRatio) noexcept;
-    bool        getPreserveRatio() const noexcept { return _preserveRatio; }
-signals:
-    void        preserveRatioChanged();
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c
+    //! ratio.
+    Q_PROPERTY(bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY
+                 preserveRatioChanged FINAL)
+    void setPreserveRatio(bool preserveRatio) noexcept;
+    bool getPreserveRatio() const noexcept { return _preserveRatio; }
+Q_SIGNALS:
+    void preserveRatioChanged();
+
 private:
-    bool        _preserveRatio = false;
+    bool _preserveRatio = false;
 
 public:
-    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c
+    //! ratio.
     Q_PROPERTY(qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL)
-    void        setRatio(qreal ratio) noexcept;
-    qreal       getRatio() const noexcept { return _ratio; }
-signals:
-    void        ratioChanged();
+    void setRatio(qreal ratio) noexcept;
+    qreal getRatio() const noexcept { return _ratio; }
+Q_SIGNALS:
+    void ratioChanged();
+
 private:
-    qreal       _ratio = 1.0;
+    qreal _ratio = 1.0;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Resizer Management *///------------------------------------------
+    /*! \name Resizer Management */ //------------------------------------------
     //@{
-signals:
-    //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
-    void        resizeStart(QSizeF targetSize);
-    //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
-    void        resizeEnd(QSizeF targetSize);
+Q_SIGNALS:
+    //! Emitted immediately before a resize operation start, \c targetSize is target item current
+    //! size.
+    void resizeStart(QSizeF targetSize);
+    //! Emitted immediately after a resize operation, \c targetSize is target item size after
+    //! resize.
+    void resizeEnd(QSizeF targetSize);
+
 protected:
-    virtual void    hoverEnterEvent(QHoverEvent *event) override;
-    virtual void    hoverLeaveEvent(QHoverEvent *event) override;
-    virtual void    mouseMoveEvent(QMouseEvent* event) override;
-    virtual void    mousePressEvent(QMouseEvent* event) override;
-    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void hoverEnterEvent(QHoverEvent* event) override;
+    virtual void hoverLeaveEvent(QHoverEvent* event) override;
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
-    QPointF     _dragInitialPos{0., 0.};
+    QPointF _dragInitialPos{ 0., 0. };
     //! Target item size at the beginning of a resizing handler drag.
-    QSizeF      _targetInitialSize{0., 0.};
+    QSizeF _targetInitialSize{ 0., 0. };
     //@}
     //-------------------------------------------------------------------------
 };
 
-}  // ::qan
+} // ::qan
 
 QML_DECLARE_TYPE(qan::BottomResizer);

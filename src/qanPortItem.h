@@ -35,15 +35,15 @@
 #pragma once
 
 // Qt headers
-#include <QQuickItem>
-#include <QPointF>
-#include <QPolygonF>
 #include <QDrag>
+#include <QPointF>
 #include <QPointer>
+#include <QPolygonF>
+#include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanNodeItem.h"
 #include "./qanEdgeItem.h"
+#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -56,7 +56,7 @@ namespace qan { // ::qan
  */
 class PortItem : public qan::NodeItem
 {
-    /*! \name Dock Object Management *///--------------------------------------
+    /*! \name Dock Object Management */ //--------------------------------------
     //@{
     Q_OBJECT
 public:
@@ -70,11 +70,12 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Port Properties Management *///----------------------------------
+    /*! \name Port Properties Management */ //----------------------------------
     //@{
 public:
     //! Port type, either IN or OUT port.
-    enum class Type {
+    enum class Type
+    {
         //! Port accept in and out connections.
         InOut,
         //! Port accept only in connections (default).
@@ -85,7 +86,8 @@ public:
     Q_ENUM(Type)
 
     //! Port acces either multiple or single in or out connections (depending on port \c type).
-    enum class Multiplicity {
+    enum class Multiplicity
+    {
         //! Port accept only on in or out connections (default).
         Multiple,
         //! Port accept only in connections (default).
@@ -97,69 +99,75 @@ public:
     //! \copydoc Node in or out or in/out (default to in/out).
     Q_PROPERTY(Type type READ getType CONSTANT FINAL)
     //! \copydoc Type
-    inline Type      getType() const noexcept { return _type; }
+    inline Type getType() const noexcept { return _type; }
     //! \copydoc Type
-    auto             setType(Type type) noexcept -> void;
+    auto setType(Type type) noexcept -> void;
+
 private:
     //! \copydoc Type
-    Type            _type{Type::InOut};
+    Type _type{ Type::InOut };
 
 public:
     //! \copydoc Multiplicity
-    Q_PROPERTY(Multiplicity multiplicity READ getMultiplicity WRITE setMultiplicity NOTIFY multiplicityChanged FINAL)
+    Q_PROPERTY(Multiplicity multiplicity READ getMultiplicity WRITE setMultiplicity NOTIFY
+                 multiplicityChanged FINAL)
     //! \copydoc Multiplicity
     inline Multiplicity getMultiplicity() const noexcept { return _multiplicity; }
     //! \copydoc Multiplicity
-    auto                setMultiplicity(Multiplicity multiplicity) noexcept -> void;
+    auto setMultiplicity(Multiplicity multiplicity) noexcept -> void;
+
 private:
     //! \copydoc Multiplicity
-    Multiplicity        _multiplicity{Multiplicity::Multiple};
-signals:
-    void                multiplicityChanged();
+    Multiplicity _multiplicity{ Multiplicity::Multiple };
+Q_SIGNALS:
+    void multiplicityChanged();
 
 public:
     //!
     Q_PROPERTY(qan::NodeItem::Dock dockType READ getDockType NOTIFY dockTypeChanged FINAL)
-    inline NodeItem::Dock   getDockType() const noexcept { return _dockType; }
-    void                    setDockType(NodeItem::Dock dockType) noexcept;
+    inline NodeItem::Dock getDockType() const noexcept { return _dockType; }
+    void setDockType(NodeItem::Dock dockType) noexcept;
+
 private:
-    qan::NodeItem::Dock     _dockType{NodeItem::Dock::Left};
-signals:
-    void                    dockTypeChanged();
+    qan::NodeItem::Dock _dockType{ NodeItem::Dock::Left };
+Q_SIGNALS:
+    void dockTypeChanged();
 
 public:
     Q_PROPERTY(QString label READ getLabel WRITE setLabel NOTIFY labelChanged FINAL)
-    void            setLabel( const QString& label ) noexcept;
-    inline QString  getLabel() const noexcept { return _label; }
+    void setLabel(const QString& label) noexcept;
+    inline QString getLabel() const noexcept { return _label; }
+
 private:
-    QString         _label = "";
-signals:
-    void            labelChanged();
+    QString _label = "";
+Q_SIGNALS:
+    void labelChanged();
 
 public:
-    void            setId(const QString& id) noexcept { _id = id; }
-    const QString&  getId() const noexcept { return _id; }
+    void setId(const QString& id) noexcept { _id = id; }
+    const QString& getId() const noexcept { return _id; }
+
 private:
-    QString         _id = "";
+    QString _id = "";
 
 public:
-    using EdgeItems =   qcm::Container<QVector, qan::EdgeItem*>;
+    using EdgeItems = qcm::Container<QVector, qan::EdgeItem*>;
 
-    void                addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
-    void                addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept;
+    void addInEdgeItem(qan::EdgeItem& inEdgeItem) noexcept;
+    void addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept;
 
-    EdgeItems&          getInEdgeItems() noexcept { return _inEdgeItems; }
-    const EdgeItems&    getInEdgeItems() const noexcept { return _inEdgeItems; }
+    EdgeItems& getInEdgeItems() noexcept { return _inEdgeItems; }
+    const EdgeItems& getInEdgeItems() const noexcept { return _inEdgeItems; }
 
-    EdgeItems&          getOutEdgeItems() noexcept { return _outEdgeItems; }
-    const EdgeItems&    getOutEdgeItems() const noexcept { return _outEdgeItems; }
+    EdgeItems& getOutEdgeItems() noexcept { return _outEdgeItems; }
+    const EdgeItems& getOutEdgeItems() const noexcept { return _outEdgeItems; }
 
 protected:
-    EdgeItems           _inEdgeItems;
-    EdgeItems           _outEdgeItems;
+    EdgeItems _inEdgeItems;
+    EdgeItems _outEdgeItems;
 
     //! Used internally to automatically monitor in/out edges items destruction.
-    void                onEdgeItemDestroyed(QObject* obj);
+    void onEdgeItemDestroyed(QObject* obj);
 
 public:
     //! Force input/output edge update.

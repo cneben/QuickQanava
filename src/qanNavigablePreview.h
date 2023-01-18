@@ -48,9 +48,9 @@ namespace qan { // ::qan
  */
 class NavigablePreview : public QQuickItem
 {
-    /*! \name NavigablePreview Object Management *///--------------------------
+    /*! \name NavigablePreview Object Management */ //--------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit NavigablePreview(QQuickItem* parent = nullptr);
     virtual ~NavigablePreview() = default;
@@ -58,7 +58,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Preview Management *///------------------------------------------
+    /*! \name Preview Management */ //------------------------------------------
     //@{
 public:
     /*! \brief Source qan::Navigable.
@@ -67,21 +67,22 @@ public:
      */
     Q_PROPERTY(qan::Navigable* source READ getSource WRITE setSource NOTIFY sourceChanged FINAL)
     //! \copydoc source
-    inline qan::Navigable*      getSource() const noexcept { return _source.data(); }
+    inline qan::Navigable* getSource() const noexcept { return _source.data(); }
     //! \copydoc source
-    void                        setSource(qan::Navigable* source) noexcept;
+    void setSource(qan::Navigable* source) noexcept;
+
 private:
     //! \copydoc source
-    QPointer<qan::Navigable>    _source;
-signals:
+    QPointer<qan::Navigable> _source;
+Q_SIGNALS:
     //! \copydoc source
-    void                        sourceChanged();
+    void sourceChanged();
 
 protected:
     //! Return union of rects \c a and \c b.
-    Q_INVOKABLE QRectF  rectUnion(QRectF a, QRectF b) const;
+    Q_INVOKABLE QRectF rectUnion(QRectF a, QRectF b) const;
 
-signals:
+Q_SIGNALS:
     /*! \brief Emitted whenever the preview visible window position or size change.
      *
      * \warning \c visibleWindowRect is scaled to (0,1) according to original navigable
@@ -89,7 +90,7 @@ signals:
      * \arg visibleWindowRect visible window rectangle in navigable \c containerItem CS.
      * \arg navigableZoom zoom in the underling navigable when change occurs.
      */
-    void        visibleWindowChanged(QRectF visibleWindowRect, qreal navigableZoom);
+    void visibleWindowChanged(QRectF visibleWindowRect, qreal navigableZoom);
     //@}
     //-------------------------------------------------------------------------
 };

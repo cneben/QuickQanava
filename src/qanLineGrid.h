@@ -35,14 +35,14 @@
 #pragma once
 
 // Qt headers
-#include <QtQml>
-#include <QQuickItem>
 #include <QQmlListProperty>
+#include <QQuickItem>
+#include <QtQml>
 
 // QuickQanava headers
 #include "./qanGrid.h"
 
-namespace qan {  // ::qan
+namespace qan { // ::qan
 
 /*! \brief Abstract grid with orthogonal geometry.
  *
@@ -53,7 +53,7 @@ namespace qan {  // ::qan
  */
 class OrthoGrid : public Grid
 {
-    /*! \name OrthoGrid Object Management *///---------------------------------
+    /*! \name OrthoGrid Object Management */ //---------------------------------
     //@{
     Q_OBJECT
 public:
@@ -63,27 +63,30 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Grid Management *///---------------------------------------------
+    /*! \name Grid Management */ //---------------------------------------------
     //@{
 public:
-    virtual bool    updateGrid(const QRectF& viewRect,
-                               const QQuickItem& container,
-                               const QQuickItem& navigable) noexcept override;
+    virtual bool updateGrid(const QRectF& viewRect,
+                            const QQuickItem& container,
+                            const QQuickItem& navigable) noexcept override;
+
 protected:
-    virtual bool    updateGrid() noexcept override;
+    virtual bool updateGrid() noexcept override;
 
 private:
     //! View rect cached updated in updateGrid(), allow updateGrid() use with no arguments.
-    QRectF                  _viewRectCache;
-    //! Cache for container targetted by this grid, updated in updateGrid(), allow updateGrid() use with no arguments.
-    QPointer<QQuickItem>    _containerCache;
-    //! Cache for navigable where this grid is used, updated in updateGrid(), allow updateGrid() use with no arguments.
-    QPointer<QQuickItem>    _navigableCache;
+    QRectF _viewRectCache;
+    //! Cache for container targetted by this grid, updated in updateGrid(), allow updateGrid() use
+    //! with no arguments.
+    QPointer<QQuickItem> _containerCache;
+    //! Cache for navigable where this grid is used, updated in updateGrid(), allow updateGrid() use
+    //! with no arguments.
+    QPointer<QQuickItem> _navigableCache;
     //@}
     //-------------------------------------------------------------------------
 };
 
-namespace impl {  // ::qan::impl
+namespace impl { // ::qan::impl
 
 /*! \brief Private utility class based on QObject to feed line to QML grid backend.
  */
@@ -92,10 +95,14 @@ class GridLine : public QObject
     Q_OBJECT
 public:
     GridLine() = default;
-    GridLine(QObject* parent) : QObject{parent} {}
-    GridLine(const QPointF&& p1, const QPointF&& p2) :
-        QObject{nullptr},
-        _p1{p1}, _p2{p2} {}
+    GridLine(QObject* parent)
+      : QObject{ parent }
+    {}
+    GridLine(const QPointF&& p1, const QPointF&& p2)
+      : QObject{ nullptr }
+      , _p1{ p1 }
+      , _p2{ p2 }
+    {}
     ~GridLine() = default;
     GridLine(const GridLine&) = delete;
 
@@ -103,10 +110,11 @@ public:
     Q_PROPERTY(QPointF p1 READ getP1)
     Q_PROPERTY(QPointF p2 READ getP2)
 
-    const QPointF&  getP1() const { return _p1; }
-    const QPointF&  getP2() const { return _p2; }
-    QPointF&        getP1() { return _p1; }
-    QPointF&        getP2() { return _p2; }
+    const QPointF& getP1() const { return _p1; }
+    const QPointF& getP2() const { return _p2; }
+    QPointF& getP1() { return _p1; }
+    QPointF& getP2() { return _p2; }
+
 private:
     QPointF _p1;
     QPointF _p2;
@@ -128,29 +136,30 @@ private:
  */
 class LineGrid : public OrthoGrid
 {
-    /*! \name LineGrid Object Management *///----------------------------------
+    /*! \name LineGrid Object Management */ //----------------------------------
     //@{
     Q_OBJECT
 public:
-    explicit LineGrid( QQuickItem* parent = nullptr );
+    explicit LineGrid(QQuickItem* parent = nullptr);
     virtual ~LineGrid() override;
     LineGrid(const LineGrid&) = delete;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Grid Management *///---------------------------------------------
+    /*! \name Grid Management */ //---------------------------------------------
     //@{
-signals:
+Q_SIGNALS:
     /*! \brief Emmitted when the grid's lines have to be redrawned.
      * \c minorLineToDrawCount and \c majorLineToDrawCount respectively the number of lines
      * to redraw.
      */
-    void            redrawLines(int minorLineToDrawCount, int majorLineToDrawCount);
+    void redrawLines(int minorLineToDrawCount, int majorLineToDrawCount);
 
 public:
-    virtual bool    updateGrid(const QRectF& viewRect,
-                               const QQuickItem& container,
-                               const QQuickItem& navigable ) noexcept override;
+    virtual bool updateGrid(const QRectF& viewRect,
+                            const QQuickItem& container,
+                            const QQuickItem& navigable) noexcept override;
+
 public:
     Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> minorLines READ getMinorLines)
     Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> majorLines READ getMajorLines)
@@ -166,25 +175,25 @@ private:
     using size_type = qsizetype;
 #endif
 
-    size_type                   minorLinesCount() const;
-    impl::GridLine*             minorLinesAt(size_type index) const;
-    QVector<impl::GridLine*>    _minorLines;
+    size_type minorLinesCount() const;
+    impl::GridLine* minorLinesAt(size_type index) const;
+    QVector<impl::GridLine*> _minorLines;
 
-    size_type                   majorLinesCount() const;
-    impl::GridLine*             majorLinesAt(size_type index) const;
-    QVector<impl::GridLine*>    _majorLines;
+    size_type majorLinesCount() const;
+    impl::GridLine* majorLinesAt(size_type index) const;
+    QVector<impl::GridLine*> _majorLines;
 
 private:
-    static size_type        callMinorLinesCount(QQmlListProperty<impl::GridLine>*);
-    static impl::GridLine*  callMinorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
+    static size_type callMinorLinesCount(QQmlListProperty<impl::GridLine>*);
+    static impl::GridLine* callMinorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
 
-    static size_type        callMajorLinesCount(QQmlListProperty<impl::GridLine>*);
-    static impl::GridLine*  callMajorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
+    static size_type callMajorLinesCount(QQmlListProperty<impl::GridLine>*);
+    static impl::GridLine* callMajorLinesAt(QQmlListProperty<impl::GridLine>*, size_type index);
     //@}
     //-------------------------------------------------------------------------
 };
 
-}  // ::qan
+} // ::qan
 
 QML_DECLARE_TYPE(qan::OrthoGrid);
 QML_DECLARE_TYPE(qan::impl::GridLine);

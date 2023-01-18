@@ -35,10 +35,10 @@
 #pragma once
 
 // Qt headers
-#include <QtQml>
 #include <QQuickItem>
+#include <QtQml>
 
-namespace qan {  // ::qan
+namespace qan { // ::qan
 
 /*! \brief Add a resize handler ont the bottom right of a target QML Item.
  *
@@ -70,7 +70,7 @@ namespace qan {  // ::qan
  */
 class BottomRightResizer : public QQuickItem
 {
-    /*! \name BottomRightResizer Object Management *///------------------------
+    /*! \name BottomRightResizer Object Management */ //------------------------
     //@{
     Q_OBJECT
 public:
@@ -81,60 +81,66 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Resizer Management *///------------------------------------------
+    /*! \name Resizer Management */ //------------------------------------------
     //@{
 public:
-    Q_PROPERTY(QQuickItem*  handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL)
-    void                    setHandler(QQuickItem* handler);
-    QQuickItem*             getHandler() const;
-signals:
-    void                    handlerChanged();
+    Q_PROPERTY(QQuickItem* handler READ getHandler WRITE setHandler NOTIFY handlerChanged FINAL)
+    void setHandler(QQuickItem* handler);
+    QQuickItem* getHandler() const;
+Q_SIGNALS:
+    void handlerChanged();
+
 private:
-    QPointer<QQuickItem>    _handler = nullptr;
+    QPointer<QQuickItem> _handler = nullptr;
 
 public:
     //! Item that should be resized by this resizer (set to nullptr to disable the resizer).
     Q_PROPERTY(QQuickItem* target READ getTarget WRITE setTarget NOTIFY targetChanged FINAL)
-    void        setTarget(QQuickItem* target);
+    void setTarget(QQuickItem* target);
     QQuickItem* getTarget() const noexcept { return _target.data(); }
-signals:
-    void        targetChanged();
+Q_SIGNALS:
+    void targetChanged();
+
 private:
-    QPointer<QQuickItem>  _target = nullptr;
+    QPointer<QQuickItem> _target = nullptr;
 
 public:
     //! FIXME
-    Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY targetContentChanged FINAL)
-    void        setTargetContent(QQuickItem* targetContent);
+    Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY
+                 targetContentChanged FINAL)
+    void setTargetContent(QQuickItem* targetContent);
     QQuickItem* getTargetContent() const { return _targetContent.data(); }
-signals:
-    void        targetContentChanged();
-private:
-    QPointer<QQuickItem>  _targetContent = nullptr;
+Q_SIGNALS:
+    void targetContentChanged();
 
 private:
-    void        configureHandler(QQuickItem& handler) noexcept;
-    void        configureTarget(QQuickItem& target) noexcept;
-private slots:
-    void        onTargetXChanged();
-    void        onTargetYChanged();
-    void        onTargetWidthChanged();
-    void        onTargetHeightChanged();
-    void        onUpdate();
+    QPointer<QQuickItem> _targetContent = nullptr;
+
+private:
+    void configureHandler(QQuickItem& handler) noexcept;
+    void configureTarget(QQuickItem& target) noexcept;
+private Q_SLOTS:
+    void onTargetXChanged();
+    void onTargetYChanged();
+    void onTargetWidthChanged();
+    void onTargetHeightChanged();
+    void onUpdate();
 
 public:
     /*! \brief Size of the bottom right handler component (default to \c 9x9).
      *
-     * \note Setting an empty or invalid size has not effect, use \c autoHideHandler property to control
-     * handler visibility (or set it's opacity to a given value).
+     * \note Setting an empty or invalid size has not effect, use \c autoHideHandler property to
+     * control handler visibility (or set it's opacity to a given value).
      */
-    Q_PROPERTY(QSizeF handlerSize READ getHandlerSize WRITE setHandlerSize NOTIFY handlerSizeChanged FINAL)
-    void        setHandlerSize(const QSizeF& handlerSize);
-    QSizeF      getHandlerSize() const { return _handlerSize; }
-signals:
-    void        handlerSizeChanged();
+    Q_PROPERTY(
+      QSizeF handlerSize READ getHandlerSize WRITE setHandlerSize NOTIFY handlerSizeChanged FINAL)
+    void setHandlerSize(const QSizeF& handlerSize);
+    QSizeF getHandlerSize() const { return _handlerSize; }
+Q_SIGNALS:
+    void handlerSizeChanged();
+
 private:
-    QSizeF      _handlerSize{9.0, 9.0};
+    QSizeF _handlerSize{ 9.0, 9.0 };
 
 public:
     /*! \brief Color of the bottom right handler component (default to \c Qt::black).
@@ -142,104 +148,125 @@ public:
      * \note For a default rectangular handler, color is border color, background is
      * set to transparent, use getHandler()->setProperty() to change this default behaviour.
      */
-    Q_PROPERTY(QColor handlerColor READ getHandlerColor WRITE setHandlerColor NOTIFY handlerColorChanged FINAL)
-    void        setHandlerColor(QColor handlerColor);
-    QColor      getHandlerColor() const { return _handlerColor; }
-signals:
-    void        handlerColorChanged();
+    Q_PROPERTY(QColor handlerColor READ getHandlerColor WRITE setHandlerColor NOTIFY
+                 handlerColorChanged FINAL)
+    void setHandlerColor(QColor handlerColor);
+    QColor getHandlerColor() const { return _handlerColor; }
+Q_SIGNALS:
+    void handlerColorChanged();
+
 private:
-    QColor      _handlerColor{Qt::black};
+    QColor _handlerColor{ Qt::black };
 
 public:
     /*! \brief Radius of the bottom right handler rectangle component (default to \c 4).
      */
-    Q_PROPERTY(qreal handlerRadius READ getHandlerRadius WRITE setHandlerRadius NOTIFY handlerRadiusChanged FINAL)
-    void        setHandlerRadius(qreal handlerRadius);
-    qreal       getHandlerRadius() const { return _handlerRadius; }
-signals:
-    void        handlerRadiusChanged();
+    Q_PROPERTY(qreal handlerRadius READ getHandlerRadius WRITE setHandlerRadius NOTIFY
+                 handlerRadiusChanged FINAL)
+    void setHandlerRadius(qreal handlerRadius);
+    qreal getHandlerRadius() const { return _handlerRadius; }
+Q_SIGNALS:
+    void handlerRadiusChanged();
+
 private:
-    qreal       _handlerRadius = 4.0;
+    qreal _handlerRadius = 4.0;
 
 public:
     /*! \brief Radius of the bottom right handler rectangle component (default to \c 4).
      */
-    Q_PROPERTY(qreal handlerWidth READ getHandlerWidth WRITE setHandlerWidth NOTIFY handlerWidthChanged FINAL)
-    void        setHandlerWidth(qreal handlerWidth);
-    qreal       getHandlerWidth() const { return _handlerWidth; }
-signals:
-    void        handlerWidthChanged();
+    Q_PROPERTY(qreal handlerWidth READ getHandlerWidth WRITE setHandlerWidth NOTIFY
+                 handlerWidthChanged FINAL)
+    void setHandlerWidth(qreal handlerWidth);
+    qreal getHandlerWidth() const { return _handlerWidth; }
+Q_SIGNALS:
+    void handlerWidthChanged();
+
 private:
-    qreal       _handlerWidth = 4.0;
+    qreal _handlerWidth = 4.0;
 
 public:
-    //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no constrain).
-    Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY minimumTargetSizeChanged FINAL)
+    //! Target could not be resized below \c minimumTargetSize (default to \c invalid ie, no
+    //! constrain).
+    Q_PROPERTY(QSizeF minimumTargetSize READ getMinimumTargetSize WRITE setMinimumTargetSize NOTIFY
+                 minimumTargetSizeChanged FINAL)
     //! \sa minimumTargetSize
-    void        setMinimumTargetSize(QSizeF minimumTargetSize);
+    void setMinimumTargetSize(QSizeF minimumTargetSize);
     //! \sa minimumTargetSize
-    QSizeF      getMinimumTargetSize() const { return _minimumTargetSize; }
-signals:
+    QSizeF getMinimumTargetSize() const { return _minimumTargetSize; }
+Q_SIGNALS:
     //! \sa minimumTargetSize
-    void        minimumTargetSizeChanged();
+    void minimumTargetSizeChanged();
+
 private:
     //! \sa minimumTargetSize
-    QSizeF      _minimumTargetSize{};
+    QSizeF _minimumTargetSize{};
 
 public:
-    //! Set to true to hide the resize handler component when the resize area is not hovered (default to \c false).
-    Q_PROPERTY(bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY autoHideHandlerChanged FINAL)
-    void        setAutoHideHandler(bool autoHideHandler);
-    bool        getAutoHideHandler() const { return _autoHideHandler; }
-signals:
-    void        autoHideHandlerChanged();
+    //! Set to true to hide the resize handler component when the resize area is not hovered
+    //! (default to \c false).
+    Q_PROPERTY(bool autoHideHandler READ getAutoHideHandler WRITE setAutoHideHandler NOTIFY
+                 autoHideHandlerChanged FINAL)
+    void setAutoHideHandler(bool autoHideHandler);
+    bool getAutoHideHandler() const { return _autoHideHandler; }
+Q_SIGNALS:
+    void autoHideHandlerChanged();
+
 private:
-    bool        _autoHideHandler = false;
+    bool _autoHideHandler = false;
 
 public:
-    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
-    Q_PROPERTY(bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY preserveRatioChanged FINAL)
-    void        setPreserveRatio(bool preserveRatio) noexcept;
-    bool        getPreserveRatio() const noexcept { return _preserveRatio; }
-signals:
-    void        preserveRatioChanged();
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c
+    //! ratio.
+    Q_PROPERTY(bool preserveRatio READ getPreserveRatio WRITE setPreserveRatio NOTIFY
+                 preserveRatioChanged FINAL)
+    void setPreserveRatio(bool preserveRatio) noexcept;
+    bool getPreserveRatio() const noexcept { return _preserveRatio; }
+Q_SIGNALS:
+    void preserveRatioChanged();
+
 private:
-    bool        _preserveRatio = false;
+    bool _preserveRatio = false;
 
 public:
-    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c ratio.
+    //! Set to true to prevent resizing that would modify the height/width ratio defined in \c
+    //! ratio.
     Q_PROPERTY(qreal ratio READ getRatio WRITE setRatio NOTIFY ratioChanged FINAL)
-    void        setRatio(qreal ratio) noexcept;
-    qreal       getRatio() const noexcept { return _ratio; }
-signals:
-    void        ratioChanged();
+    void setRatio(qreal ratio) noexcept;
+    qreal getRatio() const noexcept { return _ratio; }
+Q_SIGNALS:
+    void ratioChanged();
+
 private:
-    qreal       _ratio = 1.0;
+    qreal _ratio = 1.0;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Resizer Management *///------------------------------------------
+    /*! \name Resizer Management */ //------------------------------------------
     //@{
-signals:
-    //! Emitted immediately before a resize operation start, \c targetSize is target item current size.
-    void    resizeStart(QSizeF targetSize);
-    //! Emitted immediately after a resize operation, \c targetSize is target item size after resize.
-    void    resizeEnd(QSizeF targetSize);
+Q_SIGNALS:
+    //! Emitted immediately before a resize operation start, \c targetSize is target item current
+    //! size.
+    void resizeStart(QSizeF targetSize);
+    //! Emitted immediately after a resize operation, \c targetSize is target item size after
+    //! resize.
+    void resizeEnd(QSizeF targetSize);
+
 protected:
-    virtual void    hoverEnterEvent(QHoverEvent *event) override;
-    virtual void    hoverLeaveEvent(QHoverEvent *event) override;
-    virtual void    mouseMoveEvent(QMouseEvent* event) override;
-    virtual void    mousePressEvent(QMouseEvent* event) override;
-    virtual void    mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void hoverEnterEvent(QHoverEvent* event) override;
+    virtual void hoverLeaveEvent(QHoverEvent* event) override;
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+
 private:
     //! Initial global mouse position at the beginning of a resizing handler drag.
-    QPointF         _dragInitialPos{0., 0.};
+    QPointF _dragInitialPos{ 0., 0. };
     //! Target item size at the beginning of a resizing handler drag.
-    QSizeF          _targetInitialSize{0., 0.};
+    QSizeF _targetInitialSize{ 0., 0. };
     //@}
     //-------------------------------------------------------------------------
 };
 
-}  // ::qan
+} // ::qan
 
 QML_DECLARE_TYPE(qan::BottomRightResizer);

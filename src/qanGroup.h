@@ -35,13 +35,13 @@
 #pragma once
 
 // Qt headers
-#include <QQuickItem>
 #include <QPointF>
 #include <QPolygonF>
+#include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanStyle.h"
 #include "./qanNode.h"
+#include "./qanStyle.h"
 
 #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
@@ -59,7 +59,7 @@ class GroupItem;
  */
 class Group : public qan::Node
 {
-    /*! \name Group Object Management *///-------------------------------------
+    /*! \name Group Object Management */ //-------------------------------------
     //@{
     Q_OBJECT
 public:
@@ -74,57 +74,63 @@ public:
 public:
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::group<>::getGraph().
-    qan::Graph*         getGraph() noexcept;
+    qan::Graph* getGraph() noexcept;
     //! \copydoc getGraph()
-    const qan::Graph*   getGraph() const noexcept;
+    const qan::Graph* getGraph() const noexcept;
 
     /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
      *
      */
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
+    std::unordered_set<qan::Edge*> collectAdjacentEdges() const;
 
 public:
     friend class qan::GroupItem;
 
-    qan::GroupItem*         getGroupItem() noexcept;
-    const qan::GroupItem*   getGroupItem() const noexcept;
-    virtual void            setItem(qan::NodeItem* item) noexcept override;
+    qan::GroupItem* getGroupItem() noexcept;
+    const qan::GroupItem* getGroupItem() const noexcept;
+    virtual void setItem(qan::NodeItem* item) noexcept override;
 
 public:
-    //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
-    void    itemProposeNodeDrop();
-    //! Shortcut to getItem()->endProposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
-    void    itemEndProposeNodeDrop();
+    //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid
+    //! forward template declaration.
+    void itemProposeNodeDrop();
+    //! Shortcut to getItem()->endProposeNodeDrop(), defined only for g++ compatibility to avoid
+    //! forward template declaration.
+    void itemEndProposeNodeDrop();
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Static Factories *///--------------------------------------
+    /*! \name Group Static Factories */ //--------------------------------------
     //@{
 public:
-    /*! \brief Return the default delegate QML component that should be used to generate group \c item.
+    /*! \brief Return the default delegate QML component that should be used to generate group \c
+     * item.
      *
      *  \arg engine QML engine used for delegate QML component creation.
-     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default
+     * to Qan.Group component).
      */
-    static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
+    static QQmlComponent* delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
     /*! \brief Return the default style that should be used with qan::Group.
      *
-     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
+     *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group
+     * style will be used).
      */
-    static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
+    static qan::NodeStyle* style(QObject* parent = nullptr) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Nodes Management *///--------------------------------------
+    /*! \name Group Nodes Management */ //--------------------------------------
     //@{
 public:
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
-    Q_INVOKABLE bool    hasNode(const qan::Node* node) const;
+    //! Return true if node \c node is registered in this group, shortcut to
+    //! gtpo::group<qan::Config>::hasNode().
+    Q_INVOKABLE bool hasNode(const qan::Node* node) const;
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group DnD Management *///----------------------------------------
+    /*! \name Group DnD Management */ //----------------------------------------
     //@{
 public:
     /*! \brief Define if the group could actually be dragged by mouse.
@@ -135,12 +141,13 @@ public:
      * Default to true (ie group is draggable by mouse).
      */
     Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
-    bool            setDraggable(bool draggable) noexcept;
-    bool            getDraggable() const noexcept;
+    bool setDraggable(bool draggable) noexcept;
+    bool getDraggable() const noexcept;
+
 private:
-    bool            _draggable = true;
-signals:
-    void            draggableChanged();
+    bool _draggable = true;
+Q_SIGNALS:
+    void draggableChanged();
     //@}
     //-------------------------------------------------------------------------
 };
