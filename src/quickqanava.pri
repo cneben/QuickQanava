@@ -30,7 +30,9 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanConnector.h            \
             $$PWD/qanBehaviour.h            \
             $$PWD/qanGroup.h                \
+            $$PWD/qanTableGroup.h           \
             $$PWD/qanGroupItem.h            \
+            $$PWD/qanGroupItem.cpp          \
             $$PWD/qanGraph.h                \
             $$PWD/qanGraph.hpp              \
             $$PWD/qanStyle.h                \
@@ -69,6 +71,7 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanGraph.cpp              \
             $$PWD/qanGroup.cpp              \
             $$PWD/qanGroupItem.cpp          \
+            $$PWD/qanTableGroup.cpp         \
             $$PWD/qanStyle.cpp              \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
