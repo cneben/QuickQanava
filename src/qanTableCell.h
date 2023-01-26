@@ -52,6 +52,23 @@ public:
     TableCell(const TableCell&) = delete;
     //@}
     //-------------------------------------------------------------------------
+
+    /*! \name Cell Container Management *///-----------------------------------
+    //@{
+public:
+    //! Set `item` in this cell "container", `item` is reparented to cell.
+    const QQuickItem*       getItem() const { return _item.data(); }
+    //! \copydoc getItem()
+    void                    setItem(QQuickItem* item);
+protected:
+    //! \copydoc getItem()
+    QPointer<QQuickItem>    _item;
+
+protected slots:
+    //! Fit actual `_item` to this cell.
+    void                    fitItemToCell();
+    //@}
+    //-------------------------------------------------------------------------
 };
 
 } // ::qan

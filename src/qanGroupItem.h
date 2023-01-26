@@ -71,9 +71,9 @@ public:
     //@{
 public:
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
-    auto        getGroup() noexcept -> qan::Group*;
-    auto        getGroup() const noexcept -> const qan::Group*;
-    auto        setGroup(qan::Group* group) noexcept -> void;
+    auto            getGroup() noexcept -> qan::Group*;
+    auto            getGroup() const noexcept -> const qan::Group*;
+    virtual void    setGroup(qan::Group* group) noexcept;
 protected:
     QPointer<qan::Group> _group{nullptr};
 

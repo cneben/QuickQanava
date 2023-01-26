@@ -43,6 +43,36 @@ TableCell::TableCell(QQuickItem* parent):
 {
     // Drops are managed by WuickQanava at qan::TableGroupItem level
     setFlag(QQuickItem::ItemAcceptsDrops, false);
+
+    // Fit item in cell to cell width/height
+    connect(this, &QQuickItem::widthChanged,
+            this, &qan::TableCell::fitItemToCell);
+    connect(this, &QQuickItem::heightChanged,
+            this, &qan::TableCell::fitItemToCell);
+}
+//-----------------------------------------------------------------------------
+
+
+/* Cell Container Management *///----------------------------------------------
+void    TableCell::setItem(QQuickItem* item)
+{
+    if (item != _item) {
+        _item = item;
+        if (_item) {
+            _item->setX(0.);
+            _item->setY(0.);
+            _item->setParentItem(this);
+        }
+        fitItemToCell();
+    }
+}
+
+void    TableCell::fitItemToCell()
+{
+    if (_item) {
+        _item->setWidth(width());
+        _item->setHeight(height());
+    }
 }
 //-----------------------------------------------------------------------------
 

@@ -38,6 +38,8 @@
 #include <QtQml>
 #include <QQuickItem>
 
+#include "./qanTableGroup.h"
+
 namespace qan {  // ::qan
 
 class TableCell;
@@ -61,6 +63,11 @@ public:
 
     /*! \name Border Management *///-------------------------------------------
     //@{
+public:
+    void    setTableGroup(const qan::TableGroup* tableGroup);
+protected:
+    QPointer<const qan::TableGroup>     _tableGroup;
+
 public:
     Q_PROPERTY(Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged FINAL)
     Qt::Orientation getOrientation() const { return _orientation; }
@@ -93,11 +100,22 @@ private:
     qreal       _borderWidth = 3.0;
 
 public:
+    void        setPrevBorder(qan::TableBorder* prevBorder);
+    void        setNextBorder(qan::TableBorder* nextBorder);
+protected:
+    QPointer<qan::TableBorder>  _prevBorder;
+    QPointer<qan::TableBorder>  _nextBorder;
+
+public:
     void        addPrevCell(qan::TableCell* prevCell);
     void        addNextCell(qan::TableCell* nextCell);
 protected:
     std::vector<qan::TableCell*>    _prevCells;
     std::vector<qan::TableCell*>    _nextCells;
+
+protected slots:
+    void    onHorizontalMove();
+    void    onVerticalMove();
     //@}
     //-------------------------------------------------------------------------
 
@@ -111,6 +129,7 @@ protected:
     virtual void    mouseReleaseEvent(QMouseEvent* event) override;
 private:
     //! Initial global mouse position at the beginning of a resizing border drag.
+    QPointF         _dragInitialMousePos{0., 0.};
     QPointF         _dragInitialPos{0., 0.};
     //@}
     //-------------------------------------------------------------------------

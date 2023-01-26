@@ -70,7 +70,7 @@ GroupItem::GroupItem(QQuickItem* parent) :
 
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
+void    GroupItem::setGroup(qan::Group* group) noexcept
 {
     // DraggableCtrl configuration is done in setNode()
     qan::NodeItem::setNode(static_cast<qan::Node*>(group));

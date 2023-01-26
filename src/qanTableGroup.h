@@ -55,7 +55,7 @@ namespace qan { // ::qan
  */
 class TableGroup : public qan::Group
 {
-    /*! \name TableGroup Object Management *///-------------------------------------
+    /*! \name TableGroup Object Management *///--------------------------------
     //@{
     Q_OBJECT
 public:
@@ -70,10 +70,6 @@ public:
 public:
     //friend class qan::TableGroupItem;
 
-    //qan::TableGroupItem*         getTableGroupItem() noexcept;
-    //const qan::TableGroupItem*   getTableGroupItem() const noexcept;
-    //virtual void            setItem(qan::NodeItem* item) noexcept override;
-
 public:
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
     void    itemProposeNodeDrop();
@@ -82,7 +78,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name TableGroup Static Factories *///--------------------------------------
+    /*! \name TableGroup Static Factories *///---------------------------------
     //@{
 public:
     /*! \brief Return the default delegate QML component that should be used to generate group \c item.
@@ -97,6 +93,40 @@ public:
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
      */
     static  qan::NodeStyle*     style(QObject* parent = nullptr) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Table Properties *///--------------------------------------------
+    //@{
+public:
+    //! \brief FIXME #190.
+    Q_PROPERTY(qreal cellSpacing READ getCellSpacing WRITE setCellSpacing NOTIFY cellSpacingChanged FINAL)
+    void        setCellSpacing(qreal cellSpacing);
+    qreal       getCellSpacing() const { return _cellSpacing; }
+signals:
+    void        cellSpacingChanged();
+private:
+    qreal       _cellSpacing = 5.0;
+
+public:
+    //! \brief FIXME #190.
+    Q_PROPERTY(QSizeF cellMinimumSize READ getCellMinimumSize WRITE setCellMinimumSize NOTIFY cellMinimumSizeChanged FINAL)
+    void        setCellMinimumSize(QSizeF cellMinimumSize);
+    QSizeF      getCellMinimumSize() const { return _cellMinimumSize; }
+signals:
+    void        cellMinimumSizeChanged();
+private:
+    QSizeF      _cellMinimumSize = QSizeF{10., 10.};
+
+public:
+    //! \brief FIXME #190.
+    Q_PROPERTY(qreal tablePadding READ getTablePadding WRITE setTablePadding NOTIFY tablePaddingChanged FINAL)
+    void        setTablePadding(qreal tablePadding);
+    qreal       getTablePadding() const { return _tablePadding; }
+signals:
+    void        tablePaddingChanged();
+private:
+    qreal       _tablePadding = 2.0;
     //@}
     //-------------------------------------------------------------------------
 };

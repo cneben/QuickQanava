@@ -50,20 +50,6 @@ TableGroup::TableGroup(QObject* parent) :
 {
     set_is_group(true);
 }
-
-/*void    TableGroup::itemProposeNodeDrop()
-{
-    const auto groupItem = getTableGroupItem();
-    if (groupItem)
-        groupItem->proposeNodeDrop();
-}
-
-void    TableGroup::itemEndProposeNodeDrop()
-{
-    const auto groupItem = getTableGroupItem();
-    if (groupItem)
-        groupItem->endProposeNodeDrop();
-}*/
 //-----------------------------------------------------------------------------
 
 /* TableGroup Static Factories *///-------------------------------------------------
@@ -91,6 +77,26 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
         qan_TableGroup_style->setBackColor(QColor(242, 248, 255));
     }
     return qan_TableGroup_style.get();
+}
+//-----------------------------------------------------------------------------
+
+/* Table Properties *///-------------------------------------------------------
+void    TableGroup::setCellSpacing(qreal cellSpacing)
+{
+    _cellSpacing = cellSpacing;
+    emit cellSpacingChanged();
+}
+
+void    TableGroup::setCellMinimumSize(QSizeF cellMinimumSize)
+{
+    _cellMinimumSize = cellMinimumSize;
+    emit cellMinimumSizeChanged();
+}
+
+void    TableGroup::setTablePadding(qreal tablePadding)
+{
+    _tablePadding = tablePadding;
+    emit tablePaddingChanged();
 }
 //-----------------------------------------------------------------------------
 

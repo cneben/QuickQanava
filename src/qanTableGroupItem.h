@@ -48,6 +48,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class TableGroup;
 
 /*! \brief FIXME
  *
@@ -76,6 +77,10 @@ public:
     /*! \name Cells Management *///--------------------------------------------
     //@{
 public:
+    virtual void    setGroup(qan::Group* group) noexcept override;
+protected:
+    const qan::TableGroup*  getTableGroup() const;
+public:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
 protected slots:
@@ -98,12 +103,6 @@ public:
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true) override;
-
-    //! Call at the beginning of another group or node hover operation on this group (usually trigger a visual change to notify user that insertion is possible trought DND).
-    //void            proposeNodeDrop() noexcept { emit nodeDragEnter( ); }
-
-    //! End an operation started with proposeNodeDrop().
-    //void            endProposeNodeDrop() noexcept { emit nodeDragLeave( ); }
 
 protected:
     virtual void    mouseDoubleClickEvent(QMouseEvent* event ) override;

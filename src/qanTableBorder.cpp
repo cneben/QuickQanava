@@ -34,6 +34,8 @@
 
 // Std headers
 #include <sstream>
+#include <limits>
+#include <algorithm>
 
 // Qt headers
 #include <QCursor>
@@ -42,6 +44,7 @@
 // QuickQanava headers
 #include "./qanTableBorder.h"
 #include "./qanTableCell.h"
+#include "./qanTableGroupItem.h"
 
 namespace qan {  // ::qan
 
@@ -51,13 +54,22 @@ TableBorder::TableBorder(QQuickItem* parent) :
 {
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptHoverEvents(true);
+
+    connect(this,   &QQuickItem::xChanged,
+            this,   &TableBorder::onHorizontalMove);
+    connect(this,   &QQuickItem::yChanged,
+            this,   &TableBorder::onVerticalMove);
 }
 
 TableBorder::~TableBorder() { /* prevCells and nextCells are not owned */ }
 //-----------------------------------------------------------------------------
 
+/* Border Management *///------------------------------------------------------
+void    TableBorder::setTableGroup(const qan::TableGroup* tableGroup)
+{
+    _tableGroup = tableGroup;
+}
 
-/* Border Management *///-----------------------------------------------------
 bool    TableBorder::setOrientation(Qt::Orientation orientation)
 {
     if (orientation != _orientation) {
@@ -86,23 +98,71 @@ void    TableBorder::setBorderWidth(qreal borderWidth)
     }
 }
 
+void    TableBorder::setPrevBorder(qan::TableBorder* prevBorder)
+{
+    _prevBorder = prevBorder;
+}
+void    TableBorder::setNextBorder(qan::TableBorder* nextBorder)
+{
+    _nextBorder = nextBorder;
+}
+
 void    TableBorder::addPrevCell(qan::TableCell* prevCell)
 {
-    std::vector<qan::TableCell*>    _prevCells;
-    std::vector<qan::TableCell*>    _nextCells;
+    if (prevCell != nullptr)
+        _prevCells.push_back(prevCell);
 }
 void    TableBorder::addNextCell(qan::TableCell* nextCell)
 {
-
+    if (nextCell != nullptr)
+        _nextCells.push_back(nextCell);
 }
 
+void    TableBorder::onHorizontalMove()
+{
+    const auto tableGroupItem = _tableGroup ? qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem()) :
+                                              nullptr;
+    const auto spacing = 10.;  // FIXME #190 maintain a link to table item...
+    const auto spacing2 = spacing / 2.;
+    if (getOrientation() == Qt::Vertical) {
+        const auto verticalCenter = x() + (width() / 2.);
+
+        // Layout prev/next cells position and size
+        for (auto prevCell: _prevCells) {
+            prevCell->setWidth(verticalCenter -
+                               prevCell->x() - spacing2);
+            if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
+                _tableGroup) {
+                prevCell->setX(_tableGroup->getTablePadding());
+            }
+        }
+        for (auto nextCell: _nextCells) {
+            nextCell->setX(verticalCenter + spacing2);
+            if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
+                _tableGroup && tableGroupItem != nullptr) {
+                const auto padding = _tableGroup->getTablePadding();
+                nextCell->setWidth(tableGroupItem->width() - verticalCenter - padding - spacing2);
+            }
+        }
+    }
+}
+
+void    TableBorder::onVerticalMove()
+{
+    if (getOrientation() == Qt::Horizontal) {
+
+    }
+}
 //-----------------------------------------------------------------------------
 
 /* Border Events Management *///-----------------------------------------------
 void    TableBorder::hoverEnterEvent(QHoverEvent* event)
 {
     if (isVisible()) {
-        setCursor(Qt::SizeFDiagCursor);
+        if (getOrientation() == Qt::Vertical)
+            setCursor(Qt::SplitHCursor);
+        else if (getOrientation() == Qt::Horizontal)
+                      setCursor(Qt::SplitVCursor);
         event->setAccepted(true);
     }
 }
@@ -121,15 +181,36 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
     const auto mePos = event->scenePosition();
 #endif
     if (event->buttons() |  Qt::LeftButton &&
-        !_dragInitialPos.isNull()) {
-        const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialPos) :
+        !_dragInitialMousePos.isNull()) {
+
+        const QPointF startLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(_dragInitialMousePos) :
                                                                 QPointF{.0, 0.};
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
 
-        setPosition(position() + delta);  // FIXME: vraiment pas souhaitable
+        // Bound to ] prevCells.left(), nextCells.right() [
+        const auto spacing = 10;                // FIXME #190: Add link to table...
+        const auto spacing2 = spacing / 2.;
 
+        auto minX = std::numeric_limits<qreal>::max();
+        for (auto prevCell: _prevCells)
+            minX = std::min(minX, prevCell->x());
+        minX += spacing2;
+
+        auto maxX = std::numeric_limits<qreal>::min();
+        for (auto nextCell: _nextCells)
+            maxX = std::max(maxX, nextCell->x() + nextCell->width());
+        maxX -= spacing2;
+
+        qreal minY = 0;         // FIXME #190 Add horizontal border support...
+        qreal maxY = 100000;
+
+        const auto position = _dragInitialPos + delta;
+        if (getOrientation() == Qt::Vertical)
+            setX(qBound(minX, position.x(), maxX));
+        else if (getOrientation() == Qt::Horizontal)
+            setY(qBound(minY, position.y(), maxY));
         event->setAccepted(true);
     }
 }
@@ -143,16 +224,16 @@ void    TableBorder::mousePressEvent(QMouseEvent* event)
 #else
     const auto mePos = event->scenePosition();
 #endif
-    _dragInitialPos = mePos;
-    //emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :
-    //                           QSizeF{});
+    _dragInitialMousePos = mePos;
+    _dragInitialPos = position();
     event->setAccepted(true);
 }
 
 void    TableBorder::mouseReleaseEvent(QMouseEvent* event)
 {
     Q_UNUSED(event)
-    _dragInitialPos = {0., 0.};       // Invalid all cached coordinates when button is released
+    _dragInitialMousePos = {0., 0.};       // Invalid all cached coordinates when button is released
+    _dragInitialPos = {0., 0.};
 }
 //-------------------------------------------------------------------------
 

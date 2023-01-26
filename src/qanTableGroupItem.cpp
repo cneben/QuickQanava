@@ -65,6 +65,7 @@ void    TableGroupItem::componentComplete() { /* Nil */ }
 void    TableGroupItem::classBegin()
 {
     qWarning() << "TableGroupItem::classBegin()";
+    qWarning() << "  tableGroup=" << getTableGroup();
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::classBegin(): Error, no QML engine.";
@@ -128,14 +129,24 @@ void    TableGroupItem::classBegin()
     // We have rows*cols cells for (rows-1) + (cols-1) borders.
     for (auto r = 1; r < (rows - 1); r++) {
     }
-    for (auto c = 1; c < (cols - 1); c++) {
+    qan::TableBorder* prevBorder = nullptr;
+    for (auto c = 1; c <= (cols - 1); c++) {
         auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
         if (border != nullptr) {
+            border->setTableGroup(getTableGroup());
             border->setOrientation(Qt::Vertical);
             border->setParentItem(this);
             border->setVisible(true);
-            //border->addPrevCell()
+            border->setPrevBorder(prevBorder);
+            for (int r = 0; r < rows; r++) {
+                border->addPrevCell(_cells[(r * rows) + c-1]);
+                border->addNextCell(_cells[(r * rows) + c]);
+            }
             _verticalBorders.push_back(border);
+
+            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                prevBorder->setNextBorder(border);  // with this border
+            prevBorder = border;
         }
     }
 
@@ -145,14 +156,38 @@ void    TableGroupItem::classBegin()
 
 
 /* Cells Management *///-------------------------------------------------------
+void    TableGroupItem::setGroup(qan::Group* group) noexcept
+{
+    qan::GroupItem::setGroup(group);
+    auto tableGroup = qobject_cast<qan::TableGroup*>(group);
+    if (tableGroup != nullptr) {
+        // Set borders reference to group
+        for (auto border: _horizontalBorders)
+            if (border)
+                border->setTableGroup(tableGroup);
+        for (auto border: _verticalBorders)
+            if (border)
+                border->setTableGroup(tableGroup);
+        layoutTable();  // Force new layout with actual table group settings
+    }
+}
+
+const qan::TableGroup*  TableGroupItem::getTableGroup() const
+{
+    return qobject_cast<const qan::TableGroup*>(getGroup());
+}
+
 void    TableGroupItem::layoutTable()
 {
     qWarning() << "layoutTable()...";
     const int cols = 3;
     const int rows = 3;
 
-    const auto spacing = 10.;
-    const auto padding = 5.;
+    const auto tableGroup = getTableGroup();
+    const auto spacing = tableGroup != nullptr ? tableGroup->getCellSpacing() :
+                                                 5.;
+    const auto padding = tableGroup != nullptr ? tableGroup->getTablePadding() :
+                                                 2.;
 
     if (cols <= 0 || rows <= 0) {
         qWarning() << "qan::TableGroupItem::layoutTable(): Error, rows and columns count can't be <= 0.";
@@ -181,10 +216,8 @@ void    TableGroupItem::layoutTable()
     }
 
     for (const auto& cell: _cells) {
-        cell->setWidth(cellWidth);
+        //cell->setWidth(cellWidth);
         cell->setHeight(cellHeight);
-        cell->setX(10);
-        cell->setY(10);
     }
 
     // Layout in space
@@ -198,9 +231,30 @@ void    TableGroupItem::layoutTable()
                            (r * cellHeight);
             auto cellId = (r * cols) + c;
             auto cell = _cells[cellId];
-            cell->setX(x);
+            //cell->setX(x);
             cell->setY(y);
         }
+
+
+    // Layout vertical borders:
+    // |             cell         |         cell         |         cell             |
+    // | padding |   cell   |   border  |   cell   |   border  |   cell   | padding |
+    //                       <-spacing->            <-spacing->
+    qWarning()  << "_verticalBorders.size()=" << _verticalBorders.size();
+    if (_verticalBorders.size() == cols - 1) {
+        for (auto c = 1; c <= (cols - 1); c++) {
+            auto* verticalBorder = _verticalBorders[c-1];
+            const auto x = padding +
+                           ((c - 1) * spacing) +
+                           (c * cellWidth) +
+                           (spacing / 2.);
+            verticalBorder->setX(x);
+            verticalBorder->setY(0.);
+            verticalBorder->setWidth(1.);  // Content is not clipped and set to borderWidth
+            verticalBorder->setHeight(height());
+        }
+    } else
+        qWarning() << "ERROR";
 }
 
 void    TableGroupItem::onResized()
@@ -229,11 +283,7 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         for (const auto& cell: _cells) {
             //qWarning() << cell-> boundingRect();
             if (cell->boundingRect().translated(cell->position()).contains(groupPos)) {
-                nodeItem->setParentItem(cell);
-                nodeItem->setX(0.);
-                nodeItem->setY(0.);
-                nodeItem->setWidth(cell->width());
-                nodeItem->setHeight(cell->height());
+                cell->setItem(nodeItem);
                 break;
             }
         }
