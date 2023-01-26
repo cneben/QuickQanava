@@ -27,43 +27,27 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	TableGroup.qml
+// \file	TableBorder.qml
 // \author	benoit@destrat.io
-// \date	2023 01 26
+// \date	2022 01 26
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava        2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
-Qan.TableGroupItem {
-    id: tableGroupItem
-
-    minimumSize: Qt.size(150., 100.)
-    width: 200
-    height: 150
-
-    container: tableGroupItem
-
-    //! Show or hide group top left label editor (default to visible).
-    property bool   labelEditorVisible : false
-    //! Show or hide group top left expand button (default to visible).
-    property bool   expandButtonVisible : false
-
-    // FIXME #190
+Qan.AbstractTableBorder {
+    id: tableBorder
     Rectangle {
-        anchors.fill: parent
-        color: 'transparent'
-        border.width: 2
-        border.color: 'black'
-    }
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
 
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging start
-    //onNodeDragEnter: { console.error('ERROR onNodeDragEnter'); }
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging ends
-    //onNodeDragLeave: { console.error('ERROR onNodeDragLeave'); }
-}
+        width: parent.orientation == Qt.Vertical ? tableBorder.borderWidth :
+                                                   tableBorder.width
+        height: parent.orientation == Qt.Vertical ? tableBorder.height :
+                                                    tableBorder.borderWidth
+        color: "black"
+    }
+}  // Qan.AbstractTableBorder

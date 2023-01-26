@@ -42,23 +42,12 @@
 // QuickQanava headers
 #include "./qanNodeItem.h"
 #include "./qanGroupItem.h"
+#include "./qanTableCell.h"
+#include "./qanTableBorder.h"
 
 namespace qan { // ::qan
 
 class Graph;
-
-class TableCell : public QQuickItem
-{
-    /*! \name TableCell Object Management *///---------------------------------
-    //@{
-    Q_OBJECT
-public:
-    explicit TableCell(QQuickItem* parent = nullptr);
-    virtual ~TableCell() override = default;
-    TableCell(const TableCell&) = delete;
-    //@}
-    //-------------------------------------------------------------------------
-};
 
 /*! \brief FIXME
  *
@@ -72,7 +61,7 @@ class TableGroupItem : public qan::GroupItem
     Q_INTERFACES(QQmlParserStatus)
 public:
     explicit TableGroupItem(QQuickItem* parent = nullptr);
-    virtual ~TableGroupItem() override = default;
+    virtual ~TableGroupItem() override;
     TableGroupItem(const TableGroupItem&) = delete;
 
 public:
@@ -88,14 +77,14 @@ public:
     //@{
 public:
     //! Layout current cell after a table geometry change.
-    void        layoutCells();
+    void        layoutTable();
 protected slots:
     void        onResized();
 
 private:
-    std::vector<TableCell*>         _cells;
-
-    QScopedPointer<QQmlComponent>   _cellDelegate;
+    std::vector<qan::TableCell*>    _cells;
+    std::vector<qan::TableBorder*>  _verticalBorders;
+    std::vector<qan::TableBorder*>  _horizontalBorders;
     //@}
     //-------------------------------------------------------------------------
 

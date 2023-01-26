@@ -27,43 +27,31 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	TableGroup.qml
-// \author	benoit@destrat.io
-// \date	2023 01 26
+// \file    qanTableGroupItem.h
+// \author  benoit@destrat.io
+// \date    2023 01 26
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
+#pragma once
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+// Qt headers
+#include <QQuickItem>
 
-Qan.TableGroupItem {
-    id: tableGroupItem
+namespace qan { // ::qan
 
-    minimumSize: Qt.size(150., 100.)
-    width: 200
-    height: 150
+class Graph;
 
-    container: tableGroupItem
+class TableCell : public QQuickItem
+{
+    /*! \name TableCell Object Management *///---------------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit TableCell(QQuickItem* parent = nullptr);
+    virtual ~TableCell() override = default;
+    TableCell(const TableCell&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+};
 
-    //! Show or hide group top left label editor (default to visible).
-    property bool   labelEditorVisible : false
-    //! Show or hide group top left expand button (default to visible).
-    property bool   expandButtonVisible : false
-
-    // FIXME #190
-    Rectangle {
-        anchors.fill: parent
-        color: 'transparent'
-        border.width: 2
-        border.color: 'black'
-    }
-
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging start
-    //onNodeDragEnter: { console.error('ERROR onNodeDragEnter'); }
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging ends
-    //onNodeDragLeave: { console.error('ERROR onNodeDragLeave'); }
-}
+} // ::qan

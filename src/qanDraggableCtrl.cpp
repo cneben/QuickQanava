@@ -42,6 +42,10 @@ namespace qan { // ::qan
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    DraggableCtrl::handleDragEnterEvent(QDragEnterEvent* event)
 {
+    qWarning() << "DraggableCtrl::handleDragEnterEvent(): this=" << this;
+    qWarning() << "event->source()=" << event->source();
+    qWarning() << "_targetItem->getAcceptDrops()=" << _targetItem->getAcceptDrops();
+
     if (_targetItem &&
         _targetItem->getAcceptDrops()) {
         if (event->source() == nullptr) {

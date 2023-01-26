@@ -39,13 +39,6 @@
 
 namespace qan { // ::qan
 
-/* TableCell Object Management *///--------------------------------------------
-TableCell::TableCell(QQuickItem* parent):
-    QQuickItem{parent}
-{ }
-//-----------------------------------------------------------------------------
-
-
 /* TableGroupItem Object Management *///---------------------------------------
 TableGroupItem::TableGroupItem(QQuickItem* parent) :
     qan::GroupItem{parent}
@@ -57,12 +50,17 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
             this,   &TableGroupItem::onResized);
     connect(this,   &QQuickItem::heightChanged,
             this,   &TableGroupItem::onResized);
+
+    //qan::Draggable::setAcceptDrops(false);
+    //setFlag(QQuickItem::ItemAcceptsDrops, false);
 }
 
-void    TableGroupItem::componentComplete()
+TableGroupItem::~TableGroupItem()
 {
-    qWarning() << "TableGroupItem::componentComplete()";
+    // FIXME #190 destroy borders/cells...
 }
+
+void    TableGroupItem::componentComplete() { /* Nil */ }
 
 void    TableGroupItem::classBegin()
 {
@@ -73,13 +71,12 @@ void    TableGroupItem::classBegin()
         return;
     }
     auto cellComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableCell.qml",
-                                          QQmlComponent::PreferSynchronous, nullptr);
-    _cellDelegate.reset(cellComponent);
+                                           QQmlComponent::PreferSynchronous, nullptr);
 
-    const auto createTableCell = [this, &cellComponent]() -> qan::TableCell* {
-        if (!cellComponent->isReady()) {
+    const auto createFromComponent = [this](QQmlComponent& component) -> QQuickItem* {
+        if (!component.isReady()) {
             qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error table cell component is not ready.";
-            qWarning() << cellComponent->errorString();
+            qWarning() << component.errorString();
             return nullptr;
         }
         const auto rootContext = qmlContext(this);
@@ -87,46 +84,70 @@ void    TableGroupItem::classBegin()
             qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error, no QML context.";
             return nullptr;
         }
-        qan::TableCell* tableCell = nullptr;
-        QObject* object = cellComponent->beginCreate(rootContext);
+        QQuickItem* item = nullptr;
+        QObject* object = component.beginCreate(rootContext);
         if (object == nullptr ||
-            cellComponent->isError()) {
+            component.isError()) {
             if (object != nullptr)
                 object->deleteLater();
             return nullptr;
         }
-        cellComponent->completeCreate();
-        if (!cellComponent->isError()) {
+        component.completeCreate();
+        if (!component.isError()) {
             QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
-            tableCell = qobject_cast<qan::TableCell*>(object);
+            item = qobject_cast<QQuickItem*>(object);
         } // Note: There is no leak until cpp ownership is set
-        if (tableCell != nullptr)
-            tableCell->setVisible(true);
-        return tableCell;
+        if (item != nullptr)
+            item->setVisible(true);
+        return item;
     };
 
     // FIXME #190 Add fixed 3x3 cells
     const int cols = 3;
     const int rows = 3;
+
     for (auto r = 0; r < rows; r++)
         for (auto c = 0; c < cols; c++) {
-            auto cell = createTableCell();
+            auto cell = qobject_cast<qan::TableCell*>(createFromComponent(*cellComponent));
             if (cell != nullptr) {
+                _cells.push_back(cell);
                 cell->setParentItem(this);
                 cell->setVisible(true);
-                _cells.push_back(cell);
             }
         }
 
-    layoutCells();
+
+    auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
+                                          QQmlComponent::PreferSynchronous, nullptr);
+
+
+    // Pas de border exterieur:
+    // 1 border toutes les ]row[
+    // 1 border toutes les ]col[
+    // Donc: 6 cells == 4 borders
+    // We have rows*cols cells for (rows-1) + (cols-1) borders.
+    for (auto r = 1; r < (rows - 1); r++) {
+    }
+    for (auto c = 1; c < (cols - 1); c++) {
+        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+        if (border != nullptr) {
+            border->setOrientation(Qt::Vertical);
+            border->setParentItem(this);
+            border->setVisible(true);
+            //border->addPrevCell()
+            _verticalBorders.push_back(border);
+        }
+    }
+
+    layoutTable();
 }
 //-----------------------------------------------------------------------------
 
 
 /* Cells Management *///-------------------------------------------------------
-void    TableGroupItem::layoutCells()
+void    TableGroupItem::layoutTable()
 {
-    qWarning() << "layoutCells()...";
+    qWarning() << "layoutTable()...";
     const int cols = 3;
     const int rows = 3;
 
@@ -134,15 +155,13 @@ void    TableGroupItem::layoutCells()
     const auto padding = 5.;
 
     if (cols <= 0 || rows <= 0) {
-        qWarning() << "qan::TableGroupItem::layoutCells(): Error, rows and columns count can't be <= 0.";
+        qWarning() << "qan::TableGroupItem::layoutTable(): Error, rows and columns count can't be <= 0.";
         return;
     }
     if (spacing < 0 || padding < 0) {
-        qWarning() << "qan::TableGroupItem::layoutCells(): Error, padding and spacing can't be < 0.";
+        qWarning() << "qan::TableGroupItem::layoutTable(): Error, padding and spacing can't be < 0.";
         return;
     }
-
-    // FIXME: handle first call with width/height == 0
 
     const auto cellWidth = width() > 0. ? (width()
                                            - (2 * padding)
@@ -157,7 +176,7 @@ void    TableGroupItem::layoutCells()
     qWarning() << "cellHeight=" << cellHeight;
 
     if (cellWidth < 0. || cellHeight < 0.) {
-        qWarning() << "qan::TableGroupItem::layoutCells(): Error, invalid cell width/height.";
+        qWarning() << "qan::TableGroupItem::layoutTable(): Error, invalid cell width/height.";
         return;
     }
 
@@ -186,7 +205,7 @@ void    TableGroupItem::layoutCells()
 
 void    TableGroupItem::onResized()
 {
-    layoutCells();
+    layoutTable();
 }
 //-----------------------------------------------------------------------------
 
@@ -206,9 +225,19 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
     if (transform) {
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
-        nodeItem->setPosition(groupPos);
+        // Find cell at groupPos and attach node to cell
+        for (const auto& cell: _cells) {
+            //qWarning() << cell-> boundingRect();
+            if (cell->boundingRect().translated(cell->position()).contains(groupPos)) {
+                nodeItem->setParentItem(cell);
+                nodeItem->setX(0.);
+                nodeItem->setY(0.);
+                nodeItem->setWidth(cell->width());
+                nodeItem->setHeight(cell->height());
+                break;
+            }
+        }
     }
-    nodeItem->setParentItem(getContainer());
     groupMoved();           // Force call to groupMoved() to update group adjacent edges
     endProposeNodeDrop();
 }
