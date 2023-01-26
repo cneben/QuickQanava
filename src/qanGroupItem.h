@@ -74,7 +74,7 @@ public:
     auto        getGroup() noexcept -> qan::Group*;
     auto        getGroup() const noexcept -> const qan::Group*;
     auto        setGroup(qan::Group* group) noexcept -> void;
-private:
+protected:
     QPointer<qan::Group> _group{nullptr};
 
 public:
