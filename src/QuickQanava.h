@@ -49,6 +49,7 @@
 #include "./qanConnector.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
+#include "./qanTableGroupItem.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanGrid.h"
@@ -97,6 +98,8 @@ struct QuickQanava {
         qmlRegisterType<qan::EdgeItem>("QuickQanava", 2, 0, "EdgeItem");
         qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
+        qmlRegisterType<qan::TableGroupItem>("QuickQanava", 2, 0, "TableGroupItem");
+        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "TableCell");
         qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
 
         qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");

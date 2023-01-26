@@ -50,6 +50,7 @@
 #include "./qanEdge.h"
 #include "./qanNode.h"
 #include "./qanGroup.h"
+#include "./qanTableGroup.h"
 #include "./qanNavigable.h"
 #include "./qanSelectable.h"
 #include "./qanConnector.h"
@@ -542,6 +543,9 @@ signals:
 public:
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE virtual qan::Group* insertGroup();
+
+    //! FIXME #190.
+    Q_INVOKABLE virtual qan::Group* insertTable();
 
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *

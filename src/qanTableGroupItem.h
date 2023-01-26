@@ -69,10 +69,17 @@ class TableGroupItem : public qan::GroupItem
     /*! \name TableGroupItem Object Management *///----------------------------
     //@{
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
 public:
     explicit TableGroupItem(QQuickItem* parent = nullptr);
     virtual ~TableGroupItem() override = default;
     TableGroupItem(const TableGroupItem&) = delete;
+
+public:
+    //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
+    virtual void    componentComplete() override;
+
+    virtual void    classBegin() override;
     //@}
     //-------------------------------------------------------------------------
 
@@ -80,11 +87,13 @@ public:
     /*! \name Cells Management *///--------------------------------------------
     //@{
 public:
-
     //! Layout current cell after a table geometry change.
     void        layoutCells();
+
 private:
-    std::vector<TableCell*> _cells;
+    std::vector<TableCell*>         _cells;
+
+    QScopedPointer<QQmlComponent>   _cellDelegate;
     //@}
     //-------------------------------------------------------------------------
 

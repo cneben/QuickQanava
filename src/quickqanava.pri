@@ -105,6 +105,8 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/CanvasNodeTemplate.qml        \
                 $$PWD/Group.qml                     \
                 $$PWD/RectGroupTemplate.qml         \
+                $$PWD/TableGroup.qml                \
+                $$PWD/TableCell.qml                 \
                 $$PWD/BottomRightResizer.qml        \
                 $$PWD/Node.qml                      \
                 $$PWD/Port.qml                      \

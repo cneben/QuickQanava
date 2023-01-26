@@ -41,7 +41,8 @@ namespace qan { // ::qan
 
 /* TableCell Object Management *///--------------------------------------------
 TableCell::TableCell(QQuickItem* parent):
-    QQuickItem{parent} { }
+    QQuickItem{parent}
+{ }
 //-----------------------------------------------------------------------------
 
 
@@ -51,6 +52,22 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
 {
     setObjectName(QStringLiteral("qan::TableGroupItem"));
     // Note: Do not set width and height
+
+}
+
+void    TableGroupItem::componentComplete()
+{
+    qWarning() << "TableGroupItem::componentComplete()";
+}
+
+void    TableGroupItem::classBegin()
+{
+    qWarning() << "TableGroupItem::classBegin()";
+    auto engine = qmlEngine(this);
+    qWarning() << "engine=" << engine;
+    auto cellDelegate = new QQmlComponent(engine, "qrc:/QuickQanva/TableCell.qml",
+                                          QQmlComponent::PreferSynchronous, nullptr);
+    _cellDelegate.reset(cellDelegate);
 
     // FIXME #190 Add fixed 3x3 cells
     const int cols = 3;
@@ -67,6 +84,34 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
 /* Cells Management *///-------------------------------------------------------
 void    TableGroupItem::layoutCells()
 {
+    const int cols = 3;
+    const int rows = 3;
+
+    const auto spacing = 10.;
+    const auto padding = 5.;
+
+    if (cols <= 0 || rows <= 0) {
+        qWarning() << "qan::TableGroupItem::layoutCells(): Error, rows and columns count can't be <= 0.";
+        return;
+    }
+    if (spacing < 0 || padding < 0) {
+        qWarning() << "qan::TableGroupItem::layoutCells(): Error, padding and spacing can't be < 0.";
+        return;
+    }
+
+    const auto cellWidth = (width()
+                            - (2 * padding)
+                            - ((cols - 1) * spacing)) / cols;
+    const auto cellHeight = (height()
+                             - (2 * padding)
+                             - ((cols - 1) * spacing)) / rows;
+
+    for (const auto& cell: _cells) {
+        cell->setWidth(cellWidth);
+        cell->setHeight(cellHeight);
+    }
+
+    // Layout in space
 
 }
 //-----------------------------------------------------------------------------

@@ -877,6 +877,11 @@ qan::Group* Graph::insertGroup()
     return insertGroup<qan::Group>();
 }
 
+qan::Group* Graph::insertTable()
+{
+    return insertGroup<qan::TableGroup>();
+}
+
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
 {
     // PRECONDITIONS:
