@@ -47,20 +47,44 @@ namespace qan { // ::qan
 
 class Graph;
 
+class TableCell : public QQuickItem
+{
+    /*! \name TableCell Object Management *///---------------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit TableCell(QQuickItem* parent = nullptr);
+    virtual ~TableCell() override = default;
+    TableCell(const TableCell&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
 /*! \brief FIXME
  *
  * \nosubgrouping
  */
 class TableGroupItem : public qan::GroupItem
 {
-    /*! \name Group Object Management *///-------------------------------------
+    /*! \name TableGroupItem Object Management *///----------------------------
     //@{
     Q_OBJECT
 public:
-    //! Group constructor.
     explicit TableGroupItem(QQuickItem* parent = nullptr);
     virtual ~TableGroupItem() override = default;
     TableGroupItem(const TableGroupItem&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+
+
+    /*! \name Cells Management *///--------------------------------------------
+    //@{
+public:
+
+    //! Layout current cell after a table geometry change.
+    void        layoutCells();
+private:
+    std::vector<TableCell*> _cells;
     //@}
     //-------------------------------------------------------------------------
 

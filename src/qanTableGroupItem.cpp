@@ -39,17 +39,40 @@
 
 namespace qan { // ::qan
 
-/* TableGroupItem Object Management *///------------------------------------------------
+/* TableCell Object Management *///--------------------------------------------
+TableCell::TableCell(QQuickItem* parent):
+    QQuickItem{parent} { }
+//-----------------------------------------------------------------------------
+
+
+/* TableGroupItem Object Management *///---------------------------------------
 TableGroupItem::TableGroupItem(QQuickItem* parent) :
     qan::GroupItem{parent}
 {
     setObjectName(QStringLiteral("qan::TableGroupItem"));
     // Note: Do not set width and height
+
+    // FIXME #190 Add fixed 3x3 cells
+    const int cols = 3;
+    const int rows = 3;
+    for (auto r = 0; r < rows; r++)
+        for (auto c = 0; c < cols; c++) {
+            auto cell = new TableCell{};
+            _cells.push_back(cell);
+        }
 }
 //-----------------------------------------------------------------------------
 
 
-/* TableGroupItem DnD Management *///---------------------------------------------------
+/* Cells Management *///-------------------------------------------------------
+void    TableGroupItem::layoutCells()
+{
+
+}
+//-----------------------------------------------------------------------------
+
+
+/* TableGroupItem DnD Management *///------------------------------------------
 void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
 {
     // PRECONDITIONS:
