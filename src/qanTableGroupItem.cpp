@@ -169,7 +169,19 @@ void    TableGroupItem::layoutCells()
     }
 
     // Layout in space
-
+    for (auto r = 0; r < rows; r++)
+        for (auto c = 0; c < cols; c++) {
+            const auto x = padding +
+                           (c * spacing) +
+                           (c * cellWidth);
+            const auto y = padding +
+                           (r * spacing) +
+                           (r * cellHeight);
+            auto cellId = (r * cols) + c;
+            auto cell = _cells[cellId];
+            cell->setX(x);
+            cell->setY(y);
+        }
 }
 
 void    TableGroupItem::onResized()
