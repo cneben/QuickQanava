@@ -68,6 +68,9 @@ public:
 protected:
     QPointer<const qan::TableGroup>     _tableGroup;
 
+    //! Utility returning vertical center, ie x() + width() / 2.
+    qreal   verticalCenter() const;
+
 public:
     Q_PROPERTY(Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged FINAL)
     Qt::Orientation getOrientation() const { return _orientation; }
@@ -116,6 +119,10 @@ protected:
 protected slots:
     void    onHorizontalMove();
     void    onVerticalMove();
+
+public:
+    //! Layout prev/next border cells.
+    void    layoutCells();
     //@}
     //-------------------------------------------------------------------------
 

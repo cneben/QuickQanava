@@ -65,7 +65,6 @@ void    TableGroupItem::componentComplete() { /* Nil */ }
 void    TableGroupItem::classBegin()
 {
     qWarning() << "TableGroupItem::classBegin()";
-    qWarning() << "  tableGroup=" << getTableGroup();
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::classBegin(): Error, no QML engine.";
@@ -255,6 +254,9 @@ void    TableGroupItem::layoutTable()
         }
     } else
         qWarning() << "ERROR";
+
+    // Note: There is no need to manually call borders layoutCells() method
+    // it will be called automatically when border are moved.
 }
 
 void    TableGroupItem::onResized()

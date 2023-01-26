@@ -67,8 +67,14 @@ TableBorder::~TableBorder() { /* prevCells and nextCells are not owned */ }
 /* Border Management *///------------------------------------------------------
 void    TableBorder::setTableGroup(const qan::TableGroup* tableGroup)
 {
-    _tableGroup = tableGroup;
+    if (tableGroup != _tableGroup) {
+        _tableGroup = tableGroup;
+        if (_tableGroup)
+            layoutCells();   // Re layoutCells with correct table settings.
+    }
 }
+
+qreal   TableBorder::verticalCenter() const { return x() + (width() / 2.); }
 
 bool    TableBorder::setOrientation(Qt::Orientation orientation)
 {
@@ -118,39 +124,50 @@ void    TableBorder::addNextCell(qan::TableCell* nextCell)
         _nextCells.push_back(nextCell);
 }
 
-void    TableBorder::onHorizontalMove()
+void    TableBorder::onHorizontalMove() { layoutCells(); }
+void    TableBorder::onVerticalMove() { layoutCells(); }
+
+void    TableBorder::layoutCells()
 {
+    qWarning() << "layoutCells()";
+
     const auto tableGroupItem = _tableGroup ? qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem()) :
                                               nullptr;
-    const auto spacing = 10.;  // FIXME #190 maintain a link to table item...
+    const auto padding = _tableGroup ? _tableGroup->getTablePadding() :
+                                       2.;
+    const auto spacing = _tableGroup ? _tableGroup->getCellSpacing() :
+                                       10.;
     const auto spacing2 = spacing / 2.;
+
     if (getOrientation() == Qt::Vertical) {
-        const auto verticalCenter = x() + (width() / 2.);
+        const auto vCenter = verticalCenter();
 
         // Layout prev/next cells position and size
         for (auto prevCell: _prevCells) {
-            prevCell->setWidth(verticalCenter -
+            prevCell->setWidth(vCenter -
                                prevCell->x() - spacing2);
             if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
                 _tableGroup) {
-                prevCell->setX(_tableGroup->getTablePadding());
+                prevCell->setX(padding);
             }
         }
         for (auto nextCell: _nextCells) {
-            nextCell->setX(verticalCenter + spacing2);
+            nextCell->setX(vCenter + spacing2);
+            if (_nextBorder &&
+                _nextBorder->verticalCenter() > (x() + spacing))  // nextBorder might still not be initialized...
+                nextCell->setWidth(_nextBorder->verticalCenter() - x() - spacing);  // FIXME #190 secure that
+
+            qWarning() << "_nextBorder = " << _nextBorder;
+            qWarning() << "  _tableGroup = " << _tableGroup;
+            qWarning() << "  tableGroupItem = " << tableGroupItem;
             if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
                 _tableGroup && tableGroupItem != nullptr) {
-                const auto padding = _tableGroup->getTablePadding();
-                nextCell->setWidth(tableGroupItem->width() - verticalCenter - padding - spacing2);
+                nextCell->setWidth(tableGroupItem->width() - vCenter - padding - spacing2);
             }
         }
     }
-}
-
-void    TableBorder::onVerticalMove()
-{
-    if (getOrientation() == Qt::Horizontal) {
-
+    else if (getOrientation() == Qt::Horizontal) {
+        // FIXME #190 horizontal border support
     }
 }
 //-----------------------------------------------------------------------------
