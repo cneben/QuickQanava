@@ -38,7 +38,7 @@ import QtQuick.Shapes   1.0
 import QuickQanava        2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
-Qan.TableCell {
+Qan.AbstractTableCell {
     id: cell
 
     Rectangle {

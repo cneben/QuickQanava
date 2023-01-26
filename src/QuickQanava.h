@@ -99,7 +99,7 @@ struct QuickQanava {
         qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
         qmlRegisterType<qan::TableGroupItem>("QuickQanava", 2, 0, "TableGroupItem");
-        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "TableCell");
+        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "AbstractTableCell");
         qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
 
         qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");

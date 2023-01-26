@@ -89,6 +89,8 @@ public:
 public:
     //! Layout current cell after a table geometry change.
     void        layoutCells();
+protected slots:
+    void        onResized();
 
 private:
     std::vector<TableCell*>         _cells;

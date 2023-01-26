@@ -32,11 +32,7 @@
 // \date	2012 02 08
 //-----------------------------------------------------------------------------
 
-#ifndef QuickContainers_h
-#define QuickContainers_h
-
-// Qt headers
-// Nil
+#pragma once
 
 // QuickContainers headers
 #include "qcmAbstractContainer.h"
@@ -47,6 +43,4 @@ struct QuickContainers {
         qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
     }
 };
-
-#endif // QuickContainers_h
 

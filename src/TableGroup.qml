@@ -56,8 +56,8 @@ Qan.TableGroupItem {
     Rectangle {
         anchors.fill: parent
         color: 'transparent'
-        border.width: 1
-        border.color: 'red'
+        border.width: 2
+        border.color: 'black'
     }
 
     // FIXME #190

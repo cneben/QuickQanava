@@ -53,6 +53,10 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
     setObjectName(QStringLiteral("qan::TableGroupItem"));
     // Note: Do not set width and height
 
+    connect(this,   &QQuickItem::widthChanged,
+            this,   &TableGroupItem::onResized);
+    connect(this,   &QQuickItem::heightChanged,
+            this,   &TableGroupItem::onResized);
 }
 
 void    TableGroupItem::componentComplete()
@@ -64,19 +68,57 @@ void    TableGroupItem::classBegin()
 {
     qWarning() << "TableGroupItem::classBegin()";
     auto engine = qmlEngine(this);
-    qWarning() << "engine=" << engine;
-    auto cellDelegate = new QQmlComponent(engine, "qrc:/QuickQanva/TableCell.qml",
+    if (engine == nullptr) {
+        qWarning() << "qan::TableGroupItem::classBegin(): Error, no QML engine.";
+        return;
+    }
+    auto cellComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableCell.qml",
                                           QQmlComponent::PreferSynchronous, nullptr);
-    _cellDelegate.reset(cellDelegate);
+    _cellDelegate.reset(cellComponent);
+
+    const auto createTableCell = [this, &cellComponent]() -> qan::TableCell* {
+        if (!cellComponent->isReady()) {
+            qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error table cell component is not ready.";
+            qWarning() << cellComponent->errorString();
+            return nullptr;
+        }
+        const auto rootContext = qmlContext(this);
+        if (rootContext == nullptr) {
+            qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error, no QML context.";
+            return nullptr;
+        }
+        qan::TableCell* tableCell = nullptr;
+        QObject* object = cellComponent->beginCreate(rootContext);
+        if (object == nullptr ||
+            cellComponent->isError()) {
+            if (object != nullptr)
+                object->deleteLater();
+            return nullptr;
+        }
+        cellComponent->completeCreate();
+        if (!cellComponent->isError()) {
+            QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
+            tableCell = qobject_cast<qan::TableCell*>(object);
+        } // Note: There is no leak until cpp ownership is set
+        if (tableCell != nullptr)
+            tableCell->setVisible(true);
+        return tableCell;
+    };
 
     // FIXME #190 Add fixed 3x3 cells
     const int cols = 3;
     const int rows = 3;
     for (auto r = 0; r < rows; r++)
         for (auto c = 0; c < cols; c++) {
-            auto cell = new TableCell{};
-            _cells.push_back(cell);
+            auto cell = createTableCell();
+            if (cell != nullptr) {
+                cell->setParentItem(this);
+                cell->setVisible(true);
+                _cells.push_back(cell);
+            }
         }
+
+    layoutCells();
 }
 //-----------------------------------------------------------------------------
 
@@ -84,6 +126,7 @@ void    TableGroupItem::classBegin()
 /* Cells Management *///-------------------------------------------------------
 void    TableGroupItem::layoutCells()
 {
+    qWarning() << "layoutCells()...";
     const int cols = 3;
     const int rows = 3;
 
@@ -99,20 +142,39 @@ void    TableGroupItem::layoutCells()
         return;
     }
 
-    const auto cellWidth = (width()
-                            - (2 * padding)
-                            - ((cols - 1) * spacing)) / cols;
-    const auto cellHeight = (height()
-                             - (2 * padding)
-                             - ((cols - 1) * spacing)) / rows;
+    // FIXME: handle first call with width/height == 0
+
+    const auto cellWidth = width() > 0. ? (width()
+                                           - (2 * padding)
+                                           - ((cols - 1) * spacing)) / cols :
+                                          0.;
+    const auto cellHeight = height() > 0. ? (height()
+                                             - (2 * padding)
+                                             - ((cols - 1) * spacing)) / rows :
+                                            0.;
+
+    qWarning() << "cellWidth=" << cellWidth;
+    qWarning() << "cellHeight=" << cellHeight;
+
+    if (cellWidth < 0. || cellHeight < 0.) {
+        qWarning() << "qan::TableGroupItem::layoutCells(): Error, invalid cell width/height.";
+        return;
+    }
 
     for (const auto& cell: _cells) {
         cell->setWidth(cellWidth);
         cell->setHeight(cellHeight);
+        cell->setX(10);
+        cell->setY(10);
     }
 
     // Layout in space
 
+}
+
+void    TableGroupItem::onResized()
+{
+    layoutCells();
 }
 //-----------------------------------------------------------------------------
 
