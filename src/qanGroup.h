@@ -134,13 +134,14 @@ public:
      *
      * Default to true (ie group is draggable by mouse).
      */
-    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
+    // FIXME #190 don't thinks this property should still exists
+    /*Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
     bool            setDraggable(bool draggable) noexcept;
     bool            getDraggable() const noexcept;
 private:
     bool            _draggable = true;
 signals:
-    void            draggableChanged();
+    void            draggableChanged();*/
     //@}
     //-------------------------------------------------------------------------
 };

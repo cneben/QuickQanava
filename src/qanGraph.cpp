@@ -221,13 +221,17 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
         if (group &&
             group->getItem() != nullptr &&
             group->getItem() != except) {
-            const auto groupItem = group->getItem();
+            const auto groupItem = group->getGroupItem();
+            if (groupItem == nullptr)
+                continue;
             if (groupItem->getCollapsed())
                 continue;  // Do not return collapsed groups
 
             const auto groupRect =  QRectF{groupItem->mapToItem(getContainerItem(), QPointF{0., 0.}),
-                                           QSizeF{ groupItem->width(), groupItem->height()}};
-            if (groupRect.contains(QRectF{p, s})) {
+                                           QSizeF{groupItem->width(), groupItem->height()}};
+            const auto targetSize = groupItem->getStrictDrop() ? s :            // In non-strict mode (ie for TableGroup) target has not
+                                                                 QSizeF{1,1};   // to be fully contained by group to trigger a drop.
+            if (groupRect.contains(QRectF{p, targetSize})) {
                 QQmlEngine::setObjectOwnership(group, QQmlEngine::CppOwnership);
                 return group;
             }

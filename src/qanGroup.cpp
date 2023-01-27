@@ -140,8 +140,9 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
 bool    Group::hasNode(const qan::Node* node) const { return qan::Node::has_node(node); }
 //-----------------------------------------------------------------------------
 
-/* Group DnD Management *///---------------------------------------------------
-bool    Group::setDraggable(bool draggable) noexcept
+/* Group DnD Management *///----"-----------------------------------------------
+// FIXME #190 don't thinks this property should still exists
+/*bool    Group::setDraggable(bool draggable) noexcept
 {
     if (draggable != _draggable) {
         _draggable = draggable;
@@ -152,6 +153,7 @@ bool    Group::setDraggable(bool draggable) noexcept
 }
 
 bool    Group::getDraggable() const noexcept { return _draggable; }
+*/
 //-----------------------------------------------------------------------------
 
 } // ::qan

@@ -177,6 +177,16 @@ void    GroupItem::setContainer(QQuickItem* container) noexcept
 QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
 const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }
 
+void    GroupItem::setStrictDrop(bool strictDrop) noexcept
+{
+    if (strictDrop != _strictDrop) {
+        _strictDrop = strictDrop;
+        emit strictDropChanged();
+    }
+}
+bool    GroupItem::getStrictDrop() const noexcept { return _strictDrop; }
+
+
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     qan::NodeItem::mouseDoubleClickEvent(event);

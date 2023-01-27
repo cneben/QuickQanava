@@ -44,27 +44,32 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
     qan::GroupItem{parent}
 {
     setObjectName(QStringLiteral("qan::TableGroupItem"));
-    // Note: Do not set width and height
 
     connect(this,   &QQuickItem::widthChanged,
             this,   &TableGroupItem::onResized);
     connect(this,   &QQuickItem::heightChanged,
             this,   &TableGroupItem::onResized);
 
-    //qan::Draggable::setAcceptDrops(false);
-    //setFlag(QQuickItem::ItemAcceptsDrops, false);
+    setStrictDrop(false);  // Top left corner of a node is enought to allow a drop
 }
 
 TableGroupItem::~TableGroupItem()
 {
-    // FIXME #190 destroy borders/cells...
+    for (const auto cell: _cells)
+        if (cell)
+            cell->deleteLater();
+    for (const auto border: _verticalBorders)
+        if (border)
+            border->deleteLater();
+    for (const auto border: _horizontalBorders)
+        if (border)
+            border->deleteLater();
 }
 
 void    TableGroupItem::componentComplete() { /* Nil */ }
 
 void    TableGroupItem::classBegin()
 {
-    qWarning() << "TableGroupItem::classBegin()";
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::classBegin(): Error, no QML engine.";
@@ -115,7 +120,6 @@ void    TableGroupItem::classBegin()
                 cell->setVisible(true);
             }
         }
-
 
     auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
                                           QQmlComponent::PreferSynchronous, nullptr);
@@ -178,7 +182,6 @@ const qan::TableGroup*  TableGroupItem::getTableGroup() const
 
 void    TableGroupItem::layoutTable()
 {
-    qWarning() << "layoutTable()...";
     const int cols = 3;
     const int rows = 3;
 
@@ -206,8 +209,8 @@ void    TableGroupItem::layoutTable()
                                              - ((cols - 1) * spacing)) / rows :
                                             0.;
 
-    qWarning() << "cellWidth=" << cellWidth;
-    qWarning() << "cellHeight=" << cellHeight;
+    //qWarning() << "cellWidth=" << cellWidth;
+    //qWarning() << "cellHeight=" << cellHeight;
 
     if (cellWidth < 0. || cellHeight < 0.) {
         qWarning() << "qan::TableGroupItem::layoutTable(): Error, invalid cell width/height.";
@@ -239,7 +242,7 @@ void    TableGroupItem::layoutTable()
     // |             cell         |         cell         |         cell             |
     // | padding |   cell   |   border  |   cell   |   border  |   cell   | padding |
     //                       <-spacing->            <-spacing->
-    qWarning()  << "_verticalBorders.size()=" << _verticalBorders.size();
+    //qWarning()  << "_verticalBorders.size()=" << _verticalBorders.size();
     if (_verticalBorders.size() == cols - 1) {
         for (auto c = 1; c <= (cols - 1); c++) {
             auto* verticalBorder = _verticalBorders[c-1];
@@ -282,9 +285,13 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
         // Find cell at groupPos and attach node to cell
+        qWarning() << "_cells.size()=" << _cells.size();
+        qWarning() << "groupPos=" << groupPos;
         for (const auto& cell: _cells) {
             //qWarning() << cell-> boundingRect();
-            if (cell->boundingRect().translated(cell->position()).contains(groupPos)) {
+            const auto cellBr = cell->boundingRect().translated(cell->position());
+            qWarning() << "  cellBr=" << cellBr;
+            if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
                 break;
             }

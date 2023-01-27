@@ -129,8 +129,6 @@ void    TableBorder::onVerticalMove() { layoutCells(); }
 
 void    TableBorder::layoutCells()
 {
-    qWarning() << "layoutCells()";
-
     const auto tableGroupItem = _tableGroup ? qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem()) :
                                               nullptr;
     const auto padding = _tableGroup ? _tableGroup->getTablePadding() :
@@ -157,9 +155,6 @@ void    TableBorder::layoutCells()
                 _nextBorder->verticalCenter() > (x() + spacing))  // nextBorder might still not be initialized...
                 nextCell->setWidth(_nextBorder->verticalCenter() - x() - spacing);  // FIXME #190 secure that
 
-            qWarning() << "_nextBorder = " << _nextBorder;
-            qWarning() << "  _tableGroup = " << _tableGroup;
-            qWarning() << "  tableGroupItem = " << tableGroupItem;
             if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
                 _tableGroup && tableGroupItem != nullptr) {
                 nextCell->setWidth(tableGroupItem->width() - vCenter - padding - spacing2);

@@ -45,7 +45,8 @@ Qan.TableGroupItem {
     width: 200
     height: 150
 
-    container: tableGroupItem
+    default property alias children : groupContainer
+    container: groupContainer
 
     //! Show or hide group top left label editor (default to visible).
     property bool   labelEditorVisible : false
@@ -54,6 +55,8 @@ Qan.TableGroupItem {
 
     // FIXME #190
     Rectangle {
+        id: groupContainer
+        z: 1
         anchors.fill: parent
         color: 'transparent'
         border.width: 2
