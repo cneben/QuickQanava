@@ -68,8 +68,10 @@ public:
 protected:
     QPointer<const qan::TableGroup>     _tableGroup;
 
-    //! Utility returning vertical center, ie x() + width() / 2.
+    //! Utility, return border vertical center, ie x() + width() / 2.
     qreal   verticalCenter() const;
+    //! Utility, return border horizontal center, ie y() + height() / 2.
+    qreal   horizontalCenter() const;
 
 public:
     Q_PROPERTY(Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged FINAL)

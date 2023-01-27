@@ -122,17 +122,24 @@ void    TableGroupItem::classBegin()
         }
 
     auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
-                                          QQmlComponent::PreferSynchronous, nullptr);
+                                             QQmlComponent::PreferSynchronous, nullptr);
 
+    // Notes:
+    // - There is no "exterior" borders:
+    //    - So there is  cols-1 vertical borders
+    //    - And there is rows-1 horizontal borders
+    //    - For exemplae 6 cells == 4 borders
+    // - There is rows*cols cells for (rows-1) + (cols-1) borders.
+    //
+    // Internal cells vector is indexed row major:
+    //   cell1 | cell2 | cell3
+    //   ------+-------+------
+    //   cell4 | cell5 | cell6
+    //   ------+-------+------
+    //   cell7 | cell8 | cell9
+    //
+    // So cell index in _cells at (col=c, row=r) is _cells[(r * cols) + c]
 
-    // Pas de border exterieur:
-    // 1 border toutes les ]row[
-    // 1 border toutes les ]col[
-    // Donc: 6 cells == 4 borders
-    // We have rows*cols cells for (rows-1) + (cols-1) borders.
-    for (auto r = 1; r < (rows - 1); r++) {
-        // FIXME #190 horizontal borders
-    }
     qan::TableBorder* prevBorder = nullptr;
     for (auto c = 1; c <= (cols - 1); c++) {
         auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
@@ -143,10 +150,30 @@ void    TableGroupItem::classBegin()
             border->setVisible(true);
             border->setPrevBorder(prevBorder);
             for (int r = 0; r < rows; r++) {
-                border->addPrevCell(_cells[(r * rows) + c-1]);
-                border->addNextCell(_cells[(r * rows) + c]);
+                border->addPrevCell(_cells[(r * cols) + c-1]);
+                border->addNextCell(_cells[(r * cols) + c]);
             }
             _verticalBorders.push_back(border);
+
+            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                prevBorder->setNextBorder(border);  // with this border
+            prevBorder = border;
+        }
+    }
+    prevBorder = nullptr;
+    for (auto r = 1; r <= (rows - 1); r++) {
+        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+        if (border != nullptr) {
+            border->setTableGroup(getTableGroup());
+            border->setOrientation(Qt::Horizontal);
+            border->setParentItem(this);
+            border->setVisible(true);
+            border->setPrevBorder(prevBorder);
+            for (int c = 0; c < cols; c++) {
+                border->addPrevCell(_cells[((r-1) * cols)     + c]);
+                border->addNextCell(_cells[(r * cols) + c]);
+            }
+            _horizontalBorders.push_back(border);
 
             if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
                 prevBorder->setNextBorder(border);  // with this border
@@ -217,14 +244,9 @@ void    TableGroupItem::layoutTable()
         qWarning() << "qan::TableGroupItem::layoutTable(): Error, invalid cell width/height.";
         return;
     }
-
-    for (const auto& cell: _cells) {
-        //cell->setWidth(cellWidth);
-        cell->setHeight(cellHeight);
-    }
-
+    // Note: cells are laid out by their borders, do not set their geometry
     // Layout in space
-    for (auto r = 0; r < rows; r++)
+    /*for (auto r = 0; r < rows; r++)
         for (auto c = 0; c < cols; c++) {
             const auto x = padding +
                            (c * spacing) +
@@ -236,7 +258,7 @@ void    TableGroupItem::layoutTable()
             auto cell = _cells[cellId];
             //cell->setX(x);
             cell->setY(y);
-        }
+        }*/
 
 
     // Layout vertical borders:
@@ -257,6 +279,25 @@ void    TableGroupItem::layoutTable()
             verticalBorder->setY(0.);
             verticalBorder->setWidth(borderWidth);
             verticalBorder->setHeight(height());
+        }
+    } else
+        qWarning() << "ERROR";
+
+    // Layout horizontal borders
+    qWarning() << "_horizontalBorders.size()=" << _horizontalBorders.size();
+    if (_horizontalBorders.size() == rows - 1) {
+        const auto borderHeight = 3.;    // All easy mouse resize handling
+        const auto borderHeight2 = borderHeight / 2.;
+        for (auto r = 1; r <= (rows - 1); r++) {
+            auto* horizontalBorder = _horizontalBorders[r-1];
+            const auto y = padding +
+                           ((r - 1) * spacing) +
+                           (r * cellHeight) +
+                           (spacing / 2.);
+            horizontalBorder->setX(0.);
+            horizontalBorder->setY(y - borderHeight2);
+            horizontalBorder->setWidth(width());
+            horizontalBorder->setHeight(borderHeight);
         }
     } else
         qWarning() << "ERROR";

@@ -75,6 +75,7 @@ void    TableBorder::setTableGroup(const qan::TableGroup* tableGroup)
 }
 
 qreal   TableBorder::verticalCenter() const { return x() + (width() / 2.); }
+qreal   TableBorder::horizontalCenter() const { return y() + (height() / 2.); }
 
 bool    TableBorder::setOrientation(Qt::Orientation orientation)
 {
@@ -160,10 +161,31 @@ void    TableBorder::layoutCells()
                 nextCell->setWidth(tableGroupItem->width() - vCenter - padding - spacing2);
             }
         }
-    }
+    } // Vertical orientation
     else if (getOrientation() == Qt::Horizontal) {
-        // FIXME #190 horizontal border support
-    }
+        const auto hCenter = horizontalCenter();
+
+        // Layout prev/next cells position and size
+        for (auto prevCell: _prevCells) {
+            prevCell->setHeight(hCenter -
+                                prevCell->y() - spacing2);
+            if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
+                _tableGroup) {
+                prevCell->setY(padding);
+            }
+        }
+        for (auto nextCell: _nextCells) {
+            nextCell->setY(hCenter + spacing2);
+            if (_nextBorder &&
+                _nextBorder->horizontalCenter() > (y() + spacing))  // nextBorder might still not be initialized...
+                nextCell->setHeight(_nextBorder->horizontalCenter() - y() - spacing);  // FIXME #190 secure that
+
+            if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
+                _tableGroup && tableGroupItem != nullptr) {
+                nextCell->setHeight(tableGroupItem->height() - hCenter - padding - spacing2);
+            }
+        }
+    }  // Horizontal orientation
 }
 //-----------------------------------------------------------------------------
 
@@ -200,30 +222,57 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
         const QPointF curLocalPos = parentItem() != nullptr ? parentItem()->mapFromScene(mePos) :
                                                               QPointF{0., 0.};
         const QPointF delta{curLocalPos - startLocalPos};
+        const auto position = _dragInitialPos + delta;
 
-        // Bound to ] prevCells.left(), nextCells.right() [
+        // Bound move to ] prevCells.left(), nextCells.right() [
+        const auto borderWidth2 = _borderWidth / 2.;
+        const auto tableGroupItem = _tableGroup ? qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem()) :
+                                                  nullptr;
+
+        const auto padding = _tableGroup ? _tableGroup->getTablePadding() :
+                                           2.;
         const auto spacing = _tableGroup ? _tableGroup->getCellSpacing() :
-                                           10.;
+                                           5.;
         const auto spacing2 = spacing / 2.;
 
-        auto minX = std::numeric_limits<qreal>::max();
-        for (auto prevCell: _prevCells)
-            minX = std::min(minX, prevCell->x());
-        minX += spacing2;
+        if (getOrientation() == Qt::Vertical) {
+            auto minX = std::numeric_limits<qreal>::max();
+            if (_prevBorder == nullptr)     // Do not drag outside (on left) table group
+                minX = padding + spacing2 + borderWidth2;
+            else  {                         // Do not drag before prev border
+                if (_prevBorder != nullptr)
+                    minX = std::min(minX, _prevBorder->verticalCenter() + spacing2 + borderWidth2);
+            }
 
-        auto maxX = std::numeric_limits<qreal>::min();
-        for (auto nextCell: _nextCells)
-            maxX = std::max(maxX, nextCell->x() + nextCell->width());
-        maxX -= spacing2;
-
-        qreal minY = 0;         // FIXME #190 Add horizontal border support...
-        qreal maxY = 100000;
-
-        const auto position = _dragInitialPos + delta;
-        if (getOrientation() == Qt::Vertical)
+            auto maxX = std::numeric_limits<qreal>::min();
+            if (_nextBorder == nullptr &&   // Do not drag outside (on right) table group
+                tableGroupItem != nullptr)
+                maxX = tableGroupItem->width() - padding - spacing2 - borderWidth2;
+            else {                          // Do not drag after next border
+                if (_nextBorder != nullptr)
+                    maxX = std::max(maxX, _nextBorder->verticalCenter() - spacing - borderWidth2);
+            }
             setX(qBound(minX, position.x(), maxX));
-        else if (getOrientation() == Qt::Horizontal)
+        }
+        else if (getOrientation() == Qt::Horizontal) {
+            auto minY = std::numeric_limits<qreal>::max();
+            if (_prevBorder == nullptr)     // Do not drag outside (on top) table group
+                minY = padding + spacing2 + borderWidth2;
+            else  {                         // Do not drag before prev border
+                if (_prevBorder != nullptr)
+                    minY = std::min(minY, _prevBorder->horizontalCenter() + spacing2 + borderWidth2);
+            }
+
+            auto maxY = std::numeric_limits<qreal>::min();
+            if (_nextBorder == nullptr &&   // Do not drag outside (past/bottom) table group
+                tableGroupItem != nullptr)
+                maxY = tableGroupItem->height() - padding - spacing2 - borderWidth2;
+            else {                          // Do not drag after/under next border
+                if (_nextBorder != nullptr)
+                    maxY = std::max(maxY, _nextBorder->horizontalCenter() - spacing - borderWidth2);
+            }
             setY(qBound(minY, position.y(), maxY));
+        }
         event->setAccepted(true);
     }
 }
