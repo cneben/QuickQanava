@@ -131,6 +131,7 @@ void    TableGroupItem::classBegin()
     // Donc: 6 cells == 4 borders
     // We have rows*cols cells for (rows-1) + (cols-1) borders.
     for (auto r = 1; r < (rows - 1); r++) {
+        // FIXME #190 horizontal borders
     }
     qan::TableBorder* prevBorder = nullptr;
     for (auto c = 1; c <= (cols - 1); c++) {
@@ -244,15 +245,17 @@ void    TableGroupItem::layoutTable()
     //                       <-spacing->            <-spacing->
     //qWarning()  << "_verticalBorders.size()=" << _verticalBorders.size();
     if (_verticalBorders.size() == cols - 1) {
+        const auto borderWidth = 3.;    // All easy mouse resize handling
+        const auto borderWidth2 = borderWidth / 2.;
         for (auto c = 1; c <= (cols - 1); c++) {
             auto* verticalBorder = _verticalBorders[c-1];
             const auto x = padding +
                            ((c - 1) * spacing) +
                            (c * cellWidth) +
                            (spacing / 2.);
-            verticalBorder->setX(x);
+            verticalBorder->setX(x - borderWidth2);
             verticalBorder->setY(0.);
-            verticalBorder->setWidth(1.);  // Content is not clipped and set to borderWidth
+            verticalBorder->setWidth(borderWidth);
             verticalBorder->setHeight(height());
         }
     } else

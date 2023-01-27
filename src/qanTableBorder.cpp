@@ -202,7 +202,8 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
         const QPointF delta{curLocalPos - startLocalPos};
 
         // Bound to ] prevCells.left(), nextCells.right() [
-        const auto spacing = 10;                // FIXME #190: Add link to table...
+        const auto spacing = _tableGroup ? _tableGroup->getCellSpacing() :
+                                           10.;
         const auto spacing2 = spacing / 2.;
 
         auto minX = std::numeric_limits<qreal>::max();
