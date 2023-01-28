@@ -67,6 +67,7 @@ void    TableCell::setItem(QQuickItem* item)
             if (nodeItem != nullptr) {
                 nodeItem->setSelectable(false);
                 nodeItem->setDraggable(false);
+                nodeItem->setResizable(false);
             }
         }
         fitItemToCell();
