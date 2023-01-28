@@ -38,6 +38,7 @@ import QtQuick.Layouts      1.3
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
+//! \brief Default delegate for `qan::TableGroup`.
 Qan.TableGroupItem {
     id: tableGroupItem
 
@@ -53,20 +54,12 @@ Qan.TableGroupItem {
     //! Show or hide group top left expand button (default to visible).
     property bool   expandButtonVisible : false
 
-    // FIXME #190
     Rectangle {
         id: groupContainer
         z: 1
         anchors.fill: parent
-        color: 'transparent'
+        color: Qt.rgba(0., 0., 0., 0.)
         border.width: 2
-        border.color: 'black'
+        border.color: Qt.rgba(0., 0., 0., 1.)
     }
-
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging start
-    //onNodeDragEnter: { console.error('ERROR onNodeDragEnter'); }
-    // FIXME #190
-    // Emitted by qan::GroupItem when node dragging ends
-    //onNodeDragLeave: { console.error('ERROR onNodeDragLeave'); }
-}
+}  // Qan.TableGroupItem
