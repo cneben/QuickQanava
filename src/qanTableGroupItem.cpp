@@ -50,6 +50,7 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
     connect(this,   &QQuickItem::heightChanged,
             this,   &TableGroupItem::onResized);
 
+    setItemStyle(qan::TableGroup::style(parent));
     setStrictDrop(false);  // Top left corner of a node is enought to allow a drop
 }
 
