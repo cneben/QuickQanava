@@ -34,6 +34,7 @@
 
 // QuickQanava headers
 #include "./qanTableCell.h"
+#include "./qanNodeItem.h"
 
 namespace qan { // ::qan
 
@@ -62,6 +63,11 @@ void    TableCell::setItem(QQuickItem* item)
             _item->setX(0.);
             _item->setY(0.);
             _item->setParentItem(this);
+            auto nodeItem = static_cast<qan::NodeItem*>(item);
+            if (nodeItem != nullptr) {
+                nodeItem->setSelectable(false);
+                nodeItem->setDraggable(false);
+            }
         }
         fitItemToCell();
     }

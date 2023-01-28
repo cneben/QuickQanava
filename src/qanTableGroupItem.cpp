@@ -246,26 +246,11 @@ void    TableGroupItem::layoutTable()
     }
     // Note: cells are laid out by their borders, do not set their geometry
     // Layout in space
-    /*for (auto r = 0; r < rows; r++)
-        for (auto c = 0; c < cols; c++) {
-            const auto x = padding +
-                           (c * spacing) +
-                           (c * cellWidth);
-            const auto y = padding +
-                           (r * spacing) +
-                           (r * cellHeight);
-            auto cellId = (r * cols) + c;
-            auto cell = _cells[cellId];
-            //cell->setX(x);
-            cell->setY(y);
-        }*/
-
 
     // Layout vertical borders:
     // |             cell         |         cell         |         cell             |
     // | padding |   cell   |   border  |   cell   |   border  |   cell   | padding |
     //                       <-spacing->            <-spacing->
-    //qWarning()  << "_verticalBorders.size()=" << _verticalBorders.size();
     if (_verticalBorders.size() == cols - 1) {
         const auto borderWidth = 3.;    // All easy mouse resize handling
         const auto borderWidth2 = borderWidth / 2.;
@@ -281,10 +266,9 @@ void    TableGroupItem::layoutTable()
             verticalBorder->setHeight(height());
         }
     } else
-        qWarning() << "ERROR";
+        qWarning() << "qan::TableGoupItem::layoutTable(): Invalid vertical border count.";
 
     // Layout horizontal borders
-    qWarning() << "_horizontalBorders.size()=" << _horizontalBorders.size();
     if (_horizontalBorders.size() == rows - 1) {
         const auto borderHeight = 3.;    // All easy mouse resize handling
         const auto borderHeight2 = borderHeight / 2.;
@@ -300,7 +284,7 @@ void    TableGroupItem::layoutTable()
             horizontalBorder->setHeight(borderHeight);
         }
     } else
-        qWarning() << "ERROR";
+        qWarning() << "qan::TableGoupItem::layoutTable(): Invalid horizontal border count.";
 
     // Note: There is no need to manually call borders layoutCells() method
     // it will be called automatically when border are moved.
@@ -329,12 +313,12 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
         // Find cell at groupPos and attach node to cell
-        qWarning() << "_cells.size()=" << _cells.size();
-        qWarning() << "groupPos=" << groupPos;
+        //qWarning() << "_cells.size()=" << _cells.size();
+        //qWarning() << "groupPos=" << groupPos;
         for (const auto& cell: _cells) {
             //qWarning() << cell-> boundingRect();
             const auto cellBr = cell->boundingRect().translated(cell->position());
-            qWarning() << "  cellBr=" << cellBr;
+            //qWarning() << "  cellBr=" << cellBr;
             if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
                 break;
