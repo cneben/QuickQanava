@@ -71,6 +71,7 @@ void    TableBorder::setTableGroup(qan::TableGroup* tableGroup)
         _tableGroup = tableGroup;
         if (_tableGroup)
             layoutCells();   // Re layoutCells with correct table settings.
+        emit tableGroupChanged();
     }
 }
 
