@@ -30,6 +30,7 @@ set(qan_source_files
 
 set (qan_header_files
     qanAbstractDraggableCtrl.h
+    qanAnalysisTimeHeatMap.h
     qanBehaviour.h
     qanBottomRightResizer.h
     qanRightResizer.h
@@ -41,6 +42,7 @@ set (qan_header_files
     qanEdgeDraggableCtrl.h
     qanEdgeItem.h
     qanGraph.h
+    qanGraph.hpp
     qanGraphView.h
     qanGrid.h
     qanGroup.h
@@ -57,6 +59,9 @@ set (qan_header_files
     qanAnalysisTimeHeatMap.cpp
     qanUtils.h
     QuickQanava.h
+    )
+
+set (gtpo_header_files
     gtpo/container_adapter.h
     gtpo/edge.h
     gtpo/graph.h
@@ -68,7 +73,7 @@ set (qan_header_files
     gtpo/observer.h
     )
 
-source_group("Headers" FILES ${qan_header_files})
+source_group("Headers" FILES ${qan_header_files} ${gtpo_header_files})
 source_group("Sources" FILES ${qan_source_files})
 
 set (qan_plugin_files
@@ -78,7 +83,7 @@ set (qan_plugin_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
+qt_wrap_cpp(qan_source_files, qan_header_files gtpo_header_files)   # Creates .moc files from sources
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -90,7 +95,7 @@ else()
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 list(APPEND qan_resources GraphicalEffects${QT_VERSION_MAJOR}/QuickQanavaGraphicalEffects.qrc)
-add_library(QuickQanava STATIC ${qan_source_files} ${qan_header_files} ${qan_resources})
+add_library(QuickQanava STATIC ${qan_source_files} ${qan_header_files} ${gtpo_header_files} ${qan_resources})
 
 target_include_directories(QuickQanava
     PUBLIC
@@ -106,6 +111,11 @@ target_compile_features(QuickQanava
 install(FILES
     ${qan_header_files}
     DESTINATION include/quickqanava
+    )
+
+install(FILES
+    ${gtpo_header_files}
+    DESTINATION include/quickqanava/gtpo
     )
 
 install(TARGETS QuickQanava
@@ -163,4 +173,3 @@ install(
     DESTINATION ${DESTDIR}
     FILES_MATCHING PATTERN "*.qml"
     )
-

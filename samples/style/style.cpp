@@ -37,8 +37,8 @@
 #include <QQuickStyle>
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
-#include "./custom.h"
+#include "QuickQanava.h"
+#include "custom.h"
 
 using namespace qan;
 
@@ -58,4 +58,3 @@ int	main( int argc, char** argv )
     engine.load(QUrl("qrc:/style.qml"));
     return app.exec();
 }
-

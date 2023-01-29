@@ -33,8 +33,8 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
-#include "./qanFaceNode.h"
+#include "QuickQanava.h"
+#include "qanFaceNode.h"
 
 namespace qan { // ::qan
 

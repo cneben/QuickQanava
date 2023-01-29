@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "./qanDraggable.h"
+#include "qanDraggable.h"
 
 namespace qan { // ::qan
 

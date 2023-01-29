@@ -39,7 +39,7 @@
 // Qt headers
 
 // QuickQanava headers
-#include "./qanGrid.h"
+#include "qanGrid.h"
 
 namespace qan {  // ::qan
 

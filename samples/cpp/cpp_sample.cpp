@@ -40,7 +40,7 @@
 // QuickQanava headers
 #include <QuickQanava.h>
 
-#include "./cpp_sample.h"
+#include "cpp_sample.h"
 
 using namespace qan;
 
@@ -181,5 +181,3 @@ int	main( int argc, char** argv )
     return app.exec();
 }
 //-----------------------------------------------------------------------------
-
-

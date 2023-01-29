@@ -33,8 +33,8 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "./qanSelectable.h"
-#include "./qanGraph.h"
+#include "qanSelectable.h"
+#include "qanGraph.h"
 
 namespace qan { // ::qan
 

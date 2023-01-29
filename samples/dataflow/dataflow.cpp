@@ -40,7 +40,7 @@
 // QuickQanava headers
 #include <QuickQanava>
 
-#include "./qanDataFlow.h"
+#include "qanDataFlow.h"
 
 using namespace qan;
 
@@ -63,5 +63,3 @@ int	main( int argc, char** argv )
     return app.exec();
 }
 //-----------------------------------------------------------------------------
-
-

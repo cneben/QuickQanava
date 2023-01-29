@@ -33,9 +33,9 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "./qanDraggableCtrl.h"
-#include "./qanNodeItem.h"
-#include "./qanGraph.h"
+#include "qanDraggableCtrl.h"
+#include "qanNodeItem.h"
+#include "qanGraph.h"
 
 namespace qan { // ::qan
 

@@ -33,8 +33,8 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
-#include "./qanDataFlow.h"
+#include "QuickQanava.h"
+#include "qanDataFlow.h"
 
 namespace qan { // ::qan
 
