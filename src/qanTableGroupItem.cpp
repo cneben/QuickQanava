@@ -204,10 +204,9 @@ void    TableGroupItem::setGroup(qan::Group* group) noexcept
     }
 }
 
-const qan::TableGroup*  TableGroupItem::getTableGroup() const
-{
-    return qobject_cast<const qan::TableGroup*>(getGroup());
-}
+const qan::TableGroup*  TableGroupItem::getTableGroup() const { return qobject_cast<const qan::TableGroup*>(getGroup()); }
+qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qan::TableGroup*>(getGroup()); };
+
 
 void    TableGroupItem::layoutTable()
 {

@@ -64,10 +64,15 @@ public:
     /*! \name Border Management *///-------------------------------------------
     //@{
 public:
-    void    setTableGroup(const qan::TableGroup* tableGroup);
+    Q_PROPERTY(qan::TableGroup* tableGroup READ getTableGroup WRITE setTableGroup NOTIFY tableGroupChanged FINAL)
+    qan::TableGroup*    getTableGroup() { return _tableGroup.data(); }
+    void                setTableGroup(qan::TableGroup* tableGroup);
 protected:
-    QPointer<const qan::TableGroup>     _tableGroup;
+    QPointer<qan::TableGroup>     _tableGroup;
+signals:
+    void                tableGroupChanged();
 
+public:
     //! Utility, return border vertical center, ie x() + width() / 2.
     qreal   verticalCenter() const;
     //! Utility, return border horizontal center, ie y() + height() / 2.

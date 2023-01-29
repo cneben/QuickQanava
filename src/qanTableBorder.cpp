@@ -65,7 +65,7 @@ TableBorder::~TableBorder() { /* prevCells and nextCells are not owned */ }
 //-----------------------------------------------------------------------------
 
 /* Border Management *///------------------------------------------------------
-void    TableBorder::setTableGroup(const qan::TableGroup* tableGroup)
+void    TableBorder::setTableGroup(qan::TableGroup* tableGroup)
 {
     if (tableGroup != _tableGroup) {
         _tableGroup = tableGroup;

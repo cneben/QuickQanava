@@ -40,6 +40,8 @@ import "qrc:/QuickQanava" as Qan
 
 Qan.AbstractTableBorder {
     id: tableBorder
+    borderWidth: tableGroup ? tableGroup.tableStyle.borderWidth :
+                              3.
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -48,6 +50,7 @@ Qan.AbstractTableBorder {
                                                    tableBorder.width
         height: parent.orientation == Qt.Vertical ? tableBorder.height :
                                                     tableBorder.borderWidth
-        color: "black"
+        color: tableGroup ? tableGroup.tableStyle.borderColor :
+                            Qt.rgba(0., 0., 0., 1.)
     }
 }  // Qan.AbstractTableBorder

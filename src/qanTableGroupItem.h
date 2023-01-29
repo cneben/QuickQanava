@@ -80,6 +80,7 @@ public:
     virtual void    setGroup(qan::Group* group) noexcept override;
 protected:
     const qan::TableGroup*  getTableGroup() const;
+    qan::TableGroup*        getTableGroup();
 public:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
