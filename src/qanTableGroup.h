@@ -99,13 +99,17 @@ public:
     /*! \name Table Properties *///--------------------------------------------
     //@{
 public:
-    //! \brief FIXME #190.
+    //! \copydoc getCellSpacing()
     Q_PROPERTY(qreal cellSpacing READ getCellSpacing WRITE setCellSpacing NOTIFY cellSpacingChanged FINAL)
-    void        setCellSpacing(qreal cellSpacing);
+    //! \copydoc getCellSpacing()
+    bool        setCellSpacing(qreal cellSpacing);
+    //! \brief Spacing between table cells (padding is added on border cells).
     qreal       getCellSpacing() const { return _cellSpacing; }
 signals:
+    //! \copydoc getCellSpacing()
     void        cellSpacingChanged();
 private:
+    //! \copydoc getCellSpacing()
     qreal       _cellSpacing = 5.0;
 
 public:
@@ -119,13 +123,17 @@ private:
     QSizeF      _cellMinimumSize = QSizeF{10., 10.};
 
 public:
-    //! \brief FIXME #190.
+    //! \brief getTablePadding()
     Q_PROPERTY(qreal tablePadding READ getTablePadding WRITE setTablePadding NOTIFY tablePaddingChanged FINAL)
-    void        setTablePadding(qreal tablePadding);
+    //! \brief getTablePadding()
+    bool        setTablePadding(qreal tablePadding);
+    //! \brief Padding around table border and border cells.
     qreal       getTablePadding() const { return _tablePadding; }
 signals:
+    //! \brief getTablePadding()
     void        tablePaddingChanged();
 private:
+    //! \brief getTablePadding()
     qreal       _tablePadding = 2.0;
     //@}
     //-------------------------------------------------------------------------

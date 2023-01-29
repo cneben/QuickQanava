@@ -56,6 +56,8 @@ Item {
 
     property alias  header: headerLayout
 
+    property alias  backRadius: groupBackground.backRadius
+
     enabled: groupItem &&
              groupItem.group ? !groupItem.group.locked :
                                true

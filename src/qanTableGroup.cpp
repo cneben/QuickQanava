@@ -81,10 +81,14 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Table Properties *///-------------------------------------------------------
-void    TableGroup::setCellSpacing(qreal cellSpacing)
+bool    TableGroup::setCellSpacing(qreal cellSpacing)
 {
-    _cellSpacing = cellSpacing;
-    emit cellSpacingChanged();
+    if (!qFuzzyCompare(1. + cellSpacing, 1. + _cellSpacing)) {
+        _cellSpacing = cellSpacing;
+        emit cellSpacingChanged();
+        return true;
+    }
+    return false;
 }
 
 void    TableGroup::setCellMinimumSize(QSizeF cellMinimumSize)
@@ -93,10 +97,14 @@ void    TableGroup::setCellMinimumSize(QSizeF cellMinimumSize)
     emit cellMinimumSizeChanged();
 }
 
-void    TableGroup::setTablePadding(qreal tablePadding)
+bool    TableGroup::setTablePadding(qreal tablePadding)
 {
-    _tablePadding = tablePadding;
-    emit tablePaddingChanged();
+    if (!qFuzzyCompare(1. + tablePadding, 1. + _tablePadding)) {
+        _tablePadding = tablePadding;
+        emit tablePaddingChanged();
+        return true;
+    }
+    return false;
 }
 //-----------------------------------------------------------------------------
 
