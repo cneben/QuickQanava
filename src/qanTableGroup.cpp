@@ -38,9 +38,7 @@
 #include <QPainterPath>
 
 // QuickQanava headers
-#include "./qanNode.h"
 #include "./qanTableGroup.h"
-#include "./qanGraph.h"
 
 namespace qan { // ::qan
 
