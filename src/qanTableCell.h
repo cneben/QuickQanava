@@ -59,6 +59,8 @@ public:
     //! Set `item` in this cell "container", `item` is reparented to cell.
     const QQuickItem*       getItem() const { return _item.data(); }
     //! \copydoc getItem()
+    QQuickItem*             getItem() { return _item.data(); }
+    //! \copydoc getItem()
     void                    setItem(QQuickItem* item);
 protected:
     //! \copydoc getItem()

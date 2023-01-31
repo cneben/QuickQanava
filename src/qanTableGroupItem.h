@@ -74,23 +74,43 @@ public:
     //-------------------------------------------------------------------------
 
 
-    /*! \name Cells Management *///--------------------------------------------
+    /*! \name Borders and Cells Management *///--------------------------------
     //@{
 public:
-    virtual void    setGroup(qan::Group* group) noexcept override;
+    //! Clear table borders and cells (cells nodes are reparented to group).
+    void        clearLayout();
+
+    //! Initialize a table withe default cells and borders.
+    void        initialize(int rows, int cols);
+
+    void        createCells(int cellsCount);
+    void        createBorders(int verticalBordersCount, int horizontalBordersCount);
 protected:
-    const qan::TableGroup*  getTableGroup() const;
-    qan::TableGroup*        getTableGroup();
+    auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
+
 public:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
 protected slots:
     void        onResized();
 
+public:
+    virtual void            setGroup(qan::Group* group) noexcept override;
+protected:
+    const qan::TableGroup*  getTableGroup() const;
+    qan::TableGroup*        getTableGroup();
+
+public:
+    using Cells_t = std::vector<qan::TableCell*>;
+    using Borders_t = std::vector<qan::TableBorder*>;
+
+    const Cells_t&      getCells() const  { return _cells; };
+    const Borders_t&    getVerticalBorders() const  { return _verticalBorders; };
+    const Borders_t&    getHorizontalBorders() const  { return _horizontalBorders; };
 private:
-    std::vector<qan::TableCell*>    _cells;
-    std::vector<qan::TableBorder*>  _verticalBorders;
-    std::vector<qan::TableBorder*>  _horizontalBorders;
+    Cells_t     _cells;
+    Borders_t   _verticalBorders;
+    Borders_t   _horizontalBorders;
     //@}
     //-------------------------------------------------------------------------
 

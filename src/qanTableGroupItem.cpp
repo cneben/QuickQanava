@@ -56,71 +56,53 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
 
 TableGroupItem::~TableGroupItem()
 {
-    for (const auto cell: _cells)
-        if (cell)
-            cell->deleteLater();
-    for (const auto border: _verticalBorders)
-        if (border)
-            border->deleteLater();
-    for (const auto border: _horizontalBorders)
-        if (border)
-            border->deleteLater();
+    clearLayout();
 }
 
 void    TableGroupItem::componentComplete() { /* Nil */ }
 
 void    TableGroupItem::classBegin()
 {
-    auto engine = qmlEngine(this);
-    if (engine == nullptr) {
-        qWarning() << "qan::TableGroupItem::classBegin(): Error, no QML engine.";
+    initialize(3, 3);
+}
+//-----------------------------------------------------------------------------
+
+
+/* Borders and Cells Management *///-------------------------------------------
+void    TableGroupItem::clearLayout()
+{
+    for (const auto verticalBorder: _verticalBorders)
+        if (verticalBorder != nullptr)
+            verticalBorder->deleteLater();
+    _verticalBorders.clear();
+    for (const auto horizontalBorder: _horizontalBorders)
+        if (horizontalBorder != nullptr)
+            horizontalBorder->deleteLater();
+    _horizontalBorders.clear();
+
+    for (const auto cell: _cells)
+        if (cell != nullptr) {
+            if (cell->getItem() != nullptr)
+                cell->getItem()->setParentItem(getContainer());
+            cell->deleteLater();
+        }
+    _cells.clear();
+}
+
+void    TableGroupItem::initialize(int rows, int cols)
+{
+    if (rows <= 0 || cols <= 0) {
+        qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
     }
-    auto cellComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableCell.qml",
-                                           QQmlComponent::PreferSynchronous, nullptr);
 
-    const auto createFromComponent = [this](QQmlComponent& component) -> QQuickItem* {
-        if (!component.isReady()) {
-            qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error table cell component is not ready.";
-            qWarning() << component.errorString();
-            return nullptr;
-        }
-        const auto rootContext = qmlContext(this);
-        if (rootContext == nullptr) {
-            qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error, no QML context.";
-            return nullptr;
-        }
-        QQuickItem* item = nullptr;
-        QObject* object = component.beginCreate(rootContext);
-        if (object == nullptr ||
-            component.isError()) {
-            if (object != nullptr)
-                object->deleteLater();
-            return nullptr;
-        }
-        component.completeCreate();
-        if (!component.isError()) {
-            QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
-            item = qobject_cast<QQuickItem*>(object);
-        } // Note: There is no leak until cpp ownership is set
-        if (item != nullptr)
-            item->setVisible(true);
-        return item;
-    };
+    auto engine = qmlEngine(this);
+    if (engine == nullptr) {
+        qWarning() << "qan::TableGroupItem::initialize(): Error, no QML engine.";
+        return;
+    }
 
-    // FIXME #190 Add fixed 3x3 cells
-    const int cols = 3;
-    const int rows = 3;
-
-    for (auto r = 0; r < rows; r++)
-        for (auto c = 0; c < cols; c++) {
-            auto cell = qobject_cast<qan::TableCell*>(createFromComponent(*cellComponent));
-            if (cell != nullptr) {
-                _cells.push_back(cell);
-                cell->setParentItem(this);
-                cell->setVisible(true);
-            }
-        }
+    createCells(rows * cols);  // Create cells
 
     auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
                                              QQmlComponent::PreferSynchronous, nullptr);
@@ -129,7 +111,7 @@ void    TableGroupItem::classBegin()
     // - There is no "exterior" borders:
     //    - So there is  cols-1 vertical borders
     //    - And there is rows-1 horizontal borders
-    //    - For exemplae 6 cells == 4 borders
+    //    - For exemple 6 cells == 4 borders
     // - There is rows*cols cells for (rows-1) + (cols-1) borders.
     //
     // Internal cells vector is indexed row major:
@@ -182,31 +164,118 @@ void    TableGroupItem::classBegin()
         }
     }
 
+    borderComponent->deleteLater();
     layoutTable();
 }
-//-----------------------------------------------------------------------------
 
-
-/* Cells Management *///-------------------------------------------------------
-void    TableGroupItem::setGroup(qan::Group* group) noexcept
+void    TableGroupItem::createCells(int cellsCount)
 {
-    qan::GroupItem::setGroup(group);
-    auto tableGroup = qobject_cast<qan::TableGroup*>(group);
-    if (tableGroup != nullptr) {
-        // Set borders reference to group
-        for (auto border: _horizontalBorders)
-            if (border)
-                border->setTableGroup(tableGroup);
-        for (auto border: _verticalBorders)
-            if (border)
-                border->setTableGroup(tableGroup);
-        layoutTable();  // Force new layout with actual table group settings
+    if (cellsCount <= 0) {
+        qWarning() << "TableGroupItem::createCells(): Error, invalid rows or cols count.";
+        return;
     }
+    auto engine = qmlEngine(this);
+    if (engine == nullptr) {
+        qWarning() << "qan::TableGroupItem::createCells(): Error, no QML engine.";
+        return;
+    }
+
+    // Create cells
+    auto cellComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableCell.qml",
+                                           QQmlComponent::PreferSynchronous, nullptr);
+    for (auto c = 0; c < cellsCount; c++) {
+        auto cell = qobject_cast<qan::TableCell*>(createFromComponent(*cellComponent));
+        if (cell != nullptr) {
+            _cells.push_back(cell);
+            cell->setParentItem(this);
+            cell->setVisible(true);
+        }
+    }
+
+    cellComponent->deleteLater();
 }
 
-const qan::TableGroup*  TableGroupItem::getTableGroup() const { return qobject_cast<const qan::TableGroup*>(getGroup()); }
-qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qan::TableGroup*>(getGroup()); };
+void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBordersCount)
+{
+    if (verticalBordersCount <= 0 ||
+        horizontalBordersCount <= 0) {
+        qWarning() << "TableGroupItem::createBorders(): Error, invalid vertical or horizontal borders count.";
+        return;
+    }
+    auto engine = qmlEngine(this);
+    if (engine == nullptr) {
+        qWarning() << "qan::TableGroupItem::createBorders(): Error, no QML engine.";
+        return;
+    }
 
+    auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
+                                             QQmlComponent::PreferSynchronous, nullptr);
+
+    qan::TableBorder* prevBorder = nullptr;
+    for (auto v = 1; v < horizontalBordersCount; v++) {
+        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+        if (border != nullptr) {
+            border->setTableGroup(getTableGroup());
+            border->setOrientation(Qt::Vertical);
+            border->setParentItem(this);
+            border->setVisible(true);
+            border->setPrevBorder(prevBorder);
+            _verticalBorders.push_back(border);
+
+            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                prevBorder->setNextBorder(border);  // with this border
+            prevBorder = border;
+        }
+    }
+    prevBorder = nullptr;
+    for (auto h = 1; h < horizontalBordersCount; h++) {
+        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+        if (border != nullptr) {
+            border->setTableGroup(getTableGroup());
+            border->setOrientation(Qt::Horizontal);
+            border->setParentItem(this);
+            border->setVisible(true);
+            border->setPrevBorder(prevBorder);
+            _horizontalBorders.push_back(border);
+
+            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                prevBorder->setNextBorder(border);  // with this border
+            prevBorder = border;
+        }
+    }
+
+    borderComponent->deleteLater();
+}
+
+auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem*
+{
+    if (!component.isReady()) {
+        qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error table cell component is not ready.";
+        qWarning() << component.errorString();
+        return nullptr;
+    }
+    const auto rootContext = qmlContext(this);
+    if (rootContext == nullptr) {
+        qWarning() << "qan::TableGroupItem::classBegin(): createTableCell(): Error, no QML context.";
+        return nullptr;
+    }
+    QQuickItem* item = nullptr;
+    QObject* object = component.beginCreate(rootContext);
+    if (object == nullptr ||
+        component.isError()) {
+        if (object != nullptr)
+            object->deleteLater();
+        return nullptr;
+    }
+    component.completeCreate();
+    if (!component.isError()) {
+        QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
+        item = qobject_cast<QQuickItem*>(object);
+    } // Note: There is no leak until cpp ownership is set
+    if (item != nullptr)
+        item->setVisible(true);
+    return item;
+};
 
 void    TableGroupItem::layoutTable()
 {
@@ -294,6 +363,25 @@ void    TableGroupItem::onResized()
 {
     layoutTable();
 }
+
+void    TableGroupItem::setGroup(qan::Group* group) noexcept
+{
+    qan::GroupItem::setGroup(group);
+    auto tableGroup = qobject_cast<qan::TableGroup*>(group);
+    if (tableGroup != nullptr) {
+        // Set borders reference to group
+        for (auto border: _horizontalBorders)
+            if (border)
+                border->setTableGroup(tableGroup);
+        for (auto border: _verticalBorders)
+            if (border)
+                border->setTableGroup(tableGroup);
+        layoutTable();  // Force new layout with actual table group settings
+    }
+}
+
+const qan::TableGroup*  TableGroupItem::getTableGroup() const { return qobject_cast<const qan::TableGroup*>(getGroup()); }
+qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qan::TableGroup*>(getGroup()); };
 //-----------------------------------------------------------------------------
 
 
