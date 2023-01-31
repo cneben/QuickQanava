@@ -117,8 +117,11 @@ protected:
     QPointer<qan::TableBorder>  _nextBorder;
 
 public:
-    void        addPrevCell(qan::TableCell* prevCell);
-    void        addNextCell(qan::TableCell* nextCell);
+    using Cells_t = std::vector<qan::TableCell*>;
+    void            addPrevCell(qan::TableCell* prevCell);
+    void            addNextCell(qan::TableCell* nextCell);
+    const Cells_t&  getPrevCells() const { return _prevCells; };
+    const Cells_t&  getNextCells() const { return _nextCells; };
 protected:
     std::vector<qan::TableCell*>    _prevCells;
     std::vector<qan::TableCell*>    _nextCells;

@@ -174,6 +174,8 @@ void    TableGroupItem::createCells(int cellsCount)
         qWarning() << "TableGroupItem::createCells(): Error, invalid rows or cols count.";
         return;
     }
+    if (cellsCount == static_cast<int>(_cells.size()))
+        return;
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::createCells(): Error, no QML engine.";
@@ -212,35 +214,39 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
                                              QQmlComponent::PreferSynchronous, nullptr);
 
     qan::TableBorder* prevBorder = nullptr;
-    for (auto v = 1; v < horizontalBordersCount; v++) {
-        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
-        if (border != nullptr) {
-            border->setTableGroup(getTableGroup());
-            border->setOrientation(Qt::Vertical);
-            border->setParentItem(this);
-            border->setVisible(true);
-            border->setPrevBorder(prevBorder);
-            _verticalBorders.push_back(border);
+    if (verticalBordersCount != static_cast<int>(_verticalBorders.size())) {
+        for (auto v = 1; v < verticalBordersCount; v++) {
+            auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+            if (border != nullptr) {
+                border->setTableGroup(getTableGroup());
+                border->setOrientation(Qt::Vertical);
+                border->setParentItem(this);
+                border->setVisible(true);
+                border->setPrevBorder(prevBorder);
+                _verticalBorders.push_back(border);
 
-            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
-                prevBorder->setNextBorder(border);  // with this border
-            prevBorder = border;
+                if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                    prevBorder->setNextBorder(border);  // with this border
+                prevBorder = border;
+            }
         }
     }
     prevBorder = nullptr;
-    for (auto h = 1; h < horizontalBordersCount; h++) {
-        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
-        if (border != nullptr) {
-            border->setTableGroup(getTableGroup());
-            border->setOrientation(Qt::Horizontal);
-            border->setParentItem(this);
-            border->setVisible(true);
-            border->setPrevBorder(prevBorder);
-            _horizontalBorders.push_back(border);
+    if (horizontalBordersCount != static_cast<int>(_horizontalBorders.size())) {
+        for (auto h = 1; h < horizontalBordersCount; h++) {
+            auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
+            if (border != nullptr) {
+                border->setTableGroup(getTableGroup());
+                border->setOrientation(Qt::Horizontal);
+                border->setParentItem(this);
+                border->setVisible(true);
+                border->setPrevBorder(prevBorder);
+                _horizontalBorders.push_back(border);
 
-            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
-                prevBorder->setNextBorder(border);  // with this border
-            prevBorder = border;
+                if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
+                    prevBorder->setNextBorder(border);  // with this border
+                prevBorder = border;
+            }
         }
     }
 
