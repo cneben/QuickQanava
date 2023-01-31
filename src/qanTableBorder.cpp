@@ -117,11 +117,15 @@ void    TableBorder::setNextBorder(qan::TableBorder* nextBorder)
 
 void    TableBorder::addPrevCell(qan::TableCell* prevCell)
 {
+    if (std::find(_prevCells.cbegin(), _prevCells.cend(), prevCell) != _prevCells.cend())
+            return;
     if (prevCell != nullptr)
         _prevCells.push_back(prevCell);
 }
 void    TableBorder::addNextCell(qan::TableCell* nextCell)
 {
+    if (std::find(_nextCells.cbegin(), _nextCells.cend(), nextCell) != _nextCells.cend())
+            return;
     if (nextCell != nullptr)
         _nextCells.push_back(nextCell);
 }
