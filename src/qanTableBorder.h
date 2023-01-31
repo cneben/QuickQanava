@@ -123,8 +123,8 @@ public:
     const Cells_t&  getPrevCells() const { return _prevCells; };
     const Cells_t&  getNextCells() const { return _nextCells; };
 protected:
-    std::vector<qan::TableCell*>    _prevCells;
-    std::vector<qan::TableCell*>    _nextCells;
+    Cells_t         _prevCells;
+    Cells_t         _nextCells;
 
 protected slots:
     void    onHorizontalMove();
