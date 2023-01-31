@@ -110,7 +110,7 @@ signals:
     void        cellSpacingChanged();
 private:
     //! \copydoc getCellSpacing()
-    qreal       _cellSpacing = 5.0;
+    qreal       _cellSpacing = 10.0;
 
 public:
     //! \brief FIXME #190.
@@ -134,7 +134,7 @@ signals:
     void        tablePaddingChanged();
 private:
     //! \brief getTablePadding()
-    qreal       _tablePadding = 2.0;
+    qreal       _tablePadding = 5.0;
     //@}
     //-------------------------------------------------------------------------
 };
