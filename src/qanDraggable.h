@@ -95,7 +95,9 @@ private:
     bool            _dragged = false;
 
 public:
+    //! Set to false to prevent this primitive beeing dropped on groups (default to true ie droppable).
     void            setDroppable(bool droppable) noexcept;
+    //! \copydoc setDroppable()
     inline bool     getDroppable() const noexcept { return _droppable; }
 protected:
     virtual void    emitDroppableChanged() = 0;

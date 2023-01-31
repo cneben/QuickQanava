@@ -25,22 +25,41 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file    QuickContainer.h
+// \file	TableGroup.qml
 // \author	benoit@destrat.io
-// \date	2012 02 08
+// \date	2023 01 26
 //-----------------------------------------------------------------------------
 
-#pragma once
+import QtQuick              2.7
+import QtQuick.Layouts      1.3
 
-// QuickContainers headers
-#include "qcmAbstractContainer.h"
-#include "qcmContainer.h"
+import QuickQanava          2.0 as Qan
+import "qrc:/QuickQanava"   as Qan
 
-struct QuickContainers {
-    static void initialize() {
-        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
+//! \brief Default delegate for `qan::TableGroup`.
+Qan.TableGroupItem {
+    id: tableGroupItem
+
+    minimumSize: Qt.size(150., 100.)
+    width: 200
+    height: 150
+
+    default property alias children : groupContainer
+    container: groupContainer
+
+    //! Show or hide group top left label editor (default to visible).
+    property bool   labelEditorVisible : false
+    //! Show or hide group top left expand button (default to visible).
+    property bool   expandButtonVisible : false
+
+    Rectangle {
+        id: groupContainer
+        z: 1
+        anchors.fill: parent
+        color: Qt.rgba(0., 0., 0., 0.)
+        border.width: 2
+        border.color: Qt.rgba(0., 0., 0., 1.)
     }
-};
-
+}  // Qan.TableGroupItem

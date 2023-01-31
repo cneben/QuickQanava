@@ -27,9 +27,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file    qanGroup.h
+// \file    qanTableGroup.h
 // \author  benoit@destrat.io
-// \date    2016 03 22
+// \date    2023 01 25
 //-----------------------------------------------------------------------------
 
 #pragma once
@@ -40,55 +40,35 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanStyle.h"
-#include "./qanNode.h"
+#include "./qanGroup.h"
 
 #if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
-Q_MOC_INCLUDE("./qanGroupItem.h")
+Q_MOC_INCLUDE("./qanTableGroupItem.h")
 #endif
 
 namespace qan { // ::qan
 
-class Graph;
-class GroupItem;
-
-/*! \brief Model a graphics group of nodes.
+/*! \brief FIXME
  *
  * \nosubgrouping
  */
-class Group : public qan::Node
+class TableGroup : public qan::Group
 {
-    /*! \name Group Object Management *///-------------------------------------
+    /*! \name TableGroup Object Management *///--------------------------------
     //@{
     Q_OBJECT
 public:
-    //! Group constructor.
-    explicit Group(QObject* parent = nullptr);
+    //! TableGroup constructor.
+    explicit TableGroup(QObject* parent = nullptr);
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
-    virtual ~Group() override = default;
-    Group(const Group&) = delete;
+    virtual ~TableGroup() override = default;
+    TableGroup(const TableGroup&) = delete;
 
 public:
-    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
-    //! Shortcut to gtpo::group<>::getGraph().
-    qan::Graph*         getGraph() noexcept;
-    //! \copydoc getGraph()
-    const qan::Graph*   getGraph() const noexcept;
-
-    /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
-     *
-     */
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
-
-public:
-    friend class qan::GroupItem;
-
-    qan::GroupItem*         getGroupItem() noexcept;
-    const qan::GroupItem*   getGroupItem() const noexcept;
-    virtual void            setItem(qan::NodeItem* item) noexcept override;
+    //friend class qan::TableGroupItem;
 
 public:
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
@@ -98,17 +78,17 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Static Factories *///--------------------------------------
+    /*! \name TableGroup Static Factories *///---------------------------------
     //@{
 public:
     /*! \brief Return the default delegate QML component that should be used to generate group \c item.
      *
      *  \arg engine QML engine used for delegate QML component creation.
-     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.Group component).
+     *  \return Default delegate component or nullptr (when nullptr is returned, QuickQanava default to Qan.TableGroup component).
      */
     static  QQmlComponent*      delegate(QQmlEngine& engine, QObject* parent = nullptr) noexcept;
 
-    /*! \brief Return the default style that should be used with qan::Group.
+    /*! \brief Return the default style that should be used with qan::TableGroup.
      *
      *  \return Default style or nullptr (when nullptr is returned, qan::StyleManager default group style will be used).
      */
@@ -116,36 +96,49 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Group Nodes Management *///--------------------------------------
+    /*! \name Table Properties *///--------------------------------------------
     //@{
 public:
-    //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
-    Q_INVOKABLE bool    hasNode(const qan::Node* node) const;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Group DnD Management *///----------------------------------------
-    //@{
-public:
-    /*! \brief Define if the group could actually be dragged by mouse.
-     *
-     * Set to true to allow this group to be moved by mouse drag (if false, the node position is
-     * fixed and should be changed programmatically).
-     *
-     * Default to true (ie group is draggable by mouse).
-     */
-    // FIXME #190 don't thinks this property should still exists
-    /*Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
-    bool            setDraggable(bool draggable) noexcept;
-    bool            getDraggable() const noexcept;
-private:
-    bool            _draggable = true;
+    //! \copydoc getCellSpacing()
+    Q_PROPERTY(qreal cellSpacing READ getCellSpacing WRITE setCellSpacing NOTIFY cellSpacingChanged FINAL)
+    //! \copydoc getCellSpacing()
+    bool        setCellSpacing(qreal cellSpacing);
+    //! \brief Spacing between table cells (padding is added on border cells).
+    qreal       getCellSpacing() const { return _cellSpacing; }
 signals:
-    void            draggableChanged();*/
+    //! \copydoc getCellSpacing()
+    void        cellSpacingChanged();
+private:
+    //! \copydoc getCellSpacing()
+    qreal       _cellSpacing = 5.0;
+
+public:
+    //! \brief FIXME #190.
+    Q_PROPERTY(QSizeF cellMinimumSize READ getCellMinimumSize WRITE setCellMinimumSize NOTIFY cellMinimumSizeChanged FINAL)
+    void        setCellMinimumSize(QSizeF cellMinimumSize);
+    QSizeF      getCellMinimumSize() const { return _cellMinimumSize; }
+signals:
+    void        cellMinimumSizeChanged();
+private:
+    QSizeF      _cellMinimumSize = QSizeF{10., 10.};
+
+public:
+    //! \brief getTablePadding()
+    Q_PROPERTY(qreal tablePadding READ getTablePadding WRITE setTablePadding NOTIFY tablePaddingChanged FINAL)
+    //! \brief getTablePadding()
+    bool        setTablePadding(qreal tablePadding);
+    //! \brief Padding around table border and border cells.
+    qreal       getTablePadding() const { return _tablePadding; }
+signals:
+    //! \brief getTablePadding()
+    void        tablePaddingChanged();
+private:
+    //! \brief getTablePadding()
+    qreal       _tablePadding = 2.0;
     //@}
     //-------------------------------------------------------------------------
 };
 
 } // ::qan
 
-QML_DECLARE_TYPE(qan::Group)
+QML_DECLARE_TYPE(qan::TableGroup)

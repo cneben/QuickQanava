@@ -41,14 +41,14 @@ ApplicationWindow {
     title: "Groups sample"
     Pane { anchors.fill: parent }
     ToolTip { x: 0; id: toolTip; timeout: 2000 }
-    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
         navigable   : true
-        function centerItem( item ) {
-            if ( !item )
+        function centerItem(item) {
+            if (!item)
                 return
             var windowCenter = Qt.point((window.contentItem.width - item.width) / 2.,
                                         (window.contentItem.height - item.height) / 2.)
@@ -75,6 +75,8 @@ ApplicationWindow {
                 var g1 = topology.insertGroup()
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80
+
+                let tableGroup = topology.insertTable();
             }
             onGroupClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> clicked" )

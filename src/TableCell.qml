@@ -25,22 +25,26 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file    QuickContainer.h
+// \file	TableCell.qml
 // \author	benoit@destrat.io
-// \date	2012 02 08
+// \date	2022 01 26
 //-----------------------------------------------------------------------------
 
-#pragma once
+import QtQuick          2.7
+import QtQuick.Shapes   1.0
 
-// QuickContainers headers
-#include "qcmAbstractContainer.h"
-#include "qcmContainer.h"
+import QuickQanava        2.0 as Qan
+import "qrc:/QuickQanava" as Qan
 
-struct QuickContainers {
-    static void initialize() {
-        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
+Qan.AbstractTableCell {
+    id: cell
+
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        //border.width: 1
+        //border.color: "violet"
     }
-};
-
+}

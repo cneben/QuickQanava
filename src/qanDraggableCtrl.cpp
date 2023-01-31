@@ -42,6 +42,10 @@ namespace qan { // ::qan
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    DraggableCtrl::handleDragEnterEvent(QDragEnterEvent* event)
 {
+    qWarning() << "DraggableCtrl::handleDragEnterEvent(): this=" << this;
+    qWarning() << "event->source()=" << event->source();
+    qWarning() << "_targetItem->getAcceptDrops()=" << _targetItem->getAcceptDrops();
+
     if (_targetItem &&
         _targetItem->getAcceptDrops()) {
         if (event->source() == nullptr) {
@@ -343,7 +347,7 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
             if (group->getGroupItem() != nullptr &&             // Do not allow grouping a node in a collapsed
                 !group->getGroupItem()->getCollapsed() &&       // or locked group item
-                !group->getLocked() ) {
+                !group->getLocked()) {
                 graph->groupNode(group, _target.data());
                 nodeGrouped = true;
             }

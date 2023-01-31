@@ -42,9 +42,9 @@ import "qrc:/QuickQanava" as Qan
  */
 Item {
     // PUBLIC /////////////////////////////////////////////////////////////////
-    property var    style: nodeItem ? nodeItem.style : undefined
+    property var    style: undefined
 
-    readonly property real   backRadius:    style ? style.backRadius : 4.
+    property real            backRadius:    style ? style.backRadius : 4.
     readonly property real   backOpacity:   style ? style.backOpacity : 0.8
     readonly property color  baseColor:     style ? style.baseColor: Qt.rgba(0., 0., 0., 0.)
     readonly property color  backColor:     style ? style.backColor : Qt.rgba(0., 0., 0., 0.)

@@ -27,9 +27,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanGroup.cpp
+// \file	qanGroupItem.cpp
 // \author	benoit@destrat.io
-// \date	2016 03 22
+// \date	2017 03 02
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
@@ -70,7 +70,7 @@ GroupItem::GroupItem(QQuickItem* parent) :
 
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
+void    GroupItem::setGroup(qan::Group* group) noexcept
 {
     // DraggableCtrl configuration is done in setNode()
     qan::NodeItem::setNode(static_cast<qan::Node*>(group));
@@ -176,6 +176,16 @@ void    GroupItem::setContainer(QQuickItem* container) noexcept
 }
 QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
 const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }
+
+void    GroupItem::setStrictDrop(bool strictDrop) noexcept
+{
+    if (strictDrop != _strictDrop) {
+        _strictDrop = strictDrop;
+        emit strictDropChanged();
+    }
+}
+bool    GroupItem::getStrictDrop() const noexcept { return _strictDrop; }
+
 
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {

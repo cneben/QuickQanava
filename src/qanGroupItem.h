@@ -71,10 +71,10 @@ public:
     //@{
 public:
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
-    auto        getGroup() noexcept -> qan::Group*;
-    auto        getGroup() const noexcept -> const qan::Group*;
-    auto        setGroup(qan::Group* group) noexcept -> void;
-private:
+    auto            getGroup() noexcept -> qan::Group*;
+    auto            getGroup() const noexcept -> const qan::Group*;
+    virtual void    setGroup(qan::Group* group) noexcept;
+protected:
     QPointer<qan::Group> _group{nullptr};
 
 public:
@@ -137,6 +137,22 @@ protected:
     QPointer<QQuickItem>    _container = nullptr;
 signals:
     void                    containerChanged();
+
+public:
+    /*! \brief In strict drop mode (default), a node bounding rect must be fully inside the group until it can be dropped.
+     *
+     *  With `strictMode` to false, only the top left corner of node must be inside group to trigger
+     *  a drop proposition. Actually used internally by the library for `qan::TableGroup` where only part
+     *  of a node could be inside the group since it later resized to fit a cell. Do not modify until you know
+     *  what you are doing.
+     */
+    Q_PROPERTY(bool strictDrop READ getStrictDrop WRITE setStrictDrop NOTIFY strictDropChanged FINAL)
+    void            setStrictDrop(bool strictDrop) noexcept;
+    bool            getStrictDrop() const noexcept;
+private:
+    bool            _strictDrop = true;
+signals:
+    void            strictDropChanged();
 
 signals:
     //! Emitted whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).

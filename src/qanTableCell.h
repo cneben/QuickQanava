@@ -25,22 +25,52 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file    QuickContainer.h
-// \author	benoit@destrat.io
-// \date	2012 02 08
+// \file    qanTableGroupItem.h
+// \author  benoit@destrat.io
+// \date    2023 01 26
 //-----------------------------------------------------------------------------
 
 #pragma once
 
-// QuickContainers headers
-#include "qcmAbstractContainer.h"
-#include "qcmContainer.h"
+// Qt headers
+#include <QQuickItem>
 
-struct QuickContainers {
-    static void initialize() {
-        qmlRegisterType< qcm::AbstractContainer >( "QuickContainers", 1, 0, "AbstractContainer" );
-    }
+namespace qan { // ::qan
+
+class Graph;
+
+class TableCell : public QQuickItem
+{
+    /*! \name TableCell Object Management *///---------------------------------
+    //@{
+    Q_OBJECT
+public:
+    explicit TableCell(QQuickItem* parent = nullptr);
+    virtual ~TableCell() override = default;
+    TableCell(const TableCell&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Cell Container Management *///-----------------------------------
+    //@{
+public:
+    //! Set `item` in this cell "container", `item` is reparented to cell.
+    const QQuickItem*       getItem() const { return _item.data(); }
+    //! \copydoc getItem()
+    QQuickItem*             getItem() { return _item.data(); }
+    //! \copydoc getItem()
+    void                    setItem(QQuickItem* item);
+protected:
+    //! \copydoc getItem()
+    QPointer<QQuickItem>    _item;
+
+protected slots:
+    //! Fit actual `_item` to this cell.
+    void                    fitItemToCell();
+    //@}
+    //-------------------------------------------------------------------------
 };
 
+} // ::qan
