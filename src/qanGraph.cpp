@@ -1410,7 +1410,7 @@ void    Graph::alignHorizontalCenter(std::vector<QQuickItem*>&& items)
         // Get min left and max right.
         // Compute center of min left and max right
         // Align all items on this center
-    qreal maxRight = std::numeric_limits<qreal>::min();
+    qreal maxRight = std::numeric_limits<qreal>::lowest();
     qreal minLeft = std::numeric_limits<qreal>::max();
     for (const auto item: items) {
         maxRight = std::max(maxRight, item->x() + item->width());
@@ -1432,7 +1432,7 @@ void    Graph::alignRight(std::vector<QQuickItem*>&& items)
 {
     if (items.size() <= 1)
         return;
-    qreal maxRight = std::numeric_limits<qreal>::min();
+    qreal maxRight = std::numeric_limits<qreal>::lowest();
     for (const auto item: items)
         maxRight = std::max(maxRight, item->x() + item->width());
     for (auto item: items) {
@@ -1483,7 +1483,7 @@ void    Graph::alignBottom(std::vector<QQuickItem*>&& items)
 {
     if (items.size() <= 1)
         return;
-    qreal maxBottom = std::numeric_limits<qreal>::min();
+    qreal maxBottom = std::numeric_limits<qreal>::lowest();
     for (const auto item: items)
         maxBottom = std::max(maxBottom, item->y() + item->height());
     for (auto item: items) {
@@ -1771,7 +1771,7 @@ void    Graph::updateMaxZ(qreal z) noexcept
 auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
     if (item == nullptr)
         return 0.;
-    qreal maxZ = std::numeric_limits<qreal>::min();
+    qreal maxZ = std::numeric_limits<qreal>::lowest();
     bool hasChild = false;
     const auto childs = item->childItems();
     for (const auto childItem : qAsConst(childs)) {

@@ -249,7 +249,7 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
                     minX = std::min(minX, _prevBorder->verticalCenter() + spacing2 + borderWidth2);
             }
 
-            auto maxX = std::numeric_limits<qreal>::min();
+            auto maxX = std::numeric_limits<qreal>::lowest();
             if (_nextBorder == nullptr &&   // Do not drag outside (on right) table group
                 tableGroupItem != nullptr)
                 maxX = tableGroupItem->width() - padding - spacing2 - borderWidth2;
@@ -268,7 +268,7 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
                     minY = std::min(minY, _prevBorder->horizontalCenter() + spacing2 + borderWidth2);
             }
 
-            auto maxY = std::numeric_limits<qreal>::min();
+            auto maxY = std::numeric_limits<qreal>::lowest();
             if (_nextBorder == nullptr &&   // Do not drag outside (past/bottom) table group
                 tableGroupItem != nullptr)
                 maxY = tableGroupItem->height() - padding - spacing2 - borderWidth2;
