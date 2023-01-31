@@ -46,7 +46,7 @@ ApplicationWindow {
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
-        navigable   : true
+        navigable: true
         function centerItem(item) {
             if (!item)
                 return

@@ -44,6 +44,7 @@
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -224,6 +225,16 @@ public:
 
     //! Shortcut to base is_group() (ie return true if this node is a group and castable to qan::Group)..
     Q_INVOKABLE bool     isGroup() const { return is_group(); }
+
+public:
+    Q_PROPERTY(qan::TableCell* cell READ getCell NOTIFY cellChanged FINAL)
+    const qan::TableCell*   getCell() const { return _cell.data(); }
+    qan::TableCell*         getCell() { return _cell; }
+    bool                    setCell(qan::TableCell* cell);
+protected:
+    QPointer<qan::TableCell>    _cell;
+signals:
+    void                    cellChanged();
     //@}
     //-------------------------------------------------------------------------
 };

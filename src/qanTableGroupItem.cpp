@@ -82,8 +82,8 @@ void    TableGroupItem::clearLayout()
 
     for (const auto cell: _cells)
         if (cell != nullptr) {
-            if (cell->getItem() != nullptr)
-                cell->getItem()->setParentItem(getContainer());
+            //if (cell->getItem() != nullptr)
+            //    cell->getItem()->setParentItem(getContainer());
             cell->deleteLater();
         }
     _cells.clear();
@@ -416,6 +416,7 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
             //qWarning() << "  cellBr=" << cellBr;
             if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
+                nodeItem->getNode()->setCell(cell);
                 break;
             }
         }
@@ -437,6 +438,8 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         nodeItem->setZ(z()+1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);
+        nodeItem->setSelectable(true);
+        nodeItem->getNode()->setCell(nullptr);
     }
 }
 
