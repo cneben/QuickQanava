@@ -88,11 +88,9 @@ public:
 protected:
     auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
 
-public:
+protected slots:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
-protected slots:
-    void        onResized();
 
 public:
     virtual void            setGroup(qan::Group* group) noexcept override;

@@ -46,9 +46,9 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
     setObjectName(QStringLiteral("qan::TableGroupItem"));
 
     connect(this,   &QQuickItem::widthChanged,
-            this,   &TableGroupItem::onResized);
+            this,   &TableGroupItem::layoutTable);
     connect(this,   &QQuickItem::heightChanged,
-            this,   &TableGroupItem::onResized);
+            this,   &TableGroupItem::layoutTable);
 
     setItemStyle(qan::TableGroup::style(parent));
     setStrictDrop(false);  // Top left corner of a node is enought to allow a drop
@@ -365,11 +365,6 @@ void    TableGroupItem::layoutTable()
     // it will be called automatically when border are moved.
 }
 
-void    TableGroupItem::onResized()
-{
-    layoutTable();
-}
-
 void    TableGroupItem::setGroup(qan::Group* group) noexcept
 {
     qan::GroupItem::setGroup(group);
@@ -382,6 +377,12 @@ void    TableGroupItem::setGroup(qan::Group* group) noexcept
         for (auto border: _verticalBorders)
             if (border)
                 border->setTableGroup(tableGroup);
+        connect(tableGroup, &qan::TableGroup::cellSpacingChanged,
+                this,       &qan::TableGroupItem::layoutTable);
+        connect(tableGroup, &qan::TableGroup::cellMinimumSizeChanged,
+                this,       &qan::TableGroupItem::layoutTable);
+        connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
+                this,       &qan::TableGroupItem::layoutTable);
         layoutTable();  // Force new layout with actual table group settings
     }
 }
