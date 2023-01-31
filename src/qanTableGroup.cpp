@@ -42,7 +42,7 @@
 
 namespace qan { // ::qan
 
-/* TableGroup Object Management *///------------------------------------------------
+/* TableGroup Object Management *///-------------------------------------------
 TableGroup::TableGroup(QObject* parent) :
     qan::Group{parent}
 {
@@ -50,7 +50,7 @@ TableGroup::TableGroup(QObject* parent) :
 }
 //-----------------------------------------------------------------------------
 
-/* TableGroup Static Factories *///-------------------------------------------------
+/* TableGroup Static Factories *///--------------------------------------------
 QQmlComponent*  TableGroup::delegate(QQmlEngine& engine, QObject* parent) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
