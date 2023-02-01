@@ -221,6 +221,14 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
                 border->setParentItem(getContainer() != nullptr ? getContainer() : this);
                 border->setVisible(true);
                 border->setPrevBorder(prevBorder);
+                connect(border, &qan::TableBorder::modified,
+                        this,   [this]() {
+                    const auto graph = this->getGraph();
+                    const auto tableGroup = this->getTableGroup();
+                    if (graph != nullptr &&
+                        tableGroup != nullptr)
+                    emit graph->tableModified(tableGroup);
+                });
                 _verticalBorders.push_back(border);
 
                 if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
@@ -239,6 +247,14 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
                 border->setParentItem(getContainer() != nullptr ? getContainer() : this);
                 border->setVisible(true);
                 border->setPrevBorder(prevBorder);
+                connect(border, &qan::TableBorder::modified,
+                        this,   [this]() {
+                    const auto graph = this->getGraph();
+                    const auto tableGroup = this->getTableGroup();
+                    if (graph != nullptr &&
+                        tableGroup != nullptr)
+                    emit graph->tableModified(tableGroup);
+                });
                 _horizontalBorders.push_back(border);
 
                 if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
@@ -388,6 +404,7 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
                     this,       &qan::TableGroupItem::layoutTable);
             connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
                     this,       &qan::TableGroupItem::layoutTable);
+
             layoutTable();  // Force new layout with actual table group settings
             return true;
         }

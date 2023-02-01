@@ -419,7 +419,6 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
             const auto groupItem = qobject_cast<qan::GroupItem*>(object);
             if (groupItem != nullptr) {
                 group->setItem(groupItem);
-                groupItem->setGroup(group);
                 groupItem->setGraph(this);
                 groupItem->setStyle(qobject_cast<qan::NodeStyle*>(&style));
                 _styleManager.setStyleComponent(groupItem->getStyle(), component);

@@ -546,7 +546,11 @@ public:
 
     //! FIXME #190.
     Q_INVOKABLE virtual qan::Group* insertTable(int rows, int cols);
+signals:
+    //! Emitted when a table rows/cols are modified or moved.
+    void    tableModified(qan::TableGroup*);
 
+public:
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
      * If group insertion fails, method return \c false, no exception is thrown.

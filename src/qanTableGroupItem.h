@@ -73,6 +73,9 @@ public:
 
     //! Override qan::GroupItem::setContainer()
     virtual bool    setContainer(QQuickItem* container) noexcept override;
+
+signals:
+    void        modified();
     //@}
     //-------------------------------------------------------------------------
 
