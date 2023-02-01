@@ -69,6 +69,9 @@ public:
     TableGroup(const TableGroup&) = delete;
 
 public:
+    //! \copydoc qan::Group::isTable()
+    Q_INVOKABLE virtual bool    isTable() const override;
+
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
     void    itemProposeNodeDrop();
     //! Shortcut to getItem()->endProposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.

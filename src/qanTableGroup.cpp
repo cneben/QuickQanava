@@ -56,6 +56,8 @@ TableGroup::TableGroup(int rows, int cols) :
 {
     set_is_group(true);
 }
+
+bool    TableGroup::isTable() const { return true; }
 //-----------------------------------------------------------------------------
 
 /* TableGroup Static Factories *///--------------------------------------------
