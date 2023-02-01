@@ -61,10 +61,7 @@ TableGroupItem::~TableGroupItem()
 
 void    TableGroupItem::componentComplete() { /* Nil */ }
 
-void    TableGroupItem::classBegin()
-{
-    initialize(3, 3);
-}
+void    TableGroupItem::classBegin() { }
 
 void    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
@@ -115,7 +112,7 @@ void    TableGroupItem::initialize(int rows, int cols)
         qWarning() << "qan::TableGroupItem::initialize(): Error, no QML engine.";
         return;
     }
-
+    clearLayout();
     createCells(rows * cols);  // Create cells
 
     auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
@@ -190,6 +187,7 @@ void    TableGroupItem::createCells(int cellsCount)
     }
     if (cellsCount == static_cast<int>(_cells.size()))
         return;
+
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::createCells(): Error, no QML engine.";
@@ -299,10 +297,11 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::layoutTable()
 {
-    const int cols = 3;
-    const int rows = 3;
-
     const auto tableGroup = getTableGroup();
+    if (tableGroup == nullptr)
+        return;
+    const int cols = tableGroup->getCols();
+    const int rows = tableGroup->getRows();
     const auto spacing = tableGroup != nullptr ? tableGroup->getCellSpacing() :
                                                  5.;
     const auto padding = tableGroup != nullptr ? tableGroup->getTablePadding() :
@@ -384,6 +383,9 @@ void    TableGroupItem::setGroup(qan::Group* group) noexcept
     qan::GroupItem::setGroup(group);
     auto tableGroup = qobject_cast<qan::TableGroup*>(group);
     if (tableGroup != nullptr) {
+        initialize(tableGroup->getRows(),
+                   tableGroup->getCols());
+
         // Set borders reference to group
         for (auto border: _horizontalBorders)
             if (border)
@@ -422,12 +424,8 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
         // Find cell at groupPos and attach node to cell
-        //qWarning() << "_cells.size()=" << _cells.size();
-        //qWarning() << "groupPos=" << groupPos;
         for (const auto& cell: _cells) {
-            //qWarning() << cell-> boundingRect();
             const auto cellBr = cell->boundingRect().translated(cell->position());
-            //qWarning() << "  cellBr=" << cellBr;
             if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
                 nodeItem->getNode()->setCell(cell);

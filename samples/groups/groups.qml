@@ -76,7 +76,7 @@ ApplicationWindow {
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80
 
-                let tableGroup = topology.insertTable();
+                let tableGroup = topology.insertTable(2, 3);
             }
             onGroupClicked: group => {
                 window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
