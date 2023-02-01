@@ -52,6 +52,8 @@ Group::Group(QObject* parent) :
     set_is_group(true);
 }
 
+bool    Group::isTable() const { return false; }
+
 qan::Graph*         Group::getGraph() noexcept { return qan::Node::get_graph(); }
 
 const qan::Graph*   Group::getGraph() const noexcept { return qan::Node::get_graph(); }
@@ -138,22 +140,6 @@ qan::NodeStyle* Group::style(QObject* parent) noexcept
 
 /* Group Nodes Management *///-------------------------------------------------
 bool    Group::hasNode(const qan::Node* node) const { return qan::Node::has_node(node); }
-//-----------------------------------------------------------------------------
-
-/* Group DnD Management *///----"-----------------------------------------------
-// FIXME #190 don't thinks this property should still exists
-/*bool    Group::setDraggable(bool draggable) noexcept
-{
-    if (draggable != _draggable) {
-        _draggable = draggable;
-        emit draggableChanged();
-        return true;
-    }
-    return false;
-}
-
-bool    Group::getDraggable() const noexcept { return _draggable; }
-*/
 //-----------------------------------------------------------------------------
 
 } // ::qan

@@ -46,20 +46,18 @@ Qan.TableGroupItem {
     width: 200
     height: 150
 
-    default property alias children : groupContainer
-    container: groupContainer
+    default property alias children : template
+    container: template.content   // See qan::GroupItem::container property documentation
 
     //! Show or hide group top left label editor (default to visible).
     property bool   labelEditorVisible : false
     //! Show or hide group top left expand button (default to visible).
     property bool   expandButtonVisible : false
-
-    Rectangle {
-        id: groupContainer
-        z: 1
+    Qan.RectGroupTemplate {
+        id: template
         anchors.fill: parent
-        color: Qt.rgba(0., 0., 0., 0.)
-        border.width: 2
-        border.color: Qt.rgba(0., 0., 0., 1.)
+        groupItem: parent
+        z: 1
+        backRadius: 0
     }
 }  // Qan.TableGroupItem

@@ -207,6 +207,21 @@ qan::Group* Graph::insertGroup()
         qWarning() << "qan::Graph::insertGroup<>(): Warning: Error at group insertion.";
     return group;
 }
+
+template <class TableGroup_t>
+qan::Group* Graph::insertTable(int rows, int cols)
+{
+    const auto engine = qmlEngine(this);
+    QQmlComponent* groupComponent = nullptr;
+    if (engine != nullptr)
+        groupComponent = TableGroup_t::delegate(*engine, nullptr);
+    if (groupComponent == nullptr)
+        groupComponent = _groupDelegate.get();
+    auto group = new TableGroup_t(rows, cols);
+    if (!insertGroup(group, groupComponent, nullptr))
+        qWarning() << "qan::Graph::insertGroup<>(): Warning: Error at group insertion.";
+    return group;
+}
 //-----------------------------------------------------------------------------
 
 } // ::qan

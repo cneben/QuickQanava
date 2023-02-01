@@ -284,10 +284,10 @@ Qan.AbstractGraphView {
             // Set minimumTargetSize _before_ setting target
             groupResizer.minimumTargetSize = group.item.minimumSize
             groupResizer.target = group.item
-            groupResizer.targetContent = group.item.container
+            groupResizer.targetContent = group.isTable() ? null : group.item.container
             groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize = group.item.minimumSize
             groupRightResizer.target = groupBottomResizer.target = group.item
-            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.item.container
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.isTable() ? null : group.item.container
 
             // Do not show resizers when group is collapsed
             groupRightResizer.visible = groupBottomResizer.visible =

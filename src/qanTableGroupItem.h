@@ -70,6 +70,9 @@ public:
     virtual void    componentComplete() override;
 
     virtual void    classBegin() override;
+
+    //! Override qan::GroupItem::setContainer()
+    virtual void    setContainer(QQuickItem* container) noexcept override;
     //@}
     //-------------------------------------------------------------------------
 

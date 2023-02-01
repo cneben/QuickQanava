@@ -61,6 +61,7 @@ class TableGroup : public qan::Group
 public:
     //! TableGroup constructor.
     explicit TableGroup(QObject* parent = nullptr);
+    explicit TableGroup(int rows, int cols);
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
@@ -68,9 +69,9 @@ public:
     TableGroup(const TableGroup&) = delete;
 
 public:
-    //friend class qan::TableGroupItem;
+    //! \copydoc qan::Group::isTable()
+    Q_INVOKABLE virtual bool    isTable() const override;
 
-public:
     //! Shortcut to getItem()->proposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
     void    itemProposeNodeDrop();
     //! Shortcut to getItem()->endProposeNodeDrop(), defined only for g++ compatibility to avoid forward template declaration.
@@ -98,6 +99,34 @@ public:
 
     /*! \name Table Properties *///--------------------------------------------
     //@{
+public:
+    //! \copydoc getRows()
+    Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)
+    //! \copydoc getRows()
+    bool        setRows(int rows);
+    //! \brief Table row count.
+    int         getRows() const { return _rows; }
+signals:
+    //! \copydoc getRows()
+    void        rowsChanged();
+private:
+    //! \copydoc getRows()
+    int         _rows = 3;
+
+public:
+    //! \copydoc getCols()
+    Q_PROPERTY(int cols READ getCols WRITE setCols NOTIFY colsChanged FINAL)
+    //! \copydoc getCols()
+    bool        setCols(int cols);
+    //! \brief Table column count.
+    int         getCols() const { return _cols; }
+signals:
+    //! \copydoc getCols()
+    void        colsChanged();
+private:
+    //! \copydoc getCols()
+    int         _cols = 2;
+
 public:
     //! \copydoc getCellSpacing()
     Q_PROPERTY(qreal cellSpacing READ getCellSpacing WRITE setCellSpacing NOTIFY cellSpacingChanged FINAL)

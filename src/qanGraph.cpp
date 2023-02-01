@@ -881,9 +881,9 @@ qan::Group* Graph::insertGroup()
     return insertGroup<qan::Group>();
 }
 
-qan::Group* Graph::insertTable()
+qan::Group* Graph::insertTable(int rows, int cols)
 {
-    return insertGroup<qan::TableGroup>();
+    return insertTable<qan::TableGroup>(rows, cols);
 }
 
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
@@ -1631,9 +1631,9 @@ void    Graph::setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDo
 QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
 {
     using Dock = qan::NodeItem::Dock;
-    if ( dock == Dock::Left ||
-         dock == Dock::Right ) {
-        if ( _verticalDockDelegate ) {
+    if (dock == Dock::Left ||
+        dock == Dock::Right) {
+        if (_verticalDockDelegate) {
             auto verticalDock = createItemFromComponent(_verticalDockDelegate.get());
             verticalDock->setParentItem(node.getItem());
             verticalDock->setProperty("hostNodeItem",
@@ -1642,9 +1642,9 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
                                       QVariant::fromValue(dock));
             return verticalDock;
         }
-    } else if ( dock == Dock::Top ||
-                dock == Dock::Bottom ) {
-        if ( _horizontalDockDelegate ) {
+    } else if (dock == Dock::Top ||
+               dock == Dock::Bottom) {
+        if (_horizontalDockDelegate) {
             auto horizontalDock = createItemFromComponent(_horizontalDockDelegate.get());
             horizontalDock->setParentItem(node.getItem());
             horizontalDock->setProperty("hostNodeItem",

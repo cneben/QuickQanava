@@ -61,9 +61,23 @@ TableGroupItem::~TableGroupItem()
 
 void    TableGroupItem::componentComplete() { /* Nil */ }
 
-void    TableGroupItem::classBegin()
+void    TableGroupItem::classBegin() { }
+
+void    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
-    initialize(3, 3);
+    qan::GroupItem::setContainer(container);
+
+    // Note: Force reparenting all borders and cell to container, it might be nullptr
+    // at initialization.
+    for (const auto verticalBorder: _verticalBorders)
+        if (verticalBorder != nullptr)
+            verticalBorder->setParentItem(container);
+    for (const auto horizontalBorder: _horizontalBorders)
+        if (horizontalBorder != nullptr)
+            horizontalBorder->setParentItem(container);
+    for (const auto cell: _cells)
+        if (cell != nullptr)
+            cell->setParentItem(container);
 }
 //-----------------------------------------------------------------------------
 
@@ -81,11 +95,8 @@ void    TableGroupItem::clearLayout()
     _horizontalBorders.clear();
 
     for (const auto cell: _cells)
-        if (cell != nullptr) {
-            if (cell->getItem() != nullptr)
-                cell->getItem()->setParentItem(getContainer());
+        if (cell != nullptr)
             cell->deleteLater();
-        }
     _cells.clear();
 }
 
@@ -101,7 +112,7 @@ void    TableGroupItem::initialize(int rows, int cols)
         qWarning() << "qan::TableGroupItem::initialize(): Error, no QML engine.";
         return;
     }
-
+    clearLayout();
     createCells(rows * cols);  // Create cells
 
     auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
@@ -129,7 +140,7 @@ void    TableGroupItem::initialize(int rows, int cols)
         if (border != nullptr) {
             border->setTableGroup(getTableGroup());
             border->setOrientation(Qt::Vertical);
-            border->setParentItem(this);
+            border->setParentItem(getContainer() != nullptr ? getContainer() : this);
             border->setVisible(true);
             border->setPrevBorder(prevBorder);
             for (int r = 0; r < rows; r++) {
@@ -149,7 +160,7 @@ void    TableGroupItem::initialize(int rows, int cols)
         if (border != nullptr) {
             border->setTableGroup(getTableGroup());
             border->setOrientation(Qt::Horizontal);
-            border->setParentItem(this);
+            border->setParentItem(getContainer() != nullptr ? getContainer() : this);
             border->setVisible(true);
             border->setPrevBorder(prevBorder);
             for (int c = 0; c < cols; c++) {
@@ -176,6 +187,7 @@ void    TableGroupItem::createCells(int cellsCount)
     }
     if (cellsCount == static_cast<int>(_cells.size()))
         return;
+
     auto engine = qmlEngine(this);
     if (engine == nullptr) {
         qWarning() << "qan::TableGroupItem::createCells(): Error, no QML engine.";
@@ -189,7 +201,7 @@ void    TableGroupItem::createCells(int cellsCount)
         auto cell = qobject_cast<qan::TableCell*>(createFromComponent(*cellComponent));
         if (cell != nullptr) {
             _cells.push_back(cell);
-            cell->setParentItem(this);
+            cell->setParentItem(getContainer() != nullptr ? getContainer() : this);
             cell->setVisible(true);
         }
     }
@@ -220,7 +232,7 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
             if (border != nullptr) {
                 border->setTableGroup(getTableGroup());
                 border->setOrientation(Qt::Vertical);
-                border->setParentItem(this);
+                border->setParentItem(getContainer() != nullptr ? getContainer() : this);
                 border->setVisible(true);
                 border->setPrevBorder(prevBorder);
                 _verticalBorders.push_back(border);
@@ -238,7 +250,7 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
             if (border != nullptr) {
                 border->setTableGroup(getTableGroup());
                 border->setOrientation(Qt::Horizontal);
-                border->setParentItem(this);
+                border->setParentItem(getContainer() != nullptr ? getContainer() : this);
                 border->setVisible(true);
                 border->setPrevBorder(prevBorder);
                 _horizontalBorders.push_back(border);
@@ -285,10 +297,11 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::layoutTable()
 {
-    const int cols = 3;
-    const int rows = 3;
-
     const auto tableGroup = getTableGroup();
+    if (tableGroup == nullptr)
+        return;
+    const int cols = tableGroup->getCols();
+    const int rows = tableGroup->getRows();
     const auto spacing = tableGroup != nullptr ? tableGroup->getCellSpacing() :
                                                  5.;
     const auto padding = tableGroup != nullptr ? tableGroup->getTablePadding() :
@@ -326,7 +339,7 @@ void    TableGroupItem::layoutTable()
     // |             cell         |         cell         |         cell             |
     // | padding |   cell   |   border  |   cell   |   border  |   cell   | padding |
     //                       <-spacing->            <-spacing->
-    if (_verticalBorders.size() == cols - 1) {
+    if (static_cast<int>(_verticalBorders.size()) == cols - 1) {
         const auto borderWidth = 3.;    // All easy mouse resize handling
         const auto borderWidth2 = borderWidth / 2.;
         for (auto c = 1; c <= (cols - 1); c++) {
@@ -344,7 +357,7 @@ void    TableGroupItem::layoutTable()
         qWarning() << "qan::TableGoupItem::layoutTable(): Invalid vertical border count.";
 
     // Layout horizontal borders
-    if (_horizontalBorders.size() == rows - 1) {
+    if (static_cast<int>(_horizontalBorders.size()) == rows - 1) {
         const auto borderHeight = 3.;    // All easy mouse resize handling
         const auto borderHeight2 = borderHeight / 2.;
         for (auto r = 1; r <= (rows - 1); r++) {
@@ -370,6 +383,9 @@ void    TableGroupItem::setGroup(qan::Group* group) noexcept
     qan::GroupItem::setGroup(group);
     auto tableGroup = qobject_cast<qan::TableGroup*>(group);
     if (tableGroup != nullptr) {
+        initialize(tableGroup->getRows(),
+                   tableGroup->getCols());
+
         // Set borders reference to group
         for (auto border: _horizontalBorders)
             if (border)
@@ -408,14 +424,11 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
         groupPos = getContainer()->mapFromGlobal(globalPos);
         // Find cell at groupPos and attach node to cell
-        //qWarning() << "_cells.size()=" << _cells.size();
-        //qWarning() << "groupPos=" << groupPos;
         for (const auto& cell: _cells) {
-            //qWarning() << cell-> boundingRect();
             const auto cellBr = cell->boundingRect().translated(cell->position());
-            //qWarning() << "  cellBr=" << cellBr;
             if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
+                nodeItem->getNode()->setCell(cell);
                 break;
             }
         }
@@ -437,6 +450,8 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         nodeItem->setZ(z()+1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);
+        nodeItem->setSelectable(true);
+        nodeItem->getNode()->setCell(nullptr);
     }
 }
 

@@ -61,18 +61,19 @@ Item {
     enabled: groupItem &&
              groupItem.group ? !groupItem.group.locked :
                                true
+
+    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
+        id: groupBackground
+        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
+        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
+        visible: !groupItem.collapsed
+    }
     Item {
         id: content
         anchors.fill: parent
         z: 3
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
-    }
-    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
-        id: groupBackground
-        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
-        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
-        visible: !groupItem.collapsed
     }
     RowLayout {
         id: headerLayout

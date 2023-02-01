@@ -48,6 +48,16 @@ TableGroup::TableGroup(QObject* parent) :
 {
     set_is_group(true);
 }
+
+TableGroup::TableGroup(int rows, int cols) :
+    qan::Group{nullptr},
+    _rows{rows},
+    _cols{cols}
+{
+    set_is_group(true);
+}
+
+bool    TableGroup::isTable() const { return true; }
 //-----------------------------------------------------------------------------
 
 /* TableGroup Static Factories *///--------------------------------------------
@@ -79,6 +89,26 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Table Properties *///-------------------------------------------------------
+bool    TableGroup::setRows(int rows)
+{
+    if (rows != _rows) {
+        _rows = rows;
+        emit rowsChanged();
+        return true;
+    }
+    return false;
+}
+
+bool    TableGroup::setCols(int cols)
+{
+    if (cols != _cols) {
+        _cols = cols;
+        emit colsChanged();
+        return true;
+    }
+    return false;
+}
+
 bool    TableGroup::setCellSpacing(qreal cellSpacing)
 {
     if (!qFuzzyCompare(1. + cellSpacing, 1. + _cellSpacing)) {

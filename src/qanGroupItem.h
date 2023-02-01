@@ -130,7 +130,7 @@ public:
      * \endcode
      */
     Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
-    void                    setContainer(QQuickItem* container) noexcept;
+    virtual void            setContainer(QQuickItem* container) noexcept;
     QQuickItem*             getContainer() noexcept;
     const QQuickItem*       getContainer() const noexcept;
 protected:

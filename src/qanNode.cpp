@@ -39,9 +39,9 @@
 // QuickQanava headers
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
-#include "./qanPortItem.h"
 #include "./qanGroup.h"
 #include "./qanGraph.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -187,12 +187,23 @@ bool    Node::setIsProtected(bool isProtected)
     return false;
 }
 
-
 bool    Node::setLocked(bool locked)
 {
     if (locked != _locked) {
         _locked = locked;
         emit lockedChanged();
+        return true;
+    }
+    return false;
+}
+//-----------------------------------------------------------------------------
+
+/* Node Group Management *///--------------------------------------------------
+bool    Node::setCell(qan::TableCell* cell)
+{
+    if (cell != _cell) {
+        _cell = cell;
+        emit cellChanged();
         return true;
     }
     return false;

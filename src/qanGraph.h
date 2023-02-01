@@ -545,7 +545,7 @@ public:
     Q_INVOKABLE virtual qan::Group* insertGroup();
 
     //! FIXME #190.
-    Q_INVOKABLE virtual qan::Group* insertTable();
+    Q_INVOKABLE virtual qan::Group* insertTable(int rows, int cols);
 
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
@@ -564,6 +564,10 @@ public:
     //! Insert a group using its static delegate() and style() factories.
     template <class Group_t>
     qan::Group*             insertGroup();
+
+    //! Insert a group using its static delegate() and style() factories.
+    template <class TableGroup_t>
+    qan::Group*             insertTable(int rows, int cols);
 
     /*! Shortcut to gtpo::GenGraph<>::removeGroup().
      *
