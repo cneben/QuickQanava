@@ -339,7 +339,7 @@ void    TableGroupItem::layoutTable()
     // |             cell         |         cell         |         cell             |
     // | padding |   cell   |   border  |   cell   |   border  |   cell   | padding |
     //                       <-spacing->            <-spacing->
-    if (_verticalBorders.size() == cols - 1) {
+    if (static_cast<int>(_verticalBorders.size()) == cols - 1) {
         const auto borderWidth = 3.;    // All easy mouse resize handling
         const auto borderWidth2 = borderWidth / 2.;
         for (auto c = 1; c <= (cols - 1); c++) {
@@ -357,7 +357,7 @@ void    TableGroupItem::layoutTable()
         qWarning() << "qan::TableGoupItem::layoutTable(): Invalid vertical border count.";
 
     // Layout horizontal borders
-    if (_horizontalBorders.size() == rows - 1) {
+    if (static_cast<int>(_horizontalBorders.size()) == rows - 1) {
         const auto borderHeight = 3.;    // All easy mouse resize handling
         const auto borderHeight2 = borderHeight / 2.;
         for (auto r = 1; r <= (rows - 1); r++) {
