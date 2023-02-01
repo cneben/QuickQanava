@@ -42,9 +42,9 @@ namespace qan { // ::qan
 /* Drag'nDrop Management *///--------------------------------------------------
 bool    DraggableCtrl::handleDragEnterEvent(QDragEnterEvent* event)
 {
-    qWarning() << "DraggableCtrl::handleDragEnterEvent(): this=" << this;
-    qWarning() << "event->source()=" << event->source();
-    qWarning() << "_targetItem->getAcceptDrops()=" << _targetItem->getAcceptDrops();
+    //qWarning() << "DraggableCtrl::handleDragEnterEvent(): this=" << this;
+    //qWarning() << "event->source()=" << event->source();
+    //qWarning() << "_targetItem->getAcceptDrops()=" << _targetItem->getAcceptDrops();
 
     if (_targetItem &&
         _targetItem->getAcceptDrops()) {
@@ -252,7 +252,8 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     const auto dragVertically = disableOrientation ||
                                 ((targetDragOrientation == qan::NodeItem::DragOrientation::DragAll) ||
                                  (targetDragOrientation == qan::NodeItem::DragOrientation::DragVertical));
-    if (!disableSnapToGrid && getGraph()->getSnapToGrid()) {
+    if (!disableSnapToGrid &&
+        getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
         bool applyX = dragHorizontally &&
                       std::fabs(delta.x()) > (gridSize.width() / 2.001);

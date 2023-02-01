@@ -65,14 +65,14 @@ Item {
                 return "qrc:/QuickQanava/RectSolidBackground.qml";
             switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
             case Qan.NodeStyle.FillSolid:
-                switch (nodeItem.style.effectType ) {
+                switch (nodeItem.style.effectType) {
                 case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectSolidBackground.qml";
                 case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectSolidShadowBackground.qml";
                 case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectSolidGlowBackground.qml";
                 }
                 break;
             case Qan.NodeStyle.FillGradient:
-                switch (nodeItem.style.effectType ) {
+                switch (nodeItem.style.effectType) {
                 case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectGradientBackground.qml";
                 case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectGradientShadowBackground.qml";
                 case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectGradientGlowBackground.qml";

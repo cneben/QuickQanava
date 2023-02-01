@@ -154,6 +154,14 @@ ApplicationWindow {
                 }
             }
             MenuItem {
+                text: "Ungroup node"
+                enabled: contextMenu.node !== undefined
+                onClicked: {
+                    topology.ungroupNode(contextMenu.node)
+                    contextMenu.node = undefined
+                }
+            }
+            MenuItem {
                 text: "Remove group"
                 enabled: contextMenu.group !== undefined
                 onClicked: {

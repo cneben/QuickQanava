@@ -1631,9 +1631,9 @@ void    Graph::setVerticalDockDelegate(std::unique_ptr<QQmlComponent> verticalDo
 QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan::Node& node) noexcept
 {
     using Dock = qan::NodeItem::Dock;
-    if ( dock == Dock::Left ||
-         dock == Dock::Right ) {
-        if ( _verticalDockDelegate ) {
+    if (dock == Dock::Left ||
+        dock == Dock::Right) {
+        if (_verticalDockDelegate) {
             auto verticalDock = createItemFromComponent(_verticalDockDelegate.get());
             verticalDock->setParentItem(node.getItem());
             verticalDock->setProperty("hostNodeItem",
@@ -1642,9 +1642,9 @@ QPointer<QQuickItem> Graph::createDockFromDelegate(qan::NodeItem::Dock dock, qan
                                       QVariant::fromValue(dock));
             return verticalDock;
         }
-    } else if ( dock == Dock::Top ||
-                dock == Dock::Bottom ) {
-        if ( _horizontalDockDelegate ) {
+    } else if (dock == Dock::Top ||
+               dock == Dock::Bottom) {
+        if (_horizontalDockDelegate) {
             auto horizontalDock = createItemFromComponent(_horizontalDockDelegate.get());
             horizontalDock->setParentItem(node.getItem());
             horizontalDock->setProperty("hostNodeItem",
