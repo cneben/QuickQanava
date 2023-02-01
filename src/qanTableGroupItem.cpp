@@ -63,21 +63,24 @@ void    TableGroupItem::componentComplete() { /* Nil */ }
 
 void    TableGroupItem::classBegin() { }
 
-void    TableGroupItem::setContainer(QQuickItem* container) noexcept
+bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
-    qan::GroupItem::setContainer(container);
-
-    // Note: Force reparenting all borders and cell to container, it might be nullptr
-    // at initialization.
-    for (const auto verticalBorder: _verticalBorders)
-        if (verticalBorder != nullptr)
-            verticalBorder->setParentItem(container);
-    for (const auto horizontalBorder: _horizontalBorders)
-        if (horizontalBorder != nullptr)
-            horizontalBorder->setParentItem(container);
-    for (const auto cell: _cells)
-        if (cell != nullptr)
-            cell->setParentItem(container);
+    qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
+    if (qan::GroupItem::setContainer(container)) {
+        // Note: Force reparenting all borders and cell to container, it might be nullptr
+        // at initialization.
+        for (const auto verticalBorder: _verticalBorders)
+            if (verticalBorder != nullptr)
+                verticalBorder->setParentItem(container);
+        for (const auto horizontalBorder: _horizontalBorders)
+            if (horizontalBorder != nullptr)
+                horizontalBorder->setParentItem(container);
+        for (const auto cell: _cells)
+            if (cell != nullptr)
+                cell->setParentItem(container);
+        return true;
+    }
+    return false;
 }
 //-----------------------------------------------------------------------------
 
@@ -85,6 +88,7 @@ void    TableGroupItem::setContainer(QQuickItem* container) noexcept
 /* Borders and Cells Management *///-------------------------------------------
 void    TableGroupItem::clearLayout()
 {
+    qWarning() << "qan::TableGroupItem::clearLayout()";
     for (const auto verticalBorder: _verticalBorders)
         if (verticalBorder != nullptr)
             verticalBorder->deleteLater();
@@ -102,6 +106,7 @@ void    TableGroupItem::clearLayout()
 
 void    TableGroupItem::initialize(int rows, int cols)
 {
+    qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
         qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
@@ -134,49 +139,29 @@ void    TableGroupItem::initialize(int rows, int cols)
     //
     // So cell index in _cells at (col=c, row=r) is _cells[(r * cols) + c]
 
-    qan::TableBorder* prevBorder = nullptr;
-    for (auto c = 1; c <= (cols - 1); c++) {
-        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
-        if (border != nullptr) {
-            border->setTableGroup(getTableGroup());
-            border->setOrientation(Qt::Vertical);
-            border->setParentItem(getContainer() != nullptr ? getContainer() : this);
-            border->setVisible(true);
-            border->setPrevBorder(prevBorder);
-            for (int r = 0; r < rows; r++) {
-                border->addPrevCell(_cells[(r * cols) + c-1]);
-                border->addNextCell(_cells[(r * cols) + c]);
-            }
-            _verticalBorders.push_back(border);
-
-            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
-                prevBorder->setNextBorder(border);  // with this border
-            prevBorder = border;
+    createBorders(cols - 1, rows - 1);
+    int c = 1;
+    for (auto verticalBorder: _verticalBorders) {
+        if (verticalBorder == nullptr)
+            continue;
+        for (int r = 0; r < rows; r++) {
+            verticalBorder->addPrevCell(_cells[(r * cols) + c - 1]);
+            verticalBorder->addNextCell(_cells[(r * cols) + c]);
         }
+        c++;
     }
-    prevBorder = nullptr;
-    for (auto r = 1; r <= (rows - 1); r++) {
-        auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
-        if (border != nullptr) {
-            border->setTableGroup(getTableGroup());
-            border->setOrientation(Qt::Horizontal);
-            border->setParentItem(getContainer() != nullptr ? getContainer() : this);
-            border->setVisible(true);
-            border->setPrevBorder(prevBorder);
-            for (int c = 0; c < cols; c++) {
-                border->addPrevCell(_cells[((r-1) * cols)     + c]);
-                border->addNextCell(_cells[(r * cols) + c]);
-            }
-            _horizontalBorders.push_back(border);
 
-            if (prevBorder != nullptr)  // Audacious initialization of prevBorder nextBorder
-                prevBorder->setNextBorder(border);  // with this border
-            prevBorder = border;
+    int r = 1;
+    for (auto horizontalBorder: _horizontalBorders) {
+        if (horizontalBorder == nullptr)
+            continue;
+        for (int c = 0; c < cols; c++) {
+            horizontalBorder->addPrevCell(_cells[((r-1) * cols) + c]);
+            horizontalBorder->addNextCell(_cells[(r * cols)     + c]);
         }
     }
 
     borderComponent->deleteLater();
-    layoutTable();
 }
 
 void    TableGroupItem::createCells(int cellsCount)
@@ -211,8 +196,9 @@ void    TableGroupItem::createCells(int cellsCount)
 
 void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBordersCount)
 {
-    if (verticalBordersCount <= 0 ||
-        horizontalBordersCount <= 0) {
+    qWarning() << "qan::TableGroupItem::createBorders(): verticalBordersCount=" << verticalBordersCount << "  horizontalBordersCount=" << horizontalBordersCount;
+    if (verticalBordersCount < 0 ||     // Might be 0 for 1x1 tables
+        horizontalBordersCount < 0) {
         qWarning() << "TableGroupItem::createBorders(): Error, invalid vertical or horizontal borders count.";
         return;
     }
@@ -227,7 +213,7 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
 
     qan::TableBorder* prevBorder = nullptr;
     if (verticalBordersCount != static_cast<int>(_verticalBorders.size())) {
-        for (auto v = 1; v < verticalBordersCount; v++) {
+        for (auto v = 0; v < verticalBordersCount; v++) {
             auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
             if (border != nullptr) {
                 border->setTableGroup(getTableGroup());
@@ -245,7 +231,7 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
     }
     prevBorder = nullptr;
     if (horizontalBordersCount != static_cast<int>(_horizontalBorders.size())) {
-        for (auto h = 1; h < horizontalBordersCount; h++) {
+        for (auto h = 0; h < horizontalBordersCount; h++) {
             auto border = qobject_cast<qan::TableBorder*>(createFromComponent(*borderComponent));
             if (border != nullptr) {
                 border->setTableGroup(getTableGroup());
@@ -297,6 +283,7 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::layoutTable()
 {
+    qWarning() << "qan::TableGroupItem::layoutTable()";
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
@@ -378,29 +365,34 @@ void    TableGroupItem::layoutTable()
     // it will be called automatically when border are moved.
 }
 
-void    TableGroupItem::setGroup(qan::Group* group) noexcept
+bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 {
-    qan::GroupItem::setGroup(group);
-    auto tableGroup = qobject_cast<qan::TableGroup*>(group);
-    if (tableGroup != nullptr) {
-        initialize(tableGroup->getRows(),
-                   tableGroup->getCols());
+    if (qan::GroupItem::setGroup(group)) {
+        qWarning() << "TableGroupItem::setGroup(): group=" << group;
 
-        // Set borders reference to group
-        for (auto border: _horizontalBorders)
-            if (border)
-                border->setTableGroup(tableGroup);
-        for (auto border: _verticalBorders)
-            if (border)
-                border->setTableGroup(tableGroup);
-        connect(tableGroup, &qan::TableGroup::cellSpacingChanged,
-                this,       &qan::TableGroupItem::layoutTable);
-        connect(tableGroup, &qan::TableGroup::cellMinimumSizeChanged,
-                this,       &qan::TableGroupItem::layoutTable);
-        connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
-                this,       &qan::TableGroupItem::layoutTable);
-        layoutTable();  // Force new layout with actual table group settings
+        auto tableGroup = qobject_cast<qan::TableGroup*>(group);
+        if (tableGroup != nullptr) {
+            initialize(tableGroup->getRows(),
+                       tableGroup->getCols());
+
+            // Set borders reference to group
+            for (auto border: _horizontalBorders)
+                if (border)
+                    border->setTableGroup(tableGroup);
+            for (auto border: _verticalBorders)
+                if (border)
+                    border->setTableGroup(tableGroup);
+            connect(tableGroup, &qan::TableGroup::cellSpacingChanged,
+                    this,       &qan::TableGroupItem::layoutTable);
+            connect(tableGroup, &qan::TableGroup::cellMinimumSizeChanged,
+                    this,       &qan::TableGroupItem::layoutTable);
+            connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
+                    this,       &qan::TableGroupItem::layoutTable);
+            layoutTable();  // Force new layout with actual table group settings
+            return true;
+        }
     }
+    return false;
 }
 
 const qan::TableGroup*  TableGroupItem::getTableGroup() const { return qobject_cast<const qan::TableGroup*>(getGroup()); }

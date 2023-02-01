@@ -92,9 +92,11 @@ qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
 auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
-    _node = node;
-    const auto nodeDraggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
-    nodeDraggableCtrl->setTarget(node);
+    if (node != _node) {
+        _node = node;
+        const auto nodeDraggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
+        nodeDraggableCtrl->setTarget(node);
+    }
 }
 
 auto    NodeItem::setGraph(qan::Graph* graph) -> void

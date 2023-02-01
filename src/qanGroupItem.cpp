@@ -70,16 +70,20 @@ GroupItem::GroupItem(QQuickItem* parent) :
 
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-void    GroupItem::setGroup(qan::Group* group) noexcept
+bool    GroupItem::setGroup(qan::Group* group) noexcept
 {
     // DraggableCtrl configuration is done in setNode()
     qan::NodeItem::setNode(static_cast<qan::Node*>(group));
 
     // Configuration specific to group
-    _group = group;
-    if (group != nullptr &&            // Warning: Do that after having set _group
-        group->getItem() != this)
-        group->setItem(this);
+    if (group != _group) {
+        _group = group;
+        if (group != nullptr &&            // Warning: Do that after having set _group
+            group->getItem() != this)
+            group->setItem(this);
+        return true;
+    }
+    return false;
 }
 
 auto    GroupItem::setRect(const QRectF& r) noexcept -> void
@@ -166,13 +170,15 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         nodeItem->setDroppable(true);
     }
 }
-void    GroupItem::setContainer(QQuickItem* container) noexcept
+bool    GroupItem::setContainer(QQuickItem* container) noexcept
 {
     // PRECONDITIONS: None, container can be nullptr
     if (container != _container) {
         _container = container;
         emit containerChanged();
+        return true;
     }
+    return false;
 }
 QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
 const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }

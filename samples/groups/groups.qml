@@ -80,12 +80,12 @@ ApplicationWindow {
                 tableGroup.label = 'TABLE'
             }
             onGroupClicked: group => {
-                window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
+                window.notifyUser("Group <b>" + group.label + "</b> clicked")
                 groupEditor.group = group
             }
-            onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
+            onGroupDoubleClicked: { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
             onGroupRightClicked: (group, pos) => {
-                window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
+                window.notifyUser("Group <b>" + group.label + "</b> right clicked")
                 contextMenu.group = group
 
                 if (!window.contentItem ||
