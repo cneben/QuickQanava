@@ -134,6 +134,8 @@ void    Graph::clearGraph() noexcept
 void    Graph::clear() noexcept
 {
     _selectedNodes.clear();
+    _selectedGroups.clear();
+    _selectedEdges.clear();
     super_t::clear();
     _styleManager.clear();
 }
@@ -861,12 +863,28 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
     return true;
 }
 
-bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) { return super_t::remove_edge(source, destination); }
-bool    Graph::removeEdge(qan::Edge* edge) { return super_t::remove_edge(edge); }
+bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
+    const auto edge = super_t::find_edge(source, destination);
+    if (super_t::remove_edge(source, destination)) {
+        if (edge != nullptr &&
+            _selectedEdges.contains(edge))
+            _selectedEdges.removeAll(edge);
+        return true;
+    }
+    return false;
+}
+bool    Graph::removeEdge(qan::Edge* edge) {
+    if (super_t::remove_edge(edge)) {
+        if (_selectedEdges.contains(edge))
+            _selectedEdges.removeAll(edge);
+        return true;
+    }
+    return false;
+}
 
 bool    Graph::hasEdge(const qan::Node* source, const qan::Node* destination) const
 {
-    if ( source == nullptr || destination == nullptr )
+    if (source == nullptr || destination == nullptr)
         return false;
     return super_t::has_edge(source, destination);
 }
@@ -975,6 +993,8 @@ void    Graph::removeGroup(qan::Group* group, bool removeContent)
 
         if (_selectedNodes.contains(group))
             _selectedNodes.removeAll(group);
+        if (_selectedGroups.contains(group))
+            _selectedGroups.removeAll(group);
         remove_group(group);
     } else {
         removeGroupContent_rec(group);
@@ -1273,17 +1293,22 @@ void    Graph::removeFromSelection(qan::Node& node) { removeFromSelectionImpl<qa
 void    Graph::removeFromSelection(qan::Group& group) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
 
 // Note: Called from
-void    Graph::removeFromSelection( QQuickItem* item ) {
+void    Graph::removeFromSelection(QQuickItem* item) {
     const auto nodeItem = qobject_cast<qan::NodeItem*>(item);
-    if ( nodeItem != nullptr &&
-         nodeItem->getNode() != nullptr ) {
+    if (nodeItem != nullptr &&
+        nodeItem->getNode() != nullptr) {
         _selectedNodes.removeAll(nodeItem->getNode());
-        //nodeItem->setSelected(false);
     } else {
         const auto groupItem = qobject_cast<qan::GroupItem*>(item);
-        if ( groupItem != nullptr &&
-             groupItem->getGroup() != nullptr ) {
+        if (groupItem != nullptr &&
+            groupItem->getGroup() != nullptr) {
             _selectedGroups.removeAll(groupItem->getGroup());
+        } else {
+            const auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
+            if (edgeItem != nullptr &&
+                edgeItem->getEdge() != nullptr) {
+                _selectedEdges.removeAll(edgeItem->getEdge());
+            }
         }
     }
 }
@@ -1304,6 +1329,9 @@ void    Graph::removeSelection()
     const auto& selectedGroups = getSelectedGroups();
     for (const auto group: qAsConst(selectedGroups))
         removeGroup(group);
+    const auto& selectedEdges = getSelectedEdges();
+    for (const auto edge: qAsConst(selectedEdges))
+        removeEdge(edge);
     clearSelection();
 }
 

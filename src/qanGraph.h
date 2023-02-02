@@ -773,17 +773,21 @@ signals:
     void                selectedGroupsChanged();
 
 public:
-    using SelectedEdges = QVector<QPointer<qan::Edge>>;
+    using SelectedEdges = qcm::Container<QVector, qan::Edge*>;
 
-    //! Read-only list model of currently selected edges.
-    //Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
-    //QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
-
+    //! \copydoc _selectedEdges
+    Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
+    //! \copydoc _selectedEdges
+    QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
+    //! \copydoc _selectedEdges
     inline auto         getSelectedEdges() -> SelectedEdges& { return _selectedEdges; }
+    //! \copydoc _selectedEdges
     inline auto         getSelectedEdges() const -> const SelectedEdges& { return _selectedEdges; }
 private:
+    //! Read-only list model of currently selected edges.
     SelectedEdges       _selectedEdges;
 signals:
+    //! \copydoc _selectedEdges
     void                selectedEdgesChanged();
 
 protected:
