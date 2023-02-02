@@ -867,7 +867,7 @@ bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
     return super_t::remove_edge(source, destination);
 }
 bool    Graph::removeEdge(qan::Edge* edge) {
-    return super_t::remove_edge(edge));
+    return super_t::remove_edge(edge);
 }
 
 bool    Graph::hasEdge(const qan::Node* source, const qan::Node* destination) const
