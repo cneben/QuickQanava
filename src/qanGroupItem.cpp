@@ -170,6 +170,7 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         nodeItem->setDroppable(true);
     }
 }
+
 bool    GroupItem::setContainer(QQuickItem* container) noexcept
 {
     // PRECONDITIONS: None, container can be nullptr

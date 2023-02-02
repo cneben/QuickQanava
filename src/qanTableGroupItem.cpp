@@ -457,7 +457,7 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
             nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
-        nodeItem->setZ(z()+1.);
+        nodeItem->setZ(z() + 1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);
         nodeItem->setSelectable(true);

@@ -102,6 +102,7 @@ ApplicationWindow {
                 contextMenu.node = node
             }
             onNodeRightClicked: (node, pos) => {
+                window.notifyUser("Node <b>" + node.label + "</b> right clicked")
                 ungroupNodeButton.node = node
                 contextMenu.node = node
 
