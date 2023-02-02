@@ -452,10 +452,11 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
     if (getGraph() &&
         getGraph()->getContainerItem() != nullptr) {
-        const QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
+        const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
+                                                          QPointF{0., 0.});
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
-            nodeItem->setPosition(nodeGlobalPos);
+            nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
         nodeItem->setZ(z()+1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);

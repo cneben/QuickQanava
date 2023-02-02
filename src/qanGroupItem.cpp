@@ -164,8 +164,8 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
-            nodeItem->setPosition(nodeGlobalPos);
-        nodeItem->setZ(z()+1.);
+            nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});
+        nodeItem->setZ(z() + 1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);
     }
