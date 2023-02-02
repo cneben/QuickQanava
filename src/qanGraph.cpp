@@ -864,22 +864,10 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
 }
 
 bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
-    const auto edge = super_t::find_edge(source, destination);
-    if (super_t::remove_edge(source, destination)) {
-        if (edge != nullptr &&
-            _selectedEdges.contains(edge))
-            _selectedEdges.removeAll(edge);
-        return true;
-    }
-    return false;
+    return super_t::remove_edge(source, destination);
 }
 bool    Graph::removeEdge(qan::Edge* edge) {
-    if (super_t::remove_edge(edge)) {
-        if (_selectedEdges.contains(edge))
-            _selectedEdges.removeAll(edge);
-        return true;
-    }
-    return false;
+    return super_t::remove_edge(edge));
 }
 
 bool    Graph::hasEdge(const qan::Node* source, const qan::Node* destination) const
