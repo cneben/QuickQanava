@@ -301,6 +301,7 @@ void    TableBorder::mouseReleaseEvent(QMouseEvent* event)
     Q_UNUSED(event)
     _dragInitialMousePos = {0., 0.};       // Invalid all cached coordinates when button is released
     _dragInitialPos = {0., 0.};
+    emit modified();
 }
 //-------------------------------------------------------------------------
 

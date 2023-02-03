@@ -72,7 +72,10 @@ public:
     virtual void    classBegin() override;
 
     //! Override qan::GroupItem::setContainer()
-    virtual void    setContainer(QQuickItem* container) noexcept override;
+    virtual bool    setContainer(QQuickItem* container) noexcept override;
+
+signals:
+    void        modified();
     //@}
     //-------------------------------------------------------------------------
 
@@ -91,12 +94,12 @@ public:
 protected:
     auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
 
-protected slots:
+public slots:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
 
 public:
-    virtual void            setGroup(qan::Group* group) noexcept override;
+    virtual bool            setGroup(qan::Group* group) noexcept override;
 protected:
     const qan::TableGroup*  getTableGroup() const;
     qan::TableGroup*        getTableGroup();

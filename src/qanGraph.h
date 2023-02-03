@@ -546,7 +546,11 @@ public:
 
     //! FIXME #190.
     Q_INVOKABLE virtual qan::Group* insertTable(int rows, int cols);
+signals:
+    //! Emitted when a table rows/cols are modified or moved.
+    void    tableModified(qan::TableGroup*);
 
+public:
     /*! \brief Insert a new group in this graph and return a pointer on it, or \c nullptr if creation fails.
      *
      * If group insertion fails, method return \c false, no exception is thrown.
@@ -769,17 +773,21 @@ signals:
     void                selectedGroupsChanged();
 
 public:
-    using SelectedEdges = QVector<QPointer<qan::Edge>>;
+    using SelectedEdges = qcm::Container<QVector, qan::Edge*>;
 
-    //! Read-only list model of currently selected edges.
-    //Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
-    //QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
-
+    //! \copydoc _selectedEdges
+    Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning
+    //! \copydoc _selectedEdges
+    QAbstractItemModel* getSelectedEdgesModel() { return qobject_cast<QAbstractItemModel*>(_selectedEdges.model()); }
+    //! \copydoc _selectedEdges
     inline auto         getSelectedEdges() -> SelectedEdges& { return _selectedEdges; }
+    //! \copydoc _selectedEdges
     inline auto         getSelectedEdges() const -> const SelectedEdges& { return _selectedEdges; }
 private:
+    //! Read-only list model of currently selected edges.
     SelectedEdges       _selectedEdges;
 signals:
+    //! \copydoc _selectedEdges
     void                selectedEdgesChanged();
 
 protected:

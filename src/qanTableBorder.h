@@ -148,6 +148,10 @@ private:
     //! Initial global mouse position at the beginning of a resizing border drag.
     QPointF         _dragInitialMousePos{0., 0.};
     QPointF         _dragInitialPos{0., 0.};
+
+signals:
+    //! Emitted when (after) the border position has been modified.
+    void            modified();
     //@}
     //-------------------------------------------------------------------------
 };

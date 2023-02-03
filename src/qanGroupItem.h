@@ -73,7 +73,7 @@ public:
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
     auto            getGroup() noexcept -> qan::Group*;
     auto            getGroup() const noexcept -> const qan::Group*;
-    virtual void    setGroup(qan::Group* group) noexcept;
+    virtual bool    setGroup(qan::Group* group) noexcept;
 protected:
     QPointer<qan::Group> _group{nullptr};
 
@@ -130,7 +130,7 @@ public:
      * \endcode
      */
     Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
-    virtual void            setContainer(QQuickItem* container) noexcept;
+    virtual bool            setContainer(QQuickItem* container) noexcept;
     QQuickItem*             getContainer() noexcept;
     const QQuickItem*       getContainer() const noexcept;
 protected:
