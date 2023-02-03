@@ -436,18 +436,15 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
 
     // Note: no need for the container to be visible or open.
-    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
-    if (transform) {
-        const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
-        groupPos = getContainer()->mapFromGlobal(globalPos);
-        // Find cell at groupPos and attach node to cell
-        for (const auto& cell: _cells) {
-            const auto cellBr = cell->boundingRect().translated(cell->position());
-            if (cellBr.contains(groupPos)) {
-                cell->setItem(nodeItem);
-                nodeItem->getNode()->setCell(cell);
-                break;
-            }
+    const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
+    const auto groupPos = getContainer()->mapFromGlobal(globalPos);
+    // Find cell at groupPos and attach node to cell
+    for (const auto& cell: _cells) {
+        const auto cellBr = cell->boundingRect().translated(cell->position());
+        if (cellBr.contains(groupPos)) {
+            cell->setItem(nodeItem);
+            nodeItem->getNode()->setCell(cell);
+            break;
         }
     }
     groupMoved();           // Force call to groupMoved() to update group adjacent edges
