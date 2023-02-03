@@ -464,14 +464,13 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         if (nodeCell != nullptr) {
             const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
                                                               QPointF{0., 0.});
+
+            nodeCell->restoreCache(nodeItem);
             nodeCell->setItem(nullptr);
             nodeItem->setParentItem(getGraph()->getContainerItem());
             if (transform)
                 nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
             nodeItem->setZ(z() + 1.);
-            nodeItem->setDraggable(true);
-            nodeItem->setDroppable(true);
-            nodeItem->setSelectable(true);
             nodeItem->getNode()->setCell(nullptr);
         }
     }

@@ -34,15 +34,14 @@
 
 #pragma once
 
+// Qt headers
 #include <QQuickItem>
-
-// QuickQanava headers
-//#include "./qanTableGroup.h"
 
 namespace qan { // ::qan
 
 class Graph;
 class TableGroup;
+class NodeItem;
 
 class TableCell : public QQuickItem
 {
@@ -89,6 +88,16 @@ protected:
 signals:
     //! \copydoc setItem()
     void                    itemChanged();
+
+public:
+    //! Restore the cache initialized in `setItem()`.
+    void    restoreCache(qan::NodeItem* nodeItem) const;
+private:
+    // Private cache used to restore `item` once it is dragged out of the cell.
+    bool    _cacheSelectable = true;
+    bool    _cacheDraggable = true;
+    bool    _cacheResizable = true;
+    QSizeF  _cacheSize = QSizeF{0., 0.};
 
 protected slots:
     //! Fit actual `_item` to this cell.

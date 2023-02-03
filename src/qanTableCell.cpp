@@ -79,6 +79,11 @@ void    TableCell::setItem(QQuickItem* item)
             _item->setParentItem(this);
             auto nodeItem = static_cast<qan::NodeItem*>(item);
             if (nodeItem != nullptr) {
+                _cacheSelectable = nodeItem->getSelectable();  // Save node configuration in
+                _cacheDraggable = nodeItem->getDraggable();    // local cache.
+                _cacheResizable = nodeItem->getResizable();
+                _cacheSize = nodeItem->size();
+
                 nodeItem->setSelectable(false);
                 nodeItem->setDraggable(false);
                 nodeItem->setResizable(false);
@@ -86,6 +91,16 @@ void    TableCell::setItem(QQuickItem* item)
         }
         fitItemToCell();
         emit itemChanged();
+    }
+}
+
+void    TableCell::restoreCache(qan::NodeItem* nodeItem) const
+{
+    if (nodeItem != nullptr) {
+        nodeItem->setSelectable(_cacheSelectable);
+        nodeItem->setDraggable(_cacheDraggable);
+        nodeItem->setResizable(_cacheResizable);
+        nodeItem->setSize(_cacheSize);
     }
 }
 
