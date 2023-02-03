@@ -142,6 +142,20 @@ private:
     qreal       _cellSpacing = 10.0;
 
 public:
+    //! \copydoc getCellTopPadding()
+    Q_PROPERTY(qreal cellTopPadding READ getCellTopPadding WRITE setCellTopPadding NOTIFY cellTopPaddingChanged FINAL)
+    //! \copydoc getCellTopPadding()
+    bool        setCellTopPadding(qreal cellSpacing);
+    //! \brief Padding between cell content and cell top, might be usefull to "decorate" cell content.
+    qreal       getCellTopPadding() const { return _cellTopPadding; }
+signals:
+    //! \copydoc getCellTopPadding()
+    void        cellTopPaddingChanged();
+private:
+    //! \copydoc getCellTopPadding()
+    qreal       _cellTopPadding = 0.0;
+
+public:
     //! \brief FIXME #190.
     Q_PROPERTY(QSizeF cellMinimumSize READ getCellMinimumSize WRITE setCellMinimumSize NOTIFY cellMinimumSizeChanged FINAL)
     void        setCellMinimumSize(QSizeF cellMinimumSize);

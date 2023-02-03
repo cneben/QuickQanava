@@ -65,6 +65,9 @@ void    TableCell::setTable(qan::TableGroup* table)
 {
     if (table != _table) {
         _table = table;
+        if (table != nullptr)
+            connect(table,  &qan::TableGroup::cellTopPaddingChanged,    // Do not disconnect table is not subject to
+                    this,   &qan::TableCell::fitItemToCell);            // change
         emit tableChanged();
     }
 }
@@ -107,8 +110,11 @@ void    TableCell::restoreCache(qan::NodeItem* nodeItem) const
 void    TableCell::fitItemToCell()
 {
     if (_item) {
+        const auto topPadding = _table ? _table->getCellTopPadding() :
+                                         0.;
+        _item->setY(topPadding);
         _item->setWidth(width());
-        _item->setHeight(height());
+        _item->setHeight(height() - topPadding);
     }
 }
 //-----------------------------------------------------------------------------

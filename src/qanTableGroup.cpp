@@ -119,6 +119,16 @@ bool    TableGroup::setCellSpacing(qreal cellSpacing)
     return false;
 }
 
+bool    TableGroup::setCellTopPadding(qreal cellTopPadding)
+{
+    if (!qFuzzyCompare(1. + cellTopPadding, 1. + _cellTopPadding)) {
+        _cellTopPadding = cellTopPadding;
+        emit cellTopPaddingChanged();
+        return true;
+    }
+    return false;
+}
+
 void    TableGroup::setCellMinimumSize(QSizeF cellMinimumSize)
 {
     _cellMinimumSize = cellMinimumSize;
