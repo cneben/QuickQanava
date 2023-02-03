@@ -49,7 +49,7 @@ TableGroup::TableGroup(QObject* parent) :
     set_is_group(true);
 }
 
-TableGroup::TableGroup(int rows, int cols) :
+TableGroup::TableGroup(int cols, int rows) :
     qan::Group{nullptr},
     _rows{rows},
     _cols{cols}

@@ -104,7 +104,7 @@ void    TableGroupItem::clearLayout()
     _cells.clear();
 }
 
-void    TableGroupItem::initialize(int rows, int cols)
+void    TableGroupItem::initialize(int cols, int rows)
 {
     qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
@@ -159,6 +159,7 @@ void    TableGroupItem::initialize(int rows, int cols)
             horizontalBorder->addPrevCell(_cells[((r-1) * cols) + c]);
             horizontalBorder->addNextCell(_cells[(r * cols)     + c]);
         }
+        r++;
     }
 
     borderComponent->deleteLater();
@@ -388,8 +389,8 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 
         auto tableGroup = qobject_cast<qan::TableGroup*>(group);
         if (tableGroup != nullptr) {
-            initialize(tableGroup->getRows(),
-                       tableGroup->getCols());
+            initialize(tableGroup->getCols(),
+                       tableGroup->getRows());
 
             // Set borders reference to group
             for (auto border: _horizontalBorders)

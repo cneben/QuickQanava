@@ -886,9 +886,9 @@ qan::Group* Graph::insertGroup()
     return insertGroup<qan::Group>();
 }
 
-qan::Group* Graph::insertTable(int rows, int cols)
+qan::Group* Graph::insertTable(int cols, int rows)
 {
-    return insertTable<qan::TableGroup>(rows, cols);
+    return insertTable<qan::TableGroup>(cols, rows);
 }
 
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)

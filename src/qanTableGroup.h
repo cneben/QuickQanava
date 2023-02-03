@@ -61,7 +61,7 @@ class TableGroup : public qan::Group
 public:
     //! TableGroup constructor.
     explicit TableGroup(QObject* parent = nullptr);
-    explicit TableGroup(int rows, int cols);
+    explicit TableGroup(int cols, int rows);
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */

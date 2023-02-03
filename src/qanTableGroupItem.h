@@ -87,7 +87,7 @@ public:
     void        clearLayout();
 
     //! Initialize a table withe default cells and borders.
-    void        initialize(int rows, int cols);
+    void        initialize(int cols, int rows);
 
     void        createCells(int cellsCount);
     void        createBorders(int verticalBordersCount, int horizontalBordersCount);

@@ -544,8 +544,8 @@ public:
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
     Q_INVOKABLE virtual qan::Group* insertGroup();
 
-    //! FIXME #190.
-    Q_INVOKABLE virtual qan::Group* insertTable(int rows, int cols);
+    //! Insert a `qan::TableGroup` table.
+    Q_INVOKABLE virtual qan::Group* insertTable(int cols, int rows);
 signals:
     //! Emitted when a table rows/cols are modified or moved.
     void    tableModified(qan::TableGroup*);
@@ -571,7 +571,7 @@ public:
 
     //! Insert a group using its static delegate() and style() factories.
     template <class TableGroup_t>
-    qan::Group*             insertTable(int rows, int cols);
+    qan::Group*             insertTable(int cols, int rows);
 
     /*! Shortcut to gtpo::GenGraph<>::removeGroup().
      *
