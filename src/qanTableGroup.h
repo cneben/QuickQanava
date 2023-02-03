@@ -145,7 +145,7 @@ public:
     //! \copydoc getCellTopPadding()
     Q_PROPERTY(qreal cellTopPadding READ getCellTopPadding WRITE setCellTopPadding NOTIFY cellTopPaddingChanged FINAL)
     //! \copydoc getCellTopPadding()
-    bool        setCellTopPadding(qreal cellSpacing);
+    bool        setCellTopPadding(qreal cellTopPadding);
     //! \brief Padding between cell content and cell top, might be usefull to "decorate" cell content.
     qreal       getCellTopPadding() const { return _cellTopPadding; }
 signals:
