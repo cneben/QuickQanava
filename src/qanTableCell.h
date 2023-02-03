@@ -34,12 +34,15 @@
 
 #pragma once
 
-// Qt headers
 #include <QQuickItem>
+
+// QuickQanava headers
+//#include "./qanTableGroup.h"
 
 namespace qan { // ::qan
 
 class Graph;
+class TableGroup;
 
 class TableCell : public QQuickItem
 {
@@ -56,15 +59,36 @@ public:
     /*! \name Cell Container Management *///-----------------------------------
     //@{
 public:
-    //! Set `item` in this cell "container", `item` is reparented to cell.
+    //! \copydoc _table
+    Q_PROPERTY(qan::TableGroup* table READ getTable NOTIFY tableChanged)
+    //! \copydoc _table
+    const qan::TableGroup*  getTable() const;
+    //! \copydoc _table
+    qan::TableGroup*        getTable();
+    //! \copydoc _table
+    void                    setTable(qan::TableGroup* table);
+protected:
+    //! Cell parent table.
+    QPointer<qan::TableGroup>   _table;
+signals:
+    //! \copydoc _table
+    void                    tableChanged();
+
+public:
+    //! \copydoc setItem()
+    Q_PROPERTY(QQuickItem* item READ getItem NOTIFY itemChanged)
+    //! \copydoc setItem()
     const QQuickItem*       getItem() const { return _item.data(); }
-    //! \copydoc getItem()
+    //! \copydoc setItem()
     QQuickItem*             getItem() { return _item.data(); }
-    //! \copydoc getItem()
+    //! Set `item` in this cell "container", `item` is reparented to cell.
     void                    setItem(QQuickItem* item);
 protected:
     //! \copydoc getItem()
     QPointer<QQuickItem>    _item;
+signals:
+    //! \copydoc setItem()
+    void                    itemChanged();
 
 protected slots:
     //! Fit actual `_item` to this cell.

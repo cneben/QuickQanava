@@ -35,6 +35,7 @@
 // QuickQanava headers
 #include "./qanTableCell.h"
 #include "./qanNodeItem.h"
+#include "./qanTableGroup.h"
 
 namespace qan { // ::qan
 
@@ -50,11 +51,24 @@ TableCell::TableCell(QQuickItem* parent):
             this, &qan::TableCell::fitItemToCell);
     connect(this, &QQuickItem::heightChanged,
             this, &qan::TableCell::fitItemToCell);
+
+    setClip(true);  // Clip content
 }
 //-----------------------------------------------------------------------------
 
 
 /* Cell Container Management *///----------------------------------------------
+const qan::TableGroup*  TableCell::getTable() const { return _table.data(); }
+qan::TableGroup*        TableCell::getTable() { return _table.data(); }
+
+void    TableCell::setTable(qan::TableGroup* table)
+{
+    if (table != _table) {
+        _table = table;
+        emit tableChanged();
+    }
+}
+
 void    TableCell::setItem(QQuickItem* item)
 {
     if (item != _item) {
@@ -71,6 +85,7 @@ void    TableCell::setItem(QQuickItem* item)
             }
         }
         fitItemToCell();
+        emit itemChanged();
     }
 }
 

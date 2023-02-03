@@ -36,6 +36,7 @@
 #include "./qanGraph.h"
 #include "./qanGroupItem.h"
 #include "./qanTableGroupItem.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -189,6 +190,7 @@ void    TableGroupItem::createCells(int cellsCount)
             _cells.push_back(cell);
             cell->setParentItem(getContainer() != nullptr ? getContainer() : this);
             cell->setVisible(true);
+            cell->setTable(getTableGroup());
         }
     }
 
@@ -406,6 +408,11 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
             connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
                     this,       &qan::TableGroupItem::layoutTable);
 
+            // Set cell reference to group
+            for (auto cell: _cells)
+                if (cell != nullptr)
+                    cell->setTable(tableGroup);
+
             layoutTable();  // Force new layout with actual table group settings
             return true;
         }
@@ -453,16 +460,20 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
     if (getGraph() &&
         getGraph()->getContainerItem() != nullptr) {
-        const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
-                                                          QPointF{0., 0.});
-        nodeItem->setParentItem(getGraph()->getContainerItem());
-        if (transform)
-            nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
-        nodeItem->setZ(z() + 1.);
-        nodeItem->setDraggable(true);
-        nodeItem->setDroppable(true);
-        nodeItem->setSelectable(true);
-        nodeItem->getNode()->setCell(nullptr);
+        auto nodeCell = nodeItem->getNode()->getCell();
+        if (nodeCell != nullptr) {
+            const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
+                                                              QPointF{0., 0.});
+            nodeCell->setItem(nullptr);
+            nodeItem->setParentItem(getGraph()->getContainerItem());
+            if (transform)
+                nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
+            nodeItem->setZ(z() + 1.);
+            nodeItem->setDraggable(true);
+            nodeItem->setDroppable(true);
+            nodeItem->setSelectable(true);
+            nodeItem->getNode()->setCell(nullptr);
+        }
     }
 }
 

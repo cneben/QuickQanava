@@ -42,15 +42,15 @@
 // QuickQanava headers
 #include "./qanNodeItem.h"
 #include "./qanGroupItem.h"
-#include "./qanTableCell.h"
 #include "./qanTableBorder.h"
 
 namespace qan { // ::qan
 
 class Graph;
 class TableGroup;
+class TableCell;
 
-/*! \brief FIXME
+/*! \brief FIXME #190
  *
  * \nosubgrouping
  */
