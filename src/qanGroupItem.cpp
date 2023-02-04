@@ -134,20 +134,20 @@ void    GroupItem::groupMoved()
     }
 }
 
-void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
+void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
+    Q_UNUSED(groupCell)
     if (nodeItem == nullptr ||
         getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
 
     // Note: no need for the container to be visible or open.
-    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
     if (transform) {
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
-        groupPos = getContainer()->mapFromGlobal(globalPos);
+        const auto groupPos = getContainer()->mapFromGlobal(globalPos);
         nodeItem->setPosition(groupPos);
     }
     nodeItem->setParentItem(getContainer());

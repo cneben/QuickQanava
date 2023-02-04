@@ -39,10 +39,5 @@ import QuickQanava        2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 Qan.AbstractTableCell {
-    /*default property alias children : content.children
-    Item {
-        id: content
-        anchors.fill: parent
-        anchors.topMargin: 20
-    }*/
+
 }

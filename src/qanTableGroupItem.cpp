@@ -426,11 +426,13 @@ qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qa
 
 
 /* TableGroupItem DnD Management *///------------------------------------------
-void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
+void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
+    Q_UNUSED(groupCell)
+    Q_UNUSED(transform)
     if (nodeItem == nullptr ||
         getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
@@ -438,13 +440,21 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
     // Note: no need for the container to be visible or open.
     const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
     const auto groupPos = getContainer()->mapFromGlobal(globalPos);
-    // Find cell at groupPos and attach node to cell
-    for (const auto& cell: _cells) {
-        const auto cellBr = cell->boundingRect().translated(cell->position());
-        if (cellBr.contains(groupPos)) {
-            cell->setItem(nodeItem);
-            nodeItem->getNode()->setCell(cell);
-            break;
+    if (groupCell != nullptr) {
+        if (std::find(_cells.cbegin(), _cells.cend(), groupCell) != _cells.cend()) {
+            groupCell->setItem(nodeItem);
+            nodeItem->getNode()->setCell(groupCell);
+        } else
+            qWarning() << "qan::TableGroupItem::groupNodeItem(): Internal error, groupCell could not be found in internal cells.";
+    } else {
+        // Find cell at groupPos and attach node to cell
+        for (const auto& cell: _cells) {
+            const auto cellBr = cell->boundingRect().translated(cell->position());
+            if (cellBr.contains(groupPos)) {
+                cell->setItem(nodeItem);
+                nodeItem->getNode()->setCell(cell);
+                break;
+            }
         }
     }
     groupMoved();           // Force call to groupMoved() to update group adjacent edges

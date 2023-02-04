@@ -102,6 +102,15 @@ private:
 protected slots:
     //! Fit actual `_item` to this cell.
     void                    fitItemToCell();
+
+public:
+    //! \copydoc setUserProp()
+    const QVariant&     getUserProp() const { return _userProp; }
+    //! User defined property (may be usefull for custom serialization/persistence, or storing UUID).
+    void                setUserProp(const QVariant& userProp) { _userProp = userProp; }
+protected:
+    //! \copydoc getUserProp()
+    QVariant            _userProp;
     //@}
     //-------------------------------------------------------------------------
 };

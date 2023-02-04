@@ -591,14 +591,17 @@ public:
     //! Shortcut to gtpo::GenGraph<>::getGroupCount().
     Q_INVOKABLE int         getGroupCount() const { return get_group_count(); }
 
-    /*! \brief Group a node  \c node inside \c group group.
+    /*! \brief Group a node \c node inside \c group group.
      *
      * To disable node item coordinates transformation to group item, set transform to false then
-     * manually position node item.
+     * manually position node item (usefull when programmatically grouping node for persistence for example).
+     *
+     * `groupCell` might be used to request grouping in a specific cell when `group` is a `qan::TableGroup`.
      *
      * \sa gtpo::GenGraph::groupNode()
      */
-    Q_INVOKABLE virtual bool    groupNode(qan::Group* group, qan::Node* node, bool transform = true) noexcept;
+    Q_INVOKABLE virtual bool    groupNode(qan::Group* group, qan::Node* node, qan::TableCell* groupCell = nullptr,
+                                          bool transform = true) noexcept;
 
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
     Q_INVOKABLE virtual bool    ungroupNode(qan::Node* node, qan::Group* group = nullptr, bool transform = true) noexcept;

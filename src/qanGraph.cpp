@@ -1019,7 +1019,7 @@ bool    Graph::hasGroup(qan::Group* group) const
     return super_t::has_group(group);
 }
 
-bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform) noexcept
+bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell* groupCell, bool transform) noexcept
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
@@ -1036,7 +1036,7 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
             group->getGroupItem() != nullptr &&
             node->getItem() != nullptr ) {
             emit nodeGrouped(node, group);
-            group->getGroupItem()->groupNodeItem(node->getItem(), transform);
+            group->getGroupItem()->groupNodeItem(node->getItem(), groupCell, transform);
         }
         return true;
     } catch (...) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
