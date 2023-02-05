@@ -89,6 +89,16 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Table Properties *///-------------------------------------------------------
+bool    TableGroup::setLocked(bool locked)
+{
+    if (qan::Group::setLocked(locked)) {
+        // Note: dragging is automatically disable when target is
+        // locked, see qan::DraggableCtrl::handleMouseMoveEvent()
+        return true;
+    }
+    return false;
+}
+
 bool    TableGroup::setRows(int rows)
 {
     if (rows != _rows) {

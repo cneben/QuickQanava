@@ -100,6 +100,10 @@ public:
     /*! \name Table Properties *///--------------------------------------------
     //@{
 public:
+    //! Override default qan::Group behaviour, a locked table group is no longer selectable / resizable.
+    virtual bool    setLocked(bool locked) override;
+
+public:
     //! \copydoc getRows()
     Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)
     //! \copydoc getRows()

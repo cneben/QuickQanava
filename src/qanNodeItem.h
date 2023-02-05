@@ -420,8 +420,8 @@ public:
     Q_INVOKABLE qan::PortItem*  findPort(const QString& portId) const noexcept;
 
     //! Read-only list model of this node ports (either in or out).
-    Q_PROPERTY( QAbstractListModel* ports READ getPortsModel CONSTANT FINAL )
-    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( _ports.getModel() ); }
+    Q_PROPERTY(QAbstractListModel* ports READ getPortsModel CONSTANT FINAL)
+    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>(_ports.getModel()); }
     inline auto         getPorts() noexcept -> PortItems& { return _ports; }
     inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
 
@@ -442,9 +442,9 @@ public:
 
 public:
     //! Item left dock (usually build from qan::Graph::verticalDockDelegate).
-    Q_PROPERTY( QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL)
     //! \copydoc leftDock
-    void                    setLeftDock( QQuickItem* leftDock ) noexcept;
+    void                    setLeftDock(QQuickItem* leftDock) noexcept;
     //! \copydoc leftDock
     inline QQuickItem*      getLeftDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Left)].data(); }
 signals:
@@ -453,9 +453,9 @@ signals:
 
 public:
     //! Item top dock (usually build from qan::Graph::horizontalDockDelegate).
-    Q_PROPERTY( QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL)
     //! \copydoc topDock
-    void                    setTopDock( QQuickItem* topDock ) noexcept;
+    void                    setTopDock(QQuickItem* topDock) noexcept;
     //! \copydoc topDock
     inline QQuickItem*      getTopDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Top)].data(); }
 signals:
@@ -464,9 +464,9 @@ signals:
 
 public:
     //! Item right dock (usually build from qan::Graph::verticalDockDelegate).
-    Q_PROPERTY( QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL)
     //! \copydoc rightDock
-    void                    setRightDock( QQuickItem* rightDock ) noexcept;
+    void                    setRightDock(QQuickItem* rightDock) noexcept;
     //! \copydoc rightDock
     inline QQuickItem*      getRightDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Right)].data(); }
 signals:
@@ -475,9 +475,9 @@ signals:
 
 public:
     //! Item bottom dock (usually build from qan::Graph::horizontalDockDelegate).
-    Q_PROPERTY( QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL)
     //! \copydoc bottomDock
-    void                    setBottomDock( QQuickItem* bottomDock ) noexcept;
+    void                    setBottomDock(QQuickItem* bottomDock) noexcept;
     //! \copydoc bottomDock
     inline QQuickItem*      getBottomDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Bottom)].data(); }
 signals:

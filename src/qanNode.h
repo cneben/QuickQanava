@@ -202,7 +202,7 @@ public:
      * \note nodeRightClicked() signal is still emitted from locked node when node is double clicked.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    bool            setLocked(bool locked);
+    virtual bool    setLocked(bool locked);
     bool            getLocked() const { return _locked; }
 private:
     bool            _locked = false;
