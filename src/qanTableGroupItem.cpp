@@ -474,6 +474,7 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
 
             nodeCell->restoreCache(nodeItem);
             nodeCell->setItem(nullptr);
+            nodeCell->setUserProp(QVariant{});
             nodeItem->setParentItem(getGraph()->getContainerItem());
             if (transform)
                 nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
