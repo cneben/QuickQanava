@@ -39,12 +39,5 @@ import QuickQanava        2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 Qan.AbstractTableCell {
-    id: cell
 
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        //border.width: 1
-        //border.color: "violet"
-    }
 }

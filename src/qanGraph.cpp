@@ -886,9 +886,9 @@ qan::Group* Graph::insertGroup()
     return insertGroup<qan::Group>();
 }
 
-qan::Group* Graph::insertTable(int rows, int cols)
+qan::Group* Graph::insertTable(int cols, int rows)
 {
-    return insertTable<qan::TableGroup>(rows, cols);
+    return insertTable<qan::TableGroup>(cols, rows);
 }
 
 bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::NodeStyle* groupStyle)
@@ -1019,7 +1019,7 @@ bool    Graph::hasGroup(qan::Group* group) const
     return super_t::has_group(group);
 }
 
-bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform) noexcept
+bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell* groupCell, bool transform) noexcept
 {
     // PRECONDITIONS:
         // group and node can't be nullptr
@@ -1036,7 +1036,7 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, bool transform
             group->getGroupItem() != nullptr &&
             node->getItem() != nullptr ) {
             emit nodeGrouped(node, group);
-            group->getGroupItem()->groupNodeItem(node->getItem(), transform);
+            group->getGroupItem()->groupNodeItem(node->getItem(), groupCell, transform);
         }
         return true;
     } catch (...) { qWarning() << "qan::Graph::groupNode(): Topology error."; }

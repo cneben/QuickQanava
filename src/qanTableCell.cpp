@@ -35,6 +35,7 @@
 // QuickQanava headers
 #include "./qanTableCell.h"
 #include "./qanNodeItem.h"
+#include "./qanTableGroup.h"
 
 namespace qan { // ::qan
 
@@ -50,11 +51,27 @@ TableCell::TableCell(QQuickItem* parent):
             this, &qan::TableCell::fitItemToCell);
     connect(this, &QQuickItem::heightChanged,
             this, &qan::TableCell::fitItemToCell);
+
+    setClip(true);  // Clip content
 }
 //-----------------------------------------------------------------------------
 
 
 /* Cell Container Management *///----------------------------------------------
+const qan::TableGroup*  TableCell::getTable() const { return _table.data(); }
+qan::TableGroup*        TableCell::getTable() { return _table.data(); }
+
+void    TableCell::setTable(qan::TableGroup* table)
+{
+    if (table != _table) {
+        _table = table;
+        if (table != nullptr)
+            connect(table,  &qan::TableGroup::cellTopPaddingChanged,    // Do not disconnect table is not subject to
+                    this,   &qan::TableCell::fitItemToCell);            // change
+        emit tableChanged();
+    }
+}
+
 void    TableCell::setItem(QQuickItem* item)
 {
     if (item != _item) {
@@ -65,20 +82,39 @@ void    TableCell::setItem(QQuickItem* item)
             _item->setParentItem(this);
             auto nodeItem = static_cast<qan::NodeItem*>(item);
             if (nodeItem != nullptr) {
+                _cacheSelectable = nodeItem->getSelectable();  // Save node configuration in
+                _cacheDraggable = nodeItem->getDraggable();    // local cache.
+                _cacheResizable = nodeItem->getResizable();
+                _cacheSize = nodeItem->size();
+
                 nodeItem->setSelectable(false);
                 nodeItem->setDraggable(false);
                 nodeItem->setResizable(false);
             }
         }
         fitItemToCell();
+        emit itemChanged();
+    }
+}
+
+void    TableCell::restoreCache(qan::NodeItem* nodeItem) const
+{
+    if (nodeItem != nullptr) {
+        nodeItem->setSelectable(_cacheSelectable);
+        nodeItem->setDraggable(_cacheDraggable);
+        nodeItem->setResizable(_cacheResizable);
+        nodeItem->setSize(_cacheSize);
     }
 }
 
 void    TableCell::fitItemToCell()
 {
     if (_item) {
+        const auto topPadding = _table ? _table->getCellTopPadding() :
+                                         0.;
+        _item->setY(topPadding);
         _item->setWidth(width());
-        _item->setHeight(height());
+        _item->setHeight(height() - topPadding);
     }
 }
 //-----------------------------------------------------------------------------

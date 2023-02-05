@@ -197,13 +197,17 @@ void    TableBorder::layoutCells()
 /* Border Events Management *///-----------------------------------------------
 void    TableBorder::hoverEnterEvent(QHoverEvent* event)
 {
-    if (isVisible()) {
+    if (_tableGroup &&
+        !_tableGroup->getLocked() &&
+        isVisible()) {
         if (getOrientation() == Qt::Vertical)
             setCursor(Qt::SplitHCursor);
         else if (getOrientation() == Qt::Horizontal)
                       setCursor(Qt::SplitVCursor);
         event->setAccepted(true);
     }
+    else
+        event->setAccepted(false);
 }
 
 void    TableBorder::hoverLeaveEvent(QHoverEvent* event)
@@ -214,6 +218,12 @@ void    TableBorder::hoverLeaveEvent(QHoverEvent* event)
 
 void    TableBorder::mouseMoveEvent(QMouseEvent* event)
 {
+    if (!_tableGroup ||
+        _tableGroup->getLocked() ||
+        !isVisible()) {
+        event->setAccepted(false);
+        return;
+    }
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     const auto mePos = event->windowPos();
 #else
@@ -284,8 +294,12 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
 
 void    TableBorder::mousePressEvent(QMouseEvent* event)
 {
-    if (!isVisible())
+    if (!_tableGroup ||
+        _tableGroup->getLocked() ||
+        !isVisible()) {
+        event->setAccepted(false);
         return;
+    }
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     const auto mePos = event->windowPos();
 #else

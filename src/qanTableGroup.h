@@ -61,7 +61,7 @@ class TableGroup : public qan::Group
 public:
     //! TableGroup constructor.
     explicit TableGroup(QObject* parent = nullptr);
-    explicit TableGroup(int rows, int cols);
+    explicit TableGroup(int cols, int rows);
     /*! \brief Remove any childs group who have no QQmlEngine::CppOwnership.
      *
      */
@@ -99,6 +99,10 @@ public:
 
     /*! \name Table Properties *///--------------------------------------------
     //@{
+public:
+    //! Override default qan::Group behaviour, a locked table group is no longer selectable / resizable.
+    virtual bool    setLocked(bool locked) override;
+
 public:
     //! \copydoc getRows()
     Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)
@@ -140,6 +144,20 @@ signals:
 private:
     //! \copydoc getCellSpacing()
     qreal       _cellSpacing = 10.0;
+
+public:
+    //! \copydoc getCellTopPadding()
+    Q_PROPERTY(qreal cellTopPadding READ getCellTopPadding WRITE setCellTopPadding NOTIFY cellTopPaddingChanged FINAL)
+    //! \copydoc getCellTopPadding()
+    bool        setCellTopPadding(qreal cellTopPadding);
+    //! \brief Padding between cell content and cell top, might be usefull to "decorate" cell content.
+    qreal       getCellTopPadding() const { return _cellTopPadding; }
+signals:
+    //! \copydoc getCellTopPadding()
+    void        cellTopPaddingChanged();
+private:
+    //! \copydoc getCellTopPadding()
+    qreal       _cellTopPadding = 0.0;
 
 public:
     //! \brief FIXME #190.

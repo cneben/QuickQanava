@@ -36,6 +36,7 @@
 #include "./qanGraph.h"
 #include "./qanGroupItem.h"
 #include "./qanTableGroupItem.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -104,7 +105,7 @@ void    TableGroupItem::clearLayout()
     _cells.clear();
 }
 
-void    TableGroupItem::initialize(int rows, int cols)
+void    TableGroupItem::initialize(int cols, int rows)
 {
     qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
@@ -159,6 +160,7 @@ void    TableGroupItem::initialize(int rows, int cols)
             horizontalBorder->addPrevCell(_cells[((r-1) * cols) + c]);
             horizontalBorder->addNextCell(_cells[(r * cols)     + c]);
         }
+        r++;
     }
 
     borderComponent->deleteLater();
@@ -188,6 +190,7 @@ void    TableGroupItem::createCells(int cellsCount)
             _cells.push_back(cell);
             cell->setParentItem(getContainer() != nullptr ? getContainer() : this);
             cell->setVisible(true);
+            cell->setTable(getTableGroup());
         }
     }
 
@@ -388,8 +391,8 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 
         auto tableGroup = qobject_cast<qan::TableGroup*>(group);
         if (tableGroup != nullptr) {
-            initialize(tableGroup->getRows(),
-                       tableGroup->getCols());
+            initialize(tableGroup->getCols(),
+                       tableGroup->getRows());
 
             // Set borders reference to group
             for (auto border: _horizontalBorders)
@@ -405,6 +408,11 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
             connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
                     this,       &qan::TableGroupItem::layoutTable);
 
+            // Set cell reference to group
+            for (auto cell: _cells)
+                if (cell != nullptr)
+                    cell->setTable(tableGroup);
+
             layoutTable();  // Force new layout with actual table group settings
             return true;
         }
@@ -418,20 +426,27 @@ qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qa
 
 
 /* TableGroupItem DnD Management *///------------------------------------------
-void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
+void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
+    Q_UNUSED(groupCell)
+    Q_UNUSED(transform)
     if (nodeItem == nullptr ||
         getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
 
     // Note: no need for the container to be visible or open.
-    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
-    if (transform) {
-        const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
-        groupPos = getContainer()->mapFromGlobal(globalPos);
+    const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
+    const auto groupPos = getContainer()->mapFromGlobal(globalPos);
+    if (groupCell != nullptr) {
+        if (std::find(_cells.cbegin(), _cells.cend(), groupCell) != _cells.cend()) {
+            groupCell->setItem(nodeItem);
+            nodeItem->getNode()->setCell(groupCell);
+        } else
+            qWarning() << "qan::TableGroupItem::groupNodeItem(): Internal error, groupCell could not be found in internal cells.";
+    } else {
         // Find cell at groupPos and attach node to cell
         for (const auto& cell: _cells) {
             const auto cellBr = cell->boundingRect().translated(cell->position());
@@ -452,16 +467,19 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         return;
     if (getGraph() &&
         getGraph()->getContainerItem() != nullptr) {
-        const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
-                                                          QPointF{0., 0.});
-        nodeItem->setParentItem(getGraph()->getContainerItem());
-        if (transform)
-            nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
-        nodeItem->setZ(z() + 1.);
-        nodeItem->setDraggable(true);
-        nodeItem->setDroppable(true);
-        nodeItem->setSelectable(true);
-        nodeItem->getNode()->setCell(nullptr);
+        auto nodeCell = nodeItem->getNode()->getCell();
+        if (nodeCell != nullptr) {
+            const QPointF nodeGlobalPos = nodeItem->mapToItem(getGraph()->getContainerItem(),
+                                                              QPointF{0., 0.});
+
+            nodeCell->restoreCache(nodeItem);
+            nodeCell->setItem(nullptr);
+            nodeItem->setParentItem(getGraph()->getContainerItem());
+            if (transform)
+                nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});  // A delta to visualize ungroup
+            nodeItem->setZ(z() + 1.);
+            nodeItem->getNode()->setCell(nullptr);
+        }
     }
 }
 

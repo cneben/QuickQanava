@@ -42,15 +42,15 @@
 // QuickQanava headers
 #include "./qanNodeItem.h"
 #include "./qanGroupItem.h"
-#include "./qanTableCell.h"
 #include "./qanTableBorder.h"
 
 namespace qan { // ::qan
 
 class Graph;
 class TableGroup;
+class TableCell;
 
-/*! \brief FIXME
+/*! \brief FIXME #190
  *
  * \nosubgrouping
  */
@@ -87,7 +87,7 @@ public:
     void        clearLayout();
 
     //! Initialize a table withe default cells and borders.
-    void        initialize(int rows, int cols);
+    void        initialize(int cols, int rows);
 
     void        createCells(int cellsCount);
     void        createBorders(int verticalBordersCount, int horizontalBordersCount);
@@ -124,7 +124,7 @@ private:
 public:
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
      */
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true) override;
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell = nullptr, bool transform = true) override;
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true) override;

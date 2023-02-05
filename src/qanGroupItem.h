@@ -99,7 +99,7 @@ protected slots:
 public:
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
      */
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);

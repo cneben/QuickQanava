@@ -58,9 +58,15 @@ Item {
 
     property alias  backRadius: groupBackground.backRadius
 
-    enabled: groupItem &&
-             groupItem.group ? !groupItem.group.locked :
-                               true
+    enabled: {
+        if (groupItem &&
+            groupItem.group) {
+            if (groupItem.group.isTable())   // If group is a table, let hlg::TableGroup manage locking.
+                return true
+            return !groupItem.group.locked   // Otherwise, disable the delegate for locked group
+        }
+        return true;
+    }
 
     RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground

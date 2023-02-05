@@ -49,7 +49,7 @@ TableGroup::TableGroup(QObject* parent) :
     set_is_group(true);
 }
 
-TableGroup::TableGroup(int rows, int cols) :
+TableGroup::TableGroup(int cols, int rows) :
     qan::Group{nullptr},
     _rows{rows},
     _cols{cols}
@@ -89,6 +89,19 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
 //-----------------------------------------------------------------------------
 
 /* Table Properties *///-------------------------------------------------------
+bool    TableGroup::setLocked(bool locked)
+{
+    if (qan::Group::setLocked(locked)) {
+        // Note: dragging is automatically disable when target is
+        // locked, see qan::DraggableCtrl::handleMouseMoveEvent()
+        // Node resized signal will not be emmited since resizable is
+        // set to false
+        // Note: Nothing to do in fact !
+        return true;
+    }
+    return false;
+}
+
 bool    TableGroup::setRows(int rows)
 {
     if (rows != _rows) {
@@ -114,6 +127,16 @@ bool    TableGroup::setCellSpacing(qreal cellSpacing)
     if (!qFuzzyCompare(1. + cellSpacing, 1. + _cellSpacing)) {
         _cellSpacing = cellSpacing;
         emit cellSpacingChanged();
+        return true;
+    }
+    return false;
+}
+
+bool    TableGroup::setCellTopPadding(qreal cellTopPadding)
+{
+    if (!qFuzzyCompare(1. + cellTopPadding, 1. + _cellTopPadding)) {
+        _cellTopPadding = cellTopPadding;
+        emit cellTopPaddingChanged();
         return true;
     }
     return false;

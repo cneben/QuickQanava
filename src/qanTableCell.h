@@ -40,6 +40,8 @@
 namespace qan { // ::qan
 
 class Graph;
+class TableGroup;
+class NodeItem;
 
 class TableCell : public QQuickItem
 {
@@ -56,19 +58,59 @@ public:
     /*! \name Cell Container Management *///-----------------------------------
     //@{
 public:
-    //! Set `item` in this cell "container", `item` is reparented to cell.
+    //! \copydoc _table
+    Q_PROPERTY(qan::TableGroup* table READ getTable NOTIFY tableChanged)
+    //! \copydoc _table
+    const qan::TableGroup*  getTable() const;
+    //! \copydoc _table
+    qan::TableGroup*        getTable();
+    //! \copydoc _table
+    void                    setTable(qan::TableGroup* table);
+protected:
+    //! Cell parent table.
+    QPointer<qan::TableGroup>   _table;
+signals:
+    //! \copydoc _table
+    void                    tableChanged();
+
+public:
+    //! \copydoc setItem()
+    Q_PROPERTY(QQuickItem* item READ getItem NOTIFY itemChanged)
+    //! \copydoc setItem()
     const QQuickItem*       getItem() const { return _item.data(); }
-    //! \copydoc getItem()
+    //! \copydoc setItem()
     QQuickItem*             getItem() { return _item.data(); }
-    //! \copydoc getItem()
+    //! Set `item` in this cell "container", `item` is reparented to cell.
     void                    setItem(QQuickItem* item);
 protected:
     //! \copydoc getItem()
     QPointer<QQuickItem>    _item;
+signals:
+    //! \copydoc setItem()
+    void                    itemChanged();
+
+public:
+    //! Restore the cache initialized in `setItem()`.
+    void    restoreCache(qan::NodeItem* nodeItem) const;
+private:
+    // Private cache used to restore `item` once it is dragged out of the cell.
+    bool    _cacheSelectable = true;
+    bool    _cacheDraggable = true;
+    bool    _cacheResizable = true;
+    QSizeF  _cacheSize = QSizeF{0., 0.};
 
 protected slots:
     //! Fit actual `_item` to this cell.
     void                    fitItemToCell();
+
+public:
+    //! \copydoc setUserProp()
+    const QVariant&     getUserProp() const { return _userProp; }
+    //! User defined property (may be usefull for custom serialization/persistence, or storing UUID).
+    void                setUserProp(const QVariant& userProp) { _userProp = userProp; }
+protected:
+    //! \copydoc getUserProp()
+    QVariant            _userProp;
     //@}
     //-------------------------------------------------------------------------
 };
