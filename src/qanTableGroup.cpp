@@ -94,6 +94,9 @@ bool    TableGroup::setLocked(bool locked)
     if (qan::Group::setLocked(locked)) {
         // Note: dragging is automatically disable when target is
         // locked, see qan::DraggableCtrl::handleMouseMoveEvent()
+        // Node resized signal will not be emmited since resizable is
+        // set to false
+        // Note: Nothing to do in fact !
         return true;
     }
     return false;
