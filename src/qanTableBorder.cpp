@@ -148,6 +148,8 @@ void    TableBorder::layoutCells()
 
         // Layout prev/next cells position and size
         for (auto prevCell: _prevCells) {
+            if (prevCell == nullptr)
+                continue;
             prevCell->setWidth(vCenter -
                                prevCell->x() - spacing2);
             if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
@@ -156,10 +158,12 @@ void    TableBorder::layoutCells()
             }
         }
         for (auto nextCell: _nextCells) {
+            if (nextCell == nullptr)
+                continue;
             nextCell->setX(vCenter + spacing2);
             if (_nextBorder &&
                 _nextBorder->verticalCenter() > (x() + spacing))  // nextBorder might still not be initialized...
-                nextCell->setWidth(_nextBorder->verticalCenter() - x() - spacing);  // FIXME #190 secure that
+                nextCell->setWidth(_nextBorder->verticalCenter() - x() - spacing);
 
             if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
                 _tableGroup && tableGroupItem != nullptr) {
@@ -172,6 +176,8 @@ void    TableBorder::layoutCells()
 
         // Layout prev/next cells position and size
         for (auto prevCell: _prevCells) {
+            if (prevCell == nullptr)
+                continue;
             prevCell->setHeight(hCenter -
                                 prevCell->y() - spacing2);
             if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
@@ -180,10 +186,12 @@ void    TableBorder::layoutCells()
             }
         }
         for (auto nextCell: _nextCells) {
+            if (nextCell == nullptr)
+                continue;
             nextCell->setY(hCenter + spacing2);
             if (_nextBorder &&
                 _nextBorder->horizontalCenter() > (y() + spacing))  // nextBorder might still not be initialized...
-                nextCell->setHeight(_nextBorder->horizontalCenter() - y() - spacing);  // FIXME #190 secure that
+                nextCell->setHeight(_nextBorder->horizontalCenter() - y() - spacing);
 
             if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
                 _tableGroup && tableGroupItem != nullptr) {

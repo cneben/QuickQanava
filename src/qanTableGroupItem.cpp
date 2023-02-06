@@ -404,6 +404,7 @@ void    TableGroupItem::layoutTable()
         verticalBorder->setY(0.);
         verticalBorder->setHeight(height());
     }
+
     for (const auto horizontalBorder: _horizontalBorders) {
         if (horizontalBorder == nullptr)
             continue;
@@ -414,6 +415,18 @@ void    TableGroupItem::layoutTable()
     }
 
     _previousSize = size();
+}
+
+void    TableGroupItem::layoutCells()
+{
+    for (const auto verticalBorder: _verticalBorders) {
+        if (verticalBorder != nullptr)
+            verticalBorder->layoutCells();
+    }
+    for (const auto horizontalBorder: _horizontalBorders) {
+        if (horizontalBorder != nullptr)
+            horizontalBorder->layoutCells();
+    }
 }
 
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
@@ -434,11 +447,11 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
                 if (border)
                     border->setTableGroup(tableGroup);
             connect(tableGroup, &qan::TableGroup::cellSpacingChanged,
-                    this,       &qan::TableGroupItem::layoutTable);
+                    this,       &qan::TableGroupItem::layoutCells);
             connect(tableGroup, &qan::TableGroup::cellMinimumSizeChanged,
-                    this,       &qan::TableGroupItem::layoutTable);
+                    this,       &qan::TableGroupItem::layoutCells);
             connect(tableGroup, &qan::TableGroup::tablePaddingChanged,
-                    this,       &qan::TableGroupItem::layoutTable);
+                    this,       &qan::TableGroupItem::layoutCells);
 
             // Set cell reference to group
             for (auto cell: _cells)
@@ -481,6 +494,8 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* g
     } else {
         // Find cell at groupPos and attach node to cell
         for (const auto& cell: _cells) {
+            if (cell == nullptr)
+                continue;
             const auto cellBr = cell->boundingRect().translated(cell->position());
             if (cellBr.contains(groupPos)) {
                 cell->setItem(nodeItem);
@@ -497,7 +512,7 @@ void    TableGroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
 {
     if (nodeItem == nullptr)   // A container must have configured in concrete QML group component
         return;
-    if (getGraph() &&
+    if (getGraph() != nullptr &&
         getGraph()->getContainerItem() != nullptr) {
         auto nodeCell = nodeItem->getNode()->getCell();
         if (nodeCell != nullptr) {

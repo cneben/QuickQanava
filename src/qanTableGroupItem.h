@@ -50,7 +50,7 @@ class Graph;
 class TableGroup;
 class TableCell;
 
-/*! \brief FIXME #190
+/*! \brief Visual delegate for qan::TableGroup, manage table layout, borders and cells.
  *
  * \nosubgrouping
  */
@@ -95,6 +95,9 @@ public:
 public slots:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
+
+    //! Layout table cells, triggered when table style change.
+    void        layoutCells();
 protected:
     QSizeF      _previousSize = QSizeF{0., 0.};
 
