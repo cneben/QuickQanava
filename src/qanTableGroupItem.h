@@ -50,7 +50,7 @@ class Graph;
 class TableGroup;
 class TableCell;
 
-/*! \brief FIXME #190
+/*! \brief Visual delegate for qan::TableGroup, manage table layout, borders and cells.
  *
  * \nosubgrouping
  */
@@ -59,23 +59,18 @@ class TableGroupItem : public qan::GroupItem
     /*! \name TableGroupItem Object Management *///----------------------------
     //@{
     Q_OBJECT
-    Q_INTERFACES(QQmlParserStatus)
 public:
     explicit TableGroupItem(QQuickItem* parent = nullptr);
     virtual ~TableGroupItem() override;
     TableGroupItem(const TableGroupItem&) = delete;
 
 public:
-    //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
-    virtual void    componentComplete() override;
-
-    virtual void    classBegin() override;
-
     //! Override qan::GroupItem::setContainer()
     virtual bool    setContainer(QQuickItem* container) noexcept override;
 
 signals:
-    void        modified();
+    //! Emitted when the table geometry has change (border modified for example).
+    void            modified();
     //@}
     //-------------------------------------------------------------------------
 
@@ -91,12 +86,20 @@ public:
 
     void        createCells(int cellsCount);
     void        createBorders(int verticalBordersCount, int horizontalBordersCount);
+
 protected:
     auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
 
+public:
+    void        initializeTableLayout();
 public slots:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
+
+    //! Layout table cells, triggered when table style change.
+    void        layoutCells();
+protected:
+    QSizeF      _previousSize = QSizeF{0., 0.};
 
 public:
     virtual bool            setGroup(qan::Group* group) noexcept override;
