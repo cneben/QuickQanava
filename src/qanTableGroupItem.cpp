@@ -60,10 +60,6 @@ TableGroupItem::~TableGroupItem()
     clearLayout();
 }
 
-void    TableGroupItem::componentComplete() { /* Nil */ }
-
-void    TableGroupItem::classBegin() { }
-
 bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
     qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
@@ -164,6 +160,8 @@ void    TableGroupItem::initialize(int cols, int rows)
     }
 
     borderComponent->deleteLater();
+
+    initializeTableLayout();
 }
 
 void    TableGroupItem::createCells(int cellsCount)
@@ -300,9 +298,9 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
     return item;
 };
 
-void    TableGroupItem::layoutTable()
+void    TableGroupItem::initializeTableLayout()
 {
-    qWarning() << "qan::TableGroupItem::layoutTable()";
+    qWarning() << "qan::TableGroupItem::initializeTableLayout()";
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
@@ -314,11 +312,11 @@ void    TableGroupItem::layoutTable()
                                                  2.;
 
     if (cols <= 0 || rows <= 0) {
-        qWarning() << "qan::TableGroupItem::layoutTable(): Error, rows and columns count can't be <= 0.";
+        qWarning() << "qan::TableGroupItem::initializeTableLayout(): Error, rows and columns count can't be <= 0.";
         return;
     }
     if (spacing < 0 || padding < 0) {
-        qWarning() << "qan::TableGroupItem::layoutTable(): Error, padding and spacing can't be < 0.";
+        qWarning() << "qan::TableGroupItem::initializeTableLayout(): Error, padding and spacing can't be < 0.";
         return;
     }
 
@@ -335,7 +333,7 @@ void    TableGroupItem::layoutTable()
     //qWarning() << "cellHeight=" << cellHeight;
 
     if (cellWidth < 0. || cellHeight < 0.) {
-        qWarning() << "qan::TableGroupItem::layoutTable(): Error, invalid cell width/height.";
+        qWarning() << "qan::TableGroupItem::initializeTableLayout(): Error, invalid cell width/height.";
         return;
     }
     // Note: cells are laid out by their borders, do not set their geometry
@@ -360,7 +358,7 @@ void    TableGroupItem::layoutTable()
             verticalBorder->setHeight(height());
         }
     } else
-        qWarning() << "qan::TableGoupItem::layoutTable(): Invalid vertical border count.";
+        qWarning() << "qan::TableGoupItem::initializeTableLayout(): Invalid vertical border count.";
 
     // Layout horizontal borders
     if (static_cast<int>(_horizontalBorders.size()) == rows - 1) {
@@ -378,10 +376,44 @@ void    TableGroupItem::layoutTable()
             horizontalBorder->setHeight(borderHeight);
         }
     } else
-        qWarning() << "qan::TableGoupItem::layoutTable(): Invalid horizontal border count.";
+        qWarning() << "qan::TableGoupItem::initializeTableLayout(): Invalid horizontal border count.";
 
     // Note: There is no need to manually call borders layoutCells() method
     // it will be called automatically when border are moved.
+}
+
+void    TableGroupItem::layoutTable()
+{
+    // Adapt to a new (width, height), keep previous rows/columns ratio
+    // New position is:
+    //  x = previousX * (actualWidth / previousWidth)
+    //  y = previousY * (actualHeight / previousHeight)
+    if (_previousSize.isNull()) {
+        qWarning() << "qan::TableGroupItem::layoutTable(): Invalid initial size.";
+        _previousSize = size();
+        return;
+    }
+    if (_previousSize == size())
+        return;
+
+    for (const auto verticalBorder: _verticalBorders) {
+        if (verticalBorder == nullptr)
+            continue;
+        const auto previousX = verticalBorder->x();
+        verticalBorder->setX(qRound(previousX * width() / _previousSize.width()));
+        verticalBorder->setY(0.);
+        verticalBorder->setHeight(height());
+    }
+    for (const auto horizontalBorder: _horizontalBorders) {
+        if (horizontalBorder == nullptr)
+            continue;
+        const auto previousY = horizontalBorder->y();
+        horizontalBorder->setX(0.);
+        horizontalBorder->setY(qRound(previousY * height() / _previousSize.height()));
+        horizontalBorder->setWidth(width());
+    }
+
+    _previousSize = size();
 }
 
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
