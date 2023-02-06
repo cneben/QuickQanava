@@ -415,6 +415,7 @@ void    TableGroupItem::layoutTable()
     }
 
     _previousSize = size();
+    layoutCells();
 }
 
 void    TableGroupItem::layoutCells()
