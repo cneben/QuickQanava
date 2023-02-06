@@ -1066,6 +1066,9 @@ bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transfo
                 group->getGroupItem()->ungroupNodeItem(node->getItem(), transform);
             super_t::ungroup_node(node, group);
             emit nodeUngrouped(node, group);
+            const auto tableGroup = qobject_cast<qan::TableGroup*>(group);
+            if (tableGroup != nullptr)  // Note: Specific handling of table, table maintain
+                emit tableModified(tableGroup);  // reference to node in it's cell, force an update
             if (node != nullptr &&
                 node->getItem() != nullptr) {
                 // Update node z to maxZ: otherwise an undroupped node might be behind it's host group.
