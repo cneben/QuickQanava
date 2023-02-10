@@ -59,6 +59,14 @@ Navigable::Navigable(QQuickItem* parent) :
     setGrid(_defaultGrid.get());
     setAcceptTouchEvents(true);
 }
+
+Navigable::~Navigable()
+{
+    disconnect(_containerItem, nullptr, this, nullptr);
+    if (_grid) {
+        disconnect(_grid, nullptr, this, nullptr);
+    }
+}
 //-----------------------------------------------------------------------------
 
 /* Navigation Management *///--------------------------------------------------
@@ -495,8 +503,8 @@ void    Navigable::setGrid(qan::Grid* grid) noexcept
             _grid->setZ(-1.0);
             _grid->setAntialiasing(false);
             _grid->setScale(1.0);
-            connect(grid,   &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
-                    this,   &Navigable::updateGrid);    // take into account any grid property change while grid was hidden.
+            connect(_grid,  &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
+                    this,   &Navigable::updateGrid);     // take into account any grid property change while grid was hidden.
         }
         if (!_grid)
             _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"

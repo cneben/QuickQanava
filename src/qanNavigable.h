@@ -96,7 +96,7 @@ class Navigable : public QQuickItem
 Q_OBJECT
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
-    virtual ~Navigable() override = default;
+    virtual ~Navigable() override;
     Navigable(const Navigable&) = delete;
     //@}
     //-------------------------------------------------------------------------
