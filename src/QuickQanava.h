@@ -75,17 +75,17 @@ struct QuickQanava {
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
             engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
 
-            engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeStraightPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeOrthoPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeCurvedPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeStraightPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeOrthoPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeCurvedPath.qml", engine));
 
-            engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcArrowPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeSrcCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcCirclePath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeSrcRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcRectPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcArrowPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeSrcCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcCirclePath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeSrcRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcRectPath.qml", engine));
 
-            engine->rootContext()->setContextProperty("qanEdgeDstArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstArrowPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeDstArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstArrowPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml", engine));
         }
         qmlRegisterType<qan::NodeItem>("QuickQanava", 2, 0, "NodeItem");
         qmlRegisterType<qan::PortItem>("QuickQanava", 2, 0, "PortItem");
