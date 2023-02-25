@@ -212,9 +212,17 @@ void    NodeItem::collapseChilds(bool collapsed)
 //-----------------------------------------------------------------------------
 
 /* Selection Management *///---------------------------------------------------
-void    NodeItem::onWidthChanged() { configureSelectionItem(); }
+void    NodeItem::onWidthChanged()
+{
+    configureSelectionItem();
+    setBoundingShape(generateDefaultBoundingShape());
+}
 
-void    NodeItem::onHeightChanged() { configureSelectionItem(); }
+void    NodeItem::onHeightChanged()
+{
+    configureSelectionItem();
+    setBoundingShape(generateDefaultBoundingShape());
+}
 //-----------------------------------------------------------------------------
 
 /* Node Configuration *///-----------------------------------------------------
