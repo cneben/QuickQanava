@@ -1035,8 +1035,8 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell
         if (node->get_group() == group &&  // Check that group insertion succeed
             group->getGroupItem() != nullptr &&
             node->getItem() != nullptr ) {
-            emit nodeGrouped(node, group);
             group->getGroupItem()->groupNodeItem(node->getItem(), groupCell, transform);
+            emit nodeGrouped(node, group);
         }
         return true;
     } catch (...) { qWarning() << "qan::Graph::groupNode(): Topology error."; }
