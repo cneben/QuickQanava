@@ -245,27 +245,30 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
         // 2.2
-        // Note 20230406: Code deactivated, complex to maintain and no visual gain...
-        /*bool applyX = dragHorizontally &&
+        // Smooth inital drag when object are not aligned on grid.
+        bool applyX = dragHorizontally &&
                       std::fabs(sceneDelta.x()) > (gridSize.width() / 2.001);
         bool applyY = dragVertically &&
                       std::fabs(sceneDelta.y()) > (gridSize.height() / 2.001);
-        if (!applyX && dragHorizontally) {
+        /*if (!applyX && dragHorizontally) {
             const auto posModGridX = fmod(targetUnsnapScenePos.x(), gridSize.width());
             applyX = qFuzzyIsNull(posModGridX);
         }
         if (!applyY && dragVertically) {
             const auto posModGridY = fmod(targetUnsnapScenePos.y(), gridSize.height());
             applyY = qFuzzyIsNull(posModGridY);
-        }
-        if (applyX || applyY) { // 2.3*/
-        if (dragHorizontally || dragVertically) { // 2.3
-            const auto targetSnapPosX = dragHorizontally ? gridSize.width() * std::round(targetUnsnapScenePos.x() / gridSize.width()) :
-                                                           _initialTargetScenePos.x();
-            const auto targetSnapPosY = dragVertically ? gridSize.height() * std::round(targetUnsnapScenePos.y() / gridSize.height()) :
-                                                         _initialTargetScenePos.y();
-            targetScenePos = QPointF{targetSnapPosX, targetSnapPosY};
-        }
+        }*/
+        // 2.3
+        const auto targetSnapScenePosX = applyX ? gridSize.width() * std::round(targetUnsnapScenePos.x() / gridSize.width()) :
+                                             _initialTargetScenePos.x();
+        const auto targetSnapScenePosY = applyY ? gridSize.height() * std::round(targetUnsnapScenePos.y() / gridSize.height()) :
+                                             _initialTargetScenePos.y();
+        targetScenePos = QPointF{targetSnapScenePosX, targetSnapScenePosY};
+    } else {
+        // Apply drag constrain even if there is no snap to grid
+        targetScenePos = QPointF{dragHorizontally ? targetUnsnapScenePos.x() : _initialTargetScenePos.x(),
+                                 dragVertically ? targetUnsnapScenePos.y() : _initialTargetScenePos.y()
+        };
     }
 
     // 3.
