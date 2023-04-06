@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 20230406 prev2.3.0:
+- Fix a serious bug on multiple selection dragging and snap to grid.
+- Fix a table node grouping issue when cols==1 or rows==1.
+
 ## 20221226 prev2.3.0:
 - #185: Add horizontal or vertical constrain on node/group dragging, see new property `qan::NodeItem::dragOrientation`.
 
