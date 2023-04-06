@@ -167,16 +167,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
 
-    qWarning() << "beginDragMove --------------------------------------";
-    qWarning() << "dragSelection=" << dragSelection;
-    qWarning() << "sceneDragPos=" << sceneDragPos;
     _initialSceneDragPos = sceneDragPos;
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr)   // Project in scene rect (for example if a node is part of a group)
         _initialTargetScenePos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
-    qWarning() << "_initialTargetScenePos=" << _initialTargetScenePos;
-    qWarning() << "--------------------------------------";
-    qWarning() << "";
 
     // If there is a selection, keep start position for all selected nodes.
     if (dragSelection) {
@@ -235,12 +229,6 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     auto targetUnsnapScenePos = _initialTargetScenePos + sceneDelta;
     auto targetScenePos = targetUnsnapScenePos; // By default, do not snap
 
-    qWarning() << "dragMove --------------------------------------";
-    qWarning() << "sceneDragPos=" << sceneDragPos;
-    qWarning() << "_initialSceneDragPos=" << _initialSceneDragPos;
-    qWarning() << "sceneDelta=" << sceneDelta;
-    qWarning() << "targetUnsnapScenePos=" << targetUnsnapScenePos;
-
     // 2. Snap drag delta algorithm:
     // 2.1. Compute drag horisontal / verticall constrains
     // 2.2. If target position is "centered" on grid
@@ -257,7 +245,8 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
         // 2.2
-        bool applyX = dragHorizontally &&
+        // Note 20230406: Code deactivated, complex to maintain and no visual gain...
+        /*bool applyX = dragHorizontally &&
                       std::fabs(sceneDelta.x()) > (gridSize.width() / 2.001);
         bool applyY = dragVertically &&
                       std::fabs(sceneDelta.y()) > (gridSize.height() / 2.001);
@@ -269,7 +258,8 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
             const auto posModGridY = fmod(targetUnsnapScenePos.y(), gridSize.height());
             applyY = qFuzzyIsNull(posModGridY);
         }
-        if (applyX || applyY) { // 2.3
+        if (applyX || applyY) { // 2.3*/
+        if (dragHorizontally || dragVertically) { // 2.3
             const auto targetSnapPosX = dragHorizontally ? gridSize.width() * std::round(targetUnsnapScenePos.x() / gridSize.width()) :
                                                            _initialTargetScenePos.x();
             const auto targetSnapPosY = dragVertically ? gridSize.height() * std::round(targetUnsnapScenePos.y() / gridSize.height()) :
@@ -280,8 +270,6 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
 
     // 3.
     auto targetGroupItem = _target->getGroup() != nullptr ? _target->getGroup()->getGroupItem() : nullptr;
-    qWarning() << "targetGroupItem=" << targetGroupItem;
-    qWarning() << "targetScenePos=" << targetScenePos;
     bool movedInsideGroup = false;
     if (targetGroupItem != nullptr) {
         // Convert the target "unsnap" position in group CS (ie it's parent CS)
@@ -294,8 +282,6 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
             QPointF{0., 0.},
             QSizeF{targetGroupItem->width(), targetGroupItem->height()}
         };
-        qWarning() << "    targetRect=" << targetRect;
-        qWarning() << "    groupRect=" << groupRect;
         movedInsideGroup = groupRect.contains(targetRect);
         if (!movedInsideGroup)
             graph->ungroupNode(_target, _target->get_group());
@@ -311,8 +297,6 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     } else { // Do not snap to grid
         _targetItem->setPosition(targetScenePos);
     }
-
-    qWarning() << "--------------------------------------";
 
     // 5.
     if (dragSelection) {
