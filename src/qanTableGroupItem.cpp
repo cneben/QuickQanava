@@ -300,7 +300,7 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
-    qWarning() << "qan::TableGroupItem::initializeTableLayout()";
+    //qWarning() << "qan::TableGroupItem::initializeTableLayout()";
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
@@ -427,6 +427,29 @@ void    TableGroupItem::layoutCells()
     for (const auto horizontalBorder: _horizontalBorders) {
         if (horizontalBorder != nullptr)
             horizontalBorder->layoutCells();
+    }
+
+    // Special handling for 1 row or 1 column table: since there is
+    // no "moveable" border, calls to layoutCells() do not set either width/height
+    // of cells. Manually set correct width / height:
+    const auto tableGroup = getTableGroup();
+    if (tableGroup == nullptr)
+        return;
+    const auto padding = getTableGroup() != nullptr ? getTableGroup()->getTablePadding() : 2.;
+    const auto padding2 = padding * 2.;
+    if (tableGroup->getCols() == 1) {
+        for (const auto cell: _cells)
+            if (cell != nullptr) {
+                cell->setX(padding);
+                cell->setWidth(width() - padding2);
+            }
+    }
+    if (tableGroup->getRows() == 1) {
+        for (const auto cell: _cells)
+            if (cell != nullptr) {
+                cell->setHeight(height() - padding2);
+                cell->setY(padding);
+            }
     }
 }
 

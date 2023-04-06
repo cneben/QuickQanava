@@ -290,11 +290,10 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     // 4. Apply drag end position
     // Refresh targetGroupItem it might have changed if target has been ungrouped
     targetGroupItem = _target->getGroup() != nullptr ? _target->getGroup()->getGroupItem() : nullptr;
-    qWarning() << "targetGroupItem=" << targetGroupItem;
     if (targetGroupItem) {
         const auto targetGroupPos = graphContainerItem->mapToItem(targetGroupItem, targetScenePos);
         _targetItem->setPosition(targetGroupPos);
-    } else { // Do not snap to grid
+    } else {
         _targetItem->setPosition(targetScenePos);
     }
 
@@ -361,8 +360,8 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
 
     bool nodeGrouped = false;
     if (_targetItem->getDroppable()) {
-        const auto targetContainerPos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
-        qan::Group* group = graph->groupAt(targetContainerPos, { _targetItem->width(), _targetItem->height() }, _targetItem);
+        const auto targetScenePos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
+        qan::Group* group = graph->groupAt(targetScenePos, { _targetItem->width(), _targetItem->height() }, _targetItem);
         if (group != nullptr &&
             static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
             if (group->getGroupItem() != nullptr &&             // Do not allow grouping a node in a collapsed
