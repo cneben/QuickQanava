@@ -380,6 +380,9 @@ void    TableGroupItem::initializeTableLayout()
 
     // Note: There is no need to manually call borders layoutCells() method
     // it will be called automatically when border are moved.
+    // Note 20230406: In fact calling layout cell is necessary for rows==1, cols==1
+    // table that need special handling to dimension cells since there is no horiz/vert borders.
+    layoutCells();
 }
 
 void    TableGroupItem::layoutTable()
