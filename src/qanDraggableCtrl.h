@@ -110,9 +110,9 @@ public:
 
 private:
     //! Internal (mouse) initial dragging position.
-    QPointF                 _initialDragPos{0., 0.};
+    QPointF                 _initialSceneDragPos{0., 0.};
     //! Internal (target) initial dragging position.
-    QPointF                 _initialTargetPos{0., 0.};
+    QPointF                 _initialTargetScenePos{0., 0.};
 
     //! Last group hovered during a node drag (cached to generate a dragLeave signal on qan::Group).
     QPointer<qan::Group>    _lastProposedGroup{nullptr};

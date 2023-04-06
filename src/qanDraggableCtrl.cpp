@@ -170,11 +170,11 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     qWarning() << "beginDragMove --------------------------------------";
     qWarning() << "dragSelection=" << dragSelection;
     qWarning() << "sceneDragPos=" << sceneDragPos;
-    _initialDragPos = sceneDragPos;
+    _initialSceneDragPos = sceneDragPos;
     const auto rootItem = getGraph()->getContainerItem();
-    if (rootItem != nullptr)   // Project in scene rect (for example is a node is part of a group)
-        _initialTargetPos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
-    qWarning() << "_initialTargetPos=" << _initialTargetPos;
+    if (rootItem != nullptr)   // Project in scene rect (for example if a node is part of a group)
+        _initialTargetScenePos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
+    qWarning() << "_initialTargetScenePos=" << _initialTargetScenePos;
     qWarning() << "--------------------------------------";
     qWarning() << "";
 
@@ -217,53 +217,34 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         return;
 
     // Algorithm:
-        // 1. For grouped node (node insed a group), check if the drag move occurs inside the group.
+    //   - Strategy:
+    //     - both unsnap and snap final target positions are computed in global scene CS.
+    //     - If the target is inside a group, positions are finally converted to it's parent CS
+    //       - Difficulty is that a target might be well be moved outside of a group, hence beeing grouped before
+    //         drag an ungrouped following drag !
+
+        // 1. For grouped node (node inside a group), check if the drag move occurs inside the group.
             // 1.1 For inside
             // 2.1 For outside groups
         // 2. For ungrouped nodes, perform the drag using scene coords.
         // 3. If the node is ungroupped and the drag is not an inside group dragging, propose
         //    the node for grouping (ie just hilight the potential target group item).
 
-    const auto delta = (sceneDragPos - _initialDragPos);
-    auto targetUnsnapPos = _initialTargetPos + delta;
+    // All scene* are in scene CS.
+    const auto sceneDelta = (sceneDragPos - _initialSceneDragPos);    // _initialSceneDragPos is _always_ in scene CS.
+    auto targetUnsnapScenePos = _initialTargetScenePos + sceneDelta;
+    auto targetScenePos = targetUnsnapScenePos; // By default, do not snap
+
     qWarning() << "dragMove --------------------------------------";
     qWarning() << "sceneDragPos=" << sceneDragPos;
-    qWarning() << "_initialDragPos=" << _initialDragPos;
-    qWarning() << "delta=" << delta;
-    qWarning() << "targetUnsnapPos=" << targetUnsnapPos;
+    qWarning() << "_initialSceneDragPos=" << _initialSceneDragPos;
+    qWarning() << "sceneDelta=" << sceneDelta;
+    qWarning() << "targetUnsnapScenePos=" << targetUnsnapScenePos;
 
-    const auto targetGroup = _target->get_group();
-    qWarning() << "targetGroup=" << targetGroup;
-    auto movedInsideGroup = false;
-    if (targetGroup &&
-        targetGroup->getItem() != nullptr) {
-        // FIXME: convert targetUnsnapPos to group item CS
-        const auto groupTargetUnsnapPos = graphContainerItem->mapToItem(targetGroup->getItem(), targetUnsnapPos);
-        const QRectF targetRect{
-            groupTargetUnsnapPos,
-            // FIXME targetUnsnapPos,
-            QSizeF{_targetItem->width(),
-                   _targetItem->height()}
-        };
-        const QRectF groupRect{
-            QPointF{0., 0.},
-            QSizeF{targetGroup->getItem()->width(),
-                   targetGroup->getItem()->height()}
-        };
-        qWarning() << "    targetRect=" << targetRect;
-        qWarning() << "    groupRect=" << groupRect;
-
-        movedInsideGroup = groupRect.contains(targetRect);
-        if (!movedInsideGroup)
-            graph->ungroupNode(_target, _target->get_group());
-        targetUnsnapPos = groupTargetUnsnapPos; // FIXME explain that...
-    }
-    qWarning() << "movedInsideGroup=" << movedInsideGroup;
-    qWarning() << "--------------------------------------";
-    // Drag algorithm:
+    // Snapped drag delta algorithm:
     // 2.1. Convert the mouse drag position to "target item" space unspaned pos
     // 2.2. If target position is "centered" on grid
-    //    or mouse delta > grid
+    //    or mouse sceneDelta > grid
     //   2.2.1 Compute snapped position, apply it
     const auto targetDragOrientation = _targetItem->getDragOrientation();
     const auto dragHorizontally = disableOrientation ||
@@ -275,38 +256,77 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     if (!disableSnapToGrid &&
         getGraph()->getSnapToGrid()) {
         const auto& gridSize = getGraph()->getSnapToGridSize();
+        // FIXME Unclear code...
         bool applyX = dragHorizontally &&
-                      std::fabs(delta.x()) > (gridSize.width() / 2.001);
+                      std::fabs(sceneDelta.x()) > (gridSize.width() / 2.001);
         bool applyY = dragVertically &&
-                      std::fabs(delta.y()) > (gridSize.height() / 2.001);
+                      std::fabs(sceneDelta.y()) > (gridSize.height() / 2.001);
         if (!applyX && dragHorizontally) {
-            const auto posModGridX = fmod(targetUnsnapPos.x(), gridSize.width());
+            const auto posModGridX = fmod(targetUnsnapScenePos.x(), gridSize.width());
             applyX = qFuzzyIsNull(posModGridX);
         }
         if (!applyY && dragVertically) {
-            const auto posModGridY = fmod(targetUnsnapPos.y(), gridSize.height());
+            const auto posModGridY = fmod(targetUnsnapScenePos.y(), gridSize.height());
             applyY = qFuzzyIsNull(posModGridY);
         }
         if (applyX || applyY) {
-            const auto targetSnapPosX = dragHorizontally ? gridSize.width() * std::round(targetUnsnapPos.x() / gridSize.width()) :
-                                                           _initialTargetPos.x();
-            const auto targetSnapPosY = dragVertically ? gridSize.height() * std::round(targetUnsnapPos.y() / gridSize.height()) :
-                                                         _initialTargetPos.y();
-            _targetItem->setPosition(QPointF{targetSnapPosX,
-                                             targetSnapPosY});
+            const auto targetSnapPosX = dragHorizontally ? gridSize.width() * std::round(targetUnsnapScenePos.x() / gridSize.width()) :
+                                                           _initialTargetScenePos.x();
+            const auto targetSnapPosY = dragVertically ? gridSize.height() * std::round(targetUnsnapScenePos.y() / gridSize.height()) :
+                                                         _initialTargetScenePos.y();
+            targetScenePos = QPointF{targetSnapPosX, targetSnapPosY};
         }
-    } else { // Do not snap to grid
-        _targetItem->setPosition(QPointF{dragHorizontally ? targetUnsnapPos.x() : _initialTargetPos.x(),
-                                         dragVertically   ? targetUnsnapPos.y() : _initialTargetPos.y()});
     }
 
+    // Apply translation and manage eventual ungrouping
+    auto targetGroupItem = _target->getGroup() != nullptr ? _target->getGroup()->getGroupItem() : nullptr;
+    qWarning() << "targetGroupItem=" << targetGroupItem;
+    qWarning() << "targetScenePos=" << targetScenePos;
+    bool movedInsideGroup = false;
+    if (targetGroupItem != nullptr) {
+        // Convert the target "unsnap" position in group CS (ie it's parent CS)
+        const auto targetUnsnapGroupPos = graphContainerItem->mapToItem(targetGroupItem, targetScenePos);
+        const QRectF targetRect{
+            targetUnsnapGroupPos,
+            QSizeF{_targetItem->width(), _targetItem->height()}
+        };
+        const QRectF groupRect{
+            QPointF{0., 0.},
+            QSizeF{targetGroupItem->width(), targetGroupItem->height()}
+        };
+        qWarning() << "    targetRect=" << targetRect;
+        qWarning() << "    groupRect=" << groupRect;
+        movedInsideGroup = groupRect.contains(targetRect);
+        if (!movedInsideGroup)
+            graph->ungroupNode(_target, _target->get_group());
+    }
+
+    // Apply translation
+    // Refresh targetGroupItem it might have changed if target has been ungrouped
+    targetGroupItem = _target->getGroup() != nullptr ? _target->getGroup()->getGroupItem() : nullptr;
+    qWarning() << "targetGroupItem=" << targetGroupItem;
+    //qWarning() << "targetUnsnapScenePos=" << targetUnsnapScenePos;
+    //qWarning() << "targetSnapScenePos=" << targetSnapScenePos;
+    if (targetGroupItem) {
+        const auto targetGroupPos = graphContainerItem->mapToItem(targetGroupItem, targetScenePos);
+        _targetItem->setPosition(targetGroupPos);
+    } else { // Do not snap to grid
+        _targetItem->setPosition(targetScenePos);
+        //const auto targetSnapPos = graphContainerItem->mapToItem(targetScenePos);
+        //_targetItem->setPosition(QPointF{dragHorizontally ? targetUnsnapScenePos.x() : _initialTargetScenePos.x(),
+        //                                 dragVertically   ? targetUnsnapScenePos.y() : _initialTargetScenePos.y()});
+    }
+
+    qWarning() << "--------------------------------------";
+
+    // FIXME document that
     if (dragSelection) {
         auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=
                                             static_cast<QQuickItem*>(this->_targetItem.data());
             if (primitive != nullptr &&
                 primitive->getItem() != nullptr &&
-                primitiveIsNotSelf)       // Note: Contrary to beginDragMove(), drag nodes that are inside a group
+                primitiveIsNotSelf)       // Note: nodes inside a group or groups might be dragged too
                 primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
         };
 
@@ -342,8 +362,8 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
 
 void    DraggableCtrl::endDragMove(bool dragSelection)
 {
-    _initialDragPos = QPointF{0., 0.};    // Invalid all cached coordinates when drag ends
-    _initialTargetPos = QPointF{0., 0.};
+    _initialSceneDragPos = QPointF{0., 0.};    // Invalid all cached coordinates when drag ends
+    _initialTargetScenePos = QPointF{0., 0.};
     _lastProposedGroup = nullptr;
 
     // PRECONDITIONS:
