@@ -1021,6 +1021,7 @@ bool    Graph::hasGroup(qan::Group* group) const
 
 bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell* groupCell, bool transform) noexcept
 {
+    //qWarning() << "qan::Graph::groupNode(): group=" << group << "  node=" << node << "  groupCell=" << groupCell;
     // PRECONDITIONS:
         // group and node can't be nullptr
     if (group == nullptr ||

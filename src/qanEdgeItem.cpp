@@ -571,8 +571,8 @@ void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept
         const bool horiz = 0.50 * std::fabs(cache.dstBrCenter.x() - cache.srcBrCenter.x()) >
                            std::fabs(cache.dstBrCenter.y() - cache.srcBrCenter.y());
         const bool vert = !horiz;
-        if ( bottom ) {     // BOTTOM
-            if ( right && vert) {             // BR, vertical edge
+        if (bottom) {       // BOTTOM
+            if (right && vert) {             // BR, vertical edge
                 cache.p1 = QPointF{cache.srcBrCenter.x(),   cache.srcBr.bottom()};
                 cache.p2 = QPointF{cache.dstBr.left(),      cache.dstBrCenter.y()};
                 cache.c1 = QPointF{cache.srcBrCenter.x(),   cache.dstBrCenter.y()};
@@ -590,7 +590,7 @@ void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept
                 cache.c1 = QPointF{cache.dstBrCenter.x(),   cache.srcBrCenter.y()};
             }
         } else {            // TOP
-            if ( right && vert) {             // TR, vertical edge
+            if (right && vert) {             // TR, vertical edge
                 cache.p1 = QPointF{cache.srcBrCenter.x(),   cache.srcBr.top()};
                 cache.p2 = QPointF{cache.dstBr.left(),      cache.dstBrCenter.y()};
                 cache.c1 = QPointF{cache.srcBrCenter.x(),   cache.dstBrCenter.y()};

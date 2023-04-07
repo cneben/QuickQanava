@@ -500,6 +500,7 @@ qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qa
 /* TableGroupItem DnD Management *///------------------------------------------
 void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
+    //qWarning() << "qan::TableGroupItem::groupNodeItem(): nodeItem=" << nodeItem << "  groupCell=" << groupCell;
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
@@ -531,7 +532,16 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* g
             }
         }
     }
+
     groupMoved();           // Force call to groupMoved() to update group adjacent edges
+
+    // Notify that the table has changed
+    const auto graph = this->getGraph();
+    const auto tableGroup = this->getTableGroup();
+    if (graph != nullptr &&
+        tableGroup != nullptr)
+        emit graph->tableModified(tableGroup);
+
     endProposeNodeDrop();
 }
 

@@ -80,7 +80,7 @@ public:
 
     Q_PROPERTY(qan::EdgeItem* item READ getItem CONSTANT)
     qan::EdgeItem*   getItem() noexcept;
-    void             setItem(qan::EdgeItem* edgeItem) noexcept;
+    virtual void     setItem(qan::EdgeItem* edgeItem) noexcept;
 private:
     QPointer<qan::EdgeItem> _item;
     //@}
