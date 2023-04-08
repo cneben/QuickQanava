@@ -535,6 +535,10 @@ signals:
     /*! \brief Emitted _after_ an edge has been inserted (usually with insertEdge()).
      */
     void            edgeInserted(qan::Edge* edge);
+
+    /*! \brief Emitted immediately _before_ an edge is removed.
+     */
+    void            onEdgeRemoved(qan::Edge* edge);
     //@}
     //-------------------------------------------------------------------------
 

@@ -867,6 +867,7 @@ bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
     return super_t::remove_edge(source, destination);
 }
 bool    Graph::removeEdge(qan::Edge* edge) {
+    emit onEdgeRemoved(edge);
     return super_t::remove_edge(edge);
 }
 
@@ -1162,6 +1163,10 @@ bool    selectPrimitive(Primitive_t& primitive,
     const bool ctrlPressed = modifiers & Qt::ControlModifier;
     if (primitive.getItem() == nullptr)
         return false;
+    // Note 20230408: Primitive with `isProtected` or `locked` status can be selected, it's up to the user
+    // to protect them accordingly in user code.
+    if (primitive.getLocked())
+        return false;
 
     if (primitive.getItem()->getSelected()) {
         if (ctrlPressed)          // Click on a selected node + CTRL = deselect node
@@ -1198,6 +1203,9 @@ void    setPrimitiveSelected(Primitive_t& primitive,
 {
     // Note: graph.selectionPolicy is not taken into account
     if (primitive.getItem() == nullptr)
+        return;
+    if (selected &&             // Allow only "deselect" for locked primitives
+        primitive.getLocked())
         return;
     primitive.getItem()->setSelected(selected); // Note: graph.removeFromSelection() is called from primitive qan::Selectable::setSelected()
     if (selected)
@@ -1316,8 +1324,12 @@ void    Graph::selectAll()
 void    Graph::removeSelection()
 {
     const auto& selectedNodes = getSelectedNodes();
-    for (const auto node: qAsConst(selectedNodes))
-        removeNode(node);
+    for (const auto node: qAsConst(selectedNodes)) {
+        if (node &&
+            !node->getIsProtected() &&
+            !node->getLocked())
+            removeNode(node);
+    }
     const auto& selectedGroups = getSelectedGroups();
     for (const auto group: qAsConst(selectedGroups))
         removeGroup(group);
