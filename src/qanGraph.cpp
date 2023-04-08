@@ -676,17 +676,22 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
     return true;
 }
 
-void    Graph::removeNode(qan::Node* node)
+bool    Graph::removeNode(qan::Node* node)
 {
     // PRECONDITIONS:
         // node can't be nullptr
-    if (node != nullptr) {
-        onNodeRemoved(*node);
-        emit nodeRemoved(node);
-        if (_selectedNodes.contains(node))
-            _selectedNodes.removeAll(node);
-        super_t::remove_node(node);  // warning node pointer now invalid
-    }
+        // node can't be protected or locked
+    if (node == nullptr)
+        return false;
+    if (node->getIsProtected() ||
+        node->getLocked())
+        return false;
+
+    onNodeRemoved(*node);
+    emit nodeRemoved(node);
+    if (_selectedNodes.contains(node))
+        _selectedNodes.removeAll(node);
+    return super_t::remove_node(node);  // warning node pointer now invalid
 }
 
 int     Graph::getNodeCount() const noexcept { return super_t::get_node_count(); }
@@ -867,6 +872,12 @@ bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
     return super_t::remove_edge(source, destination);
 }
 bool    Graph::removeEdge(qan::Edge* edge) {
+    if (edge == nullptr)
+        return false;
+    if (edge->getIsProtected() ||
+        edge->getLocked())
+        return false;
+
     emit onEdgeRemoved(edge);
     return super_t::remove_edge(edge);
 }
@@ -964,6 +975,9 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
 void    Graph::removeGroup(qan::Group* group, bool removeContent)
 {
     if (group == nullptr)
+        return;
+    if (group->getIsProtected() ||
+        group->getLocked())
         return;
 
     if (!removeContent) {
@@ -1323,19 +1337,28 @@ void    Graph::selectAll()
 
 void    Graph::removeSelection()
 {
+    qWarning() << "qan::Graph::removeSelection()...";
     const auto& selectedNodes = getSelectedNodes();
-    for (const auto node: qAsConst(selectedNodes)) {
+    for (const auto node: qAsConst(selectedNodes))
         if (node &&
             !node->getIsProtected() &&
             !node->getLocked())
             removeNode(node);
-    }
+
     const auto& selectedGroups = getSelectedGroups();
     for (const auto group: qAsConst(selectedGroups))
-        removeGroup(group);
+        if (group &&
+            !group->getIsProtected() &&
+            !group->getLocked())
+            removeGroup(group);
+
     const auto& selectedEdges = getSelectedEdges();
     for (const auto edge: qAsConst(selectedEdges))
-        removeEdge(edge);
+        if (edge &&
+            !edge->getIsProtected() &&
+            !edge->getLocked())
+            removeEdge(edge);
+
     clearSelection();
 }
 

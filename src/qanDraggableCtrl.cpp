@@ -159,11 +159,15 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 
 void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
 {
-    if (_targetItem == nullptr)
+    if (_targetItem == nullptr ||
+        _target == nullptr)
         return;
+    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+        _target->getLocked())
+        return;
+
     const auto graph = getGraph();
-    if (graph != nullptr &&
-        _target != nullptr)
+    if (graph != nullptr)
         emit graph->nodeAboutToBeMoved(_target);
     _targetItem->setDragged(true);
 
@@ -200,14 +204,19 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         // _graph must be configured (non nullptr)
         // _graph must have a container item for coordinate mapping
         // _target and _targetItem must be configured (true)
+
+    if (!_target ||
+        !_targetItem)
+        return;
+    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+        _target->getLocked())
+        return;
+
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
     const auto graphContainerItem = graph->getContainerItem();
     if (graphContainerItem == nullptr)
-        return;
-    if (!_target ||
-        !_targetItem)
         return;
 
     // Algorithm:
@@ -354,6 +363,11 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
     if (!_target ||
         !_targetItem)
         return;
+
+    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+        _target->getLocked())
+        return;
+
     const auto graph = getGraph();
     if (graph == nullptr)
         return;

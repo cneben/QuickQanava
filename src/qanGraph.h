@@ -364,7 +364,7 @@ public:
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
      */
-    Q_INVOKABLE void        removeNode(qan::Node* node);
+    Q_INVOKABLE bool        removeNode(qan::Node* node);
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount() const noexcept;
