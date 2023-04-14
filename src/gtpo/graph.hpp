@@ -483,6 +483,8 @@ auto    graph<graph_base_t, node_t,
     if (node == nullptr ||
         group == nullptr)
         return false;
+    if (node->get_group() == group)
+        return true;
     node->set_group(group);
     container_adapter<nodes_t>::insert(node, group->get_nodes());
     return true;
