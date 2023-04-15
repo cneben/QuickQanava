@@ -326,7 +326,7 @@ void    TableGroupItem::initializeTableLayout()
                                           0.;
     const auto cellHeight = height() > 0. ? (height()
                                              - (2 * padding)
-                                             - ((cols - 1) * spacing)) / rows :
+                                             - ((rows - 1) * spacing)) / rows :
                                             0.;
 
     //qWarning() << "cellWidth=" << cellWidth;

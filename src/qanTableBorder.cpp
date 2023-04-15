@@ -140,7 +140,7 @@ void    TableBorder::layoutCells()
     const auto padding = _tableGroup ? _tableGroup->getTablePadding() :
                                        2.;
     const auto spacing = _tableGroup ? _tableGroup->getCellSpacing() :
-                                       10.;
+                                       5.;
     const auto spacing2 = spacing / 2.;
 
     if (getOrientation() == Qt::Vertical) {
