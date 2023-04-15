@@ -676,15 +676,16 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
     return true;
 }
 
-bool    Graph::removeNode(qan::Node* node)
+bool    Graph::removeNode(qan::Node* node, bool force)
 {
     // PRECONDITIONS:
         // node can't be nullptr
         // node can't be protected or locked
     if (node == nullptr)
         return false;
-    if (node->getIsProtected() ||
-        node->getLocked())
+    if (!force &&
+         (node->getIsProtected() ||
+          node->getLocked()))
         return false;
 
     onNodeRemoved(*node);
@@ -871,11 +872,12 @@ bool    Graph::configureEdge(qan::Edge& edge, QQmlComponent& edgeComponent, qan:
 bool    Graph::removeEdge(qan::Node* source, qan::Node* destination) {
     return super_t::remove_edge(source, destination);
 }
-bool    Graph::removeEdge(qan::Edge* edge) {
+bool    Graph::removeEdge(qan::Edge* edge, bool force) {
     if (edge == nullptr)
         return false;
-    if (edge->getIsProtected() ||
-        edge->getLocked())
+    if (!force &&
+        (edge->getIsProtected() ||
+         edge->getLocked()))
         return false;
 
     emit onEdgeRemoved(edge);
@@ -972,12 +974,13 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
     return true;
 }
 
-void    Graph::removeGroup(qan::Group* group, bool removeContent)
+void    Graph::removeGroup(qan::Group* group, bool removeContent, bool force)
 {
     if (group == nullptr)
         return;
-    if (group->getIsProtected() ||
-        group->getLocked())
+    if (!force &&
+        (group->getIsProtected() ||
+         group->getLocked()))
         return;
 
     if (!removeContent) {

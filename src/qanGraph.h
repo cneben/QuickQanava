@@ -363,8 +363,10 @@ public:
                                        qan::NodeStyle* nodeStyle = nullptr);
 
     /*! \brief Remove node \c node from this graph. Shortcut to gtpo::GenGraph<>::removeNode().
+     *
+     *  \arg force if force is true, even locked or protected are removed (default to false).
      */
-    Q_INVOKABLE bool        removeNode(qan::Node* node);
+    Q_INVOKABLE bool        removeNode(qan::Node* node, bool force = false);
 
     //! Shortcut to gtpo::GenGraph<>::getNodeCount().
     Q_INVOKABLE int         getNodeCount() const noexcept;
@@ -502,7 +504,7 @@ public:
     Q_INVOKABLE virtual bool    removeEdge(qan::Node* source, qan::Node* destination);
 
     //! Shortcut to gtpo::GenGraph<>::removeEdge().
-    Q_INVOKABLE virtual bool    removeEdge(qan::Edge* edge);
+    Q_INVOKABLE virtual bool    removeEdge(qan::Edge* edge, bool force = false);
 
     //! Return true if there is at least one directed edge between \c source and \c destination (Shortcut to gtpo::GenGraph<>::hasEdge()).
     Q_INVOKABLE bool        hasEdge(const qan::Node* source, const qan::Node* destination) const;
@@ -583,7 +585,7 @@ public:
      *  is removed too). When false (default behaviour), group nodes are reparented to
      *  graph root.
      */
-    Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false);
+    Q_INVOKABLE virtual void    removeGroup(qan::Group* group, bool removeContent = false, bool force = false);
 
 protected:
     void        removeGroupContent_rec(qan::Group* group);
