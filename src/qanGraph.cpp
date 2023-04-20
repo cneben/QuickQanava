@@ -879,7 +879,7 @@ bool    Graph::removeEdge(qan::Edge* edge, bool force) {
         (edge->getIsProtected() ||
          edge->getLocked()))
         return false;
-
+    _selectedEdges.removeAll(edge);
     emit onEdgeRemoved(edge);
     return super_t::remove_edge(edge);
 }
