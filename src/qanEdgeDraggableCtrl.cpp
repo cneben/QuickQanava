@@ -145,27 +145,36 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelect
         return;
     if (_targetItem->getSourceItem() == nullptr ||
         _targetItem->getDestinationItem() == nullptr)
-                return;
+        return;
+
     // Get target edge adjacent nodes
-    auto src = _targetItem->getSourceItem()->getNode() != nullptr ? _targetItem->getSourceItem()->getNode()->getItem() :
-                                                                    nullptr;
-    auto dst = _targetItem->getDestinationItem()->getNode() != nullptr ? _targetItem->getDestinationItem()->getNode()->getItem() :
-                                                                         nullptr;
+    qan::Node* src = _targetItem->getSourceItem()->getNode();
+    qan::Node* dst = _targetItem->getDestinationItem()->getNode();
+    auto srcItem = src != nullptr ? src->getItem() : nullptr;
+    auto dstItem = dst != nullptr ? dst->getItem() : nullptr;
+    if (srcItem == nullptr ||
+        dstItem == nullptr)
+        return;
+
     // Polish snapToGrid:
     // When edge src|dst is not vertically or horizontally aligned: disable hook.
     // If they are vertically/horizontally aligned: allow move snapToGrid it won't generate jiterring.
-    const auto disableHooksSnapToGrid = _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
-                                        _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
-                                        (_targetItem->getSourceItem()->getDragOrientation() != _targetItem->getDestinationItem()->getDragOrientation());
-    const auto disableHooksDragOrientation = (_targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragHorizontal ||
-                                              _targetItem->getSourceItem()->getDragOrientation() == qan::NodeItem::DragOrientation::DragVertical) &&
-                                             (_targetItem->getSourceItem()->getDragOrientation() == _targetItem->getDestinationItem()->getDragOrientation());
-    if (src != nullptr)
-        src->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false,
-                                      /*disableSnapToGrid=*/disableHooksSnapToGrid, disableHooksDragOrientation);
-    if (dst != nullptr)
-        dst->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false,
-                                      /*disableSnapToGrid=*/disableHooksSnapToGrid, disableHooksDragOrientation);
+    const auto disableHooksSnapToGrid = srcItem->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
+                                        srcItem->getDragOrientation() == qan::NodeItem::DragOrientation::DragAll ||
+                                        (srcItem->getDragOrientation() != dstItem->getDragOrientation());
+    const auto disableHooksDragOrientation = (srcItem->getDragOrientation() == qan::NodeItem::DragOrientation::DragHorizontal ||
+                                              srcItem->getDragOrientation() == qan::NodeItem::DragOrientation::DragVertical) &&
+                                             (srcItem->getDragOrientation() == dstItem->getDragOrientation());
+    if (srcItem != nullptr)
+        srcItem->draggableCtrl().dragMove(sceneDragPos,
+                                          /*dragSelection=*/false,
+                                          /*disableSnapToGrid=*/disableHooksSnapToGrid,
+                                          disableHooksDragOrientation);
+    if (dstItem != nullptr)
+        dstItem->draggableCtrl().dragMove(sceneDragPos,
+                                          /*dragSelection=*/false,
+                                          /*disableSnapToGrid=*/disableHooksSnapToGrid,
+                                          disableHooksDragOrientation);
 }
 
 void    EdgeDraggableCtrl::endDragMove(bool dragSelection)
