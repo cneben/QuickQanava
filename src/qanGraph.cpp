@@ -1340,7 +1340,6 @@ void    Graph::selectAll()
 
 void    Graph::removeSelection()
 {
-    qWarning() << "qan::Graph::removeSelection()...";
     const auto& selectedNodes = getSelectedNodes();
     for (const auto node: qAsConst(selectedNodes))
         if (node &&
