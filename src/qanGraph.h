@@ -754,7 +754,7 @@ public:
     Q_INVOKABLE bool    hasMultipleSelection() const;
 
 public:
-    using SelectedNodes = qcm::Container<QVector, qan::Node*>;
+    using SelectedNodes = qcm::Container<std::vector, QPointer<qan::Node>>;
 
     //! Read-only list model of currently selected nodes.
     Q_PROPERTY(QAbstractItemModel* selectedNodes READ getSelectedNodesModel NOTIFY selectedNodesChanged FINAL)  // In fact non-notifiable, avoid QML warning
@@ -768,7 +768,7 @@ signals:
     void                selectedNodesChanged();
 
 public:
-    using SelectedGroups = qcm::Container<QVector, qan::Group*>;
+    using SelectedGroups = qcm::Container<std::vector, QPointer<qan::Group>>;
 
     //! Read-only list model of currently selected groups.
     Q_PROPERTY(QAbstractItemModel* selectedGroups READ getSelectedGroupsModel NOTIFY selectedGroupsChanged FINAL)   // In fact non-notifiable, avoid QML warning
@@ -782,7 +782,7 @@ signals:
     void                selectedGroupsChanged();
 
 public:
-    using SelectedEdges = qcm::Container<QVector, qan::Edge*>;
+    using SelectedEdges = qcm::Container<std::vector, QPointer<qan::Edge>>;
 
     //! \copydoc _selectedEdges
     Q_PROPERTY(QAbstractItemModel* selectedEdges READ getSelectedEdgesModel NOTIFY selectedEdgesChanged FINAL)   // In fact non-notifiable, avoid QML warning

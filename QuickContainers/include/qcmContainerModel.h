@@ -32,8 +32,7 @@
 // \date    2016 11 25
 //-----------------------------------------------------------------------------
 
-#ifndef qcmContainerModel_h
-#define qcmContainerModel_h
+#pragma once
 
 // Std headers
 #include <memory>
@@ -94,8 +93,8 @@ inline auto ItemDispatcherBase::debug_type<ItemDispatcherBase::weak_ptr_qobject_
 template <typename Item_type>
 struct ItemDispatcher : public ItemDispatcherBase {
     // QObject and non copy constructible POD are unsupported
-    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value ||
-                                            !std::is_copy_constructible<Item_type>::value,
+    using type = typename std::conditional<std::is_base_of<QObject, Item_type >::value ||
+                                           !std::is_copy_constructible<Item_type>::value,
                                                                                 ItemDispatcherBase::unsupported_type,
                                                                                 ItemDispatcherBase::non_ptr_type
                                           >::type;
@@ -110,24 +109,24 @@ struct ItemDispatcher<Item_type*>  : public ItemDispatcherBase {
                                             >::type;
 };
 
-template < typename Item_type >
+template <typename Item_type>
 struct ItemDispatcher<QPointer<Item_type>>  : public ItemDispatcherBase {
     using type = ItemDispatcherBase::q_ptr_type;
 };
 
-template < typename Item_type >
+template <typename Item_type>
 struct ItemDispatcher<std::shared_ptr<Item_type>>  : public ItemDispatcherBase {
-    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value,
-                                                                                ItemDispatcherBase::shared_ptr_qobject_type,
-                                                                                ItemDispatcherBase::shared_ptr_type
-                                            >::type;
+    using type = typename std::conditional<std::is_base_of<QObject, Item_type>::value,
+                                           ItemDispatcherBase::shared_ptr_qobject_type,
+                                           ItemDispatcherBase::shared_ptr_type
+                                          >::type;
 };
 
-template < typename Item_type >
+template <typename Item_type>
 struct ItemDispatcher<std::weak_ptr<Item_type>>  : public ItemDispatcherBase {
-    using type = typename std::conditional< std::is_base_of< QObject, Item_type >::value,
-                                                                        ItemDispatcherBase::weak_ptr_qobject_type,
-                                                                        ItemDispatcherBase::weak_ptr_type
+    using type = typename std::conditional<std::is_base_of<QObject, Item_type>::value,
+                                                                       ItemDispatcherBase::weak_ptr_qobject_type,
+                                                                       ItemDispatcherBase::weak_ptr_type
                                             >::type;
 };
 
@@ -160,8 +159,8 @@ public:
     /*! \name Qt Abstract Model Interface *///---------------------------------
     //@{
 public:
-    virtual int         rowCount( const QModelIndex& parent = QModelIndex{} ) const override { Q_UNUSED(parent); return 0; }
-    virtual QVariant    data( const QModelIndex& index, int role = Qt::DisplayRole ) const override { Q_UNUSED(index); Q_UNUSED(role); return QVariant{}; }
+    virtual int         rowCount(const QModelIndex& parent = QModelIndex{}) const override { Q_UNUSED(parent); return 0; }
+    virtual QVariant    data(const QModelIndex& index, int role = Qt::DisplayRole) const override { Q_UNUSED(index); Q_UNUSED(role); return QVariant{}; }
 
 public:
     enum PropertiesRoles {
@@ -169,7 +168,7 @@ public:
     };
 protected:
     virtual QHash<int, QByteArray>  roleNames() const override {
-        return { {static_cast<int>(ItemDataRole),   "itemData"} };
+        return {{static_cast<int>(ItemDataRole),   "itemData"}};
     }
     //@}
     //-------------------------------------------------------------------------
@@ -201,16 +200,16 @@ private:
 protected slots:
     void            itemDisplayPropertyChanged() {
         QObject* qItem = sender();
-        if ( qItem == nullptr )
+        if (qItem == nullptr)
             return;
-        int qItemIndex = indexOf( qItem );
-        if ( qItemIndex >= 0 ) {
-            QModelIndex itemIndex{ index( qItemIndex ) };
-            if ( itemIndex.isValid( ) )
-                emit dataChanged( itemIndex, itemIndex );
+        int qItemIndex = indexOf(qItem);
+        if (qItemIndex >= 0) {
+            QModelIndex itemIndex{index(qItemIndex)};
+            if (itemIndex.isValid())
+                emit dataChanged(itemIndex, itemIndex);
         } else
-            disconnect( qItem,  nullptr,
-                        this,   nullptr );
+            disconnect(qItem,  nullptr,
+                       this,   nullptr);
     }
     //-------------------------------------------------------------------------
 
@@ -257,22 +256,20 @@ public:
     //-------------------------------------------------------------------------
 };
 
-template <class Container >
+template <class Container, class T>
 class ContainerModelImpl : public qcm::ContainerModel
 {
 public:
     explicit ContainerModelImpl(Container& container) :
         qcm::ContainerModel{},
         _container(container) { }
-    ContainerModelImpl(const ContainerModelImpl<Container>&) = delete;
+    ContainerModelImpl(const ContainerModelImpl<Container, T>&) = delete;
 private:
     Container&    _container;
 
     /*! \name Qt Abstract Model Interface *///---------------------------------
     //@{
 public:
-    using T = typename Container::Item_type;
-
     virtual int         rowCount(const QModelIndex& parent = QModelIndex{}) const override {
         return (parent.isValid() ? 0 :
                                    static_cast<int>(_container.size()));
@@ -300,90 +297,104 @@ public:
     mutable ObjectItemMap   _qObjectItemMap;
 
 protected:
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::non_ptr_type )        const -> QVariant {
-        return QVariant{ _container.at( row ) };
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::non_ptr_type)      const -> QVariant {
+        return QVariant{_container.at(row)};
     }
-    inline auto dataDisplayRole( int, ItemDispatcherBase::unsupported_type )    const -> QVariant {
+    inline auto dataDisplayRole(int, ItemDispatcherBase::unsupported_type)      const -> QVariant {
         return QVariant{};
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::ptr_type )            const -> QVariant {
-        T ptrItem = at( row );
-        return ( ptrItem != nullptr ? QVariant::fromValue<std::remove_pointer<T>::type>( *ptrItem ) :
-                                      QVariant{} );
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::ptr_type)          const -> QVariant {
+        T ptrItem = at(row);
+        return (ptrItem != nullptr ? QVariant::fromValue<std::remove_pointer<T>::type>(*ptrItem) :
+                                     QVariant{});
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::ptr_qobject_type )    const -> QVariant {
-        T item = qobject_cast<T>(at( row ));
-        monitorItem( item );
-        return ( item != nullptr ? item->property( getItemDisplayRole( ).toLatin1() ) :
-                                      QVariant{} );
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::ptr_qobject_type)  const -> QVariant {
+        T item = qobject_cast<T>(at(row));
+        monitorItem(item);
+        return (item != nullptr ? item->property(getItemDisplayRole( ).toLatin1()) :
+                                  QVariant{});
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::shared_ptr_type )     const -> QVariant {
-        T item = at( row );
-        return ( item ? QVariant::fromValue<std::remove_pointer<typename T::element_type>::type>( *item.get() ) :
-                        QVariant{} );
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::q_ptr_type)        const -> QVariant {
+        const auto item = at(row);
+        monitorItem(item);
+        return (item ? item->property(getItemDisplayRole().toLatin1()) :
+                       QVariant{});
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::shared_ptr_qobject_type ) const -> QVariant {
-        QObject* qItem = at( row );
-        monitorItem( qItem );
-        return ( qItem != nullptr ? qItem->property( getItemDisplayRole().toLatin1() ) :
-                                    QVariant{} );
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::shared_ptr_type)   const -> QVariant {
+        T item = at(row);
+        return (item ? QVariant::fromValue<std::remove_pointer<typename T::element_type>::type>(*item.get()) :
+                       QVariant{} );
     }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_type )           const -> QVariant { Q_UNUSED(row); return QVariant{}; }
-    inline auto dataDisplayRole( int row, ItemDispatcherBase::weak_ptr_qobject_type )   const -> QVariant {
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::shared_ptr_qobject_type)   const -> QVariant {
+        QObject* qItem = at(row);
+        monitorItem(qItem);
+        return (qItem != nullptr ? qItem->property(getItemDisplayRole().toLatin1()) :
+                                   QVariant{});
+    }
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::weak_ptr_type)             const -> QVariant { Q_UNUSED(row); return QVariant{}; }
+    inline auto dataDisplayRole(int row, ItemDispatcherBase::weak_ptr_qobject_type)     const -> QVariant {
         T item = _container.at(row);
-        monitorItem( item.lock().get() );
-        return ( item.expired() ||
-                 item.lock() == nullptr ? QVariant{} :
-                                          item.lock()->property( getItemDisplayRole().toLatin1() ) );
+        monitorItem(item.lock().get());
+        return (item.expired() ||
+                item.lock() == nullptr ? QVariant{} :
+                                         item.lock()->property( getItemDisplayRole().toLatin1()));
     }
 
 private:
     //! Catch an item label property change notify signal and force model update for it's index.
-    void    monitorItem( QObject* item ) const {
-        if ( item == nullptr )
+    void    monitorItem(QObject* item) const {
+        if (item == nullptr)
             return;
         QMetaProperty displayProperty = item->metaObject()->property(
-                    item->metaObject()->indexOfProperty( getItemDisplayRole().toLatin1() ) );
-        if ( displayProperty.isValid() &&
-             displayProperty.hasNotifySignal() ) {
-            QMetaMethod displayPropertyChanged = displayProperty.notifySignal( );
+                    item->metaObject()->indexOfProperty(getItemDisplayRole().toLatin1()));
+        if (displayProperty.isValid() &&
+            displayProperty.hasNotifySignal()) {
+            QMetaMethod displayPropertyChanged = displayProperty.notifySignal();
             // Note 20161125: Direct connection (without method(indexOfSlot()) call is impossible, there is no existing QObject::connect
             // overload taking (QObject*, QMetaMethod, QObject*, pointer on method).
-            QMetaMethod itemDisplayPropertyChangedSlot = metaObject( )->method( metaObject( )->indexOfSlot( "itemDisplayPropertyChanged()" ) );
-            auto c = connect( item, displayPropertyChanged,
-                              this, itemDisplayPropertyChangedSlot );
+            QMetaMethod itemDisplayPropertyChangedSlot = metaObject()->method(metaObject()->indexOfSlot("itemDisplayPropertyChanged()"));
+            auto c = connect(item,  displayPropertyChanged,
+                             this,  itemDisplayPropertyChangedSlot);
         }
     }
 
 private:
-    inline auto dataItemRole( int row, ItemDispatcherBase::non_ptr_type )           const -> QVariant {
-        T item = _container.at( row );
-        return QVariant{ item };
+    inline auto dataItemRole(int row, ItemDispatcherBase::non_ptr_type)             const -> QVariant {
+        T item = _container.at(row);
+        return QVariant{item};
     }
-    inline auto dataItemRole( int, ItemDispatcherBase::unsupported_type )           const -> QVariant { /* empty */ return QVariant{};  }
+    inline auto dataItemRole(int, ItemDispatcherBase::unsupported_type)             const -> QVariant { /* empty */ return QVariant{};  }
 
-    inline auto dataItemRole( int, ItemDispatcherBase::ptr_type )                   const -> QVariant { /* empty */ return QVariant{};  }
-    inline auto dataItemRole( int row, ItemDispatcherBase::ptr_qobject_type )       const -> QVariant {
-        T item = qobject_cast<T>(at( row ));
+    inline auto dataItemRole(int, ItemDispatcherBase::ptr_type)                     const -> QVariant { /* empty */ return QVariant{};  }
+    inline auto dataItemRole(int row, ItemDispatcherBase::ptr_qobject_type)         const -> QVariant {
+        T item = qobject_cast<T>(at(row));
         if (item != nullptr)
-            QQmlEngine::setObjectOwnership( item, QQmlEngine::CppOwnership );
-        return QVariant::fromValue< T >( item );
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership );
+        return QVariant::fromValue<T>(item);
     }
-    inline auto dataItemRole( int, ItemDispatcherBase::shared_ptr_type )            const -> QVariant { /* empty */ return QVariant{};  }
-    inline auto dataItemRole( int row, ItemDispatcherBase::shared_ptr_qobject_type ) const -> QVariant {
+    inline auto dataItemRole(int row, ItemDispatcherBase::q_ptr_type)               const -> QVariant {
+        const auto item = qobject_cast<QObject*>(at(row));
+        if (item != nullptr)
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership );
+        return item != nullptr ? QVariant::fromValue<QObject*>(item) :
+                                 QVariant{};
+    }
+
+    inline auto dataItemRole(int, ItemDispatcherBase::shared_ptr_type)              const -> QVariant { /* empty */ return QVariant{};  }
+    inline auto dataItemRole(int row, ItemDispatcherBase::shared_ptr_qobject_type)  const -> QVariant {
         T item = _container.at(row);
         auto qItem = qobject_cast<QObject*>(item.get());
-        if ( qItem != nullptr )
-            QQmlEngine::setObjectOwnership( qItem, QQmlEngine::CppOwnership );
-        return QVariant::fromValue<QObject*>( qItem );  // Might return a QVariant with an empty QObject*
+        if (qItem != nullptr)
+            QQmlEngine::setObjectOwnership(qItem, QQmlEngine::CppOwnership);
+        return QVariant::fromValue<QObject*>(qItem);  // Might return a QVariant with an empty QObject*
     }
 
-    inline auto dataItemRole( int, ItemDispatcherBase::weak_ptr_type )              const -> QVariant { /* empty */ return QVariant{}; }
-    inline auto dataItemRole( int row, ItemDispatcherBase::weak_ptr_qobject_type )  const -> QVariant {
-        T item = _container.at( row );
-        auto qItem = ( item.expired() ? nullptr : qobject_cast<QObject*>( item.lock().get() ) );
-        if ( qItem )
-            QQmlEngine::setObjectOwnership( qItem, QQmlEngine::CppOwnership );
+    inline auto dataItemRole(int, ItemDispatcherBase::weak_ptr_type)                const -> QVariant { /* empty */ return QVariant{}; }
+    inline auto dataItemRole(int row, ItemDispatcherBase::weak_ptr_qobject_type)    const -> QVariant {
+        T item = _container.at(row);
+        auto qItem = (item.expired() ? nullptr : qobject_cast<QObject*>(item.lock().get()));
+        if (qItem)
+            QQmlEngine::setObjectOwnership(qItem, QQmlEngine::CppOwnership);
         return QVariant::fromValue<QObject*>(qItem);    // Might return a QVariant with an empty QObject*
     }
     //@}
@@ -392,42 +403,47 @@ private:
 
 public:
     virtual bool        append(QObject* object) const override {
-        return appendImpl( object, typename ItemDispatcher<typename Container::Item_type>::type{} );
+        return appendImpl(object,
+                          typename ItemDispatcher<typename Container::Item_type>::type{});
     }
 
     virtual void        remove(QObject* object) const override {
         if ( object != nullptr )
-            removeImpl( object, typename ItemDispatcher<typename Container::Item_type>::type{} );
+            removeImpl(object, typename ItemDispatcher<typename Container::Item_type>::type{});
     }
 
     virtual QObject*    at(int index) const override {
-        auto item = atImpl( index, typename ItemDispatcher<typename Container::Item_type>::type{} );
+        auto item = atImpl(index, typename ItemDispatcher<typename Container::Item_type>::type{});
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         return item;
     }
 
-    virtual int         indexOf( QObject* item ) const override {
-        return indexOfImpl( item, typename ItemDispatcher<typename Container::Item_type>::type{} );
+    virtual int         indexOf(QObject* item) const override {
+        return indexOfImpl(item, typename ItemDispatcher<typename Container::Item_type>::type{});
     }
 
     virtual bool        clear() const override { _container.clear(); return true; }
 
 private:
-    inline auto appendImpl( QObject*, ItemDispatcherBase::non_ptr_type )                    const -> bool { return false; }
-    inline auto appendImpl( QObject*, ItemDispatcherBase::unsupported_type )                const -> bool { return false; }
-    inline auto appendImpl( QObject*, ItemDispatcherBase::ptr_type )                        const -> bool { return false; }
-    inline auto appendImpl( QObject* object, ItemDispatcherBase::ptr_qobject_type )         const -> bool {
+    inline auto appendImpl(QObject*, ItemDispatcherBase::non_ptr_type)              const -> bool { return false; }
+    inline auto appendImpl(QObject*, ItemDispatcherBase::unsupported_type)          const -> bool { return false; }
+    inline auto appendImpl(QObject*, ItemDispatcherBase::ptr_type)                  const -> bool { return false; }
+    inline auto appendImpl(QObject* object, ItemDispatcherBase::ptr_qobject_type)   const -> bool {
         _container.append(reinterpret_cast<typename Container::Item_type>(object));
         return true;
     }
-    inline auto appendImpl( QObject*, ItemDispatcherBase::shared_ptr_type )                 const ->bool { return false; }
-    inline auto appendImpl( QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> bool {
+    inline auto appendImpl(QObject*, ItemDispatcherBase::q_ptr_type)                const -> bool {
+        qWarning() << "Containers Model: Error: Using append() from QML is unsupported with an underlying container of QPointer.";
+        return false;
+    }
+    inline auto appendImpl(QObject*, ItemDispatcherBase::shared_ptr_type)                   const ->bool { return false; }
+    inline auto appendImpl(QObject* object, ItemDispatcherBase::shared_ptr_qobject_type)    const -> bool {
         (void)object;
         qWarning() << "Containers Model: Error: Using append() from QML is unsupported with an underlying container of std::shared_ptr.";
         return false;
     }
-    inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_type )                   const -> bool { return false; }
-    inline auto appendImpl( QObject*, ItemDispatcherBase::weak_ptr_qobject_type )           const -> bool {
+    inline auto appendImpl(QObject*, ItemDispatcherBase::weak_ptr_type )                    const -> bool { return false; }
+    inline auto appendImpl(QObject*, ItemDispatcherBase::weak_ptr_qobject_type )            const -> bool {
         // Note 20161127: It is conceptually impossible to append a weak_ptr without adding also to master
         // container of shared_ptr (otherwise, it is expired before beeing added!)
         qWarning() << "Containers Model: Error: Using append() from QML is unsupported with an underlying container of std::weak_ptr.";
@@ -435,72 +451,95 @@ private:
     }
 
 private:
-    inline auto removeImpl( const QObject*, ItemDispatcherBase::non_ptr_type )                const -> void {}
-    inline auto removeImpl( const QObject*, ItemDispatcherBase::unsupported_type )            const -> void {}
-    inline auto removeImpl( const QObject*, ItemDispatcherBase::ptr_type )                    const -> void {}
-    inline auto removeImpl( const QObject* object, ItemDispatcherBase::ptr_qobject_type )     const -> void {
+    inline auto removeImpl(const QObject*, ItemDispatcherBase::non_ptr_type )                const -> void {}
+    inline auto removeImpl(const QObject*, ItemDispatcherBase::unsupported_type )            const -> void {}
+    inline auto removeImpl(const QObject*, ItemDispatcherBase::ptr_type )                    const -> void {}
+    inline auto removeImpl(const QObject* object, ItemDispatcherBase::ptr_qobject_type)     const -> void {
         _container.removeAll(qobject_cast<typename Container::Item_type>(const_cast<QObject*>(object)));
     }
-    inline auto removeImpl( const QObject*, ItemDispatcherBase::shared_ptr_type )                 const -> void {}
-    inline auto removeImpl( const QObject* object, ItemDispatcherBase::shared_ptr_qobject_type )  const -> void {
-        if ( object == nullptr )
-            return;
+    inline auto removeImpl(const QObject* object, ItemDispatcherBase::q_ptr_type)       const -> void {
         const auto itemIter = _qObjectItemMap.find(object);
-        if ( itemIter != _qObjectItemMap.cend() ) {
+        if (itemIter != _qObjectItemMap.cend()) {
             const T t = itemIter->second;
-            _container.removeAll( t );
+            _container.removeAll(t);
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //_qObjectItemMap.erase(object);
         }
     }
-    inline auto removeImpl( const QObject*, ItemDispatcherBase::weak_ptr_type )                   const -> void {}
-    inline auto removeImpl( const QObject* object, ItemDispatcherBase::weak_ptr_qobject_type )    const -> void {
-        if ( object == nullptr )
+    inline auto removeImpl(const QObject*, ItemDispatcherBase::shared_ptr_type )                const -> void {}
+    inline auto removeImpl(const QObject* object, ItemDispatcherBase::shared_ptr_qobject_type)  const -> void {
+        if (object == nullptr)
             return;
         const auto itemIter = _qObjectItemMap.find(object);
-        if ( itemIter != _qObjectItemMap.cend() ) {
+        if (itemIter != _qObjectItemMap.cend()) {
             const T t = itemIter->second;
-            _container.removeAll( t );
+            _container.removeAll(t);
+        }
+    }
+    inline auto removeImpl(const QObject*, ItemDispatcherBase::weak_ptr_type)                   const -> void {}
+    inline auto removeImpl(const QObject* object, ItemDispatcherBase::weak_ptr_qobject_type)    const -> void {
+        if (object == nullptr)
+            return;
+        const auto itemIter = _qObjectItemMap.find(object);
+        if (itemIter != _qObjectItemMap.cend()) {
+            const T t = itemIter->second;
+            _container.removeAll(t);
         }
     }
 
 private:
-    inline auto atImpl( int, ItemDispatcherBase::non_ptr_type )             const -> QObject* { return nullptr; }
-    inline auto atImpl( int, ItemDispatcherBase::unsupported_type )         const -> QObject* { return nullptr; }
-    inline auto atImpl( int, ItemDispatcherBase::ptr_type )                 const -> QObject* { return nullptr; }
-    inline auto atImpl( int index, ItemDispatcherBase::ptr_qobject_type )   const -> QObject* { return _container.at(index); }
-    inline auto atImpl( int, ItemDispatcherBase::shared_ptr_type )                  const -> QObject* { return nullptr; }
-    inline auto atImpl( int index, ItemDispatcherBase::shared_ptr_qobject_type )    const -> QObject* {
+    inline auto atImpl(int, ItemDispatcherBase::non_ptr_type)                   const -> QObject* { return nullptr; }
+    inline auto atImpl(int, ItemDispatcherBase::unsupported_type)               const -> QObject* { return nullptr; }
+    inline auto atImpl(int index, ItemDispatcherBase::ptr_type)                 const -> QObject* { return _container.at(index); }
+    inline auto atImpl(int index, ItemDispatcherBase::ptr_qobject_type)         const -> QObject* { return _container.at(index); }
+    inline auto atImpl(int index, ItemDispatcherBase::q_ptr_type)               const -> QObject* {
         auto itemPtr = _container.at(index);
-        return ( itemPtr ? itemPtr.get() : nullptr );
+        return (itemPtr ? itemPtr.data() : nullptr);
     }
-    inline auto atImpl( int, ItemDispatcherBase::weak_ptr_type )                    const -> QObject* { return nullptr; }
-    inline auto atImpl( int index, ItemDispatcherBase::weak_ptr_qobject_type )      const -> QObject* {
+    inline auto atImpl(int, ItemDispatcherBase::shared_ptr_type)                const -> QObject* { return nullptr; }
+    inline auto atImpl(int index, ItemDispatcherBase::shared_ptr_qobject_type)  const -> QObject* {
         auto itemPtr = _container.at(index);
-        return ( !itemPtr.expired() ? itemPtr.lock().get() : nullptr );
+        return (itemPtr ? itemPtr.get() : nullptr);
+    }
+    inline auto atImpl(int, ItemDispatcherBase::weak_ptr_type)                  const -> QObject* { return nullptr; }
+    inline auto atImpl(int index, ItemDispatcherBase::weak_ptr_qobject_type)    const -> QObject* {
+        auto itemPtr = _container.at(index);
+        return (!itemPtr.expired() ? itemPtr.lock().get() : nullptr);
     }
 
 private:
-    inline auto indexOfImpl( QObject*, ItemDispatcherBase::non_ptr_type )             const -> int { return -1; }
-    inline auto indexOfImpl( QObject*, ItemDispatcherBase::unsupported_type )         const -> int { return -1;  }
-    inline auto indexOfImpl( QObject*, ItemDispatcherBase::ptr_type )                 const -> int { return -1;  }
-    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::ptr_qobject_type )    const -> int {
-        return ( item != nullptr ? _container.indexOf(qobject_cast<T>(item)) : -1 );
+    inline auto indexOfImpl(QObject*, ItemDispatcherBase::non_ptr_type)             const -> int { return -1; }
+    inline auto indexOfImpl(QObject*, ItemDispatcherBase::unsupported_type)         const -> int { return -1;  }
+    inline auto indexOfImpl(QObject* item, ItemDispatcherBase::ptr_type)            const -> int {
+            return (item != nullptr ? _container.indexOf(qobject_cast<T>(item)) : -1);
     }
-    inline auto indexOfImpl( QObject*, ItemDispatcherBase::shared_ptr_type )              const -> int { return -1;  }
-    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::shared_ptr_qobject_type ) const -> int {
-        if ( item == nullptr )
+    inline auto indexOfImpl(QObject* item, ItemDispatcherBase::ptr_qobject_type)    const -> int {
+        return (item != nullptr ? _container.indexOf(qobject_cast<T>(item)) : -1);
+    }
+    inline auto indexOfImpl(QObject* item, ItemDispatcherBase::q_ptr_type)          const -> int {
+        if (item == nullptr)
             return -1;
         const auto& itemIter = _qObjectItemMap.find(item);
-        if ( itemIter != _qObjectItemMap.cend() )
-            return _container.indexOf( itemIter->second );
+        if (itemIter != _qObjectItemMap.cend())
+            return _container.indexOf(itemIter->second);
         return -1;
     }
-    inline auto indexOfImpl( QObject*, ItemDispatcherBase::weak_ptr_type )                const -> int { return -1; }
-    inline auto indexOfImpl( QObject* item, ItemDispatcherBase::weak_ptr_qobject_type )   const -> int {
-        if ( item == nullptr )
+    inline auto indexOfImpl(QObject*, ItemDispatcherBase::shared_ptr_type)              const -> int { return -1;  }
+    inline auto indexOfImpl(QObject* item, ItemDispatcherBase::shared_ptr_qobject_type) const -> int {
+        if (item == nullptr)
             return -1;
         const auto& itemIter = _qObjectItemMap.find(item);
-        if ( itemIter != _qObjectItemMap.cend() )
-            return _container.indexOf( itemIter->second );
+        if (itemIter != _qObjectItemMap.cend())
+            return _container.indexOf(itemIter->second);
+        return -1;
+    }
+    inline auto indexOfImpl(QObject*, ItemDispatcherBase::weak_ptr_type)                const -> int { return -1; }
+    inline auto indexOfImpl(QObject* item, ItemDispatcherBase::weak_ptr_qobject_type)   const -> int {
+        if (item == nullptr)
+            return -1;
+        const auto& itemIter = _qObjectItemMap.find(item);
+        if (itemIter != _qObjectItemMap.cend())
+            return _container.indexOf(itemIter->second);
         return -1;
     }
 };
@@ -509,6 +548,3 @@ private:
 
 QML_DECLARE_TYPE(qcm::ContainerModel)
 QML_DECLARE_TYPE(const qcm::ContainerModel)
-
-#endif // qcmContainerModel_h
-

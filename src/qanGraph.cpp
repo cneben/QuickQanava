@@ -1259,30 +1259,32 @@ bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) {
 bool    Graph::selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Edge>(edge, modifiers, *this); }
 
 template <class Primitive_t>
-void    addToSelectionImpl(Primitive_t& primitive,
-                           qcm::Container<QVector, Primitive_t*>& selectedPrimitives,
+void    addToSelectionImpl(QPointer<Primitive_t> primitive,
+                        qcm::Container<std::vector, QPointer<Primitive_t>>& selectedPrimitives,
                            qan::Graph& graph)
 {
-    if (!selectedPrimitives.contains(&primitive)) {
-        selectedPrimitives.append(&primitive);
+    if (!primitive)
+        return;
+    const auto primitiveItem = primitive->getItem();
+    if (!primitiveItem)
+        return;
+    if (!selectedPrimitives.contains(primitive.data())) {
+        selectedPrimitives.append(primitive);
 
-        QObject::connect(&primitive, &Primitive_t::destroyed,
-                         &graph,     [&selectedPrimitives, &primitive]() {
-            selectedPrimitives.removeAll(&primitive);
-        } );
-
-        if (primitive.getItem() != nullptr) {
-            primitive.getItem()->setSelected(true);
-            // Eventually, create and configure node item selection item
-            if (primitive.getItem()->getSelectionItem() == nullptr)
-                primitive.getItem()->setSelectionItem(graph.createSelectionItem(primitive.getItem()));   // Safe, any argument might be nullptr
-            // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
-        }
+        QObject::connect(primitive.data(),  &Primitive_t::destroyed,
+                         &graph,            [&selectedPrimitives, primitive]() {
+                             selectedPrimitives.removeAll(primitive.data());
+                         });
+        primitiveItem->setSelected(true);
+        // Eventually, create and configure node item selection item
+        if (primitiveItem->getSelectionItem() == nullptr)
+            primitiveItem->setSelectionItem(graph.createSelectionItem(primitiveItem));   // Safe, any argument might be nullptr
+        // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
     }
 }
 
-void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(node, _selectedNodes, *this); }
-void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(group, _selectedGroups, *this); }
+void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(QPointer<qan::Node>(&node), _selectedNodes, *this); }
+void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(&group, _selectedGroups, *this); }
 void    Graph::addToSelection(qan::Edge& edge)
 {
     // Note 20221002: Do not use addToSelectionImpl<>() since it has no support for QVector<QPointer<qan::Edge>>
@@ -1299,15 +1301,15 @@ void    Graph::addToSelection(qan::Edge& edge)
 }
 
 template <class Primitive_t>
-void    removeFromSelectionImpl(Primitive_t& primitive,
-                                qcm::Container< QVector, Primitive_t* >& selectedPrimitives)
+void    removeFromSelectionImpl(QPointer<Primitive_t> primitive,
+                                qcm::Container<std::vector, QPointer<Primitive_t>>& selectedPrimitives)
 {
-    if (selectedPrimitives.contains(&primitive))
-        selectedPrimitives.removeAll(&primitive);
+    if (selectedPrimitives.contains(primitive.data()))
+        selectedPrimitives.removeAll(primitive.data());
 }
 
-void    Graph::removeFromSelection(qan::Node& node) { removeFromSelectionImpl<qan::Node>(node, _selectedNodes); }
-void    Graph::removeFromSelection(qan::Group& group) { removeFromSelectionImpl<qan::Group>(group, _selectedGroups); }
+void    Graph::removeFromSelection(qan::Node& node) { removeFromSelectionImpl<qan::Node>(&node, _selectedNodes); }
+void    Graph::removeFromSelection(qan::Group& group) { removeFromSelectionImpl<qan::Group>(&group, _selectedGroups); }
 
 // Note: Called from
 void    Graph::removeFromSelection(QQuickItem* item) {
@@ -1341,21 +1343,21 @@ void    Graph::selectAll()
 void    Graph::removeSelection()
 {
     const auto& selectedNodes = getSelectedNodes();
-    for (const auto node: qAsConst(selectedNodes))
+    for (const auto& node: qAsConst(selectedNodes))
         if (node &&
             !node->getIsProtected() &&
             !node->getLocked())
             removeNode(node);
 
     const auto& selectedGroups = getSelectedGroups();
-    for (const auto group: qAsConst(selectedGroups))
+    for (const auto& group: qAsConst(selectedGroups))
         if (group &&
             !group->getIsProtected() &&
             !group->getLocked())
             removeGroup(group);
 
     const auto& selectedEdges = getSelectedEdges();
-    for (const auto edge: qAsConst(selectedEdges))
+    for (const auto& edge: qAsConst(selectedEdges))
         if (edge &&
             !edge->getIsProtected() &&
             !edge->getLocked())

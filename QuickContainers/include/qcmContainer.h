@@ -130,7 +130,7 @@ namespace qcm { // ::qcm
  * might have trouble making a distinction between a QVariant encoding a QObject* while it should be a concrete
  * QObject* subclass.
  */
-template < template<typename...CArgs> class C, class T >
+template <template<typename...CArgs> class C, class T >
 class Container : public AbstractContainer
 {
     /*! \name Container Object Management *///------------------------
@@ -147,7 +147,7 @@ public:
     Container(const Container<C, T>& container) = delete;
 
 protected:
-    using ModelImpl = qcm::ContainerModelImpl<qcm::Container<C, T>>;
+    using ModelImpl = qcm::ContainerModelImpl<qcm::Container<C, T>, T>;
     virtual void createModel() override {
         _modelImpl = new ModelImpl{*this};
         _model = _modelImpl;
@@ -224,25 +224,26 @@ public:
         return atImpl(i, typename ItemDispatcher<T>::type{});
     }
 private:
-    inline auto atImpl( int i, ItemDispatcherBase::non_ptr_type )           const -> T {
+    inline auto atImpl(int i, ItemDispatcherBase::non_ptr_type)             const -> T {
         return _container.at(i);
     }
-    inline auto atImpl( int i, ItemDispatcherBase::unsupported_type )       const -> T { return atImpl( i, ItemDispatcherBase::non_ptr_type{} ); }
+    inline auto atImpl(int i, ItemDispatcherBase::unsupported_type)         const -> T { return atImpl(i, ItemDispatcherBase::non_ptr_type{}); }
 
-    inline auto atImpl( int i, ItemDispatcherBase::ptr_type )               const -> T {
+    inline auto atImpl(int i, ItemDispatcherBase::ptr_type)                 const -> T {
         return ( i < static_cast<int>(_container.size()) ? _container.at(i) : nullptr );
     }
-    inline auto atImpl( int i, ItemDispatcherBase::ptr_qobject_type )       const -> T { return atImpl( i, ItemDispatcherBase::ptr_type{} ); }
+    inline auto atImpl(int i, ItemDispatcherBase::ptr_qobject_type)         const -> T { return atImpl(i, ItemDispatcherBase::ptr_type{}); }
+    inline auto atImpl(int i, ItemDispatcherBase::q_ptr_type)               const -> T { return atImpl(i, ItemDispatcherBase::ptr_type{}); }
 
-    inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_type )        const -> T {
-        return ( i < static_cast<int>(_container.size()) ? _container.at( i ) : T{} );
+    inline auto atImpl(int i, ItemDispatcherBase::shared_ptr_type)          const -> T {
+        return (i < static_cast<int>(_container.size()) ? _container.at(i) : T{});
     }
-    inline auto atImpl( int i, ItemDispatcherBase::shared_ptr_qobject_type ) const -> T { return atImpl( i, ItemDispatcherBase::shared_ptr_type{} ); }
+    inline auto atImpl(int i, ItemDispatcherBase::shared_ptr_qobject_type)  const -> T { return atImpl(i, ItemDispatcherBase::shared_ptr_type{}); }
 
-    inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_type )          const -> T {
-        return ( i < static_cast<int>(_container.size()) ? _container.at( i ) : T{} );
+    inline auto atImpl(int i, ItemDispatcherBase::weak_ptr_type)            const -> T {
+        return (i < static_cast<int>(_container.size()) ? _container.at(i) : T{});
     }
-    inline auto atImpl( int i, ItemDispatcherBase::weak_ptr_qobject_type )  const -> T { return atImpl( i, ItemDispatcherBase::weak_ptr_type{} ); }
+    inline auto atImpl(int i, ItemDispatcherBase::weak_ptr_qobject_type)    const -> T { return atImpl(i, ItemDispatcherBase::weak_ptr_type{}); }
 
 public:
     //! Shortcut to Container<T>::reserve().
