@@ -253,20 +253,20 @@ public:
     //! Shortcut to Container<T>::size().
     inline auto size( ) const noexcept -> decltype(std::declval<C<T>>().size()) { return _container.size( ); }
 
-    void        append( const T& item ) {
-        if ( isNullPtr( item, typename ItemDispatcher<T>::type{} ) )
+    void        append(const T& item) {
+        if (isNullPtr(item, typename ItemDispatcher<T>::type{}))
             return;
-        if ( _model ) {
-            fwdBeginInsertRows( QModelIndex{},
-                                static_cast<int>(_container.size()),
-                                static_cast<int>(_container.size()) );
+        if (_model) {
+            fwdBeginInsertRows(QModelIndex{},
+                               static_cast<int>(_container.size()),
+                               static_cast<int>(_container.size()));
             qcm::adapter<C, T>::append(_container, item);
-            appendImpl( item, typename ItemDispatcher<T>::type{} );
+            appendImpl(item, typename ItemDispatcher<T>::type{});
             fwdEndInsertRows();
             fwdEmitLengthChanged();
         } else {
             qcm::adapter<C, T>::append(_container, item);
-            appendImpl( item, typename ItemDispatcher<T>::type{} );
+            appendImpl(item, typename ItemDispatcher<T>::type{});
         }
     }
 
@@ -311,10 +311,10 @@ private:
             _modelImpl->_qObjectItemMap.insert( { item.get(), item } );
     }
     inline auto appendImpl( const T&, ItemDispatcherBase::weak_ptr_type ) noexcept  -> void {}
-    inline auto appendImpl( const T& item, ItemDispatcherBase::weak_ptr_qobject_type )   noexcept -> void {
-        if ( _modelImpl &&
-             !item.expired() )
-            _modelImpl->_qObjectItemMap.insert( { item.lock().get(), item } );
+    inline auto appendImpl(const T& item, ItemDispatcherBase::weak_ptr_qobject_type)   noexcept -> void {
+        if (_modelImpl &&
+            !item.expired())
+            _modelImpl->_qObjectItemMap.insert({item.lock().get(), item});
     }
 
 public:
