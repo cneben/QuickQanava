@@ -26,6 +26,10 @@ set(qan_source_files
     qanStyleManager.cpp
     qanAnalysisTimeHeatMap.cpp
     qanUtils.cpp
+    qanTableGroup.cpp
+    qanTableCell.cpp
+    qanTableBorder.cpp
+    qanTableGroupItem.cpp
     )
 
 set (qan_header_files
@@ -56,6 +60,10 @@ set (qan_header_files
     qanStyleManager.h
     qanAnalysisTimeHeatMap.cpp
     qanUtils.h
+    qanTableGroup.h
+    qanTableCell.h
+    qanTableBorder.h
+    qanTableGroupItem.h
     QuickQanava.h
     gtpo/container_adapter.h
     gtpo/edge.h
