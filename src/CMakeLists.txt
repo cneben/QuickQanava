@@ -117,7 +117,12 @@ install(TARGETS QuickQanava
     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-target_link_libraries(QuickQanava PUBLIC QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
+target_link_libraries(QuickQanava PUBLIC QuickContainers
+                                         Qt${QT_VERSION_MAJOR}::Core
+                                         Qt${QT_VERSION_MAJOR}::Gui
+                                         Qt${QT_VERSION_MAJOR}::Qml
+                                         Qt${QT_VERSION_MAJOR}::Quick
+                                         Qt${QT_VERSION_MAJOR}::QuickControls2)
 if(QUICK_QANAVA_BUILD_STATIC_QRC)
     target_compile_definitions(QuickQanava PUBLIC -DQUICKQANAVA_STATIC)
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)
