@@ -61,12 +61,13 @@ struct container_adapter< std::vector<T> > {
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
-    inline static   std::size_t size( std::vector<T>& c ) { return c.size(); }
+    inline static   std::size_t size(std::vector<T>& c) { return c.size(); }
     inline static   bool        contains( const std::vector<T>& c, const T& t ) { return std::find(std::begin(c), std::end(c), t) != std::end(c); }
     inline static   void        reserve( std::vector<T>& c, std::size_t s) { c.reserve(s); }
 };
 
-
+// FIXME 20230515 no support for shared_ptr
+/*
 template < typename T >
 struct container_adapter< std::list<std::shared_ptr<T>> > {
     inline static void             insert( std::shared_ptr<T> t, std::list<std::shared_ptr<T>>& c ) { c.emplace_back( t ); }
@@ -75,7 +76,7 @@ struct container_adapter< std::list<std::shared_ptr<T>> > {
     {   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
         c.erase( std::remove(c.begin(), c.end(), t), c.end());
     }
-};
+};*/
 
 template < typename T >
 struct container_adapter< std::unordered_set<T> > {
@@ -104,15 +105,15 @@ struct container_adapter< QSet<T> > {
     inline static   void        reserve( QSet<T>& c, std::size_t s) { c.reserve(s); }
 };
 
-template < template<typename...CArgs> class C, typename T >
-struct container_adapter< qcm::Container<C, T> > {
-    inline static void  insert( T t, qcm::Container<C, T>& c ) { c.append( t ); }
-    inline static void  insert( T t, qcm::Container<C, T>& c, int i ) { Q_UNUSED(i); c.insert( t ); }
-    inline static void  remove( const T& t, qcm::Container<C, T>& c ) { c.removeAll(t); }
-    inline static   std::size_t size( qcm::Container<C, T>& c ) { return c.size(); }
-    inline static   bool        contains( const qcm::Container<C, T>& c, const T& t ) { return c.contains(t); }
-    inline static   void        reserve( qcm::Container<C , T>& c, std::size_t s) { c.reserve(s); }
+// FIXME unsure....
+template <template<typename...CArgs> class C, typename T >
+struct container_adapter<qcm::Container<C, T>> {
+    inline static void  insert(T t, qcm::Container<C, T>& c) { c.append( t ); }
+    inline static void  insert(T t, qcm::Container<C, T>& c, int i) { Q_UNUSED(i); c.insert( t ); }
+    inline static void  remove(const T& t, qcm::Container<C, T>& c) { c.removeAll(t); }
+    inline static   std::size_t size(qcm::Container<C, T>& c) { return c.size(); }
+    inline static   bool        contains(const qcm::Container<C, T>& c, const T& t) { return c.contains(t); }
+    inline static   void        reserve(qcm::Container<C , T>& c, std::size_t s) { c.reserve(s); }
 };
-
 
 } // ::gtpo
