@@ -32,15 +32,14 @@
 // \date    2015 06 05
 //-----------------------------------------------------------------------------
 
-#ifndef qanStyleManager_h
-#define qanStyleManager_h
+#pragma once
 
 // Qt headers
 #include <QSortFilterProxyModel>
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include "../QuickContainers/include/qcmContainer.h"
+#include "./quickcontainers/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"
@@ -120,7 +119,4 @@ public:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::StyleManager )
-
-#endif // qanStyleManager_h
-
+QML_DECLARE_TYPE(qan::StyleManager)

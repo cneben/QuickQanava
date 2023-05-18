@@ -46,7 +46,7 @@
 #include <QSet>
 
 // QuickContainers headers
-#include "../QuickContainers/include/qcmContainer.h"
+#include "../quickcontainers/qcmContainer.h"
 
 namespace gtpo { // ::gtpo
 
