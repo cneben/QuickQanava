@@ -42,7 +42,7 @@
 #include <utility>          // c++14 std::index_sequence
 
 // GTPO headers
-#include "./observable.h"
+#include "gtpo/observable.h"
 
 namespace gtpo { // ::gtpo
 

@@ -46,11 +46,11 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanStyle.h"
-#include "./qanNode.h"
-#include "./qanSelectable.h"
-#include "./qanDraggable.h"
-#include "./qanAbstractDraggableCtrl.h"
+#include "qanStyle.h"
+#include "qanNode.h"
+#include "qanSelectable.h"
+#include "qanDraggable.h"
+#include "qanAbstractDraggableCtrl.h"
 
 namespace qan { // ::qan
 
@@ -133,7 +133,7 @@ signals:
 
 public:
     //! Utility function to ease initialization from c++, call setX(), setY(), setWidth() and setHEight() with the content of \c rect bounding rect.
-    auto            setRect(const QRectF& r) noexcept -> void;    
+    auto            setRect(const QRectF& r) noexcept -> void;
     //@}
     //-------------------------------------------------------------------------
 

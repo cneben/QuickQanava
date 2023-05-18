@@ -37,8 +37,8 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
-#include "../../src/qanGraph.h"
-#include "./custom.h"
+#include "qanGraph.h"
+#include "custom.h"
 
 QQmlComponent*  CustomRectNode::delegate(QQmlEngine& engine) noexcept
 {

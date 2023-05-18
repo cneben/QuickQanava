@@ -36,9 +36,9 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanNavigable.h"
-#include "./qanGraphView.h"
-#include "./qanGraph.h"
+#include "qanNavigable.h"
+#include "qanGraphView.h"
+#include "qanGraph.h"
 
 namespace qan { // ::qan
 
@@ -173,4 +173,3 @@ void    GraphView::selectionRectEnd()
 //-----------------------------------------------------------------------------
 
 } // ::qan
-

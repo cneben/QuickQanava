@@ -40,10 +40,10 @@
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include "../QuickContainers/include/qcmContainer.h"
+#include "qcmContainer.h"
 
 // QuickQanava headers
-#include "./qanStyle.h"
+#include "qanStyle.h"
 
 namespace qan { // ::qan
 
@@ -123,4 +123,3 @@ public:
 QML_DECLARE_TYPE( qan::StyleManager )
 
 #endif // qanStyleManager_h
-

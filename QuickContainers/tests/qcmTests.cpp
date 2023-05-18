@@ -33,12 +33,9 @@
 //-----------------------------------------------------------------------------
 
 // QuickContainers headers
-#include "./qcmTests.h"
+#include "qcmTests.h"
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
-
-

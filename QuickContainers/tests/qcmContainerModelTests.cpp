@@ -39,8 +39,8 @@
 #include <QSignalSpy>
 
 // QuickContainers headers
-#include "./qcmTests.h"
-#include "./qcmContainerModelTests.h"
+#include "qcmTests.h"
+#include "qcmContainerModelTests.h"
 
 //-----------------------------------------------------------------------------
 // Static tag dispatching test

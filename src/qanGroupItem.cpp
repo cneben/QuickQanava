@@ -33,10 +33,10 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "./qanGraph.h"
-#include "./qanGroupItem.h"
-#include "./qanEdgeItem.h"
-#include "./qanGroup.h"
+#include "qanGraph.h"
+#include "qanGroupItem.h"
+#include "qanEdgeItem.h"
+#include "qanGroup.h"
 
 namespace qan { // ::qan
 

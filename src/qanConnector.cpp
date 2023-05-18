@@ -36,11 +36,11 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanGraph.h"
-#include "./qanNode.h"
-#include "./qanEdgeItem.h"
-#include "./qanPortItem.h"
-#include "./qanConnector.h"
+#include "qanGraph.h"
+#include "qanNode.h"
+#include "qanEdgeItem.h"
+#include "qanPortItem.h"
+#include "qanConnector.h"
 
 namespace qan { // ::qan
 

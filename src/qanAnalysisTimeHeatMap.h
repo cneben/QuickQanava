@@ -37,7 +37,7 @@
 #include <QImage>
 
 // QuickQanava headers
-#include "./qanNavigablePreview.h"
+#include "qanNavigablePreview.h"
 
 namespace qan { // ::qan
 

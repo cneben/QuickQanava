@@ -34,24 +34,24 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "./qanPlugin.h"
-#include "./qanEdge.h"
-#include "./qanEdgeItem.h"
-#include "./qanNode.h"
-#include "./qanNodeItem.h"
-#include "./qanPortItem.h"
-#include "./qanConnector.h"
-#include "./qanGroup.h"
-#include "./qanGroupItem.h"
-#include "./qanGraph.h"
-#include "./qanNavigable.h"
-#include "./qanGrid.h"
-#include "./qanLineGrid.h"
-#include "./qanGraphView.h"
-#include "./qanStyle.h"
-#include "./qanStyleManager.h"
-#include "./qanBottomRightResizer.h"
-#include "./qanNavigablePreview.h"
+#include "qanPlugin.h"
+#include "qanEdge.h"
+#include "qanEdgeItem.h"
+#include "qanNode.h"
+#include "qanNodeItem.h"
+#include "qanPortItem.h"
+#include "qanConnector.h"
+#include "qanGroup.h"
+#include "qanGroupItem.h"
+#include "qanGraph.h"
+#include "qanNavigable.h"
+#include "qanGrid.h"
+#include "qanLineGrid.h"
+#include "qanGraphView.h"
+#include "qanStyle.h"
+#include "qanStyleManager.h"
+#include "qanBottomRightResizer.h"
+#include "qanNavigablePreview.h"
 
 static void initResources()
 {
@@ -101,7 +101,7 @@ void QuickQanavaPlugin::registerTypes(const char *uri)
     qmlRegisterType<qan::GraphView>(uri, 2, 0, "AbstractGraphView");
     qmlRegisterType<qan::Navigable>(uri, 2, 0, "Navigable");
     qmlRegisterType<qan::NavigablePreview>(uri, 2, 0, "AbstractNavigablePreview");
-    
+
     qmlRegisterType<qan::Grid>(uri, 2, 0, "AbstractGrid");
     qmlRegisterType<qan::OrthoGrid>(uri, 2, 0, "OrthoGrid");
     qmlRegisterType<qan::LineGrid>(uri, 2, 0, "AbstractLineGrid");

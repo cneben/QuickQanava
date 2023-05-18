@@ -37,7 +37,7 @@
 #include <QMouseEvent>
 
 // QuickQanava headers
-#include "./qanRightResizer.h"
+#include "qanRightResizer.h"
 
 namespace qan {  // ::qan
 

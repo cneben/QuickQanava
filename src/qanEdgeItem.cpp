@@ -38,14 +38,14 @@
 #include <QPainter>
 
 // QuickQanava headers
-#include "./qanUtils.h"
-#include "./qanEdgeItem.h"
-#include "./qanNodeItem.h"      // Resolve forward declaration
-#include "./qanGroupItem.h"
-#include "./qanGraph.h"
-#include "./qanEdgeDraggableCtrl.h"
+#include "qanUtils.h"
+#include "qanEdgeItem.h"
+#include "qanNodeItem.h"      // Resolve forward declaration
+#include "qanGroupItem.h"
+#include "qanGraph.h"
+#include "qanEdgeDraggableCtrl.h"
 
-#include "./bezier/include/bezier.h"
+#include "bezier/include/bezier.h"
 
 namespace qan { // ::qan
 

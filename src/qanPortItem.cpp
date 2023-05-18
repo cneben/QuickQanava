@@ -37,7 +37,7 @@
 #include <QPainterPath>
 
 // QuickQanava headers
-#include "./qanPortItem.h"
+#include "qanPortItem.h"
 
 namespace qan { // ::qan
 

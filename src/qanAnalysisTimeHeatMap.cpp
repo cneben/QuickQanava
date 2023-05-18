@@ -34,7 +34,7 @@
 #include <QPainter>
 
 // Topoi++ headers
-#include "./qanAnalysisTimeHeatMap.h"
+#include "qanAnalysisTimeHeatMap.h"
 
 namespace qan { // ::qan
 

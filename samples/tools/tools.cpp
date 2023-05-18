@@ -38,7 +38,7 @@
 #include <QIcon>
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
+#include "QuickQanava.h"
 
 using namespace qan;
 
@@ -56,4 +56,3 @@ int	main(int argc, char** argv)
     engine.load(QUrl("qrc:/tools.qml"));
     return app.exec();
 }
-

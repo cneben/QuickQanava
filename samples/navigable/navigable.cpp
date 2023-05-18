@@ -38,9 +38,9 @@
 #include <QQuickStyle>
 
 // QuickQanava headers
-#include "../../src/qanNavigable.h"
-#include "../../src/qanNavigablePreview.h"
-#include "../../src/qanLineGrid.h"
+#include "qanNavigable.h"
+#include "qanNavigablePreview.h"
+#include "qanLineGrid.h"
 
 int main(int argc, char *argv[])
 {

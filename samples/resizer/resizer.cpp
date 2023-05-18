@@ -38,7 +38,7 @@
 #include <QQuickStyle>
 
 // QuickQanava headers
-#include "../../src/qanBottomRightResizer.h"
+#include "qanBottomRightResizer.h"
 
 int main(int argc, char *argv[])
 {

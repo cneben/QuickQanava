@@ -40,9 +40,9 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./container_adapter.h"
-#include "./observable.h"
-#include "./observer.h"
+#include "gtpo/container_adapter.h"
+#include "gtpo/observable.h"
+#include "gtpo/observer.h"
 
 /*! \brief GTPO for Generic Graph ToPolOgy.
  */
@@ -316,4 +316,4 @@ private:
 
 } // ::gtpo
 
-#include "./graph.hpp"
+#include "gtpo/graph.hpp"

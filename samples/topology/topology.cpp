@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
+#include "QuickQanava.h"
 
 // Qt headers
 #include <QApplication>
@@ -41,7 +41,7 @@
 #include <QIcon>
 
 // Topology sample headers
-#include "./qanFaceNode.h"
+#include "qanFaceNode.h"
 
 using namespace qan;
 
@@ -67,4 +67,3 @@ int	main(int argc, char** argv)
     engine.load(QUrl("qrc:/topology.qml"));
     return app.exec();
 }
-

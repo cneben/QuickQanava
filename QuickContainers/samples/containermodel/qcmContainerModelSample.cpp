@@ -34,9 +34,9 @@
 #include <QQmlContext>
 
 // QuickContainers headers
-#include "../../src/QuickContainers.h"
-#include "../../src/qcmContainerModel.h"
-#include "./qcmContainerModelSample.h"
+#include "QuickContainers.h"
+#include "qcmContainerModel.h"
+#include "qcmContainerModelSample.h"
 
 using namespace qcm;
 
