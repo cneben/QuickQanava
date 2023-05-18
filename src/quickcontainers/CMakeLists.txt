@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1.0)
 project(QuickContainers LANGUAGES CXX)
 
 # Configure Qt
+message(QuickContainers HOPLA)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
 set(CMAKE_AUTOMOC ON)
