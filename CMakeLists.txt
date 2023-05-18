@@ -6,7 +6,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(QUICKQANAVA_QT_MAJOR_VERSION "Force Qt Versions to 5 or 6 (default to 6)" 6)
+SET(QUICKQANAVA_QT_MAJOR_VERSION 5 CACHE STRING "Force Qt version to 5 or 6, default to 6")
 option(QUICKQANAVA_BUILD_STATIC_QRC "Build *.qrc resources statically" TRUE)
 option(QUICKQANAVA_WINDOWS_DEPLOY "Use windeployqt on Windows" FALSE)
 
