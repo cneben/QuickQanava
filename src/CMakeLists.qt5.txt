@@ -19,7 +19,13 @@ else()
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 list(APPEND qan_resources GraphicalEffects5/QuickQanavaGraphicalEffects.qrc)
-add_library(QuickQanava STATIC ${qan_source_files} ${qan_header_files} ${qan_resources} ${quickcontainers_source_files} ${quickcontainers_header_files})
+add_library(QuickQanava STATIC
+    ${qan_source_files}
+    ${qan_header_files}
+    ${qan_resources}
+    ${quickcontainers_source_files}
+    ${quickcontainers_header_files}
+    )
 
 target_include_directories(QuickQanava
     PUBLIC

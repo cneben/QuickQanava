@@ -35,7 +35,7 @@
 #pragma once
 
 // QuickContainers headers
-#include "../QuickContainers/include/QuickContainers.h"
+#include "./quickcontainers/QuickContainers.h"
 
 // Qt header
 #include <QQmlEngine>
