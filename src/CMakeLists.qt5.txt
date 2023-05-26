@@ -19,10 +19,10 @@ else()
 endif(QUICK_QANAVA_BUILD_STATIC_QRC)
 
 list(APPEND qan_resources GraphicalEffects5/QuickQanavaGraphicalEffects.qrc)
+qt5_add_resources(qan_source_files ${qan_resources})
 add_library(QuickQanava STATIC
     ${qan_source_files}
     ${qan_header_files}
-    ${qan_resources}
     ${quickcontainers_source_files}
     ${quickcontainers_header_files}
     )
