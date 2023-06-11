@@ -610,55 +610,52 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
     if (node == nullptr)
         return false;
 
-    if (nodeComponent == nullptr) {
+    if (nodeComponent == nullptr)
         nodeComponent = _nodeDelegate.get(); // If no delegate component is specified, try the default node delegate
-    }
-    if (nodeComponent == nullptr) {               // Otherwise, throw an error, a visual node must have a delegate
-        qWarning() << "qan::Graph::insertNode(SharedNode): Can't find a valid node delegate component.";
-        return false;
-    }
-    if (nodeComponent->isError()) {
-        qWarning() << "qan::Graph::insertNode(SharedNode): Component error: " << nodeComponent->errors();
+    if (nodeComponent != nullptr &&
+        nodeComponent->isError()) {
+        qWarning() << "qan::Graph::insertNode(): Component error: " << nodeComponent->errors();
         return false;
     }
     try {
         QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
         qan::NodeItem* nodeItem = nullptr;
-        if (nodeStyle != nullptr) {
+        if (nodeComponent != nullptr &&
+            nodeStyle != nullptr) {
             _styleManager.setStyleComponent(nodeStyle, nodeComponent);
             nodeItem = static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
                                                                        *nodeStyle,
                                                                        node));
         }
-        if (nodeItem  == nullptr)
-            throw qan::Error{"Node item creation failed."};
-        nodeItem->setNode(node);
-        nodeItem->setGraph(this);
-        node->setItem(nodeItem);
-        auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                emit this->nodeClicked(nodeItem->getNode(), p);
-        };
-        connect(nodeItem,   &qan::NodeItem::nodeClicked,
-                this,       notifyNodeClicked);
+        if (nodeItem != nullptr) {
+            nodeItem->setNode(node);
+            nodeItem->setGraph(this);
+            node->setItem(nodeItem);
+            auto notifyNodeClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeClicked(nodeItem->getNode(), p);
+            };
+            connect(nodeItem,   &qan::NodeItem::nodeClicked,
+                    this,       notifyNodeClicked);
 
-        auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                emit this->nodeRightClicked(nodeItem->getNode(), p);
-        };
-        connect(nodeItem,   &qan::NodeItem::nodeRightClicked,
-                this,       notifyNodeRightClicked);
+            auto notifyNodeRightClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeRightClicked(nodeItem->getNode(), p);
+            };
+            connect(nodeItem,   &qan::NodeItem::nodeRightClicked,
+                    this,       notifyNodeRightClicked);
 
-        auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
-            if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
-                emit this->nodeDoubleClicked(nodeItem->getNode(), p);
-        };
-        connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
-                this,     notifyNodeDoubleClicked);
-        node->setItem(nodeItem);
-        {   // Send item to front
-            _maxZ += 1;
-            nodeItem->setZ(_maxZ);
+            auto notifyNodeDoubleClicked = [this] (qan::NodeItem* nodeItem, QPointF p) {
+                if ( nodeItem != nullptr && nodeItem->getNode() != nullptr )
+                    emit this->nodeDoubleClicked(nodeItem->getNode(), p);
+            };
+            connect(nodeItem, &qan::NodeItem::nodeDoubleClicked,
+                    this,     notifyNodeDoubleClicked);
+            node->setItem(nodeItem);
+            {   // Send item to front
+                _maxZ += 1;
+                nodeItem->setZ(_maxZ);
+            }
         }
         super_t::insert_node(node);
     } catch (const qan::Error& e) {
