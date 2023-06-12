@@ -57,9 +57,11 @@ qan::Node*  Graph::insertNode(QQmlComponent* nodeComponent, qan::NodeStyle* node
         if (nodeStyle == nullptr)
             nodeStyle = Node_t::style(nullptr);
         _styleManager.setStyleComponent(nodeStyle, nodeComponent);      // nullptr nodeComponent is ok
-        qan::NodeItem* nodeItem = static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
-                                                                                  *nodeStyle,
-                                                                                  node));
+        qan::NodeItem* nodeItem = nodeComponent != nullptr ? static_cast<qan::NodeItem*>(createFromComponent(nodeComponent,
+                                                                                                              *nodeStyle,
+                                                                                                              node)) :
+                                                             nullptr;
+
         if (nodeItem != nullptr) {
             nodeItem->setNode(node);
             nodeItem->setGraph(this);
@@ -138,10 +140,6 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
         if (edgeComponent == nullptr)
             edgeComponent = _edgeDelegate.get();    // Otherwise, use default edge delegate component
     }
-    if (edgeComponent == nullptr) {               // Otherwise, throw an error, a visual edge must have a delegate
-        qWarning() << "qan::Graph::insertEdge<>(): Error: Can't find a valid edge delegate component.";
-        return nullptr;
-    }
     const auto style = qobject_cast<qan::EdgeStyle*>(Edge_t::style(nullptr));
     if (style == nullptr) {
         qWarning() << "qan::Graph::insertEdge(): Error: style() factory has returned a nullptr style.";
@@ -151,14 +149,12 @@ qan::Edge*  Graph::insertEdge(qan::Node& src, qan::Node* dstNode, QQmlComponent*
     try {
         auto edge = new Edge_t{nullptr};
         QQmlEngine::setObjectOwnership(edge, QQmlEngine::CppOwnership);
-        if (configureEdge(*edge,  *edgeComponent, *style,
-                           src,    dstNode)) {
-            insert_edge(edge);
-            configuredEdge = edge;
-        } else {
-            qWarning() << "qan::Graph::insertEdge<>(): Error: Internal error during edge configuration.";
-            // Note: edge is deleted since it is unreferenced...
-        }
+        if (edgeComponent != nullptr &&
+            style != nullptr)
+            configureEdge(*edge,  *edgeComponent, *style,
+                          src,    dstNode);
+        insert_edge(edge);
+        configuredEdge = edge;
     } catch (...) {
         qWarning() << "qan::Graph::insertEdge<>(): Error: Topology error.";
         // Note: edge is cleaned automatically if it has still not been inserted to graph
