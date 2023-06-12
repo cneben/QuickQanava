@@ -960,9 +960,7 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
             _maxZ += 1.0;
             groupItem->setZ(_maxZ);
         }
-    } else
-        qWarning() << "qan::Graph::insertGroup(): Warning: Either group delegate or group style is invalid or nullptr.";
-
+    }
     if (group != nullptr) {       // Notify user.
         onNodeInserted(*group);
         emit nodeInserted(group);
