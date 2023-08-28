@@ -1250,8 +1250,10 @@ void    Graph::setNodeSelected(qan::Node* node, bool selected)
 }
 
 bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
+bool    Graph::selectGroup(qan::Group* group) { return group != nullptr ? selectGroup(*group) : false; }
 
 bool    Graph::selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Edge>(edge, modifiers, *this); }
+bool    Graph::selectEdge(qan::Edge* edge) { return edge != nullptr ? selectEdge(*edge) : false; }
 
 template <class Primitive_t>
 void    addToSelectionImpl(QPointer<Primitive_t> primitive,
