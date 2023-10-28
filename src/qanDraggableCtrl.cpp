@@ -167,8 +167,14 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         return;
 
     const auto graph = getGraph();
-    if (graph != nullptr)
-        emit graph->nodeAboutToBeMoved(_target);
+    if (graph != nullptr) {
+        if (dragSelection && graph->hasMultipleSelection()) {
+            std::vector<qan::Node*> nodes;
+            std::copy(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), std::back_inserter(nodes));
+            emit graph->nodesAboutToBeMoved(nodes);
+        } else
+            emit graph->nodeAboutToBeMoved(_target);
+    }
     _targetItem->setDragged(true);
 
     _initialSceneDragPos = sceneDragPos;
