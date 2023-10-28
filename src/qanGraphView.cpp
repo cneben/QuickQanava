@@ -170,6 +170,64 @@ void    GraphView::selectionRectEnd()
 {
     _selectedItems.clear();  // Clear selection cache
 }
+
+void    GraphView::keyPressEvent(QKeyEvent *event)
+{
+    if (event == nullptr)
+        return;
+    if (!_graph ||
+        _graph->getContainerItem() == nullptr) {
+        event->ignore();
+        return;
+    }
+    if (_graph->getSelectedNodes().size() <= 0) {
+        event->ignore();
+        return;
+    }
+    qWarning() << "event" << event->key();
+    const auto key = event->key();
+    if (key == Qt::Key_Left ||
+        key == Qt::Key_Right ||
+        key == Qt::Key_Up ||
+        key == Qt::Key_Down) {
+
+        // 1. Get the first selected node drag controller.
+        // 2. Manually call beginDragMove()
+        // 3. Manually call endDragMove() with a delta generated according
+        //    to pressed key
+
+        // 1.
+        const auto node = _graph->getSelectedNodes().at(0);
+        const auto nodeItem = node != nullptr ? node->getItem() : nullptr;
+        if (nodeItem != nullptr) {
+            auto& dragCtrl = nodeItem->draggableCtrl();
+
+            // FIXME: emit graph beginDragNodes()...
+
+            // 2.
+            dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
+
+            // 3.
+            auto getDragDelta = [](int key) -> QPointF {
+                switch (key) {
+                case Qt::Key_Left:  return QPointF{-10, 0.};
+                case Qt::Key_Right: return QPointF{10, 0.};
+                case Qt::Key_Up:    return QPointF{0., -10.};
+                case Qt::Key_Down:  return QPointF{0, 10.};
+                }
+                return QPointF{0., 0.};
+            };
+            const auto delta = getDragDelta(key);
+            dragCtrl.dragMove(delta, /*dragSelection*/true);
+            dragCtrl.endDragMove(true);
+
+            // FIXME: emit endDragNodes()...
+        }
+
+        event->accept();
+    } else
+        event->ignore();
+}
 //-----------------------------------------------------------------------------
 
 } // ::qan

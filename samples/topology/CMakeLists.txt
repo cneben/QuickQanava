@@ -38,7 +38,6 @@ add_executable(sample_topology ${source_files} topology.qrc)
 target_include_directories(sample_topology PUBLIC QuickQanava)
 target_link_libraries(sample_topology
     QuickQanava
-    QuickContainers
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickControls2
