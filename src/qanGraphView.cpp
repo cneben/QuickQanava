@@ -184,12 +184,19 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
         event->ignore();
         return;
     }
-    qWarning() << "event" << event->key();
     const auto key = event->key();
-    if (key == Qt::Key_Left ||
-        key == Qt::Key_Right ||
-        key == Qt::Key_Up ||
-        key == Qt::Key_Down) {
+    auto getDragDelta = [](int key) -> QPointF {
+        switch (key) {
+        case Qt::Key_Left:  return QPointF{-10, 0.};
+        case Qt::Key_Right: return QPointF{10, 0.};
+        case Qt::Key_Up:    return QPointF{0., -10.};
+        case Qt::Key_Down:  return QPointF{0, 10.};
+        }
+        return QPointF{0., 0.};
+    };
+    const auto delta = getDragDelta(key);
+
+    if (delta.manhattanLength() > 0.) {
 
         // 1. Get the first selected node drag controller.
         // 2. Manually call beginDragMove()
@@ -203,25 +210,15 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
             auto& dragCtrl = nodeItem->draggableCtrl();
 
             // FIXME: emit graph beginDragNodes()...
+            // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
+            // dragCtrl will handle that as a regular DnD mouse drag.
 
             // 2.
             dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
 
             // 3.
-            auto getDragDelta = [](int key) -> QPointF {
-                switch (key) {
-                case Qt::Key_Left:  return QPointF{-10, 0.};
-                case Qt::Key_Right: return QPointF{10, 0.};
-                case Qt::Key_Up:    return QPointF{0., -10.};
-                case Qt::Key_Down:  return QPointF{0, 10.};
-                }
-                return QPointF{0., 0.};
-            };
-            const auto delta = getDragDelta(key);
             dragCtrl.dragMove(delta, /*dragSelection*/true);
             dragCtrl.endDragMove(true);
-
-            // FIXME: emit endDragNodes()...
         }
 
         event->accept();
