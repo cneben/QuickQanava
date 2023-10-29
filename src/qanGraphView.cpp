@@ -209,7 +209,6 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
         if (nodeItem != nullptr) {
             auto& dragCtrl = nodeItem->draggableCtrl();
 
-            // FIXME: emit graph beginDragNodes()...
             // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
             // dragCtrl will handle that as a regular DnD mouse drag.
 
@@ -218,9 +217,8 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
 
             // 3.
             dragCtrl.dragMove(delta, /*dragSelection*/true);
-            dragCtrl.endDragMove(true);
+            dragCtrl.endDragMove(/*dragSelection*/true);
         }
-
         event->accept();
     } else
         event->ignore();
