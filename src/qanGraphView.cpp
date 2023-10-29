@@ -173,17 +173,19 @@ void    GraphView::selectionRectEnd()
 
 void    GraphView::keyPressEvent(QKeyEvent *event)
 {
-    if (event == nullptr)
+    if (event == nullptr)   // Sanity checks
         return;
     if (!_graph ||
         _graph->getContainerItem() == nullptr) {
         event->ignore();
         return;
     }
-    if (_graph->getSelectedNodes().size() <= 0) {
+    const auto containerItem = getContainerItem();
+    if (containerItem == nullptr) {
         event->ignore();
         return;
     }
+
     const auto key = event->key();
     auto getDragDelta = [](int key) -> QPointF {
         switch (key) {
@@ -195,7 +197,23 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
         return QPointF{0., 0.};
     };
     const auto delta = getDragDelta(key);
+    if (delta.manhattanLength() <= 0.0000001) {
+        event->ignore();
+        return;
+    }
 
+    // If no selection, move the underlying graph view
+    if (_graph->getSelectedNodes().size() <= 0) {
+        const auto p = QPointF{containerItem->x(),
+                               containerItem->y()} - delta;
+        containerItem->setX(p.x());
+        containerItem->setY(p.y());
+        emit containerItemModified();
+        event->accept();
+        return;
+    }
+
+    // Otherwise handle multiple selection (ie move selection)
     if (delta.manhattanLength() > 0.) {
 
         // 1. Get the first selected node drag controller.
