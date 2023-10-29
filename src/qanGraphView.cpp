@@ -187,12 +187,13 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
     }
 
     const auto key = event->key();
-    auto getDragDelta = [](int key) -> QPointF {
+    const auto gridSize = _graph->getSnapToGrid() ? _graph->getSnapToGridSize().width() : 10.;
+    auto getDragDelta = [gridSize](int key) -> QPointF {
         switch (key) {
-        case Qt::Key_Left:  return QPointF{-10, 0.};
-        case Qt::Key_Right: return QPointF{10, 0.};
-        case Qt::Key_Up:    return QPointF{0., -10.};
-        case Qt::Key_Down:  return QPointF{0, 10.};
+        case Qt::Key_Left:  return QPointF{-gridSize, 0.};
+        case Qt::Key_Right: return QPointF{gridSize,  0.};
+        case Qt::Key_Up:    return QPointF{0.,        -gridSize};
+        case Qt::Key_Down:  return QPointF{0,         gridSize};
         }
         return QPointF{0., 0.};
     };
