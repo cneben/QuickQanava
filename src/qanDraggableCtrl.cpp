@@ -157,7 +157,7 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
         endDragMove();
 }
 
-void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
+void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection, bool notify)
 {
     if (_targetItem == nullptr ||
         _target == nullptr)
@@ -167,7 +167,9 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         return;
 
     const auto graph = getGraph();
-    if (graph != nullptr) {
+    qWarning() << "qan::DraggableCtrl::beginDragMove(): dragSelection=" << dragSelection;
+    qWarning() << "  graph->hasMultipleSelection()=" << graph->hasMultipleSelection();
+    if (graph != nullptr && notify) {
         if (dragSelection && graph->hasMultipleSelection()) {
             std::vector<qan::Node*> nodes;
             std::copy(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), std::back_inserter(nodes));
@@ -193,7 +195,9 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
                     primitive->getItem() != nullptr &&
                     static_cast<QQuickItem*>(primitive->getItem()) != static_cast<QQuickItem*>(this->_targetItem.data())/* &&
                     primitive->get_group() == nullptr*/)      // Do not drag nodes that are inside a group
-                    primitive->getItem()->draggableCtrl().beginDragMove(sceneDragPos, false);
+                    // Note 20231029: Set notify to false since notyification is done "once" with nodesaboutToBeMoved() in
+                    // the case of a multiple selection.
+                    primitive->getItem()->draggableCtrl().beginDragMove(sceneDragPos, false, /*notify*/false);
             };
 
             // Call beginDragMove on all selected nodes and groups.
@@ -356,7 +360,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
     }
 }
 
-void    DraggableCtrl::endDragMove(bool dragSelection)
+void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
 {
     _initialSceneDragPos = QPointF{0., 0.};    // Invalid all cached coordinates when drag ends
     _initialTargetScenePos = QPointF{0., 0.};
@@ -395,8 +399,6 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
             }
         }
     }
-    if (!nodeGrouped)  // Do not emit nodeMoved() if it has been grouped
-        emit graph->nodeMoved(_target);
 
     _targetItem->setDragged(false);
 
@@ -410,6 +412,16 @@ void    DraggableCtrl::endDragMove(bool dragSelection)
         };
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);
         std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), enDragMoveSelected);
+    }
+
+    if (notify) {
+        if (!dragSelection && !nodeGrouped)  // Do not emit nodeMoved() if it has been grouped
+            emit graph->nodeMoved(_target);
+        else if (dragSelection && graph->hasMultipleSelection()) {
+            std::vector<qan::Node*> nodes;
+            std::copy(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), std::back_inserter(nodes));
+            emit graph->nodesMoved(nodes);
+        }
     }
 }
 //-----------------------------------------------------------------------------
