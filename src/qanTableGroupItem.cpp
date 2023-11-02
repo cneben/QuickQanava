@@ -62,7 +62,7 @@ TableGroupItem::~TableGroupItem()
 
 bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
-    qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
+    //qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
     if (qan::GroupItem::setContainer(container)) {
         // Note: Force reparenting all borders and cell to container, it might be nullptr
         // at initialization.
@@ -85,7 +85,7 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 /* Borders and Cells Management *///-------------------------------------------
 void    TableGroupItem::clearLayout()
 {
-    qWarning() << "qan::TableGroupItem::clearLayout()";
+    //Warning() << "qan::TableGroupItem::clearLayout()";
     for (const auto verticalBorder: _verticalBorders)
         if (verticalBorder != nullptr)
             verticalBorder->deleteLater();
@@ -103,7 +103,7 @@ void    TableGroupItem::clearLayout()
 
 void    TableGroupItem::initialize(int cols, int rows)
 {
-    qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
+    //qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
         qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
@@ -197,7 +197,7 @@ void    TableGroupItem::createCells(int cellsCount)
 
 void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBordersCount)
 {
-    qWarning() << "qan::TableGroupItem::createBorders(): verticalBordersCount=" << verticalBordersCount << "  horizontalBordersCount=" << horizontalBordersCount;
+    //qWarning() << "qan::TableGroupItem::createBorders(): verticalBordersCount=" << verticalBordersCount << "  horizontalBordersCount=" << horizontalBordersCount;
     if (verticalBordersCount < 0 ||     // Might be 0 for 1x1 tables
         horizontalBordersCount < 0) {
         qWarning() << "TableGroupItem::createBorders(): Error, invalid vertical or horizontal borders count.";
@@ -459,7 +459,7 @@ void    TableGroupItem::layoutCells()
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 {
     if (qan::GroupItem::setGroup(group)) {
-        qWarning() << "TableGroupItem::setGroup(): group=" << group;
+        //qWarning() << "qan::TableGroupItem::setGroup(): group=" << group;
 
         auto tableGroup = qobject_cast<qan::TableGroup*>(group);
         if (tableGroup != nullptr) {
