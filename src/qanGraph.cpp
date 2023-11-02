@@ -1402,9 +1402,9 @@ void    Graph::clearSelection()
 
 bool    Graph::hasMultipleSelection() const
 {
-    return _selectedNodes.size() > 0 ||
-            _selectedGroups.size() > 0 ||
-            _selectedEdges.size() > 0;
+    return _selectedNodes.size() > 1 ||
+            _selectedGroups.size() > 1 ||
+            _selectedEdges.size() > 1;
 }
 
 
