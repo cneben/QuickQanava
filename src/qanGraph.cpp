@@ -1402,8 +1402,10 @@ void    Graph::clearSelection()
 
 bool    Graph::hasMultipleSelection() const
 {
-    return _selectedNodes.size() > 1 ||
-            _selectedGroups.size() > 1 ||
+    // Note 20231104: There is still no support for multiple edge selection,
+    // but an heterogeneous selection of nodes and groups is a multiple selection
+    return (_selectedNodes.size() +
+            _selectedGroups.size()) > 1 ||
             _selectedEdges.size() > 1;
 }
 
