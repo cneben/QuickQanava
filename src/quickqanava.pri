@@ -4,10 +4,8 @@ QT          += core widgets gui qml quick
 
 include(quickcontainers/quickcontainers.pri)
 
-# Note: Qmake and pri inclusion is reserved to Qt5.
+# Note: QMake and pri inclusion is reserved to Qt5.
 
-# With .pri inclusion, try to statically link all QML files in Qt ressource, do not
-DEFINES         += QUICKQANAVA_STATIC   # use QML module (calling QuickQanava::initialize() is mandatory...
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
 RESOURCES       += $$PWD/QuickQanava_static.qrc
