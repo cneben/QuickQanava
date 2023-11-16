@@ -1313,7 +1313,7 @@ bool    EdgeItem::contains(const QPointF& point) const
         r = (d > -0.001 && d < 6.001);
         break;
     case qan::EdgeStyle::LineType::Curved: {
-        Bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
+        bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
                                        {static_cast<float>(_c1.x()), static_cast<float>(_c1.y())},
                                        {static_cast<float>(_c2.x()), static_cast<float>(_c2.y())},
                                        {static_cast<float>(_p2.x()), static_cast<float>(_p2.y())}});
