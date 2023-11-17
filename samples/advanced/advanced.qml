@@ -64,40 +64,49 @@ ApplicationWindow {
             property var advancedNodeDelegate: Qt.createComponent("qrc:/AdvancedNode.qml")
             property var advancedGroupDelegate: Qt.createComponent("qrc:/AdvancedGroup.qml")
             Component.onCompleted: {
+                // Group 1
                 const g1 = topology.insertGroup(advancedGroupDelegate);
-                g1.label = "GROUP";
+                g1.label = "GROUP 1";
                 g1.item.x = 300; g1.item.y = 80;
                 g1.item.width = 450; g1.item.height = 220;
 
-                const n1 = topology.insertNode(advancedNodeDelegate);
-                topology.groupNode(g1, n1);
-                n1.item.x = 10; n1.item.y = 35;
+                const g1n1 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, g1n1);
+                g1n1.item.x = 10; g1n1.item.y = 35;
 
-                const n2 = topology.insertNode(advancedNodeDelegate);
-                topology.groupNode(g1, n2);
-                n2.item.x = 180; n2.item.y = 35;
+                const g1n2 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, g1n2);
+                g1n2.item.x = 180; g1n2.item.y = 35;
 
-                topology.insertEdge(n1, n2);
+                topology.insertEdge(g1n1, g1n2);
 
-                const n11 = topology.insertNode(advancedNodeDelegate);
-                topology.groupNode(g1, n11);
-                n11.item.x = 10; n11.item.y = 145;
+                const g1n11 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, g1n11);
+                g1n11.item.x = 10; g1n11.item.y = 145;
 
-                const n22 = topology.insertNode(advancedNodeDelegate);
-                topology.groupNode(g1, n22);
-                n22.item.x = 180; n22.item.y = 145;
+                const g1n22 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, g1n22);
+                g1n22.item.x = 180; g1n22.item.y = 145;
 
-                topology.insertEdge(n11, n22);
+                topology.insertEdge(g1n11, g1n22);
 
+                // Node 3
                 const n3 = topology.insertNode(advancedNodeDelegate);
                 n3.item.x = 850; n3.item.y = 150;
-                topology.insertEdge(n2, n3);
+                topology.insertEdge(g1n2, n3);
+
+                // Group 2
+                const g2 = topology.insertGroup(advancedGroupDelegate);
+                g2.label = "GROUP 2";
+                g2.item.x = 200; g2.item.y = 380;
+                g2.item.width = 190; g2.item.height = 120;
+
+                const g2n1 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g2, g2n1);
+                g2n1.item.x = 10; g2n1.item.y = 35;
+                topology.insertEdge(g2n1, g1n11);
             }
         } // Qan.Graph: graph
-
-        onClicked: {
-            ungroupNodeButton.node = undefined
-        }
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
@@ -122,16 +131,6 @@ ApplicationWindow {
                         n.x = graphView
                         graphView.centerItem(n.item)
                     }
-                }
-            }
-            ToolButton {
-                id: ungroupNodeButton
-                text: "Ungroup Node"
-                property var node: undefined
-                enabled: node !== undefined
-                onClicked: {
-                    if (node && node.group )
-                        topology.ungroupNode(node)
                 }
             }
 
