@@ -43,15 +43,10 @@ Qan.NodeItem {
     id: customNode
     width: 110; height: 60
 
-    /*Qan.RectGlowEffect {
-        anchors.fill: parent
-        style: customNode.style
-    }*/
-
     RowLayout {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.top
-        anchors.bottomMargin: 4
+        anchors.bottomMargin: 2
 
         ToolButton {
             Layout.preferredWidth: 32
