@@ -161,10 +161,15 @@ void    NodeItem::collapseAncestors(bool collapsed)
     // 1.
     const auto ancestors = graph->collectAncestors(*node);
 
+    qWarning() << "-- ANCESTORS: ";
+    for (const auto ancestor: ancestors)
+        qWarning() << ancestor->getLabel();
+    qWarning() << "------------";
+
     // 2.
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
-        const auto edges = ancestor->collectAdjacentEdges0();
+        const auto edges = ancestor->collectAdjacentEdges();
         std::copy(edges.begin(), edges.end(), std::inserter(ancestorsEdges, ancestorsEdges.end()));
     }
 
@@ -198,7 +203,7 @@ void    NodeItem::collapseChilds(bool collapsed)
     // 2.
     std::unordered_set<qan::Edge*> childsEdges;
     for (const auto child: childs) {
-        const auto edges = child->collectAdjacentEdges0();
+        const auto edges = child->collectAdjacentEdges();
         std::copy(edges.begin(), edges.end(),
                   std::inserter(childsEdges, childsEdges.end()));
     }

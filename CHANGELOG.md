@@ -1,11 +1,13 @@
 # CHANGELOG
 
-## 20231116 2.3.0:
+## 20231116 2.4.0:
 - Rewrite the Qt5/6 CMake configuration.
 - Remove all QUICKQANAVA_QT_MAJOR_VERSION and all compilation options, compilation is now always "static".
 - Fix bugs in multiple selection dragging.
 - Update https://github.com/oysteinmyrmo/bezier to `0.2.1`.
-- Add dragging of nodes / groups by keyboard arrow keys.
+- Features:
+  - Add dragging of nodes / groups by keyboard arrow keys.
+  - Add custom QML group delegate support in `qan::Graph::insertGroup()`.
 
 ## 20230406 prev2.3.0:
 - Fix a serious bug on multiple selection dragging and snap to grid.

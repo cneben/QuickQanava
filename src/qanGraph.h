@@ -558,7 +558,7 @@ signals:
     //@{
 public:
     //! Shortcut to gtpo::GenGraph<>::insertGroup().
-    Q_INVOKABLE virtual qan::Group* insertGroup();
+    Q_INVOKABLE virtual qan::Group* insertGroup(QQmlComponent* groupComponent = nullptr);
 
     //! Insert a `qan::TableGroup` table.
     Q_INVOKABLE virtual qan::Group* insertTable(int cols, int rows);
@@ -583,7 +583,7 @@ public:
 
     //! Insert a group using its static delegate() and style() factories.
     template <class Group_t>
-    qan::Group*             insertGroup();
+    qan::Group*             insertGroup(QQmlComponent* groupComponent = nullptr);
 
     //! Insert a group using its static delegate() and style() factories.
     template <class TableGroup_t>

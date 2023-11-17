@@ -84,7 +84,7 @@ public:
     /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
      *
      */
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
+    virtual std::unordered_set<qan::Edge*>  collectAdjacentEdges() const override;
 
 public:
     friend class qan::GroupItem;

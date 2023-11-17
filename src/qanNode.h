@@ -151,7 +151,7 @@ public:
 
 public:
     //! Get this node level 0 adjacent edges (ie sum of node in edges and out edges).
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges0() const;
+    virtual std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
     //@}
     //-------------------------------------------------------------------------
 

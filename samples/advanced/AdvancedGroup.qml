@@ -39,40 +39,59 @@ import QtQuick.Layouts      1.3
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
-Qan.Group {
+Qan.GroupItem {
     id: advancedGroup
-    //width: 110; height: 60
 
-    anchors.fil: parent
-    RowLayout {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.top
-        anchors.bottomMargin: 4
+    minimumSize: Qt.size(150., 100.)
+    width: 200
+    height: 150
 
-        ToolButton {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            icon.source: 'qrc:/collapse-parents.png'
-            visible: advancedGroup.node && advancedGroup.node.inNodes.length > 0
-            property bool collapsed: false
-            checked: collapsed
-            checkable: true
-            onClicked: {
-                advancedGroup.collapseAncestors(collapsed)
-                collapsed = !collapsed
+    default property alias children : template
+    container: template.content   // See qan::GroupItem::container property documentation
+
+    //! Show or hide group top left label editor (default to visible).
+    property alias labelEditorVisible : template.labelEditorVisible
+
+    //! Show or hide group top left expand button (default to visible).
+    property alias expandButtonVisible : template.expandButtonVisible
+
+    Qan.RectGroupTemplate {
+        id: template
+        anchors.fill: parent
+        groupItem: parent
+        z: 1
+
+        RowLayout {
+            anchors.bottom: parent.top
+            anchors.bottomMargin: 2
+            anchors.right: parent.right
+            anchors.rightMargin: 4
+
+            ToolButton {
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+                icon.source: 'qrc:/collapse-parents.png'
+                //visible: advancedGroup.node && advancedGroup.node.inNodes.length > 0
+                property bool collapsed: false
+                checked: collapsed
+                checkable: true
+                onClicked: {
+                    advancedGroup.collapseAncestors(collapsed)
+                    collapsed = !collapsed
+                }
             }
-        }
-        ToolButton {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            icon.source: 'qrc:/collapse-childs.png'
-            visible: advancedGroup.node && advancedGroup.node.outNodes.length > 0
-            property bool collapsed: false
-            checked: collapsed
-            checkable: true
-            onClicked: {
-                advancedGroup.collapseChilds(collapsed)
-                collapsed = !collapsed
+            ToolButton {
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+                icon.source: 'qrc:/collapse-childs.png'
+                //visible: advancedGroup.node && advancedGroup.node.outNodes.length > 0
+                property bool collapsed: false
+                checked: collapsed
+                checkable: true
+                onClicked: {
+                    advancedGroup.collapseChilds(collapsed)
+                    collapsed = !collapsed
+                }
             }
         }
     }

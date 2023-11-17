@@ -892,9 +892,9 @@ bool    Graph::hasEdge(const qan::Edge* edge) const { return hasEdge(edge->get_s
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
-qan::Group* Graph::insertGroup()
+qan::Group* Graph::insertGroup(QQmlComponent* groupComponent)
 {
-    return insertGroup<qan::Group>();
+    return insertGroup<qan::Group>(groupComponent);
 }
 
 qan::Group* Graph::insertTable(int cols, int rows)
@@ -2021,8 +2021,8 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
 {
     // ALGORITHM:
       // 0. Collect node neighbour.
-      // 1. Collect ancestors of neighbours.
-      // 2. Remove original neighbour from ancestors.
+      // 1. Collect ancestors of neighbors.
+      // 2. Remove original neighbors from ancestors.
 
     const auto collectAncestorsDfs_rec = [](const qan::Node* visited,
             std::vector<const qan::Node*>& parents,

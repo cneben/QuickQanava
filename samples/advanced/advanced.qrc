@@ -3,6 +3,7 @@
         <file>advanced.qml</file>
         <file>AdvancedNode.qml</file>
         <file>AdvancedGroup.qml</file>
+        <file>Hook.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>collapse-childs.png</file>
         <file>collapse-parents.png</file>

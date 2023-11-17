@@ -111,6 +111,13 @@ qan::EdgeStyle* StyleManager::getEdgeStyle( QQmlComponent* delegate )
     return nullptr;
 }
 
+qan::EdgeStyle* StyleManager::createEdgeStyle()
+{
+    const auto edgeStyle = new qan::EdgeStyle{};
+    _styles.push_back(edgeStyle);
+    return edgeStyle;
+}
+
 qan::Style*     StyleManager::getStyleAt( int s )
 {
     if ( s < _styles.size() ) {
@@ -121,7 +128,6 @@ qan::Style*     StyleManager::getStyleAt( int s )
     }
     return nullptr;
 }
-
 //-----------------------------------------------------------------------------
 
 } // ::qan

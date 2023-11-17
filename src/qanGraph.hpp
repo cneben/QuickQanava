@@ -185,12 +185,13 @@ qan::Edge*  Graph::insertNonVisualEdge(qan::Node& src, qan::Node* dstNode)
 
 /* Graph Group Management *///-------------------------------------------------
 template <class Group_t>
-qan::Group* Graph::insertGroup()
+qan::Group* Graph::insertGroup(QQmlComponent* groupComponent)
 {
-    const auto engine = qmlEngine(this);
-    QQmlComponent* groupComponent = nullptr;
-    if (engine != nullptr)
-        groupComponent = Group_t::delegate(*engine, nullptr);
+    if (groupComponent == nullptr) {
+        const auto engine = qmlEngine(this);
+        if (engine != nullptr)
+            groupComponent = Group_t::delegate(*engine, nullptr);
+    }
     if (groupComponent == nullptr)
         groupComponent = _groupDelegate.get();
     auto group = new Group_t();
