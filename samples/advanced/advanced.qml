@@ -40,8 +40,6 @@ ApplicationWindow {
     width: 1280; height: 720
     title: "Advanced sample"
     Pane { anchors.fill: parent }
-    ToolTip { x: 0; id: toolTip; timeout: 2000 }
-    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     Qan.GraphView {
         id: graphView
@@ -63,6 +61,7 @@ ApplicationWindow {
             anchors.fill: parent
             property var advancedNodeDelegate: Qt.createComponent("qrc:/AdvancedNode.qml")
             property var advancedGroupDelegate: Qt.createComponent("qrc:/AdvancedGroup.qml")
+            property var hookDelegate: Qt.createComponent("qrc:/Hook.qml")
             Component.onCompleted: {
                 // Group 1
                 const g1 = topology.insertGroup(advancedGroupDelegate);
@@ -105,6 +104,30 @@ ApplicationWindow {
                 topology.groupNode(g2, g2n1);
                 g2n1.item.x = 10; g2n1.item.y = 35;
                 topology.insertEdge(g2n1, g1n11);
+
+
+                // Arrow demonstration
+                const arrow1H1 = topology.insertNode(hookDelegate);
+                arrow1H1.item.x = 550; arrow1H1.item.y = 400;
+                const arrow1H2 = topology.insertNode(hookDelegate);
+                arrow1H2.item.x = 850; arrow1H2.item.y = 450;
+                const arrow1 = topology.insertEdge(arrow1H1, arrow1H2);
+                // Note: style are shared by default, all edge having a default common
+                // style, here we need a custom style by arrow.
+                arrow1.item.style = topology.styleManager.createEdgeStyle();
+                arrow1.item.style.lineColor = '#0766AD'
+                arrow1.item.style.lineWidth = 10
+                arrow1.item.style.arrowSize = 16
+
+                // Horizontal arrow
+                const arrow2H1 = topology.insertNode(hookDelegate);
+                arrow2H1.item.x = 550; arrow2H1.item.y = 500;
+                const arrow2H2 = topology.insertNode(hookDelegate);
+                arrow2H2.item.x = 850; arrow2H2.item.y = 500;
+                const arrow2 = topology.insertEdge(arrow2H1, arrow2H2);
+                arrow2.item.style = topology.styleManager.createEdgeStyle();
+                arrow2.item.style.lineColor = '#29ADB2'
+                arrow1.item.style.arrowSize = 6
             }
         } // Qan.Graph: graph
 
