@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>advanced.qml</file>
+        <file>AdvancedNode.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>collapse-childs.png</file>
+        <file>collapse-parents.png</file>
     </qresource>
 </RCC>

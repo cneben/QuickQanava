@@ -61,26 +61,24 @@ ApplicationWindow {
             connectorEnabled: true
             objectName: "graph"
             anchors.fill: parent
+            property var advancedNodeDelegate: Qt.createComponent("qrc:/AdvancedNode.qml")
             Component.onCompleted: {
                 const g1 = topology.insertGroup();
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80;
-                g1.item.width = 450; g1.item.height = 250;
+                g1.item.width = 450; g1.item.height = 150;
 
-                const n1 = topology.insertNode();
+                const n1 = topology.insertNode(advancedNodeDelegate);
                 topology.groupNode(g1, n1);
-                n1.label = "N1";
-                n1.item.x = 10; n1.item.y = 15;
+                n1.item.x = 10; n1.item.y = 35;
 
-                const n2 = topology.insertNode();
+                const n2 = topology.insertNode(advancedNodeDelegate);
                 topology.groupNode(g1, n2);
-                n2.label = "N2";
-                n2.item.x = 180; n2.item.y = 15;
+                n2.item.x = 180; n2.item.y = 35;
 
                 topology.insertEdge(n1, n2);
 
-                const n3 = topology.insertNode();
-                n3.label = "N3";
+                const n3 = topology.insertNode(advancedNodeDelegate);
                 n3.item.x = 850; n3.item.y = 80 + 50;
                 topology.insertEdge(n2, n3);
 
