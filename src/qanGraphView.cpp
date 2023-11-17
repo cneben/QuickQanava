@@ -170,6 +170,78 @@ void    GraphView::selectionRectEnd()
 {
     _selectedItems.clear();  // Clear selection cache
 }
+
+void    GraphView::keyPressEvent(QKeyEvent *event)
+{
+    if (event == nullptr)   // Sanity checks
+        return;
+    if (!_graph ||
+        _graph->getContainerItem() == nullptr) {
+        event->ignore();
+        return;
+    }
+    const auto containerItem = getContainerItem();
+    if (containerItem == nullptr) {
+        event->ignore();
+        return;
+    }
+
+    const auto key = event->key();
+    const auto gridSize = _graph->getSnapToGrid() ? _graph->getSnapToGridSize().width() : 10.;
+    auto getDragDelta = [gridSize](int key) -> QPointF {
+        switch (key) {
+        case Qt::Key_Left:  return QPointF{-gridSize, 0.};
+        case Qt::Key_Right: return QPointF{gridSize,  0.};
+        case Qt::Key_Up:    return QPointF{0.,        -gridSize};
+        case Qt::Key_Down:  return QPointF{0,         gridSize};
+        }
+        return QPointF{0., 0.};
+    };
+    const auto delta = getDragDelta(key);
+    if (delta.manhattanLength() <= 0.0000001) {
+        event->ignore();
+        return;
+    }
+
+    // If no selection, move the underlying graph view
+    if (_graph->getSelectedNodes().size() <= 0) {
+        const auto p = QPointF{containerItem->x(),
+                               containerItem->y()} - delta;
+        containerItem->setX(p.x());
+        containerItem->setY(p.y());
+        emit containerItemModified();
+        event->accept();
+        return;
+    }
+
+    // Otherwise handle multiple selection (ie move selection)
+    if (delta.manhattanLength() > 0.) {
+
+        // 1. Get the first selected node drag controller.
+        // 2. Manually call beginDragMove()
+        // 3. Manually call endDragMove() with a delta generated according
+        //    to pressed key
+
+        // 1.
+        const auto node = _graph->getSelectedNodes().at(0);
+        const auto nodeItem = node != nullptr ? node->getItem() : nullptr;
+        if (nodeItem != nullptr) {
+            auto& dragCtrl = nodeItem->draggableCtrl();
+
+            // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
+            // dragCtrl will handle that as a regular DnD mouse drag.
+
+            // 2.
+            dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
+
+            // 3.
+            dragCtrl.dragMove(delta, /*dragSelection*/true);
+            dragCtrl.endDragMove(/*dragSelection*/true);
+        }
+        event->accept();
+    } else
+        event->ignore();
+}
 //-----------------------------------------------------------------------------
 
 } // ::qan

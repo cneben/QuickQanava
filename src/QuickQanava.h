@@ -35,7 +35,7 @@
 #pragma once
 
 // QuickContainers headers
-#include <QuickContainers>
+#include "./quickcontainers/QuickContainers.h"
 
 // Qt header
 #include <QQmlEngine>
@@ -66,8 +66,6 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-#ifdef QUICKQANAVA_STATIC   // Initialization is done in QuickQanavaPlugin when QUICKQANAVA_STATIC is not defined
-
         Q_INIT_RESOURCE(QuickQanava_static);
         Q_INIT_RESOURCE(QuickQanavaGraphicalEffects);
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
@@ -122,7 +120,6 @@ struct QuickQanava {
         qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
         qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
         qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
-#endif // QUICKQANAVA_STATIC
     } // initialize()
 };
 

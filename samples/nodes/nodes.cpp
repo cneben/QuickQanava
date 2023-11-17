@@ -40,8 +40,6 @@
 // QuickQanava headers
 #include <QuickQanava.h>
 
-//using namespace qan;
-
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
 {

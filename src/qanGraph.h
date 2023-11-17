@@ -425,10 +425,20 @@ signals:
     /*! \brief Emitted immediatly _before_ a node is moved.
      */
     void            nodeAboutToBeMoved(qan::Node* node);
-
     /*! \brief Emitted _after_ a node has been moved.
      */
     void            nodeMoved(qan::Node* node);
+
+    /*! \brief Emitted immediatly _before_ a selection of nodes is moved.
+     *  `nodes` might also include groups. Trigerred when selection is
+     *  dragged by mouse or using keyboard keys.
+     */
+    void            nodesAboutToBeMoved(std::vector<qan::Node*> nodes);
+    /*! \brief Emitted _after_ a selection of nodes has been moved.
+     *  `nodes` might also include groups. Trigerred when selection is
+     *  dragged by mouse or using keyboard keys.
+     */
+    void            nodesMoved(std::vector<qan::Node*> nodes);
 
     //! \brief Emitted immediately _before_ a node is resized.
     void            nodeAboutToBeResized(qan::Node* node);
@@ -721,10 +731,12 @@ public:
     Q_INVOKABLE void    setNodeSelected(qan::Node* node, bool selected);
 
     //! Similar to selectNode() for qan::Group (internally group is a node).
-    bool            selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    bool                selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    Q_INVOKABLE bool    selectGroup(qan::Group* group);
 
     //! Similar to selectNode() for qan::Edge.
-    bool            selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    bool                selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
+    Q_INVOKABLE bool    selectEdge(qan::Edge* edge);
 
     /*! \brief Add a node in the current selection.
      */

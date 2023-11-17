@@ -112,6 +112,9 @@ protected:
     virtual void    selectionRectEnd() override;
 private:
     QSet<QQuickItem*>   _selectedItems;
+
+protected:
+    virtual void    keyPressEvent(QKeyEvent *event) override;
     //@}
     //-------------------------------------------------------------------------
 };

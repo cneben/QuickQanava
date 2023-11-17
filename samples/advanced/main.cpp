@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,20 +25,30 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of QuickContainers library.
+// This file is a part of the QuickQanava software library.
 //
-// \file	qpsTests.cpp
+// \file	main.cpp
 // \author	benoit@qanava.org
-// \date	2016 02 08
+// \date	2023 11 17
 //-----------------------------------------------------------------------------
 
-// QuickContainers headers
-#include "./qcmTests.h"
+// Qt headers
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+// QuickQanava headers
+#include <QuickQanava>
+
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
+{
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/advanced.qml"));
+    return app.exec();
 }
-
-
+//-----------------------------------------------------------------------------
 

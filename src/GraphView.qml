@@ -73,6 +73,7 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
 
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
         handlerRadius: resizeHandlerRadius
@@ -90,6 +91,8 @@ Qan.AbstractGraphView {
     Qan.RightResizer {
         id: nodeRightResizer
         parent: graph.containerItem
+
+        enabled: target && target.node && target.node.commitStatus !== 2
         onResizeStart: {
             if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
@@ -102,6 +105,7 @@ Qan.AbstractGraphView {
     Qan.BottomResizer {
         id: nodeBottomResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2
         onResizeStart: {
             if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
@@ -115,6 +119,7 @@ Qan.AbstractGraphView {
         id: groupResizer
         parent: graph.containerItem
         visible: false
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
 
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
@@ -134,6 +139,7 @@ Qan.AbstractGraphView {
     Qan.RightResizer {
         id: groupRightResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         onResizeStart: {
             if (target && target.group)
                 graph.groupAboutToBeResized(target.group);
@@ -146,6 +152,7 @@ Qan.AbstractGraphView {
     Qan.BottomResizer {
         id: groupBottomResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         onResizeStart: {
             if (target && target.group)
                 graph.groupAboutToBeResized(target.group);

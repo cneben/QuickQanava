@@ -108,9 +108,10 @@ void    EdgeDraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
         endDragMove();
 }
 
-void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection)
+void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection, bool notify)
 {
     Q_UNUSED(dragSelection)
+    Q_UNUSED(notify)
     if (!_targetItem)
         return;
 
@@ -177,9 +178,10 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelect
                                           disableHooksDragOrientation);
 }
 
-void    EdgeDraggableCtrl::endDragMove(bool dragSelection)
+void    EdgeDraggableCtrl::endDragMove(bool dragSelection, bool notify)
 {
     Q_UNUSED(dragSelection)
+    Q_UNUSED(notify)
     if (!_targetItem)
         return;
 
