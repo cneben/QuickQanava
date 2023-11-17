@@ -60,7 +60,7 @@ const qan::Graph*   Group::getGraph() const noexcept { return qan::Node::get_gra
 
 std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
 {
-    std::unordered_set<qan::Edge*> edges = collectAdjacentEdges0();
+    std::unordered_set<qan::Edge*> edges = qan::Node::collectAdjacentEdges();
     if (is_group()) {
         for (const auto groupNode: qAsConst(group_nodes())) {
             if (groupNode != nullptr) {
@@ -72,7 +72,7 @@ std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
                 } else {
                     auto qanNode = qobject_cast<qan::Node*>(groupNode);
                     if (qanNode != nullptr) {
-                        auto nodeEdges = qanNode->collectAdjacentEdges0();
+                        auto nodeEdges = qanNode->collectAdjacentEdges();
                         edges.insert(nodeEdges.begin(), nodeEdges.end());
                     }
                 }

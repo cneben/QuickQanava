@@ -2021,8 +2021,8 @@ std::vector<const qan::Node*>   Graph::collectAncestors(const qan::Node& node) c
 {
     // ALGORITHM:
       // 0. Collect node neighbour.
-      // 1. Collect ancestors of neighbours.
-      // 2. Remove original neighbour from ancestors.
+      // 1. Collect ancestors of neighbors.
+      // 2. Remove original neighbors from ancestors.
 
     const auto collectAncestorsDfs_rec = [](const qan::Node* visited,
             std::vector<const qan::Node*>& parents,
