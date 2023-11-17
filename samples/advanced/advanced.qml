@@ -62,11 +62,12 @@ ApplicationWindow {
             objectName: "graph"
             anchors.fill: parent
             property var advancedNodeDelegate: Qt.createComponent("qrc:/AdvancedNode.qml")
+            property var advancedGroupDelegate: Qt.createComponent("qrc:/AdvancedGroup.qml")
             Component.onCompleted: {
-                const g1 = topology.insertGroup();
+                const g1 = topology.insertGroup(advancedGroupDelegate);
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80;
-                g1.item.width = 450; g1.item.height = 150;
+                g1.item.width = 450; g1.item.height = 220;
 
                 const n1 = topology.insertNode(advancedNodeDelegate);
                 topology.groupNode(g1, n1);
@@ -78,12 +79,19 @@ ApplicationWindow {
 
                 topology.insertEdge(n1, n2);
 
+                const n11 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, n11);
+                n11.item.x = 10; n11.item.y = 145;
+
+                const n22 = topology.insertNode(advancedNodeDelegate);
+                topology.groupNode(g1, n22);
+                n22.item.x = 180; n22.item.y = 145;
+
+                topology.insertEdge(n11, n22);
+
                 const n3 = topology.insertNode(advancedNodeDelegate);
-                n3.item.x = 850; n3.item.y = 80 + 50;
+                n3.item.x = 850; n3.item.y = 150;
                 topology.insertEdge(n2, n3);
-
-                // Create a "collapse" test for a node with ancestors inside a group
-
             }
         } // Qan.Graph: graph
 
