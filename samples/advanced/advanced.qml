@@ -62,7 +62,6 @@ ApplicationWindow {
             objectName: "graph"
             anchors.fill: parent
             Component.onCompleted: {
-
                 const g1 = topology.insertGroup();
                 g1.label = "GROUP";
                 g1.item.x = 300; g1.item.y = 80;
