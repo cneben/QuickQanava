@@ -10,6 +10,8 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Qml Quick QuickCont
 
 message("Building QuickQanava for Qt${QT_VERSION_MAJOR}")
 
+option(QUICK_QANAVA_BUILD_SAMPLES "Build the samples" FALSE)
+
 if (${QT_VERSION_MAJOR} EQUAL 5)
     include(CMakeLists.qt5.txt)
 else()

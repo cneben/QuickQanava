@@ -89,8 +89,7 @@ set (quickcontainers_header_files
     quickcontainers/qcmAdapter.h
     )
 
-message(QUICKQANAVA_QT_MAJOR_VERSION= ${QUICKQANAVA_QT_MAJOR_VERSION})
-if (${QUICKQANAVA_QT_MAJOR_VERSION} EQUAL 5)
+if (${QT_VERSION_MAJOR} EQUAL 5)
     include(CMakeLists.qt5.txt)
 else()
     include(CMakeLists.qt6.txt)
