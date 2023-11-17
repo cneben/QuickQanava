@@ -892,9 +892,9 @@ bool    Graph::hasEdge(const qan::Edge* edge) const { return hasEdge(edge->get_s
 //-----------------------------------------------------------------------------
 
 /* Graph Group Management *///-------------------------------------------------
-qan::Group* Graph::insertGroup()
+qan::Group* Graph::insertGroup(QQmlComponent* groupComponent)
 {
-    return insertGroup<qan::Group>();
+    return insertGroup<qan::Group>(groupComponent);
 }
 
 qan::Group* Graph::insertTable(int cols, int rows)
