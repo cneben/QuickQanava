@@ -62,145 +62,37 @@ ApplicationWindow {
             objectName: "graph"
             anchors.fill: parent
             Component.onCompleted: {
-                var n1 = topology.insertNode()
-                n1.label = "N1"
-                n1.item.x = 80; n1.item.y = 85
-                var n2 = topology.insertNode()
-                n2.label = "N2"
-                n2.item.x = 80; n2.item.y = 155
-                var n3 = topology.insertNode()
-                n3.label = "N3"
-                n3.item.x = 80; n3.item.y = 225
 
-                var g1 = topology.insertGroup()
-                g1.label = "GROUP"
-                g1.item.x = 300; g1.item.y = 80
+                const g1 = topology.insertGroup();
+                g1.label = "GROUP";
+                g1.item.x = 300; g1.item.y = 80;
+                g1.item.width = 450; g1.item.height = 250;
 
-                let tableGroup = topology.insertTable(/*cols=*/2, /*rows=*/4)
-                tableGroup.label = 'TABLE'
-            }
-            onGroupClicked: group => {
-                window.notifyUser("Group <b>" + group.label + "</b> clicked")
-                groupEditor.group = group
-            }
-            onGroupDoubleClicked: { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
-            onGroupRightClicked: (group, pos) => {
-                window.notifyUser("Group <b>" + group.label + "</b> right clicked")
-                contextMenu.group = group
+                const n1 = topology.insertNode();
+                topology.groupNode(g1, n1);
+                n1.label = "N1";
+                n1.item.x = 10; n1.item.y = 15;
 
-                if (!window.contentItem ||
-                    !group.item)
-                    return;
-                let globalPos = window.contentItem.mapFromItem(group.item, pos.x, pos.y);
-                contextMenu.x = globalPos.x
-                contextMenu.y = globalPos.y
-                contextMenu.open()
-            }
-            onNodeClicked: node => {
-                ungroupNodeButton.node = node
-                groupEditor.group = undefined;
-                contextMenu.node = node
-            }
-            onNodeRightClicked: (node, pos) => {
-                window.notifyUser("Node <b>" + node.label + "</b> right clicked")
-                ungroupNodeButton.node = node
-                contextMenu.node = node
+                const n2 = topology.insertNode();
+                topology.groupNode(g1, n2);
+                n2.label = "N2";
+                n2.item.x = 180; n2.item.y = 15;
 
-                if (!window.contentItem ||
-                    !node.item)
-                    return;
-                let globalPos = window.contentItem.mapFromItem(node.item, pos.x, pos.y);
-                contextMenu.x = globalPos.x
-                contextMenu.y = globalPos.y
-                contextMenu.open()
-            }
-            onNodeMoved: node => {
-                if (node && node.isGroup)
-                    window.notifyUser("Group <b>" + node.label + "</b> moved")
+                topology.insertEdge(n1, n2);
+
+                const n3 = topology.insertNode();
+                n3.label = "N3";
+                n3.item.x = 850; n3.item.y = 80 + 50;
+                topology.insertEdge(n2, n3);
+
+                // Create a "collapse" test for a node with ancestors inside a group
+
             }
         } // Qan.Graph: graph
 
         onClicked: {
             ungroupNodeButton.node = undefined
-            groupEditor.group = undefined
-            contextMenu.node = undefined
         }
-        onRightClicked: {
-            contextMenu.x = pos.x
-            contextMenu.y = pos.y
-            contextMenu.open()
-        }
-
-        Menu {      // Context menu demonstration
-            id: contextMenu
-            property var node: undefined
-            property var group: undefined
-            MenuItem {
-                text: "Insert Node"
-                enabled: contextMenu.node === undefined
-                onClicked: {
-                    let n = topology.insertNode()
-                    n.label = 'New Node'
-                    n.item.x = contextMenu.x
-                    n.item.y = contextMenu.y
-                    if (contextMenu.group)
-                        topology.groupNode(contextMenu.group, n)
-                }
-            }
-            MenuItem {
-                text: "Remove node"
-                enabled: contextMenu.node !== undefined
-                onClicked: {
-                    topology.removeNode(contextMenu.node)
-                    contextMenu.node = undefined
-                }
-            }
-            MenuItem {
-                text: "Ungroup node"
-                enabled: contextMenu.node !== undefined
-                onClicked: {
-                    topology.ungroupNode(contextMenu.node)
-                    contextMenu.node = undefined
-                }
-            }
-            MenuItem {
-                text: "Remove group"
-                enabled: contextMenu.group !== undefined
-                onClicked: {
-                    topology.removeGroup(contextMenu.group)
-                    contextMenu.group = undefined
-                }
-            }
-            MenuItem {
-                text: "Remove group with content"
-                enabled: contextMenu.group !== undefined
-                onClicked: {
-                    topology.removeGroup(contextMenu.group, true)
-                    contextMenu.group = undefined
-                }
-            }
-            MenuSeparator { }
-            MenuItem {
-                text: "Send to front"
-                enabled: contextMenu.group !== undefined
-                onClicked: {
-                    topology.sendToFront(contextMenu.group.item)
-                    contextMenu.group = undefined
-                }
-            }
-            MenuItem {
-                text: "Send to back"
-                enabled: contextMenu.group !== undefined
-                onClicked: {
-                    topology.sendToBack(contextMenu.group.item)
-                    contextMenu.group = undefined
-                }
-            }
-            onClosed: { // Clean internal state when context menu us closed
-                contextMenu.node = undefined
-                contextMenu.group = undefined
-            }
-        } // Menu
 
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
@@ -237,16 +129,6 @@ ApplicationWindow {
                         topology.ungroupNode(node)
                 }
             }
-            // Note: QQmlEngine::retranslate() is often use to force applications using QuickQanava to
-            // reevaluate all qsTr() bindings: unfortunately all application bindings are actually reevaluated,
-            // sometime leading to unexpected behaviours for custom groups.
-            ToolButton {
-                id: retranslate
-                text: "Retranslate"
-                onClicked: {
-                    ;
-                }
-            }
 
             Switch {
                 text: "Snap to Grid"
@@ -263,79 +145,6 @@ ApplicationWindow {
                 onValueModified: { topology.snapToGridSize = Qt.size(value, value) }
             }
         }
-        Pane {
-            id: groupEditor
-            property var group: undefined
-            onGroupChanged: groupItem = group ? group.item : undefined
-
-            property var groupItem: undefined
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 15
-            anchors.right: parent.right
-            anchors.rightMargin: 15
-            padding: 0
-            Frame {
-                ColumnLayout {
-                    Label {
-                        text: groupEditor.group ? "Editing group <b>" + groupEditor.group.label + "</b>": "Select a group..."
-                    }
-                    CheckBox {
-                        text: "Draggable"
-                        enabled: groupEditor.groupItem !== undefined
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.draggable : false
-                        onClicked: groupEditor.groupItem.draggable = checked
-                    }
-                    CheckBox {
-                        text: "Resizable"
-                        enabled: groupEditor.groupItem != null
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.resizable : false
-                        onClicked: groupEditor.groupItem.resizable = checked
-                    }
-                    CheckBox {
-                        text: "Selected (read-only)"
-                        enabled: false
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.selected : false
-                    }
-                    CheckBox {
-                        text: "Selectable"
-                        enabled: groupEditor.groupItem != null
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.selectable : false
-                        onClicked: groupEditor.groupItem.selectable = checked
-                    }
-                    CheckBox {
-                        text: "Label editor"
-                        enabled: groupEditor.groupItem !== undefined
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.labelEditorVisible : false
-                        onClicked: groupEditor.groupItem.labelEditorVisible = checked
-                    }
-                    CheckBox {
-                        text: "Expand button"
-                        enabled: groupEditor.groupItem !== undefined
-                        checked: groupEditor.groupItem ? groupEditor.groupItem.expandButtonVisible : false
-                        onClicked: groupEditor.groupItem.expandButtonVisible = checked
-                    }
-                    ToolButton {
-                        text: "Remove group"
-                        enabled: groupEditor.groupItem !== undefined
-                        onClicked: {
-                            if (groupEditor.groupItem !== undefined) {
-                                topology.removeGroup(groupEditor.groupItem.group)
-                            }
-                        }
-                    }
-                } // groupEditor ColumnLayout
-            }
-        } // Control groupEditor
     } // Qan.GraphView
-    Qan.GraphPreview {
-        id: graphPreview
-        source: graphView
-        viewWindowColor: Material.accent
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: graphView.bottom
-        anchors.bottomMargin: 8
-        width: 350
-        height: 198
-    }  // Qan.GraphPreview
 }  // ApplicationWindow: window
 

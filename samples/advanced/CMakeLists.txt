@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.1.0)
 
+project(QuickQanava_sample_advanced VERSION 2.4.0 LANGUAGES CXX)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(source_files main.cpp)
+set(resources_files advanced.qrc)
 
 # Configure Qt
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui QuickControls2 REQUIRED)
@@ -14,6 +17,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+qt_add_resources(source_files ${resources_files})
 
 add_subdirectory(./QuickQanava)
 
