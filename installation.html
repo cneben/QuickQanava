@@ -297,27 +297,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#using-from-external-projects-with-cmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using from external projects with CMake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-from-external-projects-with-qmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using from external projects with qmake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-samples-qmake-cmake-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building samples qmake / CMake (development)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       Dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#building-from-sources" class="md-nav__link">
-    <span class="md-ellipsis">
-      Building from sources
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-from-external-projects" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using from external projects
     </span>
   </a>
   
@@ -548,27 +557,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#using-from-external-projects-with-cmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using from external projects with CMake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-from-external-projects-with-qmake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using from external projects with qmake
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-samples-qmake-cmake-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building samples qmake / CMake (development)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       Dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#building-from-sources" class="md-nav__link">
-    <span class="md-ellipsis">
-      Building from sources
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-from-external-projects" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using from external projects
     </span>
   </a>
   
@@ -590,6 +608,75 @@
 
 
 <h1 id="quickqanava-quick-start">QuickQanava Quick Start<a class="headerlink" href="#quickqanava-quick-start" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Starting from version 2.4.0, QuickQanava is now a fully static library. It is recommended to install it from a Git submodule using CMake.</p>
+</div>
+<p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system:
+  - <code>qmake</code>: Only for Qt5, to be deprecated soon (20231119, version 2.4.0).
+  - <code>CMake</code>: For both Qt5 and Qt6, can be used trough <code>add_subdirectory()</code> or <a href="https://cmake.org/cmake/help/latest/module/ExternalProject.html">ExternalProject_Add()</a></p>
+<h2 id="using-from-external-projects-with-cmake">Using from external projects with CMake<a class="headerlink" href="#using-from-external-projects-with-cmake" title="Permanent link">&para;</a></h2>
+<p>The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install QuickQanava as a GIT submodule</span>
+$<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/cneben/QuickQanava
+*<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>update
+</code></pre></div>
+<p>From your <code>CMakeLists.txt</code>:
+<div class="highlight"><pre><span></span><code>add_subdirectory<span class="o">(</span>../../<span class="o">)</span>
+
+target_include_directories<span class="o">(</span>my_project<span class="w"> </span>PUBLIC<span class="w"> </span>QuickQanava<span class="w"> </span>Qt<span class="si">${</span><span class="nv">QT_VERSION_MAJOR</span><span class="si">}</span>::QuickControls2<span class="o">)</span>
+
+target_link_libraries<span class="o">(</span>sample_advanced
+<span class="w">    </span>QuickQanava
+<span class="w">    </span>Qt<span class="si">${</span><span class="nv">QT_VERSION_MAJOR</span><span class="si">}</span>::Core
+<span class="w">    </span>Qt<span class="si">${</span><span class="nv">QT_VERSION_MAJOR</span><span class="si">}</span>::Gui
+<span class="w">    </span>Qt<span class="si">${</span><span class="nv">QT_VERSION_MAJOR</span><span class="si">}</span>::QuickControls2
+<span class="o">)</span>
+</code></pre></div></p>
+<p>QuickQanava might also be included in CMake trough <a href="https://cmake.org/cmake/help/latest/module/ExternalProject.html">ExternalProject_Add()</a> directly from GitHub.</p>
+<h2 id="using-from-external-projects-with-qmake">Using from external projects with qmake<a class="headerlink" href="#using-from-external-projects-with-qmake" title="Permanent link">&para;</a></h2>
+<p>From a <code>./QuickQanava</code> git submodule, library could be included directly in your main qmake <code>.pro</code> file with the following two #include statements:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#in your project main .pro qmake configuration file</span>
+include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/quickqanava.pri<span class="o">)</span>
+</code></pre></div>
+<h2 id="building-samples-qmake-cmake-development">Building samples qmake / CMake (development)<a class="headerlink" href="#building-samples-qmake-cmake-development" title="Permanent link">&para;</a></h2>
+<p>With Qt Creator:</p>
+<p><strong>Using qmake:</strong></p>
+<ol>
+<li>
+<p>Open <em>quickqanava.pro</em> in QtCreator.</p>
+</li>
+<li>
+<p>Select a kit, build and launch samples.</p>
+</li>
+</ol>
+<p><strong>Using CMake (CMake &gt; 3.5):</strong></p>
+<ol>
+<li>
+<p>Open <em>CMakeLists.txt</em> in QtCreator.</p>
+</li>
+<li>
+<p>for testing purposes, in 'Projects' panel, set DQUICK_QANAVA_BUILD_SAMPLES option to true in CMake configuration panel.</p>
+</li>
+<li>
+<p>Select a kit, build and launch samples.</p>
+</li>
+</ol>
+<p>Or build manually using CMake (CI):</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>QuickQanava
+$<span class="w"> </span>mkdir<span class="w"> </span>build
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+
+<span class="c1"># IF QT_DIR IS CONFIGURED AND QMAKE IN PATH</span>
+$<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DQUICK_QANAVA_BUILD_SAMPLES<span class="o">=</span>FALSE<span class="w"> </span>..
+
+<span class="c1"># IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY</span>
+$<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_PREFIX_PATH<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.15.14/gcc_64&quot;</span><span class="w"> </span>-DQT_QMAKE_EXECUTABLE<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.15.14/gcc_64/bin/qmake&quot;</span><span class="w">  </span>-DQUICK_QANAVA_BUILD_SAMPLES<span class="o">=</span>FALSE<span class="w"> </span>../QuickQanava/
+
+$<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.
+<span class="c1"># Then run the samples in ./samples</span>
+
+<span class="c1"># There is no make install</span>
+</code></pre></div>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -612,79 +699,6 @@
 <ul>
 <li><strong>Google Test</strong> is optional only to build and run tests <img alt="Google Test GitHub" src="https://github.com/google/googletest" />.</li>
 </ul>
-<h2 id="building-from-sources">Building from sources<a class="headerlink" href="#building-from-sources" title="Permanent link">&para;</a></h2>
-<p>Get the latest QuickQanava sources:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cneben/QuickQanava
-<span class="nb">cd</span><span class="w"> </span>QuickQanava
-</code></pre></div>
-<p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system.</p>
-<p>QuickQanava could be used with either <em>qmake</em> or <em>CMake</em> build configuration system.</p>
-<table>
-<thead>
-<tr>
-<th align="center">qmake</th>
-<th align="center">cmake</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">Static build, no QML module, all resources are linked statically trough QRC</td>
-<td align="center">Installable or embedable, QuickQanava is loaded using a QML module that need to be installed</td>
-</tr>
-</tbody>
-</table>
-<p>Using qmake:</p>
-<ol>
-<li>
-<p>Open <em>quickqanava.pro</em> in QtCreator.</p>
-</li>
-<li>
-<p>Select a kit, build and launch samples.</p>
-</li>
-</ol>
-<p>or (CMake &gt; 3.5)</p>
-<ol>
-<li>
-<p>Open <em>CMakeLists.txt</em> in QtCreator.</p>
-</li>
-<li>
-<p>In 'Projects' panel, set DQUICK_QANAVA_BUILD_SAMPLES option to true in CMake configuration panel.</p>
-</li>
-<li>
-<p>Select a kit, build and launch samples.</p>
-</li>
-</ol>
-<p>Or manually using CMake:</p>
-<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>QuickQanava
-$<span class="w"> </span>mkdir<span class="w"> </span>build
-$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-
-<span class="c1"># IF QT_DIR IS CONFIGURED AND QMAKE IN PATH</span>
-$<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DQUICK_QANAVA_BUILD_SAMPLES<span class="o">=</span>TRUE<span class="w"> </span>..
-
-<span class="c1"># IF QT DIR IS NOT CONFIGURED, CONFIGURE KIT MANUALLY</span>
-$<span class="w"> </span>cmake<span class="w"> </span>-DCMAKE_PREFIX_PATH<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.11.0/gcc_64&quot;</span><span class="w"> </span>-DQT_QMAKE_EXECUTABLE<span class="o">=</span><span class="s2">&quot;/home/b/Qt/5.11.0/gcc_64/bin/qmake&quot;</span><span class="w">  </span>-DQUICK_QANAVA_BUILD_SAMPLES<span class="o">=</span>TRUE<span class="w"> </span>../QuickQanava/
-
-$<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.
-<span class="c1"># Then run the samples in ./samples</span>
-
-<span class="c1"># Eventually make install</span>
-</code></pre></div>
-<p>Note that a previously installed "QML plugin" version of QuickQanava might interfere with a fully static build using direct .pri inclusion. Typical error message looks like:</p>
-<div class="highlight"><pre><span></span><code>QQmlApplicationEngine failed to load component
-qrc:/nodes.qml:33 module &quot;QuickQanava&quot; plugin &quot;quickqanavaplugin&quot; not found
-</code></pre></div>
-<p>QuickQanava and QuickContainers plugins directories could be removed manually from <code>$QTDIR\..\qml</code> to fix the problem (ex: rm -rf '~/Qt/5.11.1/gcc_64/qml/QuickQanava').</p>
-<h2 id="using-from-external-projects">Using from external projects<a class="headerlink" href="#using-from-external-projects" title="Permanent link">&para;</a></h2>
-<p>The recommended way of using QuickQanava is to include the library directly as a GIT submodule in your project:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Install QuickQanava as a GIT submodule</span>
-$<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/cneben/QuickQanava
-*<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>update
-</code></pre></div>
-<p>Once GIT has finished downloading, QuickQanava project file could be included directly in your main qmake .pro file with the following two #include statements:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">#in your project main .pro qmake configuration file</span>
-include<span class="o">(</span><span class="nv">$$</span>PWD/QuickQanava/src/quickqanava.pri<span class="o">)</span>
-</code></pre></div>
 
 
 
