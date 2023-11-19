@@ -83,7 +83,7 @@ Qan.NodeItem {
             anchors.fill: parent
             radius: 10; color: light
             border.color: "violet"; border.width: 2
-            readonly property color dark: "blue"
+            readonly property color dark: "#0097c9"
             readonly property color light: "lightblue"
             Label {
                 anchors.fill: parent
