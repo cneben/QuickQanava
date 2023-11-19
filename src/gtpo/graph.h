@@ -93,7 +93,7 @@ public:
         graph_base_t{parent},
         observable_base_t{} { }
 
-    ~graph();
+    virtual ~graph();
 
     graph(const graph&) = delete;
     graph& operator=(const graph&) = delete;

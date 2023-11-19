@@ -154,7 +154,7 @@ public:
 
     using this_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
     graph_observer() noexcept : gtpo::observer<graph_t>{} {}
-    ~graph_observer() noexcept = default;
+    virtual ~graph_observer() noexcept = default;
     graph_observer(const this_t&) = delete;
     graph_observer& operator=(const this_t&) = delete;
 
