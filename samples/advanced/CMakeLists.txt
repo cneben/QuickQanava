@@ -21,7 +21,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 qt_add_resources(source_files ${resources_files})
 
 if(NOT TARGET QuickQanava)
-    #set(QUICK_QANAVA_BUILD_STATIC_QRC ON)
     add_subdirectory(../../ quickqanava_build)  # Use ../../src as quickqanava_build subdirectory
     # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
