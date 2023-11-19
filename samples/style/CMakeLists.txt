@@ -23,7 +23,6 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(NOT TARGET QuickQanava)
-    #set(QUICK_QANAVA_BUILD_STATIC_QRC ON)
     add_subdirectory(../../ quickqanava_build)  # Use ../../src as quickqanava_build subdirectory
     # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()

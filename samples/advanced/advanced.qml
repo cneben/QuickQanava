@@ -122,8 +122,10 @@ ApplicationWindow {
                 // Horizontal arrow
                 const arrow2H1 = topology.insertNode(hookDelegate);
                 arrow2H1.item.x = 550; arrow2H1.item.y = 500;
+                arrow2H1.item.dragOrientation = Qan.NodeItem.DragHorizontal;
                 const arrow2H2 = topology.insertNode(hookDelegate);
                 arrow2H2.item.x = 850; arrow2H2.item.y = 500;
+                arrow2H2.item.dragOrientation = Qan.NodeItem.DragHorizontal;
                 const arrow2 = topology.insertEdge(arrow2H1, arrow2H2);
                 arrow2.item.style = topology.styleManager.createEdgeStyle();
                 arrow2.item.style.lineColor = '#29ADB2'
