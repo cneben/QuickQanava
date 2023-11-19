@@ -1,10 +1,5 @@
 message(src/CMakeLists.qt6.txt)
 
-set (qan_plugin_files
-    ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.h
-)
-
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
 qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
