@@ -415,6 +415,7 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
                 edge->setItem(edgeItem);
                 edgeItem->setEdge(edge);
                 edgeItem->setGraph(this);
+                edgeItem->setStyle(qobject_cast<qan::EdgeStyle*>(&style));
                 _styleManager.setStyleComponent(edgeItem->getStyle(), component);
             }
         } else if (group != nullptr) {

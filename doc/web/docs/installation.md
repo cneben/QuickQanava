@@ -4,6 +4,7 @@
 
 
 QuickQanava could be used with either _qmake_ or _CMake_ build configuration system:
+
   - `qmake`: Only for Qt5, to be deprecated soon (20231119, version 2.4.0).
   - `CMake`: For both Qt5 and Qt6, can be used trough `add_subdirectory()` or [ExternalProject_Add()](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
 
