@@ -367,7 +367,6 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
                     _target->setHeight(targetHeight);
             } else {
                 const qreal targetHeight = _targetInitialSize.height() + delta.y();
-                qWarning() << "targetHeight=" << targetHeight;
                 if (targetHeight > minimumTargetHeight)
                     _target->setHeight(targetHeight);
             }
