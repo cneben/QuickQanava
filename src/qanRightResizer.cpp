@@ -196,7 +196,7 @@ void    RightResizer::mouseMoveEvent(QMouseEvent* event)
             // Do not resize below minimumSize
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
 
-            auto childrenRect = _targetContent->childrenRect();
+            auto childrenRect = _targetContent ? _targetContent->childrenRect() : QRectF{};
             if (childrenRect.size().isEmpty())  // Note 20231208: Fix a nasty bug (Qt 5.15.13 ?) where size() is empty when there
                 childrenRect = QRectF{};   // is no longer any childs but rect position is left with invalid value.
             const auto targetContentMinWidth = _targetContent ? childrenRect.x() + childrenRect.width() : 0;

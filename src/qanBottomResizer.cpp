@@ -195,7 +195,7 @@ void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
         if (_target != nullptr) {
             const qreal targetHeight = _targetInitialSize.height() + delta.y();
 
-            auto childrenRect = _targetContent->childrenRect();
+            auto childrenRect = _targetContent ? _targetContent->childrenRect() : QRectF{};
             if (childrenRect.size().isEmpty())  // Note 20231208: Fix a nasty bug (Qt 5.15.13 ?) where size() is empty when there
                 childrenRect = QRectF{};   // is no longer any childs but rect position is left with invalid value.
             const auto targetContentMinHeight = _targetContent ? childrenRect.y() + childrenRect.height() : 0;
