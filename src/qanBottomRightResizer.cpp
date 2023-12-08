@@ -347,12 +347,16 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
         const QPointF delta{curLocalPos - startLocalPos};
 
         if (_target) {
-            const auto targetContentMinHeight = _targetContent ? _targetContent->childrenRect().y() + _targetContent->childrenRect().height() : 0;
+            auto childrenRect = _targetContent->childrenRect();
+            if (childrenRect.size().isEmpty())  // Note 20231208: Fix a nasty bug (Qt 5.15.13 ?) where size() is empty when there
+                childrenRect = QRectF{};   // is no longer any childs but rect position is left with invalid value.
+            const auto targetContentMinHeight = _targetContent ? childrenRect.y() + childrenRect.height() : 0;
             const auto minimumTargetHeight = qMax(_minimumTargetSize.height(), targetContentMinHeight);
-            const auto targetContentMinWidth = _targetContent ? _targetContent->childrenRect().x() + _targetContent->childrenRect().width() : 0;
+            const auto targetContentMinWidth = _targetContent ? childrenRect.x() + childrenRect.width() : 0;
             const auto minimumTargetWidth = qMax(_minimumTargetSize.width(), targetContentMinWidth);
 
             const qreal targetWidth = _targetInitialSize.width() + delta.x();
+
             if (targetWidth > minimumTargetWidth)       // Do not resize below minimumSize
                 _target->setWidth(targetWidth);
             if (_preserveRatio) {
@@ -363,6 +367,7 @@ void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
                     _target->setHeight(targetHeight);
             } else {
                 const qreal targetHeight = _targetInitialSize.height() + delta.y();
+                qWarning() << "targetHeight=" << targetHeight;
                 if (targetHeight > minimumTargetHeight)
                     _target->setHeight(targetHeight);
             }
