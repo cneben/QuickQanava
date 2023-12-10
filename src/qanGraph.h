@@ -762,7 +762,10 @@ public:
     //! Clear the current selection.
     Q_INVOKABLE void    clearSelection();
 
-    //! Return true if multiple node are selected.
+    //! Return true if either a nodes, groups, edges (or multiple nodes, groups, edges) is selected.
+    Q_INVOKABLE bool    hasSelection() const;
+
+    //! Return true if multiple nodes, groups or edges are selected.
     Q_INVOKABLE bool    hasMultipleSelection() const;
 
 public:

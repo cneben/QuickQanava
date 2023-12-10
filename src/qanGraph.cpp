@@ -1401,6 +1401,13 @@ void    Graph::clearSelection()
     _selectedEdges.clear();
 }
 
+bool    Graph::hasSelection() const
+{
+    return (_selectedNodes.size() >= 1 ||
+            _selectedGroups.size() >= 1 ||
+            _selectedEdges.size() >= 1);
+}
+
 bool    Graph::hasMultipleSelection() const
 {
     // Note 20231104: There is still no support for multiple edge selection,
@@ -1409,7 +1416,6 @@ bool    Graph::hasMultipleSelection() const
             _selectedGroups.size()) > 1 ||
             _selectedEdges.size() > 1;
 }
-
 
 std::vector<QQuickItem*>    Graph::getSelectedItems() const
 {
