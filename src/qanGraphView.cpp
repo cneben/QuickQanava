@@ -204,7 +204,7 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
     }
 
     // If no selection, move the underlying graph view
-    if (_graph->getSelectedNodes().size() <= 0) {
+    if ((_graph->getSelectedNodes().size() + _graph->getSelectedGroups().size()) <= 0) {
         const auto p = QPointF{containerItem->x(),
                                containerItem->y()} - delta;
         containerItem->setX(p.x());
@@ -222,23 +222,30 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
         // 3. Manually call endDragMove() with a delta generated according
         //    to pressed key
 
+        std::vector<qan::Node*> selection;
+        const auto& selectedNodes = _graph->getSelectedNodes();
+        std::copy(selectedNodes.begin(), selectedNodes.end(), std::back_inserter(selection));
+        std::copy(_graph->getSelectedGroups().begin(), _graph->getSelectedGroups().end(), std::back_inserter(selection));
+
         // 1.
-        const auto node = _graph->getSelectedNodes().at(0);
-        const auto nodeItem = node != nullptr ? node->getItem() : nullptr;
-        if (nodeItem != nullptr) {
-            auto& dragCtrl = nodeItem->draggableCtrl();
+        if (selection.size() > 0) {
+            const auto node = selection.at(0);
+            const auto nodeItem = node != nullptr ? node->getItem() : nullptr;
+            if (nodeItem != nullptr) {
+                auto& dragCtrl = nodeItem->draggableCtrl();
 
-            // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
-            // dragCtrl will handle that as a regular DnD mouse drag.
+                // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
+                // dragCtrl will handle that as a regular DnD mouse drag.
 
-            // 2.
-            dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
+                // 2.
+                dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
 
-            // 3.
-            dragCtrl.dragMove(delta, /*dragSelection*/true);
-            dragCtrl.endDragMove(/*dragSelection*/true);
+                // 3.
+                dragCtrl.dragMove(delta, /*dragSelection*/true);
+                dragCtrl.endDragMove(/*dragSelection*/true);
+            }
+            event->accept();
         }
-        event->accept();
     } else
         event->ignore();
 }
