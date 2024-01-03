@@ -417,8 +417,8 @@ public:
 
 private:
     inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_type ) -> void {
-        if ( deleteContent ) {
-            for ( const auto& p: qAsConst(_container) )
+        if (deleteContent) {
+            for (const auto& p: std::as_const(_container))
                 delete p;
         }
     }

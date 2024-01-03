@@ -1127,6 +1127,6 @@ protected:
 
 #include "./qanGraph.hpp"
 
-Q_DECLARE_METATYPE(QAbstractItemModel*)
-Q_DECLARE_METATYPE(QAbstractListModel*)
+//Q_DECLARE_METATYPE(QAbstractItemModel*)
+//Q_DECLARE_METATYPE(QAbstractListModel*)
 QML_DECLARE_TYPE(qan::Graph)
