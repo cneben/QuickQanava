@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 20231116 2.4.0:
+- Rewrite the Qt5/6 CMake configuration.
+- Remove all QUICKQANAVA_QT_MAJOR_VERSION and all compilation options, compilation is now always "static".
+- Fix bugs in multiple selection dragging.
+- Update https://github.com/oysteinmyrmo/bezier to `0.2.1`.
+- Features:
+  - Add dragging of nodes / groups by keyboard arrow keys.
+  - Add custom QML group delegate support in `qan::Graph::insertGroup()`.
+
+## 20230406 prev2.3.0:
+- Fix a serious bug on multiple selection dragging and snap to grid.
+- Fix a table node grouping issue when cols==1 or rows==1.
+
+## 20221226 prev2.3.0:
+- #185: Add horizontal or vertical constrain on node/group dragging, see new property `qan::NodeItem::dragOrientation`.
+
+## 20221225 prev2.3.0:
+- #185: Add support for "snap to grid" when moving node or groups.
+- Add |qan::Graph`, `snapToGrid` and `snapToGridSize` properties.
+
+## 20221225 v2.2.0:
+- Release v2.2.0
+
 ## 20221215 v2.2.0:
 - #183: Add a `multipleSelectionEnabled` property to `qan::Graph` to enable or disable multiple selection.
 
@@ -16,7 +39,7 @@
 - #167: Add partial edge selection support.
 - #164: Change signature of qan::Graph::connectorRequestEdgeCreation().
 
-## 20220824 v2.1.1:
+## 20220824 v2*$.1.1:
 - Change signature of two public API methods (public but presumably mainly used internally):
   - Rename qan::Graph::collectInerEdges() to qan::Graph::collectInnerEdges().
   - Rename qan::Graph::collectAncestorsDfs() to qan::Graph::collectAncestors().

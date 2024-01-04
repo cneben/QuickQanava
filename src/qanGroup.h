@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -72,6 +72,9 @@ public:
     Group(const Group&) = delete;
 
 public:
+    //! Return true if this group is a table (ie a qan::TableGroup or subclass).
+    Q_INVOKABLE virtual bool    isTable() const;
+
     Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
     //! Shortcut to gtpo::group<>::getGraph().
     qan::Graph*         getGraph() noexcept;
@@ -81,7 +84,7 @@ public:
     /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
      *
      */
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
+    virtual std::unordered_set<qan::Edge*>  collectAdjacentEdges() const override;
 
 public:
     friend class qan::GroupItem;
@@ -121,26 +124,6 @@ public:
 public:
     //! Return true if node \c node is registered in this group, shortcut to gtpo::group<qan::Config>::hasNode().
     Q_INVOKABLE bool    hasNode(const qan::Node* node) const;
-    //@}
-    //-------------------------------------------------------------------------
-
-    /*! \name Group DnD Management *///----------------------------------------
-    //@{
-public:
-    /*! \brief Define if the group could actually be dragged by mouse.
-     *
-     * Set to true to allow this group to be moved by mouse drag (if false, the node position is
-     * fixed and should be changed programmatically).
-     *
-     * Default to true (ie group is draggable by mouse).
-     */
-    Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
-    bool            setDraggable(bool draggable) noexcept;
-    bool            getDraggable() const noexcept;
-private:
-    bool            _draggable = true;
-signals:
-    void            draggableChanged();
     //@}
     //-------------------------------------------------------------------------
 };

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -93,7 +93,7 @@ public:
         graph_base_t{parent},
         observable_base_t{} { }
 
-    ~graph();
+    virtual ~graph();
 
     graph(const graph&) = delete;
     graph& operator=(const graph&) = delete;

@@ -16,13 +16,13 @@ test-tools.subdir       = samples/tools
 
 # Uncomment to activate samples projects:
 SUBDIRS +=  test-nodes
-SUBDIRS +=  test-edges
-SUBDIRS +=  test-connector
+#SUBDIRS +=  test-edges
+#SUBDIRS +=  test-connector
 SUBDIRS +=  test-groups
-SUBDIRS +=  test-selection
+#SUBDIRS +=  test-selection
 #SUBDIRS +=  test-style
 SUBDIRS +=  test-topology
-SUBDIRS +=  test-dataflow
+#SUBDIRS +=  test-dataflow
 #SUBDIRS +=  test-cpp
 #SUBDIRS +=  test-tools
 

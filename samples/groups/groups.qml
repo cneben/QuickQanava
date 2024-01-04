@@ -41,14 +41,14 @@ ApplicationWindow {
     title: "Groups sample"
     Pane { anchors.fill: parent }
     ToolTip { x: 0; id: toolTip; timeout: 2000 }
-    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
-        navigable   : true
-        function centerItem( item ) {
-            if ( !item )
+        navigable: true
+        function centerItem(item) {
+            if (!item)
                 return
             var windowCenter = Qt.point((window.contentItem.width - item.width) / 2.,
                                         (window.contentItem.height - item.height) / 2.)
@@ -73,16 +73,19 @@ ApplicationWindow {
                 n3.item.x = 80; n3.item.y = 225
 
                 var g1 = topology.insertGroup()
-                g1.label = "GROUP";
+                g1.label = "GROUP"
                 g1.item.x = 300; g1.item.y = 80
+
+                let tableGroup = topology.insertTable(/*cols=*/2, /*rows=*/4)
+                tableGroup.label = 'TABLE'
             }
             onGroupClicked: group => {
-                window.notifyUser( "Group <b>" + group.label + "</b> clicked" )
+                window.notifyUser("Group <b>" + group.label + "</b> clicked")
                 groupEditor.group = group
             }
-            onGroupDoubleClicked: { window.notifyUser( "Group <b>" + group.label + "</b> double clicked" ) }
+            onGroupDoubleClicked: { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
             onGroupRightClicked: (group, pos) => {
-                window.notifyUser( "Group <b>" + group.label + "</b> right clicked" )
+                window.notifyUser("Group <b>" + group.label + "</b> right clicked")
                 contextMenu.group = group
 
                 if (!window.contentItem ||
@@ -99,6 +102,7 @@ ApplicationWindow {
                 contextMenu.node = node
             }
             onNodeRightClicked: (node, pos) => {
+                window.notifyUser("Node <b>" + node.label + "</b> right clicked")
                 ungroupNodeButton.node = node
                 contextMenu.node = node
 
@@ -152,6 +156,14 @@ ApplicationWindow {
                 }
             }
             MenuItem {
+                text: "Ungroup node"
+                enabled: contextMenu.node !== undefined
+                onClicked: {
+                    topology.ungroupNode(contextMenu.node)
+                    contextMenu.node = undefined
+                }
+            }
+            MenuItem {
                 text: "Remove group"
                 enabled: contextMenu.group !== undefined
                 onClicked: {
@@ -193,7 +205,7 @@ ApplicationWindow {
         RowLayout {
             anchors.top: parent.top; anchors.topMargin: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 200
+            width: 550
             ToolButton {
                 text: "Add Group"
                 onClicked: {
@@ -221,7 +233,6 @@ ApplicationWindow {
                 property var node: undefined
                 enabled: node !== undefined
                 onClicked: {
-                    console.info("node.group=" + node.group)
                     if (node && node.group )
                         topology.ungroupNode(node)
                 }
@@ -235,6 +246,21 @@ ApplicationWindow {
                 onClicked: {
                     ;
                 }
+            }
+
+            Switch {
+                text: "Snap to Grid"
+                checked: topology.snapToGrid
+                onClicked: topology.snapToGrid = checked
+            }
+            Label { text: "Grid size:" }
+            SpinBox {
+                enabled: topology.snapToGrid
+                from: 1
+                to: 100
+                stepSize: 5
+                value: topology.snapToGridSize.width
+                onValueModified: { topology.snapToGridSize = Qt.size(value, value) }
             }
         }
         Pane {

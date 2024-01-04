@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -92,9 +92,11 @@ qan::AbstractDraggableCtrl& NodeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl!
 auto    NodeItem::getNode() noexcept -> qan::Node* { return _node.data(); }
 auto    NodeItem::getNode() const noexcept -> const qan::Node* { return _node.data(); }
 auto    NodeItem::setNode(qan::Node* node) noexcept -> void {
-    _node = node;
-    const auto nodeDraggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
-    nodeDraggableCtrl->setTarget(node);
+    if (node != _node) {
+        _node = node;
+        const auto nodeDraggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
+        nodeDraggableCtrl->setTarget(node);
+    }
 }
 
 auto    NodeItem::setGraph(qan::Graph* graph) -> void
@@ -159,10 +161,15 @@ void    NodeItem::collapseAncestors(bool collapsed)
     // 1.
     const auto ancestors = graph->collectAncestors(*node);
 
+    qWarning() << "-- ANCESTORS: ";
+    for (const auto ancestor: ancestors)
+        qWarning() << ancestor->getLabel();
+    qWarning() << "------------";
+
     // 2.
     std::unordered_set<qan::Edge*> ancestorsEdges;
     for (const auto ancestor: ancestors) {
-        const auto edges = ancestor->collectAdjacentEdges0();
+        const auto edges = ancestor->collectAdjacentEdges();
         std::copy(edges.begin(), edges.end(), std::inserter(ancestorsEdges, ancestorsEdges.end()));
     }
 
@@ -196,7 +203,7 @@ void    NodeItem::collapseChilds(bool collapsed)
     // 2.
     std::unordered_set<qan::Edge*> childsEdges;
     for (const auto child: childs) {
-        const auto edges = child->collectAdjacentEdges0();
+        const auto edges = child->collectAdjacentEdges();
         std::copy(edges.begin(), edges.end(),
                   std::inserter(childsEdges, childsEdges.end()));
     }
@@ -240,6 +247,16 @@ void    NodeItem::setConnectable(Connectable connectable) noexcept
 //-----------------------------------------------------------------------------
 
 /* Draggable Management *///---------------------------------------------------
+bool    NodeItem::setDragOrientation(DragOrientation dragOrientation) noexcept
+{
+    if (dragOrientation != _dragOrientation) {
+        _dragOrientation = dragOrientation;
+        emit dragOrientationChanged();
+        return true;
+    }
+    return false;
+}
+
 void    NodeItem::dragEnterEvent(QDragEnterEvent* event)
 {
     if (getNode() != nullptr &&

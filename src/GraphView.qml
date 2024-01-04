@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -73,6 +73,7 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
 
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
         handlerRadius: resizeHandlerRadius
@@ -90,6 +91,8 @@ Qan.AbstractGraphView {
     Qan.RightResizer {
         id: nodeRightResizer
         parent: graph.containerItem
+
+        enabled: target && target.node && target.node.commitStatus !== 2
         onResizeStart: {
             if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
@@ -102,6 +105,7 @@ Qan.AbstractGraphView {
     Qan.BottomResizer {
         id: nodeBottomResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2
         onResizeStart: {
             if (target && target.node)
                 graph.nodeAboutToBeResized(target.node);
@@ -115,6 +119,7 @@ Qan.AbstractGraphView {
         id: groupResizer
         parent: graph.containerItem
         visible: false
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
 
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
@@ -134,6 +139,7 @@ Qan.AbstractGraphView {
     Qan.RightResizer {
         id: groupRightResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         onResizeStart: {
             if (target && target.group)
                 graph.groupAboutToBeResized(target.group);
@@ -146,6 +152,7 @@ Qan.AbstractGraphView {
     Qan.BottomResizer {
         id: groupBottomResizer
         parent: graph.containerItem
+        enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         onResizeStart: {
             if (target && target.group)
                 graph.groupAboutToBeResized(target.group);
@@ -284,10 +291,10 @@ Qan.AbstractGraphView {
             // Set minimumTargetSize _before_ setting target
             groupResizer.minimumTargetSize = group.item.minimumSize
             groupResizer.target = group.item
-            groupResizer.targetContent = group.item.container
+            groupResizer.targetContent = group.isTable() ? null : group.item.container
             groupRightResizer.minimumTargetSize = groupBottomResizer.minimumTargetSize = group.item.minimumSize
             groupRightResizer.target = groupBottomResizer.target = group.item
-            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.item.container
+            groupRightResizer.targetContent = groupBottomResizer.targetContent = group.isTable() ? null : group.item.container
 
             // Do not show resizers when group is collapsed
             groupRightResizer.visible = groupBottomResizer.visible =

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -49,7 +49,7 @@ namespace gtpo { // ::gtpo
 class abstract_observable {
 public:
     abstract_observable() {}
-    ~abstract_observable() = default;
+    virtual ~abstract_observable() = default;
 
     abstract_observable(const abstract_observable&) = default;
     abstract_observable& operator=( const abstract_observable&) = default;
@@ -68,7 +68,7 @@ class observable : public abstract_observable
     //@{
 public:
     observable() : abstract_observable() { }
-    ~observable() noexcept {
+    virtual ~observable() noexcept {
         _observers.clear();
     }
     observable(const observable<observer_t>&) = default;
@@ -199,7 +199,7 @@ public:
     using graph_observer_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
     using super_t = observable<gtpo::graph_observer<graph_t, node_t, edge_t, group_t> >;
     observable_graph() : super_t{} { }
-    ~observable_graph() noexcept = default;
+    virtual ~observable_graph() noexcept = default;
     observable_graph(const observable_graph<graph_t, node_t, edge_t, group_t>&) = delete;
     observable_graph& operator=(const observable_graph<graph_t, node_t, edge_t, group_t>&) = delete;
     //@}

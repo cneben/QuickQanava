@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -195,9 +195,12 @@ void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
         if (_target != nullptr) {
             const qreal targetHeight = _targetInitialSize.height() + delta.y();
 
-            const auto targetContentMinHeight = _targetContent ? _targetContent->childrenRect().y() + _targetContent->childrenRect().height() : 0;
+            auto childrenRect = _targetContent ? _targetContent->childrenRect() : QRectF{};
+            if (childrenRect.size().isEmpty())  // Note 20231208: Fix a nasty bug (Qt 5.15.13 ?) where size() is empty when there
+                childrenRect = QRectF{};   // is no longer any childs but rect position is left with invalid value.
+            const auto targetContentMinHeight = _targetContent ? childrenRect.y() + childrenRect.height() : 0;
             const auto minimumTargetHeight = qMax(_minimumTargetSize.height(), targetContentMinHeight);
-            const auto targetContentMinWidth = _targetContent ? _targetContent->childrenRect().x() + _targetContent->childrenRect().width() : 0;
+            const auto targetContentMinWidth = _targetContent ? childrenRect.x() + childrenRect.width() : 0;
             const auto minimumTargetWidth = qMax(_minimumTargetSize.width(), targetContentMinWidth);
 
             if (targetHeight > minimumTargetHeight) {   // Do not resize below minimumTargetSize

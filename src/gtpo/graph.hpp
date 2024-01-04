@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -483,6 +483,8 @@ auto    graph<graph_base_t, node_t,
     if (node == nullptr ||
         group == nullptr)
         return false;
+    if (node->get_group() == group)
+        return true;
     node->set_group(group);
     container_adapter<nodes_t>::insert(node, group->get_nodes());
     return true;

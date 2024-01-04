@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -96,10 +96,11 @@ class Navigable : public QQuickItem
 Q_OBJECT
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
-    virtual ~Navigable() override = default;
+    virtual ~Navigable() override;
     Navigable(const Navigable&) = delete;
     //@}
     //-------------------------------------------------------------------------
+
 
     /*! \name Navigation Management *///---------------------------------------
     //@{

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -154,7 +154,7 @@ public:
 
     using this_t = gtpo::graph_observer<graph_t, node_t, edge_t, group_t>;
     graph_observer() noexcept : gtpo::observer<graph_t>{} {}
-    ~graph_observer() noexcept = default;
+    virtual ~graph_observer() noexcept = default;
     graph_observer(const this_t&) = delete;
     graph_observer& operator=(const this_t&) = delete;
 

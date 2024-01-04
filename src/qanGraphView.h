@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -112,6 +112,9 @@ protected:
     virtual void    selectionRectEnd() override;
 private:
     QSet<QQuickItem*>   _selectedItems;
+
+protected:
+    virtual void    keyPressEvent(QKeyEvent *event) override;
     //@}
     //-------------------------------------------------------------------------
 };

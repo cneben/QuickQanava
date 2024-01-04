@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -71,10 +71,10 @@ public:
     //@{
 public:
     Q_PROPERTY(qan::Group* group READ getGroup CONSTANT FINAL)
-    auto        getGroup() noexcept -> qan::Group*;
-    auto        getGroup() const noexcept -> const qan::Group*;
-    auto        setGroup(qan::Group* group) noexcept -> void;
-private:
+    auto            getGroup() noexcept -> qan::Group*;
+    auto            getGroup() const noexcept -> const qan::Group*;
+    virtual bool    setGroup(qan::Group* group) noexcept;
+protected:
     QPointer<qan::Group> _group{nullptr};
 
 public:
@@ -99,7 +99,7 @@ protected slots:
 public:
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
      */
-    virtual void    groupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
+    virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform = true);
 
     //! Configure \c nodeItem outside this group item (modify parentship, keep same visual position).
     virtual void    ungroupNodeItem(qan::NodeItem* nodeItem, bool transform = true);
@@ -130,13 +130,29 @@ public:
      * \endcode
      */
     Q_PROPERTY(QQuickItem* container READ getContainer WRITE setContainer NOTIFY containerChanged FINAL)
-    void                    setContainer(QQuickItem* container) noexcept;
+    virtual bool            setContainer(QQuickItem* container) noexcept;
     QQuickItem*             getContainer() noexcept;
     const QQuickItem*       getContainer() const noexcept;
 protected:
     QPointer<QQuickItem>    _container = nullptr;
 signals:
     void                    containerChanged();
+
+public:
+    /*! \brief In strict drop mode (default), a node bounding rect must be fully inside the group until it can be dropped.
+     *
+     *  With `strictMode` to false, only the top left corner of node must be inside group to trigger
+     *  a drop proposition. Actually used internally by the library for `qan::TableGroup` where only part
+     *  of a node could be inside the group since it later resized to fit a cell. Do not modify until you know
+     *  what you are doing.
+     */
+    Q_PROPERTY(bool strictDrop READ getStrictDrop WRITE setStrictDrop NOTIFY strictDropChanged FINAL)
+    void            setStrictDrop(bool strictDrop) noexcept;
+    bool            getStrictDrop() const noexcept;
+private:
+    bool            _strictDrop = true;
+signals:
+    void            strictDropChanged();
 
 signals:
     //! Emitted whenever a dragged node enter the group area (could be usefull to hilight it in a qan::Group concrete QML component).

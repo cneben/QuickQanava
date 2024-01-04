@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -116,7 +116,7 @@ public:
      */
     Q_PROPERTY(qreal backRadius READ getBackRadius WRITE setBackRadius NOTIFY backRadiusChanged FINAL)
     //! \copydoc backRadius
-    void            setBackRadius(qreal backRadius) noexcept;
+    bool            setBackRadius(qreal backRadius) noexcept;
     //! \copydoc backRadius
     inline qreal    getBackRadius() const noexcept { return _backRadius; }
 protected:
@@ -137,7 +137,7 @@ public:
      */
     Q_PROPERTY(qreal backOpacity READ getBackOpacity WRITE setBackOpacity NOTIFY backOpacityChanged FINAL)
     //! \copydoc backOpacity
-    void            setBackOpacity(qreal backOpacity) noexcept;
+    bool            setBackOpacity(qreal backOpacity) noexcept;
     //! \copydoc backOpacity
     inline qreal    getBackOpacity() const noexcept { return _backOpacity; }
 protected:
@@ -167,7 +167,7 @@ public:
     //! \copydoc FillType
     Q_PROPERTY(FillType fillType READ getFillType WRITE setFillType NOTIFY fillTypeChanged FINAL)
     //! \copydoc FillType
-    void                setFillType(FillType fillType) noexcept;
+    bool                setFillType(FillType fillType) noexcept;
     //! \copydoc FillType
     inline FillType     getFillType() const noexcept { return _fillType; }
 protected:
@@ -180,7 +180,7 @@ signals:
 public:
     //! \brief Node background color (default to white).
     Q_PROPERTY(QColor backColor READ getBackColor WRITE setBackColor NOTIFY backColorChanged FINAL)
-    void            setBackColor(const QColor& backColor) noexcept;
+    bool            setBackColor(const QColor& backColor) noexcept;
     const QColor&   getBackColor() const noexcept { return _backColor; }
 protected:
     QColor          _backColor{Qt::white};
@@ -193,7 +193,7 @@ public:
      * \since 0.9.4
      */
     Q_PROPERTY(QColor baseColor READ getBaseColor WRITE setBaseColor NOTIFY baseColorChanged FINAL)
-    void            setBaseColor(const QColor& backColor) noexcept;
+    bool            setBaseColor(const QColor& backColor) noexcept;
     const QColor&   getBaseColor() const noexcept { return _baseColor; }
 protected:
     QColor          _baseColor{Qt::white};
@@ -202,7 +202,7 @@ signals:
 
 public:
     Q_PROPERTY(QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL)
-    void            setBorderColor(const QColor& borderColor) noexcept;
+    bool            setBorderColor(const QColor& borderColor) noexcept;
     const QColor&   getBorderColor() const noexcept { return _borderColor; }
 protected:
     QColor          _borderColor = QColor(Qt::black);
@@ -211,7 +211,7 @@ signals:
 
 public:
     Q_PROPERTY(qreal borderWidth READ getBorderWidth WRITE setBorderWidth NOTIFY borderWidthChanged FINAL)
-    void            setBorderWidth(qreal borderWidth) noexcept;
+    bool            setBorderWidth(qreal borderWidth) noexcept;
     inline qreal    getBorderWidth() const noexcept { return _borderWidth; }
 protected:
     qreal           _borderWidth = 1.0;
@@ -230,7 +230,7 @@ public:
 
 public:
     Q_PROPERTY(EffectType effectType READ getEffectType WRITE setEffectType NOTIFY effectTypeChanged FINAL)
-    void                setEffectType(EffectType effectType) noexcept;
+    bool                setEffectType(EffectType effectType) noexcept;
     inline EffectType   getEffectType() const noexcept { return _effectType; }
 protected:
     EffectType          _effectType = EffectType::EffectShadow;
@@ -239,7 +239,7 @@ signals:
 
 public:
     Q_PROPERTY(bool effectEnabled READ getEffectEnabled WRITE setEffectEnabled NOTIFY effectEnabledChanged FINAL)
-    void            setEffectEnabled(bool effectEnabled) noexcept;
+    bool            setEffectEnabled(bool effectEnabled) noexcept;
     inline bool     getEffectEnabled() const noexcept { return _effectEnabled; }
 protected:
     bool            _effectEnabled = true;
@@ -248,7 +248,7 @@ signals:
 
 public:
     Q_PROPERTY(QColor effectColor READ getEffectColor WRITE setEffectColor NOTIFY effectColorChanged FINAL)
-    void            setEffectColor(QColor effectColor) noexcept;
+    bool            setEffectColor(QColor effectColor) noexcept;
     inline QColor   getEffectColor() const noexcept { return _effectColor; }
 protected:
     QColor          _effectColor = QColor{0, 0, 0, 127};
@@ -257,7 +257,7 @@ signals:
 
 public:
     Q_PROPERTY(qreal effectRadius READ getEffectRadius WRITE setEffectRadius NOTIFY effectRadiusChanged FINAL)
-    void            setEffectRadius(qreal effectRadius) noexcept;
+    bool            setEffectRadius(qreal effectRadius) noexcept;
     inline qreal    getEffectRadius() const noexcept { return _effectRadius; }
 protected:
     qreal           _effectRadius = 3.;
@@ -270,7 +270,7 @@ public:
      * Any value is considered valid (even negative offset for drop shadows).
      */
     Q_PROPERTY(qreal effectOffset READ getEffectOffset WRITE setEffectOffset NOTIFY effectOffsetChanged FINAL)
-    void            setEffectOffset(qreal effectOFfset) noexcept;
+    bool            setEffectOffset(qreal effectOFfset) noexcept;
     inline qreal    getEffectOffset() const noexcept { return _effectOffset; }
 protected:
     qreal           _effectOffset = 3.;
@@ -282,7 +282,7 @@ public:
      */
     Q_PROPERTY(int fontPointSize READ getFontPointSize WRITE setFontPointSize NOTIFY fontPointSizeChanged FINAL)
     //! \copydoc fontPointSize
-    void            setFontPointSize(int fontPointSize) noexcept;
+    bool            setFontPointSize(int fontPointSize) noexcept;
     //! \copydoc fontPointSize
     inline int      getFontPointSize() const noexcept { return _fontPointSize; }
 protected:
@@ -297,7 +297,7 @@ public:
      */
     Q_PROPERTY(bool fontBold READ getFontBold WRITE setFontBold NOTIFY fontBoldChanged FINAL)
     //! \copydoc fontBold
-    void            setFontBold(bool fontBold) noexcept;
+    bool            setFontBold(bool fontBold) noexcept;
     //! \copydoc fontBold
     inline bool     getFontBold() const noexcept { return _fontBold; }
 protected:
@@ -312,7 +312,7 @@ public:
      */
     Q_PROPERTY(QColor labelColor READ getLabelColor WRITE setLabelColor NOTIFY labelColorChanged FINAL)
     //! \copydoc labelColor
-    void            setLabelColor(QColor labelColor) noexcept;
+    bool            setLabelColor(QColor labelColor) noexcept;
     //! \copydoc labelColor
     inline QColor   getLabelColor() const noexcept { return _labelColor; }
 protected:

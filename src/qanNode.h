@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -44,6 +44,7 @@
 #include "./qanEdge.h"
 #include "./qanStyle.h"
 #include "./qanBehaviour.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -150,7 +151,7 @@ public:
 
 public:
     //! Get this node level 0 adjacent edges (ie sum of node in edges and out edges).
-    std::unordered_set<qan::Edge*>  collectAdjacentEdges0() const;
+    virtual std::unordered_set<qan::Edge*>  collectAdjacentEdges() const;
     //@}
     //-------------------------------------------------------------------------
 
@@ -201,7 +202,7 @@ public:
      * \note nodeRightClicked() signal is still emitted from locked node when node is double clicked.
      */
     Q_PROPERTY(bool locked READ getLocked WRITE setLocked NOTIFY lockedChanged FINAL)
-    bool            setLocked(bool locked);
+    virtual bool    setLocked(bool locked);
     bool            getLocked() const { return _locked; }
 private:
     bool            _locked = false;
@@ -224,6 +225,16 @@ public:
 
     //! Shortcut to base is_group() (ie return true if this node is a group and castable to qan::Group)..
     Q_INVOKABLE bool     isGroup() const { return is_group(); }
+
+public:
+    Q_PROPERTY(qan::TableCell* cell READ getCell NOTIFY cellChanged FINAL)
+    const qan::TableCell*   getCell() const { return _cell.data(); }
+    qan::TableCell*         getCell() { return _cell; }
+    bool                    setCell(qan::TableCell* cell);
+protected:
+    QPointer<qan::TableCell>    _cell;
+signals:
+    void                    cellChanged();
     //@}
     //-------------------------------------------------------------------------
 };

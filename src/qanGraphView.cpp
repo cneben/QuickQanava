@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -62,8 +62,6 @@ void    GraphView::setGraph(qan::Graph* graph)
             disconnect(_graph, 0, this, 0);
         _graph = graph;
         auto graphViewQmlContext = qmlContext(this);
-        // FIXME remove that
-        //auto containerQmlContext = qmlContext(getContainerItem());
         QQmlEngine::setContextForObject(getContainerItem(), graphViewQmlContext);
         _graph->setContainerItem(getContainerItem());
         connect(_graph, &qan::Graph::nodeClicked,
@@ -144,7 +142,7 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                                                     item->boundingRect());
             if (!rect.contains(itemBr)) {
                 _graph->setNodeSelected(*nodeItem->getNode(), false);
-                        _selectedItems.remove(item);
+                _selectedItems.remove(item);
             }
         }
     }
@@ -160,14 +158,6 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                                                     item->boundingRect());
             if (rect.contains(itemBr)) {
                 _graph->setNodeSelected(*node, true);
-                /*if (node->isGroup()) {
-                    auto subNodes = _graph->collectDfs(*node, true);   // Insert group content to selection
-                    for (auto subNode: subNodes)
-                        if (subNode != nullptr) {
-                            _graph->setNodeSelected(const_cast<qan::Node&>(*subNode), true);
-                            _selectedItems.insert(const_cast<qan::NodeItem*>(subNode->getItem()));
-                        }
-                }*/
                 // Note we assume that items are not deleted while the selection
                 // is in progress... (QPointer can't be trivially inserted in QSet)
                 _selectedItems.insert(nodeItem);
@@ -179,6 +169,85 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
 void    GraphView::selectionRectEnd()
 {
     _selectedItems.clear();  // Clear selection cache
+}
+
+void    GraphView::keyPressEvent(QKeyEvent *event)
+{
+    if (event == nullptr)   // Sanity checks
+        return;
+    if (!_graph ||
+        _graph->getContainerItem() == nullptr) {
+        event->ignore();
+        return;
+    }
+    const auto containerItem = getContainerItem();
+    if (containerItem == nullptr) {
+        event->ignore();
+        return;
+    }
+
+    const auto key = event->key();
+    const auto gridSize = _graph->getSnapToGrid() ? _graph->getSnapToGridSize().width() : 10.;
+    auto getDragDelta = [gridSize](int key) -> QPointF {
+        switch (key) {
+        case Qt::Key_Left:  return QPointF{-gridSize, 0.};
+        case Qt::Key_Right: return QPointF{gridSize,  0.};
+        case Qt::Key_Up:    return QPointF{0.,        -gridSize};
+        case Qt::Key_Down:  return QPointF{0,         gridSize};
+        }
+        return QPointF{0., 0.};
+    };
+    const auto delta = getDragDelta(key);
+    if (delta.manhattanLength() <= 0.0000001) {
+        event->ignore();
+        return;
+    }
+
+    // If no selection, move the underlying graph view
+    if ((_graph->getSelectedNodes().size() + _graph->getSelectedGroups().size()) <= 0) {
+        const auto p = QPointF{containerItem->x(),
+                               containerItem->y()} - delta;
+        containerItem->setX(p.x());
+        containerItem->setY(p.y());
+        emit containerItemModified();
+        event->accept();
+        return;
+    }
+
+    // Otherwise handle multiple selection (ie move selection)
+    if (delta.manhattanLength() > 0.) {
+
+        // 1. Get the first selected node drag controller.
+        // 2. Manually call beginDragMove()
+        // 3. Manually call endDragMove() with a delta generated according
+        //    to pressed key
+
+        std::vector<qan::Node*> selection;
+        const auto& selectedNodes = _graph->getSelectedNodes();
+        std::copy(selectedNodes.begin(), selectedNodes.end(), std::back_inserter(selection));
+        std::copy(_graph->getSelectedGroups().begin(), _graph->getSelectedGroups().end(), std::back_inserter(selection));
+
+        // 1.
+        if (selection.size() > 0) {
+            const auto node = selection.at(0);
+            const auto nodeItem = node != nullptr ? node->getItem() : nullptr;
+            if (nodeItem != nullptr) {
+                auto& dragCtrl = nodeItem->draggableCtrl();
+
+                // Note 20231028: No nodesAboutToBeMoved() / nodesMoved() handled here,
+                // dragCtrl will handle that as a regular DnD mouse drag.
+
+                // 2.
+                dragCtrl.beginDragMove(QPointF{0., 0.}, /*dragSelection*/true);
+
+                // 3.
+                dragCtrl.dragMove(delta, /*dragSelection*/true);
+                dragCtrl.endDragMove(/*dragSelection*/true);
+            }
+            event->accept();
+        }
+    } else
+        event->ignore();
 }
 //-----------------------------------------------------------------------------
 

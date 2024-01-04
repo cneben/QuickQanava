@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -56,21 +56,30 @@ Item {
 
     property alias  header: headerLayout
 
-    enabled: groupItem &&
-             groupItem.group ? !groupItem.group.locked :
-                               true
+    property alias  backRadius: groupBackground.backRadius
+
+    enabled: {
+        if (groupItem &&
+            groupItem.group) {
+            if (groupItem.group.isTable())   // If group is a table, let hlg::TableGroup manage locking.
+                return true
+            return !groupItem.group.locked   // Otherwise, disable the delegate for locked group
+        }
+        return true;
+    }
+
+    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
+        id: groupBackground
+        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
+        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
+        visible: !groupItem.collapsed
+    }
     Item {
         id: content
         anchors.fill: parent
         z: 3
         visible: !groupItem.collapsed
         enabled: !groupItem.collapsed
-    }
-    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
-        id: groupBackground
-        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
-        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
-        visible: !groupItem.collapsed
     }
     RowLayout {
         id: headerLayout

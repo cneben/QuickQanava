@@ -169,7 +169,7 @@ int	main( int argc, char** argv )
             group->getItem()->setRect({300, 200, 400, 250});
 
             // Grouping nodes from c++
-            graph->groupNode(group, nodes[0][0], false);
+            graph->groupNode(group, nodes[0][0], nullptr, false);
 
             // NOTE: If the node is already on top of the group were we want to insert node, use transformPosition=true
             // to convert node position from graphview coordinate system to group coordinate system.

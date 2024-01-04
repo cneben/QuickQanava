@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -571,8 +571,8 @@ void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept
         const bool horiz = 0.50 * std::fabs(cache.dstBrCenter.x() - cache.srcBrCenter.x()) >
                            std::fabs(cache.dstBrCenter.y() - cache.srcBrCenter.y());
         const bool vert = !horiz;
-        if ( bottom ) {     // BOTTOM
-            if ( right && vert) {             // BR, vertical edge
+        if (bottom) {       // BOTTOM
+            if (right && vert) {             // BR, vertical edge
                 cache.p1 = QPointF{cache.srcBrCenter.x(),   cache.srcBr.bottom()};
                 cache.p2 = QPointF{cache.dstBr.left(),      cache.dstBrCenter.y()};
                 cache.c1 = QPointF{cache.srcBrCenter.x(),   cache.dstBrCenter.y()};
@@ -590,7 +590,7 @@ void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept
                 cache.c1 = QPointF{cache.dstBrCenter.x(),   cache.srcBrCenter.y()};
             }
         } else {            // TOP
-            if ( right && vert) {             // TR, vertical edge
+            if (right && vert) {             // TR, vertical edge
                 cache.p1 = QPointF{cache.srcBrCenter.x(),   cache.srcBr.top()};
                 cache.p2 = QPointF{cache.dstBr.left(),      cache.dstBrCenter.y()};
                 cache.c1 = QPointF{cache.srcBrCenter.x(),   cache.dstBrCenter.y()};
@@ -1128,7 +1128,8 @@ qreal   EdgeItem::cubicCurveAngleAt(qreal pos, const QPointF& start, const QPoin
 /* Mouse Management *///-------------------------------------------------------
 void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton &&
+    if ((getEdge() != nullptr && !getEdge()->getLocked()) &&
+        event->button() == Qt::LeftButton &&
         contains(event->localPos())) {
         emit edgeDoubleClicked(this, event->localPos());
         event->accept();
@@ -1312,7 +1313,7 @@ bool    EdgeItem::contains(const QPointF& point) const
         r = (d > -0.001 && d < 6.001);
         break;
     case qan::EdgeStyle::LineType::Curved: {
-        Bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
+        bezier::Bezier<3> cubicBezier({{static_cast<float>(_p1.x()), static_cast<float>(_p1.y())},
                                        {static_cast<float>(_c1.x()), static_cast<float>(_c1.y())},
                                        {static_cast<float>(_c2.x()), static_cast<float>(_c2.y())},
                                        {static_cast<float>(_p2.x()), static_cast<float>(_p2.y())}});

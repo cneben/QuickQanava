@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,9 +27,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	qanGroup.cpp
+// \file	qanGroupItem.cpp
 // \author	benoit@destrat.io
-// \date	2016 03 22
+// \date	2017 03 02
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
@@ -70,16 +70,20 @@ GroupItem::GroupItem(QQuickItem* parent) :
 
 auto    GroupItem::getGroup() noexcept -> qan::Group* { return _group.data(); }
 auto    GroupItem::getGroup() const noexcept -> const qan::Group* { return _group.data(); }
-auto    GroupItem::setGroup(qan::Group* group) noexcept -> void
+bool    GroupItem::setGroup(qan::Group* group) noexcept
 {
     // DraggableCtrl configuration is done in setNode()
     qan::NodeItem::setNode(static_cast<qan::Node*>(group));
 
     // Configuration specific to group
-    _group = group;
-    if (group != nullptr &&            // Warning: Do that after having set _group
-        group->getItem() != this)
-        group->setItem(this);
+    if (group != _group) {
+        _group = group;
+        if (group != nullptr &&            // Warning: Do that after having set _group
+            group->getItem() != this)
+            group->setItem(this);
+        return true;
+    }
+    return false;
 }
 
 auto    GroupItem::setRect(const QRectF& r) noexcept -> void
@@ -130,20 +134,20 @@ void    GroupItem::groupMoved()
     }
 }
 
-void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, bool transform)
+void    GroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
     // PRECONDITIONS:
         // nodeItem can't be nullptr
         // A 'container' must have been configured
+    Q_UNUSED(groupCell)
     if (nodeItem == nullptr ||
         getContainer() == nullptr)   // A container must have configured in concrete QML group component
         return;
 
     // Note: no need for the container to be visible or open.
-    auto groupPos = QPointF{nodeItem->x(), nodeItem->y()};
     if (transform) {
         const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
-        groupPos = getContainer()->mapFromGlobal(globalPos);
+        const auto groupPos = getContainer()->mapFromGlobal(globalPos);
         nodeItem->setPosition(groupPos);
     }
     nodeItem->setParentItem(getContainer());
@@ -160,22 +164,35 @@ void    GroupItem::ungroupNodeItem(qan::NodeItem* nodeItem, bool transform)
         const QPointF nodeGlobalPos = mapToItem(getGraph()->getContainerItem(), nodeItem->position());
         nodeItem->setParentItem(getGraph()->getContainerItem());
         if (transform)
-            nodeItem->setPosition(nodeGlobalPos);
-        nodeItem->setZ(z()+1.);
+            nodeItem->setPosition(nodeGlobalPos + QPointF{10., 10.});
+        nodeItem->setZ(z() + 1.);
         nodeItem->setDraggable(true);
         nodeItem->setDroppable(true);
     }
 }
-void    GroupItem::setContainer(QQuickItem* container) noexcept
+
+bool    GroupItem::setContainer(QQuickItem* container) noexcept
 {
     // PRECONDITIONS: None, container can be nullptr
     if (container != _container) {
         _container = container;
         emit containerChanged();
+        return true;
     }
+    return false;
 }
 QQuickItem*         GroupItem::getContainer() noexcept { return _container; }
 const QQuickItem*   GroupItem::getContainer() const noexcept { return _container; }
+
+void    GroupItem::setStrictDrop(bool strictDrop) noexcept
+{
+    if (strictDrop != _strictDrop) {
+        _strictDrop = strictDrop;
+        emit strictDropChanged();
+    }
+}
+bool    GroupItem::getStrictDrop() const noexcept { return _strictDrop; }
+
 
 void    GroupItem::mouseDoubleClickEvent(QMouseEvent* event)
 {

@@ -2,12 +2,10 @@
 CONFIG      += warn_on qt thread c++14
 QT          += core widgets gui qml quick
 
-include(../QuickContainers/quickcontainers.pri)
+include(quickcontainers/quickcontainers.pri)
 
-# Note: Qmake and pri inclusion is reserved to Qt5.
+# Note: QMake and pri inclusion is reserved to Qt5.
 
-# With .pri inclusion, try to statically link all QML files in Qt ressource, do not
-DEFINES         += QUICKQANAVA_STATIC   # use QML module (calling QuickQanava::initialize() is mandatory...
 DEPENDPATH      += $$PWD
 INCLUDEPATH     += $$PWD
 RESOURCES       += $$PWD/QuickQanava_static.qrc
@@ -30,7 +28,12 @@ HEADERS +=  $$PWD/QuickQanava.h             \
             $$PWD/qanConnector.h            \
             $$PWD/qanBehaviour.h            \
             $$PWD/qanGroup.h                \
+            $$PWD/qanTableGroup.h           \
+            $$PWD/qanTableGroupItem.h       \
+            $$PWD/qanTableCell.h            \
+            $$PWD/qanTableBorder.h          \
             $$PWD/qanGroupItem.h            \
+            $$PWD/qanGroupItem.cpp          \
             $$PWD/qanGraph.h                \
             $$PWD/qanGraph.hpp              \
             $$PWD/qanStyle.h                \
@@ -69,6 +72,10 @@ SOURCES +=  $$PWD/qanGraphView.cpp          \
             $$PWD/qanGraph.cpp              \
             $$PWD/qanGroup.cpp              \
             $$PWD/qanGroupItem.cpp          \
+            $$PWD/qanTableGroup.cpp         \
+            $$PWD/qanTableGroupItem.cpp     \
+            $$PWD/qanTableCell.cpp          \
+            $$PWD/qanTableBorder.cpp        \
             $$PWD/qanStyle.cpp              \
             $$PWD/qanStyleManager.cpp       \
             $$PWD/qanNavigable.cpp          \
@@ -100,6 +107,8 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/CanvasNodeTemplate.qml        \
                 $$PWD/Group.qml                     \
                 $$PWD/RectGroupTemplate.qml         \
+                $$PWD/TableGroup.qml                \
+                $$PWD/TableCell.qml                 \
                 $$PWD/BottomRightResizer.qml        \
                 $$PWD/Node.qml                      \
                 $$PWD/Port.qml                      \
@@ -117,7 +126,6 @@ OTHER_FILES +=  $$PWD/../CHANGELOG.md               \
                 $$PWD/EdgeDstCirclePath.qml         \
                 $$PWD/EdgeDstRectPath.qml           \
                 $$PWD/SelectionItem.qml             \
-                $$PWD/StyleListView.qml             \
                 $$PWD/VisualConnector.qml           \
                 $$PWD/LabelEditor.qml               \
                 $$PWD/qmldir_static

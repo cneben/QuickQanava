@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -93,11 +93,6 @@ public:
     NodeItem& operator=(const NodeItem&) = delete;
     NodeItem(NodeItem&&) = delete;
     NodeItem& operator=(NodeItem&&) = delete;
-
-public:
-    qan::AbstractDraggableCtrl&                 draggableCtrl();
-protected:
-    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
     //@}
     //-------------------------------------------------------------------------
 
@@ -261,6 +256,10 @@ signals:
     /*! \name Draggable Management *///----------------------------------------
     //@{
 public:
+    qan::AbstractDraggableCtrl&                 draggableCtrl();
+protected:
+    std::unique_ptr<qan::AbstractDraggableCtrl> _draggableCtrl;
+public:
     //! \copydoc qan::Draggable::_draggable
     Q_PROPERTY(bool draggable READ getDraggable WRITE setDraggable NOTIFY draggableChanged FINAL)
     //! \copydoc qan::Draggable::_dragged
@@ -269,16 +268,39 @@ public:
     Q_PROPERTY(bool droppable READ getDroppable WRITE setDroppable NOTIFY droppableChanged FINAL)
     //! \copydoc qan::Draggable::_acceptDrops
     Q_PROPERTY(bool acceptDrops READ getAcceptDrops WRITE setAcceptDrops NOTIFY acceptDropsChanged FINAL)
+
 protected:
     virtual void    emitDraggableChanged() override { emit draggableChanged(); }
     virtual void    emitDraggedChanged() override { emit draggedChanged(); }
     virtual void    emitAcceptDropsChanged() override { emit acceptDropsChanged(); }
     virtual void    emitDroppableChanged() override { emit droppableChanged(); }
+
 signals:
     void            draggableChanged();
     void            draggedChanged();
     void            droppableChanged();
     void            acceptDropsChanged();
+
+public:
+    //! Define an orientation contrain on node dragging.
+    enum class DragOrientation: unsigned int {
+        DragAll         = 0,  //! All is no constrain on dragging: drag in all directions
+        DragVertical    = 1,  //! Drag only horizontally
+        DragHorizontal  = 2   //! Drag only vertically
+    };
+    Q_ENUM(DragOrientation)
+    //! \copydoc getDragOrientation()
+    Q_PROPERTY(DragOrientation dragOrientation READ getDragOrientation WRITE setDragOrientation NOTIFY dragOrientationChanged FINAL)
+    //! \copydoc getDragOrientation()
+    bool                    setDragOrientation(DragOrientation dragOrientation) noexcept;
+    //! Define a constrain on node/group dragging, default to no constrain, set to horizontal or vertical to constrain dragging on one orientation.
+    DragOrientation         getDragOrientation() const noexcept { return _dragOrientation; }
+protected:
+    //! \copydoc getDragOrientation()
+    DragOrientation         _dragOrientation = DragOrientation::DragAll;
+signals:
+    //! \copydoc getDragOrientation()
+    void                    dragOrientationChanged();
 
 protected:
     //! Internally used to manage drag and drop over nodes, override with caution, and call base class implementation.
@@ -398,8 +420,8 @@ public:
     Q_INVOKABLE qan::PortItem*  findPort(const QString& portId) const noexcept;
 
     //! Read-only list model of this node ports (either in or out).
-    Q_PROPERTY( QAbstractListModel* ports READ getPortsModel CONSTANT FINAL )
-    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>( _ports.getModel() ); }
+    Q_PROPERTY(QAbstractListModel* ports READ getPortsModel CONSTANT FINAL)
+    QAbstractListModel* getPortsModel() { return qobject_cast<QAbstractListModel*>(_ports.getModel()); }
     inline auto         getPorts() noexcept -> PortItems& { return _ports; }
     inline auto         getPorts() const noexcept -> const PortItems& { return _ports; }
 
@@ -420,9 +442,9 @@ public:
 
 public:
     //! Item left dock (usually build from qan::Graph::verticalDockDelegate).
-    Q_PROPERTY( QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* leftDock READ getLeftDock WRITE setLeftDock NOTIFY leftDockChanged FINAL)
     //! \copydoc leftDock
-    void                    setLeftDock( QQuickItem* leftDock ) noexcept;
+    void                    setLeftDock(QQuickItem* leftDock) noexcept;
     //! \copydoc leftDock
     inline QQuickItem*      getLeftDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Left)].data(); }
 signals:
@@ -431,9 +453,9 @@ signals:
 
 public:
     //! Item top dock (usually build from qan::Graph::horizontalDockDelegate).
-    Q_PROPERTY( QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* topDock READ getTopDock WRITE setTopDock NOTIFY topDockChanged FINAL)
     //! \copydoc topDock
-    void                    setTopDock( QQuickItem* topDock ) noexcept;
+    void                    setTopDock(QQuickItem* topDock) noexcept;
     //! \copydoc topDock
     inline QQuickItem*      getTopDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Top)].data(); }
 signals:
@@ -442,9 +464,9 @@ signals:
 
 public:
     //! Item right dock (usually build from qan::Graph::verticalDockDelegate).
-    Q_PROPERTY( QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* rightDock READ getRightDock WRITE setRightDock NOTIFY rightDockChanged FINAL)
     //! \copydoc rightDock
-    void                    setRightDock( QQuickItem* rightDock ) noexcept;
+    void                    setRightDock(QQuickItem* rightDock) noexcept;
     //! \copydoc rightDock
     inline QQuickItem*      getRightDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Right)].data(); }
 signals:
@@ -453,9 +475,9 @@ signals:
 
 public:
     //! Item bottom dock (usually build from qan::Graph::horizontalDockDelegate).
-    Q_PROPERTY( QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL )
+    Q_PROPERTY(QQuickItem* bottomDock READ getBottomDock WRITE setBottomDock NOTIFY bottomDockChanged FINAL)
     //! \copydoc bottomDock
-    void                    setBottomDock( QQuickItem* bottomDock ) noexcept;
+    void                    setBottomDock(QQuickItem* bottomDock) noexcept;
     //! \copydoc bottomDock
     inline QQuickItem*      getBottomDock() noexcept { return _dockItems[static_cast<std::size_t>(Dock::Bottom)].data(); }
 signals:

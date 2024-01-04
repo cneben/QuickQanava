@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@
 #pragma once
 
 // QuickContainers headers
-#include <QuickContainers>
+#include "./quickcontainers/QuickContainers.h"
 
 // Qt header
 #include <QQmlEngine>
@@ -49,6 +49,8 @@
 #include "./qanConnector.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
+#include "./qanTableGroupItem.h"
+#include "./qanTableBorder.h"
 #include "./qanGraph.h"
 #include "./qanNavigable.h"
 #include "./qanGrid.h"
@@ -64,8 +66,6 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-#ifdef QUICKQANAVA_STATIC   // Initialization is done in QuickQanavaPlugin when QUICKQANAVA_STATIC is not defined
-
         Q_INIT_RESOURCE(QuickQanava_static);
         Q_INIT_RESOURCE(QuickQanavaGraphicalEffects);
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
@@ -97,6 +97,9 @@ struct QuickQanava {
         qmlRegisterType<qan::EdgeItem>("QuickQanava", 2, 0, "EdgeItem");
         qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
         qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
+        qmlRegisterType<qan::TableGroupItem>("QuickQanava", 2, 0, "TableGroupItem");
+        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "AbstractTableCell");
+        qmlRegisterType<qan::TableBorder>("QuickQanava", 2, 0, "AbstractTableBorder");
         qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
 
         qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");
@@ -117,7 +120,6 @@ struct QuickQanava {
         qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
         qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
         qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
-#endif // QUICKQANAVA_STATIC
     } // initialize()
 };
 

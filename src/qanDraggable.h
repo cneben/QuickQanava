@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -95,7 +95,9 @@ private:
     bool            _dragged = false;
 
 public:
+    //! Set to false to prevent this primitive beeing dropped on groups (default to true ie droppable).
     void            setDroppable(bool droppable) noexcept;
+    //! \copydoc setDroppable()
     inline bool     getDroppable() const noexcept { return _droppable; }
 protected:
     virtual void    emitDroppableChanged() = 0;

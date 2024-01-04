@@ -17,9 +17,8 @@ weight: 0
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
-!!! warning "QuickQanava is still alpha, but QuickQanava is already used extensively in production code."
-
 !!! note "QuickQanava is licensed under BSD-3, specific features or support is available on demand: benoit@destrat.io"
+!!! note "Open an issue with `question` tag for support request / questions"
 
 ## Introduction
 

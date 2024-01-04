@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -103,7 +103,7 @@ private:
     QPointer<QQuickItem>  _target = nullptr;
 
 public:
-    //! FIXME
+    //! Do not resize below `targetContent` item childrenRect (set to null to remove the constrain).
     Q_PROPERTY(QQuickItem* targetContent READ getTargetContent WRITE setTargetContent NOTIFY targetContentChanged FINAL)
     void        setTargetContent(QQuickItem* targetContent);
     QQuickItem* getTargetContent() const { return _targetContent.data(); }

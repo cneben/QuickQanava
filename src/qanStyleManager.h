@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,15 +32,14 @@
 // \date    2015 06 05
 //-----------------------------------------------------------------------------
 
-#ifndef qanStyleManager_h
-#define qanStyleManager_h
+#pragma once
 
 // Qt headers
 #include <QSortFilterProxyModel>
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include "../QuickContainers/include/qcmContainer.h"
+#include "./quickcontainers/qcmContainer.h"
 
 // QuickQanava headers
 #include "./qanStyle.h"
@@ -72,7 +71,7 @@ public:
     /*! \name Style Management *///--------------------------------------------
     //@{
 public:
-    using StyleComponentMap = QMap< qan::Style*, QPointer<QQmlComponent> >;
+    using StyleComponentMap = QMap<qan::Style*, QPointer<QQmlComponent>>;
 
     Q_INVOKABLE void            setStyleComponent(qan::Style* style, QQmlComponent* component) noexcept;
     Q_INVOKABLE QQmlComponent*  getStyleComponent(qan::Style* style) noexcept;
@@ -81,24 +80,26 @@ private:
 
 public:
     //! Set style \c nodeStyle a the default style for a specific class of nodes \c delegate.
-    void                            setNodeStyle( QQmlComponent* delegate, qan::NodeStyle* nodeStyle );
+    void                            setNodeStyle(QQmlComponent* delegate, qan::NodeStyle* nodeStyle);
 
     //! Get the style for a specific node \c delegate, if no such style exist, return default node style.
-    qan::NodeStyle*                 getNodeStyle( QQmlComponent* delegate );
+    qan::NodeStyle*                 getNodeStyle(QQmlComponent* delegate);
 
-    using DelegateNodeStyleMap = QMap< QQmlComponent*, qan::NodeStyle* >;
+    using DelegateNodeStyleMap = QMap<QQmlComponent*, qan::NodeStyle*>;
     const DelegateNodeStyleMap&     getNodeStyles() const noexcept { return _nodeStyles; }
 private:
     DelegateNodeStyleMap            _nodeStyles;
 
 public:
     //! Set style \c defaultEdgeStyle a the default style for a specific class of edge \c delegate.
-    void                            setEdgeStyle( QQmlComponent* delegate, qan::EdgeStyle* edgeStyle );
+    void                            setEdgeStyle(QQmlComponent* delegate, qan::EdgeStyle* edgeStyle);
 
     //! Get the default style for a specific edge \c delegate, if no such style exist, return default node style.
-    qan::EdgeStyle*                 getEdgeStyle( QQmlComponent* delegate );
+    qan::EdgeStyle*                 getEdgeStyle(QQmlComponent* delegate);
 
-    using DelegateEdgeStyleMap = QMap< QQmlComponent*, qan::EdgeStyle* >;
+    Q_INVOKABLE qan::EdgeStyle*     createEdgeStyle();
+
+    using DelegateEdgeStyleMap = QMap<QQmlComponent*, qan::EdgeStyle*>;
     const DelegateEdgeStyleMap&     getEdgeStyles() const noexcept { return  _edgeStyles; }
 private:
     DelegateEdgeStyleMap            _edgeStyles;
@@ -106,7 +107,7 @@ private:
 public:
     using ObjectVectorModel = qcm::Container<QVector, QObject*>;
 
-    Q_PROPERTY( QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL )
+    Q_PROPERTY(QAbstractItemModel* styles READ qmlGetStyles CONSTANT FINAL)
     inline QAbstractItemModel*      qmlGetStyles() noexcept { return _styles.model(); }
     inline const ObjectVectorModel& getStyles() const noexcept { return _styles; }
 private:
@@ -120,7 +121,4 @@ public:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::StyleManager )
-
-#endif // qanStyleManager_h
-
+QML_DECLARE_TYPE(qan::StyleManager)

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -39,9 +39,9 @@
 // QuickQanava headers
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
-#include "./qanPortItem.h"
 #include "./qanGroup.h"
 #include "./qanGraph.h"
+#include "./qanTableCell.h"
 
 namespace qan { // ::qan
 
@@ -137,7 +137,7 @@ QAbstractItemModel* Node::qmlGetOutEdges() const
     return super_t::get_out_edges().model();
 }
 
-std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges0() const
+std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges() const
 {
     std::unordered_set<qan::Edge*> edges;
     for (const auto in_edge: qAsConst(get_in_edges())) {
@@ -187,12 +187,23 @@ bool    Node::setIsProtected(bool isProtected)
     return false;
 }
 
-
 bool    Node::setLocked(bool locked)
 {
     if (locked != _locked) {
         _locked = locked;
         emit lockedChanged();
+        return true;
+    }
+    return false;
+}
+//-----------------------------------------------------------------------------
+
+/* Node Group Management *///--------------------------------------------------
+bool    Node::setCell(qan::TableCell* cell)
+{
+    if (cell != _cell) {
+        _cell = cell;
+        emit cellChanged();
         return true;
     }
     return false;

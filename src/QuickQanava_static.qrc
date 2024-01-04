@@ -21,6 +21,9 @@
         <file>VerticalDock.qml</file>
         <file>HorizontalDock.qml</file>
         <file>Group.qml</file>
+        <file>TableGroup.qml</file>
+        <file>TableCell.qml</file>
+        <file>TableBorder.qml</file>
         <file>RectGroupTemplate.qml</file>
         <file>CanvasNodeTemplate.qml</file>
         <file>RectNodeTemplate.qml</file>
@@ -33,7 +36,6 @@
         <file>RectGradientShadowBackground.qml</file>
         <file>RectGradientGlowBackground.qml</file>
         <file>SelectionItem.qml</file>
-        <file>StyleListView.qml</file>
         <file>VisualConnector.qml</file>
         <file>LabelEditor.qml</file>
         <file alias="qmldir">qmldir_static</file>

@@ -6,7 +6,7 @@ repo_name: 'GitHub'
 repo_url: 'https://github.com/cneben/QuickQanava'
 edit_uri: ""
 
-copyright: 'Copyright &copy; 2022 BA'
+copyright: 'Copyright &copy; 2023 BA'
 use_directory_urls: false
 
 theme: 

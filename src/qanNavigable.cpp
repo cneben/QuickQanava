@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2022, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -58,6 +58,14 @@ Navigable::Navigable(QQuickItem* parent) :
     _defaultGrid = std::make_unique<qan::Grid>();
     setGrid(_defaultGrid.get());
     setAcceptTouchEvents(true);
+}
+
+Navigable::~Navigable()
+{
+    disconnect(_containerItem, nullptr, this, nullptr);
+    if (_grid) {
+        disconnect(_grid, nullptr, this, nullptr);
+    }
 }
 //-----------------------------------------------------------------------------
 
@@ -495,8 +503,8 @@ void    Navigable::setGrid(qan::Grid* grid) noexcept
             _grid->setZ(-1.0);
             _grid->setAntialiasing(false);
             _grid->setScale(1.0);
-            connect(grid,   &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
-                    this,   &Navigable::updateGrid);    // take into account any grid property change while grid was hidden.
+            connect(_grid,  &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
+                    this,   &Navigable::updateGrid);     // take into account any grid property change while grid was hidden.
         }
         if (!_grid)
             _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"
