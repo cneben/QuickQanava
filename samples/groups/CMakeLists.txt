@@ -1,8 +1,10 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-# Require C++14
-set(CMAKE_CXX_STANDARD 14)
+project(QuickQanava_sample_groups VERSION 2.4.0 LANGUAGES CXX)
+
+# Require C++17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -35,13 +37,5 @@ target_link_libraries(sample_groups
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickControls2
 )
-
-#if(WIN32 AND DEPLOY)
-#    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
-#    add_custom_command(TARGET sample_groups POST_BUILD
-#        COMMAND ${WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_FILE:sample_groups> $<$<CONFIG:Debug>:--pdb>)
-#    add_custom_command(TARGET sample_groups POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_groups>)
-#endif()
 
 

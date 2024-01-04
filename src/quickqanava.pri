@@ -1,5 +1,5 @@
 
-CONFIG      += warn_on qt thread c++14
+CONFIG      += warn_on qt thread c++17
 QT          += core widgets gui qml quick
 
 include(quickcontainers/quickcontainers.pri)
