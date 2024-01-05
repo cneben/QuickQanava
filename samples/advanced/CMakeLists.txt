@@ -24,7 +24,6 @@ if(NOT TARGET QuickQanava)
     # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_advanced ${source_files} advanced.qrc)
 target_include_directories(sample_advanced PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_advanced

@@ -82,14 +82,14 @@ Qan.GraphView {
             }
             return edgeSrcDst
         }
-        onConnectorEdgeInserted: { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
-        onConnectorRequestEdgeCreation: { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
-        onEdgeClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
-        onEdgeDoubleClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
-        onEdgeRightClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
+        onConnectorEdgeInserted: (edge) => { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
+        onConnectorRequestEdgeCreation: (src, dst) => { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
+        onEdgeClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
+        onEdgeDoubleClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
+        onEdgeRightClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
     }
     ToolTip { id: toolTip; timeout: 2500 }
-    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     ColorDialog {
         id: connectorEdgeColorDialog
