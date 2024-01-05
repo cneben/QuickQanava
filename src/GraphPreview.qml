@@ -106,14 +106,15 @@ Control {
     hoverEnabled: true
 
     z: 3    // Avoid tooltips beeing generated on top of preview
-    Qan.RectangularGlow {
+    // FIXME #218
+    /*Qan.RectangularGlow {
         anchors.fill: parent
         cached: true
         glowRadius:  8
         cornerRadius: 8
         spread: 0.5
         color: "lightgrey"
-    }
+    }*/
     Pane {
         id: previewBackground
         anchors.fill: parent

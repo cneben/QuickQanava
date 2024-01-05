@@ -10,8 +10,7 @@ set(source_files main.cpp)
 set(resources_files advanced.qrc)
 
 # Configure Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui QuickControls2 REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui QuickControls2 REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)

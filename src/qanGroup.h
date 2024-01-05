@@ -75,12 +75,6 @@ public:
     //! Return true if this group is a table (ie a qan::TableGroup or subclass).
     Q_INVOKABLE virtual bool    isTable() const;
 
-    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
-    //! Shortcut to gtpo::group<>::getGraph().
-    qan::Graph*         getGraph() noexcept;
-    //! \copydoc getGraph()
-    const qan::Graph*   getGraph() const noexcept;
-
     /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
      *
      */

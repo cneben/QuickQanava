@@ -54,10 +54,6 @@ Group::Group(QObject* parent) :
 
 bool    Group::isTable() const { return false; }
 
-qan::Graph*         Group::getGraph() noexcept { return qan::Node::get_graph(); }
-
-const qan::Graph*   Group::getGraph() const noexcept { return qan::Node::get_graph(); }
-
 std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
 {
     std::unordered_set<qan::Edge*> edges = qan::Node::collectAdjacentEdges();
