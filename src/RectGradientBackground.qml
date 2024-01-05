@@ -32,7 +32,8 @@
 // \date	2018 03 25
 //-----------------------------------------------------------------------------
 
-import QtQuick  2.7
+import QtQuick
+import QtQuick.Shapes
 
 import QuickQanava    2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -66,7 +67,8 @@ Item {
         antialiasing: true
         opacity: backOpacity
 
-        layer.enabled: true
+        // FIXME Qt6: might be possible to go full Shape here ?
+        /*layer.enabled: true
         layer.effect: Qan.LinearGradient {
             start:  Qt.point(0.,0.)
             end:    Qt.point(background.width, background.height)
@@ -75,7 +77,7 @@ Item {
                 GradientStop { position: 0.0; color: baseColor }
                 GradientStop { position: 1.0;  color: backColor }
             }
-        }
+        }*/
     }
     Rectangle {
         id: foreground

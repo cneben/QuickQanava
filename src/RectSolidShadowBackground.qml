@@ -32,8 +32,8 @@
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-
+import QtQuick
+import QtQuick.Effects
 import QuickQanava          2.0 as Qan
 
 /*! \brief Node or group background component with solid fill, shadow effect and backOpacity style support

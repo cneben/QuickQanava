@@ -89,7 +89,6 @@ set (quickcontainers_header_files
     quickcontainers/qcmAdapter.h
     )
 
-message(src/CMakeLists.qt6.txt)
 
 set (qan_plugin_files
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.cpp
@@ -104,7 +103,6 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_
 
 # Configure QuickQanava library ###############################################
 list(APPEND qan_resources QuickQanava_static.qrc)
-list(APPEND qan_resources GraphicalEffects6/QuickQanavaGraphicalEffects.qrc)
 add_library(QuickQanava STATIC
     ${qan_source_files}
     ${qan_header_files}
@@ -121,7 +119,7 @@ target_include_directories(QuickQanava
 
 target_compile_features(QuickQanava
     PUBLIC
-        cxx_std_14
+        cxx_std_17
     )
 
 install(FILES

@@ -32,7 +32,8 @@
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
+import QtQuick
+import QtQuick.Effects
 
 import QuickQanava    2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -55,48 +56,47 @@ Item {
     readonly property color  shadowColor:   style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
     readonly property real   backRadius:    style ? style.backRadius : 4.
 
-
-    Item {
-        id: effectBackground
-        x: 0; y: 0
-        width: shadowEffect.width + shadowOffset + shadowRadius
-        height: shadowEffect.height + shadowOffset + shadowRadius
+    Rectangle {         // Hidden item used to generate shadow
+        id: border
+        anchors.fill: parent
+        anchors.margins: 1
+        radius: backRadius
+        color: Qt.rgba(0, 0, 0, 1)
+        clip: true
         visible: false
-        Rectangle {
-            x: borderWidth2; y: borderWidth2
-            width: shadowEffect.width - borderWidth         // avoid aliasing artifacts at high scales.
-            height: shadowEffect.height - borderWidth
-            radius: backRadius
-            color: Qt.rgba(0, 0, 0, 1)
-            antialiasing: true
-            layer.enabled: true
-            layer.effect: Qan.DropShadow {
-                horizontalOffset: shadowOffset; verticalOffset: shadowOffset
-                radius: shadowRadius; samples: 8
-                color: shadowColor
-                visible: shadowEffect.style ? shadowEffect.style.effectEnabled : false
-                transparentBorder: true
-                cached: false
+    }
+
+    MultiEffect {
+        source: border
+        anchors.fill: parent
+        anchors.margins: 1
+        autoPaddingEnabled: false
+        paddingRect: Qt.rect(shadowOffset, shadowOffset,
+                             parent.width + shadowOffset,
+                             parent.height + shadowOffset)
+        shadowEnabled: shadowEffect.style?.effectEnabled || false
+        shadowColor: shadowColor
+        blurMax: shadowRadius
+        shadowHorizontalOffset: shadowOffset
+        shadowVerticalOffset: shadowOffset
+
+        maskEnabled: true
+        maskThresholdMin: 0.29      // Should be just below border.color
+        maskSpreadAtMin: 1.0
+        maskSource: ShaderEffectSource {
+            live: true
+            width: border.width
+            height: border.height
+            sourceItem: Rectangle {
+                x: 1
+                y: 1
+                width: border.width - 2
+                height: border.height - 2
+                border.width: 1
+                border.color: Qt.rgba(1,1,1,0.3)
+                color: 'transparent'
+                radius: backRadius
             }
         }
-    }
-
-    Item {
-        id: backgroundMask
-        anchors.fill: effectBackground
-        visible: false
-        Rectangle {
-            x: 0; y: 0
-            width: shadowEffect.width - borderWidth2
-            height: shadowEffect.height - borderWidth2
-            radius: backRadius
-            color: Qt.rgba(1, 0, 0, 1)
-        }
-    }
-    Qan.OpacityMask {
-        anchors.fill: effectBackground
-        source: effectBackground
-        maskSource: backgroundMask
-        invert: true
     }
 }  // Item: shadowEffect
