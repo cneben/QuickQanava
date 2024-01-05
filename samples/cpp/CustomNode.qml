@@ -27,16 +27,14 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
 //
-// \file	RectNode.qml
+// \file	CustomNode.qml
 // \author	benoit@destrat.io
-// \date	2017 03 17
+// \date	2020 04 06
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 
@@ -54,7 +52,8 @@ Qan.NodeItem {
     }
     property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
     property color backColor: Material.background
-    LinearGradient {
+    // FIXME #218
+    /*LinearGradient {
         anchors.fill: parent
         z: 2
         source: background
@@ -69,18 +68,19 @@ Qan.NodeItem {
             }
         }
     }
+    */
     Label {
         text: node ? node.label : ""
         z: 3
         anchors.centerIn: parent
     }
-    Glow {
+    // FIXME #218
+    /*Glow {
         z: 0
         source: background
         anchors.fill: parent
         color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
         radius: 12;     samples: 15
         spread: 0.25;   transparentBorder: true
-    }
-
+    }*/
 }

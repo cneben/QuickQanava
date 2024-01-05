@@ -1,9 +1,7 @@
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
-import QtGraphicalEffects   1.0
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 
@@ -33,6 +31,8 @@ Qan.GroupItem {
     // Custom group constants
     readonly property color groupColor: "blue"
     readonly property color backColor: "violet"
+    // FIXME #218
+    /*
     LinearGradient {
       id: backgroundEffet
         anchors.fill: parent;
@@ -57,6 +57,7 @@ Qan.GroupItem {
         radius: 12;     samples: 15
         spread: 0.25;   transparentBorder: true
     } // Glow
+    */
     Rectangle {
         id: content
         anchors.fill: parent; anchors.margins: background.border.width / 2.
