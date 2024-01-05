@@ -62,22 +62,17 @@ Item {
         id: background
         anchors.fill: parent
         radius: backRadius
-        color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
+        //color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
         antialiasing: true
         opacity: backOpacity
 
-        // FIXME Qt6: might be possible to go full Shape here ?
-        /*layer.enabled: true
-        layer.effect: Qan.LinearGradient {
-            start:  Qt.point(0.,0.)
-            end:    Qt.point(background.width, background.height)
-            cached: false
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: baseColor }
-                GradientStop { position: 1.0;  color: backColor }
-            }
-        }*/
+        // Note 20240105: Unfortunately we no longer have LinearGradient with Qt6, switching to a
+        // vertical gradient...
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: baseColor }
+            GradientStop { position: 1.0; color: backColor }
+        }
     }
     Rectangle {
         id: foreground
