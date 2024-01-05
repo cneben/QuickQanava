@@ -50,14 +50,14 @@ Qan.NodeItem {
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent
-            Image {
-                anchors.fill: parent; anchors.margins: 2
-                source: node.source
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    colorization: 1.
-                    colorizationColor: node.tintColor
-                }
+        Image {
+            anchors.fill: parent; anchors.margins: 2
+            source: node.source
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                colorization: 1.
+                colorizationColor: node.tintColor
             }
+        }
     }
 }

@@ -28,6 +28,12 @@ set(source_files
 set (header_files qanDataFlow.h)
 
 add_executable(sample_dataflow ${source_files} dataflow.qrc)
+qt6_add_resources(sample_dataflow "controls_conf"
+    PREFIX
+        "/"
+    FILES
+        "qtquickcontrols2.conf"
+)
 target_include_directories(sample_dataflow PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_dataflow
     QuickQanava

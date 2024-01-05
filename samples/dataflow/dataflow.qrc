@@ -9,6 +9,5 @@
         <file>ColorPopup.qml</file>
         <file>Lenna.jpeg</file>
         <file>JS.jpeg</file>
-        <file>qtquickcontrols2.conf</file>
     </qresource>
 </RCC>
