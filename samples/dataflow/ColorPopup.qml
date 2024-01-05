@@ -32,9 +32,9 @@
 // \date	2017 12 13
 //-----------------------------------------------------------------------------
 
-import QtQuick                   2.7
-import QtQuick.Controls          2.0
-import QtQuick.Layouts           1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Popup {
     id: colorPopup

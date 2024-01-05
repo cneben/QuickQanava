@@ -32,9 +32,10 @@
 // \date	2017 12 12
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Controls     2.0
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Controls
+import QtQuick.Layouts
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -47,16 +48,20 @@ Qan.NodeItem {
     height: Layout.preferredHeight
     connectable: Qan.NodeItem.UnConnectable     // Do not show visual edge connector, use out port instead
 
-    Qan.DropShadow {
-        id: backgroundShadow
-        anchors.fill: parent
+    MultiEffect {
         source: image
-        horizontalOffset: imageNodeItem.style.effectRadius
-        verticalOffset: imageNodeItem.style.effectRadius
-        radius: 4; samples: 8
-        color: imageNodeItem.style.effectColor
-        visible: imageNodeItem.style.effectEnabled
-        transparentBorder: true
+        anchors.fill: parent
+        anchors.margins: 1
+        autoPaddingEnabled: false
+        readonly property real shadowOffset: imageNodeItem.style.effectRadius
+        paddingRect: Qt.rect(shadowOffset,  shadowOffset,
+                             parent.width + shadowOffset,
+                             parent.height + shadowOffset)
+        shadowEnabled: imageNodeItem.style?.effectEnabled || false
+        shadowColor: imageNodeItem.style.effectColor
+        blurMax: imageNodeItem.style.effectRadius
+        shadowHorizontalOffset:  imageNodeItem.style.effectRadius
+        shadowVerticalOffset:  imageNodeItem.style.effectRadius
     }
     ComboBox {
         z: 2
