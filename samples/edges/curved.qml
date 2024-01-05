@@ -24,13 +24,12 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
-import QtQuick.Shapes            1.0
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtQuick.Shapes
 
-import Qt.labs.platform     1.1
+import Qt.labs.platform
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -241,10 +240,10 @@ Item {
                         model: ["Straight", "Curved"]
                         enabled: defaultEdgeStyle !== undefined
                         currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                        onActivated: {
-                            if (index == 0 )
+                        onActivated: (index) => {
+                            if (index === 0)
                                 defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
-                            else if ( index == 1 )
+                            else if (index === 1)
                                 defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
                         }
                     }

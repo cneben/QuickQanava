@@ -10,8 +10,6 @@ find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
 
 message("Building QuickQanava for Qt${QT_VERSION_MAJOR}")
 
-option(QUICK_QANAVA_BUILD_SAMPLES "Build the samples" FALSE)
-# Specific to Qt6
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
 add_subdirectory(src)
