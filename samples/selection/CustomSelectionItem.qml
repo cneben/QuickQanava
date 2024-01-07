@@ -32,7 +32,7 @@
 // \date	2015 06 16
 //-----------------------------------------------------------------------------
 
-import QtQuick  2.7
+import QtQuick
 
 Rectangle {
     id: selectionItem

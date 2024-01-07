@@ -24,10 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts  1.3
-import QtQuick.Controls.Material 2.1
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan

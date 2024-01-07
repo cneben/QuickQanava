@@ -36,7 +36,7 @@
 #include "../../src/QuickQanava.h"
 
 // Qt headers
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQuickStyle>
 #include <QIcon>
 
@@ -47,10 +47,7 @@ using namespace qan;
 
 int	main(int argc, char** argv)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
     QStringList themePaths; themePaths << "qrc:/icons"

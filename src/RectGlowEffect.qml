@@ -71,6 +71,7 @@ Item {
             color: Qt.rgba(0, 0, 0, 1)
             antialiasing: true
             layer.enabled: true
+            // FIXME #218
             layer.effect: Qan.Glow {
                 color: glowEffect.glowColor
                 radius: glowEffect.glowRadius

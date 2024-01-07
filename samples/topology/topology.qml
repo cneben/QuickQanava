@@ -24,16 +24,11 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick.Window 2.2
-import QtQuick 2.13
-
-import QtQuick.Controls 2.15
-
-import QtQuick.Layouts  1.3
-import QtQuick.Controls.Material 2.1
-import QtQuick.Shapes            1.0
-
-import Qt.labs.platform 1.1 as Labs
+import QtQuick.Window
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import Qt.labs.platform as Labs
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan

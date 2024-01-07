@@ -115,6 +115,23 @@ Control {
         spread: 0.5
         color: "lightgrey"
     }*/
+    /*
+    MultiEffect {
+        source: sourceItem
+        // Control position and size of glow
+        anchors.centerIn: sourceItem
+        width: sourceItem.width + 10
+        height: sourceItem.height + 10
+        // Glow blur amount
+        blurEnabled: true
+        blurMax: 50
+        blur: 0.8
+        // Glow color with different properties
+        contrast: -1.0
+        brightness: 1.0
+        colorization: 1.0
+        colorizationColor: "magenta"
+    }*/
     Pane {
         id: previewBackground
         anchors.fill: parent
