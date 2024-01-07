@@ -32,10 +32,9 @@
 // \date	2017 03 17
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -57,7 +56,8 @@ Qan.NodeItem {
     property color nodeColor
     property color backColor: Material.background
 
-    Qan.LinearGradient {
+    // FIXME #218
+    /*Qan.LinearGradient {
         anchors.fill: parent
         z: 2
         source: background
@@ -71,7 +71,7 @@ Qan.NodeItem {
                 color: Qt.tint( rectNode.nodeColor, rectNode.backColor )
             }
         }
-    }
+    }*/
 
     Label {
         text: node ? node.label : ""
@@ -79,6 +79,8 @@ Qan.NodeItem {
         anchors.centerIn: parent
     }
 
+    // FIXME #218
+    /*
     Qan.Glow {
         z: 0
         source: background
@@ -86,5 +88,5 @@ Qan.NodeItem {
         color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
         radius: 12;     samples: 15
         spread: 0.25;   transparentBorder: true
-    }
+    }*/
 }
