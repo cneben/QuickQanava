@@ -32,7 +32,7 @@
 // \date	2017 11 16
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
+import QtQuick
 import QuickQanava      2.0 as Qan
 
 Qan.AbstractLineGrid {

@@ -32,7 +32,7 @@
 // \date	2018 03 23
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
+import QtQuick
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava" as Qan

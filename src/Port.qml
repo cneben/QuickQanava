@@ -31,8 +31,9 @@
 // \date	2017 08 12
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.7
-import QtQuick.Controls 2.1
+import QtQuick
+import QtQuick.Controls
+
 import QuickQanava 2.0 as Qan
 
 Qan.PortItem {

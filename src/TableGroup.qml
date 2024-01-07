@@ -32,8 +32,7 @@
 // \date	2023 01 26
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
+import QtQuick
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan

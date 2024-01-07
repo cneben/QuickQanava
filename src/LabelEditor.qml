@@ -32,8 +32,8 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Controls     2.0
+import QtQuick
+import QtQuick.Controls
 
 /*! \brief Reusable component for visual edition of node and groups labels with on-demand loading.
  *

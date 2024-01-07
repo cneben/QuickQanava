@@ -33,7 +33,7 @@
 // Contributed by @Jackneill 20170930
 //-----------------------------------------------------------------------------
 
-import QtQuick  2.7
+import QtQuick
 
 Rectangle {
     id: selectionItem

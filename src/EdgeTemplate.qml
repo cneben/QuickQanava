@@ -32,9 +32,8 @@
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Layouts  1.3
-import QtQuick.Shapes   1.0
+import QtQuick
+import QtQuick.Shapes
 
 import QuickQanava      2.0 as Qan
 

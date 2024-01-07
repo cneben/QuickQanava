@@ -30,8 +30,8 @@
 // \author	benoit@destrat.io
 // \date	2017 08 28
 //-----------------------------------------------------------------------------
-import QtQuick 2.2
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 

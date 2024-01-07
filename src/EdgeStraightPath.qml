@@ -32,8 +32,8 @@
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Shapes   1.0
+import QtQuick
+import QtQuick.Shapes
 
 ShapePath {
     id: edgeShapePath
