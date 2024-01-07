@@ -54,6 +54,7 @@ Item {
     readonly property real   borderWidth2:   borderWidth / 2.
     readonly property real   backRadius:     style ? style.backRadius : 4.
 
+    /*
     Item {
         id: effectBackground
         z: -1   // Effect should be behind edges , docks and connectors...
@@ -102,5 +103,5 @@ Item {
         source: effectBackground
         maskSource: backgroundMask
         invert: true
-    }
+    }*/
 }  // Item: glowEffect

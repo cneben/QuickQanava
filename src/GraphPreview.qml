@@ -26,6 +26,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Effects
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -106,32 +107,19 @@ Control {
     hoverEnabled: true
 
     z: 3    // Avoid tooltips beeing generated on top of preview
-    // FIXME #218
-    /*Qan.RectangularGlow {
-        anchors.fill: parent
-        cached: true
-        glowRadius:  8
-        cornerRadius: 8
-        spread: 0.5
-        color: "lightgrey"
-    }*/
-    /*
     MultiEffect {
-        source: sourceItem
-        // Control position and size of glow
-        anchors.centerIn: sourceItem
-        width: sourceItem.width + 10
-        height: sourceItem.height + 10
-        // Glow blur amount
+        source: previewBackground
+        anchors.centerIn: previewBackground
+        visible: true
+        width: previewBackground.width + 5
+        height: previewBackground.height + 5
         blurEnabled: true
-        blurMax: 50
-        blur: 0.8
-        // Glow color with different properties
-        contrast: -1.0
-        brightness: 1.0
+        blurMax: 16
+        blur: 0.6
+        blurMultiplier: 0.1
         colorization: 1.0
-        colorizationColor: "magenta"
-    }*/
+        colorizationColor: Qt.rgba(0.7, 0.7, 0.7, 0.9)
+    }
     Pane {
         id: previewBackground
         anchors.fill: parent
