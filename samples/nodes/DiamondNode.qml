@@ -73,24 +73,24 @@ Qan.NodeItem {
             z: 1
             id: nodeSymbol
             onPaint: {
-                var ctx = nodeSymbol.getContext( "2d" )
-                ctx.clearRect( 0, 0, width, height )
+                var ctx = nodeSymbol.getContext("2d")
+                ctx.clearRect(0, 0, width, height)
                 ctx.lineWidth = diamondNode.borderWidth
                 ctx.strokeStyle = diamondNode.borderColor
-                ctx.beginPath( )
+                ctx.beginPath()
                 var w = width - 1;  var w2 = w / 2
                 var h = height - 1; var h2 = h / 2
-                ctx.moveTo( w2, 1 )
-                ctx.lineTo( w2 + h2, h2 )
-                ctx.lineTo( w2, h )
-                ctx.lineTo( w2 - h2, h2 )
-                ctx.lineTo( w2, 1 )
-                ctx.stroke( )
+                ctx.moveTo(w2, 1)
+                ctx.lineTo(w2 + h2, h2)
+                ctx.lineTo(w2, h)
+                ctx.lineTo(w2 - h2, h2)
+                ctx.lineTo(w2, 1)
+                ctx.stroke()
                 var gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0.1, Qt.lighter( diamondNode.style.backColor, 1.8 )  );
-                gradient.addColorStop(0.9, diamondNode.style.backColor );
+                gradient.addColorStop(0.1, Qt.lighter(diamondNode.style.backColor, 1.8));
+                gradient.addColorStop(0.9, diamondNode.style.backColor);
                 ctx.fillStyle = gradient
-                ctx.fill( )
+                ctx.fill()
             }
         }
     }
