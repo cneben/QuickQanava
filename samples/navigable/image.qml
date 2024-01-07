@@ -1,7 +1,6 @@
-import QtQuick                      2.7
-import QtQuick.Controls             2.1
-import QtQuick.Controls.Material    2.1
-import QtQuick.Layouts              1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -38,7 +37,7 @@ Qan.Navigable {
         }
         Button {
             text: "Fit in view"
-            onClicked: navigable.fitInView()
+            onClicked: navigable.fitContentInView()
         }
     } // RowLayout options
     Rectangle {
