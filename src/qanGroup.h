@@ -43,10 +43,8 @@
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
-#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanGroupItem.h")
-#endif
 
 namespace qan { // ::qan
 

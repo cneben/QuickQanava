@@ -160,11 +160,7 @@ protected:
     QQmlListProperty<qan::impl::GridLine> getMajorLines();
 
 private:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    using size_type = int;
-#else
     using size_type = qsizetype;
-#endif
 
     size_type                   minorLinesCount() const;
     impl::GridLine*             minorLinesAt(size_type index) const;

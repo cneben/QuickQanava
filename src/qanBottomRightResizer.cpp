@@ -327,11 +327,7 @@ void    BottomRightResizer::hoverLeaveEvent(QHoverEvent* event)
 
 void    BottomRightResizer::mouseMoveEvent(QMouseEvent* event)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    const auto mePos = event->windowPos();
-#else
     const auto mePos = event->scenePosition();
-#endif
     if (event->buttons() |  Qt::LeftButton &&
             !_dragInitialPos.isNull() &&
             !_targetInitialSize.isEmpty()) {
@@ -379,11 +375,7 @@ void    BottomRightResizer::mousePressEvent(QMouseEvent* event)
 {
     if (!isVisible())
         return;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    const auto mePos = event->windowPos();
-#else
     const auto mePos = event->scenePosition();
-#endif
     if (_target) {
         _dragInitialPos = mePos;
         _targetInitialSize = QSizeF{_target->width(), _target->height()};

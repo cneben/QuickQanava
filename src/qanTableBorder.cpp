@@ -232,11 +232,7 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
         event->setAccepted(false);
         return;
     }
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    const auto mePos = event->windowPos();
-#else
     const auto mePos = event->scenePosition();
-#endif
     if (event->buttons() |  Qt::LeftButton &&
         !_dragInitialMousePos.isNull()) {
 
@@ -308,11 +304,7 @@ void    TableBorder::mousePressEvent(QMouseEvent* event)
         event->setAccepted(false);
         return;
     }
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    const auto mePos = event->windowPos();
-#else
     const auto mePos = event->scenePosition();
-#endif
     _dragInitialMousePos = mePos;
     _dragInitialPos = position();
     event->setAccepted(true);

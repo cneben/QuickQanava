@@ -163,11 +163,7 @@ void    AnalysisTimeHeatMap::clearHeatMap() noexcept
     update();
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-void    AnalysisTimeHeatMap::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
-#else
 void    AnalysisTimeHeatMap::geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry)
-#endif
 {
     if (!newGeometry.size().toSize().isEmpty() &&
         newGeometry.toRect() != oldGeometry.toRect()) {
