@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,16 +24,11 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick.Window 2.2
-import QtQuick 2.13
-
-import QtQuick.Controls 2.15
-
-import QtQuick.Layouts  1.3
-import QtQuick.Controls.Material 2.1
-import QtQuick.Shapes            1.0
-
-import Qt.labs.platform 1.1 as Labs
+import QtQuick.Window
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import Qt.labs.platform as Labs
 
 import QuickQanava      2.0 as Qan
 import TopologySample   1.0 as Qan
@@ -251,12 +246,12 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorColor: Material.accent
             connectorEdgeColor: Material.accent
-            onConnectorEdgeInserted: edge => {
+            onConnectorEdgeInserted: (edge) => {
                 if (edge)
                     edge.label = "My edge"
             }
             property Component faceNodeComponent: Qt.createComponent("qrc:/FaceNode.qml")
-            onNodeClicked: node => {
+            onNodeClicked: (node) => {
                 portsListView.model = node.item.ports
             }
             onNodeRightClicked: (node, pos) => {

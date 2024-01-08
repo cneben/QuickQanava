@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(QuickQanava_sample_advanced VERSION 2.4.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -10,8 +10,7 @@ set(source_files main.cpp)
 set(resources_files advanced.qrc)
 
 # Configure Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui QuickControls2 REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui QuickControls2 REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -25,7 +24,6 @@ if(NOT TARGET QuickQanava)
     # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_executable(sample_advanced ${source_files} advanced.qrc)
 target_include_directories(sample_advanced PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_advanced

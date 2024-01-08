@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,8 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -106,13 +107,18 @@ Control {
     hoverEnabled: true
 
     z: 3    // Avoid tooltips beeing generated on top of preview
-    Qan.RectangularGlow {
-        anchors.fill: parent
-        cached: true
-        glowRadius:  8
-        cornerRadius: 8
-        spread: 0.5
-        color: "lightgrey"
+    MultiEffect {
+        source: previewBackground
+        anchors.centerIn: previewBackground
+        visible: true
+        width: previewBackground.width + 5
+        height: previewBackground.height + 5
+        blurEnabled: true
+        blurMax: 16
+        blur: 0.6
+        blurMultiplier: 0.1
+        colorization: 1.0
+        colorizationColor: Qt.rgba(0.7, 0.7, 0.7, 0.9)
     }
     Pane {
         id: previewBackground

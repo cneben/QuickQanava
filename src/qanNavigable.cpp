@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -273,11 +273,7 @@ void    Navigable::setDragActive(bool dragActive) noexcept
     }
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-void    Navigable::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
-#else
 void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry)
-#endif
 {
     if (getNavigable()) {
         // Apply fitContentInView if auto fitting is set to true and the user has not applyed a custom zoom or pan
@@ -341,11 +337,7 @@ void    Navigable::geometryChange(const QRectF& newGeometry, const QRectF& oldGe
 
         updateGrid();
     }
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
-#else
     QQuickItem::geometryChange(newGeometry, oldGeometry);
-#endif
 }
 
 void    Navigable::mouseMoveEvent(QMouseEvent* event)
@@ -450,11 +442,7 @@ void    Navigable::wheelEvent(QWheelEvent* event)
 {
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
         zoomOn(event->position(), getZoom() + zoomFactor);
-#else // QWheelEvent::position was added in Qt 5.14; pos was deprecated in 5.15.
-        zoomOn(event->pos(), getZoom() + zoomFactor);
-#endif
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);

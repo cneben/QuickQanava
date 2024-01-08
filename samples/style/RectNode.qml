@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,52 +25,46 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	RectNode.qml
 // \author	benoit@destrat.io
 // \date	2017 03 17
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 Qan.NodeItem {
     id: rectNode
-    width: 60; height: 60
+    width: 60
+    height: 60
     minimumSize: Qt.size(60,60)
-    x: 15;      y: 15
+    x: 15
+    y: 15
     Rectangle {
         id: background
         z: 1
         anchors.fill: parent
-        radius: 2; color: "white"
-        border.color: Material.accent; border.width: 2
+        radius: 2
+        color: "white"
+        border.color: Material.accent
+        border.width: 2
     }
     property color styleBackColor: style.backColor
-    onStyleBackColorChanged: nodeColor = Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    onStyleBackColorChanged: nodeColor = Qt.rgba(style.backColor.r,
+                                                 style.backColor.g,
+                                                 style.backColor.b, 0.2 )
     property color nodeColor
     property color backColor: Material.background
 
-    Qan.LinearGradient {
+    Qan.RectGradientBackground {
         anchors.fill: parent
-        z: 2
-        source: background
-        start: Qt.point(0.,0.)
-        end: Qt.point(background.width, background.height)
-        gradient: Gradient {
-            id: backGrad
-            GradientStop { position: 0.0; color: rectNode.nodeColor }
-            GradientStop {
-                position: 1.0;
-                color: Qt.tint( rectNode.nodeColor, rectNode.backColor )
-            }
-        }
+        style: rectNode.style
     }
 
     Label {
@@ -79,12 +73,8 @@ Qan.NodeItem {
         anchors.centerIn: parent
     }
 
-    Qan.Glow {
-        z: 0
-        source: background
+    Qan.RectGlowEffect {
         anchors.fill: parent
-        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
-        radius: 12;     samples: 15
-        spread: 0.25;   transparentBorder: true
+        style: rectNode.style
     }
 }

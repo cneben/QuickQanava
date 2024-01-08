@@ -89,8 +89,57 @@ set (quickcontainers_header_files
     quickcontainers/qcmAdapter.h
     )
 
-if (${QT_VERSION_MAJOR} EQUAL 5)
-    include(CMakeLists.qt5.txt)
-else()
-    include(CMakeLists.qt6.txt)
-endif()
+
+set (qan_plugin_files
+    ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.h
+)
+
+# Configure Qt
+set(CMAKE_AUTOMOC ON)
+qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
+set(CMAKE_AUTORCC ON)
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
+
+# Configure QuickQanava library ###############################################
+list(APPEND qan_resources QuickQanava_static.qrc)
+add_library(QuickQanava STATIC
+    ${qan_source_files}
+    ${qan_header_files}
+    ${quickcontainers_source_files}
+    ${quickcontainers_header_files}
+    ${qan_resources}
+    )
+
+target_include_directories(QuickQanava
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include>
+    )
+
+target_compile_features(QuickQanava
+    PUBLIC
+        cxx_std_17
+    )
+
+install(FILES
+    ${qan_header_files}
+    DESTINATION include/quickqanava
+    )
+
+install(TARGETS QuickQanava
+    EXPORT Targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include/quickqanava
+    )
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+target_link_libraries(QuickQanava PUBLIC Qt6::Core
+                                         Qt6::Gui
+                                         Qt6::Qml
+                                         Qt6::Quick
+                                         Qt6::QuickControls2)
+
+

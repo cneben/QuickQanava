@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -53,10 +53,6 @@ Group::Group(QObject* parent) :
 }
 
 bool    Group::isTable() const { return false; }
-
-qan::Graph*         Group::getGraph() noexcept { return qan::Node::get_graph(); }
-
-const qan::Graph*   Group::getGraph() const noexcept { return qan::Node::get_graph(); }
 
 std::unordered_set<qan::Edge*>  Group::collectAdjacentEdges() const
 {

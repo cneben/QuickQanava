@@ -24,11 +24,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
-import QtQuick.Shapes            1.0
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtQuick.Shapes
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
@@ -54,7 +53,7 @@ Qan.GraphView {
             d2.label = "D2"; d2.item.x = 350; d2.item.y = 250            
             var e2 = graph.insertEdge(s2, d2); //e2.style = null; e2.lineType = Qan.EdgeStyle.Ortho
         } // Qan.Graph.Component.onCompleted()
-        onEdgeRightClicked: {
+        onEdgeRightClicked: (edge, pos) => {
             console.error('edge=' + edge)
             console.error('pos=' + pos)
         }

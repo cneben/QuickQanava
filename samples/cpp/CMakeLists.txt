@@ -1,10 +1,21 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-# Configure Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickControls2 REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickControls2 REQUIRED)
+project(QuickQanava_sample_cpp VERSION 2.4.0 LANGUAGES CXX)
 
-set( source_files
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Configure Qt
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(source_files
     cpp_sample.cpp
 )
 
@@ -12,19 +23,16 @@ set (header_files
     cpp_sample.h
 )
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-add_executable(cpp_sample ${source_files} cpp_sample.qrc)
-target_link_libraries(cpp_sample PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
-
-if(WIN32 AND DEPLOY)
-    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
-    add_custom_command(TARGET sample_nodes POST_BUILD
-        COMMAND ${WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_FILE:sample_nodes> $<$<CONFIG:Debug>:--pdb>)
-    add_custom_command(TARGET sample_nodes POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_nodes>)
+if(NOT TARGET QuickQanava)
+    add_subdirectory(../../ quickqanava_build)  # Use ../../src as quickqanava_build subdirectory
+    # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
+
+add_executable(sample_cpp ${source_files} cpp_sample.qrc)
+target_link_libraries(sample_cpp PUBLIC
+    QuickQanava
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::QuickControls2)
+
 

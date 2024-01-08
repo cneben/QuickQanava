@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -67,10 +67,6 @@
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
         Q_INIT_RESOURCE(QuickQanava_static);
-        Q_INIT_RESOURCE(QuickQanavaGraphicalEffects);
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-        qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
-#endif
         QuickContainers::initialize();
 
         qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");

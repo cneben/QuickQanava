@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -1039,11 +1039,7 @@ QPointF  EdgeItem::getLineIntersection(const QPointF& p1, const QPointF& p2,
     QPointF intersection;
     for (auto p = 0; p < polygon.length() - 1 ; ++p) {
         const QLineF polyLine(polygon[p], polygon[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
             source = intersection;
             break;
         }
@@ -1059,11 +1055,7 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     QPointF intersection;
     for (auto p = 0; p < srcBp.length() - 1 ; ++p) {
         const QLineF polyLine(srcBp[p], srcBp[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
             source = intersection;
             break;
         }
@@ -1071,11 +1063,7 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     QPointF destination{p2};
     for (auto p = 0; p < dstBp.length() - 1 ; ++p) {
         const QLineF polyLine(dstBp[p], dstBp[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
+        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection) {
             destination = intersection;
             break;
         }

@@ -79,11 +79,11 @@ ApplicationWindow {
                 let tableGroup = topology.insertTable(/*cols=*/2, /*rows=*/4)
                 tableGroup.label = 'TABLE'
             }
-            onGroupClicked: group => {
+            onGroupClicked: (group) => {
                 window.notifyUser("Group <b>" + group.label + "</b> clicked")
                 groupEditor.group = group
             }
-            onGroupDoubleClicked: { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
+            onGroupDoubleClicked: (group) => { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
             onGroupRightClicked: (group, pos) => {
                 window.notifyUser("Group <b>" + group.label + "</b> right clicked")
                 contextMenu.group = group
@@ -96,7 +96,7 @@ ApplicationWindow {
                 contextMenu.y = globalPos.y
                 contextMenu.open()
             }
-            onNodeClicked: node => {
+            onNodeClicked: (node) => {
                 ungroupNodeButton.node = node
                 groupEditor.group = undefined;
                 contextMenu.node = node

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,17 +25,16 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	CustomNode.qml
 // \author	benoit@destrat.io
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -58,6 +57,8 @@ Qan.NodeItem {
     property color nodeColor
     property color backColor: Material.background
 
+    // FIXME #218
+    /*
     Qan.LinearGradient {
         anchors.fill: parent
         z: 2
@@ -72,7 +73,7 @@ Qan.NodeItem {
                 color: Qt.tint( roundNode.nodeColor, roundNode.backColor )
             }
         }
-    }
+    }*/
     Rectangle {
         id: border
         z: 3
@@ -86,6 +87,8 @@ Qan.NodeItem {
         z: 3
         anchors.centerIn: parent
     }
+    // FIXME #218
+    /*
     Qan.Glow {
         z: 0
         source: background
@@ -93,5 +96,5 @@ Qan.NodeItem {
         color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
         radius: 12;     samples: 15
         spread: 0.25;   transparentBorder: true
-    }
+    }*/
 }

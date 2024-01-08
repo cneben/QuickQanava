@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,7 +32,8 @@
 // \date	2018 03 25
 //-----------------------------------------------------------------------------
 
-import QtQuick  2.7
+import QtQuick
+import QtQuick.Shapes
 
 import QuickQanava    2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -61,20 +62,15 @@ Item {
         id: background
         anchors.fill: parent
         radius: backRadius
-        color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
         antialiasing: true
         opacity: backOpacity
 
-        layer.enabled: true
-        layer.effect: Qan.LinearGradient {
-            start:  Qt.point(0.,0.)
-            end:    Qt.point(background.width, background.height)
-            cached: false
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: baseColor }
-                GradientStop { position: 1.0;  color: backColor }
-            }
+        // Note 20240105: Unfortunately we no longer have LinearGradient with Qt6, switching to a
+        // vertical gradient...
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: baseColor }
+            GradientStop { position: 1.0; color: backColor }
         }
     }
     Rectangle {

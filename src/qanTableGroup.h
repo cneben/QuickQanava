@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,14 +42,12 @@
 // QuickQanava headers
 #include "./qanGroup.h"
 
-#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanTableGroupItem.h")
-#endif
 
 namespace qan { // ::qan
 
-/*! \brief FIXME
+/*! \brief Table is a specific group where nodes can be dropped inside rows en columns.
  *
  * \nosubgrouping
  */

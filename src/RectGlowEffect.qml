@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,7 +32,8 @@
 // \date	2018 03 23
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
+import QtQuick
+import QtQuick.Effects
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -54,52 +55,45 @@ Item {
     readonly property real   borderWidth2:   borderWidth / 2.
     readonly property real   backRadius:     style ? style.backRadius : 4.
 
-    Item {
-        id: effectBackground
-        z: -1   // Effect should be behind edges , docks and connectors...
-        x: -effectMargin; y: -effectMargin
-        width: glowEffect.width + effectMargin * 2
-        height: glowEffect.height + effectMargin * 2
+    Rectangle {         // Hidden item used to generate shadow
+        id: border
+        anchors.fill: parent
+        anchors.margins: 1
+        radius: backRadius
+        color: Qt.rgba(0, 0, 0, 1)
+        clip: true
         visible: false
-        Rectangle {
-            x: effectMargin
-            y: effectMargin
-            width: glowEffect.width       // Avoid aliasing artifacts for mask at high scales.
-            height: glowEffect.height
-            radius: backRadius
-            border.width: borderWidth
-            color: Qt.rgba(0, 0, 0, 1)
-            antialiasing: true
-            layer.enabled: true
-            layer.effect: Qan.Glow {
-                color: glowEffect.glowColor
-                radius: glowEffect.glowRadius
-                samples: Math.min(16, glowEffect.glowRadius)
-                spread: 0.25
-                transparentBorder: true
-                cached: false
-                visible: glowEffect.style !== undefined ? style.effectEnabled : false
+    }
+
+    MultiEffect {
+        source: border
+        anchors.centerIn: parent
+        width: border.width + (glowRadius * 2)
+        height: border.height + (glowRadius * 2)
+        blurEnabled: glowEffect.style !== undefined ? style.effectEnabled : false
+        blurMax: 16
+        blur: 0.6
+        blurMultiplier: 0.1
+        colorization: 1.0
+        colorizationColor: glowColor
+
+        maskEnabled: true
+        maskThresholdMin: 0.29      // Should be just below border.color
+        maskSpreadAtMin: 1.0
+        maskSource: ShaderEffectSource {
+            live: true
+            width: border.width
+            height: border.height
+            sourceItem: Rectangle {
+                x: 1
+                y: 1
+                width: border.width - 2
+                height: border.height - 2
+                border.width: 1
+                border.color: Qt.rgba(1,1,1,0.3)
+                color: 'transparent'
+                radius: backRadius
             }
         }
-    }
-    Item {  // Used as a mask to prevent effect beeing applied on node background, usefull if the node
-        id: backgroundMask  // background is transparent
-        anchors.fill: effectBackground
-        visible: false
-        Rectangle {
-            x: effectMargin + borderWidth2
-            y: effectMargin + borderWidth2
-            width: glowEffect.width - borderWidth
-            height: glowEffect.height - borderWidth
-            radius: backRadius
-            color: Qt.rgba(0,0,0,1)
-            antialiasing: true
-        }
-    }
-    Qan.OpacityMask {
-        anchors.fill: effectBackground
-        source: effectBackground
-        maskSource: backgroundMask
-        invert: true
     }
 }  // Item: glowEffect
