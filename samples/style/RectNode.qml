@@ -41,22 +41,33 @@ import "qrc:/QuickQanava" as Qan
 
 Qan.NodeItem {
     id: rectNode
-    width: 60; height: 60
+    width: 60
+    height: 60
     minimumSize: Qt.size(60,60)
-    x: 15;      y: 15
+    x: 15
+    y: 15
     Rectangle {
         id: background
         z: 1
         anchors.fill: parent
-        radius: 2; color: "white"
-        border.color: Material.accent; border.width: 2
+        radius: 2
+        color: "white"
+        border.color: Material.accent
+        border.width: 2
     }
     property color styleBackColor: style.backColor
-    onStyleBackColorChanged: nodeColor = Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    onStyleBackColorChanged: nodeColor = Qt.rgba(style.backColor.r,
+                                                 style.backColor.g,
+                                                 style.backColor.b, 0.2 )
     property color nodeColor
     property color backColor: Material.background
 
     // FIXME #218
+    Qan.RectGradientBackground {
+        anchors.fill: parent
+        style: rectNode.style
+    }
+
     /*Qan.LinearGradient {
         anchors.fill: parent
         z: 2
@@ -79,14 +90,8 @@ Qan.NodeItem {
         anchors.centerIn: parent
     }
 
-    // FIXME #218
-    /*
-    Qan.Glow {
-        z: 0
-        source: background
+    Qan.RectGlowEffect {
         anchors.fill: parent
-        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
-        radius: 12;     samples: 15
-        spread: 0.25;   transparentBorder: true
-    }*/
+        style: rectNode.style
+    }
 }

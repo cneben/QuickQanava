@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
+import QtQuick.Effects   // FIXME #218 remove that
 
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -41,6 +42,7 @@ Qan.NodeItem {
     id: nodeItem
     width: 110
     height: 50
+
     Qan.RectNodeTemplate {
         anchors.fill: parent
         nodeItem : parent

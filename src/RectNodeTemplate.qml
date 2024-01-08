@@ -51,17 +51,15 @@ Item {
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     onNodeItemChanged: {
-        if (delegateLoader.item &&
-            delegateLoader.item.nodeItem)
+        if (delegateLoader?.item?.nodeItem)
             delegateLoader.item.nodeItem = nodeItem
     }
-    readonly property real   backRadius: nodeItem && nodeItem.style ? nodeItem.style.backRadius : 4.
+    readonly property real   backRadius: nodeItem?.style ? nodeItem.style.backRadius : 4.
     Loader {
         id: delegateLoader
         anchors.fill: parent
         source: {
-            if (!nodeItem ||
-                !nodeItem.style)     // Defaul to solid no effect with unconfigured nodes
+            if (!nodeItem?.style)     // Defaul to solid no effect with unconfigured nodes
                 return "qrc:/QuickQanava/RectSolidBackground.qml";
             switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
             case Qan.NodeStyle.FillSolid:
@@ -82,7 +80,7 @@ Item {
         }
         onItemChanged: {
             if (item)
-                item.style = template.nodeItem ? template.nodeItem.style : undefined
+                item.style = template.nodeItem?.style || undefined
         }
     }
     ColumnLayout {

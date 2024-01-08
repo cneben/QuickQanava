@@ -144,29 +144,29 @@ ApplicationWindow {
                 RowLayout {
                     RadioButton {
                         text: "Solid"
-                        checked: ( defaultNodeStyle.fillType === Qan.NodeStyle.FillSolid )
+                        checked: defaultNodeStyle.fillType === Qan.NodeStyle.FillSolid
                         onClicked: defaultNodeStyle.fillType = Qan.NodeStyle.FillSolid
                     }
                     RadioButton {
                         text: "Gradient"
-                        checked: ( defaultNodeStyle.fillType === Qan.NodeStyle.FillGradient)
+                        checked: defaultNodeStyle.fillType === Qan.NodeStyle.FillGradient
                         onClicked: defaultNodeStyle.fillType = Qan.NodeStyle.FillGradient
                     }
                 }
                 RowLayout {
                     RadioButton {
                         text: "None"
-                        checked: ( defaultNodeStyle.effectType === Qan.NodeStyle.EffectNone )
+                        checked: defaultNodeStyle.effectType === Qan.NodeStyle.EffectNone
                         onClicked: defaultNodeStyle.effectType = Qan.NodeStyle.EffectNone
                     }
                     RadioButton {
                         text: "Shadow"
-                        checked: ( defaultNodeStyle.effectType === Qan.NodeStyle.EffectShadow )
+                        checked: defaultNodeStyle.effectType === Qan.NodeStyle.EffectShadow
                         onClicked: defaultNodeStyle.effectType = Qan.NodeStyle.EffectShadow
                     }
                     RadioButton {
                         text: "Glow"
-                        checked: ( defaultNodeStyle.effectType === Qan.NodeStyle.EffectGlow )
+                        checked: defaultNodeStyle.effectType === Qan.NodeStyle.EffectGlow
                         onClicked: { defaultNodeStyle.effectType = Qan.NodeStyle.EffectGlow }
                     }
                 }
@@ -193,7 +193,7 @@ ApplicationWindow {
                         Layout.alignment: Qt.AlignRight
                         from: 0; to: 100
                         value: defaultNodeStyle.backOpacity * 100.
-                        onValueChanged: defaultNodeStyle.backOpacity = ( value / 100.)
+                        onValueChanged: defaultNodeStyle.backOpacity = (value / 100.)
                     }
                 }
                 RowLayout {
