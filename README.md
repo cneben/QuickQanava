@@ -6,16 +6,18 @@
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-![](https://img.shields.io/badge/version-2.1.0-blue.svg)
+![](https://img.shields.io/badge/version-2.5.0-blue.svg)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40QuickQanava)](https://twitter.com/QuickQanava)
 
 ![](https://github.com/cneben/QuickQanava/blob/master/doc/web/docs/images/home.png)
 
-`QuickQanava` is a C++14 library designed to display graphs and relational content in a Qt/QML application. QuickQanava provide QML components and C++ classes to visualize medium-sized directed graphs in a C++/QML application. QuickQanava focus on displaying relational content into a dynamic user interface with DnD support, resizable content and visual creation of topology. QuickQanava focus on writing topology delegates in pure QML.
+`QuickQanava` is a C++17 library developed for rendering graphs and relational content within a Qt/QML application. It offers QML components and C++ classes designed for visualizing medium-sized directed graphs in a C++/QML application. QuickQanava emphasizes the presentation of relational content in a dynamic user interface, featuring Drag-and-Drop support, resizable content, and visual creation of topology. `QuickQanava` focus authoring of topology delegates in pure QML.
 
 QuickQanava main repository is hosted on GitHub: http://cneben.github.io/QuickQanava/index.html
 
-QuickQanava is primarily developed for Linux with Qt 5.15 with MSVC2019 and g++9 (minimal required Qt version is **Qt 5.10**, recommended is **Qt 5.15.5**). 
+QuickQanava is primarily developed with Qt 6.6.1 with MSVC2019 and g++11 (minimal required Qt version is **Qt 6.5.0**, recommended is **Qt 6.6.1**). 
+
+If you are interested in **Qt5.15** support, last release supporting Qt5 is [2.4.0](https://github.com/cneben/QuickQanava/releases/tag/2.4.0)
 
 - [CHANGELOG.md](CHANGELOG.md)
 - Project homepage: http://cneben.github.io/QuickQanava/index.html
@@ -68,5 +70,5 @@ QuickQanava include `bezier` library distributed with MIT licence on https://git
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-Copyright (c) 2017-2022 BA
+Copyright (c) 2017-2024 BA
 
