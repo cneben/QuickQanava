@@ -61,10 +61,9 @@ Item {
         anchors.fill: parent
         anchors.margins: 1
         visible: false
+        opacity: 0
         radius: backRadius - 1      // -1 to avoid margin issue
         color: Qt.rgba(1, 1, 1, 1)
-        border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 1)
     }
 
     MultiEffect {
@@ -78,9 +77,27 @@ Item {
         shadowEnabled: shadowEffect.style?.effectEnabled || false
         shadowColor: shadowColor
         shadowBlur: 0.9
-        //shadowOpacity: 0.7
         blurMax: shadowRadius
         shadowHorizontalOffset: shadowOffset
         shadowVerticalOffset: shadowOffset
+
+        maskEnabled: true
+        maskThresholdMin: 0.29      // Should be just below border.color
+        maskSpreadAtMin: 1.0
+        maskSource: ShaderEffectSource {
+            live: true
+            width: border.width
+            height: border.height
+            sourceItem: Rectangle {
+                x: 1
+                y: 1
+                width: border.width - 2
+                height: border.height - 2
+                border.width: 1
+                border.color: Qt.rgba(1,1,1,0.3)
+                color: 'transparent'
+                radius: backRadius
+            }
+        }
     }
 }  // Item: shadowEffect
