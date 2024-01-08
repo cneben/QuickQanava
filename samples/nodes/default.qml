@@ -61,13 +61,13 @@ Qan.GraphView {
             var e = graph.insertEdge(n1, n2);
             //defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
         }
-        onNodeClicked: function(node) {
+        onNodeClicked: (node) => {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )
             nodeEditor.node = node
         }
-        onNodeRightClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
-        onNodeDoubleClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
-        onNodeMoved: function(node) { notifyUser("Node <b>" + node.label + "</b> moved") }
+        onNodeRightClicked: (node) => { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
+        onNodeDoubleClicked: (node) => { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
+        onNodeMoved: (node) => { notifyUser("Node <b>" + node.label + "</b> moved") }
     } // Qan.Graph
 
     Menu {      // Context menu demonstration

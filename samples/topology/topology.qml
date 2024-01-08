@@ -246,12 +246,12 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorColor: Material.accent
             connectorEdgeColor: Material.accent
-            onConnectorEdgeInserted: edge => {
+            onConnectorEdgeInserted: (edge) => {
                 if (edge)
                     edge.label = "My edge"
             }
             property Component faceNodeComponent: Qt.createComponent("qrc:/FaceNode.qml")
-            onNodeClicked: node => {
+            onNodeClicked: (node) => {
                 portsListView.model = node.item.ports
             }
             onNodeRightClicked: (node, pos) => {

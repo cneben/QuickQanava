@@ -28,8 +28,8 @@ if(NOT TARGET QuickQanava)
     # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
 endif()
 
-add_executable(cpp_sample ${source_files} cpp_sample.qrc)
-target_link_libraries(cpp_sample PUBLIC
+add_executable(sample_cpp ${source_files} cpp_sample.qrc)
+target_link_libraries(sample_cpp PUBLIC
     QuickQanava
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui

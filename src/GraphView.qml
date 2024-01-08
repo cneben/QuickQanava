@@ -223,7 +223,7 @@ Qan.AbstractGraphView {
         }
     }
 
-    onNodeClicked: function(node) {
+    onNodeClicked: (node) => {
         if (!graphView.graph ||
             !node ||
             !node.item)
@@ -316,11 +316,11 @@ Qan.AbstractGraphView {
         } // group.item.resizable
     }  // onGroupClicked()
 
-    onGroupRightClicked: function(group) {
+    onGroupRightClicked: (group) => {
         if (group && group.item)
             graph.sendToFront(group.item)
     }
-    onGroupDoubleClicked: function(group) {
+    onGroupDoubleClicked: (group) => {
         if (group && group.itm)
             graph.sendToFront(group.item)
     }
