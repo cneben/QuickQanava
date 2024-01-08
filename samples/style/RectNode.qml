@@ -62,27 +62,10 @@ Qan.NodeItem {
     property color nodeColor
     property color backColor: Material.background
 
-    // FIXME #218
     Qan.RectGradientBackground {
         anchors.fill: parent
         style: rectNode.style
     }
-
-    /*Qan.LinearGradient {
-        anchors.fill: parent
-        z: 2
-        source: background
-        start: Qt.point(0.,0.)
-        end: Qt.point(background.width, background.height)
-        gradient: Gradient {
-            id: backGrad
-            GradientStop { position: 0.0; color: rectNode.nodeColor }
-            GradientStop {
-                position: 1.0;
-                color: Qt.tint( rectNode.nodeColor, rectNode.backColor )
-            }
-        }
-    }*/
 
     Label {
         text: node ? node.label : ""
