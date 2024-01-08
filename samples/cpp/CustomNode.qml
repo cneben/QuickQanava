@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	CustomNode.qml
 // \author	benoit@destrat.io
