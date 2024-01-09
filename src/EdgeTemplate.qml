@@ -59,6 +59,7 @@ Item {
         rotation: edgeItem.dstAngle
         x: edgeItem.p2.x
         y: edgeItem.p2.y
+        preferredRendererType: Shape.CurveRenderer
 
         property var dstArrow : undefined
         property var dstCircle: undefined
@@ -96,6 +97,7 @@ Item {
         smooth: true
         visible: srcShapeType !== Qan.EdgeStyle.None
 
+        preferredRendererType: Shape.CurveRenderer
         transformOrigin: Item.TopLeft
         rotation: edgeItem.srcAngle
         x: edgeItem.p1.x
@@ -134,6 +136,7 @@ Item {
     Shape {
         id: edgeSelectionShape
         anchors.fill: parent
+        preferredRendererType: Shape.CurveRenderer
         visible: edgeItem.visible &&
                  !edgeItem.hidden &&
                  edgeItem.selected     // Not very efficient, use a Loader there...
@@ -189,6 +192,7 @@ Item {
         id: edgeShape
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
+        preferredRendererType: Shape.CurveRenderer
         antialiasing: true
         smooth: true
         property var curvedLine : undefined

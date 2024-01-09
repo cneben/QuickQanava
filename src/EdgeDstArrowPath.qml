@@ -48,7 +48,6 @@ ShapePath {
     strokeWidth: edgeItem &&
                  edgeItem.style ? edgeItem.style.lineWidth :
                                   2
-
     startX: edgeItem ? edgeItem.dstA1.x : 0
     startY: edgeItem ? edgeItem.dstA1.y : 0
     PathLine { x: edgeItem ? edgeItem.dstA3.x : 0; y: edgeItem ? edgeItem.dstA3.y : 0 }
