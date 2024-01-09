@@ -230,13 +230,13 @@ Qan.AbstractNavigablePreview {
                     updatePreview()
                 }
             }
-            onClicked: {
+            onClicked: (mouse) => {
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 viewWindowTimer.p = p
                 viewWindowTimer.start()
                 mouse.accepted = true
             }
-            onDoubleClicked: {
+            onDoubleClicked: (mouse) => {
                 viewWindowTimer.stop()
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 let sceneP = mapFromPreview(p)
