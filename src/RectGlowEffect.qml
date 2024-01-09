@@ -50,7 +50,6 @@ Item {
     // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
     readonly property real   glowRadius:     style ? style.effectRadius : 3.
     readonly property color  glowColor:      style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
-    readonly property real   effectMargin:   glowRadius * 2
     readonly property real   borderWidth:    style ? style.borderWidth : 1.
     readonly property real   borderWidth2:   borderWidth / 2.
     readonly property real   backRadius:     style ? style.backRadius : 4.
@@ -60,7 +59,7 @@ Item {
         anchors.fill: parent
         anchors.margins: 1
         radius: backRadius
-        color: Qt.rgba(0, 0, 0, 1)
+        color: glowColor
         clip: true
         visible: false
     }
@@ -71,9 +70,9 @@ Item {
         width: border.width + (glowRadius * 2)
         height: border.height + (glowRadius * 2)
         blurEnabled: glowEffect.style !== undefined ? style.effectEnabled : false
-        blurMax: 16
-        blur: 0.6
-        blurMultiplier: 0.1
+        blurMax: 30
+        blur: 1.
+        //blurMultiplier: 0.1
         colorization: 1.0
         colorizationColor: glowColor
 
@@ -90,7 +89,7 @@ Item {
                 width: border.width - 2
                 height: border.height - 2
                 border.width: 1
-                border.color: Qt.rgba(1,1,1,0.3)
+                border.color: Qt.rgba(1, 1, 1, 0.3)
                 color: 'transparent'
                 radius: backRadius
             }
