@@ -45,9 +45,12 @@ ShapePath {
     fillColor: edgeItem &&
                edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) :
                                                                edgeTemplate.color
+    // FIXME #218 strokeWidth should always be 1, much more smoother...
+    // Eventually, modify automatically base width when generating geometry ?
     strokeWidth: edgeItem &&
                  edgeItem.style ? edgeItem.style.lineWidth :
                                   2
+    //strokeWidth: 2
     startX: edgeItem ? edgeItem.dstA1.x : 0
     startY: edgeItem ? edgeItem.dstA1.y : 0
     PathLine { x: edgeItem ? edgeItem.dstA3.x : 0; y: edgeItem ? edgeItem.dstA3.y : 0 }
