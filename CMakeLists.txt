@@ -14,7 +14,7 @@ add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
 add_subdirectory(src)
 
-option(QUICK_QANAVA_BUILD_SAMPLES "Build QuickQanava samples" ON)
+option(QUICK_QANAVA_BUILD_SAMPLES "Build QuickQanava samples" OFF)
 if (${QUICK_QANAVA_BUILD_SAMPLES})
     add_subdirectory(samples/advanced)
     add_subdirectory(samples/connector)
