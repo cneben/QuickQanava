@@ -39,7 +39,6 @@ import QuickQanava      2.0 as Qan
 
 Item {
     id: edgeTemplate
-    antialiasing: true
     property var edgeItem: undefined
 
     property color color: edgeItem &&
@@ -52,8 +51,6 @@ Item {
 
     Shape {
         id: dstShape
-        antialiasing: true
-        smooth: true
         visible: dstShapeType !== Qan.EdgeStyle.None
         transformOrigin: Item.TopLeft
         rotation: edgeItem.dstAngle
@@ -93,8 +90,6 @@ Item {
 
     Shape {
         id: srcShape
-        antialiasing: true
-        smooth: true
         visible: srcShapeType !== Qan.EdgeStyle.None
 
         preferredRendererType: Shape.CurveRenderer
@@ -140,8 +135,6 @@ Item {
         visible: edgeItem.visible &&
                  !edgeItem.hidden &&
                  edgeItem.selected     // Not very efficient, use a Loader there...
-        antialiasing: true
-        smooth: true
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined
@@ -193,8 +186,6 @@ Item {
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
         preferredRendererType: Shape.CurveRenderer
-        antialiasing: true
-        smooth: true
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined

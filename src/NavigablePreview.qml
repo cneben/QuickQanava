@@ -189,8 +189,6 @@ Qan.AbstractNavigablePreview {
         id: viewWindow
         z: 1
         color: Qt.rgba(0, 0, 0, 0)
-        smooth: true
-        antialiasing: true
         border.color: viewWindowColor
         border.width: 2
         onXChanged: viewWindowDragged()

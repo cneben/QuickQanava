@@ -88,7 +88,6 @@ Qan.Connector {
     visible: false
     selectable: false
     clip: false
-    antialiasing: true
 
     /*! \brief Internally used to reset correct connector position according to current node
      *  or port configuration, also restore position bindings to source.
@@ -177,7 +176,8 @@ Qan.Connector {
         state: "NORMAL"
         color: Qt.rgba(0, 0, 0, 0)
         radius: width / 2.
-        smooth: true;   antialiasing: true
+        smooth: true
+        antialiasing: true
         property real   borderWidth: visualConnector.connectorLineWidth
         border.color: visualConnector.connectorColor
         border.width: borderWidth
