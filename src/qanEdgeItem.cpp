@@ -202,7 +202,7 @@ void    EdgeItem::configureDestinationItem(QQuickItem* item)
 /* Edge Drawing Management *///------------------------------------------------
 void    EdgeItem::setHidden(bool hidden) noexcept
 {
-    if ( hidden != _hidden ) {
+    if (hidden != _hidden) {
         _hidden = hidden;
         emit hiddenChanged();
     }
@@ -210,7 +210,7 @@ void    EdgeItem::setHidden(bool hidden) noexcept
 
 void    EdgeItem::setArrowSize( qreal arrowSize ) noexcept
 {
-    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+    if (!qFuzzyCompare(1. + arrowSize, 1. + _arrowSize)) {
         _arrowSize = arrowSize;
         emit arrowSizeChanged();
         updateItem();
@@ -637,8 +637,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update source arrow cache points
     const auto srcShape = getSrcShape();
     switch (srcShape) {
-        // FIXME AHN
-        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
@@ -658,8 +656,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update destination arrow cache points
     const auto dstShape = getDstShape();
     switch (dstShape) {
-        // FIXME AHN
-        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;

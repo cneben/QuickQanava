@@ -179,7 +179,7 @@ void    BottomResizer::hoverLeaveEvent(QHoverEvent *event)
 }
 void    BottomResizer::mouseMoveEvent(QMouseEvent* event)
 {
-    const auto mePos = event->scenePosition();      // FIXME #218 check at high scale...
+    const auto mePos = event->scenePosition();
     if (event->buttons() |  Qt::LeftButton &&
             !_dragInitialPos.isNull() &&
             !_targetInitialSize.isEmpty()) {

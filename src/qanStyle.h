@@ -349,8 +349,6 @@ signals:
 public:
     //! End type drawing configuration
     enum class ArrowShape {
-        //! Invalid undefined value, usefull for serialization (if Undefined, default to Arrow).
-        //Undefined = 0,
         //! Do not draw an end.
         None = 0,
         //! End shape is an arrow.

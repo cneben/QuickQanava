@@ -72,7 +72,6 @@ Item {
         blurEnabled: glowEffect.style !== undefined ? style.effectEnabled : false
         blurMax: 30
         blur: 1.
-        //blurMultiplier: 0.1
         colorization: 1.0
         colorizationColor: glowColor
 
@@ -90,7 +89,7 @@ Item {
                 height: border.height - 2
                 border.width: 1
                 border.color: Qt.rgba(1, 1, 1, 0.3)
-                color: 'transparent'
+                color: Qt.rgba(0, 0, 0, 0)
                 radius: backRadius
             }
         }

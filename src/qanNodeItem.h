@@ -371,7 +371,7 @@ signals:
     void                boundingShapeChanged();
     //! signal is Emitted when the bounding shape become invalid and should be regenerated from QML.
     void                requestUpdateBoundingShape();
-protected:
+public:
     QPolygonF           generateDefaultBoundingShape() const;
 private:
     QPolygonF           _boundingShape;

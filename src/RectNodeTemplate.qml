@@ -54,6 +54,13 @@ Item {
         if (delegateLoader?.item?.nodeItem)
             delegateLoader.item.nodeItem = nodeItem
     }
+    onWidthChanged: updateDefaultBoundingShape()
+    onHeightChanged: updateDefaultBoundingShape()
+    function updateDefaultBoundingShape() {
+        if (nodeItem)
+            nodeItem.setDefaultBoundingShape()
+    }
+
     readonly property real   backRadius: nodeItem?.style ? nodeItem.style.backRadius : 4.
     Loader {
         id: delegateLoader
