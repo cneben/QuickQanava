@@ -46,8 +46,9 @@ namespace qan { // ::qan
 GraphView::GraphView(QQuickItem* parent) :
     qan::Navigable{parent}
 {
-    setAntialiasing(true);
-    setSmooth(true);
+    // FIXME #1615 ???
+    //setAntialiasing(true);
+    //setSmooth(true);
     setFocus(true);
 }
 

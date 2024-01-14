@@ -161,10 +161,8 @@ void    NodeItem::collapseAncestors(bool collapsed)
     // 1.
     const auto ancestors = graph->collectAncestors(*node);
 
-    qWarning() << "-- ANCESTORS: ";
     for (const auto ancestor: ancestors)
         qWarning() << ancestor->getLabel();
-    qWarning() << "------------";
 
     // 2.
     std::unordered_set<qan::Edge*> ancestorsEdges;

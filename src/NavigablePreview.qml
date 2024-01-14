@@ -269,12 +269,12 @@ Qan.AbstractNavigablePreview {
                 updatePreview()
             }
         }
-        onClicked: {
+        onClicked: (mouse) => {
             timer.p = Qt.point(mouse.x, mouse.y)
             timer.start()
             mouse.accepted = true
         }
-        onDoubleClicked: {
+        onDoubleClicked: (mouse) =>{
             timer.stop()
             let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
             source.centerOnPosition(sceneP)

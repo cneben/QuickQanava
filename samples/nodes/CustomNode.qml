@@ -32,11 +32,11 @@
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
+import QuickQanava 2.0 as Qan
 
 Qan.NodeItem {
     id: customNode
