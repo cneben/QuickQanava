@@ -33,54 +33,53 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
-import QtQuick.Controls.Material
 import QtQuick.Layouts
+import QtQuick.Effects
+import QtQuick.Controls.Material
 
 import QuickQanava 2.0 as Qan
 
 Qan.NodeItem {
     id: rectNode
-    width: 60; height: 60
+    width: 60
+    height: 60
     minimumSize: Qt.size(60,60)
-    x: 15;      y: 15
+    x: 15
+    y: 15
+
+    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
+    property color backColor: Material.background
     Rectangle {
         id: background
         z: 1
         anchors.fill: parent
-        radius: 2; color: "white"
-        border.color: Material.accent; border.width: 2
-    }
-    property color nodeColor: Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
-    property color backColor: Material.background
-    // FIXME #218
-    /*LinearGradient {
-        anchors.fill: parent
-        z: 2
-        source: background
-        start: Qt.point(0.,0.)
-        end: Qt.point(background.width, background.height)
+        radius: 2
+        color: "white"
+        border.color: Material.accent
+        border.width: 2
         gradient: Gradient {
-            id: backGrad
             GradientStop { position: 0.0; color: rectNode.nodeColor }
             GradientStop {
                 position: 1.0;
-                color: Qt.tint( rectNode.nodeColor, rectNode.backColor )
+                color: Qt.tint(rectNode.nodeColor, rectNode.backColor)
             }
         }
     }
-    */
+    MultiEffect {
+        source: background
+        anchors.centerIn: parent
+        z: -1
+        width: background.width + (4 * 2)       // glowRadius = 4
+        height: background.height + (4 * 2)
+        blurEnabled: true
+        blurMax: 20
+        blur: 1.
+        colorization: 1.0
+        colorizationColor: Qt.rgba(0.8, 0.8, 0.8, 0.8)
+    }
     Label {
         text: node ? node.label : ""
         z: 3
         anchors.centerIn: parent
     }
-    // FIXME #218
-    /*Glow {
-        z: 0
-        source: background
-        anchors.fill: parent
-        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
-        radius: 12;     samples: 15
-        spread: 0.25;   transparentBorder: true
-    }*/
 }

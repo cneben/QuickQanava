@@ -1,13 +1,47 @@
+/*
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the author or Destrat.io nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+//-----------------------------------------------------------------------------
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
+//
+// \file	CustomGroup.qml
+// \author	benoit@destrat.io
+//-----------------------------------------------------------------------------
 
 import QtQuick
-import QtQuick.Controls.Material
 import QtQuick.Layouts
+import QtQuick.Effects
+import QtQuick.Controls.Material
 
 import QuickQanava 2.0 as Qan
 
 Qan.GroupItem {
     id: customGroup
-    width: 400; height: 200
+    width: 400
+    height: 200
 
     // Note: This a completely custom group sample where you could customize group geometry,
     // appearance. If you just need a rectangular group, use RectGroupTemplate and default
@@ -15,6 +49,8 @@ Qan.GroupItem {
 
     // Customize your group appearance here
     // <---------------------  Begin Customization
+    readonly property color groupColor: "blue"
+    readonly property color backColor: "violet"
     Rectangle {
         id: background
         z: 0
@@ -22,42 +58,26 @@ Qan.GroupItem {
         radius: 2; color: "yellow"
         border.color: Material.accent; border.width: 4
         clip: true
-
-        // NOTE: background effects (glow and linear gradient) are not defined using layer.enabled and layer.effect
-        // properties since it would enable mipmapping and caching on target item and produce lower quality results
-        // at high scales. If you need high FPS and do not care of high level of zoom, you should consider using
-        // effect layers (and pay the associed memory cost...).
-    }
-    // Custom group constants
-    readonly property color groupColor: "blue"
-    readonly property color backColor: "violet"
-    // FIXME #218
-    /*
-    LinearGradient {
-      id: backgroundEffet
-        anchors.fill: parent;
-        anchors.margins: background.border.width / 2.
-        z: 1
-        source: background
-        start: Qt.point(0.,0.)
-        end: Qt.point(background.width, background.height)
         gradient: Gradient {
-            id: backGrad
             GradientStop { position: 0.0; color: customGroup.groupColor }
             GradientStop {
                 position: 1.0;
-                color: Qt.tint( customGroup.groupColor, customGroup.backColor )
+                color: Qt.tint(customGroup.groupColor, customGroup.backColor)
             }
         }
-    } // LinearGradient
-    Glow {
+    }
+    MultiEffect {
         source: background
-        anchors.fill: parent
-        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
-        radius: 12;     samples: 15
-        spread: 0.25;   transparentBorder: true
-    } // Glow
-    */
+        anchors.centerIn: parent
+        z: -1
+        width: background.width + (6 * 2)       // glowRadius = 6
+        height: background.height + (6 * 2)
+        blurEnabled: true
+        blurMax: 30
+        blur: 1.
+        colorization: 1.0
+        colorizationColor: Qt.rgba(0.8, 0.8, 0.8, 0.8)
+    }
     Rectangle {
         id: content
         anchors.fill: parent; anchors.margins: background.border.width / 2.

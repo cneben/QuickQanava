@@ -45,15 +45,23 @@ ShapePath {
     fillColor: edgeItem &&
                edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) :
                                                                edgeTemplate.color
-    // FIXME #218 strokeWidth should always be 1, much more smoother...
-    // Eventually, modify automatically base width when generating geometry ?
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
-    //strokeWidth: 2
+    strokeWidth: 2   // Fix to 2 to have "non sharp" edges
+    // Adding lineWidth / 2. to vertices A1 (base top) and A3 (base bottom) to take into
+    // account lineWidth in arrowLength
+    readonly property real lineWidth: edgeItem?.style ? edgeItem.style.lineWidth / 2. :
+                                                        1
     startX: edgeItem ? edgeItem.dstA1.x : 0
-    startY: edgeItem ? edgeItem.dstA1.y : 0
-    PathLine { x: edgeItem ? edgeItem.dstA3.x : 0; y: edgeItem ? edgeItem.dstA3.y : 0 }
-    PathLine { x: edgeItem ? edgeItem.dstA2.x : 0; y: edgeItem ? edgeItem.dstA2.y : 0 }
-    PathLine { x: edgeItem ? edgeItem.dstA1.x : 0; y: edgeItem ? edgeItem.dstA1.y : 0 }
+    startY: edgeItem ? edgeItem.dstA1.y - lineWidth: 0
+    PathLine {
+        x: edgeItem ? edgeItem.dstA3.x : 0
+        y: edgeItem ? edgeItem.dstA3.y + lineWidth: 0
+    }
+    PathLine {
+        x: edgeItem ? edgeItem.dstA2.x : 0
+        y: edgeItem ? edgeItem.dstA2.y : 0
+    }
+    PathLine {
+        x: edgeItem ? edgeItem.dstA1.x : 0
+        y: edgeItem ? edgeItem.dstA1.y - lineWidth: 0
+    }
 }
