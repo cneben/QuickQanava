@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Graph topology library for C++14">
+        <meta name="description" content="Graph visualization library for Qt / QML C++17">
       
       
         <meta name="author" content="Destrat.io">
@@ -619,72 +619,72 @@
 <p>Graph topology is internally modeled using <a href="https://en.wikipedia.org/wiki/Adjacency_list">adjacency lists</a>, these lists are exposed to QML and C++ with Qt abstract item models: a change in topology trigger a signal or a virtual method call in behavior observers. For example, any view connected to a node <code>outNodes</code> model is automatically updated when a directed edge is inserted from that node to another one.</p>
 <h2 id="quickqanava-initialization">QuickQanava Initialization<a class="headerlink" href="#quickqanava-initialization" title="Permanent link">&para;</a></h2>
 <p>QuickQanava should be initialized in your c++ main function:</p>
-<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QuickQanava&gt;</span>
-
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">QGuiApplication</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
-<span class="w">    </span><span class="n">QQuickStyle</span><span class="o">::</span><span class="n">setStyle</span><span class="p">(</span><span class="s">&quot;Material&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">QQmlApplicationEngine</span><span class="w"> </span><span class="n">engine</span><span class="p">;</span>
-<span class="w">    </span><span class="c1">// Or in a custom QQuickView constructor:</span>
-<span class="hll"><span class="w">    </span><span class="n">QuickQanava</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
-</span><span class="w">    </span><span class="n">engine</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">);</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
-<span class="p">}</span>
-</code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QuickQanava&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">{</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="n">QGuiApplication</span><span class="w"> </span><span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">QQuickStyle</span><span class="o">::</span><span class="n">setStyle</span><span class="p">(</span><span class="s">&quot;Material&quot;</span><span class="p">);</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="n">QQmlApplicationEngine</span><span class="w"> </span><span class="n">engine</span><span class="p">;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="c1">// Or in a custom QQuickView constructor:</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="hll"><span class="w">    </span><span class="n">QuickQanava</span><span class="o">::</span><span class="n">initialize</span><span class="p">();</span>
+</span></span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="n">engine</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
+</span></code></pre></div>
 <p>Then, in QML import QuickQanava:
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="n">QuickQanava</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
-<span class="k">import</span><span class="w"> </span><span class="s">&quot;qrc:/QuickQanava&quot;</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
-</code></pre></div></p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="n">QuickQanava</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">import</span><span class="w"> </span><span class="s">&quot;qrc:/QuickQanava&quot;</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
+</span></code></pre></div></p>
 <p>And create a <code>Qan.Graph</code> component to build a simple directed graph:
-<div class="highlight"><pre><span></span><code><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graph</span>
-<span class="w">    </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
-<span class="w">    </span><span class="n">Component</span><span class="p">.</span><span class="n">onCompleted</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">var</span><span class="w"> </span><span class="n">n1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
-<span class="w">        </span><span class="n">n1</span><span class="p">.</span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graph</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">Component</span><span class="p">.</span><span class="n">onCompleted</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="n">var</span><span class="w"> </span><span class="n">n1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">graph</span><span class="p">.</span><span class="n">insertNode</span><span class="p">()</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="n">n1</span><span class="p">.</span><span class="n">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello World&quot;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+</span></code></pre></div></p>
 <h2 id="graph-view">Graph View<a class="headerlink" href="#graph-view" title="Permanent link">&para;</a></h2>
-<p>A <code>Qan.Graph</code> or <code class="highlight"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span></code> is a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the <code>Qan.GraphView.graph</code> property:</p>
-<div class="highlight"><pre><span></span><code><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graphView</span>
-<span class="w">  </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
-<span class="w">  </span><span class="nl">navigable</span><span class="w">   </span><span class="p">:</span><span class="w"> </span><span class="nb">true</span>
-<span class="hll"><span class="w">  </span><span class="nl">graph</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
-</span><span class="w">      </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">topology</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.Graph: topology</span>
-<span class="p">}</span><span class="w"> </span><span class="c1">// Qan.GraphView</span>
-</code></pre></div>
+<p>A <code>Qan.Graph</code> or <code class="language-js highlight"><span class="nx">qan</span><span class="o">::</span><span class="nx">Graph</span></code> is a graphic item, but it is mainly used to define graph topology and should be embedded in a "graph view", following a (loose) MVC pattern to enable complete user interaction with the graph. A graph is binded to a view trough the <code>Qan.GraphView.graph</code> property:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graphView</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nl">navigable</span><span class="w">   </span><span class="p">:</span><span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="hll"><span class="w">  </span><span class="nl">graph</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
+</span></span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">topology</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.Graph: topology</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.GraphView</span>
+</span></code></pre></div>
 <p>Binding a <code>Qan.Graph</code> component to <code>graph</code> property of a <code>Qan.GraphView</code> item allow navigation using mouse panning and zooming, navigation could be disabled by setting the <code>QanGraph.navigable</code> property to false (it default to true).</p>
 <p>There is more options for customizing how the view is rendered:</p>
 <p><img alt="Qan.GraphView properties" src="graph/graphview_graph_properties.png" /></p>
 <ul>
-<li><code class="highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">connectorColor</span></code>: Visual edge creation tool 'handler' color (default to dodgerblue).</li>
-<li><code class="highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionColor</span></code>: Selection rect color (available for nodes and groups).</li>
-<li><code class="highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerColor</span></code>: Bottom right corner resize handler color.</li>
-<li><code class="highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerOpacity</span></code>, <code class="highlight"><span class="nx">resizeHandlerRadius</span></code>, <code class="highlight"><span class="nx">resizeHandlerWidth</span></code> and <code class="highlight"><span class="nx">resizeHandlerSize</span></code>: More options for bottom right corner resize handler configuration.</li>
-<li><code class="highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">gridThickColor</span></code>: Grid major thick color (works for both point and line grids).</li>
+<li><code class="language-js highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">connectorColor</span></code>: Visual edge creation tool 'handler' color (default to dodgerblue).</li>
+<li><code class="language-js highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">Graph</span><span class="p">.</span><span class="nx">selectionColor</span></code>: Selection rect color (available for nodes and groups).</li>
+<li><code class="language-js highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerColor</span></code>: Bottom right corner resize handler color.</li>
+<li><code class="language-js highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">resizeHandlerOpacity</span></code>, <code class="language-js highlight"><span class="nx">resizeHandlerRadius</span></code>, <code class="language-js highlight"><span class="nx">resizeHandlerWidth</span></code> and <code class="language-js highlight"><span class="nx">resizeHandlerSize</span></code>: More options for bottom right corner resize handler configuration.</li>
+<li><code class="language-js highlight"><span class="nx">Qan</span><span class="p">.</span><span class="nx">GraphView</span><span class="p">.</span><span class="nx">gridThickColor</span></code>: Grid major thick color (works for both point and line grids).</li>
 </ul>
 <p>For a more detailed description, see <a href="styles.html#material">Material Styling</a></p>
 <h2 id="grid">Grid<a class="headerlink" href="#grid" title="Permanent link">&para;</a></h2>
 <p>Grid could be configured with <code>Qan.GraphView.grid</code> property, only line grid is supported (see <code>Qan.LineGrid</code> component, <code>Qan.PointGrid</code> has been deprecated in 0.15.0), default grid is drawn with orthogonal lines.</p>
-<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="n">QuickQanava</span><span class="w">          </span><span class="mf">2.0</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
-<span class="k">import</span><span class="w"> </span><span class="s">&quot;qrc:/QuickQanava&quot;</span><span class="w">   </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
-
-<span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span><span class="w"> </span><span class="p">{</span>
-<span class="hll"><span class="w">  </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graphView</span>
-</span><span class="w">  </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
-<span class="w">  </span><span class="nl">graph</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nl">gridThickColor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lightgrey&quot;</span>
-<span class="w">      </span><span class="nl">grid</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">LineGrid</span><span class="p">{</span><span class="w"> </span>
-<span class="w">        </span><span class="nl">gridScale</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span>
-<span class="w">        </span><span class="nl">gridMajor</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.Graph: graph</span>
-<span class="p">}</span><span class="w"> </span><span class="c1">// Qan.GraphView</span>
-</code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="n">QuickQanava</span><span class="w">          </span><span class="mf">2.0</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">import</span><span class="w"> </span><span class="s">&quot;qrc:/QuickQanava&quot;</span><span class="w">   </span><span class="n">as</span><span class="w"> </span><span class="n">Qan</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">Qan</span><span class="p">.</span><span class="n">GraphView</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="hll"><span class="w">  </span><span class="nl">id</span><span class="p">:</span><span class="w"> </span><span class="n">graphView</span>
+</span></span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="n">anchors</span><span class="p">.</span><span class="n">fill</span><span class="o">:</span><span class="w"> </span><span class="n">parent</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nl">graph</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">Graph</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="nl">gridThickColor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lightgrey&quot;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="nl">grid</span><span class="p">:</span><span class="w"> </span><span class="n">Qan</span><span class="p">.</span><span class="n">LineGrid</span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="nl">gridScale</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="nl">gridMajor</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.Graph: graph</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">}</span><span class="w"> </span><span class="c1">// Qan.GraphView</span>
+</span></code></pre></div>
 <p>Grid appearance is configurable using the following abstract interface working for both points and lines grids:</p>
 <ul>
 <li><code>gridScale</code>: Interval in points between lines or points.</li>
@@ -696,13 +696,13 @@
 <thead>
 <tr>
 <th>Qan.PointGrid <em>(deprecated)</em></th>
-<th align="center">Qan.LineGrid</th>
+<th style="text-align: center;">Qan.LineGrid</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><img alt="Qan.GraphView properties" src="graph/grid_points.png" /></td>
-<td align="center"><img alt="Qan.GraphView properties" src="graph/grid_lines.png" /></td>
+<td style="text-align: center;"><img alt="Qan.GraphView properties" src="graph/grid_lines.png" /></td>
 </tr>
 </tbody>
 </table>
@@ -730,7 +730,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023 BA
+      Copyright &copy; 2024 BA
     </div>
   
   
@@ -761,7 +761,7 @@
       
       
     
-    <a href="https://github.com/cneben" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+    <a href="https://github.com/cneben/QuickQanava" target="_blank" rel="noopener" title="github.com" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
@@ -777,7 +777,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": "2.0.0"}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": "2.5.0"}</script>
     
     
       <script src="assets/javascripts/bundle.6c14ae12.min.js"></script>
