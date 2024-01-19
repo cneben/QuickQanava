@@ -69,13 +69,14 @@ Item {
         anchors.centerIn: parent
         width: border.width + (glowRadius * 2)
         height: border.height + (glowRadius * 2)
-        blurEnabled: glowEffect.style !== undefined ? style.effectEnabled : false
+        blurEnabled: glowEffect.visible &&
+                     glowEffect.style !== undefined ? style.effectEnabled : false
         blurMax: 30
         blur: 1.
         colorization: 1.0
         colorizationColor: glowColor
 
-        maskEnabled: true
+        maskEnabled: true && glowEffect.visible
         maskThresholdMin: 0.29      // Should be just below border.color
         maskSpreadAtMin: 1.0
         maskSource: ShaderEffectSource {
