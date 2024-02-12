@@ -781,6 +781,8 @@ private:
     SelectedNodes       _selectedNodes;
 signals:
     void                selectedNodesChanged();
+    //! Emitted whenever nodes/groups/edge selection change.
+    void                selectionChanged();
 
 public:
     using SelectedGroups = qcm::Container<std::vector, QPointer<qan::Group>>;

@@ -1281,8 +1281,14 @@ void    addToSelectionImpl(QPointer<Primitive_t> primitive,
     }
 }
 
-void    Graph::addToSelection(qan::Node& node) { addToSelectionImpl<qan::Node>(QPointer<qan::Node>(&node), _selectedNodes, *this); }
-void    Graph::addToSelection(qan::Group& group) { addToSelectionImpl<qan::Group>(&group, _selectedGroups, *this); }
+void    Graph::addToSelection(qan::Node& node) {
+    addToSelectionImpl<qan::Node>(QPointer<qan::Node>(&node), _selectedNodes, *this);
+    emit selectionChanged();
+}
+void    Graph::addToSelection(qan::Group& group) {
+    addToSelectionImpl<qan::Group>(&group, _selectedGroups, *this);
+    emit selectionChanged();
+}
 void    Graph::addToSelection(qan::Edge& edge)
 {
     // Note 20221002: Do not use addToSelectionImpl<>() since it has no support for QVector<QPointer<qan::Edge>>
@@ -1295,6 +1301,7 @@ void    Graph::addToSelection(qan::Edge& edge)
                 edge.getItem()->setSelectionItem(createSelectionItem(edge.getItem()));   // Safe, any argument might be nullptr
             // Note 20220329: primitive.getItem()->configureSelectionItem() is called from setSelectionItem()
         }
+        emit selectionChanged();
     }
 }
 
@@ -1306,8 +1313,14 @@ void    removeFromSelectionImpl(QPointer<Primitive_t> primitive,
         selectedPrimitives.removeAll(primitive.data());
 }
 
-void    Graph::removeFromSelection(qan::Node& node) { removeFromSelectionImpl<qan::Node>(&node, _selectedNodes); }
-void    Graph::removeFromSelection(qan::Group& group) { removeFromSelectionImpl<qan::Group>(&group, _selectedGroups); }
+void    Graph::removeFromSelection(qan::Node& node) {
+    removeFromSelectionImpl<qan::Node>(&node, _selectedNodes);
+    emit selectionChanged();
+}
+void    Graph::removeFromSelection(qan::Group& group) {
+    removeFromSelectionImpl<qan::Group>(&group, _selectedGroups);
+    emit selectionChanged();
+}
 
 // Note: Called from
 void    Graph::removeFromSelection(QQuickItem* item) {
@@ -1315,16 +1328,19 @@ void    Graph::removeFromSelection(QQuickItem* item) {
     if (nodeItem != nullptr &&
         nodeItem->getNode() != nullptr) {
         _selectedNodes.removeAll(nodeItem->getNode());
+        emit selectionChanged();
     } else {
         const auto groupItem = qobject_cast<qan::GroupItem*>(item);
         if (groupItem != nullptr &&
             groupItem->getGroup() != nullptr) {
             _selectedGroups.removeAll(groupItem->getGroup());
+            emit selectionChanged();
         } else {
             const auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
             if (edgeItem != nullptr &&
                 edgeItem->getEdge() != nullptr) {
                 _selectedEdges.removeAll(edgeItem->getEdge());
+                emit selectionChanged();
             }
         }
     }
@@ -1336,6 +1352,7 @@ void    Graph::selectAll()
         if (node != nullptr)
             selectNode(*node, Qt::ControlModifier);
     }
+    emit selectionChanged();
 }
 
 void    Graph::removeSelection()
@@ -1399,6 +1416,8 @@ void    Graph::clearSelection()
             edge->getItem() != nullptr)
             edge->getItem()->setSelected(false);
     _selectedEdges.clear();
+
+    emit selectionChanged();
 }
 
 bool    Graph::hasSelection() const
