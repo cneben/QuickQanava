@@ -142,6 +142,17 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                 _graph->setNodeSelected(*nodeItem->getNode(), false);
                 _selectedItems.remove(item);
             }
+        } else {
+            auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
+            if (edgeItem != nullptr &&
+                edgeItem->getEdge() != nullptr) {
+                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                        item->boundingRect());
+                if (!rect.contains(itemBr)) {
+                    _graph->setEdgeSelected(edgeItem->getEdge(), false);
+                    _selectedItems.remove(item);
+                }
+            }
         }
     }
 
@@ -150,6 +161,7 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
     for (const auto item: items) {
         auto nodeItem = qobject_cast<qan::NodeItem*>(item);
         if (nodeItem != nullptr &&
+            nodeItem->isSelectable() &&
             nodeItem->getNode() != nullptr) {
             auto node = nodeItem->getNode();
             const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
@@ -160,8 +172,29 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                 // is in progress... (QPointer can't be trivially inserted in QSet)
                 _selectedItems.insert(nodeItem);
             }
+        } else {
+            // 3. FIXME #1600 edge selection...
+            auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
+            if (edgeItem != nullptr &&
+                edgeItem->getEdge() != nullptr) {
+                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                        item->boundingRect());
+                if (rect.contains(itemBr)) {
+                    auto edge = edgeItem->getEdge();
+                    qWarning() << "Edge " << edge->getLabel() << "selected " << edge;
+
+                    // FIXME #1600
+                    _graph->setEdgeSelected(edge, true);
+                    // Note we assume that items are not deleted while the selection
+                    // is in progress... (QPointer can't be trivially inserted in QSet)
+                    _selectedItems.insert(edgeItem);
+                }
+            }
         }
     }
+
+    // 3. FIXME #1600 edge selection...
+
 }
 
 void    GraphView::selectionRectEnd()

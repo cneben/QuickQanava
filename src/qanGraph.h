@@ -734,6 +734,9 @@ public:
     bool                selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     Q_INVOKABLE bool    selectGroup(qan::Group* group);
 
+    //! Set an edge selection state (usefull to unselect).
+    void                setEdgeSelected(qan::Edge* edge, bool selected);
+
     //! Similar to selectNode() for qan::Edge.
     bool                selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     Q_INVOKABLE bool    selectEdge(qan::Edge* edge);
@@ -1129,6 +1132,4 @@ protected:
 
 #include "./qanGraph.hpp"
 
-//Q_DECLARE_METATYPE(QAbstractItemModel*)
-//Q_DECLARE_METATYPE(QAbstractListModel*)
 QML_DECLARE_TYPE(qan::Graph)
