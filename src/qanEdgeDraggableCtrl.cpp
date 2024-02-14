@@ -115,8 +115,6 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
     if (!_targetItem)
         return;
 
-    qWarning() << "qan::EdgeDraggableCtrl::beginDragMove(): dragSelection=" << dragSelection;
-
     _targetItem->setDragged(true);
     _initialDragPos = sceneDragPos;
     const auto rootItem = getGraph()->getContainerItem();
