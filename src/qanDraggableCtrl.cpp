@@ -213,6 +213,7 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
 
         // Call beginDragMove on all selected nodes and groups.
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), beginDragMoveSelected);
+        std::for_each(graph->getSelectedEdges().begin(), graph->getSelectedEdges().end(), beginDragMoveSelected);
         std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), beginDragMoveSelected);
     }
 }
@@ -341,6 +342,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         };
 
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
+        std::for_each(graph->getSelectedEdges().begin(), graph->getSelectedEdges().end(), dragMoveSelected);
         std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), dragMoveSelected);
     }
 
@@ -425,6 +427,7 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
                 primitive->getItem()->draggableCtrl().endDragMove(/*dragSelection*/false, /*notify*/false);
         };
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), enDragMoveSelected);
+        std::for_each(graph->getSelectedEdges().begin(), graph->getSelectedEdges().end(), enDragMoveSelected);
         std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), enDragMoveSelected);
     }
 

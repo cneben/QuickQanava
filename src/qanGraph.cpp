@@ -1253,6 +1253,13 @@ void    Graph::setNodeSelected(qan::Node* node, bool selected)
 bool    Graph::selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Group>(group, modifiers, *this); }
 bool    Graph::selectGroup(qan::Group* group) { return group != nullptr ? selectGroup(*group) : false; }
 
+void    Graph::setEdgeSelected(qan::Edge* edge, bool selected)
+{
+    if (edge == nullptr)
+        return;
+    impl::setPrimitiveSelected<qan::Edge>(*edge, selected, *this);
+}
+
 bool    Graph::selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers) { return impl::selectPrimitive<qan::Edge>(edge, modifiers, *this); }
 bool    Graph::selectEdge(qan::Edge* edge) { return edge != nullptr ? selectEdge(*edge) : false; }
 
