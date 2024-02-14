@@ -1261,6 +1261,8 @@ void    EdgeItem::setDragged(bool dragged) noexcept
         emit draggedChanged();
     }
 }
+
+qan::AbstractDraggableCtrl& EdgeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl != nullptr); return *_draggableCtrl; }
 //-----------------------------------------------------------------------------
 
 
