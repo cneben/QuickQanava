@@ -181,7 +181,6 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                                                         item->boundingRect());
                 if (rect.contains(itemBr)) {
                     auto edge = edgeItem->getEdge();
-                    qWarning() << "Edge " << edge->getLabel() << "selected " << edge;
 
                     _graph->setEdgeSelected(edge, true);
                     _selectedItems.insert(edgeItem);
