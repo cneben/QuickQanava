@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QtNumeric>
 #include <QQuickItem>
 
 // QuickQanava headers
@@ -146,8 +147,12 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
             auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
             if (edgeItem != nullptr &&
                 edgeItem->getEdge() != nullptr) {
-                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
                                                         item->boundingRect());
+                if (qFuzzyIsNull(itemBr.height()))  // Note: rect.contains does not work with 0 width/height
+                    itemBr.setHeight(0.5);          // br, set minimum width/height to 0.5, to allow vertical /
+                if (qFuzzyIsNull(itemBr.width()))   // horizontal line selection for example.
+                    itemBr.setWidth(0.5);
                 if (!rect.contains(itemBr)) {
                     _graph->setEdgeSelected(edgeItem->getEdge(), false);
                     _selectedItems.remove(item);
@@ -177,11 +182,14 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
             auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
             if (edgeItem != nullptr &&
                 edgeItem->getEdge() != nullptr) {
-                const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
-                                                        item->boundingRect());
+                auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                  item->boundingRect());
+                if (qFuzzyIsNull(itemBr.height()))  // Note: rect.contains does not work with 0 width/height
+                    itemBr.setHeight(0.5);          // br, set minimum width/height to 0.5, to allow vertical /
+                if (qFuzzyIsNull(itemBr.width()))   // horizontal line selection for example.
+                    itemBr.setWidth(0.5);
                 if (rect.contains(itemBr)) {
                     auto edge = edgeItem->getEdge();
-
                     _graph->setEdgeSelected(edge, true);
                     _selectedItems.insert(edgeItem);
                 }
