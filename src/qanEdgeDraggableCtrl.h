@@ -62,6 +62,13 @@ public:
     EdgeDraggableCtrl(const EdgeDraggableCtrl&) = delete;
 
 public:
+    inline auto getTarget() noexcept -> qan::Edge* { return _target.data(); }
+    inline auto getTarget() const noexcept -> const qan::Edge* { return _target.data(); }
+    inline auto setTarget(qan::Edge* target) noexcept { _target = target; }
+private:
+    QPointer<qan::Edge>    _target{nullptr};
+
+public:
     inline auto getTargetItem() noexcept -> qan::EdgeItem* { return _targetItem.data(); }
     inline auto getTargetItem() const noexcept -> const qan::EdgeItem* { return _targetItem.data(); }
     inline auto setTargetItem(qan::EdgeItem* targetItem) noexcept { _targetItem = targetItem; }
