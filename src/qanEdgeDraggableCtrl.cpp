@@ -112,13 +112,13 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
 {
     Q_UNUSED(dragSelection)
     Q_UNUSED(notify)
-    if (!_targetItem)
+    if (!_targetItem ||
+        _target == nullptr)
         return;
-    // FIXME #223
-    /*if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
         _target->getLocked())
-        return;*/
-    qWarning() << "EdgeDraggableCtrl::beginDragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
+        return;
+    //qWarning() << "EdgeDraggableCtrl::beginDragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
 
     _targetItem->setDragged(true);
     _initialDragPos = sceneDragPos;

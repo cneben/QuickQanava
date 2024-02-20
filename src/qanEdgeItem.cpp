@@ -79,8 +79,11 @@ auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
 {
     _edge = edge;
     if (edge != nullptr &&
-        edge->getItem() != this)
+        edge->getItem() != this) {
         edge->setItem(this);
+        const auto edgeDraggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+        edgeDraggableCtrl->setTarget(edge);
+    }
 }
 
 auto    EdgeItem::getGraph() const -> const qan::Graph*
