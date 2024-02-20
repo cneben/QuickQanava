@@ -162,7 +162,7 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
 void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
                                     bool disableSnapToGrid, bool disableOrientation)
 {
-    qWarning() << "EdgeDraggableCtrl::dragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection;
+    //qWarning() << "EdgeDraggableCtrl::dragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection;
     Q_UNUSED(dragSelection)
     Q_UNUSED(disableSnapToGrid)
     Q_UNUSED(disableOrientation)
@@ -207,12 +207,6 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelect
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
-    qWarning() << "selected nodes=";
-    for (const auto& sn: graph->getSelectedNodes())
-        qWarning() << " " << sn;
-    qWarning() << "selected edges=";
-    for (const auto& se: graph->getSelectedEdges())
-        qWarning() << " " << se;
     if (dragSelection) {
         auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node, group or edge
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=

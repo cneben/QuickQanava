@@ -77,9 +77,8 @@ auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
 auto    EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.data(); }
 auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
 {
-    _edge = edge;
-    if (edge != nullptr &&
-        edge->getItem() != this) {
+    if (_edge != edge) {
+        _edge = edge;
         edge->setItem(this);
         const auto edgeDraggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
         edgeDraggableCtrl->setTarget(edge);
