@@ -114,6 +114,11 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
     Q_UNUSED(notify)
     if (!_targetItem)
         return;
+    // FIXME #223
+    /*if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+        _target->getLocked())
+        return;*/
+    qWarning() << "EdgeDraggableCtrl::beginDragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
 
     _targetItem->setDragged(true);
     _initialDragPos = sceneDragPos;
@@ -157,6 +162,7 @@ void    EdgeDraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragS
 void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
                                     bool disableSnapToGrid, bool disableOrientation)
 {
+    qWarning() << "EdgeDraggableCtrl::dragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection;
     Q_UNUSED(dragSelection)
     Q_UNUSED(disableSnapToGrid)
     Q_UNUSED(disableOrientation)
@@ -201,19 +207,24 @@ void    EdgeDraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelect
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
+    qWarning() << "selected nodes=";
+    for (const auto& sn: graph->getSelectedNodes())
+        qWarning() << " " << sn;
+    qWarning() << "selected edges=";
+    for (const auto& se: graph->getSelectedEdges())
+        qWarning() << " " << se;
     if (dragSelection) {
-        auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node or group
+        auto dragMoveSelected = [this, &sceneDragPos] (auto primitive) { // Call dragMove() on a given node, group or edge
             const auto primitiveIsNotSelf = static_cast<QQuickItem*>(primitive->getItem()) !=
                                             static_cast<QQuickItem*>(this->_targetItem.data());
             if (primitive != nullptr &&
                 primitive->getItem() != nullptr &&
                 primitiveIsNotSelf)       // Note: nodes inside a group or groups might be dragged too
-                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
+                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false);
         };
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
         std::for_each(graph->getSelectedEdges().begin(), graph->getSelectedEdges().end(), dragMoveSelected);
         std::for_each(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), dragMoveSelected);
-        //std::for_each(graph->getSelectedEdges().begin(), graph->getSelectedEdges().end(), dragMoveSelected);
     }
 }
 

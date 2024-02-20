@@ -159,6 +159,8 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 
 void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection, bool notify)
 {
+    qWarning() << "DraggableCtrl::beginDragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
+
     if (_targetItem == nullptr ||
         _target == nullptr)
         return;
@@ -198,9 +200,9 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         _initialTargetScenePos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
 
     // If there is a selection, keep start position for all selected nodes.
+    qWarning() << "graph->hasMultipleSelection(): " << graph->hasMultipleSelection();
     if (dragSelection &&
         graph->hasMultipleSelection()) {
-
             auto beginDragMoveSelected = [this, &sceneDragPos] (auto primitive) {    // Call beginDragMove() on a given node or group
                 if (primitive != nullptr &&
                     primitive->getItem() != nullptr &&
@@ -225,6 +227,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         // _graph must be configured (non nullptr)
         // _graph must have a container item for coordinate mapping
         // _target and _targetItem must be configured (true)
+    qWarning() << "DraggableCtrl::dragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection;
 
     if (!_target ||
         !_targetItem)
@@ -338,7 +341,7 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
             if (primitive != nullptr &&
                 primitive->getItem() != nullptr &&
                 primitiveIsNotSelf)       // Note: nodes inside a group or groups might be dragged too
-                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, false);
+                primitive->getItem()->draggableCtrl().dragMove(sceneDragPos, /*dragSelection=*/false);
         };
 
         std::for_each(graph->getSelectedNodes().begin(), graph->getSelectedNodes().end(), dragMoveSelected);
