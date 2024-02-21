@@ -176,11 +176,17 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     // Note 20231029:
     // Notification is disabled when a multiple selection is dragged.
     // Use nodesAboutToBeMoved() route on multiple selection, nodeAboutToBeMoved() on single selection.
-    if (graph != nullptr && notify) {
+    if (notify) {
         std::vector<qan::Node*> nodes;
         const auto& selectedNodes = graph->getSelectedNodes();
         std::copy(selectedNodes.begin(), selectedNodes.end(), std::back_inserter(nodes));
         std::copy(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), std::back_inserter(nodes));
+        for (const auto& selectedEdge: graph->getSelectedEdges()) { // Add selected edges control points
+            if (selectedEdge->getSource() != nullptr)
+                nodes.push_back(selectedEdge->getSource());
+            if (selectedEdge->getDestination() != nullptr)
+                nodes.push_back(selectedEdge->getDestination());
+        }
         if (selectedNodes.size() == 0)
             nodes.push_back(getTarget());
         if (dragSelection && graph->hasMultipleSelection()) {
@@ -398,6 +404,7 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
     if (graphContainerItem == nullptr)
         return;
 
+
     //qWarning() << "qan::DraggableCtrl::endDragMove(): dragSelection=" << dragSelection;
     //qWarning() << "  graph->hasMultipleSelection()=" << graph->hasMultipleSelection();
     //qWarning() << "  notify=" << notify;
@@ -436,8 +443,7 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
     // Notification is disabled when a multiple selection is dragged.
     // Use nodesAboutToBeMoved() route on multiple selection, nodeAboutToBeMoved() on single selection.
     if (notify) {
-        if (/*!dragSelection &&*/
-            !graph->hasMultipleSelection() &&
+        if (!graph->hasMultipleSelection() &&
             !nodeGrouped)  // Do not emit nodeMoved() if it has been grouped
             emit graph->nodeMoved(_target);
         else if (dragSelection &&
@@ -446,6 +452,12 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
             const auto& selectedNodes = graph->getSelectedNodes();
             std::copy(selectedNodes.begin(), selectedNodes.end(), std::back_inserter(nodes));
             std::copy(graph->getSelectedGroups().begin(), graph->getSelectedGroups().end(), std::back_inserter(nodes));
+            for (const auto& selectedEdge: graph->getSelectedEdges()) { // Add selected edges control points
+                if (selectedEdge->getSource() != nullptr)
+                    nodes.push_back(selectedEdge->getSource());
+                if (selectedEdge->getDestination() != nullptr)
+                    nodes.push_back(selectedEdge->getDestination());
+            }
             emit graph->nodesMoved(nodes);
         }
     }
