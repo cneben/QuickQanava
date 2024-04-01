@@ -85,9 +85,9 @@ struct adapter<QVector, T> {
     inline static void  append(QVector<T>& c, const T& t)   { c.append(t); }
     inline static void  append(QVector<T>& c, T&& t)        { c.append(t); }
 
-    inline static void  insert(QVector<T>& c, const T& t)   { c.append( t ); }
-    inline static void  insert(QVector<T>& c, T&& t)        { c.append( t ); }
-    inline static void  insert(QVector<T>& c, const T& t, int i ) { c.insert( i, t ); }
+    inline static void  insert(QVector<T>& c, const T& t)   { c.append(t); }
+    inline static void  insert(QVector<T>& c, T&& t)        { c.append(t); }
+    inline static void  insert(QVector<T>& c, const T& t, int i ) { c.insert(i, t); }
 
     inline static void  remove(QVector<T>& c, std::size_t i)    { c.remove(static_cast<int>(i)); }
     inline static int   removeAll(QVector<T>& c, const T& t )   { return c.removeAll(t); }
@@ -104,9 +104,9 @@ struct adapter<QSet, T> {
     inline static void  append(QSet<T>& c, const T& t)  { c.insert(t); }
     inline static void  append(QSet<T>& c, T&& t)       { c.insert(t); }
 
-    inline static void  insert(QSet<T>& c, const T& t)      { c.insert( t ); }
-    inline static void  insert(QSet<T>& c, T&& t)           { c.insert( t ); }
-    inline static void  insert(QSet<T>& c, const T& t, int i )    { c.insert( t ); Q_UNUSED(i); }
+    inline static void  insert(QSet<T>& c, const T& t)      { c.insert(t); }
+    inline static void  insert(QSet<T>& c, T&& t)           { c.insert(t); }
+    inline static void  insert(QSet<T>& c, const T& t, int i )    { c.insert(t); Q_UNUSED(i); }
 
     inline static void  remove(QSet<T>& c, std::size_t i)   { c.erase(c.cbegin() + static_cast<int>(i)); }
     inline static int   removeAll(QSet<T>& c, const T& t )  { return c.remove(t); }
@@ -125,14 +125,14 @@ struct adapter<std::vector, T> {
     inline static void  append(std::vector<T>& c, const T& t)   { c.push_back(t); }
     inline static void  append(std::vector<T>& c, T&& t)        { c.push_back(t); }
 
-    inline static void  insert(std::vector<T>& c, const T& t)   { c.push_back( t ); }
-    inline static void  insert(std::vector<T>& c, T&& t)        { c.push_back( t ); }
-    inline static void  insert(std::vector<T>& c, const T& t, std::size_t i ) { c.insert( t, i ); }
+    inline static void  insert(std::vector<T>& c, const T& t)   { c.push_back(t); }
+    inline static void  insert(std::vector<T>& c, T&& t)        { c.push_back(t); }
+    inline static void  insert(std::vector<T>& c, const T& t, std::size_t i) { c.insert(c.begin() + i, t); }
 
-    inline static void  remove(std::vector<T>& c, std::size_t i) { c.erase( c.cbegin() + i ); }
+    inline static void  remove(std::vector<T>& c, std::size_t i) { c.erase(c.cbegin() + i); }
     // See erase-remove idiom:
     // http://thispointer.com/removing-all-occurences-of-an-element-from-vector-in-on-complexity/
-    inline static int   removeAll(std::vector<T>& c, const T& t ) {
+    inline static int   removeAll(std::vector<T>& c, const T& t) {
         c.erase(std::remove(c.begin(), c.end(), t), c.end());
         return -1;
     }
