@@ -157,6 +157,9 @@ public:
      */
     auto    is_root_node(const node_t* node) const -> bool;
 
+    //! Expose the base class method of the same name:
+    using   graph_base_t::contains;
+
     //! Use fast search container to find if a given \c node is part of this graph.
     auto    contains(const node_t* node) const -> bool;
 
