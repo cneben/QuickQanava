@@ -34,6 +34,7 @@ set(qan_source_files
 
 set (qan_header_files
     qanAbstractDraggableCtrl.h
+    qanAnalysisTimeHeatMap.h
     qanBehaviour.h
     qanBottomRightResizer.h
     qanRightResizer.h
@@ -45,6 +46,7 @@ set (qan_header_files
     qanEdgeDraggableCtrl.h
     qanEdgeItem.h
     qanGraph.h
+    qanGraph.hpp
     qanGraphView.h
     qanGrid.h
     qanGroup.h
@@ -58,13 +60,15 @@ set (qan_header_files
     qanSelectable.h
     qanStyle.h
     qanStyleManager.h
-    qanAnalysisTimeHeatMap.cpp
     qanUtils.h
     qanTableGroup.h
     qanTableCell.h
     qanTableBorder.h
     qanTableGroupItem.h
     QuickQanava.h
+    )
+
+set (gtpo_header_files
     gtpo/container_adapter.h
     gtpo/edge.h
     gtpo/graph.h
@@ -97,7 +101,7 @@ set (qan_plugin_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
+qt_wrap_cpp(qan_source_files, qan_header_files, gtpo_header_files)   # Creates .moc files from sources
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -106,6 +110,7 @@ list(APPEND qan_resources QuickQanava_static.qrc)
 add_library(QuickQanava STATIC
     ${qan_source_files}
     ${qan_header_files}
+    ${gtpo_header_files}
     ${quickcontainers_source_files}
     ${quickcontainers_header_files}
     ${qan_resources}
@@ -122,18 +127,6 @@ target_compile_features(QuickQanava
         cxx_std_17
     )
 
-install(FILES
-    ${qan_header_files}
-    DESTINATION include/quickqanava
-    )
-
-install(TARGETS QuickQanava
-    EXPORT Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include/quickqanava
-    )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 target_link_libraries(QuickQanava PUBLIC Qt6::Core
@@ -143,3 +136,50 @@ target_link_libraries(QuickQanava PUBLIC Qt6::Core
                                          Qt6::QuickControls2)
 
 
+install(FILES
+    ${qan_header_files}
+    DESTINATION include/quickqanava
+    )
+
+install(FILES
+    ${gtpo_header_files}
+    DESTINATION include/quickqanava/gtpo
+    )
+
+install(FILES
+    ${quickcontainers_header_files}
+    DESTINATION include/quickcontainers
+    )
+
+install(TARGETS QuickQanava
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include/quickqanava
+    )
+
+# Export the package for use from the build tree
+export(TARGETS
+    ${PROJECT_NAME}
+    FILE cmake/${PROJECT_NAME}Targets.cmake)
+export(PACKAGE ${PROJECT_NAME})
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    cmake/${PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
+configure_package_config_file(
+    ${CMAKE_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+    cmake/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION lib/cmake/)
+
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake
+    DESTINATION lib/cmake/)
+
+install(EXPORT ${PROJECT_NAME}Targets
+    DESTINATION lib/cmake/)
