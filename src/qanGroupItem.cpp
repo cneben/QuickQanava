@@ -207,7 +207,8 @@ void    GroupItem::mousePressEvent(QMouseEvent* event)
 {
     qan::NodeItem::mousePressEvent(event);
 
-    if (event->button() == Qt::LeftButton &&    // Selection management
+    if ((event->button() == Qt::LeftButton ||
+         event->button() == Qt::RightButton) &&    // Selection management
          getGroup() &&
          isSelectable() &&
          !getCollapsed() &&         // Locked/Collapsed group is not selectable
