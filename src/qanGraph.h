@@ -993,12 +993,14 @@ public:
     //! Send a graphic item (either a node or a group) to back.
     Q_INVOKABLE void    sendToBack(QQuickItem* item);
 
+public:
     /*! \brief Iterate over all graph container items, find and update the maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
      * maxZ after in serialization for example).
      */
-    Q_INVOKABLE void    findMaxZ() noexcept;
+    // FIXME #1718 never called
+    //Q_INVOKABLE void    findMaxZ() noexcept;
 
     /*! \brief Maximum global z for nodes and groups (ie top-most item).
      *
@@ -1017,14 +1019,43 @@ public:
     //! Add 1. to \c maxZ and return the new \c maxZ.
     qreal               nextMaxZ() noexcept;
     //! Update maximum z value if \c z is greater than actual \c maxZ value.
-    Q_INVOKABLE void    updateMaxZ(qreal z) noexcept;
+    Q_INVOKABLE void    updateMaxZ(const qreal z) noexcept;
 
 protected:
     /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.
-     *
      * \return 0. if there is no child, maximum child z value otherwise.
      */
-    auto                maxChildsZ(QQuickItem* item) const noexcept -> qreal;
+    static auto         maxChildsZ(const QQuickItem* item) noexcept -> qreal;
+
+public:
+    /*! \brief Iterate over all graph container items, find and update the minZ property.
+     *
+     * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
+     * maxZ after in serialization for example).
+     */
+    // FIXME #1718 never called
+    //Q_INVOKABLE void    findMaxZ() noexcept;
+
+    //! \brief Minimum global z for nodes and groups (ie bottom-less item).
+    Q_PROPERTY(qreal    minZ READ getMinZ WRITE setMinZ NOTIFY minZChanged FINAL)
+    qreal               getMinZ() const noexcept;
+    void                setMinZ(const qreal minZ) noexcept;
+private:
+    qreal               _minZ = 0.;
+signals:
+    void                minZChanged();
+
+public:
+    //! Substract 1. to \c minZ and return the new \c minZ.
+    qreal               nextMinZ() noexcept;
+    //! Update minimum z value if \c z is less than actual \c minZ value.
+    Q_INVOKABLE void    updateMinZ(const qreal z) noexcept;
+
+protected:
+    /*! \brief Utility to find a QQuickItem minimum z value of \c item childs.
+     * \return 0. if there is no child, minimum child z value otherwise.
+     */
+    static auto         minChildsZ(const QQuickItem* item) noexcept -> qreal;
     //@}
     //-------------------------------------------------------------------------
 

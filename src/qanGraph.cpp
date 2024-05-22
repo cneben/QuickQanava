@@ -654,8 +654,8 @@ bool    Graph::insertNode(Node* node, QQmlComponent* nodeComponent, qan::NodeSty
                     this,     notifyNodeDoubleClicked);
             node->setItem(nodeItem);
             {   // Send item to front
-                _maxZ += 1;
-                nodeItem->setZ(_maxZ);
+                const auto z = nextMaxZ();
+                nodeItem->setZ(z);
             }
         }
         super_t::insert_node(node);
@@ -958,8 +958,8 @@ bool    Graph::insertGroup(Group* group, QQmlComponent* groupComponent, qan::Nod
                 this,      notifyGroupDoubleClicked);
 
         { // Send group item to front
-            _maxZ += 1.0;
-            groupItem->setZ(_maxZ);
+            const auto z = nextMaxZ();
+            groupItem->setZ(z);
         }
     }
     if (group != nullptr) {       // Notify user.
@@ -1087,8 +1087,8 @@ bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transfo
             if (node != nullptr &&
                 node->getItem() != nullptr) {
                 // Update node z to maxZ: otherwise an undroupped node might be behind it's host group.
-                _maxZ += 1.0;
-                node->getItem()->setZ(_maxZ);
+                const auto z = nextMaxZ();
+                node->getItem()->setZ(z);
             }
             return true;
         } catch (...) { qWarning() << "qan::Graph::ungroupNode(): Topology error."; }
@@ -1822,19 +1822,20 @@ void    Graph::sendToBack(QQuickItem* item)
 {
     if (item == nullptr)
         return;
-    //qan::GroupItem* groupItem = qobject_cast<qan::GroupItem*>(item);
     qan::NodeItem* nodeItem = qobject_cast<qan::NodeItem*>(item);
     if (nodeItem == nullptr)
-        return;     // item must be a nodeItem or a groupItem
-    nodeItem->setZ(0.);
-    // FIXME
+        return;     // item must be a nodeItem or a groupItem (qan::GroupItem is a qan::NodeItem)
+    // Note 20240522: For sendToBack(), there is no need to be as agressive as in sendToFront(),
+    // juste set the node/group z to minimal z, there is no need to host group to back.
+    const auto z = nextMinZ();
+    nodeItem->setZ(z);
 }
 
-void    Graph::findMaxZ() noexcept
+/*void    Graph::findMaxZ() noexcept
 {
     const auto maxZ = maxChildsZ(getContainerItem());
     setMaxZ(maxZ);
-}
+}*/
 
 qreal   Graph::getMaxZ() const noexcept { return _maxZ; }
 void    Graph::setMaxZ(const qreal maxZ) noexcept
@@ -1850,13 +1851,13 @@ qreal   Graph::nextMaxZ() noexcept
     return _maxZ;
 }
 
-void    Graph::updateMaxZ(qreal z) noexcept
+void    Graph::updateMaxZ(const qreal z) noexcept
 {
     if (z > _maxZ)
         setMaxZ(z);
 }
 
-auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
+auto    Graph::maxChildsZ(const QQuickItem* item) noexcept -> qreal {
     if (item == nullptr)
         return 0.;
     qreal maxZ = std::numeric_limits<qreal>::lowest();
@@ -1869,6 +1870,42 @@ auto    Graph::maxChildsZ(QQuickItem* item) const noexcept -> qreal {
         }
     }
     return hasChild ? maxZ : 0.;
+};
+
+
+qreal   Graph::getMinZ() const noexcept { return _minZ; }
+void    Graph::setMinZ(const qreal minZ) noexcept
+{
+    _minZ = minZ;
+    emit minZChanged();
+}
+
+qreal   Graph::nextMinZ() noexcept
+{
+    _minZ -= 1.;
+    emit minZChanged();
+    return _minZ;
+}
+
+void    Graph::updateMinZ(const qreal z) noexcept
+{
+    if (z < _minZ)
+        setMinZ(z);
+}
+
+auto    Graph::minChildsZ(const QQuickItem* item) noexcept -> qreal {
+    if (item == nullptr)
+        return 0.;
+    qreal minZ = std::numeric_limits<qreal>::infinity();
+    bool hasChild = false;
+    const auto childs = item->childItems();
+    for (const auto childItem : qAsConst(childs)) {
+        if (childItem != nullptr) {
+            hasChild = true;
+            minZ = std::min(minZ, childItem->z());
+        }
+    }
+    return hasChild ? minZ : 0.;
 };
 //-----------------------------------------------------------------------------
 
