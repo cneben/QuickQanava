@@ -1831,11 +1831,13 @@ void    Graph::sendToBack(QQuickItem* item)
     nodeItem->setZ(z);
 }
 
-/*void    Graph::findMaxZ() noexcept
+void    Graph::updateMinMaxZ() noexcept
 {
     const auto maxZ = maxChildsZ(getContainerItem());
     setMaxZ(maxZ);
-}*/
+    const auto minZ = minChildsZ(getContainerItem());
+    setMaxZ(minZ);
+}
 
 qreal   Graph::getMaxZ() const noexcept { return _maxZ; }
 void    Graph::setMaxZ(const qreal maxZ) noexcept

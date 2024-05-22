@@ -994,13 +994,12 @@ public:
     Q_INVOKABLE void    sendToBack(QQuickItem* item);
 
 public:
-    /*! \brief Iterate over all graph container items, find and update the maxZ property.
+    /*! \brief Iterate over all graph container items, find and update the minZ and maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
      * maxZ after in serialization for example).
      */
-    // FIXME #1718 never called
-    //Q_INVOKABLE void    findMaxZ() noexcept;
+    Q_INVOKABLE void    updateMinMaxZ() noexcept;
 
     /*! \brief Maximum global z for nodes and groups (ie top-most item).
      *
@@ -1028,14 +1027,6 @@ protected:
     static auto         maxChildsZ(const QQuickItem* item) noexcept -> qreal;
 
 public:
-    /*! \brief Iterate over all graph container items, find and update the minZ property.
-     *
-     * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
-     * maxZ after in serialization for example).
-     */
-    // FIXME #1718 never called
-    //Q_INVOKABLE void    findMaxZ() noexcept;
-
     //! \brief Minimum global z for nodes and groups (ie bottom-less item).
     Q_PROPERTY(qreal    minZ READ getMinZ WRITE setMinZ NOTIFY minZChanged FINAL)
     qreal               getMinZ() const noexcept;
