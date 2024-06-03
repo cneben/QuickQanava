@@ -66,6 +66,7 @@ Item {
 
     MultiEffect {
         source: border
+        visible: glowEffect.visible
         anchors.centerIn: parent
         width: border.width + (glowRadius * 2)
         height: border.height + (glowRadius * 2)
@@ -83,6 +84,7 @@ Item {
             live: true
             width: border.width
             height: border.height
+            smooth: false
             sourceItem: Rectangle {
                 x: 1
                 y: 1
