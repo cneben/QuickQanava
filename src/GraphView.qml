@@ -197,9 +197,6 @@ Qan.AbstractGraphView {
     onPortClicked: function(port) {
         if (graph &&
             port) {
-            // FIXME #1718
-            //if (port.node)    // Force port host node on top
-            //    graph.sendToFront(port.node.item)
             if (graph.connector &&
                 graph.connectorEnabled)
                 graph.connector.sourcePort = port
@@ -231,11 +228,9 @@ Qan.AbstractGraphView {
             return
 
         if (node.locked ||
-                node.isProtected)           // Do not show any connector for locked node/groups
+            node.isProtected)           // Do not show any connector for locked node/groups
             return;
 
-        // FIXME #1718
-        //graph.sendToFront(node.item)    // Protected/Locked nodes are not re-ordered to front.
         if (graph.connector &&
                 graph.connectorEnabled &&
                 (node.item.connectable === Qan.NodeItem.Connectable ||
@@ -284,10 +279,6 @@ Qan.AbstractGraphView {
         // Disable node resizing
         nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
 
-        // FIXME #1718
-        //if (!group.locked && !group.isProtected)  // Do not move locked/protected groups to front.
-        //    graph.sendToFront(group.item)
-
         if (group.item.container &&
             group.item.resizable) {
             // Set minimumTargetSize _before_ setting target
@@ -319,16 +310,8 @@ Qan.AbstractGraphView {
         } // group.item.resizable
     }  // onGroupClicked()
 
-    onGroupRightClicked: (group) => {
-        // FIXME #1718
-        //if (group && group.item)
-        //    graph.sendToFront(group.item)
-    }
-    onGroupDoubleClicked: (group) => {
-        // FIXME #1718
-        //if (group && group.itm)
-        //    graph.sendToFront(group.item)
-    }
+    onGroupRightClicked: (group) => { }
+    onGroupDoubleClicked: (group) => { }
     ShaderEffectSource {        // Screenshot shader is used for gradbbing graph containerItem screenshot. Default
         id: graphImageShader    // Item.grabToImage() does not allow negative (x, y) position, ShaderEffectSource is
         visible: false          // used to render graph at desired resolution with a custom negative sourceRect, then
