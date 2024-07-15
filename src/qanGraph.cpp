@@ -47,6 +47,7 @@
 #include "./qanNodeItem.h"
 #include "./qanPortItem.h"
 #include "./qanEdgeItem.h"
+#include "./qanTableGroupItem.h"
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
 #include "./qanConnector.h"
@@ -144,18 +145,36 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
 {
     if (getContainerItem() == nullptr)
         return nullptr;
-    const QList<QQuickItem*> children = getContainerItem()->childItems();
-    for (int i = children.count()-1; i >= 0; --i) {
-        QQuickItem* child = children.at(i);
-        const QPointF point = mapToItem(child, QPointF(x, y));  // Map coordinates to the child element's coordinate space
-        if (child->isVisible() &&
-            child->contains( point ) &&    // Note 20160508: childAt do not call contains()
+    const auto childrens = getContainerItem()->childItems();
+    for (int i = childrens.count() - 1; i >= 0; --i) {
+        QQuickItem* child = childrens.at(i);
+        const QPointF point = mapToItem(child, QPointF{x, y});  // Map coordinates to the child element's coordinate space
+        if (child != nullptr &&
+            child->isVisible() &&
+            child->contains(point) &&    // Note 20160508: childAt do not call contains()
             point.x() > -0.0001 &&
             child->width() > point.x() &&
             point.y() > -0.0001 &&
-            child->height() > point.y() ) {
+            child->height() > point.y()) {
+            if (child->inherits("qan::TableGroupItem")) {
+                const auto tableGroupItem = static_cast<qan::TableGroupItem*>(child);
+                if (tableGroupItem != nullptr) {
+                    for (const auto cell: tableGroupItem->getCells()) {
+                        const auto point = mapToItem(cell, QPointF(x, y)); // Map coordinates to group child element's coordinate space
+                        if (cell->isVisible() &&
+                            cell->contains(point) &&
+                            point.x() > -0.0001 &&
+                            cell->width() > point.x() &&
+                            point.y() > -0.0001 &&
+                            cell->height() > point.y()) {
+                            QQmlEngine::setObjectOwnership(cell->getItem(), QQmlEngine::CppOwnership);
+                            return cell->getItem();
+                        }
+                    }
+                }
+            }
             if (child->inherits("qan::GroupItem")) {  // For group, look in group childs
-                const auto groupItem = qobject_cast<qan::GroupItem*>( child );
+                const auto groupItem = qobject_cast<qan::GroupItem*>(child);
                 if (groupItem != nullptr &&
                     groupItem->getContainer() != nullptr) {
                     const QList<QQuickItem *> groupChildren = groupItem->getContainer()->childItems();
@@ -163,11 +182,11 @@ QQuickItem* Graph::graphChildAt(qreal x, qreal y) const
                         QQuickItem* groupChild = groupChildren.at(gc);
                         const auto point = mapToItem(groupChild, QPointF(x, y)); // Map coordinates to group child element's coordinate space
                         if (groupChild->isVisible() &&
-                            groupChild->contains( point ) &&
+                            groupChild->contains(point) &&
                             point.x() > -0.0001 &&
                             groupChild->width() > point.x() &&
                             point.y() > -0.0001 &&
-                            groupChild->height() > point.y() ) {
+                            groupChild->height() > point.y()) {
                             QQmlEngine::setObjectOwnership(groupChild, QQmlEngine::CppOwnership);
                             return groupChild;
                         }
