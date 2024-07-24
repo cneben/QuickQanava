@@ -42,8 +42,8 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanNodeItem.h"
-#include "./qanEdgeItem.h"
+#include "qanNodeItem.h"
+#include "qanEdgeItem.h"
 
 namespace qan { // ::qan
 

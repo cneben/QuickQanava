@@ -38,7 +38,7 @@
 #include <QtQml>
 #include <QQuickItem>
 
-#include "./qanTableGroup.h"
+#include "qanTableGroup.h"
 
 namespace qan {  // ::qan
 

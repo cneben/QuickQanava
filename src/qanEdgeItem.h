@@ -38,9 +38,9 @@
 #include <QLineF>
 
 // QuickQanava headers
-#include "./qanStyle.h"
-#include "./qanNodeItem.h"
-#include "./qanSelectable.h"
+#include "qanStyle.h"
+#include "qanNodeItem.h"
+#include "qanSelectable.h"
 
 namespace qan { // ::qan
 

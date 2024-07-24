@@ -40,13 +40,13 @@
 #include <iterator>         // std::back_inserter
 
 // GTpo headers
-#include "./graph_property.h"
-#include "./observable.h"
-#include "./observer.h"
-#include "./container_adapter.h"
+#include "gtpo/graph_property.h"
+#include "gtpo/observable.h"
+#include "gtpo/observer.h"
+#include "gtpo/container_adapter.h"
 
 // QuickContainers headers
-#include "../quickcontainers/qcmContainer.h"
+#include "quickcontainers/qcmContainer.h"
 
 namespace gtpo { // ::gtpo
 
@@ -182,5 +182,4 @@ private:
 
 } // ::gtpo
 
-#include "./node.hpp"
-
+#include "gtpo/node.hpp"

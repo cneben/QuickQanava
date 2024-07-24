@@ -38,8 +38,8 @@
 #include <QQmlEngine>
 
 // QuickQanava headers
-#include "./qanGraph.h"
-#include "./qanStyleManager.h"
+#include "qanGraph.h"
+#include "qanStyleManager.h"
 
 namespace qan { // ::qan
 
@@ -131,4 +131,3 @@ qan::Style*     StyleManager::getStyleAt( int s )
 //-----------------------------------------------------------------------------
 
 } // ::qan
-

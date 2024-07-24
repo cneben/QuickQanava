@@ -37,11 +37,11 @@
 #include <QPainterPath>
 
 // QuickQanava headers
-#include "./qanNode.h"
-#include "./qanNodeItem.h"
-#include "./qanGroup.h"
-#include "./qanGraph.h"
-#include "./qanTableCell.h"
+#include "qanNode.h"
+#include "qanNodeItem.h"
+#include "qanGroup.h"
+#include "qanGraph.h"
+#include "qanTableCell.h"
 
 namespace qan { // ::qan
 

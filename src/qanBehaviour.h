@@ -39,8 +39,8 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./gtpo/observer.h"
-#include "./qanEdge.h"
+#include "gtpo/observer.h"
+#include "qanEdge.h"
 
 namespace qan { // ::qan
 
@@ -126,4 +126,3 @@ protected:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::NodeBehaviour)
-

@@ -40,8 +40,8 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanNodeItem.h"
-#include "./qanGroup.h"
+#include "qanNodeItem.h"
+#include "qanGroup.h"
 
 namespace qan { // ::qan
 

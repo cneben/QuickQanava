@@ -40,8 +40,8 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanStyle.h"
-#include "./qanNode.h"
+#include "qanStyle.h"
+#include "qanNode.h"
 
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanGroupItem.h")

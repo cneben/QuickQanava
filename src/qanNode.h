@@ -40,11 +40,11 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./gtpo/node.h"
-#include "./qanEdge.h"
-#include "./qanStyle.h"
-#include "./qanBehaviour.h"
-#include "./qanTableCell.h"
+#include "gtpo/node.h"
+#include "qanEdge.h"
+#include "qanStyle.h"
+#include "qanBehaviour.h"
+#include "qanTableCell.h"
 
 namespace qan { // ::qan
 

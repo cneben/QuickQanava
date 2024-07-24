@@ -35,9 +35,9 @@
 #pragma once
 
 // QuickQanava headers
-#include "./gtpo/edge.h"
-#include "./qanStyle.h"
-#include "./qanNode.h"
+#include "gtpo/edge.h"
+#include "qanStyle.h"
+#include "qanNode.h"
 
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanEdgeItem.h")

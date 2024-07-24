@@ -38,7 +38,7 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanNavigable.h"
+#include "qanNavigable.h"
 
 namespace qan { // ::qan
 

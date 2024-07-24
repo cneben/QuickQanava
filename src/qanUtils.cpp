@@ -35,9 +35,8 @@
 // Qt headers
 
 // QuickQanava headers
-#include "./qanUtils.h"
+#include "qanUtils.h"
 
 namespace qan { // ::qan
 
 } // ::qan
-
