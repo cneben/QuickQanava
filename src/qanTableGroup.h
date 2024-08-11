@@ -40,7 +40,7 @@
 #include <QPolygonF>
 
 // QuickQanava headers
-#include "./qanGroup.h"
+#include "qanGroup.h"
 
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanTableGroupItem.h")

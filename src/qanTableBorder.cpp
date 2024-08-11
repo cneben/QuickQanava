@@ -42,9 +42,9 @@
 #include <QMouseEvent>
 
 // QuickQanava headers
-#include "./qanTableBorder.h"
-#include "./qanTableCell.h"
-#include "./qanTableGroupItem.h"
+#include "qanTableBorder.h"
+#include "qanTableCell.h"
+#include "qanTableGroupItem.h"
 
 namespace qan {  // ::qan
 

@@ -34,8 +34,8 @@
 
 #pragma once
 
-#include "./gtpo/node.h"
-#include "./gtpo/graph.h"
+#include "gtpo/node.h"
+#include "gtpo/graph.h"
 
 // Qt headers
 #include <QString>
@@ -45,15 +45,15 @@
 #include <QAbstractListModel>
 
 // QuickQanava headers
-#include "./qanUtils.h"
-#include "./qanStyleManager.h"
-#include "./qanEdge.h"
-#include "./qanNode.h"
-#include "./qanGroup.h"
-#include "./qanTableGroup.h"
-#include "./qanNavigable.h"
-#include "./qanSelectable.h"
-#include "./qanConnector.h"
+#include "qanUtils.h"
+#include "qanStyleManager.h"
+#include "qanEdge.h"
+#include "qanNode.h"
+#include "qanGroup.h"
+#include "qanTableGroup.h"
+#include "qanNavigable.h"
+#include "qanSelectable.h"
+#include "qanConnector.h"
 
 
 //! Main QuickQanava namespace
@@ -1152,6 +1152,6 @@ protected:
 
 } // ::qan
 
-#include "./qanGraph.hpp"
+#include "qanGraph.hpp"
 
 QML_DECLARE_TYPE(qan::Graph)

@@ -39,10 +39,10 @@
 #include <QQuickImageProvider>
 
 // QuickContainers headers
-#include "./quickcontainers/qcmContainer.h"
+#include "quickcontainers/qcmContainer.h"
 
 // QuickQanava headers
-#include "./qanStyle.h"
+#include "qanStyle.h"
 
 namespace qan { // ::qan
 

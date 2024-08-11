@@ -35,10 +35,10 @@
 #pragma once
 
 // QuickQanava headers
-#include "./qanGraph.h"
-#include "./qanGroup.h"
-#include "./qanNavigable.h"
-#include "./qanPortItem.h"
+#include "qanGraph.h"
+#include "qanGroup.h"
+#include "qanNavigable.h"
+#include "qanPortItem.h"
 
 // Qt headers
 #include <QQuickItem>

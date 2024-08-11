@@ -36,7 +36,7 @@
 #include <QFont>
 
 // QuickQanava headers
-#include "./qanStyle.h"
+#include "qanStyle.h"
 
 namespace qan { // ::qan
 
@@ -311,4 +311,3 @@ const QVector<qreal>& EdgeStyle::getDashPattern() const noexcept { return _dashP
 //-----------------------------------------------------------------------------
 
 } // ::qan
-

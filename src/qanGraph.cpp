@@ -42,15 +42,15 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
-#include "./qanUtils.h"
-#include "./qanGraph.h"
-#include "./qanNodeItem.h"
-#include "./qanPortItem.h"
-#include "./qanEdgeItem.h"
-#include "./qanTableGroupItem.h"
-#include "./qanGroup.h"
-#include "./qanGroupItem.h"
-#include "./qanConnector.h"
+#include "qanUtils.h"
+#include "qanGraph.h"
+#include "qanNodeItem.h"
+#include "qanPortItem.h"
+#include "qanEdgeItem.h"
+#include "qanTableGroupItem.h"
+#include "qanGroup.h"
+#include "qanGroupItem.h"
+#include "qanConnector.h"
 
 namespace qan { // ::qan
 

@@ -42,8 +42,8 @@
 #include <QPointer>
 
 // QuickQanava headers
-#include "./qanAbstractDraggableCtrl.h"
-#include "./qanGroup.h"
+#include "qanAbstractDraggableCtrl.h"
+#include "qanGroup.h"
 
 namespace qan { // ::qan
 

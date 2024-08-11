@@ -24,7 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "./qcmPlugin.h"
+#include "qcmPlugin.h"
 #include "qcmAbstractContainer.h"
 #include "qcmContainer.h"
 

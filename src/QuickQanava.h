@@ -35,34 +35,34 @@
 #pragma once
 
 // QuickContainers headers
-#include "./quickcontainers/QuickContainers.h"
+#include "quickcontainers/QuickContainers.h"
 
 // Qt header
 #include <QQmlEngine>
 
 // QuickQanava headers
-#include "./qanEdge.h"
-#include "./qanEdgeItem.h"
-#include "./qanNode.h"
-#include "./qanNodeItem.h"
-#include "./qanPortItem.h"
-#include "./qanConnector.h"
-#include "./qanGroup.h"
-#include "./qanGroupItem.h"
-#include "./qanTableGroupItem.h"
-#include "./qanTableBorder.h"
-#include "./qanGraph.h"
-#include "./qanNavigable.h"
-#include "./qanGrid.h"
-#include "./qanLineGrid.h"
-#include "./qanGraphView.h"
-#include "./qanStyle.h"
-#include "./qanStyleManager.h"
-#include "./qanBottomRightResizer.h"
-#include "./qanRightResizer.h"
-#include "./qanBottomResizer.h"
-#include "./qanNavigablePreview.h"
-#include "./qanAnalysisTimeHeatMap.h"
+#include "qanEdge.h"
+#include "qanEdgeItem.h"
+#include "qanNode.h"
+#include "qanNodeItem.h"
+#include "qanPortItem.h"
+#include "qanConnector.h"
+#include "qanGroup.h"
+#include "qanGroupItem.h"
+#include "qanTableGroupItem.h"
+#include "qanTableBorder.h"
+#include "qanGraph.h"
+#include "qanNavigable.h"
+#include "qanGrid.h"
+#include "qanLineGrid.h"
+#include "qanGraphView.h"
+#include "qanStyle.h"
+#include "qanStyleManager.h"
+#include "qanBottomRightResizer.h"
+#include "qanRightResizer.h"
+#include "qanBottomResizer.h"
+#include "qanNavigablePreview.h"
+#include "qanAnalysisTimeHeatMap.h"
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
