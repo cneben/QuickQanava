@@ -343,14 +343,14 @@ public:
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
     template <class Node_t>
-    qan::Node*              insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
+    Node_t*                 insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 
     /*! \brief Same semantic than insertNode<>() but for non visual nodes.
      *
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
     template <class Node_t>
-    qan::Node*              insertNonVisualNode();
+    Node_t*                 insertNonVisualNode();
 
     /*! \brief Insert and existing node with a specific delegate component and a custom style.
      *
