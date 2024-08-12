@@ -121,7 +121,8 @@ Item {
                     color: groupItem?.style?.labelColor ?? "black"
                     elide:  Text.ElideRight
                     TapHandler {
-                        enabled: !groupItem.group.isProtected &&
+                        enabled: !groupItem.collapsed &&
+                                 !groupItem.group.isProtected &&
                                  !groupItem.group.locked    // Do not allow dragging of locked groups
                         exclusiveSignals: TapHandler.DoubleTap
                         onTapped: labelEditor.visible = true
