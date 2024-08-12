@@ -48,8 +48,7 @@ ShapePath {
     strokeWidth: 2   // Fix to 2 to have "non sharp" edges
     // Adding lineWidth / 2. to vertices A1 (base top) and A3 (base bottom) to take into
     // account lineWidth in arrowLength
-    readonly property real lineWidth: edgeItem?.style ? edgeItem.style.lineWidth / 2. :
-                                                        1
+    readonly property real lineWidth: edgeItem?.style?.lineWidth / 2. ?? 1
     startX: edgeItem ? edgeItem.dstA1.x : 0
     startY: edgeItem ? edgeItem.dstA1.y - lineWidth: 0
     PathLine {

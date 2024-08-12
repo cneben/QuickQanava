@@ -36,7 +36,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import QuickQanava 2.0      as Qan
+import QuickQanava 2.0 as Qan
 
 Item {
     id: template
@@ -44,15 +44,12 @@ Item {
     default property alias children : content.children
 
     // Binded to Tpp.Group.container in Tpp.Group.
-    property alias  content: content
+    property alias  container: content
 
     property var    groupItem: undefined
 
     //! Show or hide group top left label editor (default to visible).
-    property alias  labelEditorVisible : labelEditorControl.visible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias  expandButtonVisible : collapser.visible
+    readonly property alias labelEditorVisible: labelEditorControl.visible
 
     property alias  header: headerLayout
 
@@ -67,86 +64,87 @@ Item {
         }
         return true;
     }
-
-    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
+    RectGradientBackground {    // Apply node background styling
         id: groupBackground
-        anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
-        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
-        visible: !groupItem.collapsed
-    }
-    Item {
-        id: content
         anchors.fill: parent
-        z: 3
+        style: template.groupItem?.style
         visible: !groupItem.collapsed
-        enabled: !groupItem.collapsed
     }
-    RowLayout {
-        id: headerLayout
-        x: 0
-        y: -2 - Math.max(collapser.height,                   // Shift header by the size of collapser button or the label
-                         groupLabel.contentHeight, labelEditor.height) // height (for large font size) plus 2px margin
-        z: 2
-        width: content.width; height: collapser.height
-        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+    ColumnLayout {
+        anchors.fill: parent
         spacing: 0
-        ToolButton {
-            id: collapser
-            padding: 0
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            text: groupItem ? (groupItem.collapsed ? "+" : "-") : "-"
-            font.pixelSize: 13
-            font.bold: true
-            onClicked: groupItem.collapsed = !groupItem.collapsed
+        RowLayout {
+            id: headerLayout
+            Layout.fillWidth: true
+            Layout.fillHeight: false
+            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+            z: 2
+            spacing: 0
+            ToolButton {
+                id: collapser
+                padding: 0
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+                text: groupItem ? (groupItem.collapsed ? "+" : "-") : "-"
+                font.pixelSize: 13
+                font.bold: true
+                onClicked: groupItem.collapsed = !groupItem.collapsed
+                visible: groupItem?.expandButtonVisible
+            }
+            Item {
+                id: labelEditorControl
+                clip: false
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                property int labelPointSize : groupItem?.style?.fontPointSize ?? Material.fontSize
+                LabelEditor {
+                    id: labelEditor
+                    clip: false
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    target: groupItem?.group
+                    visible: false
+                    fontPixelSize: labelEditorControl.labelPointSize
+                }
+                Label {
+                    id: groupLabel
+                    anchors.fill: parent
+                    anchors.leftMargin: collapser.visible ? 0 : 10
+                    text: groupItem &&
+                          groupItem.group ? groupItem.group.label :
+                                            "              "
+                    visible: !labelEditor.visible
+                    verticalAlignment: Text.AlignVCenter
+                    font.bold: groupItem.style.fontBold
+                    font.pointSize: labelEditorControl.labelPointSize
+                    color: groupItem?.style?.labelColor ?? "black"
+                    elide:  Text.ElideRight
+                    TapHandler {
+                        enabled: !groupItem.group.isProtected &&
+                                 !groupItem.group.locked    // Do not allow dragging of locked groups
+                        exclusiveSignals: TapHandler.DoubleTap
+                        onTapped: labelEditor.visible = true
+                    }
+                }
+            } // labelEditor Item
+        } // RowLayout: collapser + label
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.margins: 0
+            height: groupItem?.style?.borderWidth ?? 1.
+            border.width: 0
+            color: groupItem?.style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
+            opacity: 0.8
+            visible: !groupItem.collapsed
         }
         Item {
-            id: labelEditorControl
-            clip: false
+            id: content
             Layout.fillWidth: true
             Layout.fillHeight: true
-            property int fontPointSize : groupItem.style.fontPointSize  // Do not set pointSize for -1 value
-            onFontPointSizeChanged: {
-                if (fontPointSize != -1)
-                    labelEditor.pixelSize = fontPointSize
-                groupLabel.font.pointSize = fontPointSize
-            }
-            LabelEditor {
-                clip: false
-                id: labelEditor
-                anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
-                target: groupItem && groupItem.group ? groupItem.group : undefined
-                visible: false
-                bold: groupItem.style.fontBold
-            }
-            Label {
-                id: groupLabel
-                anchors.fill: parent
-                text: groupItem &&
-                      groupItem.group ? groupItem.group.label :
-                                        "              "
-                visible: !labelEditor.visible
-                verticalAlignment: Text.AlignVCenter
-                font.bold: groupItem.style.fontBold
-                color: groupItem &&
-                       groupItem.style &&
-                       groupItem.style.labelColor ? groupItem.style.labelColor : "black"
-                elide:  Text.ElideRight
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: !groupItem.group.isProtected &&
-                             !groupItem.group.locked    // Do not allow dragging of locked groups
-                    preventStealing: true
-                    propagateComposedEvents: true // Ensure event are forwarded to collapserArea
-                    drag.target: groupItem.draggable ? groupItem : null
-                    onDoubleClicked: labelEditor.visible = true
-                }
-            }
-        } // labelEditor Item
-    } // RowLayout: collapser + label
-
-    // Emitted by qan::GroupItem when node dragging start
-    function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
-    // Emitted by qan::GroupItem when node dragging ends
-    function onNodeDragLeave() { /*groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) */}
+            z: 3
+            visible: !groupItem.collapsed
+            enabled: !groupItem.collapsed
+        }
+    }
 }

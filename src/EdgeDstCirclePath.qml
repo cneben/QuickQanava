@@ -50,10 +50,7 @@ ShapePath {
             return Qt.rgba(0.,0.,0.,0.);
         return edgeTemplate ? edgeTemplate.color : Qt.rgba(0,0,0,1)
     }
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
-
+    strokeWidth: edgeItem?.style?.lineWidth ?? 2
     startX: 0
     startY: 0
     PathArc {

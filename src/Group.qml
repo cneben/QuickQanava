@@ -38,6 +38,7 @@ import QtQuick.Layouts
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
+//! \brief Default delegate for `qan::GroupItem`.
 Qan.GroupItem {
     id: groupItem
 
@@ -46,13 +47,8 @@ Qan.GroupItem {
     height: 150
 
     default property alias children : template
-    container: template.content   // See qan::GroupItem::container property documentation
-
-    //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : template.labelEditorVisible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : template.expandButtonVisible
+    container: template.container   // See qan::GroupItem::container property documentation
+    labelEditorVisible: template.labelEditorVisible
 
     Qan.RectGroupTemplate {
         id: template
@@ -60,9 +56,4 @@ Qan.GroupItem {
         groupItem: parent
         z: 1
     }
-
-    // Emitted by qan::GroupItem when node dragging start
-    onNodeDragEnter: { template.onNodeDragEnter() }
-    // Emitted by qan::GroupItem when node dragging ends
-    onNodeDragLeave: { template.onNodeDragLeave() }
 }

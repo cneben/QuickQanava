@@ -34,9 +34,6 @@
 
 #pragma once
 
-// Std headers
-#include <memory>
-
 // Qt headers
 #include <QObject>      // Q_DECLARE_INTERFACE
 #include <QPointer>

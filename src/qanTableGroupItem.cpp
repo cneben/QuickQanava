@@ -45,12 +45,6 @@ TableGroupItem::TableGroupItem(QQuickItem* parent) :
     qan::GroupItem{parent}
 {
     setObjectName(QStringLiteral("qan::TableGroupItem"));
-
-    connect(this,   &QQuickItem::widthChanged,
-            this,   &TableGroupItem::layoutTable);
-    connect(this,   &QQuickItem::heightChanged,
-            this,   &TableGroupItem::layoutTable);
-
     setItemStyle(qan::TableGroup::style(parent));
     setStrictDrop(false);  // Top left corner of a node is enought to allow a drop
 }
@@ -75,6 +69,14 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
         for (const auto cell: _cells)
             if (cell != nullptr)
                 cell->setParentItem(container);
+
+        connect(container,  &QQuickItem::widthChanged,
+                this,       &TableGroupItem::layoutTable);
+        connect(container,  &QQuickItem::heightChanged,
+                this,       &TableGroupItem::layoutTable);
+
+        initializeTableLayout();
+        layoutTable();
         return true;
     }
     return false;
@@ -209,8 +211,8 @@ void    TableGroupItem::createBorders(int verticalBordersCount, int horizontalBo
         return;
     }
 
-    auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
-                                             QQmlComponent::PreferSynchronous, nullptr);
+    const auto borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
+                                                   QQmlComponent::PreferSynchronous, nullptr);
 
     qan::TableBorder* prevBorder = nullptr;
     if (verticalBordersCount != static_cast<int>(_verticalBorders.size())) {
@@ -300,10 +302,20 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
-    //qWarning() << "qan::TableGroupItem::initializeTableLayout()";
+    //qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << getTableGroup();
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
+
+    const auto tableContainer = getContainer();
+    if (tableContainer == nullptr)
+        return;
+    const auto tableWidth = tableContainer->width();
+    const auto tableHeight = tableContainer->height();
+    const auto tableSize = tableContainer->size();
+    if (qRound(tableWidth) <= 0 || qRound(tableHeight) <= 0)
+        return;
+
     const int cols = tableGroup->getCols();
     const int rows = tableGroup->getRows();
     const auto spacing = tableGroup != nullptr ? tableGroup->getCellSpacing() :
@@ -320,17 +332,16 @@ void    TableGroupItem::initializeTableLayout()
         return;
     }
 
-    const auto cellWidth = width() > 0. ? (width()
+    const auto cellWidth = tableWidth > 0. ? (tableWidth
                                            - (2 * padding)
                                            - ((cols - 1) * spacing)) / cols :
                                           0.;
-    const auto cellHeight = height() > 0. ? (height()
+    const auto cellHeight = tableHeight > 0. ? (tableHeight
                                              - (2 * padding)
                                              - ((rows - 1) * spacing)) / rows :
                                             0.;
 
-    //qWarning() << "cellWidth=" << cellWidth;
-    //qWarning() << "cellHeight=" << cellHeight;
+    //qWarning() << "  cellWidth=" << cellWidth << " cellHeight=" << cellHeight;
 
     if (cellWidth < 0. || cellHeight < 0.) {
         qWarning() << "qan::TableGroupItem::initializeTableLayout(): Error, invalid cell width/height.";
@@ -355,7 +366,7 @@ void    TableGroupItem::initializeTableLayout()
             verticalBorder->setX(x - borderWidth2);
             verticalBorder->setY(0.);
             verticalBorder->setWidth(borderWidth);
-            verticalBorder->setHeight(height());
+            verticalBorder->setHeight(tableHeight);
         }
     } else
         qWarning() << "qan::TableGoupItem::initializeTableLayout(): Invalid vertical border count.";
@@ -372,7 +383,7 @@ void    TableGroupItem::initializeTableLayout()
                            (spacing / 2.);
             horizontalBorder->setX(0.);
             horizontalBorder->setY(y - borderHeight2);
-            horizontalBorder->setWidth(width());
+            horizontalBorder->setWidth(tableWidth);
             horizontalBorder->setHeight(borderHeight);
         }
     } else
@@ -383,6 +394,8 @@ void    TableGroupItem::initializeTableLayout()
     // Note 20230406: In fact calling layout cell is necessary for rows==1, cols==1
     // table that need special handling to dimension cells since there is no horiz/vert borders.
     layoutCells();
+
+    _previousSize = tableSize;  // Set a correct initial size
 }
 
 void    TableGroupItem::layoutTable()
@@ -391,21 +404,28 @@ void    TableGroupItem::layoutTable()
     // New position is:
     //  x = previousX * (actualWidth / previousWidth)
     //  y = previousY * (actualHeight / previousHeight)
-    if (_previousSize.isNull()) {
-        qWarning() << "qan::TableGroupItem::layoutTable(): Invalid initial size.";
-        _previousSize = size();
+    const auto tableContainer = getContainer();
+    //qWarning() << "TableGroupItem::layoutTable(): tableContainer=" << tableContainer << " _previousSize=" << _previousSize;
+    if (tableContainer == nullptr)
         return;
-    }
-    if (_previousSize == size())
+
+    const auto tableSize = tableContainer->size();
+    const auto tableWidth = tableContainer->width();
+    const auto tableHeight = tableContainer->height();
+
+    if (_previousSize.isNull()) {
+        initializeTableLayout();
+        return;
+    } else if (_previousSize == tableSize)
         return;
 
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
             continue;
         const auto previousX = verticalBorder->x();
-        verticalBorder->setX(qRound(previousX * width() / _previousSize.width()));
+        verticalBorder->setX((previousX / _previousSize.width()) * tableWidth);
         verticalBorder->setY(0.);
-        verticalBorder->setHeight(height());
+        verticalBorder->setHeight(tableHeight);
     }
 
     for (const auto horizontalBorder: _horizontalBorders) {
@@ -413,11 +433,11 @@ void    TableGroupItem::layoutTable()
             continue;
         const auto previousY = horizontalBorder->y();
         horizontalBorder->setX(0.);
-        horizontalBorder->setY(qRound(previousY * height() / _previousSize.height()));
-        horizontalBorder->setWidth(width());
+        horizontalBorder->setY((previousY / _previousSize.height()) * tableHeight);
+        horizontalBorder->setWidth(tableWidth);
     }
 
-    _previousSize = size();
+    _previousSize = tableSize;
     layoutCells();
 }
 
@@ -432,6 +452,12 @@ void    TableGroupItem::layoutCells()
             horizontalBorder->layoutCells();
     }
 
+    const auto tableContainer = getContainer();
+    if (tableContainer == nullptr)
+        return;
+    const auto tableWidth = tableContainer->width();
+    const auto tableHeight = tableContainer->height();
+
     // Special handling for 1 row or 1 column table: since there is
     // no "moveable" border, calls to layoutCells() do not set either width/height
     // of cells. Manually set correct width / height:
@@ -444,13 +470,13 @@ void    TableGroupItem::layoutCells()
         for (const auto cell: _cells)
             if (cell != nullptr) {
                 cell->setX(padding);
-                cell->setWidth(width() - padding2);
+                cell->setWidth(tableWidth - padding2);
             }
     }
     if (tableGroup->getRows() == 1) {
         for (const auto cell: _cells)
             if (cell != nullptr) {
-                cell->setHeight(height() - padding2);
+                cell->setHeight(tableHeight - padding2);
                 cell->setY(padding);
             }
     }
@@ -459,8 +485,6 @@ void    TableGroupItem::layoutCells()
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 {
     if (qan::GroupItem::setGroup(group)) {
-        //qWarning() << "qan::TableGroupItem::setGroup(): group=" << group;
-
         auto tableGroup = qobject_cast<qan::TableGroup*>(group);
         if (tableGroup != nullptr) {
             initialize(tableGroup->getCols(),

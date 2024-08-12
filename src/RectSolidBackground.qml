@@ -46,11 +46,11 @@ Rectangle {
     property var    style: undefined
 
     // PUBLIC /////////////////////////////////////////////////////////////////
-    radius: style ? style.backRadius : 4.
+    radius: style?.backRadius ?? 4.
     color: style?.backColor || Qt.rgba(0., 0., 0., 0.)
-    border.color: style ? style.borderColor : Qt.rgba(0., 0., 0., 0.)
-    border.width: style ? style.borderWidth : 1.0
+    border.color: style?.borderColor ?? Qt.rgba(0., 0., 0., 0.)
+    border.width: style?.borderWidth ?? 1.0
     antialiasing: true  // Vertex antialiasing
-    opacity: style ? style.backOpacity : 0.8
+    opacity: style?.backOpacity ?? 0.8
     // Note: Do not enable layer to avoid aliasing at high scale
 }

@@ -78,7 +78,7 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
         qan_TableGroup_style->setFontPointSize(11);
         qan_TableGroup_style->setFontBold(true);
         qan_TableGroup_style->setLabelColor(QColor{"black"});
-        qan_TableGroup_style->setBorderWidth(2.);
+        qan_TableGroup_style->setBorderWidth(3.);
         qan_TableGroup_style->setBackRadius(8.);
         qan_TableGroup_style->setBackOpacity(0.90);
         qan_TableGroup_style->setBaseColor(QColor(240, 245, 250));

@@ -83,15 +83,70 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Collapse Management *///-----------------------------------------
+    /*! \name Collapse / Edition Management *///-------------------------------
     //@{
 protected:
     virtual void    setCollapsed(bool collapsed) noexcept override;
+
+public:
+    //! \copydoc getExpandButtonVisible()
+    Q_PROPERTY(bool expandButtonVisible READ getExpandButtonVisible WRITE setExpandButtonVisible NOTIFY expandButtonVisibleChanged FINAL)
+    //! \copydoc getExpandButtonVisible()
+    void            setExpandButtonVisible(bool expandButtonVisible);
+    //! \brief Show / hide the group expand / collapse button.
+    bool            getExpandButtonVisible() const;
+private:
+    //! \copydoc getExpandButtonVisible()
+    bool            _expandButtonVisible = true;
+signals:
+    //! \copydoc getExpandButtonVisible()
+    void            expandButtonVisibleChanged();
+
+public:
+    //! \copydoc getLabelEditorVisible()
+    Q_PROPERTY(bool labelEditorVisible READ getLabelEditorVisible WRITE setLabelEditorVisible NOTIFY labelEditorVisibleChanged FINAL)
+    //! \copydoc getLabelEditorVisible()
+    void            setLabelEditorVisible(bool labelEditorVisible);
+    //! \brief True when the group label in group editor is beeing edited.
+    bool            getLabelEditorVisible() const;
+private:
+    //! \copydoc getLabelEditorVisible()
+    bool            _labelEditorVisible = false;
+signals:
+    //! \copydoc getLabelEditorVisible()
+    void            labelEditorVisibleChanged();
     //@}
     //-------------------------------------------------------------------------
 
     /*! \name Dragging Support Management *///---------------------------------
     //@{
+public:
+    //! Define a group "dragging" policy: either only from group header or content (default to Header, can be or'ed).
+    enum class DragPolicy : unsigned int {
+        //! Undefined / No dragging.
+        Undefined = 0,
+        //! Allow dragging group in the group header.
+        Header = 2,
+        //! Allow dragging group in the group content.
+        Container = 2
+    };
+    Q_ENUM(DragPolicy)
+    //! \copydoc DragPolicy
+    Q_PROPERTY(DragPolicy dragPolicy READ getDragPolicy WRITE setDragPolicy NOTIFY dragPolicyChanged FINAL)
+    //! \copydoc DragPolicy
+    virtual bool        setDragPolicy(DragPolicy dragPolicy) noexcept;
+    //! \copydoc DragPolicy
+    DragPolicy          getDragPolicy() noexcept;
+    //! \copydoc DragPolicy
+    const DragPolicy    getDragPolicy() const noexcept;
+protected:
+    //! \copydoc DragPolicy
+    DragPolicy  _dragPolicy = DragPolicy::Header;
+signals:
+    //! \copydoc DragPolicy
+    void        dragPolicyChanged();
+
+
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
     void            groupMoved();
@@ -174,6 +229,11 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 };
+
+// Define the bitwise AND operator for MyEnum
+inline GroupItem::DragPolicy operator&(GroupItem::DragPolicy lhs, GroupItem::DragPolicy rhs) {
+    return static_cast<GroupItem::DragPolicy>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+}
 
 } // ::qan
 

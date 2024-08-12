@@ -98,7 +98,7 @@ auto    GroupItem::setRect(const QRectF& r) noexcept -> void
 //-----------------------------------------------------------------------------
 
 
-/* Collapse Management *///----------------------------------------------------
+/* Collapse / Edition Management *///------------------------------------------
 void    GroupItem::setCollapsed(bool collapsed) noexcept
 {
     qan::NodeItem::setCollapsed(collapsed);
@@ -114,9 +114,26 @@ void    GroupItem::setCollapsed(bool collapsed) noexcept
             groupMoved();   // Force update of all adjacent edges
     }
 }
+
+void    GroupItem::setExpandButtonVisible(bool expandButtonVisible) { _expandButtonVisible = expandButtonVisible; emit expandButtonVisibleChanged(); }
+bool    GroupItem::getExpandButtonVisible() const { return _expandButtonVisible; }
+
+void    GroupItem::setLabelEditorVisible(bool labelEditorVisible) { _labelEditorVisible = labelEditorVisible; emit labelEditorVisibleChanged(); }
+bool    GroupItem::getLabelEditorVisible() const { return _labelEditorVisible; }
 //-----------------------------------------------------------------------------
 
 /* Group DnD Management *///---------------------------------------------------
+bool GroupItem::setDragPolicy(DragPolicy dragPolicy) noexcept
+{
+    if (dragPolicy != _dragPolicy) {
+        _dragPolicy = dragPolicy;
+        return true;
+    }
+    return false;
+}
+GroupItem::DragPolicy          GroupItem::getDragPolicy() noexcept { return _dragPolicy; }
+const GroupItem::DragPolicy    GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
+
 void    GroupItem::groupMoved()
 {
     if (getCollapsed())   // Do not update edges when the group is collapsed
