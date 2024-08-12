@@ -56,7 +56,7 @@ TableGroupItem::~TableGroupItem()
 
 bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
-    qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
+    //qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
     if (qan::GroupItem::setContainer(container)) {
         // Note: Force reparenting all borders and cell to container, it might be nullptr
         // at initialization.
@@ -105,7 +105,7 @@ void    TableGroupItem::clearLayout()
 
 void    TableGroupItem::initialize(int cols, int rows)
 {
-    qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
+    //qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
         qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
@@ -302,23 +302,18 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
-    qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << getTableGroup();
+    //qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << getTableGroup();
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
 
-    // FIXME #238 Add more security: _previousSize ? no cells / bordesr created ?
-
-    // FIXME #238 use height = getContainer()->height(). Secure that...
     const auto tableContainer = getContainer();
     if (tableContainer == nullptr)
         return;
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
     const auto tableSize = tableContainer->size();
-    qWarning() << "  tableWidth=" << tableWidth << " tableHeight" << tableHeight;
-
-    if (tableWidth <= 0 || tableHeight <= 0)
+    if (qRound(tableWidth) <= 0 || qRound(tableHeight) <= 0)
         return;
 
     const int cols = tableGroup->getCols();
@@ -346,7 +341,7 @@ void    TableGroupItem::initializeTableLayout()
                                              - ((rows - 1) * spacing)) / rows :
                                             0.;
 
-    qWarning() << "  cellWidth=" << cellWidth << " cellHeight=" << cellHeight;
+    //qWarning() << "  cellWidth=" << cellWidth << " cellHeight=" << cellHeight;
 
     if (cellWidth < 0. || cellHeight < 0.) {
         qWarning() << "qan::TableGroupItem::initializeTableLayout(): Error, invalid cell width/height.";
@@ -394,15 +389,13 @@ void    TableGroupItem::initializeTableLayout()
     } else
         qWarning() << "qan::TableGoupItem::initializeTableLayout(): Invalid horizontal border count.";
 
-    // FIXME #238 unclear...
     // Note: There is no need to manually call borders layoutCells() method
     // it will be called automatically when border are moved.
     // Note 20230406: In fact calling layout cell is necessary for rows==1, cols==1
     // table that need special handling to dimension cells since there is no horiz/vert borders.
     layoutCells();
 
-    // FIXME #238 set _previousSize here !!!!
-    _previousSize = tableSize;
+    _previousSize = tableSize;  // Set a correct initial size
 }
 
 void    TableGroupItem::layoutTable()
@@ -412,7 +405,7 @@ void    TableGroupItem::layoutTable()
     //  x = previousX * (actualWidth / previousWidth)
     //  y = previousY * (actualHeight / previousHeight)
     const auto tableContainer = getContainer();
-    qWarning() << "TableGroupItem::layoutTable(): tableContainer=" << tableContainer << " _previousSize=" << _previousSize;
+    //qWarning() << "TableGroupItem::layoutTable(): tableContainer=" << tableContainer << " _previousSize=" << _previousSize;
     if (tableContainer == nullptr)
         return;
 
@@ -420,11 +413,7 @@ void    TableGroupItem::layoutTable()
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
 
-    // FIXME #238 there must be a way to detect invalid size / init here and call initializeTableLayout()...
-    // Pheraps if _previousSize est null ?
-
     if (_previousSize.isNull()) {
-        //qWarning() << "qan::TableGroupItem::layoutTable(): Invalid initial size.";
         initializeTableLayout();
         return;
     } else if (_previousSize == tableSize)
@@ -434,7 +423,7 @@ void    TableGroupItem::layoutTable()
         if (verticalBorder == nullptr)
             continue;
         const auto previousX = verticalBorder->x();
-        verticalBorder->setX(qRound(previousX * tableWidth / _previousSize.width()));
+        verticalBorder->setX((previousX / _previousSize.width()) * tableWidth);
         verticalBorder->setY(0.);
         verticalBorder->setHeight(tableHeight);
     }
@@ -444,7 +433,7 @@ void    TableGroupItem::layoutTable()
             continue;
         const auto previousY = horizontalBorder->y();
         horizontalBorder->setX(0.);
-        horizontalBorder->setY(qRound(previousY * tableHeight / _previousSize.height()));
+        horizontalBorder->setY((previousY / _previousSize.height()) * tableHeight);
         horizontalBorder->setWidth(tableWidth);
     }
 
@@ -496,8 +485,6 @@ void    TableGroupItem::layoutCells()
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
 {
     if (qan::GroupItem::setGroup(group)) {
-        //qWarning() << "qan::TableGroupItem::setGroup(): group=" << group;
-
         auto tableGroup = qobject_cast<qan::TableGroup*>(group);
         if (tableGroup != nullptr) {
             initialize(tableGroup->getCols(),
