@@ -42,14 +42,8 @@ import "qrc:/QuickQanava" as Qan
  */
 Item {
     // PUBLIC /////////////////////////////////////////////////////////////////
-    property var    style: undefined
-
-    property real            backRadius:    style ? style.backRadius : 4.
-    readonly property real   backOpacity:   style ? style.backOpacity : 0.8
-    readonly property color  baseColor:     style ? style.baseColor: Qt.rgba(0., 0., 0., 0.)
-    readonly property color  backColor:     style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
-    readonly property real   borderWidth:   style ? style.borderWidth : 1.
-    readonly property color  borderColor:   style ? style.borderColor : Qt.rgba(1., 1., 1., 0.)
+    property var            style: undefined
+    readonly property real  backRadius: style ? style.backRadius : 4.
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     // Note: Top level item is used to isolate rendering of:
@@ -62,13 +56,19 @@ Item {
         anchors.fill: parent
         radius: backRadius
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
-        opacity: backOpacity
+        opacity: style ? style.backOpacity : 0.8
 
         // Note 20240105: Unfortunately we no longer have LinearGradient with Qt6, switching to a
         // vertical gradient...
         gradient: Gradient {
-            GradientStop { position: 0.0; color: baseColor }
-            GradientStop { position: 1.0; color: backColor }
+            GradientStop {
+                position: 0.0;
+                color: style ? style.baseColor: Qt.rgba(0., 0., 0., 0.)
+            }
+            GradientStop {
+                position: 1.0
+                color: style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
+            }
         }
     }
     Rectangle {
@@ -76,9 +76,9 @@ Item {
         anchors.fill: parent    // Background follow the content layout implicit size
         radius: backRadius
         color: Qt.rgba(0, 0, 0, 0)  // Fully transparent
-        border.color: borderColor
-        border.width: borderWidth
-        antialiasing: true      // Vertex antialiasing for borders
+        border.color: style ? style.borderColor : Qt.rgba(1., 1., 1., 0.)
+        border.width: style ? style.borderWidth : 1.
+        //antialiasing: true      // Vertex antialiasing for borders
         // Note: Do not enable layer to avoid aliasing at high scale
     }
 }  // Item

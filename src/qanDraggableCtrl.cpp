@@ -166,8 +166,11 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
         _target->getLocked())
         return;
+    const auto graph = getGraph();
+    if (graph == nullptr)
+        return;
 
-    if (_target->isGroup()) {
+    if (/*notify && */_target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
         // Convert sceneDragPos to group item local coordinates
         const auto groupItemDragPos = _targetItem->mapFromScene(sceneDragPos);
@@ -175,19 +178,19 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
         qWarning() << "  groupItemDragPos=" << groupItemDragPos;
         qWarning() << "  groupItem->getContainer()=" << groupItem->getContainer();
         if (groupItem != nullptr) {
+            bool drag = false;
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
-                if (groupItemDragPos.y() > groupItem->getContainer()->y())
-                    return;
+                if (groupItemDragPos.y() < groupItem->getContainer()->y())
+                    drag = true;
             } else if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Container) == qan::GroupItem::DragPolicy::Container) {
-
-            } else
+                if (groupItemDragPos.y() >= groupItem->getContainer()->y())
+                    drag = true;
+            }
+            if (!drag)
                 return;
         }
     }
 
-    const auto graph = getGraph();
-    if (graph == nullptr)
-        return;
     //qWarning() << "qan::DraggableCtrl::beginDragMove(): dragSelection=" << dragSelection;
     //qWarning() << "  graph->hasMultipleSelection()=" << graph->hasMultipleSelection();
     //qWarning() << "  notify=" << notify;

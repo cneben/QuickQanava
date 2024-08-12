@@ -77,11 +77,13 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
+        spacing: 0
         RowLayout {
             id: headerLayout
             Layout.fillWidth: true
             Layout.fillHeight: false
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+            z: 2
             spacing: 0
             ToolButton {
                 id: collapser
@@ -139,11 +141,20 @@ Item {
                 }
             } // labelEditor Item
         } // RowLayout: collapser + label
+        Rectangle {
+            // FIXME #238 do not show for tables...
+            Layout.fillWidth: true
+            Layout.margins: 0
+            height: 1
+            border.width: 0
+            color: groupItem?.style?.borderColor || Qt.rgba(1., 1., 1., 0.)
+            opacity: 0.8
+            visible: !groupItem.collapsed
+        }
         Item {
             id: content
             Layout.fillWidth: true
             Layout.fillHeight: true
-            //anchors.fill: parent
             z: 3
             visible: !groupItem.collapsed
             enabled: !groupItem.collapsed
