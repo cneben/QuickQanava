@@ -159,7 +159,7 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 
 void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection, bool notify)
 {
-    qWarning() << "DraggableCtrl::beginDragMove(): sceneDragPos=" << sceneDragPos << " target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
+    //qWarning() << "DraggableCtrl::beginDragMove(): sceneDragPos=" << sceneDragPos << " target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
     if (_targetItem == nullptr ||
         _target == nullptr)
         return;
@@ -170,15 +170,17 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     if (graph == nullptr)
         return;
 
+    // FIXME #238 multiple selection...
     if (/*notify && */_target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
         const auto groupItemContainer = groupItem ? groupItem->getContainer() : nullptr;
         // Convert sceneDragPos to group item local coordinates
-        qWarning() << "  groupItem=" << groupItem;
-        qWarning() << "  groupItem->getContainer()=" << groupItemContainer;
+        // FIXME #238
+        //qWarning() << "  groupItem=" << groupItem;
+        //qWarning() << "  groupItem->getContainer()=" << groupItemContainer;
         if (groupItem != nullptr && groupItemContainer != nullptr) {
             const auto groupItemDragPos = groupItemContainer->mapFromScene(sceneDragPos);
-            qWarning() << "  groupItemDragPos=" << groupItemDragPos;
+            //qWarning() << "  groupItemDragPos=" << groupItemDragPos;
             bool drag = false;
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
                 if (groupItemDragPos.y() < 0)  // Coords are in container CS

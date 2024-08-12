@@ -120,13 +120,11 @@ Item {
                     font.pointSize: labelEditorControl.labelPointSize
                     color: groupItem?.style?.labelColor || "black"
                     elide:  Text.ElideRight
-                    MouseArea {
-                        anchors.fill: parent
+                    TapHandler {
                         enabled: !groupItem.group.isProtected &&
                                  !groupItem.group.locked    // Do not allow dragging of locked groups
-                        preventStealing: true
-                        propagateComposedEvents: true // Ensure event are forwarded to collapserArea
-                        onDoubleClicked: labelEditor.visible = true
+                        exclusiveSignals: TapHandler.DoubleTap
+                        onTapped: labelEditor.visible = true
                     }
                 }
             } // labelEditor Item
@@ -150,7 +148,6 @@ Item {
             enabled: !groupItem.collapsed
         }
     }
-
 
     // Emitted by qan::GroupItem when node dragging start
     function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
