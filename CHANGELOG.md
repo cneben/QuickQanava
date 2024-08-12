@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 20240812 2.4.2:
+- Merge #230 by @emmenlau, enhance node/group factory methods template signature.
+- Merge #236 by @emmenlau, fix a memory leak.
+- Merge #233 by @emmenlau, fix a compilation issue in graph.h.
+- Change group dragging default behaviour: group are now only draggable by their
+  header. Old policy can be restored with qan::GroupItem::DragPolicy.
+
 ## 20231116 2.4.0:
 - Rewrite the Qt5/6 CMake configuration.
 - Remove all QUICKQANAVA_QT_MAJOR_VERSION and all compilation options, compilation is now always "static".
