@@ -117,6 +117,17 @@ void    GroupItem::setCollapsed(bool collapsed) noexcept
 //-----------------------------------------------------------------------------
 
 /* Group DnD Management *///---------------------------------------------------
+bool GroupItem::setDragPolicy(DragPolicy dragPolicy) noexcept
+{
+    if (dragPolicy != _dragPolicy) {
+        _dragPolicy = dragPolicy;
+        return true;
+    }
+    return false;
+}
+GroupItem::DragPolicy          GroupItem::getDragPolicy() noexcept { return _dragPolicy; }
+const GroupItem::DragPolicy    GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
+
 void    GroupItem::groupMoved()
 {
     if (getCollapsed())   // Do not update edges when the group is collapsed

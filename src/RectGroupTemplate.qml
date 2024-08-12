@@ -44,7 +44,7 @@ Item {
     default property alias children : content.children
 
     // Binded to Tpp.Group.container in Tpp.Group.
-    property alias  content: content
+    property alias  container: content
 
     property var    groupItem: undefined
 
@@ -70,9 +70,8 @@ Item {
 
     RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
         id: groupBackground
-        //anchors.fill: content   // Note 20160328: Do not set as content child to avoid interferring
         anchors.fill: parent
-        style: template.groupItem ? template.groupItem.style: undefined // with content.childrenRect
+        style: template.groupItem ? template.groupItem.style: undefined // with container.childrenRect
         visible: !groupItem.collapsed
     }
 
@@ -83,12 +82,6 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: false
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            // x: 0
-            // y: -2 - Math.max(collapser.height,                   // Shift header by the size of collapser button or the label
-            //                  groupLabel.contentHeight, labelEditor.height) // height (for large font size) plus 2px margin
-            // z: 2
-            //width: content.width; height: collapser.height
-            //Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             spacing: 0
             ToolButton {
                 id: collapser
@@ -114,7 +107,9 @@ Item {
                 LabelEditor {
                     clip: false
                     id: labelEditor
-                    anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
                     target: groupItem && groupItem.group ? groupItem.group : undefined
                     visible: false
                     bold: groupItem.style.fontBold

@@ -92,6 +92,28 @@ protected:
 
     /*! \name Dragging Support Management *///---------------------------------
     //@{
+public:
+    //! FIXME #238
+    enum class DragPolicy : unsigned int {
+        //! Undefined / No dragging.
+        Undefined = 0,
+        //! Allow dragging group in the group header.
+        Header = 2,
+        //! Allow dragging group in the group content.
+        Container = 2
+    };
+    Q_ENUM(DragPolicy)
+
+    Q_PROPERTY(DragPolicy dragPolicy READ getDragPolicy WRITE setDragPolicy NOTIFY dragPolicyChanged FINAL)
+    virtual bool        setDragPolicy(DragPolicy dragPolicy) noexcept;
+    DragPolicy          getDragPolicy() noexcept;
+    const DragPolicy    getDragPolicy() const noexcept;
+protected:
+    DragPolicy  _dragPolicy = DragPolicy::Header;
+signals:
+    void        dragPolicyChanged();
+
+
 protected slots:
     //! Group is monitored for position change, since group's nodes edges should be updated manually in that case.
     void            groupMoved();
@@ -174,6 +196,11 @@ signals:
     //@}
     //-------------------------------------------------------------------------
 };
+
+// Define the bitwise AND operator for MyEnum
+inline GroupItem::DragPolicy operator&(GroupItem::DragPolicy lhs, GroupItem::DragPolicy rhs) {
+    return static_cast<GroupItem::DragPolicy>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+}
 
 } // ::qan
 
