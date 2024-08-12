@@ -174,8 +174,6 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     if (/*notify && */_target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
         const auto groupItemContainer = groupItem ? groupItem->getContainer() : nullptr;
-        // Convert sceneDragPos to group item local coordinates
-        // FIXME #238
         //qWarning() << "  groupItem=" << groupItem;
         //qWarning() << "  groupItem->getContainer()=" << groupItemContainer;
         if (groupItem != nullptr && groupItemContainer != nullptr) {

@@ -121,7 +121,7 @@ signals:
     /*! \name Dragging Support Management *///---------------------------------
     //@{
 public:
-    //! FIXME #238
+    //! Define a group "dragging" policy: either only from group header or content (default to Header, can be or'ed).
     enum class DragPolicy : unsigned int {
         //! Undefined / No dragging.
         Undefined = 0,
@@ -131,14 +131,19 @@ public:
         Container = 2
     };
     Q_ENUM(DragPolicy)
-
+    //! \copydoc DragPolicy
     Q_PROPERTY(DragPolicy dragPolicy READ getDragPolicy WRITE setDragPolicy NOTIFY dragPolicyChanged FINAL)
+    //! \copydoc DragPolicy
     virtual bool        setDragPolicy(DragPolicy dragPolicy) noexcept;
+    //! \copydoc DragPolicy
     DragPolicy          getDragPolicy() noexcept;
+    //! \copydoc DragPolicy
     const DragPolicy    getDragPolicy() const noexcept;
 protected:
+    //! \copydoc DragPolicy
     DragPolicy  _dragPolicy = DragPolicy::Header;
 signals:
+    //! \copydoc DragPolicy
     void        dragPolicyChanged();
 
 

@@ -130,10 +130,9 @@ Item {
             } // labelEditor Item
         } // RowLayout: collapser + label
         Rectangle {
-            // FIXME #238 do not show for tables...
             Layout.fillWidth: true
             Layout.margins: 0
-            height: 1
+            height: groupItem?.style?.borderWidth ?? 1.
             border.width: 0
             color: groupItem?.style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
             opacity: 0.8
