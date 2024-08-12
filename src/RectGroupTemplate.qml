@@ -49,10 +49,7 @@ Item {
     property var    groupItem: undefined
 
     //! Show or hide group top left label editor (default to visible).
-    property alias  labelEditorVisible : labelEditorControl.visible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias  expandButtonVisible : collapser.visible
+    readonly property alias labelEditorVisible: labelEditorControl.visible
 
     property alias  header: headerLayout
 
@@ -92,50 +89,45 @@ Item {
                 font.pixelSize: 13
                 font.bold: true
                 onClicked: groupItem.collapsed = !groupItem.collapsed
+                visible: groupItem?.expandButtonVisible
             }
             Item {
                 id: labelEditorControl
                 clip: false
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                property int fontPointSize : groupItem.style.fontPointSize  // Do not set pointSize for -1 value
-                onFontPointSizeChanged: {
-                    if (fontPointSize != -1)
-                        labelEditor.pixelSize = fontPointSize
-                    groupLabel.font.pointSize = fontPointSize
-                }
+                property int labelPointSize : groupItem?.style?.fontPointSize || Material.fontSize
                 LabelEditor {
-                    clip: false
                     id: labelEditor
+                    clip: false
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    target: groupItem && groupItem.group ? groupItem.group : undefined
+                    target: groupItem?.group
                     visible: false
-                    bold: groupItem.style.fontBold
+                    fontPixelSize: labelEditorControl.labelPointSize
                 }
                 Label {
                     id: groupLabel
                     anchors.fill: parent
+                    anchors.leftMargin: collapser.visible ? 0 : 10
                     text: groupItem &&
                           groupItem.group ? groupItem.group.label :
                                             "              "
                     visible: !labelEditor.visible
                     verticalAlignment: Text.AlignVCenter
                     font.bold: groupItem.style.fontBold
-                    color: groupItem &&
-                           groupItem.style &&
-                           groupItem.style.labelColor ? groupItem.style.labelColor : "black"
+                    font.pointSize: labelEditorControl.labelPointSize
+                    color: groupItem?.style?.labelColor || "black"
                     elide:  Text.ElideRight
-                    /*MouseArea {
+                    MouseArea {
                         anchors.fill: parent
                         enabled: !groupItem.group.isProtected &&
                                  !groupItem.group.locked    // Do not allow dragging of locked groups
                         preventStealing: true
                         propagateComposedEvents: true // Ensure event are forwarded to collapserArea
-                        drag.target: groupItem.draggable ? groupItem : null
                         onDoubleClicked: labelEditor.visible = true
-                    }*/
+                    }
                 }
             } // labelEditor Item
         } // RowLayout: collapser + label

@@ -98,7 +98,7 @@ auto    GroupItem::setRect(const QRectF& r) noexcept -> void
 //-----------------------------------------------------------------------------
 
 
-/* Collapse Management *///----------------------------------------------------
+/* Collapse / Edition Management *///------------------------------------------
 void    GroupItem::setCollapsed(bool collapsed) noexcept
 {
     qan::NodeItem::setCollapsed(collapsed);
@@ -114,6 +114,12 @@ void    GroupItem::setCollapsed(bool collapsed) noexcept
             groupMoved();   // Force update of all adjacent edges
     }
 }
+
+void    GroupItem::setExpandButtonVisible(bool expandButtonVisible) { _expandButtonVisible = expandButtonVisible; emit expandButtonVisibleChanged(); }
+bool    GroupItem::getExpandButtonVisible() const { return _expandButtonVisible; }
+
+void    GroupItem::setLabelEditorVisible(bool labelEditorVisible) { _labelEditorVisible = labelEditorVisible; emit labelEditorVisibleChanged(); }
+bool    GroupItem::getLabelEditorVisible() const { return _labelEditorVisible; }
 //-----------------------------------------------------------------------------
 
 /* Group DnD Management *///---------------------------------------------------

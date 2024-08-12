@@ -83,10 +83,38 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-    /*! \name Collapse Management *///-----------------------------------------
+    /*! \name Collapse / Edition Management *///-------------------------------
     //@{
 protected:
     virtual void    setCollapsed(bool collapsed) noexcept override;
+
+public:
+    //! \copydoc getExpandButtonVisible()
+    Q_PROPERTY(bool expandButtonVisible READ getExpandButtonVisible WRITE setExpandButtonVisible NOTIFY expandButtonVisibleChanged FINAL)
+    //! \copydoc getExpandButtonVisible()
+    void            setExpandButtonVisible(bool expandButtonVisible);
+    //! \brief Show / hide the group expand / collapse button.
+    bool            getExpandButtonVisible() const;
+private:
+    //! \copydoc getExpandButtonVisible()
+    bool            _expandButtonVisible = true;
+signals:
+    //! \copydoc getExpandButtonVisible()
+    void            expandButtonVisibleChanged();
+
+public:
+    //! \copydoc getLabelEditorVisible()
+    Q_PROPERTY(bool labelEditorVisible READ getLabelEditorVisible WRITE setLabelEditorVisible NOTIFY labelEditorVisibleChanged FINAL)
+    //! \copydoc getLabelEditorVisible()
+    void            setLabelEditorVisible(bool labelEditorVisible);
+    //! \brief True when the group label in group editor is beeing edited.
+    bool            getLabelEditorVisible() const;
+private:
+    //! \copydoc getLabelEditorVisible()
+    bool            _labelEditorVisible = false;
+signals:
+    //! \copydoc getLabelEditorVisible()
+    void            labelEditorVisibleChanged();
     //@}
     //-------------------------------------------------------------------------
 

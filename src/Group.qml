@@ -38,6 +38,7 @@ import QtQuick.Layouts
 import QuickQanava          2.0 as Qan
 import "qrc:/QuickQanava"   as Qan
 
+//! \brief Default delegate for `qan::GroupItem`.
 Qan.GroupItem {
     id: groupItem
 
@@ -47,12 +48,7 @@ Qan.GroupItem {
 
     default property alias children : template
     container: template.container   // See qan::GroupItem::container property documentation
-
-    //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : template.labelEditorVisible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : template.expandButtonVisible
+    labelEditorVisible: template.labelEditorVisible
 
     Qan.RectGroupTemplate {
         id: template
