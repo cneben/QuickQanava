@@ -36,7 +36,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import QuickQanava 2.0      as Qan
+import QuickQanava 2.0 as Qan
 
 Item {
     id: template
@@ -67,14 +67,12 @@ Item {
         }
         return true;
     }
-
-    RectGradientBackground {    // Node background and shadow with backOpacity and backRadius support
+    RectGradientBackground {    // Apply node background styling
         id: groupBackground
         anchors.fill: parent
-        style: template.groupItem ? template.groupItem.style: undefined // with container.childrenRect
+        style: template.groupItem?.style
         visible: !groupItem.collapsed
     }
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -129,7 +127,7 @@ Item {
                            groupItem.style &&
                            groupItem.style.labelColor ? groupItem.style.labelColor : "black"
                     elide:  Text.ElideRight
-                    MouseArea {
+                    /*MouseArea {
                         anchors.fill: parent
                         enabled: !groupItem.group.isProtected &&
                                  !groupItem.group.locked    // Do not allow dragging of locked groups
@@ -137,7 +135,7 @@ Item {
                         propagateComposedEvents: true // Ensure event are forwarded to collapserArea
                         drag.target: groupItem.draggable ? groupItem : null
                         onDoubleClicked: labelEditor.visible = true
-                    }
+                    }*/
                 }
             } // labelEditor Item
         } // RowLayout: collapser + label

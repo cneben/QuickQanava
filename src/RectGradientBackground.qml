@@ -34,7 +34,7 @@
 
 import QtQuick
 
-import QuickQanava    2.0 as Qan
+import QuickQanava 2.0 as Qan
 import "qrc:/QuickQanava" as Qan
 
 /*! \brief Node or group background component with gradient fill, no effect and backOpacity style support
@@ -42,8 +42,8 @@ import "qrc:/QuickQanava" as Qan
  */
 Item {
     // PUBLIC /////////////////////////////////////////////////////////////////
-    property var            style: undefined
-    readonly property real  backRadius: style ? style.backRadius : 4.
+    property var    style: undefined
+    property real   backRadius: style ? style.backRadius : 4.
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     // Note: Top level item is used to isolate rendering of:

@@ -131,7 +131,7 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
+        const auto sceneDragPos = event->scenePosition();
         if (!_targetItem->getDragged()) {
             // Project in scene rect (for example is a node is part of a group)
             beginDragMove(sceneDragPos, _targetItem->getSelected());
@@ -159,7 +159,7 @@ void    DraggableCtrl::handleMouseReleaseEvent(QMouseEvent* event)
 
 void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelection, bool notify)
 {
-    qWarning() << "DraggableCtrl::beginDragMove(): target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
+    qWarning() << "DraggableCtrl::beginDragMove(): sceneDragPos=" << sceneDragPos << " target=" << getTargetItem() << " dragSelection=" << dragSelection << " notify=" << notify;
     if (_targetItem == nullptr ||
         _target == nullptr)
         return;
@@ -172,22 +172,25 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
 
     if (/*notify && */_target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
+        const auto groupItemContainer = groupItem ? groupItem->getContainer() : nullptr;
         // Convert sceneDragPos to group item local coordinates
-        const auto groupItemDragPos = _targetItem->mapFromScene(sceneDragPos);
         qWarning() << "  groupItem=" << groupItem;
-        qWarning() << "  groupItemDragPos=" << groupItemDragPos;
-        qWarning() << "  groupItem->getContainer()=" << groupItem->getContainer();
-        if (groupItem != nullptr) {
+        qWarning() << "  groupItem->getContainer()=" << groupItemContainer;
+        if (groupItem != nullptr && groupItemContainer != nullptr) {
+            const auto groupItemDragPos = groupItemContainer->mapFromScene(sceneDragPos);
+            qWarning() << "  groupItemDragPos=" << groupItemDragPos;
             bool drag = false;
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
-                if (groupItemDragPos.y() < groupItem->getContainer()->y())
+                if (groupItemDragPos.y() < 0)  // Coords are in container CS
                     drag = true;
             } else if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Container) == qan::GroupItem::DragPolicy::Container) {
-                if (groupItemDragPos.y() >= groupItem->getContainer()->y())
+                if (groupItemDragPos.y() >= 0)
                     drag = true;
             }
-            if (!drag)
+            if (!drag) {
+                _targetItem->setDragged(false);
                 return;
+            }
         }
     }
 

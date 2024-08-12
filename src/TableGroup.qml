@@ -46,7 +46,7 @@ Qan.TableGroupItem {
     height: 150
 
     default property alias children : template
-    container: template.content   // See qan::GroupItem::container property documentation
+    container: template.container   // See qan::GroupItem::container property documentation
 
     //! Show or hide group top left label editor (default to visible).
     property bool   labelEditorVisible : false
