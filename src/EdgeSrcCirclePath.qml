@@ -44,8 +44,7 @@ ShapePath {
     strokeColor: edgeTemplate.color
     fillColor: edgeItem.srcShape === Qan.EdgeStyle.CircleOpen ? Qt.rgba(0.,0.,0.,0.) :
                                                                 edgeTemplate.color
-    strokeWidth: edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
+    strokeWidth: edgeItem?.style?.lineWidth ?? 2
 
     startX: 0
     startY: 0

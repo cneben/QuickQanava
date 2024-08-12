@@ -39,7 +39,6 @@ import "qrc:/QuickQanava" as Qan
 
 Qan.AbstractTableBorder {
     id: tableBorder
-    // FIXME #238 have a .? operator try here (but borderWidth might be 0....
     borderWidth: tableGroup?.tableStyle?.borderWidth ?? 3.
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter

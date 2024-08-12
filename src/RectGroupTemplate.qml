@@ -96,7 +96,7 @@ Item {
                 clip: false
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                property int labelPointSize : groupItem?.style?.fontPointSize || Material.fontSize
+                property int labelPointSize : groupItem?.style?.fontPointSize ?? Material.fontSize
                 LabelEditor {
                     id: labelEditor
                     clip: false
@@ -118,7 +118,7 @@ Item {
                     verticalAlignment: Text.AlignVCenter
                     font.bold: groupItem.style.fontBold
                     font.pointSize: labelEditorControl.labelPointSize
-                    color: groupItem?.style?.labelColor || "black"
+                    color: groupItem?.style?.labelColor ?? "black"
                     elide:  Text.ElideRight
                     TapHandler {
                         enabled: !groupItem.group.isProtected &&
@@ -135,7 +135,7 @@ Item {
             Layout.margins: 0
             height: 1
             border.width: 0
-            color: groupItem?.style?.borderColor || Qt.rgba(1., 1., 1., 0.)
+            color: groupItem?.style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
             opacity: 0.8
             visible: !groupItem.collapsed
         }
@@ -148,9 +148,4 @@ Item {
             enabled: !groupItem.collapsed
         }
     }
-
-    // Emitted by qan::GroupItem when node dragging start
-    function onNodeDragEnter() { /*groupBackground.backColor = Qt.binding( function() { return Qt.darker( template.groupItem.style.backColor, 1.05 ) } ) */}
-    // Emitted by qan::GroupItem when node dragging ends
-    function onNodeDragLeave() { /*groupBackground.backColor = Qt.binding( function() { return template.groupItem.style.backColor } ) */}
 }

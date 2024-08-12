@@ -56,9 +56,4 @@ Qan.GroupItem {
         groupItem: parent
         z: 1
     }
-
-    // Emitted by qan::GroupItem when node dragging start
-    onNodeDragEnter: { template.onNodeDragEnter() }
-    // Emitted by qan::GroupItem when node dragging ends
-    onNodeDragLeave: { template.onNodeDragLeave() }
 }

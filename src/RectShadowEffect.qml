@@ -48,13 +48,8 @@ Item {
     property var    style: undefined
 
     // PRIVATE ////////////////////////////////////////////////////////////////
-    // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    readonly property real   borderWidth:   style ? style.borderWidth : 1.
-    readonly property real   borderWidth2:  borderWidth / 2.
-    readonly property real   shadowOffset:  style ? style.effectOffset : 3.
-    readonly property real   shadowRadius:  style ? style.effectRadius : 3.
-    readonly property color  shadowColor:   style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
-    readonly property real   backRadius:    style ? style.backRadius : 4.
+    readonly property real   shadowOffset:  style?.effectOffset ?? 3.
+    readonly property real   backRadius:    style?.backRadius ?? 4.
 
     Rectangle {         // Hidden item used to generate shadow
         id: border
@@ -75,9 +70,9 @@ Item {
                              parent.width + shadowOffset,
                              parent.height + shadowOffset)
         shadowEnabled: shadowEffect.style?.effectEnabled || false
-        shadowColor: shadowColor
+        shadowColor: style?.effectColor ?? Qt.rgba(0.7, 0.7, 0.7, 0.7)
         shadowBlur: 0.9
-        blurMax: shadowRadius
+        blurMax: style?.effectRadius ?? 3.
         shadowHorizontalOffset: shadowOffset
         shadowVerticalOffset: shadowOffset
 

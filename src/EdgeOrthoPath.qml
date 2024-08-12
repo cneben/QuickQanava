@@ -45,12 +45,10 @@ ShapePath {
     startX: edgeItem.p1.x
     startY: edgeItem.p1.y
     capStyle: ShapePath.FlatCap
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
+    strokeWidth: edgeItem?.style?.lineWidth ?? 2
     strokeColor: edgeTemplate.color
     strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem.style ? edgeItem.style.dashPattern : [4, 2]
+    dashPattern: edgeItem?.style?.dashPattern ?? [4, 2]
     fillColor: Qt.rgba(0,0,0,0)
     PathLine {
         x: edgeItem.c1.x

@@ -47,19 +47,15 @@ Item {
     property var    style: undefined
 
     // PRIVATE ////////////////////////////////////////////////////////////////
-    // Default settings for rect radius, shadow margin is the _maximum_ shadow radius (+vertical or horizontal offset).
-    readonly property real   glowRadius:     style ? style.effectRadius : 3.
-    readonly property color  glowColor:      style ? style.effectColor : Qt.rgba(0.7, 0.7, 0.7, 0.7)
-    readonly property real   borderWidth:    style ? style.borderWidth : 1.
-    readonly property real   borderWidth2:   borderWidth / 2.
-    readonly property real   backRadius:     style ? style.backRadius : 4.
+    readonly property real   glowRadius: style?.effectRadius ?? 3.
+    readonly property real   backRadius: style?.backRadius ?? 4.
 
     Rectangle {         // Hidden item used to generate shadow
         id: border
         anchors.fill: parent
         anchors.margins: 1
         radius: backRadius
-        color: glowColor
+        color: style?.effectColor ?? Qt.rgba(0.7, 0.7, 0.7, 0.7)
         clip: true
         visible: false
     }

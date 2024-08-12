@@ -41,7 +41,7 @@ Qan.EdgeItem {
     id: edgeItem
 
     // Private hack for visual connector edge color dynamic modification
-    property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
+    property color color: style?.lineColor ?? Qt.rgba(0.,0.,0.,1.)
     Qan.EdgeTemplate {
         anchors.fill: parent
         edgeItem: parent

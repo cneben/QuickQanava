@@ -41,11 +41,10 @@ Item {
     id: edgeTemplate
     property var edgeItem: undefined
 
-    property color color: edgeItem &&
-                          edgeItem.style ? edgeItem.style.lineColor : Qt.rgba(0.,0.,0.,1.)
+    property color color: edgeItem?.style?.lineColor ?? Qt.rgba(0.,0.,0.,1.)
     // Allow direct bypass of style
-    property var    lineType: edgeItem.style ? edgeItem.style.lineType : Qan.EdgeStyle.Straight
-    property var    dashed  : edgeItem.style && style.dashed ? ShapePath.DashLine : ShapePath.SolidLine
+    property var    lineType: edgeItem?.style?.lineType ?? Qan.EdgeStyle.Straight
+    property var    dashed  : edgeItem?.style?.dashed ? ShapePath.DashLine : ShapePath.SolidLine
 
     visible: edgeItem.visible && !edgeItem.hidden
 
@@ -139,7 +138,7 @@ Item {
         property var straightLine : undefined
         property var orthoLine : undefined
         property var lineType: edgeTemplate.lineType
-        property var lineWidth: edgeItem && edgeItem.style ? edgeItem.style.lineWidth + 2. : 4.
+        property var lineWidth: edgeItem?.style?.lineWidth + 2. ?? 4.
         property var lineColor: edgeItem &&
                                 edgeItem.graph ? edgeItem.graph.selectionColor :
                                                  Qt.rgba(0.1176, 0.5647, 1., 1.)  // dodgerblue=rgb(30, 144, 255)
