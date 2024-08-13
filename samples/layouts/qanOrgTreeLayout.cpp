@@ -34,7 +34,9 @@
 
 // Std headers
 #include <queue>
+#include <stack>
 #include <unordered_set>
+#include <algorithm>
 
 // Qt headers
 #include <QQmlProperty>
@@ -47,27 +49,26 @@
 
 namespace qan { // ::qan
 
-/* OrgTreeLayout Object Management *///----------------------------------------
-OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
+
+/* NaiveTreeLayout Object Management *///--------------------------------------
+NaiveTreeLayout::NaiveTreeLayout(QObject* parent) noexcept :
     QObject{parent}
 {
 }
 
-OrgTreeLayout::~OrgTreeLayout()
-{
-}
+NaiveTreeLayout::~NaiveTreeLayout() { }
 
-void    OrgTreeLayout::layout(qan::Node& root) noexcept
+void    NaiveTreeLayout::layout(qan::Node& root) noexcept
 {
     // Pre-condition: root must be a tree subgraph, this is not enforced in this methodod.
 
     // Algorithm:
     // 1. Use BFS to generate an array of nodes "level by level".
     // 2. Layout the tree bottom up; for every level, bottom up:
-        // 2.1 Layout the node at y(level) position.
-        // 2.2 For mid level, shift nodes x position to align right subgraph on it's previous
-        //     node subgraph (magic happen here: use a shifting heuristic !)
-        // 2.3 Align node on it's sub graph (according to input configuration align left or center)
+    // 2.1 Layout the node at y(level) position.
+    // 2.2 For mid level, shift nodes x position to align right subgraph on it's previous
+    //     node subgraph (magic happen here: use a shifting heuristic !)
+    // 2.3 Align node on it's sub graph (according to input configuration align left or center)
     // 3. Shift the tree to align root to it's original position.
 
     const auto collectBFS = [](qan::Node* root) -> std::vector<std::vector<qan::Node*>> {
@@ -135,9 +136,54 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
     // FIXME centering in another pass...
 }
 
+void    NaiveTreeLayout::layout(qan::Node* root) noexcept
+{
+    qWarning() << "qan::NaiveTreeLayout::layout(): root=" << root;
+    if (root != nullptr)
+        layout(*root);
+}
+//-----------------------------------------------------------------------------
+
+
+/* OrgTreeLayout Object Management *///----------------------------------------
+OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
+    QObject{parent}
+{
+}
+
+OrgTreeLayout::~OrgTreeLayout()
+{
+}
+
+void    OrgTreeLayout::layout(qan::Node& root) noexcept
+{
+    // Pre-condition: root must be a tree subgraph, this is not enforced in this methodod.
+
+    // Algorithm:
+        // Traverse graph DFS aligning child nodes vertically
+        // At a given level: `shift` next node according to previous node sub-tree BR
+    auto layout_rec = [](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+        //qWarning() << "layout_rec(): br=" << br;
+        const auto x = br.right() + 45.;
+        for (auto child: childNodes) {
+            //qWarning() << "layout_rec(): child.label=" << child->getLabel() << "  br=" << br;
+            child->getItem()->setX(x);
+            child->getItem()->setY(br.bottom() + 45);
+            br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
+            const auto prevBr = self(self, child->get_out_nodes(), br);
+            br = br.united(prevBr);
+        }
+        return br;
+    };
+    //qWarning() << "root.bottomRight=" << root.getItem()->boundingRect().bottomRight();
+    // Note: QQuickItem boundingRect is in item local CS, translate to scene CS.
+    layout_rec(layout_rec, root.get_out_nodes(),
+               root.getItem()->boundingRect().translated(root.getItem()->position()));
+}
+
 void    OrgTreeLayout::layout(qan::Node* root) noexcept
 {
-    qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
+    //qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
     if (root != nullptr)
         layout(*root);
 }

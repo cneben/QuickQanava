@@ -50,6 +50,33 @@ namespace qan { // ::qan
 /*! \brief
  * \nosubgrouping
  */
+class NaiveTreeLayout : public QObject
+{
+    Q_OBJECT
+    /*! \name NaiveTreeLayout Object Management *///---------------------------
+    //@{
+public:
+    explicit NaiveTreeLayout(QObject* parent = nullptr) noexcept;
+    virtual ~NaiveTreeLayout() override;
+    NaiveTreeLayout(const NaiveTreeLayout&) = delete;
+    NaiveTreeLayout& operator=(const NaiveTreeLayout&) = delete;
+    NaiveTreeLayout(NaiveTreeLayout&&) = delete;
+    NaiveTreeLayout& operator=(NaiveTreeLayout&&) = delete;
+
+public:
+    // FIXME
+    void                layout(qan::Node& root) noexcept;
+
+    //! QML invokable version of layout().
+    Q_INVOKABLE void    layout(qan::Node* root) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+
+/*! \brief
+ * \nosubgrouping
+ */
 class OrgTreeLayout : public QObject
 {
     Q_OBJECT

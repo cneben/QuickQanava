@@ -56,15 +56,26 @@ ApplicationWindow {
                 let n12 = graph.insertNode()
                 n12.label = "n12"; n12.item.x=125; n12.item.y= 125
 
-
                 let n121 = graph.insertNode()
                 n121.label = "n121"; n121.item.x=125; n121.item.y= 225
 
-                graph.insertEdge(n1, n12);
+                let n1211 = graph.insertNode()
+                n1211.label = "n1211"; n1211.item.x=125; n1211.item.y= 225
+
+                let n13 = graph.insertNode()
+                n13.label = "n13"; n13.item.x=225; n13.item.y= 125
+
                 graph.insertEdge(n1, n11);
+                graph.insertEdge(n1, n12);
+                graph.insertEdge(n1, n13);
                 graph.insertEdge(n12, n121);
+                graph.insertEdge(n121, n1211);
 
                 orgTreeLayout.layout(n1);
+                //naiveTreeLayout.layout(n1);
+            }
+            Qan.NaiveTreeLayout {
+                id: naiveTreeLayout
             }
             Qan.OrgTreeLayout {
                 id: orgTreeLayout

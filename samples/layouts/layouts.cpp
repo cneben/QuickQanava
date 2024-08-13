@@ -47,6 +47,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine* engine = new QQmlApplicationEngine();
+    qmlRegisterType<qan::NaiveTreeLayout>("QuickQanava", 2, 0, "NaiveTreeLayout");
     qmlRegisterType<qan::OrgTreeLayout>("QuickQanava", 2, 0, "OrgTreeLayout");
     engine->addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     QuickQanava::initialize(engine);
