@@ -63,7 +63,11 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
 
     // Algorithm:
     // 1. Use BFS to generate an array of nodes "level by level".
-    // 2. Layout the tree bottom up
+    // 2. Layout the tree bottom up; for every level, bottom up:
+        // 2.1 Layout the node at y(level) position.
+        // 2.2 For mid level, shift nodes x position to align right subgraph on it's previous
+        //     node subgraph (magic happen here: use a shifting heuristic !)
+        // 2.3 Align node on it's sub graph (according to input configuration align left or center)
     // 3. Shift the tree to align root to it's original position.
 
     const auto collectBFS = [](qan::Node* root) -> std::vector<std::vector<qan::Node*>> {
@@ -107,6 +111,28 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
             std::cerr << node->getLabel().toStdString() << "\t";
         std::cerr << std::endl;
     }
+
+    // 2.
+    if (levels.size() <= 1)   // Can't layout a tree with less than 2 levels
+        return;
+    const double xSpacing = 25.;
+    const double ySpacing = 125.;
+    for (int level = levels.size() - 1; level >= 0; level--) {
+        auto nodes = levels[level];
+
+        // 2.1
+        const double y = level * ySpacing; // FIXME, be smarter here...
+
+        // 2.2
+        double x = 0.;
+        for (const auto node: nodes) {
+            node->getItem()->setX(x);
+            node->getItem()->setY(y);
+            x += node->getItem()->getBoundingShape().boundingRect().width() + xSpacing;
+        }
+    }
+
+    // FIXME centering in another pass...
 }
 
 void    OrgTreeLayout::layout(qan::Node* root) noexcept
