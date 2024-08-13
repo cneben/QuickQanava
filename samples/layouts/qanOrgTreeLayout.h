@@ -75,7 +75,10 @@ public:
      * running this algorithm on a non tree subgraph might lead to inifinite recursions or
      * invalid layouts.
      */
-    Q_INVOKABLE virtual void    layout(qan::Node& root) noexcept;
+    void                layout(qan::Node& root) noexcept;
+
+    //! QML invokable version of layout().
+    Q_INVOKABLE void    layout(qan::Node* root) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

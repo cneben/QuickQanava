@@ -33,7 +33,8 @@
 //-----------------------------------------------------------------------------
 
 // Std headers
-#include <memory>
+#include <queue>
+#include <unordered_set>
 
 // Qt headers
 #include <QQmlProperty>
@@ -65,8 +66,54 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
     // 2. Layout the tree bottom up
     // 3. Shift the tree to align root to it's original position.
 
-    // 1. BFS
+    const auto collectBFS = [](qan::Node* root) -> std::vector<std::vector<qan::Node*>> {
+        std::vector<std::vector<qan::Node*>> r;
+        if (root == nullptr)
+            return r;
 
+        // <-- hand tuned ChatGPT code
+        std::queue<std::pair<Node*, int>> nodeLevelqueue;
+        std::unordered_set<Node*> visited;
+
+        nodeLevelqueue.push({root, 0});
+        visited.insert(root);
+
+        while (!nodeLevelqueue.empty()) {
+            auto [current, level] = nodeLevelqueue.front();
+            nodeLevelqueue.pop();
+
+            if (r.size() <= level)
+                r.resize(level + 1);    // Resize() initialize new items
+            r[level].push_back(current);
+            for (auto child : current->get_out_nodes()) {             // Enqueue unvisited children with their level
+                if (visited.find(child) == visited.end()) {
+                    nodeLevelqueue.push({child, level + 1});
+                    visited.insert(child);
+                }
+            }
+        }
+        // <-- ChatGPT code
+        return r;
+    };
+
+    // 1. BFS
+    const auto levels = collectBFS(&root);
+
+    // Debug
+    int l = 0;
+    for (const auto& level: levels) {
+        std::cerr << l++ << ": ";
+        for (const auto node: level)
+            std::cerr << node->getLabel().toStdString() << "\t";
+        std::cerr << std::endl;
+    }
+}
+
+void    OrgTreeLayout::layout(qan::Node* root) noexcept
+{
+    qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
+    if (root != nullptr)
+        layout(*root);
 }
 //-----------------------------------------------------------------------------
 

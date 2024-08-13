@@ -47,16 +47,29 @@ ApplicationWindow {
             parent: graphView
             id: graph
             Component.onCompleted: {
-                var n1 = graph.insertNode()
-                n1.label = "Hello World"; n1.item.x=15; n1.item.y= 25
+                let n1 = graph.insertNode()
+                n1.label = "n1"; n1.item.x=15; n1.item.y= 25
                 n1.item.ratio = 0.4
-                var n2 = graph.insertNode()
-                n2.label = "Node 2"; n2.item.x=15; n2.item.y= 125
 
-                var e = graph.insertEdge(n1, n2);
+                let n11 = graph.insertNode()
+                n11.label = "n11"; n11.item.x=15; n11.item.y= 125
+                let n12 = graph.insertNode()
+                n12.label = "n12"; n12.item.x=125; n12.item.y= 125
+
+
+                let n121 = graph.insertNode()
+                n121.label = "n121"; n121.item.x=125; n121.item.y= 225
+
+                graph.insertEdge(n1, n12);
+                graph.insertEdge(n1, n11);
+                graph.insertEdge(n12, n121);
+
+                orgTreeLayout.layout(n1);
+            }
+            Qan.OrgTreeLayout {
+                id: orgTreeLayout
             }
         } // Qan.Graph
-
         Menu {      // Context menu demonstration
             id: contextMenu
             MenuItem {

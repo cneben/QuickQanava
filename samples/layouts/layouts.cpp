@@ -39,6 +39,7 @@
 
 // QuickQanava headers
 #include <QuickQanava.h>
+#include "./qanOrgTreeLayout.h"
 
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
@@ -46,6 +47,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine* engine = new QQmlApplicationEngine();
+    qmlRegisterType<qan::OrgTreeLayout>("QuickQanava", 2, 0, "OrgTreeLayout");
     engine->addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     QuickQanava::initialize(engine);
     engine->load(QUrl("qrc:/layouts.qml"));
