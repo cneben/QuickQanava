@@ -23,11 +23,14 @@ endif()
 
 set(source_files
     layouts.cpp
+    qanOrgTreeLayout.cpp
 )
 
-set (header_files)
+set (header_files
+     qanOrgTreeLayout.h
+)
 
-add_executable(sample_layouts ${source_files} layouts.qrc)
+add_executable(sample_layouts ${source_files} ${header_files} layouts.qrc)
 target_include_directories(sample_layouts PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_layouts
     QuickQanava
