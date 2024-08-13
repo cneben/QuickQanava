@@ -55,7 +55,6 @@ NaiveTreeLayout::NaiveTreeLayout(QObject* parent) noexcept :
     QObject{parent}
 {
 }
-
 NaiveTreeLayout::~NaiveTreeLayout() { }
 
 void    NaiveTreeLayout::layout(qan::Node& root) noexcept
@@ -122,7 +121,7 @@ void    NaiveTreeLayout::layout(qan::Node& root) noexcept
         auto nodes = levels[level];
 
         // 2.1
-        const double y = level * ySpacing; // FIXME, be smarter here...
+        const double y = level * ySpacing; // FIXME, be smarter on shift here...
 
         // 2.2
         double x = 0.;
@@ -150,14 +149,14 @@ OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
     QObject{parent}
 {
 }
-
-OrgTreeLayout::~OrgTreeLayout()
-{
-}
+OrgTreeLayout::~OrgTreeLayout() { }
 
 void    OrgTreeLayout::layout(qan::Node& root) noexcept
 {
-    // Pre-condition: root must be a tree subgraph, this is not enforced in this methodod.
+    // FIXME #228: Variant / naive Reingold-Tilford algorithm
+
+    // Pre-condition: root must be a tree subgraph, this is not enforced in this algorithm,
+    // any circuit will lead to intinite recursion...
 
     // Algorithm:
         // Traverse graph DFS aligning child nodes vertically

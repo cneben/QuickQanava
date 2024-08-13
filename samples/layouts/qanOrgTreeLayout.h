@@ -64,7 +64,7 @@ public:
     NaiveTreeLayout& operator=(NaiveTreeLayout&&) = delete;
 
 public:
-    // FIXME
+    // FIXME #228
     void                layout(qan::Node& root) noexcept;
 
     //! QML invokable version of layout().
@@ -91,12 +91,12 @@ public:
     OrgTreeLayout& operator=(OrgTreeLayout&&) = delete;
 
 public:
-    /*! \brief Apply an "organisational chart tree layout algorithm" to subgraph \c root.
+    /*! \brief Apply a vertical "organisational chart tree layout algorithm" to subgraph \c root.
      *
      * OrgChart layout _will preserve_ node orders.
      *
-     * While the current implementation is not "space optimal" it run in O(n), n beeing the
-     * number of nodes in root "tree subgraph".
+     * This naive implementation is recursive and not "space optimal" while it run in O(n),
+     * n beeing the number of nodes in root "tree subgraph".
      *
      * \note \c root must be a tree subgraph, this method will not enforce this condition,
      * running this algorithm on a non tree subgraph might lead to inifinite recursions or
