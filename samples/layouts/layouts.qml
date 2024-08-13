@@ -75,10 +75,6 @@ ApplicationWindow {
                 graph.insertEdge(n121, n1211);
 
                 orgTreeLayout.layout(n1);
-                //naiveTreeLayout.layout(n1);
-            }
-            Qan.NaiveTreeLayout {
-                id: naiveTreeLayout
             }
             Qan.OrgTreeLayout {
                 id: orgTreeLayout

@@ -34,9 +34,7 @@
 
 // Std headers
 #include <queue>
-#include <stack>
 #include <unordered_set>
-#include <algorithm>
 
 // Qt headers
 #include <QQmlProperty>
@@ -45,10 +43,10 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
-#include "./qanOrgTreeLayout.h"
+#include "./qanTreeLayout.h"
+
 
 namespace qan { // ::qan
-
 
 /* NaiveTreeLayout Object Management *///--------------------------------------
 NaiveTreeLayout::NaiveTreeLayout(QObject* parent) noexcept :
@@ -151,7 +149,7 @@ OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
 }
 OrgTreeLayout::~OrgTreeLayout() { }
 
-void    OrgTreeLayout::layout(qan::Node& root) noexcept
+void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) noexcept
 {
     // FIXME #228: Variant / naive Reingold-Tilford algorithm
 
@@ -161,13 +159,13 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
     // Algorithm:
         // Traverse graph DFS aligning child nodes vertically
         // At a given level: `shift` next node according to previous node sub-tree BR
-    auto layout_rec = [](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+    auto layout_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
         //qWarning() << "layout_rec(): br=" << br;
-        const auto x = br.right() + 45.;
+        const auto x = br.right() + xSpacing;
         for (auto child: childNodes) {
             //qWarning() << "layout_rec(): child.label=" << child->getLabel() << "  br=" << br;
             child->getItem()->setX(x);
-            child->getItem()->setY(br.bottom() + 45);
+            child->getItem()->setY(br.bottom() + ySpacing);
             br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
             const auto prevBr = self(self, child->get_out_nodes(), br);
             br = br.united(prevBr);
@@ -180,11 +178,11 @@ void    OrgTreeLayout::layout(qan::Node& root) noexcept
                root.getItem()->boundingRect().translated(root.getItem()->position()));
 }
 
-void    OrgTreeLayout::layout(qan::Node* root) noexcept
+void    OrgTreeLayout::layout(qan::Node* root, qreal xSpacing, qreal ySpacing) noexcept
 {
     //qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
     if (root != nullptr)
-        layout(*root);
+        layout(*root, xSpacing, ySpacing);
 }
 //-----------------------------------------------------------------------------
 

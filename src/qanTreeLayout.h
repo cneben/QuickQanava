@@ -42,7 +42,7 @@
 #include <QAbstractListModel>
 
 // QuickQanava headers
-#include "../../src/qanGraph.h"
+#include "./qanGraph.h"
 
 
 namespace qan { // ::qan
@@ -102,10 +102,10 @@ public:
      * running this algorithm on a non tree subgraph might lead to inifinite recursions or
      * invalid layouts.
      */
-    void                layout(qan::Node& root) noexcept;
+    void                layout(qan::Node& root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
 
     //! QML invokable version of layout().
-    Q_INVOKABLE void    layout(qan::Node* root) noexcept;
+    Q_INVOKABLE void    layout(qan::Node* root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

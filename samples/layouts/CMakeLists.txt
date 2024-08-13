@@ -23,11 +23,9 @@ endif()
 
 set(source_files
     layouts.cpp
-    qanOrgTreeLayout.cpp
 )
 
 set (header_files
-     qanOrgTreeLayout.h
 )
 
 add_executable(sample_layouts ${source_files} ${header_files} layouts.qrc)
