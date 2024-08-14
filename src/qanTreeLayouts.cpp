@@ -43,7 +43,7 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
-#include "./qanTreeLayout.h"
+#include "./qanTreeLayouts.h"
 
 
 namespace qan { // ::qan
@@ -149,9 +149,22 @@ OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
 }
 OrgTreeLayout::~OrgTreeLayout() { }
 
+bool    OrgTreeLayout::setLayoutOrientation(OrgTreeLayout::LayoutOrientation layoutOrientation) noexcept {
+    if (_layoutOrientation != layoutOrientation) {
+        _layoutOrientation = layoutOrientation;
+        emit layoutOrientationChanged();
+        return true;
+    }
+    return false;
+}
+OrgTreeLayout::LayoutOrientation        OrgTreeLayout::getLayoutOrientation() noexcept { return _layoutOrientation; }
+const OrgTreeLayout::LayoutOrientation  OrgTreeLayout::getLayoutOrientation() const noexcept { return _layoutOrientation; }
+
+
 void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) noexcept
 {
-    // FIXME #228: Variant / naive Reingold-Tilford algorithm
+    // Note: Recursive variant of Reingold-Tilford algorithm with naive shifting (ie shifting
+    // based on the less space efficient sub tree bounding rect intersection...)
 
     // Pre-condition: root must be a tree subgraph, this is not enforced in this algorithm,
     // any circuit will lead to intinite recursion...
@@ -160,27 +173,24 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
         // Traverse graph DFS aligning child nodes vertically
         // At a given level: `shift` next node according to previous node sub-tree BR
     auto layout_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
-        //qWarning() << "layout_rec(): br=" << br;
         const auto x = br.right() + xSpacing;
         for (auto child: childNodes) {
-            //qWarning() << "layout_rec(): child.label=" << child->getLabel() << "  br=" << br;
             child->getItem()->setX(x);
             child->getItem()->setY(br.bottom() + ySpacing);
+            // Take into account this level maximum width
             br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
-            const auto prevBr = self(self, child->get_out_nodes(), br);
-            br = br.united(prevBr);
+            const auto childBr = self(self, child->get_out_nodes(), br);
+            br.setBottom(childBr.bottom()); // Note: Do not take full child BR into account to avoid x drifting
         }
         return br;
     };
-    //qWarning() << "root.bottomRight=" << root.getItem()->boundingRect().bottomRight();
-    // Note: QQuickItem boundingRect is in item local CS, translate to scene CS.
+    // Note: QQuickItem boundingRect() is in item local CS, translate to "scene" CS.
     layout_rec(layout_rec, root.get_out_nodes(),
                root.getItem()->boundingRect().translated(root.getItem()->position()));
 }
 
 void    OrgTreeLayout::layout(qan::Node* root, qreal xSpacing, qreal ySpacing) noexcept
 {
-    //qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
     if (root != nullptr)
         layout(*root, xSpacing, ySpacing);
 }

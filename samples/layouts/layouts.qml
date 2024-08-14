@@ -66,6 +66,8 @@ ApplicationWindow {
 
                 let n13 = graph.insertNode()
                 n13.label = "n13"; n13.item.x=225; n13.item.y= 125
+                let n131 = graph.insertNode()
+                n131.label = "n131"; n131.item.x=225; n131.item.y= 125
 
                 graph.insertEdge(n1, n11);
                 graph.insertEdge(n1, n12);
@@ -73,6 +75,7 @@ ApplicationWindow {
                 graph.insertEdge(n12, n121);
                 graph.insertEdge(n12, n122);
                 graph.insertEdge(n121, n1211);
+                graph.insertEdge(n13, n131);
 
                 orgTreeLayout.layout(n1);
             }

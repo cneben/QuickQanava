@@ -63,7 +63,7 @@
 #include "./qanBottomResizer.h"
 #include "./qanNavigablePreview.h"
 #include "./qanAnalysisTimeHeatMap.h"
-#include "./qanTreeLayout.h"
+#include "./qanTreeLayouts.h"
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {

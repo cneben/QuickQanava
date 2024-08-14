@@ -91,6 +91,35 @@ public:
     OrgTreeLayout& operator=(OrgTreeLayout&&) = delete;
 
 public:
+    //! Define layout orentation, modify before a call to layout(), default to Vertical.
+    enum class LayoutOrientation : unsigned int {
+        //! Undefined.
+        Undefined = 0,
+        //! Vertical tree layout.
+        Vertical = 2,
+        //! Horizontal tree layout.
+        Horizontal = 4,
+        //! Mixed t0ree layout (ie vertical, but horizontal for leaf nodes).
+        Mixed = 8
+    };
+    Q_ENUM(LayoutOrientation)
+
+    //! \copydoc LayoutOrientation
+    Q_PROPERTY(LayoutOrientation layoutOrientation READ getLayoutOrientation WRITE setLayoutOrientation NOTIFY layoutOrientationChanged FINAL)
+    //! \copydoc LayoutOrientation
+    virtual bool            setLayoutOrientation(LayoutOrientation layoutOrientation) noexcept;
+    //! \copydoc LayoutOrientation
+    LayoutOrientation       getLayoutOrientation() noexcept;
+    //! \copydoc LayoutOrientation
+    const LayoutOrientation getLayoutOrientation() const noexcept;
+protected:
+    //! \copydoc LayoutOrientation
+    LayoutOrientation       _layoutOrientation = LayoutOrientation::Vertical;
+signals:
+    //! \copydoc LayoutOrientation
+    void                    layoutOrientationChanged();
+
+public:
     /*! \brief Apply a vertical "organisational chart tree layout algorithm" to subgraph \c root.
      *
      * OrgChart layout _will preserve_ node orders.
