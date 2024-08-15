@@ -77,6 +77,7 @@ ApplicationWindow {
                 graph.insertEdge(n121, n1211);
                 graph.insertEdge(n13, n131);
 
+                orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Horizontal
                 orgTreeLayout.layout(n1);
             }
             Qan.OrgTreeLayout {

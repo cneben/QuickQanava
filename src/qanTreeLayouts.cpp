@@ -172,7 +172,7 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
     // Algorithm:
         // Traverse graph DFS aligning child nodes vertically
         // At a given level: `shift` next node according to previous node sub-tree BR
-    auto layout_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+    auto layoutVert_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
         const auto x = br.right() + xSpacing;
         for (auto child: childNodes) {
             child->getItem()->setX(x);
@@ -184,9 +184,36 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
         }
         return br;
     };
+
+    auto layoutHoriz_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+        const auto y = br.bottom() + ySpacing;
+        for (auto child: childNodes) {
+            child->getItem()->setX(br.right() + xSpacing);
+            child->getItem()->setY(y);
+            // Take into account this level maximum width
+            br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
+            const auto childBr = self(self, child->get_out_nodes(), br);
+            br.setRight(childBr.right()); // Note: Do not take full child BR into account to avoid x drifting
+        }
+        return br;
+    };
+
     // Note: QQuickItem boundingRect() is in item local CS, translate to "scene" CS.
-    layout_rec(layout_rec, root.get_out_nodes(),
-               root.getItem()->boundingRect().translated(root.getItem()->position()));
+    switch (getLayoutOrientation()) {
+    case LayoutOrientation::Undefined: return;
+    case LayoutOrientation::Vertical:
+        layoutVert_rec(layoutVert_rec, root.get_out_nodes(),
+                       root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    case LayoutOrientation::Horizontal:
+        layoutHoriz_rec(layoutHoriz_rec, root.get_out_nodes(),
+                        root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    case LayoutOrientation::Mixed:
+        //layoutHoriz_rec(layout_rec, root.get_out_nodes(),
+        //                root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    }
 }
 
 void    OrgTreeLayout::layout(qan::Node* root, qreal xSpacing, qreal ySpacing) noexcept
