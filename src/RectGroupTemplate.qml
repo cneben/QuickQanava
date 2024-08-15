@@ -51,9 +51,16 @@ Item {
     //! Show or hide group top left label editor (default to visible).
     readonly property alias labelEditorVisible: labelEditorControl.visible
 
+    //! Header layout (available for attaching childrens).
     property alias  header: headerLayout
 
     property alias  backRadius: groupBackground.backRadius
+
+    //! User header background component hook, see RectGroupTemplate.headerBackground.
+    property alias  headerBackground: groupBackground.headerBackground
+
+    //! Enable drawing an horizontal separator at heaer bottom, mioght be usefull for TableGroup (default to false).
+    property bool   headerSeparatorVisible: false
 
     enabled: {
         if (groupItem &&
@@ -138,7 +145,7 @@ Item {
             border.width: 0
             color: groupItem?.style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
             opacity: 0.8
-            visible: !groupItem.collapsed
+            visible: !groupItem.collapsed && headerSeparatorVisible
         }
         Item {
             id: content

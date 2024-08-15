@@ -54,5 +54,6 @@ Qan.TableGroupItem {
         groupItem: parent
         z: 1
         backRadius: 0
+        headerSeparatorVisible: true
     }
 }  // Qan.TableGroupItem

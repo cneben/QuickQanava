@@ -45,6 +45,9 @@ Item {
     property var    style: undefined
     property real   backRadius: style?.backRadius ?? 4.
 
+    //! User component hook to set a header background (component has to specify it's height).
+    property Component headerBackground: null
+
     // PRIVATE ////////////////////////////////////////////////////////////////
     // Note: Top level item is used to isolate rendering of:
     //    - background with a gradient effect
@@ -70,6 +73,12 @@ Item {
                 color: style?.backColor ?? Qt.rgba(0., 0., 0., 0.)
             }
         }
+    }
+    Loader {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        sourceComponent: headerBackground
     }
     Rectangle {
         id: foreground
