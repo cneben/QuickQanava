@@ -74,10 +74,10 @@ ApplicationWindow {
                 graph.insertEdge(n1, n13);
                 graph.insertEdge(n12, n121);
                 graph.insertEdge(n12, n122);
-                graph.insertEdge(n121, n1211);
+                //graph.insertEdge(n121, n1211);
                 graph.insertEdge(n13, n131);
 
-                orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Horizontal
+                orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Mixed
                 orgTreeLayout.layout(n1);
             }
             Qan.OrgTreeLayout {

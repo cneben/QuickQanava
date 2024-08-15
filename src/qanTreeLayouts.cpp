@@ -198,6 +198,29 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
         return br;
     };
 
+    auto layoutMixed_rec = [xSpacing, ySpacing, layoutHoriz_rec](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+        auto childsAreLeafs = true;
+        for (const auto child: childNodes)
+            if (child->get_out_nodes().size() != 0) {
+                childsAreLeafs = false;
+                break;
+            }
+        if (childsAreLeafs)
+            return layoutHoriz_rec(self, childNodes, br);
+        else {
+            const auto x = br.right() + xSpacing;
+            for (auto child: childNodes) {
+                child->getItem()->setX(x);
+                child->getItem()->setY(br.bottom() + ySpacing);
+                // Take into account this level maximum width
+                br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
+                const auto childBr = self(self, child->get_out_nodes(), br);
+                br.setBottom(childBr.bottom()); // Note: Do not take full child BR into account to avoid x drifting
+            }
+        }
+        return br;
+    };
+
     // Note: QQuickItem boundingRect() is in item local CS, translate to "scene" CS.
     switch (getLayoutOrientation()) {
     case LayoutOrientation::Undefined: return;
@@ -210,8 +233,8 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
                         root.getItem()->boundingRect().translated(root.getItem()->position()));
         break;
     case LayoutOrientation::Mixed:
-        //layoutHoriz_rec(layout_rec, root.get_out_nodes(),
-        //                root.getItem()->boundingRect().translated(root.getItem()->position()));
+        layoutMixed_rec(layoutMixed_rec, root.get_out_nodes(),
+                        root.getItem()->boundingRect().translated(root.getItem()->position()));
         break;
     }
 }
