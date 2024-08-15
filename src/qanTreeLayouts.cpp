@@ -178,9 +178,8 @@ void    RandomLayout::layout(qan::Node& root) noexcept
         if (node->getItem() == nullptr)
             continue;
         const auto nodeBr = node->getItem()->boundingRect();
-        qreal maxX = layoutRect.width() - nodeBr.width();
-        qreal maxY = layoutRect.height() - nodeBr.height();
-        // Generate and set random x and y positions within available area
+        qreal maxX = layoutRect.width() - nodeBr.width();       // Generate and set random x and y positions
+        qreal maxY = layoutRect.height() - nodeBr.height();     // within available layoutRect area
         node->getItem()->setX(QRandomGenerator::global()->bounded(maxX) + layoutRect.left());
         node->getItem()->setY(QRandomGenerator::global()->bounded(maxY) + layoutRect.top());
     }

@@ -51,36 +51,39 @@ ApplicationWindow {
                 let n1 = graph.insertNode()
                 id: graphView
                 graphView.treeRoot = n1
-                n1.label = "n1"; n1.item.x=15; n1.item.y= 25
+                n1.label = "n1"; n1.item.x = 15; n1.item.y = 25
                 n1.item.ratio = 0.4
 
                 let n11 = graph.insertNode()
-                n11.label = "n11"; n11.item.x=15; n11.item.y= 125
+                n11.label = "n11"; n11.item.x = 115; n11.item.y = 100
+                let n111 = graph.insertNode()
+                n111.label = "n111"; n111.item.x = 215; n111.item.y = 170
+                let n1111 = graph.insertNode()
+                n1111.label = "n1111"; n1111.item.x = 315; n1111.item.y = 240
+
                 let n12 = graph.insertNode()
-                n12.label = "n12"; n12.item.x=125; n12.item.y= 125
-
+                n12.label = "n12"; n12.item.x = 115; n12.item.y= 310
                 let n121 = graph.insertNode()
-                n121.label = "n121"; n121.item.x=125; n121.item.y= 225
+                n121.label = "n121"; n121.item.x = 215; n121.item.y = 380
                 let n122 = graph.insertNode()
-                n122.label = "n122"; n122.item.x=225; n122.item.y= 225
-
-                let n1211 = graph.insertNode()
-                n1211.label = "n1211"; n1211.item.x=125; n1211.item.y= 225
+                n122.label = "n122"; n122.item.x = 215; n122.item.y = 450
 
                 let n13 = graph.insertNode()
-                n13.label = "n13"; n13.item.x=225; n13.item.y= 125
+                n13.label = "n13"; n13.item.x = 115; n13.item.y = 520
                 let n131 = graph.insertNode()
-                n131.label = "n131"; n131.item.x=225; n131.item.y= 125
+                n131.label = "n131"; n131.item.x = 225; n131.item.y = 590
 
                 graph.insertEdge(n1, n11)
                 graph.insertEdge(n1, n12)
                 graph.insertEdge(n1, n13)
+
+                graph.insertEdge(n11, n111)
+                graph.insertEdge(n111, n1111)
+
                 graph.insertEdge(n12, n121)
                 graph.insertEdge(n12, n122)
-                //graph.insertEdge(n121, n1211)
-                graph.insertEdge(n13, n131)
 
-                randomLayout.layout(n1);
+                graph.insertEdge(n13, n131)
             }
             Qan.OrgTreeLayout {
                 id: orgTreeLayout
