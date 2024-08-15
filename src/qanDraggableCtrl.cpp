@@ -179,7 +179,8 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
                 if (groupItemDragPos.y() < 0)  // Coords are in container CS
                     drag = true;
-            } else if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Container) == qan::GroupItem::DragPolicy::Container) {
+            }
+            if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Container) == qan::GroupItem::DragPolicy::Container) {
                 if (groupItemDragPos.y() >= 0)
                     drag = true;
             }

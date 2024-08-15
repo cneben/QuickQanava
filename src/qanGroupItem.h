@@ -128,7 +128,7 @@ public:
         //! Allow dragging group in the group header.
         Header = 2,
         //! Allow dragging group in the group content.
-        Container = 2
+        Container = 4
     };
     Q_ENUM(DragPolicy)
     //! \copydoc DragPolicy
