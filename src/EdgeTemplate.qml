@@ -184,7 +184,8 @@ Item {
         id: edgeShape
         anchors.fill: parent
         visible: edgeItem.visible && !edgeItem.hidden
-        preferredRendererType: Shape.CurveRenderer
+        // Note 20240815: Do not pay the curve renderer cost for horiz/vert ortho lines
+        preferredRendererType: lineType === Qan.EdgeStyle.Ortho ? Qan.EdgeStyle.Ortho : Shape.CurveRenderer
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined
