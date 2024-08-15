@@ -79,9 +79,15 @@ ApplicationWindow {
                 graph.insertEdge(n12, n122)
                 //graph.insertEdge(n121, n1211)
                 graph.insertEdge(n13, n131)
+
+                randomLayout.layout(n1);
             }
             Qan.OrgTreeLayout {
                 id: orgTreeLayout
+            }
+            Qan.RandomLayout {
+                id: randomLayout
+                layoutRect: Qt.rect(100, 100, 1000, 1000)
             }
         } // Qan.Graph
         Menu {      // Context menu demonstration
@@ -105,13 +111,18 @@ ApplicationWindow {
             anchors.top: parent.top
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 420
+            width: 470
             height: 50
             padding: 2
             RowLayout {
                 anchors.fill: parent
                 Label {
                     text: "Apply OrgTree:"
+                }
+                Button {
+                    text: 'Random'
+                    Material.roundedScale: Material.SmallScale
+                    onClicked: randomLayout.layout(graphView.treeRoot)
                 }
                 Button {
                     text: 'Mixed'

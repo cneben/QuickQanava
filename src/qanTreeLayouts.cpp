@@ -143,6 +143,58 @@ void    NaiveTreeLayout::layout(qan::Node* root) noexcept
 
 
 /* OrgTreeLayout Object Management *///----------------------------------------
+RandomLayout::RandomLayout(QObject* parent) noexcept :
+    QObject{parent}
+{
+}
+RandomLayout::~RandomLayout() { }
+
+bool    RandomLayout::setLayoutRect(QRectF layoutRect) noexcept
+{
+    _layoutRect = layoutRect;
+    emit layoutRectChanged();
+    return true;
+}
+const QRectF    RandomLayout::getLayoutRect() const noexcept { return _layoutRect; }
+
+void    RandomLayout::layout(qan::Node& root) noexcept
+{
+    // In nodes, out nodes, adjacent nodes ?
+    const auto graph = root.getGraph();
+    if (graph == nullptr)
+        return;
+    if (root.getItem() == nullptr)
+        return;
+
+    // Generate a 1000x1000 layout rect centered on root if the user has not specified one
+    const auto rootPosition = root.getItem()->position();
+    const auto layoutRect = _layoutRect.isEmpty() ? QRectF{rootPosition.x() - 500, rootPosition.y() - 500, 1000., 1000.} :
+                                                    _layoutRect;
+
+    auto outNodes = graph->collectSubNodes(QVector<qan::Node*>{&root}, false);
+    outNodes.insert(&root);
+    for (auto n : outNodes) {
+        auto node = const_cast<qan::Node*>(n);
+        if (node->getItem() == nullptr)
+            continue;
+        const auto nodeBr = node->getItem()->boundingRect();
+        qreal maxX = layoutRect.width() - nodeBr.width();
+        qreal maxY = layoutRect.height() - nodeBr.height();
+        // Generate and set random x and y positions within available area
+        node->getItem()->setX(QRandomGenerator::global()->bounded(maxX) + layoutRect.left());
+        node->getItem()->setY(QRandomGenerator::global()->bounded(maxY) + layoutRect.top());
+    }
+}
+
+void    RandomLayout::layout(qan::Node* root) noexcept
+{
+    if (root != nullptr)
+        layout(*root);
+}
+//-----------------------------------------------------------------------------
+
+
+/* OrgTreeLayout Object Management *///----------------------------------------
 OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
     QObject{parent}
 {

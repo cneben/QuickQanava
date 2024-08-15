@@ -1073,7 +1073,7 @@ public:
      */
     std::vector<const qan::Node*>   collectDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
-    //! \copydoc collectDfs()
+    //! Collect all out nodes of \c nodes using DFS, return an unordered set of subnodes (nodes in node are _not_ in returned set).
     auto    collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept -> std::unordered_set<const qan::Node*>;
 
 private:
