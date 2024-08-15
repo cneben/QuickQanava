@@ -74,7 +74,57 @@ public:
 };
 
 
-/*! \brief
+/*! \brief Layout nodes randomly inside a bounding rect.
+ * \nosubgrouping
+ */
+class RandomLayout : public QObject
+{
+    Q_OBJECT
+    /*! \name RandomLayout Object Management *///-----------------------------
+    //@{
+public:
+    explicit RandomLayout(QObject* parent = nullptr) noexcept;
+    virtual ~RandomLayout() override;
+    RandomLayout(const RandomLayout&) = delete;
+    RandomLayout& operator=(const RandomLayout&) = delete;
+    RandomLayout(RandomLayout&&) = delete;
+    RandomLayout& operator=(RandomLayout&&) = delete;
+
+public:
+    //! \copydoc getLayoutRect()
+    Q_PROPERTY(QRectF layoutRect READ getLayoutRect WRITE setLayoutRect NOTIFY layoutRectChanged FINAL)
+    //! \copydoc getLayoutRect()
+    bool            setLayoutRect(QRectF layoutRect) noexcept;
+    //! \copydoc getLayoutRect()
+    const QRectF    getLayoutRect() const noexcept;
+protected:
+    //! \copydoc getLayoutRect()
+    QRectF          _layoutRect = QRectF{};
+signals:
+    //! \copydoc getLayoutRect()
+    void            layoutRectChanged();
+
+public:
+    /*! \brief Apply a random layout fitting nodes positions inside \c layoutRect.
+     * If \c layoutRect is empty, generate a 1000x1000 default rect around \c root position.
+     */
+    void                layout(qan::Node& root) noexcept;
+
+    //! QML invokable version of layout().
+    Q_INVOKABLE void    layout(qan::Node* root) noexcept;
+    //@}
+    //-------------------------------------------------------------------------
+};
+
+
+/*! \brief Org chart naive recursive variant of Reingold-Tilford algorithm with shifting.
+ *
+ * This algorithm layout tree in an "Org chart" fashion using no space optimization,
+ * respecting node ordering and working for n-ary trees.
+ *
+ * \note This layout does not enforces that the input graph is a tree, laying out
+ * a non-tree graph might lead to infinite recursion.
+ *
  * \nosubgrouping
  */
 class OrgTreeLayout : public QObject
@@ -91,6 +141,35 @@ public:
     OrgTreeLayout& operator=(OrgTreeLayout&&) = delete;
 
 public:
+    //! Define layout orentation, modify before a call to layout(), default to Vertical.
+    enum class LayoutOrientation : unsigned int {
+        //! Undefined.
+        Undefined = 0,
+        //! Vertical tree layout.
+        Vertical = 2,
+        //! Horizontal tree layout.
+        Horizontal = 4,
+        //! Mixed t0ree layout (ie vertical, but horizontal for leaf nodes).
+        Mixed = 8
+    };
+    Q_ENUM(LayoutOrientation)
+
+    //! \copydoc LayoutOrientation
+    Q_PROPERTY(LayoutOrientation layoutOrientation READ getLayoutOrientation WRITE setLayoutOrientation NOTIFY layoutOrientationChanged FINAL)
+    //! \copydoc LayoutOrientation
+    bool                    setLayoutOrientation(LayoutOrientation layoutOrientation) noexcept;
+    //! \copydoc LayoutOrientation
+    LayoutOrientation       getLayoutOrientation() noexcept;
+    //! \copydoc LayoutOrientation
+    const LayoutOrientation getLayoutOrientation() const noexcept;
+protected:
+    //! \copydoc LayoutOrientation
+    LayoutOrientation       _layoutOrientation = LayoutOrientation::Vertical;
+signals:
+    //! \copydoc LayoutOrientation
+    void                    layoutOrientationChanged();
+
+public:
     /*! \brief Apply a vertical "organisational chart tree layout algorithm" to subgraph \c root.
      *
      * OrgChart layout _will preserve_ node orders.
@@ -102,10 +181,10 @@ public:
      * running this algorithm on a non tree subgraph might lead to inifinite recursions or
      * invalid layouts.
      */
-    void                layout(qan::Node& root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
+    void                layout(qan::Node& root, qreal xSpacing = 25., qreal ySpacing = 25.) noexcept;
 
     //! QML invokable version of layout().
-    Q_INVOKABLE void    layout(qan::Node* root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
+    Q_INVOKABLE void    layout(qan::Node* root, qreal xSpacing = 25., qreal ySpacing = 25.) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

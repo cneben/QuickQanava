@@ -30,7 +30,7 @@ set(qan_source_files
     qanTableCell.cpp
     qanTableBorder.cpp
     qanTableGroupItem.cpp
-    qanTreeLayout.cpp
+    qanTreeLayouts.cpp
     )
 
 set (qan_header_files
@@ -65,7 +65,7 @@ set (qan_header_files
     qanTableCell.h
     qanTableBorder.h
     qanTableGroupItem.h
-    qanTreeLayout.cpp
+    qanTreeLayouts.h
     QuickQanava.h
     gtpo/container_adapter.h
     gtpo/edge.h

@@ -63,7 +63,7 @@
 #include "./qanBottomResizer.h"
 #include "./qanNavigablePreview.h"
 #include "./qanAnalysisTimeHeatMap.h"
-#include "./qanTreeLayout.h"
+#include "./qanTreeLayouts.h"
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
@@ -118,6 +118,7 @@ struct QuickQanava {
         qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
         qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
 
+        qmlRegisterType<qan::RandomLayout>("QuickQanava", 2, 0, "RandomLayout");
         qmlRegisterType<qan::OrgTreeLayout>("QuickQanava", 2, 0, "OrgTreeLayout");
     } // initialize()
 };

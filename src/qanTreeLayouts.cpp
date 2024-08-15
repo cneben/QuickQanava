@@ -43,7 +43,7 @@
 #include <QQmlComponent>
 
 // QuickQanava headers
-#include "./qanTreeLayout.h"
+#include "./qanTreeLayouts.h"
 
 
 namespace qan { // ::qan
@@ -143,15 +143,79 @@ void    NaiveTreeLayout::layout(qan::Node* root) noexcept
 
 
 /* OrgTreeLayout Object Management *///----------------------------------------
+RandomLayout::RandomLayout(QObject* parent) noexcept :
+    QObject{parent}
+{
+}
+RandomLayout::~RandomLayout() { }
+
+bool    RandomLayout::setLayoutRect(QRectF layoutRect) noexcept
+{
+    _layoutRect = layoutRect;
+    emit layoutRectChanged();
+    return true;
+}
+const QRectF    RandomLayout::getLayoutRect() const noexcept { return _layoutRect; }
+
+void    RandomLayout::layout(qan::Node& root) noexcept
+{
+    // In nodes, out nodes, adjacent nodes ?
+    const auto graph = root.getGraph();
+    if (graph == nullptr)
+        return;
+    if (root.getItem() == nullptr)
+        return;
+
+    // Generate a 1000x1000 layout rect centered on root if the user has not specified one
+    const auto rootPosition = root.getItem()->position();
+    const auto layoutRect = _layoutRect.isEmpty() ? QRectF{rootPosition.x() - 500, rootPosition.y() - 500, 1000., 1000.} :
+                                                    _layoutRect;
+
+    auto outNodes = graph->collectSubNodes(QVector<qan::Node*>{&root}, false);
+    outNodes.insert(&root);
+    for (auto n : outNodes) {
+        auto node = const_cast<qan::Node*>(n);
+        if (node->getItem() == nullptr)
+            continue;
+        const auto nodeBr = node->getItem()->boundingRect();
+        qreal maxX = layoutRect.width() - nodeBr.width();       // Generate and set random x and y positions
+        qreal maxY = layoutRect.height() - nodeBr.height();     // within available layoutRect area
+        node->getItem()->setX(QRandomGenerator::global()->bounded(maxX) + layoutRect.left());
+        node->getItem()->setY(QRandomGenerator::global()->bounded(maxY) + layoutRect.top());
+    }
+}
+
+void    RandomLayout::layout(qan::Node* root) noexcept
+{
+    if (root != nullptr)
+        layout(*root);
+}
+//-----------------------------------------------------------------------------
+
+
+/* OrgTreeLayout Object Management *///----------------------------------------
 OrgTreeLayout::OrgTreeLayout(QObject* parent) noexcept :
     QObject{parent}
 {
 }
 OrgTreeLayout::~OrgTreeLayout() { }
 
+bool    OrgTreeLayout::setLayoutOrientation(OrgTreeLayout::LayoutOrientation layoutOrientation) noexcept {
+    if (_layoutOrientation != layoutOrientation) {
+        _layoutOrientation = layoutOrientation;
+        emit layoutOrientationChanged();
+        return true;
+    }
+    return false;
+}
+OrgTreeLayout::LayoutOrientation        OrgTreeLayout::getLayoutOrientation() noexcept { return _layoutOrientation; }
+const OrgTreeLayout::LayoutOrientation  OrgTreeLayout::getLayoutOrientation() const noexcept { return _layoutOrientation; }
+
+
 void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) noexcept
 {
-    // FIXME #228: Variant / naive Reingold-Tilford algorithm
+    // Note: Recursive variant of Reingold-Tilford algorithm with naive shifting (ie shifting
+    // based on the less space efficient sub tree bounding rect intersection...)
 
     // Pre-condition: root must be a tree subgraph, this is not enforced in this algorithm,
     // any circuit will lead to intinite recursion...
@@ -159,28 +223,75 @@ void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) n
     // Algorithm:
         // Traverse graph DFS aligning child nodes vertically
         // At a given level: `shift` next node according to previous node sub-tree BR
-    auto layout_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
-        //qWarning() << "layout_rec(): br=" << br;
+    auto layoutVert_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
         const auto x = br.right() + xSpacing;
         for (auto child: childNodes) {
-            //qWarning() << "layout_rec(): child.label=" << child->getLabel() << "  br=" << br;
             child->getItem()->setX(x);
             child->getItem()->setY(br.bottom() + ySpacing);
+            // Take into account this level maximum width
             br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
-            const auto prevBr = self(self, child->get_out_nodes(), br);
-            br = br.united(prevBr);
+            const auto childBr = self(self, child->get_out_nodes(), br);
+            br.setBottom(childBr.bottom()); // Note: Do not take full child BR into account to avoid x drifting
         }
         return br;
     };
-    //qWarning() << "root.bottomRight=" << root.getItem()->boundingRect().bottomRight();
-    // Note: QQuickItem boundingRect is in item local CS, translate to scene CS.
-    layout_rec(layout_rec, root.get_out_nodes(),
-               root.getItem()->boundingRect().translated(root.getItem()->position()));
+
+    auto layoutHoriz_rec = [xSpacing, ySpacing](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+        const auto y = br.bottom() + ySpacing;
+        for (auto child: childNodes) {
+            child->getItem()->setX(br.right() + xSpacing);
+            child->getItem()->setY(y);
+            // Take into account this level maximum width
+            br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
+            const auto childBr = self(self, child->get_out_nodes(), br);
+            br.setRight(childBr.right()); // Note: Do not take full child BR into account to avoid x drifting
+        }
+        return br;
+    };
+
+    auto layoutMixed_rec = [xSpacing, ySpacing, layoutHoriz_rec](auto&& self, auto& childNodes, QRectF br) -> QRectF {
+        auto childsAreLeafs = true;
+        for (const auto child: childNodes)
+            if (child->get_out_nodes().size() != 0) {
+                childsAreLeafs = false;
+                break;
+            }
+        if (childsAreLeafs)
+            return layoutHoriz_rec(self, childNodes, br);
+        else {
+            const auto x = br.right() + xSpacing;
+            for (auto child: childNodes) {
+                child->getItem()->setX(x);
+                child->getItem()->setY(br.bottom() + ySpacing);
+                // Take into account this level maximum width
+                br = br.united(child->getItem()->boundingRect().translated(child->getItem()->position()));
+                const auto childBr = self(self, child->get_out_nodes(), br);
+                br.setBottom(childBr.bottom()); // Note: Do not take full child BR into account to avoid x drifting
+            }
+        }
+        return br;
+    };
+
+    // Note: QQuickItem boundingRect() is in item local CS, translate to "scene" CS.
+    switch (getLayoutOrientation()) {
+    case LayoutOrientation::Undefined: return;
+    case LayoutOrientation::Vertical:
+        layoutVert_rec(layoutVert_rec, root.get_out_nodes(),
+                       root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    case LayoutOrientation::Horizontal:
+        layoutHoriz_rec(layoutHoriz_rec, root.get_out_nodes(),
+                        root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    case LayoutOrientation::Mixed:
+        layoutMixed_rec(layoutMixed_rec, root.get_out_nodes(),
+                        root.getItem()->boundingRect().translated(root.getItem()->position()));
+        break;
+    }
 }
 
 void    OrgTreeLayout::layout(qan::Node* root, qreal xSpacing, qreal ySpacing) noexcept
 {
-    //qWarning() << "qan::OrgTreeLayout::layout(): root=" << root;
     if (root != nullptr)
         layout(*root, xSpacing, ySpacing);
 }

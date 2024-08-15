@@ -127,6 +127,7 @@ Item {
                         exclusiveSignals: TapHandler.DoubleTap
                         onTapped: labelEditor.visible = true
                     }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.SizeAllCursor; acceptedButtons: Qt.NoButton }
                 }
             } // labelEditor Item
         } // RowLayout: collapser + label
