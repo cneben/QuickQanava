@@ -131,10 +131,10 @@ public:
      * running this algorithm on a non tree subgraph might lead to inifinite recursions or
      * invalid layouts.
      */
-    void                layout(qan::Node& root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
+    void                layout(qan::Node& root, qreal xSpacing = 25., qreal ySpacing = 25.) noexcept;
 
     //! QML invokable version of layout().
-    Q_INVOKABLE void    layout(qan::Node* root, qreal xSpacing = 35., qreal ySpacing = 25.) noexcept;
+    Q_INVOKABLE void    layout(qan::Node* root, qreal xSpacing = 25., qreal ySpacing = 25.) noexcept;
     //@}
     //-------------------------------------------------------------------------
 };

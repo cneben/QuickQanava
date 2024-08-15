@@ -43,11 +43,14 @@ ApplicationWindow {
         navigable   : true
         resizeHandlerColor: "#03a9f4"
         gridThickColor: Material.theme === Material.Dark ? "#4e4e4e" : "#c1c1c1"
+        property var treeRoot: undefined
         graph: Qan.Graph {
             parent: graphView
             id: graph
             Component.onCompleted: {
                 let n1 = graph.insertNode()
+                id: graphView
+                graphView.treeRoot = n1
                 n1.label = "n1"; n1.item.x=15; n1.item.y= 25
                 n1.item.ratio = 0.4
 
@@ -69,16 +72,13 @@ ApplicationWindow {
                 let n131 = graph.insertNode()
                 n131.label = "n131"; n131.item.x=225; n131.item.y= 125
 
-                graph.insertEdge(n1, n11);
-                graph.insertEdge(n1, n12);
-                graph.insertEdge(n1, n13);
-                graph.insertEdge(n12, n121);
-                graph.insertEdge(n12, n122);
-                //graph.insertEdge(n121, n1211);
-                graph.insertEdge(n13, n131);
-
-                orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Mixed
-                orgTreeLayout.layout(n1);
+                graph.insertEdge(n1, n11)
+                graph.insertEdge(n1, n12)
+                graph.insertEdge(n1, n13)
+                graph.insertEdge(n12, n121)
+                graph.insertEdge(n12, n122)
+                //graph.insertEdge(n121, n1211)
+                graph.insertEdge(n13, n131)
             }
             Qan.OrgTreeLayout {
                 id: orgTreeLayout
@@ -100,6 +100,44 @@ ApplicationWindow {
             contextMenu.x = pos.x
             contextMenu.y = pos.y
             contextMenu.open()
+        }
+        Pane {
+            anchors.top: parent.top
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 420
+            height: 50
+            padding: 2
+            RowLayout {
+                anchors.fill: parent
+                Label {
+                    text: "Apply OrgTree:"
+                }
+                Button {
+                    text: 'Mixed'
+                    Material.roundedScale: Material.SmallScale
+                    onClicked: {
+                        orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Mixed
+                        orgTreeLayout.layout(graphView.treeRoot);
+                    }
+                }
+                Button {
+                    text: 'Vertical'
+                    Material.roundedScale: Material.SmallScale
+                    onClicked: {
+                        orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Vertical
+                        orgTreeLayout.layout(graphView.treeRoot);
+                    }
+                }
+                Button {
+                    text: 'Horizontal'
+                    Material.roundedScale: Material.SmallScale
+                    onClicked: {
+                        orgTreeLayout.layoutOrientation = Qan.OrgTreeLayout.Horizontal
+                        orgTreeLayout.layout(graphView.treeRoot);
+                    }
+                }
+            }
         }
     }  // Qan.GraphView
 }
