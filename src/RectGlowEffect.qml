@@ -66,12 +66,11 @@ Item {
         anchors.centerIn: parent
         width: border.width + (glowRadius * 2)
         height: border.height + (glowRadius * 2)
-        blurEnabled: glowEffect.visible &&
-                     glowEffect.style !== undefined ? style.effectEnabled : false
+        blurEnabled: glowEffect.visible && (glowEffect.style?.effectEnabled || false)
         blurMax: 30
         blur: 1.
         colorization: 1.0
-        colorizationColor: glowColor
+        colorizationColor: style?.effectColor ?? Qt.rgba(0.7, 0.7, 0.7, 0.7)
 
         maskEnabled: true && glowEffect.visible
         maskThresholdMin: 0.29      // Should be just below border.color
