@@ -131,7 +131,9 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto sceneDragPos = event->scenePosition();
+        //const auto sceneDragPos = event->scenePosition();
+        // FIXME #232
+        const auto sceneDragPos = graph->getContainerItem()->mapFromScene(event->scenePosition());
         if (!_targetItem->getDragged()) {
             // Project in scene rect (for example is a node is part of a group)
             beginDragMove(sceneDragPos, _targetItem->getSelected());

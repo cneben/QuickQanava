@@ -75,6 +75,7 @@ Qan.AbstractGraphView {
             border.width: 2
             border.color: 'violet'
             transformOrigin: Qt.TopLeftCorner
+
             z: 1    // Note: Do not remove, otherwise events are hidden !
             Component.onCompleted: {
                 // Set initial content size
@@ -91,35 +92,43 @@ Qan.AbstractGraphView {
             navigable.contentY = (2000 / 2) - (navigable.height / 2.)
             */
             }
-        }
+            MouseArea {
+                //hoverEnabled: true
+                anchors.fill: parent
+                onWheel: (wheel) => {
+                             // FIXME #232 take wheel intensity into account...
+                             console.error(`wheel.x=${wheel.x}  wheel.y=${wheel.y}`)
+                             const P = mapToGlobal(wheel.x, wheel.y)
+                             //const P = mapToItem(contentItem, wheel.x, wheel.y)
+                             const scaleIncrement = wheel.angleDelta.y > 0. ? 0.25
+                                                                            : -0.25;
+                             const preScale = graphContainerItem.scale
+                             graphContainerItem.scale += scaleIncrement
+                             const scale = graphContainerItem.scale
 
-        MouseArea {
-            //hoverEnabled: true
-            anchors.fill: parent
-            onWheel: (wheel) => {
-                         console.error('HOPLA')
-                         // FIXME #232 take wheel intensity into account...
-                         const P = mapToGlobal(wheel.x, wheel.y)
-                         const scaleIncrement = wheel.angleDelta.y > 0. ? 0.5
-                                                                        : -0.05;
-                         const preScale = graphContainerItem.scale
-                         graphContainerItem.scale += scaleIncrement
-                         const scale = graphContainerItem.scale
+                             //console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
+                             const preContentX = navigable.contentX
+                             const preContentY = navigable.contentY
 
-                         console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
-                         const preContentX = navigable.contentX
-                         const preContentY = navigable.contentY
+                             //console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
+                             navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
+                             navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
 
-                         console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
-                         navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
-                         navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
+                             //const Pp = graphContainerItem.mapFromGlobal(wheel.x, wheel.y)
+                             const Pp = mapToGlobal(wheel.x, wheel.y)
+                             //const Pp = mapToItem(contentItem, wheel.x, wheel.y)
 
-                         const Pp = mapToGlobal(wheel.x, wheel.y)
-                         console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
-                         navigable.contentX = preContentX + (Pp.x - P.x)
-                         navigable.contentY = preContentY + (Pp.y - P.y)
-                     }
-            onClicked: (mouse) => { console.error('HOPLA'); graphView.clicked(mouse) }
+                             //const Pp = Qt.point(P.x * (1 + scaleIncrement), P.y * (1. + scaleIncrement));
+                             console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
+                             navigable.contentX = preContentX + (Pp.x - P.x)
+                             navigable.contentY = preContentY + (Pp.y - P.y)
+                             //navigable.contentX *= graphContainerItem.scale
+                             //navigable.contentY *= graphContainerItem.scale
+                             navigable.returnToBounds();
+                         }
+
+                onClicked: (mouse) => { graphView.clicked(mouse) }
+            }
         }
     }
     onRequestDisableNavigable: navigable.interactive = false
