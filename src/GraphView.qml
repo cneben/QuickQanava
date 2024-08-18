@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
+import QtQuick.Controls
 
 import QuickQanava      2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -58,6 +59,98 @@ Qan.AbstractGraphView {
     property size   resizeHandlerSize: "9x9"
 
     // PRIVATE ////////////////////////////////////////////////////////////////
+    Flickable {
+        id: navigable
+        anchors.fill: parent
+        clip: true
+        ScrollBar.vertical: ScrollBar { }
+        ScrollBar.horizontal: ScrollBar { }
+
+        //transformOrigin:
+
+        //onWidthChanged: console.error('width=' + width)
+        //onHeightChanged: console.error('height=' + height)
+        boundsMovement: Flickable.DragAndOvershootBounds
+
+        DragHandler {
+            property real _startX
+            property real _startY
+            acceptedButtons: Qt.RightButton
+            dragThreshold: 0
+            target: null
+            onActiveChanged: {
+                if (active) {
+                    _startX = navigable.contentX
+                    _startY = navigable.contentY
+                }
+            }
+            onTranslationChanged: {
+                navigable.contentX = _startX - translation.x
+                navigable.contentY = _startY - translation.y
+            }
+        }
+
+        Rectangle {
+            id: graphContainerItem
+            width: 3000
+            height: 2000
+            border.width: 2
+            border.color: 'violet'
+            transformOrigin: Qt.TopLeftCorner
+
+            Component.onCompleted: {
+                console.error('!!!setContainerItem(): graphContainerItem=' + graphContainerItem)
+                graphView.containerItem = graphContainerItem
+
+                // Set initial content size
+                //navigable.resizeContent(3000, 2000, null)
+                // FIXME: Laisser comme cela, mais il faudra un code d'initialisation "dédié" pour
+                // faire le centrage initial de la vue:
+                // avec un flag sur onSizeChanged() pas le choix, ici la taille est à 0...
+                navigable.contentWidth = 3000
+                navigable.contentHeight = 2000
+                /*console.error('navigable.width=' + navigable.width)
+            console.error('navigable.contentItem.width=' + navigable.contentItem.width)
+            // Resize view to center
+            navigable.contentX = (3000 / 2) - (navigable.width / 2.)      // FIXME simplify expression /2
+            navigable.contentY = (2000 / 2) - (navigable.height / 2.)
+            */
+            }
+
+            MouseArea {
+                hoverEnabled: true
+                anchors.fill: parent
+                onWheel: (wheel) => {
+                             // FIXME take wheel intensity into account...
+                             const P = mapToGlobal(wheel.x, wheel.y)
+                             const scaleIncrement = wheel.angleDelta.y > 0. ? 0.5
+                                                                            : -0.05;
+                             const preScale = graphContainerItem.scale
+                             graphContainerItem.scale += scaleIncrement
+                             const scale = graphContainerItem.scale
+
+                             console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
+                             const preContentX = navigable.contentX
+                             const preContentY = navigable.contentY
+
+                             console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
+                             navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
+                             navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
+
+                             const Pp = mapToGlobal(wheel.x, wheel.y)
+                             //const Pp = Qt.point(P.x * scale,
+                             //                    P.y * scale)
+                             //const Pp = Qt.point(P.x * 1. + scaleIncrement,
+                             //                    P.y * 1. + scaleIncrement)
+                             console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
+                            navigable.contentX = preContentX + (Pp.x - P.x)
+                            navigable.contentY = preContentY + (Pp.y - P.y)
+                         }
+                onClicked: (mouse) => { graphView.clicked(mouse) }
+            }
+        }
+    }
+
     Qan.LineGrid {
         id: lineGrid
     }
@@ -171,7 +264,8 @@ Qan.AbstractGraphView {
         color: Qt.rgba(0, 0, 0, 0)  // transparent
         visible: false
     }
-    selectionRectItem: selectionRect
+    // fIXME #232
+    //selectionRectItem: selectionRect
 
     // View Click management //////////////////////////////////////////////////
     onClicked: {

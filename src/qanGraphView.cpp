@@ -57,7 +57,44 @@ GraphView::GraphView(QQuickItem* parent) :
 //-----------------------------------------------------------------------------
 
 
-/* raph Interactions *///------------------------------------------------------
+/* Grid Management *///--------------------------------------------------------
+void    GraphView::setGrid(qan::Grid* grid) noexcept
+{
+    if (grid != _grid) {
+        if (_grid) {                        // Hide previous grid
+            disconnect(_grid,   nullptr,
+                       this,    nullptr);   // Disconnect every update signals from grid to this navigable
+        }
+        _grid = grid;                       // Configure new grid
+        if (_grid) {
+            _grid->setParentItem(this);
+            _grid->setZ(-1.0);
+            _grid->setAntialiasing(false);
+            _grid->setScale(1.0);
+            connect(_grid,  &QQuickItem::visibleChanged, // Force updateGrid when visibility is changed to eventually
+                    this,   &GraphView::updateGrid);     // take into account any grid property change while grid was hidden.
+        }
+        if (!_grid)
+            _grid = _defaultGrid.get(); // Do not connect default grid, it is an "empty grid"
+        updateGrid();
+        emit gridChanged();
+    }
+}
+
+void    GraphView::updateGrid() noexcept
+{
+    if (_grid &&
+        _containerItem != nullptr) {
+        // Generate a view rect to update grid
+        QRectF viewRect{_containerItem->mapFromItem(this, {0.,0.}),
+                        _containerItem->mapFromItem(this, {width(), height()})};
+        if (!viewRect.isEmpty())
+            _grid->updateGrid(viewRect, *_containerItem, *this);
+    }
+}
+//-----------------------------------------------------------------------------
+
+/* Graph Interactions *///-----------------------------------------------------
 void    GraphView::setGraph(qan::Graph* graph)
 {
     if (graph == nullptr) {
@@ -245,15 +282,18 @@ void    GraphView::keyPressEvent(QKeyEvent *event)
     }
 
     // If no selection, move the underlying graph view
+    // FIXME #232
+    /*
     if ((_graph->getSelectedNodes().size() + _graph->getSelectedGroups().size()) <= 0) {
         const auto p = QPointF{containerItem->x(),
                                containerItem->y()} - delta;
         containerItem->setX(p.x());
         containerItem->setY(p.y());
-        emit containerItemModified();
+        //emit containerItemModified();
         event->accept();
         return;
     }
+    */
 
     // Otherwise handle multiple selection (ie move selection)
     if (delta.manhattanLength() > 0.) {

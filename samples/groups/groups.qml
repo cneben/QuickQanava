@@ -45,7 +45,8 @@ ApplicationWindow {
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
-        navigable: true
+        // FIXME #232
+        //navigable: true
         function centerItem(item) {
             if (!item)
                 return
@@ -328,7 +329,8 @@ ApplicationWindow {
         Qan.GraphPreview {
             id: graphPreview
             source: graphView
-            viewWindowColor: Material.accent
+            // FIXME #232
+            //viewWindowColor: Material.accent
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: graphView.bottom
             anchors.bottomMargin: 8

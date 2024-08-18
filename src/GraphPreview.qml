@@ -44,13 +44,15 @@ Control {
     //! Source Qan.GraphView that should be previewed.
     property var    source: undefined
 
-    property alias  viewWindowColor: navigablePreview.viewWindowColor
+    // FIXME #232 nommage horrible
+    //property alias  viewWindowColor: navigablePreview.viewWindowColor
 
     // Preview background panel opacity (default to 0.9).
     property alias  previewOpactity: previewBackground.opacity
 
     //! Initial (and minimum) scene rect (should usually fit your initial screen size).
-    property alias  initialRect: navigablePreview.initialRect
+    // FIXME #232
+    //property alias  initialRect: navigablePreview.initialRect
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     padding: 0
@@ -73,7 +75,7 @@ Control {
         // 2. If navigable preview height (nph) < preview height (ph), then use graphRatio to
         //    generate nph.
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
-        if (!source)
+        if (!source || !source.containerItem)
             return
         const pw = graphPreview.width
         const ph = graphPreview.height
@@ -99,8 +101,9 @@ Control {
             nph = nph * (pw / npw)
 
         // Secure with boundary Check
-        navigablePreview.width = Math.min(npw, pw)
-        navigablePreview.height = Math.min(nph, ph)
+        // FIXME #232
+        //navigablePreview.width = Math.min(npw, pw)
+        //navigablePreview.height = Math.min(nph, ph)
     }
 
     opacity: 0.8
@@ -133,10 +136,13 @@ Control {
                            ''
             font.pixelSize: 11
         }
+        // FIXME #232  (and rename to Flickable Preview !)
+        /*
         Qan.NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
             source: graphPreview.source
         }  // Qan.NavigablePreview
+        */
     }
 }  // Control graph preview

@@ -39,6 +39,7 @@
 #include "./qanGroup.h"
 //#include "./qanNavigable.h"
 #include "./qanPortItem.h"
+#include "./qanGrid.h"
 
 // Qt headers
 #include <QQuickItem>
@@ -63,8 +64,7 @@ public:
     //@}
     //-------------------------------------------------------------------------
 
-
-    /*! \name View Flickable Management *///---------------------------------
+    /*! \name View Flickable Management *///-----------------------------------
     //@{
 public:
     /*! \brief Parent container for area child items.
@@ -91,14 +91,53 @@ public:
      * \endcode
      *
      */
-    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem WRITE setContainerItem NOTIFY containerItemChanged FINAL)
+    // FIXME #232 do not inline that
     //! \sa containerItem
-    inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
+    QQuickItem*     getContainerItem() noexcept { return _containerItem.data(); }
+    void            setContainerItem(QQuickItem* containerItem) noexcept { _containerItem = containerItem; emit containerItemChanged(); }
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
+signals:
+    void    containerItemChanged();
+
+    // #323 sitck with old qan::Navigable interface...
+signals:
+    //! Emitted whenever the mouse is clicked in graph view.
+    void    clicked(QVariant pos);
+
+    //! Emitted whenever the mouse is right clicked in graph view.
+    // FIXME #232
+    void    rightClicked(QVariant pos);
     //@}
     //-------------------------------------------------------------------------
 
+    /*! \name Grid Management *///---------------------------------------------
+    //@{
+public:
+    /*! \brief User defined background grid.
+     *
+     * Grid is automatically updated on zoom/pan or navigable content view modification.
+     *
+     * \note may be nullptr (undefined in QML).
+     */
+    Q_PROPERTY(qan::Grid* grid READ getGrid WRITE setGrid NOTIFY gridChanged FINAL)
+    //! \copydoc grid
+    qan::Grid*          getGrid() noexcept { return _grid.data(); }
+    const qan::Grid*    getGrid() const noexcept { return _grid.data(); }
+    void                setGrid(qan::Grid* grid) noexcept;
+private:
+    //! Force update of grid.
+    void                updateGrid() noexcept;
+    //! \copydoc grid
+    QPointer<qan::Grid> _grid;
+
+    std::unique_ptr<qan::Grid>   _defaultGrid;
+signals:
+    //! \copydoc grid
+    void                gridChanged();
+    //@}
+    //-------------------------------------------------------------------------
 
     /*! \name Graph Interactions *///------------------------------------------
     //@{
@@ -142,7 +181,6 @@ signals:
     void            groupDoubleClicked(qan::Group* group, QPointF pos);
     //@}
     //-------------------------------------------------------------------------
-
 
     /*! \name Selection Rectangle Management *///------------------------------
     //@{
