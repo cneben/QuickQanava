@@ -317,6 +317,8 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 {
+    qWarning() << "NodeItem::mouseMove()";
+
     if (getNode() != nullptr &&
             (getNode()->getIsProtected() ||
              getNode()->getLocked())) {
@@ -329,10 +331,14 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event)
     else
         event->ignore();
         // Note 20200531: Do not call base QQuickItem implementation, really.
+    // FIXME #232
+    QQuickItem::mouseMoveEvent(event);
 }
 
 void    NodeItem::mousePressEvent(QMouseEvent* event)
 {
+    qWarning() << "NodeItem::mousePress()";
+
     bool accepted = !getCollapsed() &&            // Fast exit
                     isInsideBoundingShape(event->localPos());
     if (accepted) {
@@ -357,7 +363,9 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
         event->accept();
     } else
         event->ignore();
+    QQuickItem::mousePressEvent(event);
     // Note 20160712: Do not call base QQuickItem implementation.
+    // FIXME #232
 }
 
 void    NodeItem::mouseReleaseEvent(QMouseEvent* event)

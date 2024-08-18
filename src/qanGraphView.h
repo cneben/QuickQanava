@@ -70,36 +70,18 @@ public:
     /*! \brief Parent container for area child items.
      *
      * Items added as child of the area must manually update their parents property to \c containerItem
-     *
-     * Example code for navigating an image:
-     * \code
-     * // Don't forget to register the component:
-     * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
-     * // QML: import QuickQanava 2.0
-     * Qan.Navigable {
-     *   anchors.fill: parent
-     *   clip: true     // Don't set clipping if Navigable is anchored directly to your main window
-     *   Image {
-     *       parent: imageView.containerItem    // Any direct child must manually set its parent item
-     *       id: image
-     *       source: "qrc:/myimage.png"
-     *       Component.onCompleted: {
-     *         // Eventually, fit the image in view: navigable.fitContentInView(), where navigable is Navigable id
-     *       }
-     *   }
-     * }
-     * \endcode
-     *
+     *  FIXME #232 rewrite doc
      */
     Q_PROPERTY(QQuickItem* containerItem READ getContainerItem WRITE setContainerItem NOTIFY containerItemChanged FINAL)
     // FIXME #232 do not inline that
     //! \sa containerItem
-    QQuickItem*     getContainerItem() noexcept { return _containerItem.data(); }
-    void            setContainerItem(QQuickItem* containerItem) noexcept { _containerItem = containerItem; emit containerItemChanged(); }
+    QQuickItem*         getContainerItem();
+    const QQuickItem*   getContainerItem() const;
+    void                setContainerItem(QQuickItem* containerItem);
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
 signals:
-    void    containerItemChanged();
+    void                containerItemChanged();
 
     // #323 sitck with old qan::Navigable interface...
 signals:

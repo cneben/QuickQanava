@@ -53,7 +53,14 @@ GraphView::GraphView(QQuickItem* parent) :
 
 
 /* View Flickable Management *///----------------------------------------------
-
+QQuickItem*         GraphView::getContainerItem() { return _containerItem.data(); }
+const QQuickItem*   GraphView::getContainerItem() const { return _containerItem.data(); }
+void        GraphView::setContainerItem(QQuickItem* containerItem) {
+    _containerItem = containerItem;
+    emit containerItemChanged();
+    if (_graph)
+        _graph->setContainerItem(containerItem);
+}
 //-----------------------------------------------------------------------------
 
 

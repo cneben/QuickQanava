@@ -65,14 +65,14 @@ Qan.AbstractGraphView {
         clip: true
         ScrollBar.vertical: ScrollBar { }
         ScrollBar.horizontal: ScrollBar { }
-
+        pressDelay: 1000
         //transformOrigin:
 
         //onWidthChanged: console.error('width=' + width)
         //onHeightChanged: console.error('height=' + height)
         boundsMovement: Flickable.DragAndOvershootBounds
 
-        DragHandler {
+        /*DragHandler {
             property real _startX
             property real _startY
             acceptedButtons: Qt.RightButton
@@ -88,19 +88,20 @@ Qan.AbstractGraphView {
                 navigable.contentX = _startX - translation.x
                 navigable.contentY = _startY - translation.y
             }
-        }
+        }*/
 
         Rectangle {
             id: graphContainerItem
             width: 3000
             height: 2000
+            //z: 1000   // FIXME #232
             border.width: 2
             border.color: 'violet'
             transformOrigin: Qt.TopLeftCorner
 
             Component.onCompleted: {
                 console.error('!!!setContainerItem(): graphContainerItem=' + graphContainerItem)
-                graphView.containerItem = graphContainerItem
+                //graphView.containerItem = graphContainerItem
 
                 // Set initial content size
                 //navigable.resizeContent(3000, 2000, null)
@@ -151,6 +152,7 @@ Qan.AbstractGraphView {
         }
     }
 
+    containerItem: graphContainerItem
     Qan.LineGrid {
         id: lineGrid
     }

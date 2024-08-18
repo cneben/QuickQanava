@@ -455,6 +455,8 @@ QQuickItem* Graph::createFromComponent(QQmlComponent* component,
             QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
             item = qobject_cast<QQuickItem*>(object);
             item->setVisible(true);
+            // FIXME #232
+            qWarning() << "qan::Graph::createFromComponent(): containerItem=" << getContainerItem();
             item->setParentItem(getContainerItem());
         } // Note: There is no leak until cpp ownership is set
     } catch (const qan::Error& e) {
