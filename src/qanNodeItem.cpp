@@ -44,6 +44,7 @@
 #include "./qanNode.h"
 #include "./qanNodeItem.h"
 #include "./qanGraph.h"
+#include "./qanGraphView.h"
 #include "./qanDraggableCtrl.h"
 
 namespace qan { // ::qan
@@ -317,7 +318,12 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 {
-    qWarning() << "NodeItem::mouseMove()";
+    //qWarning() << "NodeItem::mouseMove()";
+    // FIXME #232 access graph to set interactive to
+    auto graphView = _node->getGraph()->getGraphView();
+    //qWarning() << "qan::NodeItem::mousePressEvent(): graphView=" << graphView;
+    if (graphView != nullptr)
+        graphView->disableNavigable();
 
     if (getNode() != nullptr &&
             (getNode()->getIsProtected() ||
@@ -330,14 +336,19 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event)
         event->accept();
     else
         event->ignore();
-        // Note 20200531: Do not call base QQuickItem implementation, really.
-    // FIXME #232
-    QQuickItem::mouseMoveEvent(event);
+    // Note 20200531: Do not call base QQuickItem implementation, really.
 }
 
 void    NodeItem::mousePressEvent(QMouseEvent* event)
 {
-    qWarning() << "NodeItem::mousePress()";
+    // FIXME #232 access graph to set interactive to
+    // false in the concerned flickable...
+    // Really not exiting but...
+
+    auto graphView = _node->getGraph()->getGraphView();
+    qWarning() << "qan::NodeItem::mousePressEvent(): graphView=" << graphView;
+    //if (graphView != nullptr)
+        // graphView->disableNavigable();*/
 
     bool accepted = !getCollapsed() &&            // Fast exit
                     isInsideBoundingShape(event->localPos());
@@ -363,15 +374,17 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
         event->accept();
     } else
         event->ignore();
-    QQuickItem::mousePressEvent(event);
     // Note 20160712: Do not call base QQuickItem implementation.
-    // FIXME #232
 }
 
 void    NodeItem::mouseReleaseEvent(QMouseEvent* event)
 {
     const auto draggableCtrl = static_cast<DraggableCtrl*>(_draggableCtrl.get());
     draggableCtrl->handleMouseReleaseEvent(event);
+    // FIXME #232
+    auto graphView = _node->getGraph()->getGraphView();
+    if (graphView != nullptr)
+        graphView->enableNavigable();
 }
 //-----------------------------------------------------------------------------
 

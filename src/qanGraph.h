@@ -51,7 +51,6 @@
 #include "./qanNode.h"
 #include "./qanGroup.h"
 #include "./qanTableGroup.h"
-#include "./qanNavigable.h"
 #include "./qanSelectable.h"
 #include "./qanConnector.h"
 
@@ -60,6 +59,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class GraphView;
 class Node;
 class Connector;
 class PortItem;
@@ -102,6 +102,34 @@ public:
     virtual void    classBegin() override;
 
 public:
+    // FIXME #232
+    Q_PROPERTY(QQuickItem*  graphView READ qmlGetGraphView NOTIFY graphViewChanged FINAL)
+    QQuickItem*             qmlGetGraphView();
+    qan::GraphView*         getGraphView();
+    const qan::GraphView*   getGraphView() const;
+    void                    setGraphView(qan::GraphView* graphView);
+signals:
+    void                    graphViewChanged();
+private:
+    qan::GraphView*         _graphView = nullptr;
+
+public:
+    /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
+     *
+     * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
+     * graphics items.
+     */
+    Q_PROPERTY(QQuickItem*      containerItem READ getContainerItem NOTIFY containerItemChanged FINAL)
+    //! \sa containerItem
+    inline QQuickItem*          getContainerItem() noexcept { return _containerItem.data(); }
+    inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
+    void                        setContainerItem(QQuickItem* containerItem);
+signals:
+    void                        containerItemChanged();
+private:
+    QPointer<QQuickItem>        _containerItem;
+
+public:
     /*! \brief Clear this graph topology and styles.
      *
      */
@@ -129,22 +157,6 @@ public:
      * \arg except Return every compatible group except \c except (can be nullptr).
      */
     Q_INVOKABLE qan::Group* groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* except = nullptr) const;
-
-public:
-    /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
-     *
-     * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
-     * graphics items.
-     */
-    Q_PROPERTY(QQuickItem*      containerItem READ getContainerItem NOTIFY containerItemChanged FINAL)
-    //! \sa containerItem
-    inline QQuickItem*          getContainerItem() noexcept { return _containerItem.data(); }
-    inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
-    void                        setContainerItem(QQuickItem* containerItem);
-signals:
-    void                        containerItemChanged();
-private:
-    QPointer<QQuickItem>        _containerItem;
     //@}
     //-------------------------------------------------------------------------
 

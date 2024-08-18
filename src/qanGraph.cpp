@@ -51,6 +51,7 @@
 #include "./qanGroup.h"
 #include "./qanGroupItem.h"
 #include "./qanConnector.h"
+#include "./qanGraphView.h"
 
 namespace qan { // ::qan
 
@@ -125,6 +126,29 @@ void    Graph::componentComplete()
             } else qWarning() << "qan::Graph::componentComplete(): Error: No style available for connector creation.";
         }
     } else qWarning() << "qan::Graph::componentComplete(): Error: No QML engine available to register default QML delegates.";
+}
+
+QQuickItem*             Graph::qmlGetGraphView() { return _graphView; }
+qan::GraphView*         Graph::getGraphView() { return _graphView; }
+const qan::GraphView*   Graph::getGraphView() const { return _graphView; }
+void    Graph::setGraphView(qan::GraphView* graphView)
+{
+    _graphView = graphView;
+    emit graphViewChanged();
+}
+
+void    Graph::setContainerItem(QQuickItem* containerItem)
+{
+    // PRECONDITIONS:
+    // containerItem can't be nullptr
+    if (containerItem == nullptr) {
+        return;
+    }
+    if (containerItem != nullptr &&
+        containerItem != _containerItem.data()) {
+        _containerItem = containerItem;
+        emit containerItemChanged();
+    }
 }
 
 void    Graph::clearGraph() noexcept
@@ -259,21 +283,6 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
         }
     } // for all groups
     return nullptr;
-}
-
-void    Graph::setContainerItem(QQuickItem* containerItem)
-{
-    // PRECONDITIONS:
-        // containerItem can't be nullptr
-    if (containerItem == nullptr) {
-        qWarning() << "qan::Graph::setContainerItem(): Error, invalid container item.";
-        return;
-    }
-    if (containerItem != nullptr &&
-        containerItem != _containerItem.data()) {
-        _containerItem = containerItem;
-        emit containerItemChanged();
-    }
 }
 //-----------------------------------------------------------------------------
 

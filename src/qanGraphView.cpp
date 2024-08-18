@@ -109,9 +109,12 @@ void    GraphView::setGraph(qan::Graph* graph)
         return;
     }
     if (graph != _graph) {
-        if (_graph != nullptr)
+        if (_graph != nullptr) {
             disconnect(_graph, 0, this, 0);
+            _graph->setGraphView(nullptr);
+        }
         _graph = graph;
+        _graph->setGraphView(this);
         auto graphViewQmlContext = qmlContext(this);
         QQmlEngine::setContextForObject(getContainerItem(), graphViewQmlContext);
         _graph->setContainerItem(getContainerItem());

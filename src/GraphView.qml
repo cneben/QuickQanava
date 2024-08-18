@@ -65,44 +65,18 @@ Qan.AbstractGraphView {
         clip: true
         ScrollBar.vertical: ScrollBar { }
         ScrollBar.horizontal: ScrollBar { }
-        pressDelay: 1000
-        //transformOrigin:
-
-        //onWidthChanged: console.error('width=' + width)
-        //onHeightChanged: console.error('height=' + height)
+        // Note: keep pressDelay to 0 otherwise it broke event dispatching
         boundsMovement: Flickable.DragAndOvershootBounds
-
-        /*DragHandler {
-            property real _startX
-            property real _startY
-            acceptedButtons: Qt.RightButton
-            dragThreshold: 0
-            target: null
-            onActiveChanged: {
-                if (active) {
-                    _startX = navigable.contentX
-                    _startY = navigable.contentY
-                }
-            }
-            onTranslationChanged: {
-                navigable.contentX = _startX - translation.x
-                navigable.contentY = _startY - translation.y
-            }
-        }*/
 
         Rectangle {
             id: graphContainerItem
             width: 3000
             height: 2000
-            //z: 1000   // FIXME #232
             border.width: 2
             border.color: 'violet'
             transformOrigin: Qt.TopLeftCorner
-
+            z: 1    // Note: Do not remove, otherwise events are hidden !
             Component.onCompleted: {
-                console.error('!!!setContainerItem(): graphContainerItem=' + graphContainerItem)
-                //graphView.containerItem = graphContainerItem
-
                 // Set initial content size
                 //navigable.resizeContent(3000, 2000, null)
                 // FIXME: Laisser comme cela, mais il faudra un code d'initialisation "dédié" pour
@@ -117,40 +91,39 @@ Qan.AbstractGraphView {
             navigable.contentY = (2000 / 2) - (navigable.height / 2.)
             */
             }
+        }
 
-            MouseArea {
-                hoverEnabled: true
-                anchors.fill: parent
-                onWheel: (wheel) => {
-                             // FIXME take wheel intensity into account...
-                             const P = mapToGlobal(wheel.x, wheel.y)
-                             const scaleIncrement = wheel.angleDelta.y > 0. ? 0.5
-                                                                            : -0.05;
-                             const preScale = graphContainerItem.scale
-                             graphContainerItem.scale += scaleIncrement
-                             const scale = graphContainerItem.scale
+        MouseArea {
+            //hoverEnabled: true
+            anchors.fill: parent
+            onWheel: (wheel) => {
+                         console.error('HOPLA')
+                         // FIXME #232 take wheel intensity into account...
+                         const P = mapToGlobal(wheel.x, wheel.y)
+                         const scaleIncrement = wheel.angleDelta.y > 0. ? 0.5
+                                                                        : -0.05;
+                         const preScale = graphContainerItem.scale
+                         graphContainerItem.scale += scaleIncrement
+                         const scale = graphContainerItem.scale
 
-                             console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
-                             const preContentX = navigable.contentX
-                             const preContentY = navigable.contentY
+                         console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
+                         const preContentX = navigable.contentX
+                         const preContentY = navigable.contentY
 
-                             console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
-                             navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
-                             navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
+                         console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
+                         navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
+                         navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
 
-                             const Pp = mapToGlobal(wheel.x, wheel.y)
-                             //const Pp = Qt.point(P.x * scale,
-                             //                    P.y * scale)
-                             //const Pp = Qt.point(P.x * 1. + scaleIncrement,
-                             //                    P.y * 1. + scaleIncrement)
-                             console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
-                            navigable.contentX = preContentX + (Pp.x - P.x)
-                            navigable.contentY = preContentY + (Pp.y - P.y)
-                         }
-                onClicked: (mouse) => { graphView.clicked(mouse) }
-            }
+                         const Pp = mapToGlobal(wheel.x, wheel.y)
+                         console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
+                         navigable.contentX = preContentX + (Pp.x - P.x)
+                         navigable.contentY = preContentY + (Pp.y - P.y)
+                     }
+            onClicked: (mouse) => { console.error('HOPLA'); graphView.clicked(mouse) }
         }
     }
+    onRequestDisableNavigable: navigable.interactive = false
+    onRequestEnableNavigable: navigable.interactive = true
 
     containerItem: graphContainerItem
     Qan.LineGrid {
@@ -278,9 +251,9 @@ Qan.AbstractGraphView {
 
         // Hide the default visual edge connector
         if (graph &&
-            graph.connectorEnabled &&
-            graph.connector &&
-            graph.connector.visible)
+                graph.connectorEnabled &&
+                graph.connector &&
+                graph.connector.visible)
             graph.connector.visible = false
 
         graphView.focus = true           // User clicked outside a graph item, remove it's eventual active focus
@@ -292,9 +265,9 @@ Qan.AbstractGraphView {
     // Port management ////////////////////////////////////////////////////////
     onPortClicked: function(port) {
         if (graph &&
-            port) {
+                port) {
             if (graph.connector &&
-                graph.connectorEnabled)
+                    graph.connectorEnabled)
                 graph.connector.sourcePort = port
         } else if (graph)
             graph.connector.visible = false
@@ -309,8 +282,8 @@ Qan.AbstractGraphView {
         target: null
         function onRatioChanged() {
             if (nodeResizer &&
-                target &&
-                nodeResizer.target === target) {
+                    target &&
+                    nodeResizer.target === target) {
                 nodeResizer.preserveRatio = target.ratio > 0.
                 nodeResizer.ratio = target.ratio
             }
@@ -318,65 +291,65 @@ Qan.AbstractGraphView {
     }
 
     onNodeClicked: (node) => {
-        if (!graphView.graph ||
-            !node ||
-            !node.item)
-            return
+                       if (!graphView.graph ||
+                           !node ||
+                           !node.item)
+                       return
 
-        if (node.locked ||
-            node.isProtected)           // Do not show any connector for locked node/groups
-            return;
+                       if (node.locked ||
+                           node.isProtected)           // Do not show any connector for locked node/groups
+                       return;
 
-        if (graph.connector &&
-                graph.connectorEnabled &&
-                (node.item.connectable === Qan.NodeItem.Connectable ||
-                 node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
-            graph.connector.visible = true
-            graph.connector.sourceNode = node
-            // Connector should be half on top of node
-            graph.connector.y = -graph.connector.height / 2
-        }
-        if (node.item.resizable) {
-            nodeItemRatioWatcher.target = node.item
+                       if (graph.connector &&
+                           graph.connectorEnabled &&
+                           (node.item.connectable === Qan.NodeItem.Connectable ||
+                            node.item.connectable === Qan.NodeItem.OutConnectable)) {      // Do not show visual connector if node is not visually "connectable"
+                           graph.connector.visible = true
+                           graph.connector.sourceNode = node
+                           // Connector should be half on top of node
+                           graph.connector.y = -graph.connector.height / 2
+                       }
+                       if (node.item.resizable) {
+                           nodeItemRatioWatcher.target = node.item
 
-            nodeResizer.minimumTargetSize = node.item.minimumSize
-            nodeRightResizer.minimumTargetSize = nodeBottomResizer.minimumTargetSize = node.item.minimumSize
+                           nodeResizer.minimumTargetSize = node.item.minimumSize
+                           nodeRightResizer.minimumTargetSize = nodeBottomResizer.minimumTargetSize = node.item.minimumSize
 
-            nodeResizer.target = node.item
-            nodeRightResizer.target = nodeBottomResizer.target = node.item
+                           nodeResizer.target = node.item
+                           nodeRightResizer.target = nodeBottomResizer.target = node.item
 
-            nodeResizer.visible = nodeRightResizer.visible = nodeBottomResizer.visible =
-                    Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
-                                                                   false; })
+                           nodeResizer.visible = nodeRightResizer.visible = nodeBottomResizer.visible =
+                           Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
+                                                                          false; })
 
 
-            nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
-            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
+                           nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+                           nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
 
-            nodeResizer.preserveRatio = (node.item.ratio > 0.)
-            if (node.item.ratio > 0.) {
-                nodeResizer.ratio = node.item.ratio
-                nodeResizer.preserveRatio = true
-            } else
-                nodeResizer.preserveRatio = false
-        } else {
-            nodeResizer.target = null
-            nodeRightResizer.target = nodeBottomResizer.target = null
-        }
-    }
+                           nodeResizer.preserveRatio = (node.item.ratio > 0.)
+                           if (node.item.ratio > 0.) {
+                               nodeResizer.ratio = node.item.ratio
+                               nodeResizer.preserveRatio = true
+                           } else
+                           nodeResizer.preserveRatio = false
+                       } else {
+                           nodeResizer.target = null
+                           nodeRightResizer.target = nodeBottomResizer.target = null
+                       }
+                   }
 
     // Group management ///////////////////////////////////////////////////////
     onGroupClicked: function(group) {
         if (!graphView.graph ||
-            !group ||
-            !group.item)
+                !group ||
+                !group.item)
             return
 
         // Disable node resizing
         nodeResizer.target = nodeRightResizer.target = nodeBottomResizer.target = null
 
         if (group.item.container &&
-            group.item.resizable) {
+                group.item.resizable) {
             // Set minimumTargetSize _before_ setting target
             groupResizer.minimumTargetSize = group.item.minimumSize
             groupResizer.target = group.item
@@ -421,7 +394,7 @@ Qan.AbstractGraphView {
      */
     function    grabGraphImage(filePath, zoom, border) {
         if (!graph ||
-            !graph.containerItem) {
+                !graph.containerItem) {
             console.error('Qan.GraphView.onRequestGrabGraph(): Error, graph or graph container item is invalid.')
             return
         }
@@ -452,12 +425,12 @@ Qan.AbstractGraphView {
                                               graph.containerItem.childrenRect.height + border2)
 
         if (!graphImageShader.grabToImage(function(result) {
-                                if (!result.saveToFile(localFilePath)) {
-                                    console.error('Error while writing image to ' + filePath)
-                                }
-                                // Reset graphImageShader
-                                graphImageShader.sourceItem = undefined
-                           }, imageSize))
+            if (!result.saveToFile(localFilePath)) {
+                console.error('Error while writing image to ' + filePath)
+            }
+            // Reset graphImageShader
+            graphImageShader.sourceItem = undefined
+        }, imageSize))
             console.error('Qan.GraphView.onRequestGrabGraph(): Graph screenshot request failed.')
     }
 } // Qan.GraphView

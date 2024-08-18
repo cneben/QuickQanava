@@ -83,6 +83,13 @@ private:
 signals:
     void                containerItemChanged();
 
+public:
+    void    disableNavigable() { emit requestDisableNavigable(); }
+    void    enableNavigable() { emit requestEnableNavigable(); }
+signals:
+    void    requestDisableNavigable();
+    void    requestEnableNavigable();
+
     // #323 sitck with old qan::Navigable interface...
 signals:
     //! Emitted whenever the mouse is clicked in graph view.
