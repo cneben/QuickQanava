@@ -96,16 +96,17 @@ void    GraphView::setGraph(qan::Graph* graph)
     }
 }
 
-void    GraphView::navigableClicked(QPointF pos)
+void    GraphView::navigableClicked(QPointF pos, QPointF globalPos)
 {
     Q_UNUSED(pos)
+    Q_UNUSED(globalPos)
     if (_graph)
         _graph->clearSelection();
 }
 
-void    GraphView::navigableRightClicked(QPointF pos)
+void    GraphView::navigableRightClicked(QPointF pos, QPointF globalPos)
 {
-    emit    rightClicked(pos);
+    emit rightClicked(pos, globalPos);
 }
 
 QString GraphView::urlToLocalFile(QUrl url) const noexcept
