@@ -37,7 +37,7 @@
 // QuickQanava headers
 #include "./qanGraph.h"
 #include "./qanGroup.h"
-#include "./qanNavigable.h"
+//#include "./qanNavigable.h"
 #include "./qanPortItem.h"
 
 // Qt headers
@@ -50,7 +50,7 @@ namespace qan { // ::qan
  *
  * \nosubgrouping
 */
-class GraphView : public qan::Navigable
+class GraphView : public QQuickItem
 {
     Q_OBJECT
     /*! \name GraphView Object Management *///---------------------------------
@@ -60,7 +60,48 @@ public:
     explicit GraphView(QQuickItem* parent = nullptr);
     virtual ~GraphView() override = default;
     GraphView(const GraphView&) = delete;
+    //@}
+    //-------------------------------------------------------------------------
 
+
+    /*! \name View Flickable Management *///---------------------------------
+    //@{
+public:
+    /*! \brief Parent container for area child items.
+     *
+     * Items added as child of the area must manually update their parents property to \c containerItem
+     *
+     * Example code for navigating an image:
+     * \code
+     * // Don't forget to register the component:
+     * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+     * // QML: import QuickQanava 2.0
+     * Qan.Navigable {
+     *   anchors.fill: parent
+     *   clip: true     // Don't set clipping if Navigable is anchored directly to your main window
+     *   Image {
+     *       parent: imageView.containerItem    // Any direct child must manually set its parent item
+     *       id: image
+     *       source: "qrc:/myimage.png"
+     *       Component.onCompleted: {
+     *         // Eventually, fit the image in view: navigable.fitContentInView(), where navigable is Navigable id
+     *       }
+     *   }
+     * }
+     * \endcode
+     *
+     */
+    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+    //! \sa containerItem
+    inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
+private:
+    QPointer<QQuickItem>    _containerItem = nullptr;
+    //@}
+    //-------------------------------------------------------------------------
+
+
+    /*! \name Graph Interactions *///------------------------------------------
+    //@{
 public:
     //! Graph that should be displayed in this graph view.
     Q_PROPERTY(qan::Graph*  graph READ getGraph WRITE setGraph NOTIFY graphChanged FINAL)
@@ -73,8 +114,9 @@ signals:
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
-    virtual void    navigableClicked(QPointF pos, QPointF globalPos) override;
-    virtual void    navigableRightClicked(QPointF pos, QPointF globalPos) override;
+    // FIXME #232 probably rename that...
+    virtual void    navigableClicked(QPointF pos, QPointF globalPos);
+    virtual void    navigableRightClicked(QPointF pos, QPointF globalPos);
 
     //! Utilisty method to convert a given \c url to a local file path (if possible, otherwise return an empty string).
     Q_INVOKABLE QString urlToLocalFile(QUrl url) const noexcept;
@@ -106,10 +148,12 @@ signals:
     //@{
 protected:
     //! \copydoc qan::Navigable::selectionRectActivated()
-    virtual void    selectionRectActivated(const QRectF& rect) override;
+    // FIXME #232 probably rename that...
+    virtual void    selectionRectActivated(const QRectF& rect);
 
     //! \copydoc qan::Navigable::selectionRectEnd()
-    virtual void    selectionRectEnd() override;
+    // FIXME #232 probably rename that...
+    virtual void    selectionRectEnd();
 private:
     QSet<QQuickItem*>   _selectedItems;
 

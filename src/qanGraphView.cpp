@@ -37,7 +37,7 @@
 #include <QQuickItem>
 
 // QuickQanava headers
-#include "./qanNavigable.h"
+//#include "./qanNavigable.h"
 #include "./qanGraphView.h"
 #include "./qanGraph.h"
 
@@ -45,11 +45,19 @@ namespace qan { // ::qan
 
 /* GraphView Object Management *///--------------------------------------------
 GraphView::GraphView(QQuickItem* parent) :
-    qan::Navigable{parent}
+    QQuickItem{parent}
 {
     setFocus(true);
 }
+//-----------------------------------------------------------------------------
 
+
+/* View Flickable Management *///----------------------------------------------
+
+//-----------------------------------------------------------------------------
+
+
+/* raph Interactions *///------------------------------------------------------
 void    GraphView::setGraph(qan::Graph* graph)
 {
     if (graph == nullptr) {
