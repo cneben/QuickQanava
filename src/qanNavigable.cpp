@@ -138,9 +138,9 @@ void    Navigable::moveTo(QPointF position)
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
 {
-    qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
+    //qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
     QRectF content = _containerItem->childrenRect();
-    qWarning() << "  content=" << content;
+    //qWarning() << "  content=" << content;
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
         const qreal viewWidth = forceWidth > 0. ? forceWidth : width();
         const qreal viewHeight = forceHeight > 0. ? forceHeight : height();

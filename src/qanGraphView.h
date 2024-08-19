@@ -70,7 +70,22 @@ private:
     QPointer<qan::Graph>    _graph = nullptr;
 signals:
     void                    graphChanged();
+    //@}
+    //-------------------------------------------------------------------------
 
+
+    /*! \name GraphView Interactions Management *///---------------------------
+    //@{
+public:
+    Q_PROPERTY(QRectF containerBr READ getContainerBr WRITE setContainerBr NOTIFY containerBrChanged FINAL)
+    QRectF  getContainerBr() const;
+    void    setContainerBr(const QRectF& containerBr);
+protected:
+    QRectF  _containerBr = QRectF{-1000, -750, 2000, 1500};
+protected slots:
+    void    updateContainerBr(const QRectF& containerChildrenRect);
+signals:
+    void    containerBrChanged();
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).

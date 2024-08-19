@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
+import QtQuick.Controls
 
 import QuickQanava      2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -58,6 +59,28 @@ Qan.AbstractGraphView {
     property size   resizeHandlerSize: "9x9"
 
     // PRIVATE ////////////////////////////////////////////////////////////////
+    ScrollBar {
+        id: vbar
+        hoverEnabled: true
+        active: hovered || pressed
+        orientation: Qt.Vertical
+        size: graphView.height / graphView.containerBr.height
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+
+    ScrollBar {
+        id: hbar
+        hoverEnabled: true
+        active: hovered || pressed
+        orientation: Qt.Horizontal
+        size: graphView.width / graphView.containerBr.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+
     Qan.LineGrid {
         id: lineGrid
     }

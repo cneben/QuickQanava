@@ -144,7 +144,7 @@ public:
      * \endcode
      *
      */
-    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+    Q_PROPERTY(QQuickItem*  containerItem READ getContainerItem CONSTANT FINAL)
     //! \sa containerItem
     inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
 private:
@@ -293,7 +293,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
+    qreal       _zoomMin = 0.09;  // Max 10% zoom with default zoom in/out thresold
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
