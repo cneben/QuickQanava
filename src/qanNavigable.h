@@ -48,7 +48,7 @@ namespace qan { // ::qan
  * Example code for navigating an image:
  * \code
  * // Don't forget to register the component:
- * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+ * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
  * // QML: import QuickQanava 2.0 as Qan
  * Qan.Navigable {
  *   anchors.fill: parent
@@ -127,7 +127,7 @@ public:
      * Example code for navigating an image:
      * \code
      * // Don't forget to register the component:
-     * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+     * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
      * // QML: import QuickQanava 2.0
      * Qan.Navigable {
      *   anchors.fill: parent

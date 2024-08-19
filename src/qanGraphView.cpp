@@ -96,6 +96,8 @@ void    GraphView::setGraph(qan::Graph* graph)
     }
 }
 
+
+
 void    GraphView::navigableClicked(QPointF pos, QPointF globalPos)
 {
     Q_UNUSED(pos)

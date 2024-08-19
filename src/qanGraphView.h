@@ -71,6 +71,7 @@ private:
 signals:
     void                    graphChanged();
 
+
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
     virtual void    navigableClicked(QPointF pos, QPointF globalPos) override;

@@ -73,7 +73,7 @@ Control {
         // 2. If navigable preview height (nph) < preview height (ph), then use graphRatio to
         //    generate nph.
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
-        if (!source)
+        if (!source || !source.containerItem)
             return
         const pw = graphPreview.width
         const ph = graphPreview.height
