@@ -62,36 +62,34 @@ Qan.AbstractGraphView {
     Flickable {
         id: navigable
         anchors.fill: parent
-        clip: true
+        clip: false
         ScrollBar.vertical: ScrollBar { }
         ScrollBar.horizontal: ScrollBar { }
         // Note: keep pressDelay to 0 otherwise it broke event dispatching
         boundsMovement: Flickable.DragAndOvershootBounds
 
         Rectangle {
-            id: graphContainerItem
-            width: 3000
-            height: 2000
+            id: graphContainer
+            width: graphView.graphBr.width
+            height: graphView.graphBr.height
             border.width: 2
             border.color: 'violet'
             transformOrigin: Qt.TopLeftCorner
-
             z: 1    // Note: Do not remove, otherwise events are hidden !
             Component.onCompleted: {
-                // Set initial content size
-                //navigable.resizeContent(3000, 2000, null)
-                // FIXME: Laisser comme cela, mais il faudra un code d'initialisation "dédié" pour
-                // faire le centrage initial de la vue:
-                // avec un flag sur onSizeChanged() pas le choix, ici la taille est à 0...
-                navigable.contentWidth = 3000
-                navigable.contentHeight = 2000
-                /*console.error('navigable.width=' + navigable.width)
-            console.error('navigable.contentItem.width=' + navigable.contentItem.width)
-            // Resize view to center
-            navigable.contentX = (3000 / 2) - (navigable.width / 2.)      // FIXME simplify expression /2
-            navigable.contentY = (2000 / 2) - (navigable.height / 2.)
-            */
+                //updateGraphBr(Qt.rect(0., 0., 3000, 2000))
             }
+            function updateGraphBr(graphBr) {
+                console.error('updateGraphBr(): graphBr=' + graphBr)
+                if (!graphBr)
+                    return;
+                //const contentBr = graphContainer.childrenRect
+                navigable.contentWidth = graphBr.width * graphContainer.scale;
+                navigable.contentHeight = graphBr.height * graphContainer.scale;
+                graphContainer.x = (-graphBr.x * graphContainer.scale);
+                graphContainer.y = (-graphBr.y * graphContainer.scale);
+            }
+
             MouseArea {
                 //hoverEnabled: true
                 anchors.fill: parent
@@ -99,31 +97,27 @@ Qan.AbstractGraphView {
                              // FIXME #232 take wheel intensity into account...
                              console.error(`wheel.x=${wheel.x}  wheel.y=${wheel.y}`)
                              const P = mapToGlobal(wheel.x, wheel.y)
-                             //const P = mapToItem(contentItem, wheel.x, wheel.y)
                              const scaleIncrement = wheel.angleDelta.y > 0. ? 0.25
                                                                             : -0.25;
-                             const preScale = graphContainerItem.scale
-                             graphContainerItem.scale += scaleIncrement
-                             const scale = graphContainerItem.scale
+                             const preScale = graphContainer.scale
+                             graphContainer.scale += scaleIncrement
+                             const scale = graphContainer.scale
 
-                             //console.error(`graphContainerItem.scale=${graphContainerItem.scale}`)
+                             //console.error(`graphContainer.scale=${graphContainer.scale}`)
                              const preContentX = navigable.contentX
                              const preContentY = navigable.contentY
 
                              //console.error(`contentX=${navigable.contentX}  contentY=${navigable.contentY}`)
-                             navigable.contentWidth = graphContainerItem.width * graphContainerItem.scale;
-                             navigable.contentHeight = graphContainerItem.height * graphContainerItem.scale;
+                             //const graphContainerBr = graphContainer.childrenRect
+                             navigable.contentWidth = graphView.graphBr.width * graphContainer.scale;
+                             navigable.contentHeight = graphView.graphBr.height * graphContainer.scale;
+                             //graphContainer.x = (-graphContainerBr.x * graphContainer.scale);
+                             //graphContainer.y = (-graphContainerBr.y * graphContainer.scale);
 
-                             //const Pp = graphContainerItem.mapFromGlobal(wheel.x, wheel.y)
                              const Pp = mapToGlobal(wheel.x, wheel.y)
-                             //const Pp = mapToItem(contentItem, wheel.x, wheel.y)
-
-                             //const Pp = Qt.point(P.x * (1 + scaleIncrement), P.y * (1. + scaleIncrement));
                              console.error(`P=${P}  Pp=${Pp}  PPp=${Qt.point((Pp.x - P.x), (Pp.y - P.y))}`)
                              navigable.contentX = preContentX + (Pp.x - P.x)
                              navigable.contentY = preContentY + (Pp.y - P.y)
-                             //navigable.contentX *= graphContainerItem.scale
-                             //navigable.contentY *= graphContainerItem.scale
                              navigable.returnToBounds();
                          }
 
@@ -133,8 +127,8 @@ Qan.AbstractGraphView {
     }
     onRequestDisableNavigable: navigable.interactive = false
     onRequestEnableNavigable: navigable.interactive = true
-
-    containerItem: graphContainerItem
+    onRequestUpdateGraphBr: (graphBr) => { graphContainer.updateGraphBr(graphBr) }
+    containerItem: graphContainer
     Qan.LineGrid {
         id: lineGrid
     }

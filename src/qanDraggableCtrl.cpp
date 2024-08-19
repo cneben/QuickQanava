@@ -357,6 +357,10 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         const auto targetGroupPos = graphContainerItem->mapToItem(targetGroupItem, targetScenePos);
         _targetItem->setPosition(targetGroupPos);
     } else {
+        //const auto graphContainerItem = graph->getContainerItem();
+        //if (graphContainerItem == nullptr)
+        //    return;
+        qWarning() << "targetScenePos=" << targetScenePos;
         _targetItem->setPosition(targetScenePos);
     }
 

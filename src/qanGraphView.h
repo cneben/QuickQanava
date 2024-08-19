@@ -84,6 +84,14 @@ signals:
     void                containerItemChanged();
 
 public:
+    Q_PROPERTY(QRectF graphBr READ getGraphBr NOTIFY containerItemChanged FINAL)
+    QRectF  getGraphBr() { return _graphBr; }
+    QRectF  _graphBr;
+    void    updateGraphBr(const QRectF& childrenRect);
+signals:
+    void    requestUpdateGraphBr(const QRectF& childrenRect);
+
+public:
     void    disableNavigable() { emit requestDisableNavigable(); }
     void    enableNavigable() { emit requestEnableNavigable(); }
 signals:

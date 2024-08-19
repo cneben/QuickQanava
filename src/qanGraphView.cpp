@@ -48,6 +48,7 @@ GraphView::GraphView(QQuickItem* parent) :
     QQuickItem{parent}
 {
     setFocus(true);
+    _graphBr = QRectF{-1000, -750, 2000, 1500};
 }
 //-----------------------------------------------------------------------------
 
@@ -55,11 +56,34 @@ GraphView::GraphView(QQuickItem* parent) :
 /* View Flickable Management *///----------------------------------------------
 QQuickItem*         GraphView::getContainerItem() { return _containerItem.data(); }
 const QQuickItem*   GraphView::getContainerItem() const { return _containerItem.data(); }
+
 void        GraphView::setContainerItem(QQuickItem* containerItem) {
     _containerItem = containerItem;
     emit containerItemChanged();
     if (_graph)
         _graph->setContainerItem(containerItem);
+    // FIXME 232
+    connect(containerItem, &QQuickItem::childrenRectChanged,
+            this, &GraphView::updateGraphBr);
+    // Set the flickable initial size BTW...
+    emit requestUpdateGraphBr(_graphBr);
+}
+
+void    GraphView::updateGraphBr(const QRectF& childrenRect)
+{
+    qWarning() << "GraphView::updateGraphBr(): childrenRect=" << childrenRect;
+    if (_graphBr.contains(childrenRect))
+        return;
+    bool growLeft = childrenRect.left() < _graphBr.left();
+    bool growRight= childrenRect.right() > _graphBr.right();
+    bool growTop = childrenRect.top() < _graphBr.top();
+    bool growBottom = childrenRect.bottom() > _graphBr.bottom();
+    _graphBr = _graphBr.united(childrenRect);
+    _graphBr.adjust(growLeft ? -50 : 0.,
+                    growTop ? -50 : 0.,
+                    growRight ? 50 : 0.,
+                    growBottom ? 50 : 0.);
+    emit requestUpdateGraphBr(_graphBr);
 }
 //-----------------------------------------------------------------------------
 
