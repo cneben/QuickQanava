@@ -99,33 +99,6 @@ void    GraphView::setGraph(qan::Graph* graph)
 
 
 /* GraphView Interactions Management *///--------------------------------------
-// FIXME #244 finally moved to qan::Navigable
-/*QRectF  GraphView::getContainerBr() const { return _containerBr; }
-void    GraphView::setContainerBr(const QRectF& containerBr)
-{
-    _containerBr = containerBr;
-    emit containerBrChanged();
-}
-void    GraphView::updateContainerBr(const QRectF& containerChildrenRect)
-{
-    qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
-    if (_containerBr.contains(containerChildrenRect))
-        return;
-    bool growLeft = containerChildrenRect.left() < _containerBr.left();
-    bool growRight= containerChildrenRect.right() > _containerBr.right();
-    bool growTop = containerChildrenRect.top() < _containerBr.top();
-    bool growBottom = containerChildrenRect.bottom() > _containerBr.bottom();
-    _containerBr = _containerBr.united(containerChildrenRect);
-    _containerBr.adjust(growLeft ? -50 : 0.,        // FIXME #244 use containerBorder configuraiton here !
-                        growTop ? -50 : 0.,
-                        growRight ? 50 : 0.,
-                        growBottom ? 50 : 0.);
-    // FIXME #244
-    //emit requestUpdateGraphBr(_containerBr);
-    setContainerBr(_containerBr);
-}
-*/
-
 void    GraphView::navigableClicked(QPointF pos, QPointF globalPos)
 {
     Q_UNUSED(pos)

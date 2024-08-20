@@ -55,6 +55,7 @@ Navigable::Navigable(QQuickItem* parent) :
                     const auto cr = this->_containerItem->childrenRect();
                     this->_containerItem->setWidth(cr.width());
                     this->_containerItem->setHeight(cr.height());
+                    this->updateVirtualBr(cr);
                 }
             });
 
@@ -100,6 +101,7 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
     // fixed/centered on (0, 0) in container Cs.
     qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
     const auto virtualBr = _virtualItem->boundingRect().translated(_virtualItem->position());
+    qWarning() << "  virtualBr=" << virtualBr;
     if (virtualBr.contains(containerChildrenRect))
         return; // No need to grow
     bool growLeft = containerChildrenRect.left() < virtualBr.left();
@@ -112,6 +114,7 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
                         growTop ? -50 : 0.,
                         growRight ? 50 : 0.,
                         growBottom ? 50 : 0.);
+    qWarning() << "  newVirtualBr=" << newVirtualBr;
     _virtualItem->setPosition(newVirtualBr.topLeft());
     _virtualItem->setSize(newVirtualBr.size());
 }

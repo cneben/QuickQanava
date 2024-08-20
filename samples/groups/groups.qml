@@ -331,7 +331,7 @@ ApplicationWindow {
             viewWindowColor: Material.accent
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: graphView.bottom
-            anchors.bottomMargin: 8
+            anchors.bottomMargin: 20
             width: 350
             height: 198
         }  // Qan.GraphPreview
