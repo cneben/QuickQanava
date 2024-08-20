@@ -63,23 +63,87 @@ Qan.AbstractGraphView {
         id: vbar
         hoverEnabled: true
         active: hovered || pressed
+        policy: ScrollBar.AlwaysOn
         orientation: Qt.Vertical
-        size: graphView.height / graphView.containerBr.height
+        //size: graphViewContainerRect.height / graphView.containerItemBr.height
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
     }
-
     ScrollBar {
         id: hbar
         hoverEnabled: true
         active: hovered || pressed
+        policy: ScrollBar.AlwaysOn
         orientation: Qt.Horizontal
-        size: graphView.width / graphView.containerBr.width
+        //size: graphViewContainerRect.width / graphView.containerBr.width
+        //size: graphViewContainerRect.width / graphView.containerItemBr.bound
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        onPositionChanged: {
+            if (pressed) {
+                //console.error(`hpos=${position}`);
+                const graphViewContainerX = virtualItemBr.left + (position * graphView.virtualItemBr.width)
+                console.error(`hpos=${position} graphViewContainerX=${graphViewContainerX}`)
+                // Map virtualContainer x position to container CS
+                const p_container = virtualItem.mapToItem(containerItem, Qt.point(graphViewContainerX, 0.))
+                containerItem.x = p_container.x
+            }
+            //console.error('graphViewWindow=' + graphViewWindow)
+        }
     }
+
+    property rect graphViewContainerRect: {     // GraphView frame projected in container CS
+        // Map this graph view "window frame" to underlying containerItem to
+        // project size in containerItem Cs
+        const containerView = graphView.mapToItem(containerItem,
+                                                  Qt.rect(0, 0, graphView.width, graphView.height))
+        return containerView
+    }
+
+    function updateScrollbars() {
+        console.error('updateScrollbars()')
+        const graphViewContainerRect = graphView.mapToItem(containerItem,
+                                                            Qt.rect(0, 0, graphView.width, graphView.height))
+        graphView.graphViewContainerRect = graphViewContainerRect
+
+        hbar.position = Math.abs(virtualItemBr.left + graphViewContainerRect.x) / virtualItemBr.width
+        hbar.size = graphViewContainerRect.width / graphView.virtualItemBr.width
+
+        vbar.position = Math.abs(virtualItemBr.top + graphViewContainerRect.y) / virtualItemBr.height
+        vbar.size = graphViewContainerRect.height / graphView.virtualItemBr.height
+
+        console.error(`  containerItemBr=${containerItemBr}`)
+        console.error(`  virtualItemBr=${virtualItemBr}`)
+        console.error(`  graphViewContainerRect=${graphViewContainerRect}`)
+        console.error(`  hbar.position=${hbar.position}  hbar.size=${hbar.size}`)
+        console.error(`  vbar.position=${vbar.position}  vbar.size=${vbar.size}`)
+    }
+
+    // FIXME: take scale into account...
+    property rect containerItemBr: Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height);
+    onContainerItemBrChanged: updateScrollbars()
+
+    property rect virtualItemBr: Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
+    onVirtualItemBrChanged: updateScrollbars()
+
+    // FIXME: having some kind of "modified" signal in qan::Navigable would be a lot cleaner !
+    onWidthChanged: updateScrollbars()
+    onHeightChanged: updateScrollbars()
+    onNavigated: {
+        console.error('navigated()...')
+        updateScrollbars()
+    }
+
+    /*Connections {
+        target: containerItem
+        function onXChanged() { graphView.updateScrollbars(); }
+        function onYChanged() { graphView.updateScrollbars(); }
+        function onWidthChanged() { graphView.updateScrollbars(); }
+        function onHeightChanged() { graphView.updateScrollbars(); }
+        function onScaleChanged() { graphView.updateScrollbars(); }
+    }*/
 
     Qan.LineGrid {
         id: lineGrid

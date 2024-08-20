@@ -150,6 +150,13 @@ public:
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
 
+public:  // FIXME #244
+    Q_PROPERTY(QQuickItem*  virtualItem READ getVirtualItem CONSTANT FINAL)
+    //! \sa virtualItem
+    inline QQuickItem*      getVirtualItem() noexcept { return _virtualItem.data(); }
+private:
+    QPointer<QQuickItem>    _virtualItem = nullptr;
+
 public:
     //! Center the view on a given child item (zoom level is not modified).
     Q_INVOKABLE void    centerOn(QQuickItem* item);
@@ -170,6 +177,10 @@ public:
      * used to provide a valid size, < 0. are automatically ignored.
      */
     Q_INVOKABLE void    fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
+
+signals:
+    //! Navigable has bee modified following a user interaction (not emitted from programmatic modification).
+    void    navigated();
 
 public:
     //! \brief Auto fitting mode.

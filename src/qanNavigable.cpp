@@ -42,8 +42,13 @@ Navigable::Navigable(QQuickItem* parent) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
+    // FIXME 244 center ?
     _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
+    //_containerItem->setSize({2000, 1500});
+    //_containerItem->setPosition({-1000, -750});
     _containerItem->setAcceptTouchEvents(true);
+
+    // FIXME #244 magic goes here for "puching" borders...
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
             this,   [this]() {
         if (this->_containerItem != nullptr) {
@@ -52,6 +57,15 @@ Navigable::Navigable(QQuickItem* parent) :
             this->_containerItem->setHeight(cr.height());
         }
     });
+
+    _virtualItem = new QQuickItem{this};
+    // FIXME 244 center ?
+    _virtualItem->setTransformOrigin(TransformOrigin::Center);
+    _virtualItem->setSize({2000, 1500});
+    _virtualItem->setPosition({-1000, -750});
+    _virtualItem->setAcceptTouchEvents(true);
+
+
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
     setTransformOrigin(TransformOrigin::TopLeft);
 
@@ -361,6 +375,7 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
         _panModified = true;
         _lastPan = event->position();
         setDragActive(true);
+        emit navigated();
 
         updateGrid();
     } else if (_selectionRectItem != nullptr &&
@@ -445,6 +460,7 @@ void    Navigable::wheelEvent(QWheelEvent* event)
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
         zoomOn(event->position(), getZoom() + zoomFactor);
+        emit navigated();
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);
