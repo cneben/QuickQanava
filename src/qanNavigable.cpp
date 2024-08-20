@@ -51,14 +51,14 @@ Navigable::Navigable(QQuickItem* parent) :
     // FIXME #244 magic goes here for "puching" borders...
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
             this,   [this]() {
-        if (this->_containerItem != nullptr) {
-            const auto cr = this->_containerItem->childrenRect();
-            this->_containerItem->setWidth(cr.width());
-            this->_containerItem->setHeight(cr.height());
-        }
-    });
+                if (this->_containerItem != nullptr) {
+                    const auto cr = this->_containerItem->childrenRect();
+                    this->_containerItem->setWidth(cr.width());
+                    this->_containerItem->setHeight(cr.height());
+                }
+            });
 
-    _virtualItem = new QQuickItem{this};
+    _virtualItem = new QQuickItem{_containerItem};
     // FIXME 244 center ?
     _virtualItem->setTransformOrigin(TransformOrigin::Center);
     _virtualItem->setSize({2000, 1500});
@@ -91,6 +91,31 @@ void    Navigable::setNavigable(bool navigable) noexcept
         emit navigableChanged();
     }
 }
+
+void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
+{
+    // Container item is in Navgiable CS.
+    // Virtual item is in container item CS
+    // Virtual item must "contains" container item children rect but stay
+    // fixed/centered on (0, 0) in container Cs.
+    qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
+    const auto virtualBr = _virtualItem->boundingRect().translated(_virtualItem->position());
+    if (virtualBr.contains(containerChildrenRect))
+        return; // No need to grow
+    bool growLeft = containerChildrenRect.left() < virtualBr.left();
+    bool growRight= containerChildrenRect.right() > virtualBr.right();
+    bool growTop = containerChildrenRect.top() < virtualBr.top();
+    bool growBottom = containerChildrenRect.bottom() > virtualBr.bottom();
+    auto newVirtualBr = virtualBr.united(containerChildrenRect);
+    // FIXME #244 use virtualBorder configuraiton here !
+    newVirtualBr.adjust(growLeft ? -50 : 0.,
+                        growTop ? -50 : 0.,
+                        growRight ? 50 : 0.,
+                        growBottom ? 50 : 0.);
+    _virtualItem->setPosition(newVirtualBr.topLeft());
+    _virtualItem->setSize(newVirtualBr.size());
+}
+
 
 void    Navigable::centerOn(QQuickItem* item)
 {

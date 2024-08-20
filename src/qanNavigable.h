@@ -156,6 +156,9 @@ public:  // FIXME #244
     inline QQuickItem*      getVirtualItem() noexcept { return _virtualItem.data(); }
 private:
     QPointer<QQuickItem>    _virtualItem = nullptr;
+protected slots:
+    //! Update the virtual item Br to follow a container item grow.
+    void    updateVirtualBr(const QRectF& containerChildrenRect);
 
 public:
     //! Center the view on a given child item (zoom level is not modified).

@@ -65,10 +65,23 @@ Qan.AbstractGraphView {
         active: hovered || pressed
         policy: ScrollBar.AlwaysOn
         orientation: Qt.Vertical
-        //size: graphViewContainerRect.height / graphView.containerItemBr.height
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        onPositionChanged: {
+            if (pressed) {
+                const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y,
+                                                                       virtualItem.width, virtualItem.height));
+
+                // vbar.position = viewBr.y / virtualViewBr.height
+                // Get vbar position in virtual view br
+                const virtualY = vbar.position * virtualViewBr.height
+
+                // Map virtual view Y to container Y then move container
+                const containerY = virtualItem.mapToItem(containerItem, Qt.point(0., virtualY))
+                containerItem.y = -containerY.y
+            }
+        }
     }
     ScrollBar {
         id: hbar
@@ -76,57 +89,84 @@ Qan.AbstractGraphView {
         active: hovered || pressed
         policy: ScrollBar.AlwaysOn
         orientation: Qt.Horizontal
-        //size: graphViewContainerRect.width / graphView.containerBr.width
-        //size: graphViewContainerRect.width / graphView.containerItemBr.bound
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onPositionChanged: {
-            if (pressed) {
-                //console.error(`hpos=${position}`);
-                const graphViewContainerX = virtualItemBr.left + (position * graphView.virtualItemBr.width)
-                console.error(`hpos=${position} graphViewContainerX=${graphViewContainerX}`)
-                // Map virtualContainer x position to container CS
-                const p_container = virtualItem.mapToItem(containerItem, Qt.point(graphViewContainerX, 0.))
-                containerItem.x = p_container.x
+            //console.error('position=' + position)
+            // Note 20240820: There is small glitvh in initial position (0.5 that comes to 0.36 when clickin, strange...)
+            onPositionChanged: {
+                if (pressed) {
+                    const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y,
+                                                                           virtualItem.width, virtualItem.height));
+
+                    // hbar.position = viewBr.x / virtualViewBr.width
+                    // Get hbar position in virtual view br
+                    const virtualX = hbar.position * virtualViewBr.width
+
+                    // Map virtual view X to container X then move container
+                    const containerX = virtualItem.mapToItem(containerItem, Qt.point(virtualX, 0.))
+                    containerItem.x = -containerX.x
+                }
             }
-            //console.error('graphViewWindow=' + graphViewWindow)
         }
     }
 
-    property rect graphViewContainerRect: {     // GraphView frame projected in container CS
-        // Map this graph view "window frame" to underlying containerItem to
-        // project size in containerItem Cs
-        const containerView = graphView.mapToItem(containerItem,
-                                                  Qt.rect(0, 0, graphView.width, graphView.height))
-        return containerView
-    }
+    // GraphView frame projected in container CS
+    // Map this graph view "window frame" to underlying containerItem to
+    // project size in containerItem Cs
+    property rect graphViewContainerRect
+    property rect graphViewVirtualRect
 
     function updateScrollbars() {
-        console.error('updateScrollbars()')
-        const graphViewContainerRect = graphView.mapToItem(containerItem,
-                                                            Qt.rect(0, 0, graphView.width, graphView.height))
-        graphView.graphViewContainerRect = graphViewContainerRect
+        // Virtual item is where the graphView "view rect" is projected
+        console.error('')
+        //console.error('updateScrollbars()')
 
-        hbar.position = Math.abs(virtualItemBr.left + graphViewContainerRect.x) / virtualItemBr.width
+        // Try mapping virtual and container items to this
+        const containerViewBr = mapFromItem(containerItem, Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height));
+        const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height));
+        //console.error('containerViewBr=' + containerViewBr)
+        //console.error('virtualViewBr=' + virtualViewBr)
+
+        // View rect is graphView window projected inside virtual item
+        const viewBr = graphView.mapToItem(virtualItem, Qt.rect(0, 0, graphView.width, graphView.height))
+        //console.error('viewBr=' + viewBr)
+
+        console.error('containerItem.y=' + containerItem.y)
+        console.error('virtualViewBr.top=' + virtualViewBr.top)
+        console.error('viewBr.top=' + viewBr.top)
+
+        hbar.position = viewBr.x / virtualViewBr.width
+        hbar.size = viewBr.width / virtualViewBr.width
+
+        vbar.position = viewBr.y / virtualViewBr.height
+        vbar.size = viewBr.height / virtualViewBr.height
+
+
+        /*graphView.graphViewContainerRect = graphViewContainerRect
+        graphView.graphViewVirtualRect = graphViewContainerRect
+
+        hbar.position = Math.abs(virtualItemBr.left + graphViewVirtualRect.x) / virtualItemBr.width
         hbar.size = graphViewContainerRect.width / graphView.virtualItemBr.width
 
-        vbar.position = Math.abs(virtualItemBr.top + graphViewContainerRect.y) / virtualItemBr.height
+        console.error('virtualItemBr.top=' + virtualItemBr.top)
+        vbar.position = Math.abs(virtualItemBr.top + graphViewVirtualRect.y) / virtualItemBr.height
         vbar.size = graphViewContainerRect.height / graphView.virtualItemBr.height
 
         console.error(`  containerItemBr=${containerItemBr}`)
         console.error(`  virtualItemBr=${virtualItemBr}`)
         console.error(`  graphViewContainerRect=${graphViewContainerRect}`)
         console.error(`  hbar.position=${hbar.position}  hbar.size=${hbar.size}`)
-        console.error(`  vbar.position=${vbar.position}  vbar.size=${vbar.size}`)
+        console.error(`  vbar.position=${vbar.position}  vbar.size=${vbar.size}`)*/
     }
 
     // FIXME: take scale into account...
-    property rect containerItemBr: Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height);
+    /*property rect containerItemBr: Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height);
     onContainerItemBrChanged: updateScrollbars()
 
     property rect virtualItemBr: Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
-    onVirtualItemBrChanged: updateScrollbars()
+    onVirtualItemBrChanged: updateScrollbars()*/
 
     // FIXME: having some kind of "modified" signal in qan::Navigable would be a lot cleaner !
     onWidthChanged: updateScrollbars()
