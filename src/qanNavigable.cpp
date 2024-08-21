@@ -42,26 +42,23 @@ Navigable::Navigable(QQuickItem* parent) :
     QQuickItem{parent}
 {
     _containerItem = new QQuickItem{this};
-    // FIXME 244 center ?
     _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
-    //_containerItem->setSize({2000, 1500});
-    //_containerItem->setPosition({-1000, -750});
     _containerItem->setAcceptTouchEvents(true);
 
-    // FIXME #244 magic goes here for "puching" borders...
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
             this,   [this]() {
                 if (this->_containerItem != nullptr) {
                     const auto cr = this->_containerItem->childrenRect();
                     this->_containerItem->setWidth(cr.width());
                     this->_containerItem->setHeight(cr.height());
+                    // Note virtualItem is a child of containerItem, but it concrete size
+                    // must also be updated
                     this->updateVirtualBr(cr);
                 }
             });
 
     _virtualItem = new QQuickItem{_containerItem};
-    // FIXME 244 center ?
-    _virtualItem->setTransformOrigin(TransformOrigin::Center);
+    _virtualItem->setTransformOrigin(TransformOrigin::Center);  // Note: scale around center
     _virtualItem->setSize({2000, 1500});
     _virtualItem->setPosition({-1000, -750});
     _virtualItem->setAcceptTouchEvents(true);
@@ -99,11 +96,12 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
     // Virtual item is in container item CS
     // Virtual item must "contains" container item children rect but stay
     // fixed/centered on (0, 0) in container Cs.
-    qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
     const auto virtualBr = _virtualItem->boundingRect().translated(_virtualItem->position());
-    qWarning() << "  virtualBr=" << virtualBr;
     if (virtualBr.contains(containerChildrenRect))
         return; // No need to grow
+    // FIXME #244
+    qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
+    qWarning() << "  virtualBr=" << virtualBr;
     bool growLeft = containerChildrenRect.left() < virtualBr.left();
     bool growRight= containerChildrenRect.right() > virtualBr.right();
     bool growTop = containerChildrenRect.top() < virtualBr.top();
@@ -118,7 +116,6 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
     _virtualItem->setPosition(newVirtualBr.topLeft());
     _virtualItem->setSize(newVirtualBr.size());
 }
-
 
 void    Navigable::centerOn(QQuickItem* item)
 {

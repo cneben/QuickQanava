@@ -271,7 +271,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15
             anchors.right: parent.right
-            anchors.rightMargin: 15
+            anchors.rightMargin: 20
             padding: 0
             Frame {
                 ColumnLayout {
