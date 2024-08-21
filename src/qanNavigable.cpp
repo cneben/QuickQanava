@@ -57,6 +57,10 @@ Navigable::Navigable(QQuickItem* parent) :
                 }
             });
 
+    // Note 02240821: Virtual item actually model the limit of the navigable scrollable
+    // area. It grow with container item childrenRect. It was initially added to
+    // ease transformation between container CS to navigable CS for scrollbar management.
+    // It main interest now is to automatically siez the navigable preview correctly.
     _virtualItem = new QQuickItem{_containerItem};
     _virtualItem->setTransformOrigin(TransformOrigin::Center);  // Note: scale around center
     _virtualItem->setSize({2000, 1500});
