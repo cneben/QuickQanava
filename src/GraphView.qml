@@ -58,6 +58,11 @@ Qan.AbstractGraphView {
     property real   resizeHandlerWidth: 4.0
     property size   resizeHandlerSize: "9x9"
 
+    //! Shortcut to set scrollbar policy (default to always visible).
+    property alias  vScrollBar: vbar
+    //! Shortcut to set scrollbar policy (default to always visible).
+    property alias  hScrollBar: hbar
+
     // PRIVATE ////////////////////////////////////////////////////////////////
     ScrollBar {
         id: vbar
@@ -70,11 +75,7 @@ Qan.AbstractGraphView {
         anchors.bottom: parent.bottom
         onPositionChanged: {
             if (pressed) {
-                //const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y,
-                //                                                       virtualItem.width, virtualItem.height));
                 const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
-
-                // vbar.position = viewBr.y / virtualViewBr.height
                 // Get vbar position in virtual view br, map it to container CS by just applying scaling
                 const virtualY = (virtualViewBr.y + (vbar.position * virtualViewBr.height)) * containerItem.scale
                 containerItem.y = -virtualY
@@ -91,42 +92,28 @@ Qan.AbstractGraphView {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onPositionChanged: {
-            // Note 20240820: There is small glitvh in initial position (0.5 that comes to 0.36 when clickin, strange...)
-            onPositionChanged: {
-                console.error('position=' + position)
-                if (pressed) {
-                    //const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y,
-                    //                                                       virtualItem.width, virtualItem.height));
-                    const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
-
-                    // hbar.position = viewBr.x / virtualViewBr.width
-                    // Get hbar position in virtual view br, map it to container CS by just applying scaling
-                    const virtualX = (virtualViewBr.x + (hbar.position * virtualViewBr.width)) * containerItem.scale
-                    console.error(`virtualX=${virtualX}`)
-                    containerItem.x = -virtualX
-                }
+            if (pressed) {
+                const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
+                // Get hbar position in virtual view br, map it to container CS by just applying scaling
+                const virtualX = (virtualViewBr.x + (hbar.position * virtualViewBr.width)) * containerItem.scale
+                containerItem.x = -virtualX
             }
         }
     }
 
     function updateScrollbars() {
-        // Virtual item is where the graphView "view rect" is projected
-        console.error('')
-        //console.error('updateScrollbars()')
-
         // Try mapping virtual and container items to this
         const containerViewBr = mapFromItem(containerItem, Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height));
-        //const virtualViewBr = mapFromItem(virtualItem, Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height));
         // virtualViewBr is left unprojected since viewBr is defacto projected into this CS
         const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
 
         // View rect is graphView window projected inside virtual item
         const viewBr = graphView.mapToItem(virtualItem, Qt.rect(0, 0, graphView.width, graphView.height))
 
-        console.error('containerViewBr=' + containerViewBr)
+        /*console.error('containerViewBr=' + containerViewBr)
         console.error('virtualViewBr=' + virtualViewBr)
         console.error('viewBr=' + viewBr)
-        console.error('hbar.position=' + viewBr.x / virtualViewBr.width)
+        console.error('hbar.position=' + viewBr.x / virtualViewBr.width)*/
 
         // Note: clamping allow scrollbar to have full size and 0. position on extreme zoom out (intented behaviour)
         const clamp = (value, min, max) => {

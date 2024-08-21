@@ -150,7 +150,8 @@ public:
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
 
-public:  // FIXME #244
+public:
+    //! Internally used for scrollbar and navigable preview, consider private.
     Q_PROPERTY(QQuickItem*  virtualItem READ getVirtualItem CONSTANT FINAL)
     //! \sa virtualItem
     inline QQuickItem*      getVirtualItem() noexcept { return _virtualItem.data(); }
@@ -159,6 +160,24 @@ private:
 protected slots:
     //! Update the virtual item Br to follow a container item grow.
     void    updateVirtualBr(const QRectF& containerChildrenRect);
+
+public:
+    //! \copydoc getViewRect().
+    Q_PROPERTY(QRectF viewRect READ getViewRect WRITE setViewRect NOTIFY viewRectChanged FINAL)
+    /*! Set the size of the navigable scrollbar area.
+     *
+     * Default to {-1000, -750, 2000, 1500}.
+     *
+     * Setting a small viewRect will limit the area available to scroll the navigable
+     * using scrollbars.
+     * Setting a viewRect smaller that navigable childrenRect has no effect.
+     * Mapped internally to virtualItem bounding rect.
+     */
+    QRectF          getViewRect() const;
+    //! \copydoc getViewRect().
+    void            setViewRect(const QRectF& viewRect);
+signals:
+    void            viewRectChanged();
 
 public:
     //! Center the view on a given child item (zoom level is not modified).

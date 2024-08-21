@@ -63,7 +63,6 @@ Navigable::Navigable(QQuickItem* parent) :
     _virtualItem->setPosition({-1000, -750});
     _virtualItem->setAcceptTouchEvents(true);
 
-
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
     setTransformOrigin(TransformOrigin::TopLeft);
 
@@ -99,9 +98,6 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
     const auto virtualBr = _virtualItem->boundingRect().translated(_virtualItem->position());
     if (virtualBr.contains(containerChildrenRect))
         return; // No need to grow
-    // FIXME #244
-    qWarning() << "GraphView::updateContainerBr(): containerChildrenRect=" << containerChildrenRect;
-    qWarning() << "  virtualBr=" << virtualBr;
     bool growLeft = containerChildrenRect.left() < virtualBr.left();
     bool growRight= containerChildrenRect.right() > virtualBr.right();
     bool growTop = containerChildrenRect.top() < virtualBr.top();
@@ -112,10 +108,23 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
                         growTop ? -50 : 0.,
                         growRight ? 50 : 0.,
                         growBottom ? 50 : 0.);
-    qWarning() << "  newVirtualBr=" << newVirtualBr;
     _virtualItem->setPosition(newVirtualBr.topLeft());
     _virtualItem->setSize(newVirtualBr.size());
 }
+
+QRectF  Navigable::getViewRect() const {
+    return _virtualItem ? QRectF{_virtualItem->position(), _virtualItem->size()} :
+                          QRectF{};
+}
+void    Navigable::setViewRect(const QRectF& viewRect)
+{
+    if (_virtualItem) {
+        _virtualItem->setPosition(viewRect.topLeft());
+        _virtualItem->setSize(viewRect.size());
+        emit viewRectChanged();
+    }
+}
+
 
 void    Navigable::centerOn(QQuickItem* item)
 {
@@ -173,6 +182,7 @@ void    Navigable::moveTo(QPointF position)
     const qreal zoom = _containerItem->scale();
     _containerItem->setPosition(-position * zoom);
     updateGrid();
+    emit navigated();
 }
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
