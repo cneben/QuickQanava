@@ -170,12 +170,16 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
+    const auto graphContainerItem = graph->getContainerItem();
+    if (graphContainerItem == nullptr)
+        return;
 
     if (notify && _target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
         const auto groupItemContainer = groupItem ? groupItem->getContainer() : nullptr;
         if (groupItem != nullptr && groupItemContainer != nullptr) {
-            const auto groupItemDragPos = groupItemContainer->mapFromScene(sceneDragPos);
+            const auto groupItemDragPos = graphContainerItem->mapToItem(groupItemContainer, sceneDragPos);
+            //qWarning() << "  groupItemDragPos=" << groupItemDragPos;
             bool drag = false;
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
                 if (groupItemDragPos.y() < 0)  // Coords are in container CS

@@ -149,6 +149,7 @@ Qan.AbstractGraphView {
         id: nodeResizer
         parent: graph.containerItem
         visible: false
+        z: 10
 
         enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         opacity: resizeHandlerOpacity
@@ -197,6 +198,7 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
         enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
+        z: 5
 
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
@@ -332,8 +334,11 @@ Qan.AbstractGraphView {
                                                                    false; })
 
 
-            nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
-            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
+            nodeResizer.z = graph.maxZ + 15    // We want resizer to stay on top of selection item and ports.
+            /*console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
+            console.error(`node.item.parent=${node.item.parent}`)
+            console.error(`node.item.parent.z=${node.item.parent.z}`)*/
+            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 15
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)
             if (node.item.ratio > 0.) {
@@ -377,9 +382,12 @@ Qan.AbstractGraphView {
                                                           group.item.resizable;           // And if group is resizeable
                                                       })
 
-            groupResizer.z = graph.maxZ + 3    // We want resizer to stay on top of selection item and ports.
+            groupResizer.z = graph.maxZ + 12    // We want resizer to stay on top of selection item and ports.
+            /*console.error(`graph.maxZ=${graph.maxZ} group.item.z=${group.item.z} groupResizer.z=${groupResizer.z}`)
+            console.error(`group.item.container=${group.item.container}`)
+            console.error(`group.item.parent.z=${group.item.parent.z}`)*/
             groupResizer.preserveRatio = false
-            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 3
+            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 12
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
             groupResizer.target = groupResizer.targetContent = null
