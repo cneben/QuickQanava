@@ -271,7 +271,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15
             anchors.right: parent.right
-            anchors.rightMargin: 15
+            anchors.rightMargin: 20
             padding: 0
             Frame {
                 ColumnLayout {
@@ -331,7 +331,7 @@ ApplicationWindow {
             viewWindowColor: Material.accent
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: graphView.bottom
-            anchors.bottomMargin: 8
+            anchors.bottomMargin: 20
             width: 350
             height: 198
         }  // Qan.GraphPreview

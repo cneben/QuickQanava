@@ -95,7 +95,10 @@ void    GraphView::setGraph(qan::Graph* graph)
         emit graphChanged();
     }
 }
+//-----------------------------------------------------------------------------
 
+
+/* GraphView Interactions Management *///--------------------------------------
 void    GraphView::navigableClicked(QPointF pos, QPointF globalPos)
 {
     Q_UNUSED(pos)

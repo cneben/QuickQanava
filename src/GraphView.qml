@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
+import QtQuick.Controls
 
 import QuickQanava      2.0 as Qan
 import "qrc:/QuickQanava" as Qan
@@ -57,7 +58,84 @@ Qan.AbstractGraphView {
     property real   resizeHandlerWidth: 4.0
     property size   resizeHandlerSize: "9x9"
 
+    //! Shortcut to set scrollbar policy (default to always visible).
+    property alias  vScrollBar: vbar
+    //! Shortcut to set scrollbar policy (default to always visible).
+    property alias  hScrollBar: hbar
+
     // PRIVATE ////////////////////////////////////////////////////////////////
+    ScrollBar {
+        id: vbar
+        hoverEnabled: true
+        active: hovered || pressed
+        policy: ScrollBar.AlwaysOn
+        orientation: Qt.Vertical
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        onPositionChanged: {
+            if (pressed) {
+                const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
+                // Get vbar position in virtual view br, map it to container CS by just applying scaling
+                const virtualY = (virtualViewBr.y + (vbar.position * virtualViewBr.height)) * containerItem.scale
+                containerItem.y = -virtualY
+                graphView.navigated()
+            }
+        }
+    }
+    ScrollBar {
+        id: hbar
+        hoverEnabled: true
+        active: hovered || pressed
+        policy: ScrollBar.AlwaysOn
+        orientation: Qt.Horizontal
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        onPositionChanged: {
+            if (pressed) {
+                const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
+                // Get hbar position in virtual view br, map it to container CS by just applying scaling
+                const virtualX = (virtualViewBr.x + (hbar.position * virtualViewBr.width)) * containerItem.scale
+                containerItem.x = -virtualX
+                graphView.navigated()
+            }
+        }
+    }
+
+    function updateScrollbars() {
+        // Try mapping virtual and container items to this
+        const containerViewBr = mapFromItem(containerItem, Qt.rect(containerItem.x, containerItem.y, containerItem.width, containerItem.height));
+        // virtualViewBr is left unprojected since viewBr is defacto projected into this CS
+        const virtualViewBr = Qt.rect(virtualItem.x, virtualItem.y, virtualItem.width, virtualItem.height);
+
+        // View rect is graphView window projected inside virtual item
+        const viewBr = graphView.mapToItem(virtualItem, Qt.rect(0, 0, graphView.width, graphView.height))
+
+        /*console.error('containerViewBr=' + containerViewBr)
+        console.error('virtualViewBr=' + virtualViewBr)
+        console.error('viewBr=' + viewBr)
+        console.error('hbar.position=' + viewBr.x / virtualViewBr.width)*/
+
+        // Note: clamping allow scrollbar to have full size and 0. position on extreme zoom out (intented behaviour)
+        const clamp = (value, min, max) => {
+          return Math.min(Math.max(value, min), max);
+        }
+
+        hbar.position = clamp(viewBr.x / virtualViewBr.width, 0., 1.)
+        // Note: hbar and vbar size has to be trimmed if the bar extend is outside the
+        // virtualItemBr, otherwise there is a "jittering" effect when changing it's position
+        // by user input.
+        hbar.size = clamp(Math.min(viewBr.width / virtualViewBr.width, (1. - hbar.position)), 0., 1.)
+
+        vbar.position = clamp(viewBr.y / virtualViewBr.height, 0., 1.)
+        vbar.size = clamp(Math.min(viewBr.height / virtualViewBr.height, (1. - vbar.position)), 0., 1.)
+    }
+
+    onWidthChanged: updateScrollbars()
+    onHeightChanged: updateScrollbars()
+    onNavigated: { updateScrollbars() }
+
     Qan.LineGrid {
         id: lineGrid
     }
@@ -71,6 +149,7 @@ Qan.AbstractGraphView {
         id: nodeResizer
         parent: graph.containerItem
         visible: false
+        z: 10
 
         enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
         opacity: resizeHandlerOpacity
@@ -119,6 +198,7 @@ Qan.AbstractGraphView {
         parent: graph.containerItem
         visible: false
         enabled: target && target.node && target.node.commitStatus !== 2    // Disable for locked nodes
+        z: 5
 
         opacity: resizeHandlerOpacity
         handlerColor: resizeHandlerColor
@@ -254,8 +334,11 @@ Qan.AbstractGraphView {
                                                                    false; })
 
 
-            nodeResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
-            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 4
+            nodeResizer.z = graph.maxZ + 15    // We want resizer to stay on top of selection item and ports.
+            /*console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
+            console.error(`node.item.parent=${node.item.parent}`)
+            console.error(`node.item.parent.z=${node.item.parent.z}`)*/
+            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 15
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)
             if (node.item.ratio > 0.) {
@@ -299,9 +382,12 @@ Qan.AbstractGraphView {
                                                           group.item.resizable;           // And if group is resizeable
                                                       })
 
-            groupResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+            groupResizer.z = graph.maxZ + 12    // We want resizer to stay on top of selection item and ports.
+            /*console.error(`graph.maxZ=${graph.maxZ} group.item.z=${group.item.z} groupResizer.z=${groupResizer.z}`)
+            console.error(`group.item.container=${group.item.container}`)
+            console.error(`group.item.parent.z=${group.item.parent.z}`)*/
             groupResizer.preserveRatio = false
-            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 4
+            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 12
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
             groupResizer.target = groupResizer.targetContent = null

@@ -44,14 +44,29 @@ Navigable::Navigable(QQuickItem* parent) :
     _containerItem = new QQuickItem{this};
     _containerItem->setTransformOrigin(TransformOrigin::TopLeft);
     _containerItem->setAcceptTouchEvents(true);
+
     connect(_containerItem, &QQuickItem::childrenRectChanged,  // Listen to children rect changes to update containerItem size
             this,   [this]() {
-        if (this->_containerItem != nullptr) {
-            const auto cr = this->_containerItem->childrenRect();
-            this->_containerItem->setWidth(cr.width());
-            this->_containerItem->setHeight(cr.height());
-        }
-    });
+                if (this->_containerItem != nullptr) {
+                    const auto cr = this->_containerItem->childrenRect();
+                    this->_containerItem->setWidth(cr.width());
+                    this->_containerItem->setHeight(cr.height());
+                    // Note virtualItem is a child of containerItem, but it concrete size
+                    // must also be updated
+                    this->updateVirtualBr(cr);
+                }
+            });
+
+    // Note 02240821: Virtual item actually model the limit of the navigable scrollable
+    // area. It grow with container item childrenRect. It was initially added to
+    // ease transformation between container CS to navigable CS for scrollbar management.
+    // It main interest now is to automatically siez the navigable preview correctly.
+    _virtualItem = new QQuickItem{_containerItem};
+    _virtualItem->setTransformOrigin(TransformOrigin::Center);  // Note: scale around center
+    _virtualItem->setSize({2000, 1500});
+    _virtualItem->setPosition({-1000, -750});
+    _virtualItem->setAcceptTouchEvents(true);
+
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
     setTransformOrigin(TransformOrigin::TopLeft);
 
@@ -77,6 +92,43 @@ void    Navigable::setNavigable(bool navigable) noexcept
         emit navigableChanged();
     }
 }
+
+void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
+{
+    // Container item is in Navgiable CS.
+    // Virtual item is in container item CS
+    // Virtual item must "contains" container item children rect but stay
+    // fixed/centered on (0, 0) in container Cs.
+    const auto virtualBr = _virtualItem->boundingRect().translated(_virtualItem->position());
+    if (virtualBr.contains(containerChildrenRect))
+        return; // No need to grow
+    bool growLeft = containerChildrenRect.left() < virtualBr.left();
+    bool growRight= containerChildrenRect.right() > virtualBr.right();
+    bool growTop = containerChildrenRect.top() < virtualBr.top();
+    bool growBottom = containerChildrenRect.bottom() > virtualBr.bottom();
+    auto newVirtualBr = virtualBr.united(containerChildrenRect);
+    // FIXME #244 use virtualBorder configuraiton here !
+    newVirtualBr.adjust(growLeft ? -50 : 0.,
+                        growTop ? -50 : 0.,
+                        growRight ? 50 : 0.,
+                        growBottom ? 50 : 0.);
+    _virtualItem->setPosition(newVirtualBr.topLeft());
+    _virtualItem->setSize(newVirtualBr.size());
+}
+
+QRectF  Navigable::getViewRect() const {
+    return _virtualItem ? QRectF{_virtualItem->position(), _virtualItem->size()} :
+                          QRectF{};
+}
+void    Navigable::setViewRect(const QRectF& viewRect)
+{
+    if (_virtualItem) {
+        _virtualItem->setPosition(viewRect.topLeft());
+        _virtualItem->setSize(viewRect.size());
+        emit viewRectChanged();
+    }
+}
+
 
 void    Navigable::centerOn(QQuickItem* item)
 {
@@ -134,13 +186,14 @@ void    Navigable::moveTo(QPointF position)
     const qreal zoom = _containerItem->scale();
     _containerItem->setPosition(-position * zoom);
     updateGrid();
+    emit navigated();
 }
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
 {
-    qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
+    //qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
     QRectF content = _containerItem->childrenRect();
-    qWarning() << "  content=" << content;
+    //qWarning() << "  content=" << content;
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
         const qreal viewWidth = forceWidth > 0. ? forceWidth : width();
         const qreal viewHeight = forceHeight > 0. ? forceHeight : height();
@@ -361,6 +414,7 @@ void    Navigable::mouseMoveEvent(QMouseEvent* event)
         _panModified = true;
         _lastPan = event->position();
         setDragActive(true);
+        emit navigated();
 
         updateGrid();
     } else if (_selectionRectItem != nullptr &&
@@ -445,6 +499,7 @@ void    Navigable::wheelEvent(QWheelEvent* event)
     if (getNavigable()) {
         qreal zoomFactor = (event->angleDelta().y() > 0. ? _zoomIncrement : -_zoomIncrement);
         zoomOn(event->position(), getZoom() + zoomFactor);
+        emit navigated();
     }
     updateGrid();
     // Note 20160117: NavigableArea is opaque for wheel events, do not call QQuickItem::wheelEvent(event);

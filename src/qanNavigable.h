@@ -48,7 +48,7 @@ namespace qan { // ::qan
  * Example code for navigating an image:
  * \code
  * // Don't forget to register the component:
- * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+ * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
  * // QML: import QuickQanava 2.0 as Qan
  * Qan.Navigable {
  *   anchors.fill: parent
@@ -127,7 +127,7 @@ public:
      * Example code for navigating an image:
      * \code
      * // Don't forget to register the component:
-     * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+     * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
      * // QML: import QuickQanava 2.0
      * Qan.Navigable {
      *   anchors.fill: parent
@@ -144,11 +144,40 @@ public:
      * \endcode
      *
      */
-    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+    Q_PROPERTY(QQuickItem*  containerItem READ getContainerItem CONSTANT FINAL)
     //! \sa containerItem
     inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
+
+public:
+    //! Internally used for scrollbar and navigable preview, consider private.
+    Q_PROPERTY(QQuickItem*  virtualItem READ getVirtualItem CONSTANT FINAL)
+    //! \sa virtualItem
+    inline QQuickItem*      getVirtualItem() noexcept { return _virtualItem.data(); }
+private:
+    QPointer<QQuickItem>    _virtualItem = nullptr;
+protected slots:
+    //! Update the virtual item Br to follow a container item grow.
+    void    updateVirtualBr(const QRectF& containerChildrenRect);
+
+public:
+    //! \copydoc getViewRect().
+    Q_PROPERTY(QRectF viewRect READ getViewRect WRITE setViewRect NOTIFY viewRectChanged FINAL)
+    /*! Set the size of the navigable scrollbar area.
+     *
+     * Default to {-1000, -750, 2000, 1500}.
+     *
+     * Setting a small viewRect will limit the area available to scroll the navigable
+     * using scrollbars.
+     * Setting a viewRect smaller that navigable childrenRect has no effect.
+     * Mapped internally to virtualItem bounding rect.
+     */
+    QRectF          getViewRect() const;
+    //! \copydoc getViewRect().
+    void            setViewRect(const QRectF& viewRect);
+signals:
+    void            viewRectChanged();
 
 public:
     //! Center the view on a given child item (zoom level is not modified).
@@ -170,6 +199,10 @@ public:
      * used to provide a valid size, < 0. are automatically ignored.
      */
     Q_INVOKABLE void    fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
+
+signals:
+    //! Navigable has bee modified following a user interaction (not emitted from programmatic modification).
+    void    navigated();
 
 public:
     //! \brief Auto fitting mode.
@@ -293,7 +326,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
+    qreal       _zoomMin = 0.09;  // Max 10% zoom with default zoom in/out thresold
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();

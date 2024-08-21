@@ -41,6 +41,7 @@
 #include <QVariant>
 #include <QQmlEngine>
 #include <QQmlComponent>
+#include <QRandomGenerator>
 
 // QuickQanava headers
 #include "./qanTreeLayouts.h"

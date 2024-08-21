@@ -131,7 +131,8 @@ bool    DraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto sceneDragPos = event->scenePosition();
+        //const auto sceneDragPos = event->scenePosition();
+        const auto sceneDragPos = graph->getContainerItem()->mapFromScene(event->scenePosition());
         if (!_targetItem->getDragged()) {
             // Project in scene rect (for example is a node is part of a group)
             beginDragMove(sceneDragPos, _targetItem->getSelected());
@@ -169,12 +170,16 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
+    const auto graphContainerItem = graph->getContainerItem();
+    if (graphContainerItem == nullptr)
+        return;
 
     if (notify && _target->isGroup()) {
         const auto groupItem = qobject_cast<qan::GroupItem*>(_targetItem);
         const auto groupItemContainer = groupItem ? groupItem->getContainer() : nullptr;
         if (groupItem != nullptr && groupItemContainer != nullptr) {
-            const auto groupItemDragPos = groupItemContainer->mapFromScene(sceneDragPos);
+            const auto groupItemDragPos = graphContainerItem->mapToItem(groupItemContainer, sceneDragPos);
+            //qWarning() << "  groupItemDragPos=" << groupItemDragPos;
             bool drag = false;
             if ((groupItem->getDragPolicy() & qan::GroupItem::DragPolicy::Header) == qan::GroupItem::DragPolicy::Header) {
                 if (groupItemDragPos.y() < 0)  // Coords are in container CS

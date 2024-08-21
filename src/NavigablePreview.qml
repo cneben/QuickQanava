@@ -66,6 +66,9 @@ Qan.AbstractNavigablePreview {
             source.containerItem.onChildrenRectChanged.connect(updatePreview)
             // Emitted only on user initiaited navitable view changes.
             source.containerItemModified.connect(updatePreview)
+            source.onWidthChanged.connect(updatePreview)
+            source.onHeightChanged.connect(updatePreview)
+            source.onNavigated.connect(updatePreview)
 
             sourcePreview.sourceItem = source.containerItem
         } else

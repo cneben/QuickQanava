@@ -70,7 +70,12 @@ private:
     QPointer<qan::Graph>    _graph = nullptr;
 signals:
     void                    graphChanged();
+    //@}
+    //-------------------------------------------------------------------------
 
+
+    /*! \name GraphView Interactions Management *///---------------------------
+    //@{
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
     virtual void    navigableClicked(QPointF pos, QPointF globalPos) override;
