@@ -79,6 +79,7 @@ Qan.AbstractGraphView {
                 // Get vbar position in virtual view br, map it to container CS by just applying scaling
                 const virtualY = (virtualViewBr.y + (vbar.position * virtualViewBr.height)) * containerItem.scale
                 containerItem.y = -virtualY
+                graphView.navigated()
             }
         }
     }
@@ -97,6 +98,7 @@ Qan.AbstractGraphView {
                 // Get hbar position in virtual view br, map it to container CS by just applying scaling
                 const virtualX = (virtualViewBr.x + (hbar.position * virtualViewBr.width)) * containerItem.scale
                 containerItem.x = -virtualX
+                graphView.navigated()
             }
         }
     }
@@ -375,9 +377,9 @@ Qan.AbstractGraphView {
                                                           group.item.resizable;           // And if group is resizeable
                                                       })
 
-            groupResizer.z = graph.maxZ + 4    // We want resizer to stay on top of selection item and ports.
+            groupResizer.z = graph.maxZ + 3    // We want resizer to stay on top of selection item and ports.
             groupResizer.preserveRatio = false
-            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 4
+            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 3
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
             groupResizer.target = groupResizer.targetContent = null
