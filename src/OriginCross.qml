@@ -51,8 +51,8 @@ Shape {
         startY: -crossSize
         capStyle: ShapePath.RoundCap
         strokeWidth: 2
-        strokeColor: Qt.rgba(1,1,1,1)
-        fillColor: Qt.rgba(0,0,0,0)
+        strokeColor: Qt.rgba(0, 0, 0, 0.9)
+        fillColor: Qt.rgba(0, 0, 0, 0.9)
         PathLine {
             x: 0
             y: crossSize

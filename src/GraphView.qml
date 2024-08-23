@@ -63,10 +63,14 @@ Qan.AbstractGraphView {
     //! Shortcut to set scrollbar policy or visibility (default to always visible).
     property alias  hScrollBar: hbar
 
+    //! Shortcut to set origin cross visibility (default to visible).
+    property alias  originCross: _originCross
+
     // PRIVATE ////////////////////////////////////////////////////////////////
     OriginCross {
+        id: _originCross
         parent: containerItem
-        crossColor: graphView.gridThickColor
+        //crossColor: Qt.rgba(1,1,1,0.8)
     }
 
     ScrollBar {
