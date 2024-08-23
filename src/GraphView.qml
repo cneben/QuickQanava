@@ -58,9 +58,9 @@ Qan.AbstractGraphView {
     property real   resizeHandlerWidth: 4.0
     property size   resizeHandlerSize: "9x9"
 
-    //! Shortcut to set scrollbar policy (default to always visible).
+    //! Shortcut to set scrollbar policy or visibility (default to always visible).
     property alias  vScrollBar: vbar
-    //! Shortcut to set scrollbar policy (default to always visible).
+    //! Shortcut to set scrollbar policy or visibility (default to always visible).
     property alias  hScrollBar: hbar
 
     // PRIVATE ////////////////////////////////////////////////////////////////

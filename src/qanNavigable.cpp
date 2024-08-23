@@ -220,7 +220,10 @@ void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
         if (fitZoom > 0.999999)
             fitZoom = 1.0;
 
-        // Don't use setZoom() to avoid a isValidZoom() check
+        // Don't use setZoom() to avoid a isValidZoom() check, but modify zoom range
+        // to avoid beeing freezed in a non valid zoom
+        if (fitZoom < _zoomMin)
+            _zoomMin = fitZoom + 0.001;
         _zoom = fitZoom;
         _containerItem->setScale(_zoom);
         emit zoomChanged();
@@ -269,29 +272,33 @@ void    Navigable::zoomOn(QPointF center, qreal zoom)
     const qreal containerCenterY = center.y() - _containerItem->y();
     const qreal lastZoom = _zoom;
 
-    // Don't apply modification if new zoom is not valid (probably because it is not in zoomMin, zoomMax range)
-    if (isValidZoom(zoom)) {
-        // Get center coordinate in container CS with the new zoom
-        qreal oldZoomX = containerCenterX * (zoom / lastZoom);
-        qreal oldZoomY = containerCenterY * (zoom / lastZoom);
-
-        // Compute a container position correction to have a fixed "zoom
-        // application point"
-        qreal zoomCorrectionX = containerCenterX - oldZoomX;
-        qreal zoomCorrectionY = containerCenterY - oldZoomY;
-
-        // Correct container position and set the appropriate scaling
-        _containerItem->setX(_containerItem->x() + zoomCorrectionX);
-        _containerItem->setY(_containerItem->y() + zoomCorrectionY);
-        _containerItem->setScale(zoom);
-        _zoom = zoom;
-        _zoomModified = true;
-        _panModified = true;
-        emit zoomChanged();
-        emit containerItemModified();
-        navigableContainerItemModified();
-        updateGrid();
+    // Cull into a valid zoom...
+    if (!isValidZoom(zoom)) {
+        if (zoom < _zoomMin)
+            zoom = _zoomMin;
+        if (_zoomMax > 0 && zoom > _zoomMax)
+            zoom = _zoomMax;
     }
+    // Get center coordinate in container CS with the new zoom
+    const qreal oldZoomX = containerCenterX * (zoom / lastZoom);
+    const qreal oldZoomY = containerCenterY * (zoom / lastZoom);
+
+    // Compute a container position correction to have a fixed "zoom
+    // application point"
+    const qreal zoomCorrectionX = containerCenterX - oldZoomX;
+    const qreal zoomCorrectionY = containerCenterY - oldZoomY;
+
+    // Correct container position and set the appropriate scaling
+    _containerItem->setX(_containerItem->x() + zoomCorrectionX);
+    _containerItem->setY(_containerItem->y() + zoomCorrectionY);
+    _containerItem->setScale(zoom);
+    _zoom = zoom;
+    _zoomModified = true;
+    _panModified = true;
+    emit zoomChanged();
+    emit containerItemModified();
+    navigableContainerItemModified();
+    updateGrid();
 }
 
 bool    Navigable::isValidZoom(qreal zoom) const
