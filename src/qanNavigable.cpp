@@ -157,9 +157,13 @@ void    Navigable::centerOn(QQuickItem* item)
     const QPointF viewCenterContainerCs = mapToItem(_containerItem, viewCenter);
     const QPointF viewOriginContainerCs = mapToItem(_containerItem, QPointF{0, 0});
     const QPointF translationContainerCs = viewCenterContainerCs - viewOriginContainerCs;
-    _containerItem->setPosition(_containerItem->position() + (translationContainerCs * zoom));
 
-    updateGrid();
+    const auto containerPosition = _containerItem->position() + (translationContainerCs * zoom);
+    if (containerPosition != _containerItem->position()) {      // fuzzy compare
+        _containerItem->setPosition(containerPosition);
+        updateGrid();
+        emit navigated();
+    }
 }
 
 void    Navigable::centerOnPosition(QPointF position)
@@ -175,8 +179,12 @@ void    Navigable::centerOnPosition(QPointF position)
     const QPointF translation{navigableCenterContainerCs - position};
 
     const qreal zoom = _containerItem->scale();
-    _containerItem->setPosition(_containerItem->position() + (translation * zoom));
-    updateGrid();
+    const auto containerPosition = _containerItem->position() + (translation * zoom);
+    if (containerPosition != _containerItem->position()) {      // fuzzy compare
+        _containerItem->setPosition(containerPosition);
+        updateGrid();
+        emit navigated();
+    }
 }
 
 void    Navigable::moveTo(QPointF position)
@@ -184,9 +192,12 @@ void    Navigable::moveTo(QPointF position)
     if (_containerItem == nullptr)
         return;
     const qreal zoom = _containerItem->scale();
-    _containerItem->setPosition(-position * zoom);
-    updateGrid();
-    emit navigated();
+    const auto containerPosition = -position * zoom;
+    if (containerPosition != _containerItem->position()) {      // fuzzy compare
+        _containerItem->setPosition(containerPosition);
+        updateGrid();
+        emit navigated();
+    }
 }
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)

@@ -55,21 +55,11 @@ Qan.AbstractNavigablePreview {
         if (source &&
             source.containerItem) {
             resetVisibleWindow()
-
-            // Monitor source changes
-            source.containerItem.onWidthChanged.connect(updatePreview)
-            source.containerItem.onHeightChanged.connect(updatePreview)
-            source.containerItem.onScaleChanged.connect(updatePreview)
-            // Note 20221204: Do not connect on containerItem on(X/Y)Changed(),
-            // wait for user initiated onContainerItemModified since dragging
-            // view window also modify container x/y
-            source.containerItem.onChildrenRectChanged.connect(updatePreview)
-            // Emitted only on user initiaited navitable view changes.
             source.containerItemModified.connect(updatePreview)
             source.onWidthChanged.connect(updatePreview)
             source.onHeightChanged.connect(updatePreview)
+            // Emitted only on user initiated navigable view changes.
             source.onNavigated.connect(updatePreview)
-
             sourcePreview.sourceItem = source.containerItem
         } else
             sourcePreview.sourceItem = undefined
@@ -89,6 +79,11 @@ Qan.AbstractNavigablePreview {
     function updatePreview() {
         if (!source)
             return
+        // Note 20240823: Prevent updating the view while it is dragged
+        // to avoid "Maximum call stack size exceeded"
+        if (viewWindowController.pressedButtons & Qt.LeftButton ||
+            viewWindowController.active)
+            return;
         const r = computeSourceRect()
         if (r &&
             r.width > 0. &&
