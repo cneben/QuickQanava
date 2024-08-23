@@ -64,6 +64,11 @@ Qan.AbstractGraphView {
     property alias  hScrollBar: hbar
 
     // PRIVATE ////////////////////////////////////////////////////////////////
+    OriginCross {
+        parent: containerItem
+        crossColor: graphView.gridThickColor
+    }
+
     ScrollBar {
         id: vbar
         hoverEnabled: true
