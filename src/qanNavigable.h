@@ -180,6 +180,9 @@ signals:
     void            viewRectChanged();
 
 public:
+    //! Center the view on graph content center and set a 1.0 zoom.
+    Q_INVOKABLE void    center();
+
     //! Center the view on a given child item (zoom level is not modified).
     Q_INVOKABLE void    centerOn(QQuickItem* item);
 

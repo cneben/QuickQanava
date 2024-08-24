@@ -107,7 +107,6 @@ void    Navigable::updateVirtualBr(const QRectF& containerChildrenRect)
     bool growTop = containerChildrenRect.top() < virtualBr.top();
     bool growBottom = containerChildrenRect.bottom() > virtualBr.bottom();
     auto newVirtualBr = virtualBr.united(containerChildrenRect);
-    // FIXME #244 use virtualBorder configuraiton here !
     newVirtualBr.adjust(growLeft ? -50 : 0.,
                         growTop ? -50 : 0.,
                         growRight ? 50 : 0.,
@@ -129,6 +128,19 @@ void    Navigable::setViewRect(const QRectF& viewRect)
     }
 }
 
+void    Navigable::center() {
+    const QRectF content = _containerItem->childrenRect();
+    if (content.isEmpty())
+        return;
+    _zoom = 1.0;
+    _containerItem->setScale(1.0);
+    const auto scale = 1.0;
+    const auto graphCenter = content.center();
+    const auto viewCenter = QPointF{width() / 2., height() / 2.0};
+    const auto topLeft = -(graphCenter * scale) - (viewCenter * scale);
+    _containerItem->setPosition(-topLeft);
+    emit navigated();
+}
 
 void    Navigable::centerOn(QQuickItem* item)
 {
@@ -177,9 +189,10 @@ void    Navigable::centerOnPosition(QPointF position)
     const QPointF navigableCenter{width() / 2., height() / 2.};
     const QPointF navigableCenterContainerCs = mapToItem(_containerItem, navigableCenter);
     const QPointF translation{navigableCenterContainerCs - position};
-
     const qreal zoom = _containerItem->scale();
+    // FIXME: Affreux
     const auto containerPosition = _containerItem->position() + (translation * zoom);
+
     if (containerPosition != _containerItem->position()) {      // fuzzy compare
         _containerItem->setPosition(containerPosition);
         updateGrid();
@@ -202,9 +215,9 @@ void    Navigable::moveTo(QPointF position)
 
 void    Navigable::fitContentInView(qreal forceWidth, qreal forceHeight)
 {
-    //qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
-    QRectF content = _containerItem->childrenRect();
-    //qWarning() << "  content=" << content;
+    qWarning() << "qan::Navigable::fitContentInView(): forceWidth=" << forceWidth << " forceHeight=" << forceHeight;
+    const QRectF content = _containerItem->childrenRect();
+    qWarning() << "  content=" << content;
     if (!content.isEmpty()) { // Protect against div/0, can't fit if there is no content...
         const qreal viewWidth = forceWidth > 0. ? forceWidth : width();
         const qreal viewHeight = forceHeight > 0. ? forceHeight : height();

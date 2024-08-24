@@ -42,6 +42,8 @@ ApplicationWindow {
     ToolTip { x: 0; id: toolTip; timeout: 2000 }
     function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
+    Component.onCompleted: graphView.center()
+
     Qan.GraphView {
         id: graphView
         anchors.fill: parent
