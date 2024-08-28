@@ -124,7 +124,6 @@ Item {
                           groupItem.group ? groupItem.group.label :
                                             "              "
                     visible: !labelEditor.visible
-                    onImplicitHeightChanged: console.error('implicitHeight=' + implicitHeight)
                     verticalAlignment: Text.AlignVCenter
                     font.bold: groupItem.style.fontBold
                     font.pointSize: labelEditorControl.labelPointSize
