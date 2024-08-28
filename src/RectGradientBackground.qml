@@ -48,6 +48,8 @@ Item {
     //! User component hook to set a header background (component has to specify it's height).
     property Component headerBackground: null
 
+    property real headerHeight: 35
+
     // PRIVATE ////////////////////////////////////////////////////////////////
     // Note: Top level item is used to isolate rendering of:
     //    - background with a gradient effect
@@ -78,6 +80,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+        height: headerHeight
         sourceComponent: headerBackground
     }
     Rectangle {

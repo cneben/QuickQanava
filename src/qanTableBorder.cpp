@@ -135,13 +135,19 @@ void    TableBorder::onVerticalMove() { layoutCells(); }
 
 void    TableBorder::layoutCells()
 {
-    const auto tableGroupItem = _tableGroup ? qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem()) :
-                                              nullptr;
+    if (_tableGroup == nullptr)
+        return;
+    const auto tableGroupItem = qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem());
+    if (tableGroupItem == nullptr ||
+        tableGroupItem->getContainer() == nullptr)
+        return;
     const auto padding = _tableGroup ? _tableGroup->getTablePadding() :
                                        2.;
     const auto spacing = _tableGroup ? _tableGroup->getCellSpacing() :
                                        5.;
     const auto spacing2 = spacing / 2.;
+    const auto tableWidth = tableGroupItem->getContainer()->width();
+    const auto tableHeight = tableGroupItem->getContainer()->height();
 
     if (getOrientation() == Qt::Vertical) {
         const auto vCenter = verticalCenter();
@@ -165,10 +171,8 @@ void    TableBorder::layoutCells()
                 _nextBorder->verticalCenter() > (x() + spacing))  // nextBorder might still not be initialized...
                 nextCell->setWidth(_nextBorder->verticalCenter() - x() - spacing);
 
-            if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
-                _tableGroup && tableGroupItem != nullptr) {
-                nextCell->setWidth(tableGroupItem->width() - vCenter - padding - spacing2);
-            }
+            if (!_nextBorder)    // For last column, set cell witdh too (no next border will do it).
+                nextCell->setWidth(tableWidth - vCenter - padding - spacing2);
         }
     } // Vertical orientation
     else if (getOrientation() == Qt::Horizontal) {
@@ -193,10 +197,8 @@ void    TableBorder::layoutCells()
                 _nextBorder->horizontalCenter() > (y() + spacing))  // nextBorder might still not be initialized...
                 nextCell->setHeight(_nextBorder->horizontalCenter() - y() - spacing);
 
-            if (!_nextBorder &&     // For last column, set cell witdh too (no next border will do it).
-                _tableGroup && tableGroupItem != nullptr) {
-                nextCell->setHeight(tableGroupItem->height() - hCenter - padding - spacing2);
-            }
+            if (!_nextBorder)   // For last column, set cell witdh too (no next border will do it).
+                nextCell->setHeight(tableHeight - hCenter - padding - spacing2);
         }
     }  // Horizontal orientation
 }

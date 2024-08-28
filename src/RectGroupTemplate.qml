@@ -76,6 +76,7 @@ Item {
         anchors.fill: parent
         style: template.groupItem?.style
         visible: !groupItem.collapsed
+        headerHeight: Math.max(35, groupLabel.implicitHeight)
     }
     ColumnLayout {
         anchors.fill: parent
@@ -84,6 +85,7 @@ Item {
             id: headerLayout
             Layout.fillWidth: true
             Layout.fillHeight: false
+            Layout.preferredHeight:  Math.max(35, groupLabel.implicitHeight)
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
             z: 2
             spacing: 0
@@ -122,6 +124,7 @@ Item {
                           groupItem.group ? groupItem.group.label :
                                             "              "
                     visible: !labelEditor.visible
+                    onImplicitHeightChanged: console.error('implicitHeight=' + implicitHeight)
                     verticalAlignment: Text.AlignVCenter
                     font.bold: groupItem.style.fontBold
                     font.pointSize: labelEditorControl.labelPointSize
