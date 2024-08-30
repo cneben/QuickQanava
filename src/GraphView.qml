@@ -342,11 +342,10 @@ Qan.AbstractGraphView {
                     Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
                                                                    false; })
 
-
             nodeResizer.z = graph.maxZ + 15    // We want resizer to stay on top of selection item and ports.
-            /*console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
+            console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
             console.error(`node.item.parent=${node.item.parent}`)
-            console.error(`node.item.parent.z=${node.item.parent.z}`)*/
+            console.error(`node.item.parent.z=${node.item.parent.z}`)
             nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 15
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)

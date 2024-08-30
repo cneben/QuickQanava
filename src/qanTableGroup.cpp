@@ -39,6 +39,7 @@
 
 // QuickQanava headers
 #include "./qanTableGroup.h"
+#include "./qanTableGroupItem.h"
 
 namespace qan { // ::qan
 
@@ -100,6 +101,13 @@ bool    TableGroup::setLocked(bool locked)
         return true;
     }
     return false;
+}
+
+void    TableGroup::initializeLayout()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    if (tableGroupItem)
+        tableGroupItem->initializeTableLayout();
 }
 
 bool    TableGroup::setRows(int rows)

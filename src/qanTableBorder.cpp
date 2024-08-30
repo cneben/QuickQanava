@@ -54,11 +54,6 @@ TableBorder::TableBorder(QQuickItem* parent) :
 {
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setAcceptHoverEvents(true);
-
-    connect(this,   &QQuickItem::xChanged,
-            this,   &TableBorder::onHorizontalMove);
-    connect(this,   &QQuickItem::yChanged,
-            this,   &TableBorder::onVerticalMove);
 }
 
 TableBorder::~TableBorder() { /* prevCells and nextCells are not owned */ }
@@ -69,8 +64,6 @@ void    TableBorder::setTableGroup(qan::TableGroup* tableGroup)
 {
     if (tableGroup != _tableGroup) {
         _tableGroup = tableGroup;
-        if (_tableGroup)
-            layoutCells();   // Re layoutCells with correct table settings.
         emit tableGroupChanged();
     }
 }
@@ -135,9 +128,13 @@ void    TableBorder::onVerticalMove() { layoutCells(); }
 
 void    TableBorder::layoutCells()
 {
+    // qWarning() << "qan::TableBorder::layoutCells()";
     if (_tableGroup == nullptr)
         return;
+    //qWarning() << "  _tableGroup.label=" << _tableGroup->getLabel();
     const auto tableGroupItem = qobject_cast<const qan::TableGroupItem*>(_tableGroup->getGroupItem());
+    //if (tableGroupItem != nullptr)
+    //    qWarning() << "  tableGroupItem=" << tableGroupItem << "  tableGroupItem.container=" << tableGroupItem->getContainer();
     if (tableGroupItem == nullptr ||
         tableGroupItem->getContainer() == nullptr)
         return;
@@ -148,6 +145,7 @@ void    TableBorder::layoutCells()
     const auto spacing2 = spacing / 2.;
     const auto tableWidth = tableGroupItem->getContainer()->width();
     const auto tableHeight = tableGroupItem->getContainer()->height();
+    //qWarning() << "  tableWidth=" << tableWidth << "  tableHeight=" << tableHeight;
 
     if (getOrientation() == Qt::Vertical) {
         const auto vCenter = verticalCenter();
@@ -156,12 +154,17 @@ void    TableBorder::layoutCells()
         for (auto prevCell: _prevCells) {
             if (prevCell == nullptr)
                 continue;
-            prevCell->setWidth(vCenter -
-                               prevCell->x() - spacing2);
+            // qWarning() << "Border " << this;
+            // qWarning() << "  border._prevBorder=" << _prevBorder;
+            // qWarning() << "  border.vCenter=" << vCenter;
             if (!_prevBorder &&     // For first column, set cell x too (not prev border will do it).
                 _tableGroup) {
                 prevCell->setX(padding);
             }
+            // qWarning() << "  prevCell.x=" << prevCell->x();
+            const auto prevCellWidth = vCenter - prevCell->x() - spacing2;
+            // qWarning() << "  prevCellWidth=" << prevCellWidth;
+            prevCell->setWidth(prevCellWidth);
         }
         for (auto nextCell: _nextCells) {
             if (nextCell == nullptr)
@@ -234,6 +237,8 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
         event->setAccepted(false);
         return;
     }
+    bool xModified = false;
+    bool yModified = false;
     const auto mePos = event->scenePosition();
     if (event->buttons() |  Qt::LeftButton &&
         !_dragInitialMousePos.isNull()) {
@@ -274,6 +279,7 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
                     maxX = std::max(maxX, _nextBorder->verticalCenter() - spacing - borderWidth2);
             }
             setX(qBound(minX, position.x(), maxX));
+            xModified = true;
         }
         else if (getOrientation() == Qt::Horizontal) {
             auto minY = std::numeric_limits<qreal>::max();
@@ -293,9 +299,12 @@ void    TableBorder::mouseMoveEvent(QMouseEvent* event)
                     maxY = std::max(maxY, _nextBorder->horizontalCenter() - spacing - borderWidth2);
             }
             setY(qBound(minY, position.y(), maxY));
+            yModified = true;
         }
         event->setAccepted(true);
     }
+    if (xModified || yModified)
+        layoutCells();
 }
 
 void    TableBorder::mousePressEvent(QMouseEvent* event)

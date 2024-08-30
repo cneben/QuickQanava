@@ -101,6 +101,9 @@ public:
     //! Override default qan::Group behaviour, a locked table group is no longer selectable / resizable.
     virtual bool    setLocked(bool locked) override;
 
+    // FIXME #1756
+    virtual void    initializeLayout();
+
 public:
     //! \copydoc getRows()
     Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)

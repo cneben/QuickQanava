@@ -41,6 +41,8 @@ import "qrc:/QuickQanava" as Qan
  *
  */
 Item {
+    id: rectGradientBackground
+
     // PUBLIC /////////////////////////////////////////////////////////////////
     property var    style: undefined
     property real   backRadius: style?.backRadius ?? 4.
@@ -77,9 +79,9 @@ Item {
         }
     }
     Loader {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.top: rectGradientBackground.top
+        anchors.left: rectGradientBackground.left
+        anchors.right: rectGradientBackground.right
         height: headerHeight
         sourceComponent: headerBackground
     }

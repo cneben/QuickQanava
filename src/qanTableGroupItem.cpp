@@ -69,14 +69,9 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
         for (const auto cell: _cells)
             if (cell != nullptr)
                 cell->setParentItem(container);
-
-        connect(container,  &QQuickItem::widthChanged,
-                this,       &TableGroupItem::layoutTable);
-        connect(container,  &QQuickItem::heightChanged,
-                this,       &TableGroupItem::layoutTable);
-
-        initializeTableLayout();
-        layoutTable();
+        // FIXME #1756
+        //initializeTableLayout();
+        //layoutTable();
         return true;
     }
     return false;
@@ -105,7 +100,7 @@ void    TableGroupItem::clearLayout()
 
 void    TableGroupItem::initialize(int cols, int rows)
 {
-    //qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
+    qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
     if (rows <= 0 || cols <= 0) {
         qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
@@ -163,7 +158,17 @@ void    TableGroupItem::initialize(int cols, int rows)
 
     borderComponent->deleteLater();
 
-    initializeTableLayout();
+    // Note 20240830: React to size modifications, usually table size
+    // is fully initialized at this point, to prevent spurious reaction
+    // set setEnabled(false).
+    connect(this,  &QQuickItem::widthChanged,
+            this,  &TableGroupItem::layoutTable);
+    connect(this,  &QQuickItem::heightChanged,
+            this,  &TableGroupItem::layoutTable);
+
+    // Note 20240830: Do not call initializeTableLayout(),
+    // it is up to the user to do that, it might not be
+    // desirable in vertain serialization use cases.
 }
 
 void    TableGroupItem::createCells(int cellsCount)
@@ -302,10 +307,11 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
-    //qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << getTableGroup();
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
+    // FIXME #1756
+    qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << tableGroup << " tableGroup.label=" << tableGroup->getLabel();
 
     const auto tableContainer = getContainer();
     if (tableContainer == nullptr)
@@ -400,18 +406,21 @@ void    TableGroupItem::initializeTableLayout()
 
 void    TableGroupItem::layoutTable()
 {
+    if (!isEnabled())
+        return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
     // Adapt to a new (width, height), keep previous rows/columns ratio
     // New position is:
     //  x = previousX * (actualWidth / previousWidth)
     //  y = previousY * (actualHeight / previousHeight)
     const auto tableContainer = getContainer();
-    //qWarning() << "TableGroupItem::layoutTable(): tableContainer=" << tableContainer << " _previousSize=" << _previousSize;
     if (tableContainer == nullptr)
         return;
 
     const auto tableSize = tableContainer->size();
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
+    // FIXME #1756
+    qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight << " _previousSize=" << _previousSize;
 
     if (_previousSize.isNull()) {
         initializeTableLayout();
@@ -443,6 +452,7 @@ void    TableGroupItem::layoutTable()
 
 void    TableGroupItem::layoutCells()
 {
+    qWarning() << "qan::TableGroupItem::layoutCells()";
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder != nullptr)
             verticalBorder->layoutCells();
@@ -464,6 +474,8 @@ void    TableGroupItem::layoutCells()
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
+    qWarning() << "  tableGroup->getRows()=" << tableGroup->getRows();
+    qWarning() << "  tableGroup->getCols()=" << tableGroup->getCols();
     const auto padding = getTableGroup() != nullptr ? getTableGroup()->getTablePadding() : 2.;
     const auto padding2 = padding * 2.;
     if (tableGroup->getCols() == 1) {
@@ -509,7 +521,8 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
                 if (cell != nullptr)
                     cell->setTable(tableGroup);
 
-            layoutTable();  // Force new layout with actual table group settings
+            // FIXME #1756
+            //layoutTable();  // Force new layout with actual table group settings
             return true;
         }
     }
