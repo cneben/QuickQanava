@@ -342,11 +342,12 @@ Qan.AbstractGraphView {
                     Qt.binding(() => { return nodeResizer.target ? nodeResizer.target.visible && nodeResizer.target.resizable :
                                                                    false; })
 
-            nodeResizer.z = graph.maxZ + 15    // We want resizer to stay on top of selection item and ports.
-            console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
-            console.error(`node.item.parent=${node.item.parent}`)
-            console.error(`node.item.parent.z=${node.item.parent.z}`)
-            nodeRightResizer.z = nodeBottomResizer.z = graph.maxZ + 15
+            nodeResizer.z = 200005  // Resizer must stay on top of selection item and ports, 200k is QuickQanava max maxZ
+            // FIXME #1742
+            // console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
+            // console.error(`node.item.parent=${node.item.parent}`)
+            // console.error(`node.item.parent.z=${node.item.parent.z}`)
+            nodeRightResizer.z = nodeBottomResizer.z = 200005
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)
             if (node.item.ratio > 0.) {
@@ -390,12 +391,9 @@ Qan.AbstractGraphView {
                                                           group.item.resizable;           // And if group is resizeable
                                                       })
 
-            groupResizer.z = graph.maxZ + 12    // We want resizer to stay on top of selection item and ports.
-            /*console.error(`graph.maxZ=${graph.maxZ} group.item.z=${group.item.z} groupResizer.z=${groupResizer.z}`)
-            console.error(`group.item.container=${group.item.container}`)
-            console.error(`group.item.parent.z=${group.item.parent.z}`)*/
+            groupResizer.z = 200005  // Resizer must stay on top of selection item and ports, 200k is QuickQanava max maxZ
             groupResizer.preserveRatio = false
-            groupRightResizer.z = groupBottomResizer.z = graph.maxZ + 12
+            groupRightResizer.z = groupBottomResizer.z = 200005
             groupRightResizer.preserveRatio = groupBottomResizer.preserveRatio = false
         } else {
             groupResizer.target = groupResizer.targetContent = null

@@ -1838,13 +1838,7 @@ void    Graph::sendToFront(QQuickItem* item)
             const auto groupParentItem = groupItem->parentItem();
             if (groupParentItem == nullptr)
                 continue;       // Should not happen, a group necessary have a parent item.
-            if (groupParentItem == graphContainerItem) {        // 2.2.1 We have root group, use global graph maxZ property
-                groupItem->setZ(nextMaxZ());
-            } else {
-                const auto maxZ = maxChildsZ(groupParentItem);  // 2.2.2
-                updateMaxZ(maxZ + 1.);
-                groupItem->setZ(maxZ + 1.);
-            }
+            groupItem->setZ(nextMaxZ());
         } // For all group items
     }
 }
@@ -1864,16 +1858,38 @@ void    Graph::sendToBack(QQuickItem* item)
 
 void    Graph::updateMinMaxZ() noexcept
 {
-    const auto maxZ = maxChildsZ(getContainerItem());
-    setMaxZ(maxZ);
-    const auto minZ = minChildsZ(getContainerItem());
-    setMaxZ(minZ);
+    {
+        auto maxZIt = std::max_element(get_nodes().cbegin(), get_nodes().cend(),
+                                             [](const auto a, const auto b) {
+                                                 return a->getItem() != nullptr &&
+                                                        b->getItem() != nullptr &&
+                                                        a->getItem()->z() < b->getItem()->z();
+                                             });
+
+        const auto maxZ = maxZIt != get_nodes().end() &&
+                          (*maxZIt)->getItem() != nullptr ? (*maxZIt)->getItem()->z() : 0.;
+        setMaxZ(maxZ);
+    }
+
+    {
+        auto minZIt = std::min_element(get_nodes().cbegin(), get_nodes().cend(),
+                                       [](const auto a, const auto b) {
+                                           return a->getItem() != nullptr &&
+                                                  b->getItem() != nullptr &&
+                                                  a->getItem()->z() < b->getItem()->z();
+                                       });
+
+        const auto minZ = minZIt != get_nodes().end() &&
+                                  (*minZIt)->getItem() != nullptr ? (*minZIt)->getItem()->z() : 0.;
+
+        setMinZ(minZ);
+    }
 }
 
 qreal   Graph::getMaxZ() const noexcept { return _maxZ; }
 void    Graph::setMaxZ(const qreal maxZ) noexcept
 {
-    _maxZ = maxZ;
+    _maxZ = std::min(200000., maxZ);
     emit maxZChanged();
 }
 
@@ -1890,26 +1906,10 @@ void    Graph::updateMaxZ(const qreal z) noexcept
         setMaxZ(z);
 }
 
-auto    Graph::maxChildsZ(const QQuickItem* item) noexcept -> qreal {
-    if (item == nullptr)
-        return 0.;
-    qreal maxZ = std::numeric_limits<qreal>::lowest();
-    bool hasChild = false;
-    const auto childs = item->childItems();
-    for (const auto childItem : qAsConst(childs)) {
-        if (childItem != nullptr) {
-            hasChild = true;
-            maxZ = std::max(maxZ, childItem->z());
-        }
-    }
-    return hasChild ? maxZ : 0.;
-};
-
-
 qreal   Graph::getMinZ() const noexcept { return _minZ; }
 void    Graph::setMinZ(const qreal minZ) noexcept
 {
-    _minZ = minZ;
+    _minZ = std::max(-200000., minZ);
     emit minZChanged();
 }
 
@@ -1925,21 +1925,6 @@ void    Graph::updateMinZ(const qreal z) noexcept
     if (z < _minZ)
         setMinZ(z);
 }
-
-auto    Graph::minChildsZ(const QQuickItem* item) noexcept -> qreal {
-    if (item == nullptr)
-        return 0.;
-    qreal minZ = std::numeric_limits<qreal>::infinity();
-    bool hasChild = false;
-    const auto childs = item->childItems();
-    for (const auto childItem : qAsConst(childs)) {
-        if (childItem != nullptr) {
-            hasChild = true;
-            minZ = std::min(minZ, childItem->z());
-        }
-    }
-    return hasChild ? minZ : 0.;
-};
 //-----------------------------------------------------------------------------
 
 

@@ -1047,12 +1047,6 @@ public:
     //! Update maximum z value if \c z is greater than actual \c maxZ value.
     Q_INVOKABLE void    updateMaxZ(const qreal z) noexcept;
 
-protected:
-    /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.
-     * \return 0. if there is no child, maximum child z value otherwise.
-     */
-    static auto         maxChildsZ(const QQuickItem* item) noexcept -> qreal;
-
 public:
     //! \brief Minimum global z for nodes and groups (ie bottom-less item).
     Q_PROPERTY(qreal    minZ READ getMinZ WRITE setMinZ NOTIFY minZChanged FINAL)
@@ -1068,12 +1062,6 @@ public:
     qreal               nextMinZ() noexcept;
     //! Update minimum z value if \c z is less than actual \c minZ value.
     Q_INVOKABLE void    updateMinZ(const qreal z) noexcept;
-
-protected:
-    /*! \brief Utility to find a QQuickItem minimum z value of \c item childs.
-     * \return 0. if there is no child, minimum child z value otherwise.
-     */
-    static auto         minChildsZ(const QQuickItem* item) noexcept -> qreal;
     //@}
     //-------------------------------------------------------------------------
 
