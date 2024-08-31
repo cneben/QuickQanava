@@ -69,9 +69,6 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
         for (const auto cell: _cells)
             if (cell != nullptr)
                 cell->setParentItem(container);
-        // FIXME #1756
-        //initializeTableLayout();
-        //layoutTable();
         return true;
     }
     return false;
@@ -310,9 +307,6 @@ void    TableGroupItem::initializeTableLayout()
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
-    // FIXME #1756
-    qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableGroup=" << tableGroup << " tableGroup.label=" << tableGroup->getLabel();
-
     const auto tableContainer = getContainer();
     if (tableContainer == nullptr)
         return;
@@ -419,8 +413,8 @@ void    TableGroupItem::layoutTable()
     const auto tableSize = tableContainer->size();
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
-    // FIXME #1756
-    qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight << " _previousSize=" << _previousSize;
+
+    // qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight << " _previousSize=" << _previousSize;
 
     if (_previousSize.isNull()) {
         initializeTableLayout();
@@ -521,8 +515,7 @@ bool    TableGroupItem::setGroup(qan::Group* group) noexcept
                 if (cell != nullptr)
                     cell->setTable(tableGroup);
 
-            // FIXME #1756
-            //layoutTable();  // Force new layout with actual table group settings
+            // Note 20240831: Do not layout it is up to the user to call qan::TableGroup::initializeLayout()
             return true;
         }
     }
