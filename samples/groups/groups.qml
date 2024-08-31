@@ -78,6 +78,7 @@ ApplicationWindow {
                 g1.item.x = 300; g1.item.y = 80
 
                 let tableGroup = topology.insertTable(/*cols=*/2, /*rows=*/4)
+                tableGroup.initializeLayout()
                 tableGroup.label = 'TABLE'
             }
             onGroupClicked: (group) => {
