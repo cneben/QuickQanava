@@ -343,10 +343,6 @@ Qan.AbstractGraphView {
                                                                    false; })
 
             nodeResizer.z = 200005  // Resizer must stay on top of selection item and ports, 200k is QuickQanava max maxZ
-            // FIXME #1742
-            // console.error(`graph.maxZ=${graph.maxZ} node.item.z=${node.item.z} nodeResizer.z=${nodeResizer.z}`)
-            // console.error(`node.item.parent=${node.item.parent}`)
-            // console.error(`node.item.parent.z=${node.item.parent.z}`)
             nodeRightResizer.z = nodeBottomResizer.z = 200005
 
             nodeResizer.preserveRatio = (node.item.ratio > 0.)
