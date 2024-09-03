@@ -58,16 +58,15 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
     //qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
     if (qan::GroupItem::setContainer(container)) {
-
         // Note 20240830: React to size modifications, usually table size
         // is fully initialized at this point, to prevent spurious reaction
         // set setEnabled(false).
         const auto container = getContainer();
         if (container != nullptr) {
             connect(container,  &QQuickItem::widthChanged,
-                    this,  &TableGroupItem::layoutTable);
+                    this,       &TableGroupItem::requestLayoutTable);
             connect(container,  &QQuickItem::heightChanged,
-                    this,  &TableGroupItem::layoutTable);
+                    this,       &TableGroupItem::requestLayoutTable);
         }
 
         // Note: Force reparenting all borders and cell to container, it might be nullptr
@@ -403,7 +402,8 @@ void    TableGroupItem::initializeTableLayout()
     _previousSize = tableSize;  // Set a correct initial size
 }
 
-void    TableGroupItem::layoutTable()
+void    TableGroupItem::requestLayoutTable() { layoutTable(/*force*/false); }
+void    TableGroupItem::layoutTable(bool force)
 {
     if (!isEnabled())
         return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
@@ -419,16 +419,21 @@ void    TableGroupItem::layoutTable()
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
 
-    //qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
+    //qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  force=" << force <<
     //    "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight <<
     //    " _previousSize=" << _previousSize;
 
     if (_previousSize.isNull()) {
-        //initializeTableLayout();
+        _previousSize = tableSize;
         qWarning() << "TableGroupItem::layoutTable(): Error: No previous size.";
+        if (!force)
+            return;
+    }
+    if (!force &&
+        _previousSize == tableSize)
         return;
-    } else if (_previousSize == tableSize)
-        return;
+    if (force)  // Do not really resize in force mode, only adapt row/column width/height
+        _previousSize = tableSize;
 
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
