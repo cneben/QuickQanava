@@ -58,6 +58,18 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
     //qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
     if (qan::GroupItem::setContainer(container)) {
+
+        // Note 20240830: React to size modifications, usually table size
+        // is fully initialized at this point, to prevent spurious reaction
+        // set setEnabled(false).
+        const auto container = getContainer();
+        if (container != nullptr) {
+            connect(container,  &QQuickItem::widthChanged,
+                    this,  &TableGroupItem::layoutTable);
+            connect(container,  &QQuickItem::heightChanged,
+                    this,  &TableGroupItem::layoutTable);
+        }
+
         // Note: Force reparenting all borders and cell to container, it might be nullptr
         // at initialization.
         for (const auto verticalBorder: _verticalBorders)
@@ -97,7 +109,8 @@ void    TableGroupItem::clearLayout()
 
 void    TableGroupItem::initialize(int cols, int rows)
 {
-    qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
+    //qWarning() << "qan::TableGroupItem::initialize(): rows=" << rows << "  cols=" << cols;
+    //qWarning() << "  container=" << getContainer();
     if (rows <= 0 || cols <= 0) {
         qWarning() << "TableGroupItem::initialize(): Error, invalid rows or cols count.";
         return;
@@ -154,14 +167,6 @@ void    TableGroupItem::initialize(int cols, int rows)
     }
 
     borderComponent->deleteLater();
-
-    // Note 20240830: React to size modifications, usually table size
-    // is fully initialized at this point, to prevent spurious reaction
-    // set setEnabled(false).
-    connect(this,  &QQuickItem::widthChanged,
-            this,  &TableGroupItem::layoutTable);
-    connect(this,  &QQuickItem::heightChanged,
-            this,  &TableGroupItem::layoutTable);
 
     // Note 20240830: Do not call initializeTableLayout(),
     // it is up to the user to do that, it might not be
@@ -414,10 +419,13 @@ void    TableGroupItem::layoutTable()
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
 
-    // qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight << " _previousSize=" << _previousSize;
+    //qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
+    //    "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight <<
+    //    " _previousSize=" << _previousSize;
 
     if (_previousSize.isNull()) {
-        initializeTableLayout();
+        //initializeTableLayout();
+        qWarning() << "TableGroupItem::layoutTable(): Error: No previous size.";
         return;
     } else if (_previousSize == tableSize)
         return;
@@ -446,7 +454,7 @@ void    TableGroupItem::layoutTable()
 
 void    TableGroupItem::layoutCells()
 {
-    qWarning() << "qan::TableGroupItem::layoutCells()";
+    //qWarning() << "qan::TableGroupItem::layoutCells()";
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder != nullptr)
             verticalBorder->layoutCells();
@@ -461,6 +469,7 @@ void    TableGroupItem::layoutCells()
         return;
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
+    const auto tableSize = tableContainer->size();
 
     // Special handling for 1 row or 1 column table: since there is
     // no "moveable" border, calls to layoutCells() do not set either width/height
@@ -468,8 +477,8 @@ void    TableGroupItem::layoutCells()
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
-    qWarning() << "  tableGroup->getRows()=" << tableGroup->getRows();
-    qWarning() << "  tableGroup->getCols()=" << tableGroup->getCols();
+    //qWarning() << "  tableGroup->getRows()=" << tableGroup->getRows();
+    //qWarning() << "  tableGroup->getCols()=" << tableGroup->getCols();
     const auto padding = getTableGroup() != nullptr ? getTableGroup()->getTablePadding() : 2.;
     const auto padding2 = padding * 2.;
     if (tableGroup->getCols() == 1) {
@@ -486,6 +495,7 @@ void    TableGroupItem::layoutCells()
                 cell->setY(padding);
             }
     }
+    _previousSize = tableSize;
 }
 
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept
