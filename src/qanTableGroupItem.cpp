@@ -58,17 +58,6 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
 {
     //qWarning() << "qan::TableGroupItem::setContainer(): container=" << container;
     if (qan::GroupItem::setContainer(container)) {
-        // Note 20240830: React to size modifications, usually table size
-        // is fully initialized at this point, to prevent spurious reaction
-        // set setEnabled(false).
-        const auto container = getContainer();
-        if (container != nullptr) {
-            connect(container,  &QQuickItem::widthChanged,
-                    this,       &TableGroupItem::requestLayoutTable);
-            connect(container,  &QQuickItem::heightChanged,
-                    this,       &TableGroupItem::requestLayoutTable);
-        }
-
         // Note: Force reparenting all borders and cell to container, it might be nullptr
         // at initialization.
         for (const auto verticalBorder: _verticalBorders)
@@ -80,6 +69,7 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
         for (const auto cell: _cells)
             if (cell != nullptr)
                 cell->setParentItem(container);
+
         return true;
     }
     return false;
@@ -308,6 +298,7 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
+    //qWarning() << "qan::TableGroupItem::initializeTableLayout()";
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
@@ -400,10 +391,20 @@ void    TableGroupItem::initializeTableLayout()
     layoutCells();
 
     _previousSize = tableSize;  // Set a correct initial size
+
+    // Note 20240830: React to size modifications, usually table size
+    // is fully initialized at this point, to prevent spurious reaction
+    // set setEnabled(false).
+    const auto container = getContainer();
+    if (container != nullptr) {
+        connect(container,  &QQuickItem::widthChanged,
+                this,       &TableGroupItem::layoutTable);
+        connect(container,  &QQuickItem::heightChanged,
+                this,       &TableGroupItem::layoutTable);
+    }
 }
 
-void    TableGroupItem::requestLayoutTable() { layoutTable(/*force*/false); }
-void    TableGroupItem::layoutTable(bool force)
+void    TableGroupItem::layoutTable()
 {
     if (!isEnabled())
         return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
@@ -419,21 +420,25 @@ void    TableGroupItem::layoutTable(bool force)
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
 
-    //qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() << "  force=" << force <<
-    //    "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight <<
-    //    " _previousSize=" << _previousSize;
-
-    if (_previousSize.isNull()) {
-        _previousSize = tableSize;
-        qWarning() << "TableGroupItem::layoutTable(): Error: No previous size.";
-        if (!force)
-            return;
-    }
-    if (!force &&
-        _previousSize == tableSize)
+    if (qAbs(tableWidth - width()) > 10)    // Note 20240904: Table container size must be _almost_ equal to
+        return;                             // table group size otherwise we perhaps are still in a polish loop
+    if (qAbs(tableHeight - height()) > 70)
         return;
-    if (force)  // Do not really resize in force mode, only adapt row/column width/height
-        _previousSize = tableSize;
+
+    // qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
+    //     "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight <<
+    //     " _previousSize=" << _previousSize;
+    // qWarning() << "  groupSize" << size();
+    // qWarning() << "  _previousSize.isNull()=" << _previousSize.isNull();
+    // qWarning() << "  _previousSize.isValid()=" << _previousSize.isValid();
+    // qWarning() << "  _previousSize.isEmpty()=" << _previousSize.isEmpty();
+    if (_previousSize.isNull()) {
+        if (!tableSize.isEmpty())
+            _previousSize = tableSize;
+        return;
+    }
+    if (_previousSize == tableSize)
+        return;
 
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
@@ -455,6 +460,23 @@ void    TableGroupItem::layoutTable(bool force)
 
     _previousSize = tableSize;
     layoutCells();
+}
+
+void    TableGroupItem::polishTable()
+{
+    if (!isEnabled())
+        return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
+    const auto tableContainer = getContainer();
+    if (tableContainer == nullptr)
+        return;
+    layoutCells();
+    const auto container = getContainer();
+    if (container != nullptr) {
+        connect(container,  &QQuickItem::widthChanged,
+                this,       &TableGroupItem::layoutTable);
+        connect(container,  &QQuickItem::heightChanged,
+                this,       &TableGroupItem::layoutTable);
+    }
 }
 
 void    TableGroupItem::layoutCells()
@@ -500,7 +522,7 @@ void    TableGroupItem::layoutCells()
                 cell->setY(padding);
             }
     }
-    _previousSize = tableSize;
+    //_previousSize = tableSize;
 }
 
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept

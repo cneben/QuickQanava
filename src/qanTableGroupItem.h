@@ -93,14 +93,15 @@ protected:
 public:
     void        initializeTableLayout();
 public slots:
-    //! Call layoutTable().
-    void        requestLayoutTable();
-    /*! Layout current cell after a table geometry change.
-     *  If force is true table will be laid out even if it's size
-     *  has not changed since last layout (might be usefull to force
-     *  a layout after serialization).
+    //! Layout current cell after a table geometry change.
+    void        layoutTable();
+
+    /*! Layout cells and polish table (ie activate necessary bindings for table resizing).
+     * This method could be used _after_ serialization of a table when
+     * group content item is still unsure: it is safer than a complete
+     * call to layoutTable(). Note: call layoutCells().
      */
-    void        layoutTable(bool force);
+    void        polishTable();
 
     //! Layout table cells, triggered when table style change.
     void        layoutCells();
