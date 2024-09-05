@@ -70,7 +70,7 @@ Qan.AbstractGraphView {
     OriginCross {
         id: _originCross
         parent: containerItem
-        //crossColor: Qt.rgba(1,1,1,0.8)
+        z: -100000
     }
 
     ScrollBar {
