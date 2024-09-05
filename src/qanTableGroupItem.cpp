@@ -412,10 +412,6 @@ void    TableGroupItem::layoutTable()
 {
     if (!isEnabled())
         return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
-    // Adapt to a new (width, height), keep previous rows/columns ratio
-    // New position is:
-    //  x = previousX * (actualWidth / previousWidth)
-    //  y = previousY * (actualHeight / previousHeight)
     const auto tableContainer = getContainer();
     if (tableContainer == nullptr)
         return;
@@ -432,12 +428,10 @@ void    TableGroupItem::layoutTable()
     qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
         "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight;
 
+    // Project normalized sx/sy coordinates to table item container CS.
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
             continue;
-        // FIXME #1756
-        //const auto previousX = verticalBorder->x();
-        //verticalBorder->setX((previousX / _previousSize.width()) * tableWidth);
         verticalBorder->setX(verticalBorder->getSx() * tableWidth);
         verticalBorder->setY(0.);
         verticalBorder->setHeight(tableHeight);
@@ -447,25 +441,10 @@ void    TableGroupItem::layoutTable()
         if (horizontalBorder == nullptr)
             continue;
         horizontalBorder->setX(0.);
-        // FIXME #1756
-        //const auto previousY = horizontalBorder->y();
-        //horizontalBorder->setY((previousY / _previousSize.height()) * tableHeight);
         horizontalBorder->setY(horizontalBorder->getSy() * tableHeight);
         horizontalBorder->setWidth(tableWidth);
     }
 
-    layoutCells();
-}
-
-void    TableGroupItem::polishTable()
-{
-    // FIXME #1756 no longer necessary ????
-
-    if (!isEnabled())
-        return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
-    const auto tableContainer = getContainer();
-    if (tableContainer == nullptr)
-        return;
     layoutCells();
 }
 

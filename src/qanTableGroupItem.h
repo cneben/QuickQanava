@@ -96,13 +96,6 @@ public slots:
     //! Layout current cell after a table geometry change.
     void        layoutTable();
 
-    /*! Layout cells and polish table (ie activate necessary bindings for table resizing).
-     * This method could be used _after_ serialization of a table when
-     * group content item is still unsure: it is safer than a complete
-     * call to layoutTable(). Note: call layoutCells().
-     */
-    void        polishTable();
-
     //! Layout table cells, triggered when table style change.
     void        layoutCells();
 
