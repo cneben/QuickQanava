@@ -70,6 +70,17 @@ bool    TableGroupItem::setContainer(QQuickItem* container) noexcept
             if (cell != nullptr)
                 cell->setParentItem(container);
 
+        // Note 20240830: React to size modifications, usually table size
+        // is fully initialized at this point, to prevent spurious reaction
+        // set setEnabled(false).
+        const auto container = getContainer();
+        if (container != nullptr) {
+            connect(container,  &QQuickItem::widthChanged,
+                    this,       &TableGroupItem::layoutTable);
+            connect(container,  &QQuickItem::heightChanged,
+                    this,       &TableGroupItem::layoutTable);
+        }
+
         return true;
     }
     return false;
@@ -298,7 +309,6 @@ auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem
 
 void    TableGroupItem::initializeTableLayout()
 {
-    //qWarning() << "qan::TableGroupItem::initializeTableLayout()";
     const auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
@@ -308,6 +318,7 @@ void    TableGroupItem::initializeTableLayout()
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
     const auto tableSize = tableContainer->size();
+    qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableSize=" << tableSize;
     if (qRound(tableWidth) <= 0 || qRound(tableHeight) <= 0)
         return;
 
@@ -358,7 +369,8 @@ void    TableGroupItem::initializeTableLayout()
                            ((c - 1) * spacing) +
                            (c * cellWidth) +
                            (spacing / 2.);
-            verticalBorder->setX(x - borderWidth2);
+            const auto borderX = x - borderWidth2;
+            verticalBorder->setSx(borderX / tableWidth);
             verticalBorder->setY(0.);
             verticalBorder->setWidth(borderWidth);
             verticalBorder->setHeight(tableHeight);
@@ -377,7 +389,10 @@ void    TableGroupItem::initializeTableLayout()
                            (r * cellHeight) +
                            (spacing / 2.);
             horizontalBorder->setX(0.);
-            horizontalBorder->setY(y - borderHeight2);
+            // FIXME #1756 BTW, ce serait peut-être bien aussi de normaliser
+            // width et heght en prevision merge...
+            const auto borderY = y - borderHeight2;
+            horizontalBorder->setSy(borderY / tableHeight);
             horizontalBorder->setWidth(tableWidth);
             horizontalBorder->setHeight(borderHeight);
         }
@@ -388,20 +403,9 @@ void    TableGroupItem::initializeTableLayout()
     // it will be called automatically when border are moved.
     // Note 20230406: In fact calling layout cell is necessary for rows==1, cols==1
     // table that need special handling to dimension cells since there is no horiz/vert borders.
-    layoutCells();
-
-    _previousSize = tableSize;  // Set a correct initial size
-
-    // Note 20240830: React to size modifications, usually table size
-    // is fully initialized at this point, to prevent spurious reaction
-    // set setEnabled(false).
-    const auto container = getContainer();
-    if (container != nullptr) {
-        connect(container,  &QQuickItem::widthChanged,
-                this,       &TableGroupItem::layoutTable);
-        connect(container,  &QQuickItem::heightChanged,
-                this,       &TableGroupItem::layoutTable);
-    }
+    // FIXME #1756
+    layoutTable();
+    //layoutCells();
 }
 
 void    TableGroupItem::layoutTable()
@@ -420,31 +424,21 @@ void    TableGroupItem::layoutTable()
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
 
-    if (qAbs(tableWidth - width()) > 10)    // Note 20240904: Table container size must be _almost_ equal to
-        return;                             // table group size otherwise we perhaps are still in a polish loop
-    if (qAbs(tableHeight - height()) > 70)
+    // During initial polish loop and since we are binded directly on width/
+    // height change, table container size might be empty.
+    if (tableSize.isEmpty() || tableSize.isNull())
         return;
 
-    // qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
-    //     "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight <<
-    //     " _previousSize=" << _previousSize;
-    // qWarning() << "  groupSize" << size();
-    // qWarning() << "  _previousSize.isNull()=" << _previousSize.isNull();
-    // qWarning() << "  _previousSize.isValid()=" << _previousSize.isValid();
-    // qWarning() << "  _previousSize.isEmpty()=" << _previousSize.isEmpty();
-    if (_previousSize.isNull()) {
-        if (!tableSize.isEmpty())
-            _previousSize = tableSize;
-        return;
-    }
-    if (_previousSize == tableSize)
-        return;
+    qWarning() << "TableGroupItem::layoutTable(): " << getGroup()->getLabel() <<
+        "  tableWidth=" << tableWidth << "tableHeight=" << tableHeight;
 
     for (const auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
             continue;
-        const auto previousX = verticalBorder->x();
-        verticalBorder->setX((previousX / _previousSize.width()) * tableWidth);
+        // FIXME #1756
+        //const auto previousX = verticalBorder->x();
+        //verticalBorder->setX((previousX / _previousSize.width()) * tableWidth);
+        verticalBorder->setX(verticalBorder->getSx() * tableWidth);
         verticalBorder->setY(0.);
         verticalBorder->setHeight(tableHeight);
     }
@@ -452,31 +446,27 @@ void    TableGroupItem::layoutTable()
     for (const auto horizontalBorder: _horizontalBorders) {
         if (horizontalBorder == nullptr)
             continue;
-        const auto previousY = horizontalBorder->y();
         horizontalBorder->setX(0.);
-        horizontalBorder->setY((previousY / _previousSize.height()) * tableHeight);
+        // FIXME #1756
+        //const auto previousY = horizontalBorder->y();
+        //horizontalBorder->setY((previousY / _previousSize.height()) * tableHeight);
+        horizontalBorder->setY(horizontalBorder->getSy() * tableHeight);
         horizontalBorder->setWidth(tableWidth);
     }
 
-    _previousSize = tableSize;
     layoutCells();
 }
 
 void    TableGroupItem::polishTable()
 {
+    // FIXME #1756 no longer necessary ????
+
     if (!isEnabled())
         return; // Note 20240830: prevent spurious layouts during serialization (see hlg::TableGroup::serializeFromJson()).
     const auto tableContainer = getContainer();
     if (tableContainer == nullptr)
         return;
     layoutCells();
-    const auto container = getContainer();
-    if (container != nullptr) {
-        connect(container,  &QQuickItem::widthChanged,
-                this,       &TableGroupItem::layoutTable);
-        connect(container,  &QQuickItem::heightChanged,
-                this,       &TableGroupItem::layoutTable);
-    }
 }
 
 void    TableGroupItem::layoutCells()
@@ -522,7 +512,6 @@ void    TableGroupItem::layoutCells()
                 cell->setY(padding);
             }
     }
-    //_previousSize = tableSize;
 }
 
 bool    TableGroupItem::setGroup(qan::Group* group) noexcept

@@ -79,6 +79,24 @@ public:
     qreal   horizontalCenter() const;
 
 public:
+    Q_PROPERTY(qreal sx READ getSx WRITE setSx NOTIFY sxChanged FINAL)
+    qreal       getSx() const;
+    void        setSx(qreal sX);
+protected:
+    qreal       _sx = 0.;
+signals:
+    void        sxChanged();
+
+public:
+    Q_PROPERTY(qreal sy READ getSy WRITE setSy NOTIFY syChanged FINAL)
+    qreal       getSy() const;
+    void        setSy(qreal sY);
+protected:
+    qreal       _sy = 0.;
+signals:
+    void        syChanged();
+
+public:
     Q_PROPERTY(Qt::Orientation orientation READ getOrientation WRITE setOrientation NOTIFY orientationChanged FINAL)
     Qt::Orientation getOrientation() const { return _orientation; }
     bool            setOrientation(Qt::Orientation orientation);
@@ -88,7 +106,7 @@ signals:
     void            orientationChanged();
 
 public:
-    /*! \brief FIXME
+    /*! \brief Border line color.
      */
     Q_PROPERTY(QColor borderColor READ getBorderColor WRITE setBorderColor NOTIFY borderColorChanged FINAL)
     void        setBorderColor(QColor borderColor);

@@ -105,8 +105,6 @@ public slots:
 
     //! Layout table cells, triggered when table style change.
     void        layoutCells();
-protected:
-    QSizeF      _previousSize = QSizeF{0., 0.};
 
 public:
     virtual bool            setGroup(qan::Group* group) noexcept override;
