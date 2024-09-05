@@ -465,7 +465,6 @@ void    TableGroupItem::layoutCells()
         return;
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
-    const auto tableSize = tableContainer->size();
 
     // Special handling for 1 row or 1 column table: since there is
     // no "moveable" border, calls to layoutCells() do not set either width/height
