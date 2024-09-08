@@ -36,7 +36,6 @@ import QtQuick
 import QtQuick.Layouts
 
 import QuickQanava as Qan
-//import "qrc:/QuickQanava"   as Qan
 
 //! \brief Default delegate for `qan::GroupItem`.
 Qan.GroupItem {

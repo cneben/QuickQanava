@@ -42,6 +42,7 @@
 
 using namespace qan;
 
+#include <QQmlExtensionPlugin>
 Q_IMPORT_QML_PLUGIN(QuickQanavaPlugin)
 
 //-----------------------------------------------------------------------------
@@ -50,16 +51,20 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
+    engine.addImportPath("./QuickQanava");
+    engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src");
+    engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src/QuickQanava");
+
     QuickQanava::initialize(&engine);
     //engine.load(QUrl("qrc:/groups.qml"));
 
     // FIXME #248 appears in recent QML sample, WTF ?
-    QObject::connect(
+    /*QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
         []() { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection);
+        Qt::QueuedConnection);*/
     engine.loadFromModule("sample_groups", "SampleGroups");
 
     return app.exec();

@@ -34,8 +34,6 @@
 
 import QtQuick
 
-import QuickQanava  2.0 as Qan
-
 /*! \brief Node or group background component with plain solid color backOpacity style support
  *
  */

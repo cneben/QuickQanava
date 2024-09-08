@@ -35,7 +35,6 @@
 import QtQuick
 
 import QuickQanava as Qan
-//import "qrc:/QuickQanava" as Qan
 
 Qan.EdgeItem {
     id: edgeItem

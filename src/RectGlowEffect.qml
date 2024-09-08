@@ -35,8 +35,7 @@
 import QtQuick
 import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 /*! \brief Node or group background glow effect with transparent mask for node content.
  */

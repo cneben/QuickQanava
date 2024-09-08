@@ -157,10 +157,11 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_
 #     ${qan_resources}
 #     )
 
-#qt_add_library(QuickQanava STATIC)
-qt_add_qml_module(QuickQanava STATIC
+# qt_add_library(QuickQanava STATIC)
+qt_add_qml_module(QuickQanava
+    STATIC
     URI QuickQanava
-    VERSION 2.5
+    # VERSION 2.5
     SOURCES
         ${qan_source_files} ${qan_header_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
     QML_FILES
@@ -169,30 +170,31 @@ qt_add_qml_module(QuickQanava STATIC
     OUTPUT_DIRECTORY QuickQanava
     #RESOURCE QuickQanava_static.qrc
 )
+set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/QuickQanava)
 
-target_include_directories(QuickQanava
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:include>
-    )
+# target_include_directories(QuickQanava
+#     PUBLIC
+#         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+#         $<INSTALL_INTERFACE:include>
+#     )
 
-target_compile_features(QuickQanava
-    PUBLIC
-        cxx_std_17
-    )
+# target_compile_features(QuickQanava
+#     PUBLIC
+#         cxx_std_17
+#     )
 
-install(FILES
-    ${qan_header_files}
-    DESTINATION include/quickqanava
-    )
+# install(FILES
+#     ${qan_header_files}
+#     DESTINATION include/quickqanava
+#     )
 
-install(TARGETS QuickQanava
-    EXPORT Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include/quickqanava
-    )
+# install(TARGETS QuickQanava
+#     EXPORT Targets
+#     LIBRARY DESTINATION lib
+#     ARCHIVE DESTINATION lib
+#     RUNTIME DESTINATION bin
+#     INCLUDES DESTINATION include/quickqanava
+#     )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 target_link_libraries(QuickQanava PUBLIC Qt6::Core

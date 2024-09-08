@@ -51,7 +51,7 @@ class NavigablePreview : public QQuickItem
     /*! \name NavigablePreview Object Management *///--------------------------
     //@{
     Q_OBJECT
-    QML_NAMED_ELEMENT(AbstractNavigableView)
+    QML_NAMED_ELEMENT(AbstractNavigablePreview)
 
 public:
     explicit NavigablePreview(QQuickItem* parent = nullptr);

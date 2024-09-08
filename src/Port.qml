@@ -34,7 +34,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import QuickQanava 2.0 as Qan
+import QuickQanava as Qan
 
 Qan.PortItem {
     id: portItem

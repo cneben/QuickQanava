@@ -52,9 +52,7 @@ namespace qan {  // ::qan
  *   qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
  *
  *   // From QML:
- *   import QuickQanava 2.0 as Qan
- *   import "qrc:/QuickQanava" 2.0 as Qan
- *
+ *   import QuickQanava as Qan
  *   Item {
  *     id: targetItem
  *     Qan.BottomRightResizer { target: targetItem }

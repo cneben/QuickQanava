@@ -28,8 +28,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 
-import QuickQanava as Qan
-
 /*! \brief Visual graph preview.
  *
  */

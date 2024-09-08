@@ -36,7 +36,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
-import QuickQanava 2.0 as Qan
+import QuickQanava as Qan
 
 /*! \brief Default template component for building a custom rectangular qan::Node item.
  *

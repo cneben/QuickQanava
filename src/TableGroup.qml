@@ -34,7 +34,7 @@
 
 import QtQuick
 
-import QuickQanava          2.0 as Qan
+import QuickQanava as Qan
 import "qrc:/QuickQanava"   as Qan
 
 //! \brief Default delegate for `qan::TableGroupItem`.

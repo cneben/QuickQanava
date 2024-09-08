@@ -32,6 +32,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
 #add_subdirectory(../../src QuickQanava_src)
 # endif()
 
+set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/qml ${CMAKE_BINARY_DIR}/imports CACHE STRING "" FORCE)
+
 # add_executable(sample_groups ${source_files} groups.qrc)
 # target_include_directories(sample_groups PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_groups_exe PRIVATE

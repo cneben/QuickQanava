@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 
 import QtQuick
-import QuickQanava      2.0 as Qan
+import QuickQanava as Qan
 
 Qan.AbstractLineGrid {
     id: lineGrid

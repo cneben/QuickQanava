@@ -94,6 +94,7 @@ class NodeStyle : public qan::Style
     /*! \name NodeStyle Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     /*! \brief Style constructor with style \c name and \c target initialisation.
      *
@@ -330,6 +331,7 @@ signals:
 class EdgeStyle : public qan::Style
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name EdgeStyle Object Management *///---------------------------------
     //@{
 public:
