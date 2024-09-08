@@ -35,8 +35,8 @@
 import QtQuick
 import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
+//import "qrc:/QuickQanava"   as Qan
 
 //! \brief Default delegate for `qan::GroupItem`.
 Qan.GroupItem {
@@ -50,7 +50,7 @@ Qan.GroupItem {
     container: template.container   // See qan::GroupItem::container property documentation
     labelEditorVisible: template.labelEditorVisible
 
-    Qan.RectGroupTemplate {
+    RectGroupTemplate {
         id: template
         anchors.fill: parent
         groupItem: parent

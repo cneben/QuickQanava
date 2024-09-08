@@ -50,7 +50,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    //QuickQanava::initialize(&engine);
+    QuickQanava::initialize(&engine);
     //engine.load(QUrl("qrc:/groups.qml"));
 
     // FIXME #248 appears in recent QML sample, WTF ?

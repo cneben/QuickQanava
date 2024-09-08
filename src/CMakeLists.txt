@@ -157,16 +157,17 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_
 #     ${qan_resources}
 #     )
 
-qt_add_library(QuickQanava STATIC)
-qt_add_qml_module(QuickQanava
+#qt_add_library(QuickQanava STATIC)
+qt_add_qml_module(QuickQanava STATIC
     URI QuickQanava
     VERSION 2.5
     SOURCES
         ${qan_source_files} ${qan_header_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
     QML_FILES
         ${qan_qml_files}
-    RESOURCE_PREFIX QuickQanava
+    RESOURCE_PREFIX /
     OUTPUT_DIRECTORY QuickQanava
+    #RESOURCE QuickQanava_static.qrc
 )
 
 target_include_directories(QuickQanava

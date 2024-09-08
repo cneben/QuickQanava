@@ -35,7 +35,7 @@
 import QtQuick
 import QtQuick.Shapes
 
-import QuickQanava      2.0 as Qan
+import QuickQanava as Qan
 
 Item {
     id: edgeTemplate

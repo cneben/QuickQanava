@@ -26,8 +26,8 @@
 
 import QtQuick
 
-import QuickQanava        2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
+//import "qrc:/QuickQanava" as Qan
 
 /*! \brief Droppable node control that allow direct mouse/touch edge creation between nodes.
  *
@@ -73,7 +73,7 @@ Qan.Connector {
     //! True when the connector item is currently dragged.
     property bool   connectorDragged: dropDestArea.drag.active
 
-    edgeComponent: Component{ Qan.Edge{} }
+    edgeComponent: Component{ Edge{} }
     onEdgeColorChanged: {
         if (edgeItem)
             edgeItem.color = edgeColor

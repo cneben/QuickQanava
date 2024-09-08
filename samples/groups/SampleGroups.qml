@@ -46,11 +46,22 @@ ApplicationWindow {
         id: topology
     }
     //Component.onCompleted: graphView.center()
+    Qan.GraphPreview {
+        id: graphPreview
+        //source: graphView
+        viewWindowColor: Material.accent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: graphView.bottom
+        anchors.bottomMargin: 20
+        width: 350
+        height: 198
+    }  // Qan.GraphPreview
 
     // Qan.GraphView {
     //     id: graphView
     //     anchors.fill: parent
     //     navigable: true
+    // }
     //     function centerItem(item) {
     //         if (!item)
     //             return

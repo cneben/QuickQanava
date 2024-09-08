@@ -59,6 +59,7 @@ class GroupItem : public qan::NodeItem
     /*! \name Group Object Management *///-------------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     //! Group constructor.
     explicit GroupItem(QQuickItem* parent = nullptr);
