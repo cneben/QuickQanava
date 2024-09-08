@@ -172,11 +172,11 @@ qt_add_qml_module(QuickQanava
 )
 set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/QuickQanava)
 
-# target_include_directories(QuickQanava
-#     PUBLIC
-#         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-#         $<INSTALL_INTERFACE:include>
-#     )
+target_include_directories(QuickQanava
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
 
 # target_compile_features(QuickQanava
 #     PUBLIC
