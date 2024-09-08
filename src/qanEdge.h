@@ -58,7 +58,6 @@ class Edge : public gtpo::edge<QObject, qan::Graph, Node>
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
-    QML_ELEMENT
 public:
     using super_t = gtpo::edge<QObject, qan::Graph, Node>;
 

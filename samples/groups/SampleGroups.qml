@@ -42,7 +42,6 @@ ApplicationWindow {
 
     Component.onCompleted: graphView.center()
 
-
     Qan.GraphView {
         id: graphView
         anchors.fill: parent

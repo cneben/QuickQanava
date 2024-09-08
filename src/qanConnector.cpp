@@ -204,7 +204,6 @@ auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> vo
             const auto context = qmlContext(this);
             if (context != nullptr) {
                 const auto edgeObject = _edgeComponent->create(context);    // Create a new edge
-
                 _edgeItem.reset(qobject_cast<qan::EdgeItem*>(edgeObject));  // Any existing edge item is destroyed
                 if (_edgeItem &&
                     !_edgeComponent->isError()) {
@@ -225,6 +224,7 @@ auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> vo
                     qWarning() << "qan::Connector::setEdgeComponent(): Error while creating edge:";
                     qWarning() << "\t" << _edgeComponent->status();
                     qWarning() << "\t" << _edgeComponent->errors();
+                    qWarning() << "\t" << _edgeComponent->errorString();
                 }
             }
         }
