@@ -59,6 +59,7 @@ class PortItem : public qan::NodeItem
     /*! \name Dock Object Management *///--------------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     //! PortItem constructor.
     explicit PortItem(QQuickItem* parent = nullptr);

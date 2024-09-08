@@ -22,20 +22,21 @@ qt_add_qml_module(sample_groups
     VERSION 1.0
     URI sample_groups
     QML_FILES
-        groups.qml
+    SampleGroups.qml
     OUTPUT_DIRECTORY sample_groups
 )
+# qt_add_library(sample_groups STATIC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
-if(NOT TARGET QuickQanava)
-    add_subdirectory(../../)  # Use ../../src as quickqanava_build subdirectory
-    # see https://stackoverflow.com/questions/50408169/cmake-error-add-subdirectory-not-given-a-binary-directory/50408555
-endif()
+# if(NOT TARGET QuickQanava)
+#add_subdirectory(../../src QuickQanava_src)
+# endif()
 
 # add_executable(sample_groups ${source_files} groups.qrc)
 # target_include_directories(sample_groups PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
-target_link_libraries(sample_groups_exe PUBLIC
+target_link_libraries(sample_groups_exe PRIVATE
     QuickQanava
+    QuickQanavaplugin
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickControls2

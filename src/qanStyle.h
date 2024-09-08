@@ -60,6 +60,8 @@ namespace qan { // ::qan
 class Style : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+
     /*! \name Style Object Management *///-------------------------------------
     //@{
 public:

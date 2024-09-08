@@ -73,6 +73,7 @@ class BottomRightResizer : public QQuickItem
     /*! \name BottomRightResizer Object Management *///------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     //! .
     explicit BottomRightResizer(QQuickItem* parent = nullptr);

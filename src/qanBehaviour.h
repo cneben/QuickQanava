@@ -63,6 +63,7 @@ class NodeBehaviour : public QObject,
                       public gtpo::node_observer<qan::Node, qan::Edge>
 {
     Q_OBJECT
+
     /*! \name NodeBehaviour Management *///------------------------------------
     //@{
 public:

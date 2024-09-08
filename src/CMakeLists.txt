@@ -165,7 +165,7 @@ qt_add_qml_module(QuickQanava
         ${qan_source_files} ${qan_header_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
     QML_FILES
         ${qan_qml_files}
-    RESOURCE_PREFIX /QuickQanava
+    RESOURCE_PREFIX QuickQanava
     OUTPUT_DIRECTORY QuickQanava
 )
 

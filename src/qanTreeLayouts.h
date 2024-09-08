@@ -53,6 +53,7 @@ namespace qan { // ::qan
 class NaiveTreeLayout : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name NaiveTreeLayout Object Management *///---------------------------
     //@{
 public:
@@ -80,6 +81,7 @@ public:
 class RandomLayout : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name RandomLayout Object Management *///-----------------------------
     //@{
 public:
@@ -130,6 +132,7 @@ public:
 class OrgTreeLayout : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name OrgTreeLayout Object Management *///-----------------------------
     //@{
 public:

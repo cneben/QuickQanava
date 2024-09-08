@@ -48,6 +48,7 @@ class TableCell : public QQuickItem
     /*! \name TableCell Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractTableCell)
 public:
     explicit TableCell(QQuickItem* parent = nullptr);
     virtual ~TableCell() override = default;

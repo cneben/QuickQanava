@@ -93,7 +93,9 @@ class Navigable : public QQuickItem
 {
     /*! \name Navigable Object Management *///---------------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
+    QML_ELEMENT
+
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
     virtual ~Navigable() override;

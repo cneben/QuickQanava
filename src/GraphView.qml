@@ -35,8 +35,8 @@
 import QtQuick
 import QtQuick.Controls
 
-import QuickQanava      2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
+//import "qrc:/QuickQanava" as Qan
 
 /*! \brief Visual view for a Qan.Graph component.
  *
@@ -145,7 +145,7 @@ Qan.AbstractGraphView {
     onHeightChanged: updateScrollbars()
     onNavigated: { updateScrollbars() }
 
-    Qan.LineGrid {
+    LineGrid {
         id: lineGrid
     }
     grid: lineGrid

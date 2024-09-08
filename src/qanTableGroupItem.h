@@ -59,6 +59,7 @@ class TableGroupItem : public qan::GroupItem
     /*! \name TableGroupItem Object Management *///----------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit TableGroupItem(QQuickItem* parent = nullptr);
     virtual ~TableGroupItem() override;

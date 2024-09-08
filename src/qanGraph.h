@@ -76,6 +76,7 @@ class PortItem;
 class Graph : public gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>
 {
     Q_OBJECT
+    QML_ELEMENT
     Q_INTERFACES(QQmlParserStatus)
 
     using super_t = gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>;

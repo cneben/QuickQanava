@@ -71,6 +71,7 @@ class Node : public gtpo::node<QObject,
     /*! \name Node Object Management *///--------------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     using super_t = gtpo::node<QObject, qan::Graph, qan::Node, qan::Edge, qan::Group>;
 

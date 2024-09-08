@@ -64,6 +64,8 @@ class Connector : public qan::NodeItem
     /*! \name Connector Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
+
 public:
     explicit Connector( QQuickItem* parent = nullptr );
     virtual ~Connector() override = default;

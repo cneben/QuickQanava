@@ -56,6 +56,7 @@ class OrthoGrid : public Grid
     /*! \name OrthoGrid Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractLineGrid)
 public:
     explicit OrthoGrid(QQuickItem* parent = nullptr);
     virtual ~OrthoGrid() override = default;

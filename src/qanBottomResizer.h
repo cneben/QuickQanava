@@ -51,6 +51,8 @@ class BottomResizer : public QQuickItem
     /*! \name BottomResizer Object Management *///------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
+
 public:
     //! .
     explicit BottomResizer(QQuickItem* parent = nullptr);

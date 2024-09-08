@@ -28,8 +28,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 /*! \brief Visual graph preview.
  *
@@ -133,7 +132,7 @@ Control {
                            ''
             font.pixelSize: 11
         }
-        Qan.NavigablePreview {
+        NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
             source: graphPreview.source

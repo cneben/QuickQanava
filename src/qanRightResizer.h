@@ -51,6 +51,8 @@ class RightResizer : public QQuickItem
     /*! \name RightResizer Object Management *///------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
+
 public:
     //! .
     explicit RightResizer(QQuickItem* parent = nullptr);
