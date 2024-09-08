@@ -97,6 +97,48 @@ set (qan_plugin_files
     ${CMAKE_CURRENT_SOURCE_DIR}/qanPlugin.h
 )
 
+set(qan_qml_files
+    NavigablePreview.qml
+    GraphPreview.qml
+    HeatMapPreview.qml
+    LineGrid.qml
+    Edge.qml
+    EdgeTemplate.qml
+    EdgeStraightPath.qml
+    EdgeOrthoPath.qml
+    EdgeCurvedPath.qml
+    EdgeSrcArrowPath.qml
+    EdgeSrcCirclePath.qml
+    EdgeSrcRectPath.qml
+    EdgeDstArrowPath.qml
+    EdgeDstCirclePath.qml
+    EdgeDstRectPath.qml
+    GraphView.qml
+    Node.qml
+    Port.qml
+    VerticalDock.qml
+    HorizontalDock.qml
+    Group.qml
+    TableGroup.qml
+    TableCell.qml
+    TableBorder.qml
+    RectGroupTemplate.qml
+    CanvasNodeTemplate.qml
+    RectNodeTemplate.qml
+    RectSolidBackground.qml
+    RectSolidShadowBackground.qml
+    RectShadowEffect.qml
+    RectSolidGlowBackground.qml
+    RectGlowEffect.qml
+    RectGradientBackground.qml
+    RectGradientShadowBackground.qml
+    RectGradientGlowBackground.qml
+    SelectionItem.qml
+    VisualConnector.qml
+    LabelEditor.qml
+    OriginCross.qml
+)
+
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
 qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
@@ -104,14 +146,28 @@ set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
 # Configure QuickQanava library ###############################################
-list(APPEND qan_resources QuickQanava_static.qrc)
-add_library(QuickQanava STATIC
-    ${qan_source_files}
-    ${qan_header_files}
-    ${quickcontainers_source_files}
-    ${quickcontainers_header_files}
-    ${qan_resources}
-    )
+
+# FIXME #248
+# list(APPEND qan_resources QuickQanava_static.qrc)
+# add_library(QuickQanava STATIC
+#     ${qan_source_files}
+#     ${qan_header_files}
+#     ${quickcontainers_source_files}
+#     ${quickcontainers_header_files}
+#     ${qan_resources}
+#     )
+
+qt_add_library(QuickQanava STATIC)
+qt_add_qml_module(QuickQanava
+    URI QuickQanava
+    VERSION 2.5
+    SOURCES
+        ${qan_source_files} ${qan_header_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
+    QML_FILES
+        ${qan_qml_files}
+    RESOURCE_PREFIX /QuickQanava
+    OUTPUT_DIRECTORY QuickQanava
+)
 
 target_include_directories(QuickQanava
     PUBLIC
