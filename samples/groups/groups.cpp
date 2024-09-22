@@ -51,21 +51,14 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addImportPath("./QuickQanava");
-    engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src");
-    engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src/QuickQanava");
+    QString currentDir = QDir::currentPath();
+    qDebug() << "Current working directory:" << currentDir;
+    engine.addImportPath("../../src/");
+    //engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src");
+    //engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src/QuickQanava");
 
     QuickQanava::initialize(&engine);
-    //engine.load(QUrl("qrc:/groups.qml"));
-
-    // FIXME #248 appears in recent QML sample, WTF ?
-    /*QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []() { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection);*/
-    engine.loadFromModule("sample_groups", "SampleGroups");
+    engine.loadFromModule("SampleGroups", "SampleGroups");
 
     return app.exec();
 }

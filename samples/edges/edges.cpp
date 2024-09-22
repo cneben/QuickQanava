@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	connector.cpp
+// \file	edges.cpp
 // \author	benoit@destrat.io
 // \date	2017 03 06
 //-----------------------------------------------------------------------------
@@ -43,18 +43,18 @@
 
 using namespace qan;
 
+#include <QQmlExtensionPlugin>
+Q_IMPORT_QML_PLUGIN(QuickQanavaPlugin)
+
 //-----------------------------------------------------------------------------
 int	main( int argc, char** argv )
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
     QGuiApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src");  // Enable loading of ../../src/QuickQanava module
     QuickQanava::initialize(&engine);
-    engine.load(QUrl("qrc:/edges.qml"));
+    engine.loadFromModule("SampleEdges", "SampleEdges");
     return app.exec();
 }
 //-----------------------------------------------------------------------------

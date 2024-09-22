@@ -4,7 +4,7 @@ project(QuickQanava_sample_groups VERSION 2.5.0 LANGUAGES CXX)
 
 # Configure Qt
 find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
-qt_standard_project_setup(REQUIRES 6.5)
+qt_standard_project_setup(REQUIRES 6.6)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -18,24 +18,18 @@ set(source_files
     groups.cpp
 )
 qt_add_executable(sample_groups_exe groups.cpp)
-qt_add_qml_module(sample_groups
+qt_add_qml_module(SampleGroups
     VERSION 1.0
-    URI sample_groups
+    URI SampleGroups
     QML_FILES
     SampleGroups.qml
-    OUTPUT_DIRECTORY sample_groups
+    OUTPUT_DIRECTORY SampleGroups
 )
-# qt_add_library(sample_groups STATIC)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
-# if(NOT TARGET QuickQanava)
-#add_subdirectory(../../src QuickQanava_src)
-# endif()
 
 set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/qml ${CMAKE_BINARY_DIR}/imports CACHE STRING "" FORCE)
 
-# add_executable(sample_groups ${source_files} groups.qrc)
-# target_include_directories(sample_groups PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_groups_exe PRIVATE
     QuickQanava
     QuickQanavaplugin
