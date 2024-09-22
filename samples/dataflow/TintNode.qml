@@ -36,8 +36,7 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: flowNodeItem

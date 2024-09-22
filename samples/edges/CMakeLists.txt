@@ -25,9 +25,13 @@ qt_add_qml_module(SampleEdges
     Ortho.qml
     OUTPUT_DIRECTORY SampleEdges
 )
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
-set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/qml ${CMAKE_BINARY_DIR}/imports CACHE STRING "" FORCE)
+qt6_add_resources(sample_edges_exe "controls_conf"
+    PREFIX
+        "/"
+    FILES
+        "qtquickcontrols2.conf"
+)
 target_link_libraries(sample_edges_exe PRIVATE
     QuickQanava
     QuickQanavaplugin

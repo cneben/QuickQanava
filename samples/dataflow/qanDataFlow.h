@@ -32,14 +32,14 @@
 // \date	2016 12 12
 //-----------------------------------------------------------------------------
 
-#ifndef qanDataFlow_h
-#define qanDataFlow_h
-
-// QuickQanava headers
-#include <QuickQanava>
+#pragma once
 
 // Qt headers
 #include <QQuickPaintedItem>
+#include <QColor>
+
+// QuickQanava headers
+#include <QuickQanava>
 
 namespace qan { // ::qan
 
@@ -47,15 +47,17 @@ class FlowNodeBehaviour : public qan::NodeBehaviour
 {
     Q_OBJECT
 public:
-    explicit FlowNodeBehaviour(QObject* parent = nullptr) : qan::NodeBehaviour{ "FlowNodeBehaviour", parent } { /* Nil */ }
+    explicit FlowNodeBehaviour(QObject* parent = nullptr) :
+        qan::NodeBehaviour{"FlowNodeBehaviour", parent} { /* Nil */ }
 protected:
-    virtual void    inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept override;
-    virtual void    inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) noexcept override;
+    virtual void    inNodeInserted(qan::Node& inNode, qan::Edge& edge) noexcept override;
+    virtual void    inNodeRemoved(qan::Node& inNode, qan::Edge& edge) noexcept override;
 };
 
 class FlowNode : public qan::Node
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     enum class Type {
         Percentage,
@@ -66,8 +68,8 @@ public:
     };
     Q_ENUM(Type)
 
-    explicit FlowNode( QQuickItem* parent = nullptr ) : FlowNode( Type::Percentage, parent ) {}
-    explicit FlowNode( Type type, QQuickItem* parent = nullptr ) :
+    explicit FlowNode(QQuickItem* parent = nullptr) : FlowNode(Type::Percentage, parent) {}
+    explicit FlowNode(Type type, QQuickItem* parent = nullptr) :
         qan::Node{parent}, _type{type} { /* Nil */ }
     virtual ~FlowNode() { /* Nil */ }
 
@@ -100,6 +102,7 @@ signals:
 class PercentageNode : public qan::FlowNode
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     PercentageNode() : qan::FlowNode{FlowNode::Type::Percentage} { setOutput(0.); }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
@@ -108,6 +111,7 @@ public:
 class OperationNode : public qan::FlowNode
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     enum class Operation {
         Add,
@@ -136,14 +140,16 @@ protected slots:
 class ImageNode : public qan::FlowNode
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
-    ImageNode() : qan::FlowNode{FlowNode::Type::Image} { setOutput(QStringLiteral("qrc:/Lenna.jpeg")); }
+    ImageNode() : qan::FlowNode{FlowNode::Type::Image} { setOutput(QStringLiteral("qrc:/qt/qml/SampleDataFlow/Lenna.jpeg")); }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
 };
 
 class ColorNode : public qan::FlowNode
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     ColorNode() : qan::FlowNode{FlowNode::Type::Color} { setOutput(QColor{Qt::darkBlue}); }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
@@ -152,6 +158,7 @@ public:
 class TintNode : public qan::FlowNode
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     TintNode() : qan::FlowNode{FlowNode::Type::Tint} { }
     static  QQmlComponent*      delegate(QQmlEngine& engine) noexcept;
@@ -179,6 +186,7 @@ protected slots:
 class FlowGraph : public qan::Graph
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit FlowGraph( QQuickItem* parent = nullptr ) noexcept : qan::Graph(parent) { }
 public:
@@ -188,10 +196,8 @@ public:
 
 } // ::qan
 
-QML_DECLARE_TYPE( qan::FlowNode )
-QML_DECLARE_TYPE( qan::FlowGraph )
-Q_DECLARE_METATYPE( qan::FlowNode::Type )
-Q_DECLARE_METATYPE( qan::OperationNode::Operation )
-
-#endif // qanDataFlow_h
+// QML_DECLARE_TYPE(qan::FlowNode)
+QML_DECLARE_TYPE(qan::FlowGraph)
+Q_DECLARE_METATYPE(qan::FlowNode::Type)
+Q_DECLARE_METATYPE(qan::OperationNode::Operation)
 

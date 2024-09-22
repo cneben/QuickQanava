@@ -25,11 +25,13 @@ qt_add_qml_module(SampleGroups
     SampleGroups.qml
     OUTPUT_DIRECTORY SampleGroups
 )
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
-
-set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/qml ${CMAKE_BINARY_DIR}/imports CACHE STRING "" FORCE)
-
+qt6_add_resources(sample_groups_exe "controls_conf"
+    PREFIX
+        "/"
+    FILES
+        "qtquickcontrols2.conf"
+)
 target_link_libraries(sample_groups_exe PRIVATE
     QuickQanava
     QuickQanavaplugin

@@ -51,11 +51,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    QString currentDir = QDir::currentPath();
-    qDebug() << "Current working directory:" << currentDir;
     engine.addImportPath("../../src/");
-    //engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src");
-    //engine.addImportPath("/home/b/projects/deliastrat.io/Holograph/third-party/QuickQanava/build/Desktop_Qt_6_7_2-Debug/src/QuickQanava");
 
     QuickQanava::initialize(&engine);
     engine.loadFromModule("SampleGroups", "SampleGroups");

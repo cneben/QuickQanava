@@ -37,8 +37,7 @@ import QtQuick.Effects
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: imageNodeItem
@@ -71,7 +70,7 @@ Qan.NodeItem {
         opacity: 0.85
         model: [ "Lenna", "Jason"]
         onCurrentIndexChanged: {
-            node.output = currentIndex === 0 ? "qrc:/Lenna.jpeg" : "qrc:/JS.jpeg"
+            node.output = currentIndex === 0 ? "qrc:/qt/qml/SampleDataFlow/Lenna.jpeg" : "qrc:/qt/qml/SampleDataFlow/JS.jpeg"
         }
     }
     Pane {
