@@ -226,6 +226,10 @@ void    DraggableCtrl::beginDragMove(const QPointF& sceneDragPos, bool dragSelec
     _targetItem->setDragged(true);
 
     _initialSceneDragPos = sceneDragPos;
+    if (!_target->isGroup()) {
+        _initialTargetZ = _targetItem->z();     // 20240821: Force maximum graph z when dragging a node (not a group), restored
+        _targetItem->setZ(graph->getMaxZ() + 10.);    // in endDragMove
+    }
     const auto rootItem = getGraph()->getContainerItem();
     if (rootItem != nullptr)   // Project in scene rect (for example if a node is part of a group)
         _initialTargetScenePos = rootItem->mapFromItem(_targetItem, QPointF{0,0});
@@ -418,6 +422,11 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
     if (!_target ||
         !_targetItem)
         return;
+
+    if (!_target->isGroup()) {
+        _targetItem->setZ(_initialTargetZ);
+        _initialTargetZ = 0.;
+    }
 
     if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
         _target->getLocked())
