@@ -16,7 +16,7 @@ add_subdirectory(src)
 
 option(QUICK_QANAVA_BUILD_SAMPLES "Build QuickQanava samples" OFF)
 #if (${QUICK_QANAVA_BUILD_SAMPLES})
-    #add_subdirectory(samples/advanced)
+    add_subdirectory(samples/advanced)
     #add_subdirectory(samples/connector)
     #add_subdirectory(samples/cpp)
 
@@ -29,6 +29,6 @@ option(QUICK_QANAVA_BUILD_SAMPLES "Build QuickQanava samples" OFF)
     add_subdirectory(samples/layouts)
     add_subdirectory(samples/selection)
 
-    #add_subdirectory(samples/style)
-    #add_subdirectory(samples/topology)
+    add_subdirectory(samples/style)
+    add_subdirectory(samples/topology)
 #endif()

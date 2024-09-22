@@ -2,21 +2,20 @@ cmake_minimum_required(VERSION 3.16)
 
 project(QuickQanava_sample_advanced VERSION 2.5.0 LANGUAGES CXX)
 
+# Configure Qt
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
+qt_standard_project_setup(REQUIRES 6.6)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-set(source_files main.cpp)
-set(resources_files advanced.qrc)
-
-# Configure Qt
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(source_files main.cpp)
+set(resources_files advanced.qrc)
 qt_add_resources(source_files ${resources_files})
 
 if(NOT TARGET QuickQanava)
@@ -28,6 +27,7 @@ add_executable(sample_advanced ${source_files} advanced.qrc)
 target_include_directories(sample_advanced PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
 target_link_libraries(sample_advanced
     QuickQanava
+    QuickQanavaplugin
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickControls2

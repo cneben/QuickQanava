@@ -27,9 +27,9 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	groups.cpp
+// \file	selection.cpp
 // \author	benoit@qanava.org
-// \date	2016 03 23
+// \date	2020 04 26
 //-----------------------------------------------------------------------------
 
 // Qt headers

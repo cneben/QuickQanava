@@ -57,7 +57,7 @@ int	main(int argc, char** argv)
     QIcon::setThemeName(QStringLiteral("Qan"));
 
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src");  // Enable loading of ../../src/QuickQanava module
     QuickQanava::initialize(&engine);
     qmlRegisterType<qan::FaceNode>("TopologySample", 1, 0, "AbstractFaceNode");
     qmlRegisterType<qan::FaceGraph>("TopologySample", 1, 0, "FaceGraph");

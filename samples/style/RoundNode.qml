@@ -37,8 +37,7 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: roundNode
