@@ -48,8 +48,8 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
+    engine.addImportPath("../../src/");
     QuickQanava::initialize(&engine);
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
     engine.load(QUrl("qrc:/selection.qml"));
     return app.exec();
 }

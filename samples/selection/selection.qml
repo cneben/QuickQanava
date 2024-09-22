@@ -29,8 +29,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import Qt.labs.platform as Labs    // ColorDialog
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 ApplicationWindow {
     id: window
@@ -82,7 +81,7 @@ ApplicationWindow {
             onGroupRightClicked: (group) => { window.notifyUser( "Group <b>" + group.label + "</b> right clicked" ) }
         } // Qan.Graph: graph
         focus: true
-        Keys.onPressed: {
+        Keys.onPressed: (event) => {
             if (event.modifiers & Qt.ControlModifier &&      // CTRL+A
                 event.key === Qt.Key_A) {
                 topology.selectAll()

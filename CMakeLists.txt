@@ -26,8 +26,9 @@ option(QUICK_QANAVA_BUILD_SAMPLES "Build QuickQanava samples" OFF)
     add_subdirectory(samples/navigable)
 
     add_subdirectory(samples/nodes)
-    #add_subdirectory(samples/layouts)
-    #add_subdirectory(samples/selection)
+    add_subdirectory(samples/layouts)
+    add_subdirectory(samples/selection)
+
     #add_subdirectory(samples/style)
     #add_subdirectory(samples/topology)
 #endif()

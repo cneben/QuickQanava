@@ -52,10 +52,8 @@ int	main( int argc, char** argv )
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
     engine.addImportPath("../../src/");
-
     QuickQanava::initialize(&engine);
     engine.loadFromModule("SampleGroups", "SampleGroups");
-
     return app.exec();
 }
 //-----------------------------------------------------------------------------
