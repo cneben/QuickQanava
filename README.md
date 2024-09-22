@@ -1,7 +1,5 @@
 # QuickQanava 
 
-![Linux Qt5 g++ qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-linux-qt5.yml/badge.svg) 
-![Win64 Qt5 msvc qmake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt5.yml/badge.svg) 
 ![Win64 Qt6 msvc CMake](https://github.com/cneben/QuickQanava/actions/workflows/build-win64-qt6.yml/badge.svg) 
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue.svg)](http://cneben.github.io/QuickQanava/)
