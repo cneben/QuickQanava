@@ -36,7 +36,7 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import QtQuick.Controls.Material
 
-import QuickQanava 2.0 as Qan
+import QuickQanava as Qan
 
 Qan.GroupItem {
     id: customGroup

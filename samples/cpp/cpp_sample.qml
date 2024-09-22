@@ -24,14 +24,13 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
-import MyModule             1.0        // Our custom topology is defined in MyModule
+import QuickQanava as Qan
+import MyModule   // Our custom topology is defined in MyModule
 
 ApplicationWindow {
     id: window

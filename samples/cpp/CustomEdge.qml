@@ -32,11 +32,10 @@
 // \date	2015 06 20
 //-----------------------------------------------------------------------------
 
-import QtQuick                      2.7
-import QtQuick.Controls.Material    2.1
+import QtQuick
+import QtQuick.Controls.Material
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.EdgeItem {
     id: edgeItem
