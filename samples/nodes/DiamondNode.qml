@@ -35,8 +35,7 @@
 import QtQuick              2.8
 import QtQuick.Layouts      1.3
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"       as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: diamondNode
