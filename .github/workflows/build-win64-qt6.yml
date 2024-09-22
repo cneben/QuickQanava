@@ -35,7 +35,7 @@ jobs:
       
       - name: Install dependencies and generate project files
         run: |
-          cmake -S '${{ github.workspace }}/' -B '${{ github.workspace }}/Build' -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release 
+          cmake -S '${{ github.workspace }}/' -B '${{ github.workspace }}/Build' -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release -DQUICK_QANAVA_CI=ON
          
       - name: Compiling QuickQanava
         shell: cmd
