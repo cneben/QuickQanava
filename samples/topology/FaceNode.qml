@@ -1,5 +1,5 @@
  /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,12 +32,12 @@
 // \date	2016 02 11
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Controls     2.0
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: faceNodeItem
@@ -46,17 +46,22 @@ Qan.NodeItem {
     width: Layout.preferredWidth
     height: Layout.preferredHeight
 
-    Qan.DropShadow {
-        id: backgroundShadow
-        anchors.fill: parent
+    MultiEffect {
         source: image
-        horizontalOffset: faceNodeItem.style.effectRadius
-        verticalOffset: faceNodeItem.style.effectRadius
-        radius: 4; samples: 8
-        color: faceNodeItem.style.effectColor
-        visible: faceNodeItem.style.effectEnabled
-        transparentBorder: true
+        anchors.fill: parent
+        anchors.margins: 1
+        autoPaddingEnabled: false
+        readonly property real shadowOffset: faceNodeItem.style.effectRadius + 2.
+        paddingRect: Qt.rect(shadowOffset, shadowOffset,
+                             parent.width + shadowOffset,
+                             parent.height + shadowOffset)
+        shadowColor: faceNodeItem.style.effectColor
+        shadowHorizontalOffset: shadowOffset
+        shadowVerticalOffset: shadowOffset
+        shadowEnabled: true
+        blurMax: 6
     }
+
     Pane {
         z: 2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -86,10 +91,9 @@ Qan.NodeItem {
         smooth: true
         source: faceNodeItem.node.image
         onSourceSizeChanged: {
-            if ( sourceSize.width > 0 &&
-                 sourceSize.height > 0 ) {
+            if (sourceSize.width > 0 &&
+                sourceSize.height > 0) {
                 faceNodeItem.ratio = sourceSize.width / sourceSize.height;
-                // FIXME: generate a clean initial size here
             } else
                 faceNodeItem.ratio = -1.;
         }

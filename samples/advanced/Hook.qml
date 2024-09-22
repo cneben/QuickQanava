@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,15 +25,15 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	Hook.qml
 // \author	benoit@destrat.io
 // \date	2023 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QuickQanava      2.0 as Qan
+import QtQuick 2.7
+import QuickQanava as Qan
 
 /*! A Hook has is transparent square which is only visible when selected.
  *

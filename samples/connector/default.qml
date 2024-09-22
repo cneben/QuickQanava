@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -30,8 +30,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 import Qt.labs.platform          1.0    // ColorDialog
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 import "." as Qan
 
 Qan.GraphView {
@@ -82,14 +81,14 @@ Qan.GraphView {
             }
             return edgeSrcDst
         }
-        onConnectorEdgeInserted: { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
-        onConnectorRequestEdgeCreation: { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
-        onEdgeClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
-        onEdgeDoubleClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
-        onEdgeRightClicked: { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
+        onConnectorEdgeInserted: (edge) => { notifyUser("Edge inserted: " + getEdgeDescription(edge)) }
+        onConnectorRequestEdgeCreation: (src, dst) => { notifyUser("Requesting Edge creation from " + src.label + " to " + ( dst ? dst.label : "UNDEFINED" ) ) }
+        onEdgeClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " clicked") }
+        onEdgeDoubleClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " double clicked") }
+        onEdgeRightClicked: (edge) => { notifyUser("Edge " + edge.label + " " + getEdgeDescription(edge) + " right clicked") }
     }
     ToolTip { id: toolTip; timeout: 2500 }
-    function notifyUser(message) { toolTip.text=message; toolTip.open() }
+    function notifyUser(message) { toolTip.text = message; toolTip.open() }
 
     ColorDialog {
         id: connectorEdgeColorDialog

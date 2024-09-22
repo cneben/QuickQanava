@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,24 +32,24 @@
 // \date	2018 03 25
 //-----------------------------------------------------------------------------
 
-import QtQuick  2.7
+import QtQuick
 
-import QuickQanava    2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 /*! \brief Node or group background component with gradient fill, no effect and backOpacity style support
  *
  */
 Item {
+    id: rectGradientBackground
+
     // PUBLIC /////////////////////////////////////////////////////////////////
     property var    style: undefined
+    property real   backRadius: style?.backRadius ?? 4.
 
-    property real            backRadius:    style ? style.backRadius : 4.
-    readonly property real   backOpacity:   style ? style.backOpacity : 0.8
-    readonly property color  baseColor:     style ? style.baseColor: Qt.rgba(0., 0., 0., 0.)
-    readonly property color  backColor:     style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
-    readonly property real   borderWidth:   style ? style.borderWidth : 1.
-    readonly property color  borderColor:   style ? style.borderColor : Qt.rgba(1., 1., 1., 0.)
+    //! User component hook to set a header background (component has to specify it's height).
+    property Component headerBackground: null
+
+    property real headerHeight: 35
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     // Note: Top level item is used to isolate rendering of:
@@ -61,30 +61,37 @@ Item {
         id: background
         anchors.fill: parent
         radius: backRadius
-        color: Qt.rgba(0, 0, 0, 1)  // Force black, otherwise, effect does not reasterize gradient pixels
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
-        antialiasing: true
-        opacity: backOpacity
+        opacity: style?.backOpacity ?? 0.8
 
-        layer.enabled: true
-        layer.effect: Qan.LinearGradient {
-            start:  Qt.point(0.,0.)
-            end:    Qt.point(background.width, background.height)
-            cached: false
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: baseColor }
-                GradientStop { position: 1.0;  color: backColor }
+        // Note 20240105: Unfortunately we no longer have LinearGradient with Qt6, switching to a
+        // vertical gradient...
+        gradient: Gradient {
+            GradientStop {
+                position: 0.0;
+                color: style?.baseColor ?? Qt.rgba(0., 0., 0., 0.)
+            }
+            GradientStop {
+                position: 1.0
+                color: style?.backColor ?? Qt.rgba(0., 0., 0., 0.)
             }
         }
+    }
+    Loader {
+        anchors.top: rectGradientBackground.top
+        anchors.left: rectGradientBackground.left
+        anchors.right: rectGradientBackground.right
+        height: headerHeight
+        sourceComponent: headerBackground
     }
     Rectangle {
         id: foreground
         anchors.fill: parent    // Background follow the content layout implicit size
         radius: backRadius
         color: Qt.rgba(0, 0, 0, 0)  // Fully transparent
-        border.color: borderColor
-        border.width: borderWidth
-        antialiasing: true
+        border.color: style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
+        border.width: style?.borderWidth ?? 1.
+        antialiasing: true      // Vertex antialiasing for borders
         // Note: Do not enable layer to avoid aliasing at high scale
     }
 }  // Item

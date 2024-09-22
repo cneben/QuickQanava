@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,23 +27,21 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	CurvedEdge.qml
+// \file	Edge.qml
 // \author	benoit@destrat.io
 // \date	2016 09 04
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Shapes   1.0
+import QtQuick
 
-import QuickQanava        2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 Qan.EdgeItem {
     id: edgeItem
 
     // Private hack for visual connector edge color dynamic modification
-    property color color: style ? style.lineColor : Qt.rgba(0.,0.,0.,1.)
-    Qan.EdgeTemplate {
+    property color color: style?.lineColor ?? Qt.rgba(0.,0.,0.,1.)
+    EdgeTemplate {
         anchors.fill: parent
         edgeItem: parent
         color: parent.color

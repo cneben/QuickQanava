@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -50,7 +50,9 @@ class NavigablePreview : public QQuickItem
 {
     /*! \name NavigablePreview Object Management *///--------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractNavigablePreview)
+
 public:
     explicit NavigablePreview(QQuickItem* parent = nullptr);
     virtual ~NavigablePreview() = default;

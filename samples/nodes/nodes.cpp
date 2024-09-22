@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file	custom.cpp
+// \file	nodes.cpp
 // \author	benoit@destrat.io
 // \date	2014 10 19
 //-----------------------------------------------------------------------------
@@ -45,12 +45,11 @@ int	main( int argc, char** argv )
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
-    QQmlApplicationEngine* engine = new QQmlApplicationEngine();
-    engine->addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
-    QuickQanava::initialize(engine);
-    engine->load(QUrl("qrc:/nodes.qml"));
+    QQmlApplicationEngine engine;
+    engine.addImportPath("../../src/");
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/nodes.qml"));
     const auto status = app.exec();
-    delete engine;
     return status;
 }
 //-----------------------------------------------------------------------------

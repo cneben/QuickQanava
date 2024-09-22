@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -52,7 +52,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src/");
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/connector.qml"));
     return app.exec();

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,7 @@
 // \date	2017 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick      2.7
-import QuickQanava  2.0 as Qan
+import QtQuick
 
 /*! \brief Node or group background component with plain solid color backOpacity style support
  *
@@ -45,11 +44,11 @@ Rectangle {
     property var    style: undefined
 
     // PUBLIC /////////////////////////////////////////////////////////////////
-    radius: style ? style.backRadius : 4.
-    color: style ? style.backColor : Qt.rgba(0., 0., 0., 0.)
-    border.color: style ? style.borderColor : Qt.rgba(0., 0., 0., 0.)
-    border.width: style ? style.borderWidth : 1.0
-    antialiasing: true
-    opacity: style ? style.backOpacity : 0.8
+    radius: style?.backRadius ?? 4.
+    color: style?.backColor || Qt.rgba(0., 0., 0., 0.)
+    border.color: style?.borderColor ?? Qt.rgba(0., 0., 0., 0.)
+    border.width: style?.borderWidth ?? 1.0
+    antialiasing: true  // Vertex antialiasing
+    opacity: style?.backOpacity ?? 0.8
     // Note: Do not enable layer to avoid aliasing at high scale
 }

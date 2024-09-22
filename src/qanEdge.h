@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -39,11 +39,9 @@
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
-#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanEdgeItem.h")
 Q_MOC_INCLUDE("./qanNode.h")
-#endif
 
 namespace qan { // ::qan
 

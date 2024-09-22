@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,11 +32,11 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
-import QtQuick.Controls     2.0
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
 
-import QuickQanava          2.0 as Qan
+import QuickQanava as Qan
 
 /*! \brief Default template component for building a custom rectangular qan::Node item.
  *
@@ -51,17 +51,22 @@ Item {
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     onNodeItemChanged: {
-        if (delegateLoader.item &&
-            delegateLoader.item.nodeItem)
+        if (delegateLoader?.item?.nodeItem)
             delegateLoader.item.nodeItem = nodeItem
     }
-    readonly property real   backRadius: nodeItem && nodeItem.style ? nodeItem.style.backRadius : 4.
+    onWidthChanged: updateDefaultBoundingShape()
+    onHeightChanged: updateDefaultBoundingShape()
+    function updateDefaultBoundingShape() {
+        if (nodeItem)
+            nodeItem.setDefaultBoundingShape()
+    }
+
+    readonly property real   backRadius: nodeItem?.style?.backRadius ?? 4.
     Loader {
         id: delegateLoader
         anchors.fill: parent
         source: {
-            if (!nodeItem ||
-                !nodeItem.style)     // Defaul to solid no effect with unconfigured nodes
+            if (!nodeItem?.style)     // Defaul to solid no effect with unconfigured nodes
                 return "qrc:/QuickQanava/RectSolidBackground.qml";
             switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
             case Qan.NodeStyle.FillSolid:
@@ -82,7 +87,7 @@ Item {
         }
         onItemChanged: {
             if (item)
-                item.style = template.nodeItem ? template.nodeItem.style : undefined
+                item.style = template.nodeItem?.style || undefined
         }
     }
     ColumnLayout {

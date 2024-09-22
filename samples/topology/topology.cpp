@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -36,7 +36,7 @@
 #include "../../src/QuickQanava.h"
 
 // Qt headers
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQuickStyle>
 #include <QIcon>
 
@@ -47,10 +47,7 @@ using namespace qan;
 
 int	main(int argc, char** argv)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(true);
     QQuickStyle::setStyle("Material");
     QStringList themePaths; themePaths << "qrc:/icons"
@@ -60,7 +57,7 @@ int	main(int argc, char** argv)
     QIcon::setThemeName(QStringLiteral("Qan"));
 
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src");  // Enable loading of ../../src/QuickQanava module
     QuickQanava::initialize(&engine);
     qmlRegisterType<qan::FaceNode>("TopologySample", 1, 0, "AbstractFaceNode");
     qmlRegisterType<qan::FaceGraph>("TopologySample", 1, 0, "FaceGraph");

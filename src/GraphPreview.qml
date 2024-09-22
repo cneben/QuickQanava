@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,11 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.7
-import QtQuick.Controls 2.13
-
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
 
 /*! \brief Visual graph preview.
  *
@@ -72,7 +70,7 @@ Control {
         // 2. If navigable preview height (nph) < preview height (ph), then use graphRatio to
         //    generate nph.
         // 3. Else compute navigable preview width using previewRatio and fix nph to ph.
-        if (!source)
+        if (!source || !source.containerItem)
             return
         const pw = graphPreview.width
         const ph = graphPreview.height
@@ -106,13 +104,18 @@ Control {
     hoverEnabled: true
 
     z: 3    // Avoid tooltips beeing generated on top of preview
-    Qan.RectangularGlow {
-        anchors.fill: parent
-        cached: true
-        glowRadius:  8
-        cornerRadius: 8
-        spread: 0.5
-        color: "lightgrey"
+    MultiEffect {
+        source: previewBackground
+        anchors.centerIn: previewBackground
+        visible: true
+        width: previewBackground.width + 5
+        height: previewBackground.height + 5
+        blurEnabled: true
+        blurMax: 16
+        blur: 0.6
+        blurMultiplier: 0.1
+        colorization: 1.0
+        colorizationColor: Qt.rgba(0.7, 0.7, 0.7, 0.9)
     }
     Pane {
         id: previewBackground
@@ -127,7 +130,7 @@ Control {
                            ''
             font.pixelSize: 11
         }
-        Qan.NavigablePreview {
+        NavigablePreview {
             id: navigablePreview
             anchors.centerIn: parent
             source: graphPreview.source

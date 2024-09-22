@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,13 +24,11 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.12
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 Qan.GraphView {
     id: graphView
@@ -61,13 +59,13 @@ Qan.GraphView {
             var e = graph.insertEdge(n1, n2);
             //defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
         }
-        onNodeClicked: function(node) {
+        onNodeClicked: (node) => {
             notifyUser( "Node <b>" + node.label + "</b> clicked" )
             nodeEditor.node = node
         }
-        onNodeRightClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
-        onNodeDoubleClicked: function(node) { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
-        onNodeMoved: function(node) { notifyUser("Node <b>" + node.label + "</b> moved") }
+        onNodeRightClicked: (node) => { notifyUser( "Node <b>" + node.label + "</b> right clicked" ) }
+        onNodeDoubleClicked: (node) => { notifyUser( "Node <b>" + node.label + "</b> double clicked" ) }
+        onNodeMoved: (node) => { notifyUser("Node <b>" + node.label + "</b> moved") }
     } // Qan.Graph
 
     Menu {      // Context menu demonstration

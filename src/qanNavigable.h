@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -48,8 +48,8 @@ namespace qan { // ::qan
  * Example code for navigating an image:
  * \code
  * // Don't forget to register the component:
- * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
- * // QML: import QuickQanava 2.0 as Qan
+ * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
+ * // QML: import QuickQanava as Qan
  * Qan.Navigable {
  *   anchors.fill: parent
  *   clip: true     // Don't set clipping if Navigable is anchored directly to your main window
@@ -63,7 +63,7 @@ namespace qan { // ::qan
  *
  * A "navigable area" could easily be controlled with a slider control:
  * \code
- * // QML: import QuickQanava 2.0 as Qan
+ * // QML: import QuickQanava as Qan
  *
  * Qan.Navigable {
  *   id: navigable
@@ -93,7 +93,9 @@ class Navigable : public QQuickItem
 {
     /*! \name Navigable Object Management *///---------------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
+    QML_ELEMENT
+
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
     virtual ~Navigable() override;
@@ -127,7 +129,7 @@ public:
      * Example code for navigating an image:
      * \code
      * // Don't forget to register the component:
-     * // C++: qmlRegisterType< qan::Navigable >( "Qanava", 1, 0, "Navigable");
+     * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
      * // QML: import QuickQanava 2.0
      * Qan.Navigable {
      *   anchors.fill: parent
@@ -144,13 +146,45 @@ public:
      * \endcode
      *
      */
-    Q_PROPERTY(QQuickItem* containerItem READ getContainerItem CONSTANT FINAL)
+    Q_PROPERTY(QQuickItem*  containerItem READ getContainerItem CONSTANT FINAL)
     //! \sa containerItem
     inline QQuickItem*      getContainerItem() noexcept { return _containerItem.data(); }
 private:
     QPointer<QQuickItem>    _containerItem = nullptr;
 
 public:
+    //! Internally used for scrollbar and navigable preview, consider private.
+    Q_PROPERTY(QQuickItem*  virtualItem READ getVirtualItem CONSTANT FINAL)
+    //! \sa virtualItem
+    inline QQuickItem*      getVirtualItem() noexcept { return _virtualItem.data(); }
+private:
+    QPointer<QQuickItem>    _virtualItem = nullptr;
+protected slots:
+    //! Update the virtual item Br to follow a container item grow.
+    void    updateVirtualBr(const QRectF& containerChildrenRect);
+
+public:
+    //! \copydoc getViewRect().
+    Q_PROPERTY(QRectF viewRect READ getViewRect WRITE setViewRect NOTIFY viewRectChanged FINAL)
+    /*! Set the size of the navigable scrollbar area.
+     *
+     * Default to {-1000, -750, 2000, 1500}.
+     *
+     * Setting a small viewRect will limit the area available to scroll the navigable
+     * using scrollbars.
+     * Setting a viewRect smaller that navigable childrenRect has no effect.
+     * Mapped internally to virtualItem bounding rect.
+     */
+    QRectF          getViewRect() const;
+    //! \copydoc getViewRect().
+    void            setViewRect(const QRectF& viewRect);
+signals:
+    void            viewRectChanged();
+
+public:
+    //! Center the view on graph content center and set a 1.0 zoom.
+    Q_INVOKABLE void    center();
+
     //! Center the view on a given child item (zoom level is not modified).
     Q_INVOKABLE void    centerOn(QQuickItem* item);
 
@@ -170,6 +204,10 @@ public:
      * used to provide a valid size, < 0. are automatically ignored.
      */
     Q_INVOKABLE void    fitContentInView(qreal forceWidth = -1., qreal forceHeight = -1.);
+
+signals:
+    //! Navigable has bee modified following a user interaction (not emitted from programmatic modification).
+    void    navigated();
 
 public:
     //! \brief Auto fitting mode.
@@ -293,7 +331,7 @@ public:
     void        setZoomMin(qreal zoomMin);
 private:
     //! \copydoc zoomMin
-    qreal       _zoomMin = 0.04;  // Max 5% zoom with default zoom in/out thresold
+    qreal       _zoomMin = 0.09;  // Max 10% zoom with default zoom in/out thresold
 signals:
     //! \sa zoomMin
     void        zoomMinChanged();
@@ -310,9 +348,9 @@ signals:
 
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
-    virtual void    navigableClicked(QPointF pos) { Q_UNUSED(pos); }
+    virtual void    navigableClicked(QPointF pos, QPointF globalPos) { Q_UNUSED(pos); }
     //! Called when the mouse is right clicked in the container (base implementation empty).
-    virtual void    navigableRightClicked(QPointF pos) { Q_UNUSED(pos); }
+    virtual void    navigableRightClicked(QPointF pos, QPointF globalPos) { Q_UNUSED(pos); }
     //! Called when the container item is scaled (zoomed) or panned (base implementation empty).
     virtual void    navigableContainerItemModified() { }
 
@@ -331,11 +369,7 @@ signals:
     void        dragActiveChanged();
 
 protected:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    virtual void    geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry) override;
-#else
     virtual void    geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
-#endif
     virtual void    mouseMoveEvent(QMouseEvent* event) override;
     virtual void    mousePressEvent(QMouseEvent* event) override;
     virtual void    mouseReleaseEvent(QMouseEvent* event) override;

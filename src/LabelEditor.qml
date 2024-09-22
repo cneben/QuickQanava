@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,8 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Controls     2.0
+import QtQuick
+import QtQuick.Controls
 
 /*! \brief Reusable component for visual edition of node and groups labels with on-demand loading.
  *
@@ -46,7 +46,7 @@ import QtQuick.Controls     2.0
  *
  * Exemple use on an user defined custom node:
  * \code
- * Qan.AbstractNode {
+ * Qan.Node {
  *   id: rectNode
  *   width: 110; height: 50
  *   Connections {
@@ -71,8 +71,7 @@ Loader {
     //! Editor target node or group (or any Qan primitive with a \c label property).
     property var    target: undefined
 
-    property bool   bold: false
-    property real   pixelSize: 12
+    property real   fontPixelSize: 11
 
     onVisibleChanged: {
         if (visible && !item)
@@ -101,8 +100,8 @@ Loader {
             anchors.left: parent.left
             anchors.right: parent.right
             text: target ? target.label : ""
-            font.bold: labelEditorLoader.bold
-            font.pixelSize: labelEditorLoader.pixelSize
+            font.bold: false
+            font.pixelSize: 22
             onAccepted: {
                 if (target &&
                     text.length !== 0)
@@ -114,6 +113,9 @@ Loader {
                 if (target &&
                     text !== target.label)  // Ensure that last edition text is removed
                     text = target.label       // for exemple if edition has been interrupted in a focus change
+            }
+            background: Rectangle {
+                color: Qt.rgba(0., 0., 0., 0.)  // Disable editor background
             }
             Keys.onEscapePressed: {
                 // Cancel edition on escape

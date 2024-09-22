@@ -24,15 +24,12 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
-import QtQuick.Shapes            1.0
+import QtQuick
+import QtQuick.Controls.Material
+import QtQuick.Layouts
+import QtQuick.Shapes
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "." as Qan
+import QuickQanava as Qan
 
 ApplicationWindow {
     id: window
@@ -42,6 +39,8 @@ ApplicationWindow {
     Pane { anchors.fill: parent }
     ToolTip { x: 0; id: toolTip; timeout: 2000 }
     function notifyUser(message) { toolTip.text = message; toolTip.open() }
+
+    Component.onCompleted: graphView.center()
 
     Qan.GraphView {
         id: graphView
@@ -77,47 +76,48 @@ ApplicationWindow {
                 g1.item.x = 300; g1.item.y = 80
 
                 let tableGroup = topology.insertTable(/*cols=*/2, /*rows=*/4)
+                tableGroup.initializeLayout()
                 tableGroup.label = 'TABLE'
             }
-            onGroupClicked: group => {
-                window.notifyUser("Group <b>" + group.label + "</b> clicked")
-                groupEditor.group = group
-            }
-            onGroupDoubleClicked: { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
+            onGroupClicked: (group) => {
+                                window.notifyUser("Group <b>" + group.label + "</b> clicked")
+                                groupEditor.group = group
+                            }
+            onGroupDoubleClicked: (group) => { window.notifyUser("Group <b>" + group.label + "</b> double clicked") }
             onGroupRightClicked: (group, pos) => {
-                window.notifyUser("Group <b>" + group.label + "</b> right clicked")
-                contextMenu.group = group
+                                     window.notifyUser("Group <b>" + group.label + "</b> right clicked")
+                                     contextMenu.group = group
 
-                if (!window.contentItem ||
-                    !group.item)
-                    return;
-                let globalPos = window.contentItem.mapFromItem(group.item, pos.x, pos.y);
-                contextMenu.x = globalPos.x
-                contextMenu.y = globalPos.y
-                contextMenu.open()
-            }
-            onNodeClicked: node => {
-                ungroupNodeButton.node = node
-                groupEditor.group = undefined;
-                contextMenu.node = node
-            }
+                                     if (!window.contentItem ||
+                                         !group.item)
+                                     return;
+                                     let globalPos = window.contentItem.mapFromItem(group.item, pos.x, pos.y);
+                                     contextMenu.x = globalPos.x
+                                     contextMenu.y = globalPos.y
+                                     contextMenu.open()
+                                 }
+            onNodeClicked: (node) => {
+                               ungroupNodeButton.node = node
+                               groupEditor.group = undefined;
+                               contextMenu.node = node
+                           }
             onNodeRightClicked: (node, pos) => {
-                window.notifyUser("Node <b>" + node.label + "</b> right clicked")
-                ungroupNodeButton.node = node
-                contextMenu.node = node
+                                    window.notifyUser("Node <b>" + node.label + "</b> right clicked")
+                                    ungroupNodeButton.node = node
+                                    contextMenu.node = node
 
-                if (!window.contentItem ||
-                    !node.item)
-                    return;
-                let globalPos = window.contentItem.mapFromItem(node.item, pos.x, pos.y);
-                contextMenu.x = globalPos.x
-                contextMenu.y = globalPos.y
-                contextMenu.open()
-            }
+                                    if (!window.contentItem ||
+                                        !node.item)
+                                    return;
+                                    let globalPos = window.contentItem.mapFromItem(node.item, pos.x, pos.y);
+                                    contextMenu.x = globalPos.x
+                                    contextMenu.y = globalPos.y
+                                    contextMenu.open()
+                                }
             onNodeMoved: node => {
-                if (node && node.isGroup)
-                    window.notifyUser("Group <b>" + node.label + "</b> moved")
-            }
+                             if (node && node.isGroup)
+                             window.notifyUser("Group <b>" + node.label + "</b> moved")
+                         }
         } // Qan.Graph: graph
 
         onClicked: {
@@ -272,7 +272,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 15
             anchors.right: parent.right
-            anchors.rightMargin: 15
+            anchors.rightMargin: 20
             padding: 0
             Frame {
                 ColumnLayout {
@@ -326,16 +326,16 @@ ApplicationWindow {
                 } // groupEditor ColumnLayout
             }
         } // Control groupEditor
+        Qan.GraphPreview {
+            id: graphPreview
+            source: graphView
+            viewWindowColor: Material.accent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: graphView.bottom
+            anchors.bottomMargin: 20
+            width: 350
+            height: 198
+        }  // Qan.GraphPreview
     } // Qan.GraphView
-    Qan.GraphPreview {
-        id: graphPreview
-        source: graphView
-        viewWindowColor: Material.accent
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: graphView.bottom
-        anchors.bottomMargin: 8
-        width: 350
-        height: 198
-    }  // Qan.GraphPreview
 }  // ApplicationWindow: window
 

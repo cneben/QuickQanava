@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	AdvancedNode.qml
 // \author	benoit@destrat.io
@@ -36,8 +36,7 @@ import QtQuick              2.8
 import QtQuick.Controls     2.1
 import QtQuick.Layouts      1.3
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.GroupItem {
     id: advancedGroup
@@ -47,13 +46,9 @@ Qan.GroupItem {
     height: 150
 
     default property alias children : template
-    container: template.content   // See qan::GroupItem::container property documentation
-
-    //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : template.labelEditorVisible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : template.expandButtonVisible
+    container: template.container   // See qan::GroupItem::container property documentation
+    labelEditorVisible : template.labelEditorVisible
+    //expandButtonVisible : template.expandButtonVisible
 
     Qan.RectGroupTemplate {
         id: template

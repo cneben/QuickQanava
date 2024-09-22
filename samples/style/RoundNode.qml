@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,20 +25,19 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	CustomNode.qml
 // \author	benoit@destrat.io
 // \date	2015 08 01
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.8
-import QtQuick.Controls     2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: roundNode
@@ -52,27 +51,19 @@ Qan.NodeItem {
         radius: width / 2;
         border.color: Material.accent; border.width: 2
         color: roundNode.style.backColor
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: roundNode.nodeColor }
+            GradientStop {
+                position: 1.0;
+                color: Qt.tint(roundNode.nodeColor, roundNode.backColor)
+            }
+        }
     }
     property color styleBackColor: style.backColor
     onStyleBackColorChanged: nodeColor = Qt.rgba( style.backColor.r, style.backColor.g, style.backColor.b, 0.2 )
     property color nodeColor
     property color backColor: Material.background
 
-    Qan.LinearGradient {
-        anchors.fill: parent
-        z: 2
-        source: background
-        start: Qt.point(0.,0.)
-        end: Qt.point(background.width, background.height)
-        gradient: Gradient {
-            id: backGrad
-            GradientStop { position: 0.0; color: roundNode.nodeColor }
-            GradientStop {
-                position: 1.0;
-                color: Qt.tint( roundNode.nodeColor, roundNode.backColor )
-            }
-        }
-    }
     Rectangle {
         id: border
         z: 3
@@ -86,12 +77,15 @@ Qan.NodeItem {
         z: 3
         anchors.centerIn: parent
     }
-    Qan.Glow {
-        z: 0
+    MultiEffect {
         source: background
-        anchors.fill: parent
-        color: Material.theme === Material.Light ? Qt.lighter( Material.foreground ) : Qt.darker( Material.foreground )
-        radius: 12;     samples: 15
-        spread: 0.25;   transparentBorder: true
+        anchors.centerIn: parent
+        width: background.width + (6 * 2)       // glowRadius = 6
+        height: background.height + (6 * 2)
+        blurEnabled: true
+        blurMax: 30
+        blur: 1.
+        colorization: 1.0
+        colorizationColor: Qt.rgba(1, 1, 1, 0.3)
     }
-}
+}  // Qan.NodeItem: roundNode

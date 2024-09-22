@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,8 @@
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Shapes   1.0
+import QtQuick
+import QtQuick.Shapes
 
 ShapePath {
     id: edgeShapePath
@@ -45,14 +45,10 @@ ShapePath {
     startX: edgeItem.p1.x
     startY: edgeItem.p1.y
     capStyle: ShapePath.FlatCap
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
+    strokeWidth: edgeItem?.style?.lineWidth ?? 2
     strokeColor: edgeTemplate.color
     strokeStyle: edgeTemplate.dashed
-    dashPattern: edgeItem &&
-                 edgeItem.style ? edgeItem.style.dashPattern :
-                                  [2, 2]
+    dashPattern: edgeItem?.style?.dashPattern ?? [2, 2]
     fillColor: Qt.rgba(0,0,0,0)
     PathLine {
         x: edgeItem.p2.x

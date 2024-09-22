@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -63,63 +63,29 @@
 #include "./qanBottomResizer.h"
 #include "./qanNavigablePreview.h"
 #include "./qanAnalysisTimeHeatMap.h"
+#include "./qanTreeLayouts.h"
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-        Q_INIT_RESOURCE(QuickQanava_static);
-        Q_INIT_RESOURCE(QuickQanavaGraphicalEffects);
-#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
-        qWarning() << "QuickQanava::initialize(): Warning: QuickQanava depends on Qt Quick Shapes library available since Qt 5.10.";
-#endif
         QuickContainers::initialize();
 
-        qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");
         if (engine != nullptr) {
             engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
             engine->rootContext()->setContextProperty("defaultGroupStyle", QVariant::fromValue(qan::Group::style()));
 
-            engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeStraightPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeOrthoPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeCurvedPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeStraightPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeOrthoPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeCurvedPath.qml", engine));
 
-            engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcArrowPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeSrcCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcCirclePath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeSrcRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcRectPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcArrowPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeSrcCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcCirclePath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeSrcRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeSrcRectPath.qml", engine));
 
-            engine->rootContext()->setContextProperty("qanEdgeDstArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstArrowPath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml"));
-            engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml"));
+            engine->rootContext()->setContextProperty("qanEdgeDstArrowPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstArrowPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml", engine));
         }
-        qmlRegisterType<qan::NodeItem>("QuickQanava", 2, 0, "NodeItem");
-        qmlRegisterType<qan::PortItem>("QuickQanava", 2, 0, "PortItem");
-        qmlRegisterType<qan::Edge>("QuickQanava", 2, 0, "AbstractEdge");
-        qmlRegisterType<qan::EdgeItem>("QuickQanava", 2, 0, "EdgeItem");
-        qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
-        qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
-        qmlRegisterType<qan::TableGroupItem>("QuickQanava", 2, 0, "TableGroupItem");
-        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "AbstractTableCell");
-        qmlRegisterType<qan::TableBorder>("QuickQanava", 2, 0, "AbstractTableBorder");
-        qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
-
-        qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");
-        qmlRegisterType<qan::GraphView>("QuickQanava", 2, 0, "AbstractGraphView");
-        qmlRegisterType<qan::Navigable>("QuickQanava", 2, 0, "Navigable");
-        qmlRegisterType<qan::NavigablePreview>("QuickQanava", 2, 0, "AbstractNavigablePreview");
-        qmlRegisterType<qan::AnalysisTimeHeatMap>("QuickQanava", 2, 0, "AnalysisTimeHeatMap");
-
-        qmlRegisterType<qan::Grid>("QuickQanava", 2, 0, "AbstractGrid");
-        qmlRegisterType<qan::OrthoGrid>("QuickQanava", 2, 0, "OrthoGrid");
-        qmlRegisterType<qan::LineGrid>("QuickQanava", 2, 0, "AbstractLineGrid");
-        qmlRegisterType<qan::impl::GridLine>("QuickQanava", 2, 0, "GridLine");
-
-        qmlRegisterType<qan::Style>("QuickQanava", 2, 0, "Style");
-        qmlRegisterType<qan::NodeStyle>("QuickQanava", 2, 0, "NodeStyle");
-        qmlRegisterType<qan::EdgeStyle>("QuickQanava", 2, 0, "EdgeStyle");
-        qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
-        qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
-        qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
-        qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
     } // initialize()
 };
 

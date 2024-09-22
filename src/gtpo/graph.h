@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -156,6 +156,9 @@ public:
      * \return true if \c node is a root node, false otherwise.
      */
     auto    is_root_node(const node_t* node) const -> bool;
+
+    //! Expose the base class method of the same name:
+    using   graph_base_t::contains;
 
     //! Use fast search container to find if a given \c node is part of this graph.
     auto    contains(const node_t* node) const -> bool;

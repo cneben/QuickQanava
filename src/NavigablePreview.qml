@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,9 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.7
+import QtQuick
 
-import QuickQanava 2.0 as Qan
+import QuickQanava as Qan
 
 /*! \brief Concrete component for qan::NavigablePreview interface.
  *
@@ -55,18 +55,11 @@ Qan.AbstractNavigablePreview {
         if (source &&
             source.containerItem) {
             resetVisibleWindow()
-
-            // Monitor source changes
-            source.containerItem.onWidthChanged.connect(updatePreview)
-            source.containerItem.onHeightChanged.connect(updatePreview)
-            source.containerItem.onScaleChanged.connect(updatePreview)
-            // Note 20221204: Do not connect on containerItem on(X/Y)Changed(),
-            // wait for user initiated onContainerItemModified since dragging
-            // view window also modify container x/y
-            source.containerItem.onChildrenRectChanged.connect(updatePreview)
-            // Emitted only on user initiaited navitable view changes.
             source.containerItemModified.connect(updatePreview)
-
+            source.onWidthChanged.connect(updatePreview)
+            source.onHeightChanged.connect(updatePreview)
+            // Emitted only on user initiated navigable view changes.
+            source.onNavigated.connect(updatePreview)
             sourcePreview.sourceItem = source.containerItem
         } else
             sourcePreview.sourceItem = undefined
@@ -86,6 +79,11 @@ Qan.AbstractNavigablePreview {
     function updatePreview() {
         if (!source)
             return
+        // Note 20240823: Prevent updating the view while it is dragged
+        // to avoid "Maximum call stack size exceeded"
+        if (viewWindowController.pressedButtons & Qt.LeftButton ||
+            viewWindowController.active)
+            return;
         const r = computeSourceRect()
         if (r &&
             r.width > 0. &&
@@ -189,8 +187,6 @@ Qan.AbstractNavigablePreview {
         id: viewWindow
         z: 1
         color: Qt.rgba(0, 0, 0, 0)
-        smooth: true
-        antialiasing: true
         border.color: viewWindowColor
         border.width: 2
         onXChanged: viewWindowDragged()
@@ -230,13 +226,13 @@ Qan.AbstractNavigablePreview {
                     updatePreview()
                 }
             }
-            onClicked: {
+            onClicked: (mouse) => {
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 viewWindowTimer.p = p
                 viewWindowTimer.start()
                 mouse.accepted = true
             }
-            onDoubleClicked: {
+            onDoubleClicked: (mouse) => {
                 viewWindowTimer.stop()
                 let p = mapToItem(preview, Qt.point(mouse.x, mouse.y))
                 let sceneP = mapFromPreview(p)
@@ -269,12 +265,12 @@ Qan.AbstractNavigablePreview {
                 updatePreview()
             }
         }
-        onClicked: {
+        onClicked: (mouse) => {
             timer.p = Qt.point(mouse.x, mouse.y)
             timer.start()
             mouse.accepted = true
         }
-        onDoubleClicked: {
+        onDoubleClicked: (mouse) =>{
             timer.stop()
             let sceneP = mapFromPreview(Qt.point(mouse.x, mouse.y))
             source.centerOnPosition(sceneP)

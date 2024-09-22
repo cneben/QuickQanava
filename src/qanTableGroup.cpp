@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -39,6 +39,7 @@
 
 // QuickQanava headers
 #include "./qanTableGroup.h"
+#include "./qanTableGroupItem.h"
 
 namespace qan { // ::qan
 
@@ -78,7 +79,7 @@ qan::NodeStyle* TableGroup::style(QObject* parent) noexcept
         qan_TableGroup_style->setFontPointSize(11);
         qan_TableGroup_style->setFontBold(true);
         qan_TableGroup_style->setLabelColor(QColor{"black"});
-        qan_TableGroup_style->setBorderWidth(2.);
+        qan_TableGroup_style->setBorderWidth(3.);
         qan_TableGroup_style->setBackRadius(8.);
         qan_TableGroup_style->setBackOpacity(0.90);
         qan_TableGroup_style->setBaseColor(QColor(240, 245, 250));
@@ -100,6 +101,13 @@ bool    TableGroup::setLocked(bool locked)
         return true;
     }
     return false;
+}
+
+void    TableGroup::initializeLayout()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    if (tableGroupItem)
+        tableGroupItem->initializeTableLayout();
 }
 
 bool    TableGroup::setRows(int rows)

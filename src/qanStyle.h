@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -60,6 +60,8 @@ namespace qan { // ::qan
 class Style : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+
     /*! \name Style Object Management *///-------------------------------------
     //@{
 public:
@@ -92,6 +94,7 @@ class NodeStyle : public qan::Style
     /*! \name NodeStyle Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     /*! \brief Style constructor with style \c name and \c target initialisation.
      *
@@ -328,6 +331,7 @@ signals:
 class EdgeStyle : public qan::Style
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name EdgeStyle Object Management *///---------------------------------
     //@{
 public:
@@ -349,8 +353,6 @@ signals:
 public:
     //! End type drawing configuration
     enum class ArrowShape {
-        //! Invalid undefined value, usefull for serialization (if Undefined, default to Arrow).
-        //Undefined = 0,
         //! Do not draw an end.
         None = 0,
         //! End shape is an arrow.

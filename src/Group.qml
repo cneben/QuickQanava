@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,12 +32,12 @@
 // \date	2016 03 22
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
+//! \brief Default delegate for `qan::GroupItem`.
 Qan.GroupItem {
     id: groupItem
 
@@ -46,23 +46,13 @@ Qan.GroupItem {
     height: 150
 
     default property alias children : template
-    container: template.content   // See qan::GroupItem::container property documentation
+    container: template.container   // See qan::GroupItem::container property documentation
+    labelEditorVisible: template.labelEditorVisible
 
-    //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : template.labelEditorVisible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : template.expandButtonVisible
-
-    Qan.RectGroupTemplate {
+    RectGroupTemplate {
         id: template
         anchors.fill: parent
         groupItem: parent
         z: 1
     }
-
-    // Emitted by qan::GroupItem when node dragging start
-    onNodeDragEnter: { template.onNodeDragEnter() }
-    // Emitted by qan::GroupItem when node dragging ends
-    onNodeDragLeave: { template.onNodeDragLeave() }
 }

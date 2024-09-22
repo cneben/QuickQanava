@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,10 +43,8 @@
 #include "./qanStyle.h"
 #include "./qanNode.h"
 
-#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
 Q_MOC_INCLUDE("./qanGraph.h")
 Q_MOC_INCLUDE("./qanGroupItem.h")
-#endif
 
 namespace qan { // ::qan
 
@@ -74,12 +72,6 @@ public:
 public:
     //! Return true if this group is a table (ie a qan::TableGroup or subclass).
     Q_INVOKABLE virtual bool    isTable() const;
-
-    Q_PROPERTY(qan::Graph* graph READ getGraph CONSTANT FINAL)
-    //! Shortcut to gtpo::group<>::getGraph().
-    qan::Graph*         getGraph() noexcept;
-    //! \copydoc getGraph()
-    const qan::Graph*   getGraph() const noexcept;
 
     /*! \brief Collect this group adjacent edges (ie adjacent edges of group and group nodes).
      *

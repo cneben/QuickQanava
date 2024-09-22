@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,43 +32,10 @@
 // \date	2017 08 28
 //-----------------------------------------------------------------------------
 
-import QtQuick 2.2
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Layouts
 
-import QuickQanava 2.0 as Qan
-
-/*
-ColumnLayout {
-    id: verticalDock
-    spacing: 20
-    z: 1.5   // Selection item z=1.0, dock must be on top of selection
-    property var hostNodeItem: undefined
-    property int dockType: -1
-    property int leftMargin: 7
-    property int rightMargin: 7
-
-    default property alias  children : verticalDock.children
-
-    x: {
-        if (hostNodeItem === undefined)
-            return 0.
-        if (dockType == Qan.NodeItem.Right) {
-            return hostNodeItem.width + rightMargin
-        }
-        if (dockType == Qan.NodeItem.Left) {
-            console.error('!!!Recomputing layout hostNodeItem=' + hostNodeItem)
-            return -width - leftMargin
-        }
-        return 0.
-    }
-    onXChanged: {
-        console.error('!!!POST layout')
-        hostNodeItem.updatePortsEdges()
-    }
-    y: {
-        return -(height - hostNodeItem) / 2.
-    }
-}*/
+import QuickQanava as Qan
 
 ColumnLayout {
     id: verticalDock

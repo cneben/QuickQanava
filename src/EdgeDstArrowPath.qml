@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,10 +32,10 @@
 // \date	2022 10 02
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QtQuick.Shapes   1.0
+import QtQuick
+import QtQuick.Shapes
 
-import QuickQanava      2.0 as Qan
+import QuickQanava as Qan
 
 ShapePath {
     property var edgeTemplate: undefined
@@ -45,13 +45,22 @@ ShapePath {
     fillColor: edgeItem &&
                edgeItem.dstShape === Qan.EdgeStyle.ArrowOpen ? Qt.rgba(0.,0.,0.,0.) :
                                                                edgeTemplate.color
-    strokeWidth: edgeItem &&
-                 edgeItem.style ? edgeItem.style.lineWidth :
-                                  2
-
+    strokeWidth: 2   // Fix to 2 to have "non sharp" edges
+    // Adding lineWidth / 2. to vertices A1 (base top) and A3 (base bottom) to take into
+    // account lineWidth in arrowLength
+    readonly property real lineWidth: edgeItem?.style?.lineWidth / 2. ?? 1
     startX: edgeItem ? edgeItem.dstA1.x : 0
-    startY: edgeItem ? edgeItem.dstA1.y : 0
-    PathLine { x: edgeItem ? edgeItem.dstA3.x : 0; y: edgeItem ? edgeItem.dstA3.y : 0 }
-    PathLine { x: edgeItem ? edgeItem.dstA2.x : 0; y: edgeItem ? edgeItem.dstA2.y : 0 }
-    PathLine { x: edgeItem ? edgeItem.dstA1.x : 0; y: edgeItem ? edgeItem.dstA1.y : 0 }
+    startY: edgeItem ? edgeItem.dstA1.y - lineWidth: 0
+    PathLine {
+        x: edgeItem ? edgeItem.dstA3.x : 0
+        y: edgeItem ? edgeItem.dstA3.y + lineWidth: 0
+    }
+    PathLine {
+        x: edgeItem ? edgeItem.dstA2.x : 0
+        y: edgeItem ? edgeItem.dstA2.y : 0
+    }
+    PathLine {
+        x: edgeItem ? edgeItem.dstA1.x : 0
+        y: edgeItem ? edgeItem.dstA1.y - lineWidth: 0
+    }
 }

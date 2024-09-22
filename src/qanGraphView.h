@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -53,6 +53,8 @@ namespace qan { // ::qan
 class GraphView : public qan::Navigable
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractGraphView)
+
     /*! \name GraphView Object Management *///---------------------------------
     //@{
 public:
@@ -70,11 +72,16 @@ private:
     QPointer<qan::Graph>    _graph = nullptr;
 signals:
     void                    graphChanged();
+    //@}
+    //-------------------------------------------------------------------------
 
+
+    /*! \name GraphView Interactions Management *///---------------------------
+    //@{
 protected:
     //! Called when the mouse is clicked in the container (base implementation empty).
-    virtual void    navigableClicked(QPointF pos) override;
-    virtual void    navigableRightClicked(QPointF pos) override;
+    virtual void    navigableClicked(QPointF pos, QPointF globalPos) override;
+    virtual void    navigableRightClicked(QPointF pos, QPointF globalPos) override;
 
     //! Utilisty method to convert a given \c url to a local file path (if possible, otherwise return an empty string).
     Q_INVOKABLE QString urlToLocalFile(QUrl url) const noexcept;
@@ -82,7 +89,7 @@ protected:
 signals:
     void            connectorChanged();
 
-    void            rightClicked(QPointF pos);
+    void            rightClicked(QPointF pos, QPointF globalPos);
 
     void            nodeClicked(qan::Node* node, QPointF pos);
     void            nodeRightClicked(qan::Node* node, QPointF pos);

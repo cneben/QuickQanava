@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -60,6 +60,7 @@
 namespace qan { // ::qan
 
 class Graph;
+class GraphView;
 class Node;
 class Connector;
 class PortItem;
@@ -75,6 +76,7 @@ class PortItem;
 class Graph : public gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>
 {
     Q_OBJECT
+    QML_ELEMENT
     Q_INTERFACES(QQmlParserStatus)
 
     using super_t = gtpo::graph<QQuickItem, qan::Node, qan::Group, qan::Edge>;
@@ -96,11 +98,53 @@ public:
     Graph(Graph&&) = delete;
     Graph& operator=(Graph&&) = delete;
 public:
+    virtual void    classBegin() override;
+
     //! QQmlParserStatus Component.onCompleted() overload to initialize default graph delegate in a valid QQmlEngine.
     virtual void    componentComplete() override;
 
-    virtual void    classBegin() override;
+public:
+    //! \copydoc getGraphView()
+    Q_PROPERTY(QQuickItem*  graphView READ qmlGetGraphView NOTIFY graphViewChanged FINAL)
+    //! \copydoc getGraphView()
+    QQuickItem*             qmlGetGraphView();
+    //! qan::GrapvView where this graph is registered (a graph may have only one view).
+    qan::GraphView*         getGraphView();
+    //! \copydoc getGraphView()
+    const qan::GraphView*   getGraphView() const;
+    //! \copydoc getGraphView()
+    void                    setGraphView(qan::GraphView* graphView);
+signals:
+    //! \copydoc getGraphView()
+    void                    graphViewChanged();
+private:
+    //! \copydoc getGraphView()
+    qan::GraphView*         _graphView = nullptr;
 
+public:
+    //! \copydoc getContainerItem()
+    Q_PROPERTY(QQuickItem*      containerItem READ getContainerItem NOTIFY containerItemChanged FINAL)
+    /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
+     *
+     * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
+     * graphics items.
+     */
+    inline QQuickItem*          getContainerItem() noexcept { return _containerItem.data(); }
+    //! \copydoc getContainerItem()
+    inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
+    //! \copydoc getContainerItem()
+    void                        setContainerItem(QQuickItem* containerItem);
+signals:
+    //! \copydoc getContainerItem()
+    void                        containerItemChanged();
+private:
+    //! \copydoc getContainerItem()
+    QPointer<QQuickItem>        _containerItem;
+    //@}
+    //-------------------------------------------------------------------------
+
+    /*! \name Graph Management *///--------------------------------------------
+    //@{
 public:
     /*! \brief Clear this graph topology and styles.
      *
@@ -129,22 +173,6 @@ public:
      * \arg except Return every compatible group except \c except (can be nullptr).
      */
     Q_INVOKABLE qan::Group* groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* except = nullptr) const;
-
-public:
-    /*! \brief Quick item used as a parent for all graphics item "factored" by this graph (default to this).
-     *
-     * \note Container item should be initialized at startup, any change will _not_ be refelected to existing
-     * graphics items.
-     */
-    Q_PROPERTY(QQuickItem*      containerItem READ getContainerItem NOTIFY containerItemChanged FINAL)
-    //! \sa containerItem
-    inline QQuickItem*          getContainerItem() noexcept { return _containerItem.data(); }
-    inline const QQuickItem*    getContainerItem() const noexcept { return _containerItem.data(); }
-    void                        setContainerItem(QQuickItem* containerItem);
-signals:
-    void                        containerItemChanged();
-private:
-    QPointer<QQuickItem>        _containerItem;
     //@}
     //-------------------------------------------------------------------------
 
@@ -343,14 +371,14 @@ public:
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
     template <class Node_t>
-    qan::Node*              insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
+    Node_t*                 insertNode(QQmlComponent* nodeComponent = nullptr, qan::NodeStyle* nodeStyle = nullptr);
 
     /*! \brief Same semantic than insertNode<>() but for non visual nodes.
      *
      * \note trigger nodeInserted() signal after insertion and generate a call to onNodeInserted().
      */
     template <class Node_t>
-    qan::Node*              insertNonVisualNode();
+    Node_t*                 insertNonVisualNode();
 
     /*! \brief Insert and existing node with a specific delegate component and a custom style.
      *
@@ -734,6 +762,9 @@ public:
     bool                selectGroup(qan::Group& group, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     Q_INVOKABLE bool    selectGroup(qan::Group* group);
 
+    //! Set an edge selection state (usefull to unselect).
+    void                setEdgeSelected(qan::Edge* edge, bool selected);
+
     //! Similar to selectNode() for qan::Edge.
     bool                selectEdge(qan::Edge& edge, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     Q_INVOKABLE bool    selectEdge(qan::Edge* edge);
@@ -781,6 +812,8 @@ private:
     SelectedNodes       _selectedNodes;
 signals:
     void                selectedNodesChanged();
+    //! Emitted whenever nodes/groups/edge selection change.
+    void                selectionChanged();
 
 public:
     using SelectedGroups = qcm::Container<std::vector, QPointer<qan::Group>>;
@@ -988,12 +1021,13 @@ public:
     //! Send a graphic item (either a node or a group) to back.
     Q_INVOKABLE void    sendToBack(QQuickItem* item);
 
-    /*! \brief Iterate over all graph container items, find and update the maxZ property.
+public:
+    /*! \brief Iterate over all graph container items, find and update the minZ and maxZ property.
      *
      * \note O(N) with N beeing the graph item count (might be quite costly, mainly defined to update
      * maxZ after in serialization for example).
      */
-    Q_INVOKABLE void    findMaxZ() noexcept;
+    Q_INVOKABLE void    updateMinMaxZ() noexcept;
 
     /*! \brief Maximum global z for nodes and groups (ie top-most item).
      *
@@ -1012,14 +1046,23 @@ public:
     //! Add 1. to \c maxZ and return the new \c maxZ.
     qreal               nextMaxZ() noexcept;
     //! Update maximum z value if \c z is greater than actual \c maxZ value.
-    Q_INVOKABLE void    updateMaxZ(qreal z) noexcept;
+    Q_INVOKABLE void    updateMaxZ(const qreal z) noexcept;
 
-protected:
-    /*! \brief Utility to find a QQuickItem maximum z value of \c item childs.
-     *
-     * \return 0. if there is no child, maximum child z value otherwise.
-     */
-    auto                maxChildsZ(QQuickItem* item) const noexcept -> qreal;
+public:
+    //! \brief Minimum global z for nodes and groups (ie bottom-less item).
+    Q_PROPERTY(qreal    minZ READ getMinZ WRITE setMinZ NOTIFY minZChanged FINAL)
+    qreal               getMinZ() const noexcept;
+    void                setMinZ(const qreal minZ) noexcept;
+private:
+    qreal               _minZ = 0.;
+signals:
+    void                minZChanged();
+
+public:
+    //! Substract 1. to \c minZ and return the new \c minZ.
+    qreal               nextMinZ() noexcept;
+    //! Update minimum z value if \c z is less than actual \c minZ value.
+    Q_INVOKABLE void    updateMinZ(const qreal z) noexcept;
     //@}
     //-------------------------------------------------------------------------
 
@@ -1046,7 +1089,7 @@ public:
      */
     std::vector<const qan::Node*>   collectDfs(const qan::Node& node, bool collectGroup = false) const noexcept;
 
-    //! \copydoc collectDfs()
+    //! Collect all out nodes of \c nodes using DFS, return an unordered set of subnodes (nodes in node are _not_ in returned set).
     auto    collectSubNodes(const QVector<qan::Node*> nodes, bool collectGroup = false) const noexcept -> std::unordered_set<const qan::Node*>;
 
 private:
@@ -1127,6 +1170,4 @@ protected:
 
 #include "./qanGraph.hpp"
 
-Q_DECLARE_METATYPE(QAbstractItemModel*)
-Q_DECLARE_METATYPE(QAbstractListModel*)
 QML_DECLARE_TYPE(qan::Graph)

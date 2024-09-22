@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -59,6 +59,7 @@ class TableGroupItem : public qan::GroupItem
     /*! \name TableGroupItem Object Management *///----------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit TableGroupItem(QQuickItem* parent = nullptr);
     virtual ~TableGroupItem() override;
@@ -98,8 +99,6 @@ public slots:
 
     //! Layout table cells, triggered when table style change.
     void        layoutCells();
-protected:
-    QSizeF      _previousSize = QSizeF{0., 0.};
 
 public:
     virtual bool            setGroup(qan::Group* group) noexcept override;

@@ -1,42 +1,68 @@
+cmake_minimum_required(VERSION 3.16)
 
-cmake_minimum_required(VERSION 3.1.0)
+project(QuickQanava_sample_dataflow VERSION 2.5.0 LANGUAGES CXX)
 
-# Require C++14
-set(CMAKE_CXX_STANDARD 14)
+# Configure Qt
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick Qml Quick QuickControls2)
+qt_standard_project_setup(REQUIRES 6.6)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set( source_files
-    dataflow.cpp
-    qanDataFlow.cpp
-)
-
-set (header_files qanDataFlow.h)
-
-# Configure Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui QuickControls2 REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui QuickControls2 REQUIRED)
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
-
+#set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-include_directories( ${Qt5Quick_INCLUDE_DIRS} )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} "../../src" )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} "../../src")
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_executable(sample_dataflow ${source_files} dataflow.qrc)
-target_include_directories(sample_dataflow PUBLIC QuickQanava Qt${QT_VERSION_MAJOR}::QuickControls2)
-target_link_libraries(sample_dataflow QuickQanava QuickContainers Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::QuickControls2)
+set(source_files
+    qanDataFlow.cpp
+)
+set (header_files qanDataFlow.h)
+qt_add_qml_module(SampleDataFlow
+    VERSION 1.0
+    URI SampleDataFlow
+    SOURCES
+        qanDataFlow.cpp ${header_files}
+    QML_FILES
+        SampleDataFlow.qml
+        ColorNode.qml
+        ColorPopup.qml
+        ImageNode.qml
+        OperationNode.qml
+        PercentageNode.qml
+        TintNode.qml
+    RESOURCES
+        Lenna.jpeg
+        JS.jpeg
+    OUTPUT_DIRECTORY SampleDataFlow
+)
 
-if(WIN32 AND DEPLOY)
-    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QTDIR} ENV QTDIR PATH_SUFFIXES bin)
-    add_custom_command(TARGET sample_dataflow POST_BUILD
-        COMMAND ${WINDEPLOYQT_EXECUTABLE} --qmldir ${CMAKE_CURRENT_SOURCE_DIR} $<TARGET_FILE:sample_dataflow> $<$<CONFIG:Debug>:--pdb>)
-    add_custom_command(TARGET sample_dataflow POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:QuickQanava> $<TARGET_FILE_DIR:sample_dataflow>)
-endif()
+target_link_libraries(SampleDataFlow PRIVATE
+    QuickQanava
+    QuickQanavaplugin
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Qml
+    Qt6::Quick
+    Qt6::QuickControls2
+)
 
-
+add_executable(sample_dataflow_exe dataflow.cpp)
+qt6_add_resources(sample_dataflow_exe "controls_conf"
+    PREFIX
+        "/"
+    FILES
+        "qtquickcontrols2.conf"
+)
+target_link_libraries(sample_dataflow_exe PRIVATE
+    QuickQanava
+    QuickQanavaplugin
+    SampleDataFlow
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Qml
+    Qt6::Quick
+    Qt6::QuickControls2
+)
 

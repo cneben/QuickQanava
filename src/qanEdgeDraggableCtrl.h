@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -60,6 +60,13 @@ public:
     explicit EdgeDraggableCtrl() = default;
     virtual ~EdgeDraggableCtrl() override = default;
     EdgeDraggableCtrl(const EdgeDraggableCtrl&) = delete;
+
+public:
+    inline auto getTarget() noexcept -> qan::Edge* { return _target.data(); }
+    inline auto getTarget() const noexcept -> const qan::Edge* { return _target.data(); }
+    inline auto setTarget(qan::Edge* target) noexcept { _target = target; }
+private:
+    QPointer<qan::Edge>    _target{nullptr};
 
 public:
     inline auto getTargetItem() noexcept -> qan::EdgeItem* { return _targetItem.data(); }

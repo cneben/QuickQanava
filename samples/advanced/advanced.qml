@@ -30,8 +30,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 import QtQuick.Shapes            1.0
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 import "." as Qan
 
 ApplicationWindow {
@@ -67,7 +66,7 @@ ApplicationWindow {
                 const g1 = topology.insertGroup(advancedGroupDelegate);
                 g1.label = "GROUP 1";
                 g1.item.x = 300; g1.item.y = 80;
-                g1.item.width = 450; g1.item.height = 220;
+                g1.item.width = 450; g1.item.height = 260;
 
                 const g1n1 = topology.insertNode(advancedNodeDelegate);
                 topology.groupNode(g1, g1n1);
@@ -98,7 +97,7 @@ ApplicationWindow {
                 const g2 = topology.insertGroup(advancedGroupDelegate);
                 g2.label = "GROUP 2";
                 g2.item.x = 200; g2.item.y = 380;
-                g2.item.width = 190; g2.item.height = 120;
+                g2.item.width = 190; g2.item.height = 150;
 
                 const g2n1 = topology.insertNode(advancedNodeDelegate);
                 topology.groupNode(g2, g2n1);

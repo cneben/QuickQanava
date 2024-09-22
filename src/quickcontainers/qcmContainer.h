@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -417,8 +417,8 @@ public:
 
 private:
     inline auto clearImpl( bool deleteContent, ItemDispatcherBase::ptr_type ) -> void {
-        if ( deleteContent ) {
-            for ( const auto& p: qAsConst(_container) )
+        if (deleteContent) {
+            for (const auto& p: std::as_const(_container))
                 delete p;
         }
     }

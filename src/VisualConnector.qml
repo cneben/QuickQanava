@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,10 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick 2.7
+import QtQuick
 
-import QuickQanava        2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 /*! \brief Droppable node control that allow direct mouse/touch edge creation between nodes.
  *
@@ -73,7 +72,7 @@ Qan.Connector {
     //! True when the connector item is currently dragged.
     property bool   connectorDragged: dropDestArea.drag.active
 
-    edgeComponent: Component{ Qan.Edge{} }
+    edgeComponent: Component{ Edge{} }
     onEdgeColorChanged: {
         if (edgeItem)
             edgeItem.color = edgeColor
@@ -88,7 +87,6 @@ Qan.Connector {
     visible: false
     selectable: false
     clip: false
-    antialiasing: true
 
     /*! \brief Internally used to reset correct connector position according to current node
      *  or port configuration, also restore position bindings to source.
@@ -177,7 +175,8 @@ Qan.Connector {
         state: "NORMAL"
         color: Qt.rgba(0, 0, 0, 0)
         radius: width / 2.
-        smooth: true;   antialiasing: true
+        smooth: true
+        antialiasing: true
         property real   borderWidth: visualConnector.connectorLineWidth
         border.color: visualConnector.connectorColor
         border.width: borderWidth
@@ -212,7 +211,7 @@ Qan.Connector {
             if (edgeItem)       // Hide the edgeItem after a mouse release or it could
                 edgeItem.visible = false    // be visible on non rectangular nodes.
         }
-        onPressed: function(mouse) {
+        onPressed: (mouse) =>  {
             mouse.accepted = true
             connectorPressed()
             if (edgeItem)

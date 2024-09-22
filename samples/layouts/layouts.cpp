@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2020, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,39 +24,33 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick                   2.8
-import QtQuick.Controls          2.1
-import QtQuick.Controls.Material 2.1
-import QtQuick.Layouts           1.3
-import QtQuick.Shapes            1.0
+//-----------------------------------------------------------------------------
+// This file is a part of the QuickQanava software library.
+//
+// \file	layouts.cpp
+// \author	benoit@destrat.io
+// \date	20240813
+//-----------------------------------------------------------------------------
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+// Qt headers
+#include <QGuiApplication>
+#include <QtQml>
+#include <QQuickStyle>
 
-ApplicationWindow {
-    id: window
-    visible: true
-    width: 1280; height: 720
-    title: "Edges sample"
+// QuickQanava headers
+#include <QuickQanava.h>
 
-    Pane { anchors.fill: parent }
-    ColumnLayout {
-        anchors.fill: parent
-        TabBar {
-            id: tabBar
-            Layout.preferredWidth: 450; Layout.fillHeight: false
-            TabButton { text: qsTr("Curved Edges") }
-            TabButton { text: qsTr("Edge Endings") }
-            TabButton { text: qsTr("Ortho Edges") }
-        }
-        StackLayout {
-            clip: true
-            Layout.fillWidth: true; Layout.fillHeight: true
-            currentIndex: tabBar.currentIndex
-            Item { Loader { anchors.fill: parent; source: "qrc:/curved.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/endings.qml"} }
-            Item { Loader { anchors.fill: parent; source: "qrc:/ortho.qml"} }
-        }
-    }
+//-----------------------------------------------------------------------------
+int	main( int argc, char** argv )
+{
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
+    QQmlApplicationEngine engine;
+    engine.addImportPath("../../src/");
+    QuickQanava::initialize(&engine);
+    engine.load(QUrl("qrc:/layouts.qml"));
+    const auto status = app.exec();
+    return status;
 }
+//-----------------------------------------------------------------------------
 

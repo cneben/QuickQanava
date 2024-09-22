@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,13 +32,12 @@
 // \date	2015 11 30
 //-----------------------------------------------------------------------------
 
-import QtQuick              2.7
-import QtQuick.Controls     2.1
-import QtQuick.Layouts      1.3
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-
+import QuickQanava as Qan
 
 /*! \brief Default component template for building a custom qan::Node Item with an arbitrary geometry drawn into a JS Canvas2D.
  *
@@ -51,28 +50,29 @@ Item {
     default property alias  children : templateContentLayout.children
 
     function requestPaint() {
-        if ( nodeSymbol.item )
+        if (nodeSymbol.item)
             nodeSymbol.item.requestPaint();
     }
     Loader {    // Node symbol is node background
         id: nodeSymbol
         anchors.fill: parent
-        onItemChanged: {
-            if ( item )
-                backgroundShadow.source = item
-        }
     }
-    Qan.DropShadow {    // Effect source property set in nodeSymbol Loader onItemChanged()
+
+    MultiEffect {
         id: backgroundShadow
+        source: nodeSymbol.item
         anchors.fill: parent
-        horizontalOffset: nodeItem.style.effectRadius
-        verticalOffset: nodeItem.style.effectRadius
-        radius: 8.0
-        samples: 16
-        smooth: true
-        color: nodeItem.style.effectColor
-        visible: nodeItem.style.effectEnabled
-        transparentBorder: true
+        anchors.margins: 1
+        autoPaddingEnabled: false
+        readonly property real shadowOffset: nodeItem.style.effectRadius
+        paddingRect: Qt.rect(shadowOffset, shadowOffset,
+                             parent.width + shadowOffset,
+                             parent.height + shadowOffset)
+        shadowEnabled: true
+        shadowColor: nodeItem.style.effectColor
+        blurMax: 8.
+        shadowHorizontalOffset: shadowOffset
+        shadowVerticalOffset: shadowOffset
     }
 
     ColumnLayout {

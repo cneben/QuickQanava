@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -56,6 +56,7 @@ class OrthoGrid : public Grid
     /*! \name OrthoGrid Object Management *///---------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit OrthoGrid(QQuickItem* parent = nullptr);
     virtual ~OrthoGrid() override = default;
@@ -100,8 +101,8 @@ public:
     GridLine(const GridLine&) = delete;
 
 public:
-    Q_PROPERTY(QPointF p1 READ getP1)
-    Q_PROPERTY(QPointF p2 READ getP2)
+    Q_PROPERTY(QPointF p1 READ getP1 CONSTANT)
+    Q_PROPERTY(QPointF p2 READ getP2 CONSTANT)
 
     const QPointF&  getP1() const { return _p1; }
     const QPointF&  getP2() const { return _p2; }
@@ -131,6 +132,7 @@ class LineGrid : public OrthoGrid
     /*! \name LineGrid Object Management *///----------------------------------
     //@{
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractLineGrid)
 public:
     explicit LineGrid( QQuickItem* parent = nullptr );
     virtual ~LineGrid() override;
@@ -152,19 +154,15 @@ public:
                                const QQuickItem& container,
                                const QQuickItem& navigable ) noexcept override;
 public:
-    Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> minorLines READ getMinorLines)
-    Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> majorLines READ getMajorLines)
+    Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> minorLines READ getMinorLines CONSTANT)
+    Q_PROPERTY(QQmlListProperty<qan::impl::GridLine> majorLines READ getMajorLines CONSTANT)
 
 protected:
     QQmlListProperty<qan::impl::GridLine> getMinorLines();
     QQmlListProperty<qan::impl::GridLine> getMajorLines();
 
 private:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    using size_type = int;
-#else
     using size_type = qsizetype;
-#endif
 
     size_type                   minorLinesCount() const;
     impl::GridLine*             minorLinesAt(size_type index) const;

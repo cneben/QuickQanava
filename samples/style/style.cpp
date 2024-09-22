@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,18 +42,18 @@
 
 using namespace qan;
 
-int	main( int argc, char** argv )
+int	main(int argc, char** argv)
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
 
-    qmlRegisterType< CustomRectNode >( "StyleSample", 1, 0, "CustomRectNode");
-    qmlRegisterType< CustomRoundNode >( "StyleSample", 1, 0, "CustomRoundNode");
-    qmlRegisterType< CustomGraph >( "StyleSample", 1, 0, "CustomGraph");
-    qmlRegisterType< CustomEdge >( "StyleSample", 1, 0, "AbstractCustomEdge");
+    qmlRegisterType<CustomRectNode>("StyleSample", 1, 0, "CustomRectNode");
+    qmlRegisterType<CustomRoundNode>("StyleSample", 1, 0, "CustomRoundNode");
+    qmlRegisterType<CustomGraph>("StyleSample", 1, 0, "CustomGraph");
+    qmlRegisterType<CustomEdge>("StyleSample", 1, 0, "AbstractCustomEdge");
 
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src");  // Enable loading of ../../src/QuickQanava module
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/style.qml"));
     return app.exec();

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -52,9 +52,7 @@ namespace qan {  // ::qan
  *   qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
  *
  *   // From QML:
- *   import QuickQanava 2.0 as Qan
- *   import "qrc:/QuickQanava" 2.0 as Qan
- *
+ *   import QuickQanava as Qan
  *   Item {
  *     id: targetItem
  *     Qan.BottomRightResizer { target: targetItem }
@@ -73,6 +71,7 @@ class BottomRightResizer : public QQuickItem
     /*! \name BottomRightResizer Object Management *///------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     //! .
     explicit BottomRightResizer(QQuickItem* parent = nullptr);

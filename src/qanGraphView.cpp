@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 
 // Qt headers
+#include <QtNumeric>
 #include <QQuickItem>
 
 // QuickQanava headers
@@ -46,8 +47,6 @@ namespace qan { // ::qan
 GraphView::GraphView(QQuickItem* parent) :
     qan::Navigable{parent}
 {
-    setAntialiasing(true);
-    setSmooth(true);
     setFocus(true);
 }
 
@@ -96,17 +95,21 @@ void    GraphView::setGraph(qan::Graph* graph)
         emit graphChanged();
     }
 }
+//-----------------------------------------------------------------------------
 
-void    GraphView::navigableClicked(QPointF pos)
+
+/* GraphView Interactions Management *///--------------------------------------
+void    GraphView::navigableClicked(QPointF pos, QPointF globalPos)
 {
     Q_UNUSED(pos)
+    Q_UNUSED(globalPos)
     if (_graph)
         _graph->clearSelection();
 }
 
-void    GraphView::navigableRightClicked(QPointF pos)
+void    GraphView::navigableRightClicked(QPointF pos, QPointF globalPos)
 {
-    emit    rightClicked(pos);
+    emit rightClicked(pos, globalPos);
 }
 
 QString GraphView::urlToLocalFile(QUrl url) const noexcept
@@ -144,6 +147,21 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                 _graph->setNodeSelected(*nodeItem->getNode(), false);
                 _selectedItems.remove(item);
             }
+        } else {
+            auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
+            if (edgeItem != nullptr &&
+                edgeItem->getEdge() != nullptr) {
+                auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                        item->boundingRect());
+                if (qFuzzyIsNull(itemBr.height()))  // Note: rect.contains does not work with 0 width/height
+                    itemBr.setHeight(0.5);          // br, set minimum width/height to 0.5, to allow vertical /
+                if (qFuzzyIsNull(itemBr.width()))   // horizontal line selection for example.
+                    itemBr.setWidth(0.5);
+                if (!rect.contains(itemBr)) {
+                    _graph->setEdgeSelected(edgeItem->getEdge(), false);
+                    _selectedItems.remove(item);
+                }
+            }
         }
     }
 
@@ -152,6 +170,7 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
     for (const auto item: items) {
         auto nodeItem = qobject_cast<qan::NodeItem*>(item);
         if (nodeItem != nullptr &&
+            nodeItem->isSelectable() &&
             nodeItem->getNode() != nullptr) {
             auto node = nodeItem->getNode();
             const auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
@@ -161,6 +180,23 @@ void    GraphView::selectionRectActivated(const QRectF& rect)
                 // Note we assume that items are not deleted while the selection
                 // is in progress... (QPointer can't be trivially inserted in QSet)
                 _selectedItems.insert(nodeItem);
+            }
+        } else {
+            // 3. Edge selection...
+            auto edgeItem = qobject_cast<qan::EdgeItem*>(item);
+            if (edgeItem != nullptr &&
+                edgeItem->getEdge() != nullptr) {
+                auto itemBr = item->mapRectToItem(_graph->getContainerItem(),
+                                                  item->boundingRect());
+                if (qFuzzyIsNull(itemBr.height()))  // Note: rect.contains does not work with 0 width/height
+                    itemBr.setHeight(0.5);          // br, set minimum width/height to 0.5, to allow vertical /
+                if (qFuzzyIsNull(itemBr.width()))   // horizontal line selection for example.
+                    itemBr.setWidth(0.5);
+                if (rect.contains(itemBr)) {
+                    auto edge = edgeItem->getEdge();
+                    _graph->setEdgeSelected(edge, true);
+                    _selectedItems.insert(edgeItem);
+                }
             }
         }
     }

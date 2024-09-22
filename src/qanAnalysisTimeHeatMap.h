@@ -61,6 +61,7 @@ class AnalysisTimeHeatMap : public QQuickPaintedItem
     /*! \name AnalysisTimeHeatMap Object Management *///-----------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit AnalysisTimeHeatMap(QQuickItem* parent = nullptr);
     virtual ~AnalysisTimeHeatMap() = default;

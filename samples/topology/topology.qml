@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,20 +24,14 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import QtQuick.Window 2.2
-import QtQuick 2.13
+import QtQuick.Window
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls.Material
+import Qt.labs.platform as Labs
 
-import QtQuick.Controls 2.15
-
-import QtQuick.Layouts  1.3
-import QtQuick.Controls.Material 2.1
-import QtQuick.Shapes            1.0
-
-import Qt.labs.platform 1.1 as Labs
-
-import QuickQanava      2.0 as Qan
-import TopologySample   1.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
+import TopologySample as Qan
 
 ApplicationWindow {
     id: window
@@ -251,12 +245,12 @@ ApplicationWindow {
             selectionColor: Material.accent
             connectorColor: Material.accent
             connectorEdgeColor: Material.accent
-            onConnectorEdgeInserted: edge => {
+            onConnectorEdgeInserted: (edge) => {
                 if (edge)
                     edge.label = "My edge"
             }
             property Component faceNodeComponent: Qt.createComponent("qrc:/FaceNode.qml")
-            onNodeClicked: node => {
+            onNodeClicked: (node) => {
                 portsListView.model = node.item.ports
             }
             onNodeRightClicked: (node, pos) => {
@@ -407,40 +401,40 @@ ApplicationWindow {
                 var dd3p1 = topology.insertPort(dd3, Qan.NodeItem.Top)
                 dd3p1.label = "P#1"
 
-                /* e = topology.insertEdge(bw2, bw1)
-                 topology.bindEdgeSource(e, bw2p1)
-                 topology.bindEdgeDestination(e, bw1p2)
-                 e = topology.insertEdge(bw3, bw1)
-                 topology.bindEdgeSource(e, bw3p1)
-                 topology.bindEdgeDestination(e, bw1p3)
+                let e = topology.insertEdge(bw2, bw1)
+                topology.bindEdgeSource(e, bw2p1)
+                topology.bindEdgeDestination(e, bw1p2)
+                e = topology.insertEdge(bw3, bw1)
+                topology.bindEdgeSource(e, bw3p1)
+                topology.bindEdgeDestination(e, bw1p3)
 
-                 e = topology.insertEdge(js1, js2)
-                 topology.bindEdgeSource(e, js1p4)
-                 topology.bindEdgeDestination(e, js2p1)
+                e = topology.insertEdge(js1, js2)
+                topology.bindEdgeSource(e, js1p4)
+                topology.bindEdgeDestination(e, js2p1)
 
-                 e = topology.insertEdge(js1, vd1)
-                 topology.bindEdgeSource(e, js1p2)
-                 topology.bindEdgeDestination(e, vd1p1)
+                e = topology.insertEdge(js1, vd1)
+                topology.bindEdgeSource(e, js1p2)
+                topology.bindEdgeDestination(e, vd1p1)
 
-                 e = topology.insertEdge(js1, dd1)
-                 topology.bindEdgeSource(e, js1p3)
-                 topology.bindEdgeDestination(e, dd1p1)
+                e = topology.insertEdge(js1, dd1)
+                topology.bindEdgeSource(e, js1p3)
+                topology.bindEdgeDestination(e, dd1p1)
 
-                 e = topology.insertEdge(dd2, dd1)
-                 topology.bindEdgeSource(e, dd2p1)
-                 topology.bindEdgeDestination(e, dd1p2)
+                e = topology.insertEdge(dd2, dd1)
+                topology.bindEdgeSource(e, dd2p1)
+                topology.bindEdgeDestination(e, dd1p2)
 
-                 e = topology.insertEdge(dd3, dd1)
-                 topology.bindEdgeSource(e, dd3p1)
-                 topology.bindEdgeDestination(e, dd1p3)
+                e = topology.insertEdge(dd3, dd1)
+                topology.bindEdgeSource(e, dd3p1)
+                topology.bindEdgeDestination(e, dd1p3)
 
-                 e = topology.insertEdge(vd2, vd1)
-                 topology.bindEdgeSource(e, vd2p1)
-                 topology.bindEdgeDestination(e, vd1p2)
+                e = topology.insertEdge(vd2, vd1)
+                topology.bindEdgeSource(e, vd2p1)
+                topology.bindEdgeDestination(e, vd1p2)
 
-                 e = topology.insertEdge(vd3, vd1)
-                 topology.bindEdgeSource(e, vd3p1)
-                 topology.bindEdgeDestination(e, vd1p3)*/
+                e = topology.insertEdge(vd3, vd1)
+                topology.bindEdgeSource(e, vd3p1)
+                topology.bindEdgeDestination(e, vd1p3)
             }
         } // Qan.Graph: graph
         onRightClicked: pos => {
@@ -779,10 +773,10 @@ ApplicationWindow {
                     model: ["Straight", "Curved"]
                     enabled: defaultEdgeStyle !== undefined
                     currentIndex: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight ? 0 : 1
-                    onActivated: {
-                        if (index == 0)
+                    onActivated: (index) => {
+                        if (index === 0)
                             defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
-                        else if (index == 1)
+                        else if (index === 1)
                             defaultEdgeStyle.lineType = Qan.EdgeStyle.Curved
                     }
                 }

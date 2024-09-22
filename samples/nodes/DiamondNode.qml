@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the QuickQanava software library. Copyright 2023 Benoit AUTHEMAN.
+// This file is a part of the QuickQanava software library. Copyright 2024 Benoit AUTHEMAN.
 //
 // \file	DiamondNode.qml
 // \author	benoit@destrat.io
@@ -35,8 +35,7 @@
 import QtQuick              2.8
 import QtQuick.Layouts      1.3
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"       as Qan
+import QuickQanava as Qan
 
 Qan.NodeItem {
     id: diamondNode
@@ -73,24 +72,24 @@ Qan.NodeItem {
             z: 1
             id: nodeSymbol
             onPaint: {
-                var ctx = nodeSymbol.getContext( "2d" )
-                ctx.clearRect( 0, 0, width, height )
+                var ctx = nodeSymbol.getContext("2d")
+                ctx.clearRect(0, 0, width, height)
                 ctx.lineWidth = diamondNode.borderWidth
                 ctx.strokeStyle = diamondNode.borderColor
-                ctx.beginPath( )
+                ctx.beginPath()
                 var w = width - 1;  var w2 = w / 2
                 var h = height - 1; var h2 = h / 2
-                ctx.moveTo( w2, 1 )
-                ctx.lineTo( w2 + h2, h2 )
-                ctx.lineTo( w2, h )
-                ctx.lineTo( w2 - h2, h2 )
-                ctx.lineTo( w2, 1 )
-                ctx.stroke( )
+                ctx.moveTo(w2, 1)
+                ctx.lineTo(w2 + h2, h2)
+                ctx.lineTo(w2, h)
+                ctx.lineTo(w2 - h2, h2)
+                ctx.lineTo(w2, 1)
+                ctx.stroke()
                 var gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0.1, Qt.lighter( diamondNode.style.backColor, 1.8 )  );
-                gradient.addColorStop(0.9, diamondNode.style.backColor );
+                gradient.addColorStop(0.1, Qt.lighter(diamondNode.style.backColor, 1.8));
+                gradient.addColorStop(0.9, diamondNode.style.backColor);
                 ctx.fillStyle = gradient
-                ctx.fill( )
+                ctx.fill()
             }
         }
     }

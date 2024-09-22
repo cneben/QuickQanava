@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -29,8 +29,7 @@ import QtQuick.Controls          2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 import "." as Qan
 
 Qan.GraphView {
@@ -74,7 +73,7 @@ Qan.GraphView {
             createDefaultEdge: false    // SAMPLE: When createDefaultEdge is set to false, VisualConnector does not use Qan.Graph.insertEdge()
                                         // to create edge, but instead emit requestEdgeCreation (see below) to allow user to create custom
                                         // edge (either specifying a custom edge component, or calling a user defined method on graph).
-            onRequestEdgeCreation: {
+            onRequestEdgeCreation: (src, dst, srcPortItem, dstPortItem) => {
                 if (src && dst && dstPortItem) {
                     notifyUser("Edge creation requested between " + src.label + " and " + dstPortItem.label)
                     let e = graph.insertEdge(src, dst);
@@ -130,7 +129,7 @@ Qan.GraphView {
             graph.setConnectorSource(s1)
             customConnector.sourceNode = s1
         }
-        onNodeClicked: {
+        onNodeClicked: (node) => {
             if (node && node.item) {
                 customConnector.sourceNode = node
             } else

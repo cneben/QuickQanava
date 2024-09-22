@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -77,10 +77,12 @@ auto    EdgeItem::getEdge() noexcept -> qan::Edge* { return _edge.data(); }
 auto    EdgeItem::getEdge() const noexcept -> const qan::Edge* { return _edge.data(); }
 auto    EdgeItem::setEdge(qan::Edge* edge) noexcept -> void
 {
-    _edge = edge;
-    if (edge != nullptr &&
-        edge->getItem() != this)
+    if (_edge != edge) {
+        _edge = edge;
         edge->setItem(this);
+        const auto edgeDraggableCtrl = static_cast<EdgeDraggableCtrl*>(_draggableCtrl.get());
+        edgeDraggableCtrl->setTarget(edge);
+    }
 }
 
 auto    EdgeItem::getGraph() const -> const qan::Graph*
@@ -202,7 +204,7 @@ void    EdgeItem::configureDestinationItem(QQuickItem* item)
 /* Edge Drawing Management *///------------------------------------------------
 void    EdgeItem::setHidden(bool hidden) noexcept
 {
-    if ( hidden != _hidden ) {
+    if (hidden != _hidden) {
         _hidden = hidden;
         emit hiddenChanged();
     }
@@ -210,7 +212,7 @@ void    EdgeItem::setHidden(bool hidden) noexcept
 
 void    EdgeItem::setArrowSize( qreal arrowSize ) noexcept
 {
-    if ( !qFuzzyCompare(1. + arrowSize, 1. + _arrowSize ) ) {
+    if (!qFuzzyCompare(1. + arrowSize, 1. + _arrowSize)) {
         _arrowSize = arrowSize;
         emit arrowSizeChanged();
         updateItem();
@@ -637,8 +639,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update source arrow cache points
     const auto srcShape = getSrcShape();
     switch (srcShape) {
-        // FIXME AHN
-        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.srcA1 = arrowA1;
@@ -658,8 +658,6 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
     // Update destination arrow cache points
     const auto dstShape = getDstShape();
     switch (dstShape) {
-        // FIXME AHN
-        //case qan::EdgeItem::ArrowShape::Undefined:  // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::Arrow:      // [[fallthrough]]
         case qan::EdgeItem::ArrowShape::ArrowOpen:
             cache.dstA1 = arrowA1;
@@ -1039,11 +1037,7 @@ QPointF  EdgeItem::getLineIntersection(const QPointF& p1, const QPointF& p2,
     QPointF intersection;
     for (auto p = 0; p < polygon.length() - 1 ; ++p) {
         const QLineF polyLine(polygon[p], polygon[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
             source = intersection;
             break;
         }
@@ -1059,11 +1053,7 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     QPointF intersection;
     for (auto p = 0; p < srcBp.length() - 1 ; ++p) {
         const QLineF polyLine(srcBp[p], srcBp[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
             source = intersection;
             break;
         }
@@ -1071,11 +1061,7 @@ QLineF  EdgeItem::getLineIntersection( const QPointF& p1, const QPointF& p2,
     QPointF destination{p2};
     for (auto p = 0; p < dstBp.length() - 1 ; ++p) {
         const QLineF polyLine(dstBp[p], dstBp[p + 1]);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#else
-        if (line.intersect(polyLine, &intersection) == QLineF::BoundedIntersection ) {
-#endif
+        if (line.intersects(polyLine, &intersection) == QLineF::BoundedIntersection) {
             destination = intersection;
             break;
         }
@@ -1277,6 +1263,8 @@ void    EdgeItem::setDragged(bool dragged) noexcept
         emit draggedChanged();
     }
 }
+
+qan::AbstractDraggableCtrl& EdgeItem::draggableCtrl() { Q_ASSERT(_draggableCtrl != nullptr); return *_draggableCtrl; }
 //-----------------------------------------------------------------------------
 
 

@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 20240922 2.5.0:
+- #248: Add full support for cmake qt_add_qml_module(), QuickQanava must now be used
+  as a static QML module (qml compiler is automatically applied, it look like it is a lot faster...).
+- #244: Add scrollbar support to qan::Navigable, better graph view area support.
+- #238: Change group layout, add header support in group delegate.
+- #228: Add preliminary support for auto tree layouts.
+
+## 20240812 2.4.2:
+- Merge #230 by @emmenlau, enhance node/group factory methods template signature.
+- Merge #236 by @emmenlau, fix a memory leak.
+- Merge #233 by @emmenlau, fix a compilation issue in graph.h.
+- Change group dragging default behaviour: group are now only draggable by their
+  header. Old policy can be restored with qan::GroupItem::DragPolicy.
+
 ## 20231116 2.4.0:
 - Rewrite the Qt5/6 CMake configuration.
 - Remove all QUICKQANAVA_QT_MAJOR_VERSION and all compilation options, compilation is now always "static".

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2023, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -63,6 +63,7 @@ class NodeBehaviour : public QObject,
                       public gtpo::node_observer<qan::Node, qan::Edge>
 {
     Q_OBJECT
+
     /*! \name NodeBehaviour Management *///------------------------------------
     //@{
 public:
