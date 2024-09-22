@@ -53,6 +53,8 @@ namespace qan { // ::qan
 class GraphView : public qan::Navigable
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractGraphView)
+
     /*! \name GraphView Object Management *///---------------------------------
     //@{
 public:

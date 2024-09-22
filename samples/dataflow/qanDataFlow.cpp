@@ -33,26 +33,25 @@
 //-----------------------------------------------------------------------------
 
 // QuickQanava headers
-#include "../../src/QuickQanava.h"
+#include "QuickQanava.h"
 #include "./qanDataFlow.h"
 
 namespace qan { // ::qan
 
-void    FlowNodeBehaviour::inNodeInserted( qan::Node& inNode, qan::Edge& edge ) noexcept
+void    FlowNodeBehaviour::inNodeInserted(qan::Node& inNode, qan::Edge& edge) noexcept
 {
     Q_UNUSED(edge);
     const auto inFlowNode = qobject_cast<qan::FlowNode*>(&inNode);
     const auto flowNodeHost = qobject_cast<qan::FlowNode*>(getHost());
-    if ( inFlowNode != nullptr &&
-         flowNodeHost != nullptr ) {
-        //
+    if (inFlowNode != nullptr &&
+        flowNodeHost != nullptr) {
         QObject::connect(inFlowNode,    &qan::FlowNode::outputChanged,
                          flowNodeHost,  &qan::FlowNode::inNodeOutputChanged);
     }
     flowNodeHost->inNodeOutputChanged();    // Force a call since with a new edge insertion, actual value might aready be initialized
 }
 
-void    FlowNodeBehaviour::inNodeRemoved( qan::Node& inNode, qan::Edge& edge ) noexcept
+void    FlowNodeBehaviour::inNodeRemoved(qan::Node& inNode, qan::Edge& edge) noexcept
 {
     Q_UNUSED(inNode); Q_UNUSED(edge);
 }
@@ -61,7 +60,7 @@ QQmlComponent*  FlowNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   qan_FlowNode_delegate;
     if ( !qan_FlowNode_delegate )
-        qan_FlowNode_delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/FlowNode.qml");
+        qan_FlowNode_delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/FlowNode.qml");
     return qan_FlowNode_delegate.get();
 }
 
@@ -80,7 +79,7 @@ QQmlComponent*  PercentageNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/PercentageNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/PercentageNode.qml");
     return delegate.get();
 }
 
@@ -88,7 +87,7 @@ QQmlComponent*  OperationNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/OperationNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/OperationNode.qml");
     return delegate.get();
 }
 
@@ -132,7 +131,7 @@ QQmlComponent*  ImageNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/ImageNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/ImageNode.qml");
     return delegate.get();
 }
 
@@ -140,7 +139,7 @@ QQmlComponent*  ColorNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/ColorNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/ColorNode.qml");
     return delegate.get();
 }
 
@@ -148,7 +147,7 @@ QQmlComponent*  TintNode::delegate(QQmlEngine& engine) noexcept
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if ( !delegate )
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/TintNode.qml");
+        delegate = std::make_unique<QQmlComponent>(&engine, ":/qt/qml/SampleDataFlow/TintNode.qml");
     return delegate.get();
 }
 
@@ -202,6 +201,7 @@ void    TintNode::inNodeOutputChanged()
 
 qan::Node* FlowGraph::insertFlowNode(FlowNode::Type type)
 {
+    qWarning() << "FlowGraph::insertFlowNode(): type=" << type;
     qan::Node* flowNode = nullptr;
     switch ( type ) {
     case qan::FlowNode::Type::Percentage:
@@ -236,7 +236,7 @@ qan::Node* FlowGraph::insertFlowNode(FlowNode::Type type)
         break;
     default: return nullptr;
     }
-    if ( flowNode )
+    if (flowNode)
         flowNode->installBehaviour(std::make_unique<FlowNodeBehaviour>());
     return flowNode;
 }

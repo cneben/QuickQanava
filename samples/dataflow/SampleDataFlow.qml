@@ -29,9 +29,8 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtQuick.Shapes
 
-import QuickQanava          2.0 as Qan
-import QuickQanava.Samples  1.0
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
+import SampleDataFlow
 
 ApplicationWindow {
     id: window

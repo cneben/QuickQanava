@@ -34,8 +34,7 @@
 
 import QtQuick
 
-import QuickQanava        2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 Qan.AbstractTableBorder {
     id: tableBorder

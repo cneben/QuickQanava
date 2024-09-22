@@ -40,8 +40,6 @@
 // QuickQanava headers
 #include <QuickQanava>
 
-#include "./qanDataFlow.h"
-
 using namespace qan;
 
 //-----------------------------------------------------------------------------
@@ -53,13 +51,10 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src/");
+    engine.addImportPath("./");
     QuickQanava::initialize(&engine);
-    qmlRegisterType< qan::FlowNode >( "QuickQanava.Samples", 1, 0, "FlowNode");
-    qmlRegisterType< qan::OperationNode >( "QuickQanava.Samples", 1, 0, "OperationNode");
-    qmlRegisterType< qan::FlowGraph >( "QuickQanava.Samples", 1, 0, "FlowGraph");
-
-    engine.load(QUrl("qrc:/dataflow.qml"));
+    engine.loadFromModule("SampleDataFlow", "SampleDataFlow");
     return app.exec();
 }
 //-----------------------------------------------------------------------------

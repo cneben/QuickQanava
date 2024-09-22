@@ -85,6 +85,7 @@ class NodeItem : public QQuickItem,
     Q_OBJECT
     Q_INTERFACES(qan::Selectable)
     Q_INTERFACES(qan::Draggable)
+    QML_ELEMENT
 public:
     //! Node constructor.
     explicit NodeItem(QQuickItem* parent = nullptr);

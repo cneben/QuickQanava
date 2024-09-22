@@ -30,10 +30,8 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts           1.3
 import Qt.labs.platform          1.0    // ColorDialog
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 import "." as Qan
-
 
 Qan.GraphView {
     id: graphView

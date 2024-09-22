@@ -35,8 +35,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import QuickQanava      2.0 as Qan
-import "qrc:/QuickQanava" as Qan
+import QuickQanava as Qan
 
 /*! \brief Visual view for a Qan.Graph component.
  *

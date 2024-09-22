@@ -51,6 +51,7 @@ class Grid : public QQuickItem
     /*! \name Grid Interface *///----------------------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit Grid(QQuickItem* parent = nullptr);
     virtual ~Grid() override = default;

@@ -33,7 +33,7 @@
 import QtQuick
 import QtQuick.Layouts
 
-import QuickQanava 2.0 as Qan
+import QuickQanava as Qan
 
 RowLayout {
     id: root

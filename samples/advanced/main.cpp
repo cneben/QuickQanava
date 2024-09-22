@@ -41,11 +41,12 @@
 #include <QuickQanava>
 
 //-----------------------------------------------------------------------------
-int	main( int argc, char** argv )
+int	main(int argc, char** argv)
 {
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
+    engine.addImportPath("../../src/");
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/advanced.qml"));
     return app.exec();

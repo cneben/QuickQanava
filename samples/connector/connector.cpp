@@ -52,7 +52,7 @@ int	main( int argc, char** argv )
     QGuiApplication app(argc, argv);   // Necessary for Qt.labs ColorDialog
     QQuickStyle::setStyle("Material");
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
+    engine.addImportPath("../../src/");
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/connector.qml"));
     return app.exec();

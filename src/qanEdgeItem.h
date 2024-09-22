@@ -60,6 +60,7 @@ class EdgeItem : public QQuickItem,
     /*! \name Edge Object Management *///--------------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
     Q_INTERFACES(qan::Selectable)
 public:
     explicit EdgeItem(QQuickItem* parent = nullptr);

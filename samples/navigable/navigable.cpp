@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<qan::LineGrid>("QuickQanava", 2, 0, "AbstractLineGrid");
 
     QQmlApplicationEngine engine;
-    engine.addPluginPath(QStringLiteral("../../src")); // Necessary only for development when plugin is not installed to QTDIR/qml
-    engine.load( QUrl( QStringLiteral( "qrc:/navigable.qml" ) ) );
+    engine.addImportPath("../../src/");
+    engine.load(QUrl(QStringLiteral("qrc:/navigable.qml")));
     return app.exec();
 }

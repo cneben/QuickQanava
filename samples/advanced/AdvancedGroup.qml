@@ -36,8 +36,7 @@ import QtQuick              2.8
 import QtQuick.Controls     2.1
 import QtQuick.Layouts      1.3
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Qan.GroupItem {
     id: advancedGroup
@@ -47,13 +46,9 @@ Qan.GroupItem {
     height: 150
 
     default property alias children : template
-    container: template.content   // See qan::GroupItem::container property documentation
-
-    //! Show or hide group top left label editor (default to visible).
-    property alias labelEditorVisible : template.labelEditorVisible
-
-    //! Show or hide group top left expand button (default to visible).
-    property alias expandButtonVisible : template.expandButtonVisible
+    container: template.container   // See qan::GroupItem::container property documentation
+    labelEditorVisible : template.labelEditorVisible
+    //expandButtonVisible : template.expandButtonVisible
 
     Qan.RectGroupTemplate {
         id: template

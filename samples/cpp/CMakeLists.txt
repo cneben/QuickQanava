@@ -2,13 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 
 project(QuickQanava_sample_cpp VERSION 2.5.0 LANGUAGES CXX)
 
-
+# Configure Qt
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
+qt_standard_project_setup(REQUIRES 6.6)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Configure Qt
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Quick QuickControls2)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -31,6 +30,7 @@ endif()
 add_executable(sample_cpp ${source_files} cpp_sample.qrc)
 target_link_libraries(sample_cpp PUBLIC
     QuickQanava
+    QuickQanavaplugin
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::QuickControls2)

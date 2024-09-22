@@ -67,10 +67,8 @@
 
 struct QuickQanava {
     static void initialize(QQmlEngine* engine) {
-        Q_INIT_RESOURCE(QuickQanava_static);
         QuickContainers::initialize();
 
-        qmlRegisterType<qan::Node>("QuickQanava", 2, 0, "AbstractNode");
         if (engine != nullptr) {
             engine->rootContext()->setContextProperty("defaultNodeStyle", QVariant::fromValue(qan::Node::style()));
             engine->rootContext()->setContextProperty("defaultEdgeStyle", QVariant::fromValue(qan::Edge::style()));
@@ -88,38 +86,6 @@ struct QuickQanava {
             engine->rootContext()->setContextProperty("qanEdgeDstCirclePathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstCirclePath.qml", engine));
             engine->rootContext()->setContextProperty("qanEdgeDstRectPathComponent", new QQmlComponent(engine, "qrc:/QuickQanava/EdgeDstRectPath.qml", engine));
         }
-        qmlRegisterType<qan::NodeItem>("QuickQanava", 2, 0, "NodeItem");
-        qmlRegisterType<qan::PortItem>("QuickQanava", 2, 0, "PortItem");
-        qmlRegisterType<qan::Edge>("QuickQanava", 2, 0, "AbstractEdge");
-        qmlRegisterType<qan::EdgeItem>("QuickQanava", 2, 0, "EdgeItem");
-        qmlRegisterType<qan::Group>("QuickQanava", 2, 0, "AbstractGroup");
-        qmlRegisterType<qan::GroupItem>("QuickQanava", 2, 0, "GroupItem");
-        qmlRegisterType<qan::TableGroupItem>("QuickQanava", 2, 0, "TableGroupItem");
-        qmlRegisterType<qan::TableCell>("QuickQanava", 2, 0, "AbstractTableCell");
-        qmlRegisterType<qan::TableBorder>("QuickQanava", 2, 0, "AbstractTableBorder");
-        qmlRegisterType<qan::Connector>("QuickQanava", 2, 0, "Connector");
-
-        qmlRegisterType<qan::Graph>("QuickQanava", 2, 0, "Graph");
-        qmlRegisterType<qan::GraphView>("QuickQanava", 2, 0, "AbstractGraphView");
-        qmlRegisterType<qan::Navigable>("QuickQanava", 2, 0, "Navigable");
-        qmlRegisterType<qan::NavigablePreview>("QuickQanava", 2, 0, "AbstractNavigablePreview");
-        qmlRegisterType<qan::AnalysisTimeHeatMap>("QuickQanava", 2, 0, "AnalysisTimeHeatMap");
-
-        qmlRegisterType<qan::Grid>("QuickQanava", 2, 0, "AbstractGrid");
-        qmlRegisterType<qan::OrthoGrid>("QuickQanava", 2, 0, "OrthoGrid");
-        qmlRegisterType<qan::LineGrid>("QuickQanava", 2, 0, "AbstractLineGrid");
-        qmlRegisterType<qan::impl::GridLine>("QuickQanava", 2, 0, "GridLine");
-
-        qmlRegisterType<qan::Style>("QuickQanava", 2, 0, "Style");
-        qmlRegisterType<qan::NodeStyle>("QuickQanava", 2, 0, "NodeStyle");
-        qmlRegisterType<qan::EdgeStyle>("QuickQanava", 2, 0, "EdgeStyle");
-        qmlRegisterType<qan::StyleManager>("QuickQanava", 2, 0, "StyleManager");
-        qmlRegisterType<qan::BottomRightResizer>("QuickQanava", 2, 0, "BottomRightResizer");
-        qmlRegisterType<qan::RightResizer>("QuickQanava", 2, 0, "RightResizer");
-        qmlRegisterType<qan::BottomResizer>("QuickQanava", 2, 0, "BottomResizer");
-
-        qmlRegisterType<qan::RandomLayout>("QuickQanava", 2, 0, "RandomLayout");
-        qmlRegisterType<qan::OrgTreeLayout>("QuickQanava", 2, 0, "OrgTreeLayout");
     } // initialize()
 };
 

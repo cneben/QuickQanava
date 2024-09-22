@@ -46,7 +46,7 @@ import QtQuick.Controls
  *
  * Exemple use on an user defined custom node:
  * \code
- * Qan.AbstractNode {
+ * Qan.Node {
  *   id: rectNode
  *   width: 110; height: 50
  *   Connections {

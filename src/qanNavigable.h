@@ -49,7 +49,7 @@ namespace qan { // ::qan
  * \code
  * // Don't forget to register the component:
  * // C++: qmlRegisterType<qan::Navigable>("Qanava", 1, 0, "Navigable");
- * // QML: import QuickQanava 2.0 as Qan
+ * // QML: import QuickQanava as Qan
  * Qan.Navigable {
  *   anchors.fill: parent
  *   clip: true     // Don't set clipping if Navigable is anchored directly to your main window
@@ -63,7 +63,7 @@ namespace qan { // ::qan
  *
  * A "navigable area" could easily be controlled with a slider control:
  * \code
- * // QML: import QuickQanava 2.0 as Qan
+ * // QML: import QuickQanava as Qan
  *
  * Qan.Navigable {
  *   id: navigable
@@ -93,7 +93,9 @@ class Navigable : public QQuickItem
 {
     /*! \name Navigable Object Management *///---------------------------------
     //@{
-Q_OBJECT
+    Q_OBJECT
+    QML_ELEMENT
+
 public:
     explicit Navigable(QQuickItem* parent = nullptr);
     virtual ~Navigable() override;

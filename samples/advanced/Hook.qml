@@ -32,8 +32,8 @@
 // \date	2023 11 17
 //-----------------------------------------------------------------------------
 
-import QtQuick          2.7
-import QuickQanava      2.0 as Qan
+import QtQuick 2.7
+import QuickQanava as Qan
 
 /*! A Hook has is transparent square which is only visible when selected.
  *

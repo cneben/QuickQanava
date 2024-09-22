@@ -29,9 +29,7 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import QtQuick.Shapes
 
-import QuickQanava 2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-import "." as Qan
+import QuickQanava as Qan
 
 ApplicationWindow {
     id: window

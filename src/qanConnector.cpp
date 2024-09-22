@@ -197,33 +197,34 @@ auto    Connector::getEdgeComponent() noexcept -> QQmlComponent* { return _edgeC
 
 auto    Connector::setEdgeComponent(QQmlComponent* edgeComponent) noexcept -> void
 {
-    if ( edgeComponent != _edgeComponent ) {
+    if (edgeComponent != _edgeComponent) {
         _edgeComponent = edgeComponent;
-        if ( _edgeComponent &&
-             _edgeComponent->isReady() ) {
+        if (_edgeComponent &&
+            _edgeComponent->isReady()) {
             const auto context = qmlContext(this);
-            if ( context != nullptr ) {
+            if (context != nullptr) {
                 const auto edgeObject = _edgeComponent->create(context);    // Create a new edge
-
                 _edgeItem.reset(qobject_cast<qan::EdgeItem*>(edgeObject));  // Any existing edge item is destroyed
-                if ( _edgeItem &&
-                     !_edgeComponent->isError() ) {
-                    QQmlEngine::setObjectOwnership( _edgeItem.data(), QQmlEngine::CppOwnership );
-                    _edgeItem->setVisible( false );
+                if (_edgeItem &&
+                    !_edgeComponent->isError()) {
+                    QQmlEngine::setObjectOwnership(_edgeItem.data(), QQmlEngine::CppOwnership);
+                    _edgeItem->setVisible(false);
                     _edgeItem->setAcceptDrops(false);
-                    if ( getGraph() != nullptr ) {
-                        _edgeItem->setGraph( getGraph() );
-                        _edgeItem->setParentItem( getGraph()->getContainerItem() );
+                    if (getGraph() != nullptr) {
+                        _edgeItem->setGraph(getGraph());
+                        _edgeItem->setParentItem(getGraph()->getContainerItem());
                     }
-                    if ( _sourceNode &&
-                         _sourceNode->getItem() ) {
+                    if (_sourceNode &&
+                        _sourceNode->getItem()) {
                         _edgeItem->setSourceItem(_sourceNode->getItem());
                         _edgeItem->setDestinationItem(this);
                     }
                     emit edgeItemChanged();
                 } else {
                     qWarning() << "qan::Connector::setEdgeComponent(): Error while creating edge:";
+                    qWarning() << "\t" << _edgeComponent->status();
                     qWarning() << "\t" << _edgeComponent->errors();
+                    qWarning() << "\t" << _edgeComponent->errorString();
                 }
             }
         }

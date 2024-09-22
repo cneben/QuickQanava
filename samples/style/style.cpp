@@ -53,6 +53,7 @@ int	main(int argc, char** argv)
     qmlRegisterType<CustomEdge>("StyleSample", 1, 0, "AbstractCustomEdge");
 
     QQmlApplicationEngine engine;
+    engine.addImportPath("../../src");  // Enable loading of ../../src/QuickQanava module
     QuickQanava::initialize(&engine);
     engine.load(QUrl("qrc:/style.qml"));
     return app.exec();

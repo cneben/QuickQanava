@@ -31,8 +31,7 @@ import QtQuick.Shapes
 
 import Qt.labs.platform
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava"   as Qan
+import QuickQanava as Qan
 
 Item {
     anchors.fill: parent

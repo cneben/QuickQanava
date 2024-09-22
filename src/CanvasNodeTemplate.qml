@@ -37,9 +37,7 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Effects
 
-import QuickQanava          2.0 as Qan
-import "qrc:/QuickQanava" as Qan
-
+import QuickQanava as Qan
 
 /*! \brief Default component template for building a custom qan::Node Item with an arbitrary geometry drawn into a JS Canvas2D.
  *

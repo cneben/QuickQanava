@@ -53,6 +53,7 @@ class TableBorder : public QQuickItem
     /*! \name TableBorder Object Management *///------------------------
     //@{
     Q_OBJECT
+    QML_NAMED_ELEMENT(AbstractTableBorder)
 public:
     //! .
     explicit TableBorder(QQuickItem* parent = nullptr);

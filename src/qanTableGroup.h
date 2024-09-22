@@ -56,6 +56,7 @@ class TableGroup : public qan::Group
     /*! \name TableGroup Object Management *///--------------------------------
     //@{
     Q_OBJECT
+    QML_ELEMENT
 public:
     //! TableGroup constructor.
     explicit TableGroup(QObject* parent = nullptr);

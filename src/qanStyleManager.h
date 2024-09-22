@@ -55,6 +55,7 @@ class Graph;
 class StyleManager : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
     /*! \name Style Object Management *///-------------------------------------
     //@{
 public:

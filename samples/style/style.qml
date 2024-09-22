@@ -28,10 +28,9 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
-import QuickQanava          2.0 as Qan
-import StyleSample          1.0 as Qan
-import "qrc:/QuickQanava"   as Qan
-import "qrc:/."             as Sample
+import QuickQanava as Qan
+import StyleSample as Qan
+import "qrc:/." as Sample
 
 ApplicationWindow {
     id: window
