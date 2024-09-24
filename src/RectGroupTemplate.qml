@@ -77,6 +77,7 @@ Item {
         style: template.groupItem?.style
         visible: !groupItem.collapsed
         headerHeight: Math.max(35, groupLabel.implicitHeight)
+        antialiasing: template.antialiasing
     }
     ColumnLayout {
         anchors.fill: parent
@@ -148,6 +149,7 @@ Item {
             color: groupItem?.style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
             opacity: 0.8
             visible: !groupItem.collapsed && headerSeparatorVisible
+            antialiasing: template.antialiasing
         }
         Item {
             id: content

@@ -63,6 +63,7 @@ Item {
         radius: backRadius
         border.width: 0             // Do not draw border, just the background gradient (border is drawn in foreground)
         opacity: style?.backOpacity ?? 0.8
+        antialiasing: rectGradientBackground.antialiasing
 
         // Note 20240105: Unfortunately we no longer have LinearGradient with Qt6, switching to a
         // vertical gradient...
@@ -91,7 +92,7 @@ Item {
         color: Qt.rgba(0, 0, 0, 0)  // Fully transparent
         border.color: style?.borderColor ?? Qt.rgba(1., 1., 1., 0.)
         border.width: style?.borderWidth ?? 1.
-        antialiasing: true      // Vertex antialiasing for borders
+        antialiasing: rectGradientBackground.antialiasing // Vertex antialiasing for borders
         // Note: Do not enable layer to avoid aliasing at high scale
     }
 }  // Item
