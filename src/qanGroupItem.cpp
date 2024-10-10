@@ -131,8 +131,7 @@ bool GroupItem::setDragPolicy(DragPolicy dragPolicy) noexcept
     }
     return false;
 }
-GroupItem::DragPolicy          GroupItem::getDragPolicy() noexcept { return _dragPolicy; }
-const GroupItem::DragPolicy    GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
+GroupItem::DragPolicy    GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
 
 void    GroupItem::groupMoved()
 {

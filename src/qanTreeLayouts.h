@@ -162,9 +162,7 @@ public:
     //! \copydoc LayoutOrientation
     bool                    setLayoutOrientation(LayoutOrientation layoutOrientation) noexcept;
     //! \copydoc LayoutOrientation
-    LayoutOrientation       getLayoutOrientation() noexcept;
-    //! \copydoc LayoutOrientation
-    const LayoutOrientation getLayoutOrientation() const noexcept;
+    LayoutOrientation       getLayoutOrientation() const noexcept;
 protected:
     //! \copydoc LayoutOrientation
     LayoutOrientation       _layoutOrientation = LayoutOrientation::Vertical;
@@ -195,4 +193,3 @@ public:
 } // ::qan
 
 QML_DECLARE_TYPE(qan::OrgTreeLayout)
-
