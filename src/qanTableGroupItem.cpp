@@ -608,7 +608,7 @@ void    TableGroupItem::mouseDoubleClickEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton &&
         (getNode() != nullptr &&
          !getNode()->getLocked()))
-        emit groupDoubleClicked(this, event->localPos());
+        emit groupDoubleClicked(this, event->position());
 }
 
 void    TableGroupItem::mousePressEvent(QMouseEvent* event)
@@ -625,9 +625,9 @@ void    TableGroupItem::mousePressEvent(QMouseEvent* event)
     }
 
     if (event->button() == Qt::LeftButton)
-        emit groupClicked(this, event->localPos());
+        emit groupClicked(this, event->position());
     else if (event->button() == Qt::RightButton)
-        emit groupRightClicked(this, event->localPos());
+        emit groupRightClicked(this, event->position());
 }
 //-----------------------------------------------------------------------------
 

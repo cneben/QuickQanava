@@ -1116,8 +1116,8 @@ void    EdgeItem::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if ((getEdge() != nullptr && !getEdge()->getLocked()) &&
         event->button() == Qt::LeftButton &&
-        contains(event->localPos())) {
-        emit edgeDoubleClicked(this, event->localPos());
+        contains(event->position())) {
+        emit edgeDoubleClicked(this, event->position());
         event->accept();
     }
     else
@@ -1130,7 +1130,7 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
     // Note 20211030: Do not take getLocked() into account,
     // otherwise onEdgeDoubleClicked() is no longer fired (and edge
     // can't be unlocked with a visual editor !
-    if (contains(event->localPos())) {
+    if (contains(event->position())) {
         // Selection management
         if ((event->button() == Qt::LeftButton ||
              event->button() == Qt::RightButton) &&
@@ -1142,11 +1142,11 @@ void    EdgeItem::mousePressEvent(QMouseEvent* event)
         }
 
         if (event->button() == Qt::LeftButton) {
-            emit edgeClicked(this, event->localPos());
+            emit edgeClicked(this, event->position());
             event->accept();
         }
         else if (event->button() == Qt::RightButton) {
-            emit edgeRightClicked(this, event->localPos());
+            emit edgeRightClicked(this, event->position());
             event->accept();
         }
     } else
@@ -1361,7 +1361,7 @@ void    EdgeItem::dragEnterEvent(QDragEnterEvent* event)
 void	EdgeItem::dragMoveEvent(QDragMoveEvent* event)
 {
     if (getAcceptDrops()) {
-        qreal d = distanceFromLine(event->posF( ), QLineF{_p1, _p2});
+        qreal d = distanceFromLine(event->position(), QLineF{_p1, _p2});
         if (d > 0. && d < 5.)
             event->accept();
         else event->ignore();
