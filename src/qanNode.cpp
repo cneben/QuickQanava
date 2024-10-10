@@ -140,11 +140,11 @@ QAbstractItemModel* Node::qmlGetOutEdges() const
 std::unordered_set<qan::Edge*>  Node::collectAdjacentEdges() const
 {
     std::unordered_set<qan::Edge*> edges;
-    for (const auto in_edge: qAsConst(get_in_edges())) {
+    for (const auto in_edge: std::as_const(get_in_edges())) {
         if (in_edge != nullptr)
             edges.insert(in_edge);
     }
-    for (const auto out_edge: qAsConst(get_out_edges())) {
+    for (const auto out_edge: std::as_const(get_out_edges())) {
         if (out_edge != nullptr)
             edges.insert(out_edge);
     }

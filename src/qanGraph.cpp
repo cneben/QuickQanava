@@ -243,7 +243,7 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
     // 1.
     std::vector<qan::Group*> groups;
     groups.reserve(static_cast<unsigned int>(get_groups().size()));
-    for (const auto group : qAsConst(get_groups().getContainer())) {
+    for (const auto group : std::as_const(get_groups().getContainer())) {
         if (group != nullptr)
             groups.push_back(group);
     }
@@ -265,7 +265,7 @@ qan::Group* Graph::groupAt(const QPointF& p, const QSizeF& s, const QQuickItem* 
     // 3.
     if (getContainerItem() == nullptr)
             return nullptr;
-    for (const auto group : qAsConst(groups)) {
+    for (const auto group : std::as_const(groups)) {
         if (group &&
             group->getItem() != nullptr &&
             group->getItem() != except) {
@@ -1396,21 +1396,21 @@ void    Graph::selectAll()
 void    Graph::removeSelection()
 {
     const auto& selectedNodes = getSelectedNodes();
-    for (const auto& node: qAsConst(selectedNodes))
+    for (const auto& node: std::as_const(selectedNodes))
         if (node &&
             !node->getIsProtected() &&
             !node->getLocked())
             removeNode(node);
 
     const auto& selectedGroups = getSelectedGroups();
-    for (const auto& group: qAsConst(selectedGroups))
+    for (const auto& group: std::as_const(selectedGroups))
         if (group &&
             !group->getIsProtected() &&
             !group->getLocked())
             removeGroup(group);
 
     const auto& selectedEdges = getSelectedEdges();
-    for (const auto& edge: qAsConst(selectedEdges))
+    for (const auto& edge: std::as_const(selectedEdges))
         if (edge &&
             !edge->getIsProtected() &&
             !edge->getLocked())
@@ -1449,7 +1449,7 @@ void    Graph::clearSelection()
     std::copy(_selectedEdges.cbegin(),
               _selectedEdges.cend(),
               std::back_inserter(selectedEdgesCopy));
-    for (auto& edge : qAsConst(selectedEdgesCopy))
+    for (auto& edge : std::as_const(selectedEdgesCopy))
         if (edge != nullptr &&
             edge->getItem() != nullptr)
             edge->getItem()->setSelected(false);
@@ -2262,7 +2262,7 @@ bool    Graph::isAncestor(const qan::Node& node, const qan::Node& candidate) con
 auto    Graph::collectGroupsNodes(const QVector<const qan::Group*>& groups) const noexcept -> std::unordered_set<const qan::Node*>
 {
     std::unordered_set<const qan::Node*> r;
-    for (const auto group: qAsConst(groups))  // Collect all group nodes and their sub groups nodes
+    for (const auto group: std::as_const(groups))  // Collect all group nodes and their sub groups nodes
         if (group != nullptr)           // recursively
             collectGroupNodes_rec(group, r);
     return r;
