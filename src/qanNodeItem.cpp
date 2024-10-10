@@ -309,7 +309,7 @@ void    NodeItem::mouseDoubleClickEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton &&
         (getNode() != nullptr &&
          !getNode()->getLocked()))
-        emit nodeDoubleClicked(this, event->localPos());
+        emit nodeDoubleClicked(this, event->position());
 }
 
 void    NodeItem::mouseMoveEvent(QMouseEvent* event)
@@ -331,7 +331,7 @@ void    NodeItem::mouseMoveEvent(QMouseEvent* event)
 void    NodeItem::mousePressEvent(QMouseEvent* event)
 {
     bool accepted = !getCollapsed() &&            // Fast exit
-                    isInsideBoundingShape(event->localPos());
+                    isInsideBoundingShape(event->position());
     if (accepted) {
         forceActiveFocus();
 
@@ -348,9 +348,9 @@ void    NodeItem::mousePressEvent(QMouseEvent* event)
 
         // QML notifications
         if (event->button() == Qt::LeftButton)
-            emit nodeClicked(this, event->localPos());
+            emit nodeClicked(this, event->position());
         else if (event->button() == Qt::RightButton)
-            emit nodeRightClicked(this, event->localPos());
+            emit nodeRightClicked(this, event->position());
         event->accept();
     } else
         event->ignore();
@@ -444,7 +444,7 @@ bool    NodeItem::isInsideBoundingShape(QPointF p)
 /* Port/Dock Management *///---------------------------------------------------
 qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
 {
-    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
+    for (const auto port : std::as_const(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
         if (portItem != nullptr &&
             portItem->getId() == portId) {
@@ -457,7 +457,7 @@ qan::PortItem*  NodeItem::findPort(const QString& portId) const noexcept
 
 void    NodeItem::updatePortsEdges()
 {
-    for (const auto port : qAsConst(_ports)){   // Note: std::as_const is officially c++17
+    for (const auto port : std::as_const(_ports)){   // Note: std::as_const is officially c++17
         const auto portItem = qobject_cast<qan::PortItem*>(port);
         if (portItem != nullptr)
             portItem->updateEdges();

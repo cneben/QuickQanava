@@ -216,7 +216,7 @@ void    BottomResizer::mousePressEvent(QMouseEvent* event)
     if (!isVisible())
         return;
     if (_target) {
-        _dragInitialPos = event->windowPos();
+        _dragInitialPos = event->scenePosition();
         _targetInitialSize = {_target->width(), _target->height()};
         emit resizeStart(_target ? QSizeF{_target->width(), _target->height()} :  // Use of target ok.
                                   QSizeF{});

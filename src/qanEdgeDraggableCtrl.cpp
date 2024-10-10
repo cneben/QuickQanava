@@ -86,7 +86,7 @@ bool    EdgeDraggableCtrl::handleMouseMoveEvent(QMouseEvent* event)
     const auto rootItem = graph->getContainerItem();
     if (rootItem != nullptr &&      // Root item exist, left button is pressed and the target item
         event->buttons().testFlag(Qt::LeftButton)) {    // is draggable and not collapsed
-        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPos());
+        const auto sceneDragPos = rootItem->mapFromGlobal(event->globalPosition());
         if (!_targetItem->getDragged()) {
             beginDragMove(sceneDragPos, _targetItem->getSelected());
             return true;

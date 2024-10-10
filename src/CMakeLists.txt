@@ -141,7 +141,6 @@ set(qan_qml_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-qt_wrap_cpp(qan_source_files, qan_header_files)   # Creates .moc files from sources
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
@@ -202,5 +201,3 @@ target_link_libraries(QuickQanava PUBLIC Qt6::Core
                                          Qt6::Qml
                                          Qt6::Quick
                                          Qt6::QuickControls2)
-
-
