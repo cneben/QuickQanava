@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -249,7 +250,7 @@ qan::TableBorder*   TableGroupItem::createBorder()
             return nullptr;
         }
         // Component is parented to graph, will be destroyed when graph is destroyed
-        TableGroupItem::_borderComponent = new QQmlComponent(engine, "qrc:/QuickQanava/TableBorder.qml",
+        TableGroupItem::_borderComponent = new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/TableBorder.qml",
                                                              QQmlComponent::PreferSynchronous, getGraph());
     }
     if (!TableGroupItem::_borderComponent)

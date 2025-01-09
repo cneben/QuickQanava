@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -67,20 +68,20 @@ Item {
         anchors.fill: parent
         source: {
             if (!nodeItem?.style)     // Defaul to solid no effect with unconfigured nodes
-                return "qrc:/QuickQanava/RectSolidBackground.qml";
+                return "qrc:/qt/qml/QuickQanava/RectSolidBackground.qml";
             switch (nodeItem.style.fillType) {  // Otherwise, select the delegate according to current style configuration
             case Qan.NodeStyle.FillSolid:
                 switch (nodeItem.style.effectType) {
-                case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectSolidBackground.qml";
-                case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectSolidShadowBackground.qml";
-                case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectSolidGlowBackground.qml";
+                case Qan.NodeStyle.EffectNone:   return "qrc:/qt/qml/QuickQanava/RectSolidBackground.qml";
+                case Qan.NodeStyle.EffectShadow: return "qrc:/qt/qml/QuickQanava/RectSolidShadowBackground.qml";
+                case Qan.NodeStyle.EffectGlow:   return "qrc:/qt/qml/QuickQanava/RectSolidGlowBackground.qml";
                 }
                 break;
             case Qan.NodeStyle.FillGradient:
                 switch (nodeItem.style.effectType) {
-                case Qan.NodeStyle.EffectNone:   return "qrc:/QuickQanava/RectGradientBackground.qml";
-                case Qan.NodeStyle.EffectShadow: return "qrc:/QuickQanava/RectGradientShadowBackground.qml";
-                case Qan.NodeStyle.EffectGlow:   return "qrc:/QuickQanava/RectGradientGlowBackground.qml";
+                case Qan.NodeStyle.EffectNone:   return "qrc:/qt/qml/QuickQanava/RectGradientBackground.qml";
+                case Qan.NodeStyle.EffectShadow: return "qrc:/qt/qml/QuickQanava/RectGradientShadowBackground.qml";
+                case Qan.NodeStyle.EffectGlow:   return "qrc:/qt/qml/QuickQanava/RectGradientGlowBackground.qml";
                 }
                 break;
             } // case fillType
