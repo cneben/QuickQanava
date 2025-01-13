@@ -158,9 +158,8 @@ qt_add_qml_module(QuickQanava
         ${qan_source_files} ${qan_header_files} ${qan_moc_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
     QML_FILES
         ${qan_qml_files}
-    OUTPUT_DIRECTORY QuickQanava
 )
-set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/QuickQanava)
+set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
 
 target_include_directories(QuickQanava
     PUBLIC
