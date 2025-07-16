@@ -1077,6 +1077,7 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell
             group->getGroupItem() != nullptr &&
             node->getItem() != nullptr ) {
             group->getGroupItem()->groupNodeItem(node->getItem(), groupCell, transform);
+            emit node->groupChanged();
             emit nodeGrouped(node, group);
         }
         return true;

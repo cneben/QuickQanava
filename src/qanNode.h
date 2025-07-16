@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -218,7 +219,7 @@ public:
      *
      * \note nullptr if group or node is ungrouped.
      */
-    Q_PROPERTY(qan::Group* group READ getGroup FINAL)
+    Q_PROPERTY(qan::Group* group READ getGroup NOTIFY groupChanged FINAL)
     const qan::Group*    getGroup() const { return get_group(); }
     qan::Group*          getGroup() { return get_group(); }
     Q_INVOKABLE bool     hasGroup() const { return get_group() != nullptr; }
@@ -234,6 +235,7 @@ public:
 protected:
     QPointer<qan::TableCell>    _cell;
 signals:
+    void                    groupChanged();
     void                    cellChanged();
     //@}
     //-------------------------------------------------------------------------
