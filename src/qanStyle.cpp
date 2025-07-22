@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -259,6 +260,17 @@ bool    EdgeStyle::setArrowSize(qreal arrowSize) noexcept
     if (!qFuzzyCompare(1. + arrowSize, 1. + _arrowSize)) {
         _arrowSize = arrowSize;
         emit arrowSizeChanged();
+        emit styleModified();
+        return true;
+    }
+    return false;
+}
+
+auto   EdgeStyle::setOrthoRoundedRadius(qreal orthoRoundedRadius) noexcept -> bool
+{
+    if (_orthoRoundedRadius != orthoRoundedRadius) {
+        _orthoRoundedRadius = orthoRoundedRadius;
+        emit orthoRoundedRadiusChanged();
         emit styleModified();
         return true;
     }

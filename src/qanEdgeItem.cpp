@@ -256,6 +256,7 @@ void    EdgeItem::updateItem() noexcept
         case qan::EdgeStyle::LineType::Straight: generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Curved:   generateStraightEnds(cache); break;
         case qan::EdgeStyle::LineType::Ortho:    generateOrthoEnds(cache);    break;
+        case qan::EdgeStyle::LineType::OrthoRounded: generateOrthoRoundedEnds(cache); break;
         }
         if (cache.isValid()) {
             switch (cache.lineType) {           // 3.
@@ -263,6 +264,7 @@ void    EdgeItem::updateItem() noexcept
             case qan::EdgeStyle::LineType::Straight: /* Nil */                           break;
             case qan::EdgeStyle::LineType::Curved:   generateCurvedControlPoints(cache); break;
             case qan::EdgeStyle::LineType::Ortho:    /* Nil */                           break; // Ortho C1 control point is generated in generateOrthoEnds()
+            case qan::EdgeStyle::LineType::OrthoRounded: /* Nil */                       break; // Ortho C1, C2 control point are generated in generateOrthoEndsRounded()
             }
             generateArrowGeometry(cache);
             generateLabelPosition(cache);
@@ -614,6 +616,21 @@ void    EdgeItem::generateOrthoEnds(GeometryCache& cache) const noexcept
     }
 }
 
+void EdgeItem::generateOrthoRoundedEnds(GeometryCache &cache) const noexcept
+{
+    // PRECONDITIONS:
+    // cache should be valid
+    // cache srcBs and dstBs must not be empty (valid bounding shapes are necessary)
+    if ( !cache.isValid() )
+        return;
+
+    cache.p1 = QPointF{cache.srcBr.right(), cache.srcBrCenter.y()};
+    cache.p2 = QPointF{cache.dstBr.left(),  cache.dstBrCenter.y()};
+    auto center = QLineF{cache.p1, cache.p2}.center();
+    cache.c1 = QPointF{center.x(), cache.p1.y()};
+    cache.c2 = QPointF{center.x(), cache.p2.y()}; // Unused
+}
+
 void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
 {
     // PRECONDITIONS:
@@ -685,6 +702,7 @@ void    EdgeItem::generateArrowGeometry(GeometryCache& cache) const noexcept
             break;
 
         case qan::EdgeStyle::LineType::Ortho:
+        case qan::EdgeStyle::LineType::OrthoRounded:
             cache.dstAngle = generateStraightArrowAngle(cache.c1, cache.p2, dstShape, arrowLength);
             cache.srcAngle = generateStraightArrowAngle(cache.c1, cache.p1, srcShape, arrowLength);
             break;
@@ -994,7 +1012,13 @@ void    EdgeItem::applyGeometry(const GeometryCache& cache) noexcept
         if (cache.lineType == qan::EdgeStyle::LineType::Ortho) {
             _c1 = mapFromItem(graphContainerItem, cache.c1);
             emit controlPointsChanged();
-        } else if (cache.lineType == qan::EdgeStyle::LineType::Curved) { // Apply control point geometry
+        }
+        else if (cache.lineType == qan::EdgeStyle::LineType::OrthoRounded) {
+            _c1 = mapFromItem(graphContainerItem, cache.c1);
+            _c2 = mapFromItem(graphContainerItem, cache.c2);
+            emit controlPointsChanged();
+        }
+        else if (cache.lineType == qan::EdgeStyle::LineType::Curved) { // Apply control point geometry
             _c1 = mapFromItem(graphContainerItem, cache.c1);
             _c2 = mapFromItem(graphContainerItem, cache.c2);
             emit controlPointsChanged();
@@ -1330,7 +1354,12 @@ bool    EdgeItem::contains(const QPointF& point) const
             r = (d2 > -0.001 && d2 < 6.001);
         }
         break;
+    case qan::EdgeStyle::LineType::OrthoRounded:
+        // Not implemented since we do not support selecting edges
+        // TODO: Implement later if needed
+        break;
     }
+
     return r;
 }
 

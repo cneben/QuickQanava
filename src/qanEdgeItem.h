@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -226,6 +227,9 @@ protected:
 
     //! \brief Generate P1 and P2 for ortho edge style.
     void                    generateOrthoEnds(GeometryCache& cache) const noexcept;
+
+    //! \brief Generate P1 and P2 for ortho rounded edge style.
+    void                    generateOrthoRoundedEnds(GeometryCache& cache) const noexcept;
 
     /*! \brief FIXME
      *

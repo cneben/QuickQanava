@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -167,6 +168,15 @@ Item {
                                                                                                  strokeColor: lineColor
                                                                                              })
                 break;
+            case Qan.EdgeStyle.OrthoRounded:
+                if (straightLine) straightLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeSelectionShape.data = orthoLine = qanEdgeOrthoRoundedPathComponent.createObject(edgeSelectionShape, {
+                                                                                                 edgeTemplate: edgeTemplate,
+                                                                                                 strokeWidth: lineWidth,
+                                                                                                 strokeColor: lineColor
+                                                                                             })
+                break;
             case Qan.EdgeStyle.Curved:
                 if (straightLine) straightLine.destroy()
                 if (orthoLine) orthoLine.destroy()
@@ -202,6 +212,11 @@ Item {
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
                 edgeShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                break;
+            case Qan.EdgeStyle.OrthoRounded:
+                if (straightLine) straightLine.destroy()
+                if (curvedLine) curvedLine.destroy()
+                edgeShape.data = orthoLine = qanEdgeOrthoRoundedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 break;
             case Qan.EdgeStyle.Curved:
                 if (straightLine) straightLine.destroy()
