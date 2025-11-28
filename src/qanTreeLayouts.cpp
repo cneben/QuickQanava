@@ -75,7 +75,7 @@ void    NaiveTreeLayout::layout(qan::Node& root) noexcept
             return r;
 
         // <-- hand tuned ChatGPT code
-        std::queue<std::pair<Node*, int>> nodeLevelqueue;
+        std::queue<std::pair<Node*, std::size_t>> nodeLevelqueue;
         std::unordered_set<Node*> visited;
 
         nodeLevelqueue.push({root, 0});
@@ -210,7 +210,7 @@ bool    OrgTreeLayout::setLayoutOrientation(OrgTreeLayout::LayoutOrientation lay
     return false;
 }
 OrgTreeLayout::LayoutOrientation        OrgTreeLayout::getLayoutOrientation() noexcept { return _layoutOrientation; }
-const OrgTreeLayout::LayoutOrientation  OrgTreeLayout::getLayoutOrientation() const noexcept { return _layoutOrientation; }
+OrgTreeLayout::LayoutOrientation  OrgTreeLayout::getLayoutOrientation() const noexcept { return _layoutOrientation; }
 
 
 void    OrgTreeLayout::layout(qan::Node& root, qreal xSpacing, qreal ySpacing) noexcept
