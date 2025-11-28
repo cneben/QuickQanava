@@ -214,15 +214,15 @@ void    TableGroupItem::initializeCellsLinks()
     auto tableGroup = getTableGroup();
     if (tableGroup == nullptr)
         return;
-    const auto rows = tableGroup->getRows();
-    const auto cols = tableGroup->getCols();
+    const std::size_t rows = tableGroup->getRows() > 0 ? tableGroup->getRows() : 0;
+    const std::size_t cols = tableGroup->getCols() > 0 ? tableGroup->getCols() : 0;
     if (_cells.size() != (rows * cols))
         return;
     int c = 1;
     for (auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
             continue;
-        for (int r = 0; r < rows; r++) {
+        for (std::size_t r = 0; r < rows; r++) {
             verticalBorder->addPrevCell(_cells[(r * cols) + c - 1]);
             verticalBorder->addNextCell(_cells[(r * cols) + c]);
         }
@@ -232,7 +232,7 @@ void    TableGroupItem::initializeCellsLinks()
     for (auto horizontalBorder: _horizontalBorders) {
         if (horizontalBorder == nullptr)
             continue;
-        for (int c = 0; c < cols; c++) {
+        for (std::size_t c = 0; c < cols; c++) {
             horizontalBorder->addPrevCell(_cells[((r-1) * cols) + c]);
             horizontalBorder->addNextCell(_cells[(r * cols)     + c]);
         }
@@ -439,7 +439,7 @@ void    TableGroupItem::initializeTableLayout()
         return;
     const auto tableWidth = tableContainer->width();
     const auto tableHeight = tableContainer->height();
-    const auto tableSize = tableContainer->size();
+    //const auto tableSize = tableContainer->size();
     //qWarning() << "qan::TableGroupItem::initializeTableLayout(): tableSize=" << tableSize;
     if (qRound(tableWidth) <= 0 || qRound(tableHeight) <= 0)
         return;

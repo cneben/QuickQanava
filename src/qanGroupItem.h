@@ -139,7 +139,7 @@ public:
     //! \copydoc DragPolicy
     DragPolicy          getDragPolicy() noexcept;
     //! \copydoc DragPolicy
-    const DragPolicy    getDragPolicy() const noexcept;
+    DragPolicy    getDragPolicy() const noexcept;
 protected:
     //! \copydoc DragPolicy
     DragPolicy  _dragPolicy = DragPolicy::Header;

@@ -164,7 +164,7 @@ public:
     //! \copydoc LayoutOrientation
     LayoutOrientation       getLayoutOrientation() noexcept;
     //! \copydoc LayoutOrientation
-    const LayoutOrientation getLayoutOrientation() const noexcept;
+    LayoutOrientation getLayoutOrientation() const noexcept;
 protected:
     //! \copydoc LayoutOrientation
     LayoutOrientation       _layoutOrientation = LayoutOrientation::Vertical;
