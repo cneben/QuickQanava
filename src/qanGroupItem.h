@@ -137,7 +137,13 @@ public:
     //! \copydoc DragPolicy
     virtual bool        setDragPolicy(DragPolicy dragPolicy) noexcept;
     //! \copydoc DragPolicy
+<<<<<<< HEAD
     DragPolicy          getDragPolicy() const noexcept;
+=======
+    DragPolicy          getDragPolicy() noexcept;
+    //! \copydoc DragPolicy
+    DragPolicy    getDragPolicy() const noexcept;
+>>>>>>> 1567946 ( #259: fix warnings.)
 protected:
     //! \copydoc DragPolicy
     DragPolicy  _dragPolicy = DragPolicy::Header;

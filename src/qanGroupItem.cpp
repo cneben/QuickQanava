@@ -131,7 +131,12 @@ bool GroupItem::setDragPolicy(DragPolicy dragPolicy) noexcept
     }
     return false;
 }
+<<<<<<< HEAD
 GroupItem::DragPolicy    GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
+=======
+GroupItem::DragPolicy          GroupItem::getDragPolicy() noexcept { return _dragPolicy; }
+GroupItem::DragPolicy          GroupItem::getDragPolicy() const noexcept { return _dragPolicy; }
+>>>>>>> 1567946 ( #259: fix warnings.)
 
 void    GroupItem::groupMoved()
 {
