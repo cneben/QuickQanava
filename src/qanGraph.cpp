@@ -68,14 +68,8 @@ Graph::Graph(QQuickItem* parent) noexcept :
 
 Graph::~Graph()
 {
-    // Force diconnection of node/edges signals, it avoid
-    // triggering code on this partially deleted graph when a node or
-    // edge destroyed() signal is binded to something that try to access this
-    // partially destroyed graph (for example a nodes/edges model...!).
-    for (const auto node: get_nodes())
-        node->disconnect(node, 0, 0, 0);
-    for (const auto edge: get_edges())
-        edge->disconnect(edge, 0, 0, 0);
+    // Note 20251219: forced disconnection of all signals from nodes and edges removed, it was a fix
+    // for pre qt6 versions and is not recommended with latest Qt versions.
 }
 
 void    Graph::classBegin()
