@@ -19,7 +19,7 @@ if (${QUICK_QANAVA_CI})
     add_subdirectory(samples/groups)    # Used to test CI
 endif()
 
-add_subdirectory(samples/groups)
+#add_subdirectory(samples/groups)
 if (${QUICK_QANAVA_BUILD_SAMPLES})
     add_subdirectory(samples/advanced)
     add_subdirectory(samples/connector)
