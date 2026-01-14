@@ -377,7 +377,7 @@ public:
         Straight    = 1,
         Curved      = 2,
         Ortho       = 3,
-        OrthoRounded = 4
+        OrthoDouble = 4
     };
     Q_ENUM(LineType)
 
@@ -419,13 +419,13 @@ signals:
     void            arrowSizeChanged();
 
 public:
-    Q_PROPERTY(qreal orthoRoundedRadius READ getOrthoRoundedRadius WRITE setOrthoRoundedRadius NOTIFY orthoRoundedRadiusChanged FINAL)
-    bool            setOrthoRoundedRadius(qreal orthoRoundedRadius) noexcept;
-    inline qreal    getOrthoRoundedRadius() const noexcept { return _orthoRoundedRadius; }
+    Q_PROPERTY(qreal orthoRadius READ getOrthoRadius WRITE setOrthoRadius NOTIFY orthoRadiusChanged FINAL)
+    bool            setOrthoRadius(qreal orthoRadius) noexcept;
+    inline qreal    getOrthoRadius() const noexcept { return _orthoRadius; }
 protected:
-    qreal           _orthoRoundedRadius = 10.0;
+    qreal           _orthoRadius = 10.0;
 signals:
-    void            orthoRoundedRadiusChanged();
+    void            orthoRadiusChanged();
 
 public:
 

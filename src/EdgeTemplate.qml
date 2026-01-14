@@ -138,7 +138,7 @@ Item {
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined
-        property var orthoRoundedLine: undefined
+        property var orthoDoubleLine: undefined
         property var lineType: edgeTemplate.lineType
         property var lineWidth: edgeItem?.style?.lineWidth + 2. ?? 4.
         property var lineColor: edgeItem &&
@@ -152,7 +152,7 @@ Item {
             switch (lineType) {
             case Qan.EdgeStyle.Undefined:   // falltrought
             case Qan.EdgeStyle.Straight:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (orthoLine) orthoLine.destroy()
                 if (curvedLine) curvedLine.destroy()
                 edgeSelectionShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeSelectionShape, {
@@ -162,7 +162,7 @@ Item {
                                                                                           });
                 break;
             case Qan.EdgeStyle.Ortho:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
                 edgeSelectionShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeSelectionShape, {
@@ -171,18 +171,18 @@ Item {
                                                                                                  strokeColor: lineColor
                                                                                              })
                 break;
-            case Qan.EdgeStyle.OrthoRounded:
+            case Qan.EdgeStyle.OrthoDouble:
                 if (orthoLine) orthoLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
-                edgeSelectionShape.data = orthoRoundedLine = qanEdgeOrthoRoundedPathComponent.createObject(edgeSelectionShape, {
+                edgeSelectionShape.data = orthoDoubleLine = qanEdgeOrthoDoublePathComponent.createObject(edgeSelectionShape, {
                                                                                                  edgeTemplate: edgeTemplate,
                                                                                                  strokeWidth: lineWidth,
                                                                                                  strokeColor: lineColor
                                                                                              })
                 break;
             case Qan.EdgeStyle.Curved:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (orthoLine) orthoLine.destroy()
                 edgeSelectionShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeSelectionShape, {
@@ -204,31 +204,31 @@ Item {
         property var curvedLine : undefined
         property var straightLine : undefined
         property var orthoLine : undefined
-        property var orthoRoundedLine: undefined
+        property var orthoDoubleLine: undefined
         property var lineType: edgeTemplate.lineType
         onLineTypeChanged: {
             switch (lineType) {
             case Qan.EdgeStyle.Undefined:   // falltrought
             case Qan.EdgeStyle.Straight:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (orthoLine) orthoLine.destroy()
                 if (curvedLine) curvedLine.destroy()
                 edgeShape.data = straightLine = qanEdgeStraightPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate});
                 break;
             case Qan.EdgeStyle.Ortho:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
                 edgeShape.data = orthoLine = qanEdgeOrthoPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 break;
-            case Qan.EdgeStyle.OrthoRounded:
+            case Qan.EdgeStyle.OrthoDouble:
                 if (orthoLine) orthoLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (curvedLine) curvedLine.destroy()
-                edgeShape.data = orthoRoundedLine = qanEdgeOrthoRoundedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
+                edgeShape.data = orthoDoubleLine = qanEdgeOrthoDoublePathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})
                 break;
             case Qan.EdgeStyle.Curved:
-                if (orthoRoundedLine) orthoRoundedLine.destroy()
+                if (orthoDoubleLine) orthoDoubleLine.destroy()
                 if (straightLine) straightLine.destroy()
                 if (orthoLine) orthoLine.destroy()
                 edgeShape.data = curvedLine = qanEdgeCurvedPathComponent.createObject(edgeShape, {edgeTemplate: edgeTemplate})

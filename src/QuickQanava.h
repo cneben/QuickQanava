@@ -77,7 +77,7 @@ struct QuickQanava {
 
             engine->rootContext()->setContextProperty("qanEdgeStraightPathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeStraightPath.qml", engine));
             engine->rootContext()->setContextProperty("qanEdgeOrthoPathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeOrthoPath.qml", engine));
-            engine->rootContext()->setContextProperty("qanEdgeOrthoRoundedPathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeOrthoRoundedPath.qml", engine));
+            engine->rootContext()->setContextProperty("qanEdgeOrthoDoublePathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeOrthoDoublePath.qml", engine));
             engine->rootContext()->setContextProperty("qanEdgeCurvedPathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeCurvedPath.qml", engine));
 
             engine->rootContext()->setContextProperty("qanEdgeSrcArrowPathComponent", new QQmlComponent(engine, "qrc:/qt/qml/QuickQanava/EdgeSrcArrowPath.qml", engine));

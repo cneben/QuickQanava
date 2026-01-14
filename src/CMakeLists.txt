@@ -106,7 +106,7 @@ set(qan_qml_files
     EdgeTemplate.qml
     EdgeStraightPath.qml
     EdgeOrthoPath.qml
-    EdgeOrthoRoundedPath.qml
+    EdgeOrthoDoublePath.qml
     EdgeCurvedPath.qml
     EdgeSrcArrowPath.qml
     EdgeSrcCirclePath.qml

@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------------
 // This file is a part of the QuickQanava software library.
 //
-// \file    EdgeOrthoRoundedPath.qml
+// \file    EdgeOrthoDoublePath.qml
 // \author	morgan.bengtsson.ext@siemens-energy.com
 // \date    2025 07 21
 //-----------------------------------------------------------------------------
@@ -52,33 +52,46 @@ ShapePath {
     dashPattern: edgeItem?.style?.dashPattern ?? [4, 2]
     fillColor: Qt.rgba(0,0,0,0)
 
-    property real radius: Math.min(edgeItem?.style?.orthoRoundedRadius ?? 10, Math.abs(edgeItem.p2.y - edgeItem.p1.y) / 2)
-    property bool goesUp : edgeItem.p2.y > edgeItem.p1.y;
-    property real radiusCompensation: edgeShapePath.goesUp ? edgeShapePath.radius : -edgeShapePath.radius
+    property real edgeLengthY: Math.abs(edgeItem.p2.y - edgeItem.p1.y)
+    property real edgeLengthX: Math.abs(edgeItem.p2.x - edgeItem.p1.x)
+    property int horizontalDir: Math.sign(edgeItem.p1.x - edgeItem.p2.x);
+    property int verticalDir: Math.sign(edgeItem.p1.y - edgeItem.p2.y);
+    property bool isPoint: edgeItem.c1.x === edgeItem.c2.x && edgeItem.c1.y === edgeItem.c2.y
+    property bool horizontalEdge: (edgeItem.c1.x === edgeItem.c2.x) && !isPoint
+    property bool verticalEdge: (edgeItem.c1.y === edgeItem.c2.y) && !isPoint
+    property real radius: Math.min(edgeItem?.style?.orthoRadius ?? 10, (horizontalEdge ? edgeLengthY : edgeLengthX) / 2)
 
     PathLine {
-        x: edgeShapePath.edgeItem.c1.x  - edgeShapePath.radius
-        y: edgeShapePath.edgeItem.c1.y
+        x: edgeShapePath.edgeItem.c1.x + edgeShapePath.horizontalEdge * edgeShapePath.horizontalDir * edgeShapePath.radius
+        y: edgeShapePath.edgeItem.c1.y + edgeShapePath.verticalEdge * edgeShapePath.verticalDir * edgeShapePath.radius
     }
     PathArc {
-        x: edgeShapePath.edgeItem.c1.x
-        y: edgeShapePath.edgeItem.c1.y + edgeShapePath.radiusCompensation
+        x: edgeShapePath.edgeItem.c1.x - edgeShapePath.verticalEdge * edgeShapePath.horizontalDir * edgeShapePath.radius
+        y: edgeShapePath.edgeItem.c1.y - edgeShapePath.horizontalEdge * edgeShapePath.verticalDir * edgeShapePath.radius
         radiusX: edgeShapePath.radius
         radiusY: edgeShapePath.radius
         useLargeArc: false
-        direction: edgeShapePath.goesUp ? PathArc.Clockwise : PathArc.Counterclockwise
+        direction: (edgeShapePath.verticalEdge
+                    ? edgeShapePath.verticalDir !== edgeShapePath.horizontalDir
+                    : edgeShapePath.verticalDir === edgeShapePath.horizontalDir)
+                    ? PathArc.Clockwise
+                    : PathArc.Counterclockwise;
     }
     PathLine {
-        x: edgeShapePath.edgeItem.c1.x
-        y: edgeShapePath.edgeItem.p2.y - edgeShapePath.radiusCompensation
+        x: edgeShapePath.edgeItem.c2.x + edgeShapePath.verticalEdge * edgeShapePath.horizontalDir * edgeShapePath.radius
+        y: edgeShapePath.edgeItem.c2.y + edgeShapePath.horizontalEdge * edgeShapePath.verticalDir * edgeShapePath.radius
     }
     PathArc {
-        x: edgeShapePath.edgeItem.c1.x + edgeShapePath.radius
-        y: edgeShapePath.edgeItem.p2.y
+        x: edgeShapePath.edgeItem.c2.x - edgeShapePath.horizontalEdge * edgeShapePath.horizontalDir * edgeShapePath.radius
+        y: edgeShapePath.edgeItem.c2.y - edgeShapePath.verticalEdge * edgeShapePath.verticalDir * edgeShapePath.radius
         radiusX: edgeShapePath.radius
         radiusY: edgeShapePath.radius
         useLargeArc: false
-        direction: edgeShapePath.goesUp ? PathArc.Counterclockwise: PathArc.Clockwise
+        direction: (edgeShapePath.horizontalEdge
+                    ? edgeShapePath.verticalDir !== edgeShapePath.horizontalDir
+                    : edgeShapePath.verticalDir === edgeShapePath.horizontalDir)
+                    ? PathArc.Clockwise
+                    : PathArc.Counterclockwise;
     }
     PathLine {
         x: edgeShapePath.edgeItem.p2.x

@@ -266,11 +266,11 @@ bool    EdgeStyle::setArrowSize(qreal arrowSize) noexcept
     return false;
 }
 
-auto   EdgeStyle::setOrthoRoundedRadius(qreal orthoRoundedRadius) noexcept -> bool
+auto   EdgeStyle::setOrthoRadius(qreal orthoRadius) noexcept -> bool
 {
-    if (_orthoRoundedRadius != orthoRoundedRadius) {
-        _orthoRoundedRadius = orthoRoundedRadius;
-        emit orthoRoundedRadiusChanged();
+    if (_orthoRadius != orthoRadius) {
+        _orthoRadius = orthoRadius;
+        emit orthoRadiusChanged();
         emit styleModified();
         return true;
     }

@@ -229,7 +229,7 @@ protected:
     void                    generateOrthoEnds(GeometryCache& cache) const noexcept;
 
     //! \brief Generate P1 and P2 for ortho rounded edge style.
-    void                    generateOrthoRoundedEnds(GeometryCache& cache) const noexcept;
+    void                    generateOrthoDoubleEnds(GeometryCache& cache) const noexcept;
 
     /*! \brief FIXME
      *
