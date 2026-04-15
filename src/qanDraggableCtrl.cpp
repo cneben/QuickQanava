@@ -423,41 +423,24 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
         !_targetItem)
         return;
 
+    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
+        _target->getLocked())
+        return;
+
     if (!_target->isGroup()) {
         _targetItem->setZ(_initialTargetZ);
         _initialTargetZ = 0.;
     }
 
-    if (_target->getIsProtected() ||    // Prevent dragging of protected or locked objects
-        _target->getLocked())
-        return;
-
     const auto graph = getGraph();
     if (graph == nullptr)
         return;
-    const auto graphContainerItem = graph->getContainerItem();
-    if (graphContainerItem == nullptr)
-        return;
-
 
     //qWarning() << "qan::DraggableCtrl::endDragMove(): dragSelection=" << dragSelection;
     //qWarning() << "  graph->hasMultipleSelection()=" << graph->hasMultipleSelection();
     //qWarning() << "  notify=" << notify;
 
-    bool nodeGrouped = false;
-    if (_targetItem->getDroppable()) {
-        const auto targetScenePos = _targetItem->mapToItem(graphContainerItem, QPointF{0., 0.});
-        qan::Group* group = graph->groupAt(targetScenePos, { _targetItem->width(), _targetItem->height() }, _targetItem);
-        if (group != nullptr &&
-            static_cast<QQuickItem*>(group->getItem()) != static_cast<QQuickItem*>(_targetItem.data())) { // Do not drop a group in itself
-            if (group->getGroupItem() != nullptr &&             // Do not allow grouping a node in a collapsed
-                !group->getGroupItem()->getCollapsed() &&       // or locked group item
-                !group->getLocked()) {
-                graph->groupNode(group, _target.data());
-                nodeGrouped = true;
-            }
-        }
-    }
+    const bool nodeGrouped = graph->tryGroupNodeAt(_target.data(), _targetItem.data());
 
     _targetItem->setDragged(false);
 

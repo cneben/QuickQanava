@@ -650,6 +650,18 @@ public:
     //! Ungroup node \c node from group \c group (using nullptr for \c group ungroup node from it's current group without further topology checks).
     Q_INVOKABLE virtual bool    ungroupNode(qan::Node* node, qan::Group* group = nullptr, bool transform = true) noexcept;
 
+    /*! \brief Try to group \c target into a droppable group located under \c targetItem.
+     *
+     * Factored out of DraggableCtrl::endDragMove() so the auto-grouping logic can be reused
+     * (for example after a paste) without the other endDragMove() side effects (z reset,
+     * drag flag clearing, notify). Has no effect if \c target is protected or locked, if
+     * \c targetItem is not droppable, or if no suitable drop-target group is found under
+     * \c targetItem.
+     *
+     * \return true if \c target was grouped, false otherwise.
+     */
+    Q_INVOKABLE bool            tryGroupNodeAt(qan::Node* target, qan::NodeItem* targetItem) noexcept;
+
 signals:
 
     /*! \brief Emitted when a group registered in this graph is clicked.

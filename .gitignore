@@ -17,3 +17,4 @@ samples/build*
 build-tests-*
 
 build
+.qmlls.ini

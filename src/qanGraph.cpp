@@ -1083,6 +1083,37 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell
     return false;
 }
 
+bool    qan::Graph::tryGroupNodeAt(qan::Node* target, qan::NodeItem* targetItem) noexcept
+{
+    if (target == nullptr ||
+        targetItem == nullptr)
+        return false;
+    if (target->getIsProtected() ||     // Prevent grouping of protected or locked objects
+        target->getLocked())
+        return false;
+    if (!targetItem->getDroppable())
+        return false;
+
+    const auto containerItem = getContainerItem();
+    if (containerItem == nullptr)
+        return false;
+
+    const auto targetScenePos = targetItem->mapToItem(containerItem, QPointF{0., 0.});
+    qan::Group* group = groupAt(targetScenePos,
+                                {targetItem->width(), targetItem->height()},
+                                targetItem);
+    if (group == nullptr ||
+        static_cast<QQuickItem*>(group->getItem()) == static_cast<QQuickItem*>(targetItem))  // Do not drop a group in itself
+        return false;
+    if (group->getGroupItem() == nullptr ||             // Do not allow grouping a node in a collapsed
+        group->getGroupItem()->getCollapsed() ||        // or locked group item
+        group->getLocked())
+        return false;
+
+    groupNode(group, target);
+    return true;
+}
+
 bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transform) noexcept
 {
     // PRECONDITIONS:
