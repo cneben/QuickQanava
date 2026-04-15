@@ -112,8 +112,9 @@ void    PortItem::addOutEdgeItem(qan::EdgeItem& outEdgeItem) noexcept
 void    PortItem::onEdgeItemDestroyed(QObject* obj)
 {
     // Connection to destroyed signal in addInEdgeItem() and addOutEdgeItem()
-    // The object has already been partially destroyed so casting to the derived EdgeItem class is unsafe.
-    // We do this only to remove the EdgeItem from our internal lists.
+    // The object has already been partially destroyed from graph::remove_edge() so casting to the derived
+    // EdgeItem class is "unsafe" (ie return nullptr since object has been destroyed) using a qobject_cast<>
+    // Use a static_cast to force removing EdgeItem from our internal lists.
     const auto edgeItem_unsafe = static_cast<qan::EdgeItem*>(obj);
     if (edgeItem_unsafe != nullptr)
     {
