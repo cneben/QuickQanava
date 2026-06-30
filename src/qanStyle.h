@@ -39,6 +39,7 @@
 #include <QFont>
 #include <QSizeF>
 #include <QVector>
+#include <QCoreApplication>
 #include <QQmlEngine>
 
 namespace qan { // ::qan
@@ -486,3 +487,29 @@ Q_DECLARE_METATYPE(qan::NodeStyle::EffectType)
 QML_DECLARE_TYPE(qan::EdgeStyle)
 Q_DECLARE_METATYPE(qan::EdgeStyle::LineType)
 Q_DECLARE_METATYPE(qan::EdgeStyle::ArrowShape)
+
+namespace std
+{
+// qan::Style derived objects (NodeStyle/EdgeStyle) are frequently cached in
+// lifetime-of-application function-local statics. Those statics are destroyed by
+// the C-runtime at process exit, after QCoreApplication has already been torn
+// down. Deleting a QObject still referenced by the (now dead) QML engine at that
+// point emits "shared QObject was deleted directly" and segfaults. Guard the
+// delete so that once the application is gone the object is leaked (reclaimed by
+// the OS) instead of being destroyed; while the application is alive behavior is
+// identical to the default deleter.
+template<>
+struct default_delete<qan::NodeStyle> {
+    void operator()(qan::NodeStyle* ptr) {
+        if (ptr != nullptr && QCoreApplication::instance() != nullptr)
+            delete ptr;
+    }
+};
+template<>
+struct default_delete<qan::EdgeStyle> {
+    void operator()(qan::EdgeStyle* ptr) {
+        if (ptr != nullptr && QCoreApplication::instance() != nullptr)
+            delete ptr;
+    }
+};
+}
