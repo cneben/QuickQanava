@@ -42,6 +42,7 @@
 
 // Qt headers
 #include <QString>
+#include <QCoreApplication>
 #include <QQmlComponent>
 #include <QQmlEngine>
 #include <QQuickItem>
@@ -55,8 +56,14 @@ namespace std
 template<>
 struct default_delete<QQmlComponent> {
     void operator()(QQmlComponent* ptr) {
-        //qWarning() << "ptr=" << ptr;
+        // Guard against static destruction-order fiasco: lifetime-of-app
+        // unique_ptr<QQmlComponent> caches are destroyed by the C-runtime at
+        // process exit, after QCoreApplication is gone. deleteLater() then
+        // dereferences a dead per-thread event queue and segfaults. Once the
+        // application is torn down, skip the deferred delete and let the OS
+        // reclaim the memory (intentional leak, exit-time only).
         if (ptr != nullptr &&
+            QCoreApplication::instance() != nullptr &&
             QQmlEngine::objectOwnership(ptr) == QQmlEngine::CppOwnership)
             ptr->deleteLater();
     }
