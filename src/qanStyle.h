@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -376,7 +377,8 @@ public:
         Undefined   = 0,
         Straight    = 1,
         Curved      = 2,
-        Ortho       = 3
+        Ortho       = 3,
+        OrthoDouble = 4
     };
     Q_ENUM(LineType)
 
@@ -416,6 +418,15 @@ protected:
     qreal           _arrowSize = 4.0;
 signals:
     void            arrowSizeChanged();
+
+public:
+    Q_PROPERTY(qreal orthoRadius READ getOrthoRadius WRITE setOrthoRadius NOTIFY orthoRadiusChanged FINAL)
+    bool            setOrthoRadius(qreal orthoRadius) noexcept;
+    inline qreal    getOrthoRadius() const noexcept { return _orthoRadius; }
+protected:
+    qreal           _orthoRadius = 10.0;
+signals:
+    void            orthoRadiusChanged();
 
 public:
 

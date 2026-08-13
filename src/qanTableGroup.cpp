@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -66,7 +67,7 @@ QQmlComponent*  TableGroup::delegate(QQmlEngine& engine, QObject* parent) noexce
 {
     static std::unique_ptr<QQmlComponent>   delegate;
     if (!delegate)
-        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/QuickQanava/TableGroup.qml",
+        delegate = std::make_unique<QQmlComponent>(&engine, "qrc:/qt/qml/QuickQanava/TableGroup.qml",
                                                    QQmlComponent::PreferSynchronous, parent);
     return delegate.get();
 }

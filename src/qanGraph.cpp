@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2008-2024, Benoit AUTHEMAN All rights reserved.
+ Copyright (c) 2025, Siemens Energy Global GmbH & Co. KG
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -74,14 +75,14 @@ Graph::~Graph()
 
 void    Graph::classBegin()
 {
-    setPortDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Port.qml")));
-    setHorizontalDockDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/HorizontalDock.qml")));
-    setVerticalDockDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/VerticalDock.qml")));
-    setGroupDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Group.qml")));
+    setPortDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/Port.qml")));
+    setHorizontalDockDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/HorizontalDock.qml")));
+    setVerticalDockDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/VerticalDock.qml")));
+    setGroupDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/Group.qml")));
     // Note: Do not set a default node delegate, otherwise it would be used instead
     //  of qan::Node::delegate(), just let the user specify one.
-    setEdgeDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/Edge.qml")));
-    setSelectionDelegate(createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml")));
+    setEdgeDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/Edge.qml")));
+    setSelectionDelegate(createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/SelectionItem.qml")));
 
     const auto engine = qmlEngine(this);
     if (engine != nullptr) {
@@ -97,7 +98,7 @@ void    Graph::componentComplete()
     const auto engine = qmlEngine(this);
     if (engine != nullptr) {
         // Visual connector initialization
-        auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/QuickQanava/VisualConnector.qml"));
+        auto connectorComponent = std::make_unique<QQmlComponent>(engine, QStringLiteral("qrc:/qt/qml/QuickQanava/VisualConnector.qml"));
         if (connectorComponent) {
             qan::Style* style = qan::Connector::style(nullptr);
             if (style != nullptr) {
@@ -495,7 +496,7 @@ void Graph::setSelectionDelegate(std::unique_ptr<QQmlComponent> selectionDelegat
             delegateChanged = true;
         }
     } else {    // Use QuickQanava default selection delegate
-        _selectionDelegate = createComponent(QStringLiteral("qrc:/QuickQanava/SelectionItem.qml"));
+        _selectionDelegate = createComponent(QStringLiteral("qrc:/qt/qml/QuickQanava/SelectionItem.qml"));
         delegateChanged = true;
     }
     if (delegateChanged) {  // Update all existing delegates...
@@ -1076,6 +1077,7 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell
             group->getGroupItem() != nullptr &&
             node->getItem() != nullptr ) {
             group->getGroupItem()->groupNodeItem(node->getItem(), groupCell, transform);
+            emit node->groupChanged();
             emit nodeGrouped(node, group);
         }
         return true;

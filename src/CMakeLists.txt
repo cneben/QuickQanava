@@ -106,6 +106,7 @@ set(qan_qml_files
     EdgeTemplate.qml
     EdgeStraightPath.qml
     EdgeOrthoPath.qml
+    EdgeOrthoDoublePath.qml
     EdgeCurvedPath.qml
     EdgeSrcArrowPath.qml
     EdgeSrcCirclePath.qml
@@ -141,11 +142,12 @@ set(qan_qml_files
 
 # Configure Qt
 set(CMAKE_AUTOMOC ON)
-#qt_wrap_cpp(qan_moc_files ${qan_header_files})   # Creates .moc files from sources
 set(CMAKE_AUTORCC ON)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
 # Configure QuickQanava library ###############################################
+
+qt_policy(SET QTP0001 NEW)
 
 # qt_add_library(QuickQanava STATIC)
 qt_add_qml_module(QuickQanava
@@ -156,10 +158,8 @@ qt_add_qml_module(QuickQanava
         ${qan_source_files} ${qan_header_files} ${qan_moc_files} ${quickcontainers_source_files} ${quickcontainers_header_files}
     QML_FILES
         ${qan_qml_files}
-    RESOURCE_PREFIX /
-    OUTPUT_DIRECTORY QuickQanava
 )
-set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/QuickQanava)
+set(QT_QML_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/qml)
 
 target_include_directories(QuickQanava
     PUBLIC

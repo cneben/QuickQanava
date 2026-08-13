@@ -57,14 +57,26 @@ Qan.GraphView {
             console.error('pos=' + pos)
         }
     } // Qan.Graph
-    CheckBox {
+    Column {
         anchors.top: parent.top; anchors.topMargin: 4
-        anchors.right: parent.right; anchors.rightMargin: 2
-        id: dashed
-        text: "Ortho"
-        checked: defaultEdgeStyle.lineType === Qan.EdgeStyle.Ortho
-        onClicked: {
-            defaultEdgeStyle.lineType = !checked ? Qan.EdgeStyle.Straight : Qan.EdgeStyle.Ortho
+        anchors.right: parent.right; anchors.rightMargin: 4
+
+        RadioButton {
+            text: "Straight"
+            checked: defaultEdgeStyle.lineType === Qan.EdgeStyle.Straight
+            onClicked: defaultEdgeStyle.lineType = Qan.EdgeStyle.Straight
+        }
+        RadioButton {
+            text: "Ortho"
+            checked: defaultEdgeStyle.lineType === Qan.EdgeStyle.Ortho
+            onClicked: defaultEdgeStyle.lineType = Qan.EdgeStyle.Ortho
+        }
+        RadioButton {
+            text: "OrthoDouble"
+            checked: defaultEdgeStyle.lineType === Qan.EdgeStyle.OrthoDouble
+            onClicked: defaultEdgeStyle.lineType = Qan.EdgeStyle.OrthoDouble
         }
     }
+
+
 }  // Qan.GraphView
