@@ -46,8 +46,9 @@ Item {
     id: template
 
     // PUBLIC /////////////////////////////////////////////////////////////////
-    property var            nodeItem : undefined
-    default property alias  children : contentLayout.children
+    property var                         nodeItem : undefined
+    default property alias               children : contentLayout.children
+    property alias enableLabelEditorOnDoubleClick : doubleClickLabelEditorConnections.enabled
 
     // PRIVATE ////////////////////////////////////////////////////////////////
     onNodeItemChanged: {
@@ -119,6 +120,7 @@ Item {
         }
     }
     Connections {
+        id: doubleClickLabelEditorConnections
         target: nodeItem
         function onNodeDoubleClicked() { labelEditor.visible = true }
     }
