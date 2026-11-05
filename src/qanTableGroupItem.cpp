@@ -222,6 +222,7 @@ void    TableGroupItem::initializeCellsLinks()
     for (auto verticalBorder: _verticalBorders) {
         if (verticalBorder == nullptr)
             continue;
+        verticalBorder->clearCells();
         for (std::size_t r = 0; r < rows; r++) {
             verticalBorder->addPrevCell(_cells[(r * cols) + c - 1]);
             verticalBorder->addNextCell(_cells[(r * cols) + c]);
@@ -232,6 +233,7 @@ void    TableGroupItem::initializeCellsLinks()
     for (auto horizontalBorder: _horizontalBorders) {
         if (horizontalBorder == nullptr)
             continue;
+        horizontalBorder->clearCells();
         for (std::size_t c = 0; c < cols; c++) {
             horizontalBorder->addPrevCell(_cells[((r-1) * cols) + c]);
             horizontalBorder->addNextCell(_cells[(r * cols)     + c]);
@@ -295,34 +297,52 @@ qan::TableCell*   TableGroupItem::createCell()
     return cell;
 }
 
+bool    TableGroupItem::hasValidLayout() const
+{
+    const auto tableGroup = getTableGroup();
+    if (tableGroup == nullptr ||
+        tableGroup->getRows() <= 0 ||
+        tableGroup->getCols() <= 0)
+        return false;
+    const std::size_t rows = tableGroup->getRows();
+    const std::size_t cols = tableGroup->getCols();
+    return _cells.size() == (rows * cols) &&
+           _verticalBorders.size() == (cols - 1) &&
+           _horizontalBorders.size() == (rows - 1) &&
+           std::find(_cells.cbegin(), _cells.cend(), nullptr) == _cells.cend() &&
+           std::find(_verticalBorders.cbegin(), _verticalBorders.cend(), nullptr) == _verticalBorders.cend() &&
+           std::find(_horizontalBorders.cbegin(), _horizontalBorders.cend(), nullptr) == _horizontalBorders.cend();
+}
+
 void    TableGroupItem::insertColumn()
 {
     // Algorithm:
     // Create a new vertical border for the new column
     // Create new cells for the new cols column count
-    qWarning() << "qan::TableGroupItem::insertColumn()";
     const auto container = getContainer();
     if (container == nullptr)
         return;
     auto tableGroup = getTableGroup();
-    if (tableGroup == nullptr)
+    if (tableGroup == nullptr ||
+        !hasValidLayout())
         return;
+    // Note: A single column table has no border, the new border then splits the whole table.
     qan::TableBorder* prevBorder = _verticalBorders.empty() ? nullptr : _verticalBorders.back();
-    if (prevBorder == nullptr)
-        return;
     const auto width = container->width();
     auto border = createBorder();
-    if (border != nullptr) {
-        border->setOrientation(Qt::Vertical);
-        border->setPrevBorder(prevBorder);
-        _verticalBorders.push_back(border);
+    if (border == nullptr)
+        return;
+    border->setOrientation(Qt::Vertical);
+    border->setPrevBorder(prevBorder);
+    _verticalBorders.push_back(border);
+    if (prevBorder != nullptr)
         prevBorder->setNextBorder(border);
-        const auto x = prevBorder->x() + ((width - prevBorder->x()) / 2.0);
-        border->setX(x);
-        border->setSx(x / width);
-        border->setHeight(prevBorder->height());
-        border->setWidth(3);
-    }
+    const auto prevX = prevBorder != nullptr ? prevBorder->x() : 0.;
+    const auto x = prevX + ((width - prevX) / 2.0);
+    border->setX(x);
+    border->setSx(x / width);
+    border->setHeight(container->height());
+    border->setWidth(3);
 
     // Update the _cells array, be very carefull there is a mapping from
     // old table layout to new layout. Done in 2 phase: copy old cells
@@ -334,11 +354,10 @@ void    TableGroupItem::insertColumn()
     Cells_t newCells;
     newCells.resize(newCols * newRows);
     for (auto r = 0; r < oldRows; r++)  // Copy old cells to new table
-        for (auto c = 0; c < oldRows; c++)
+        for (auto c = 0; c < oldCols; c++)
             newCells[(r * newCols) + c] = _cells[(r * oldCols) + c];
     for (auto r = 0; r < oldRows; r++) {  // Create new cells for new column
         auto cell = createCell();
-        qWarning() << "cell=" << cell;
         newCells[(r * newCols) + (newCols - 1)] = cell;
     }
     _cells = newCells;
@@ -358,24 +377,26 @@ void    TableGroupItem::insertRow()
     if (container == nullptr)
         return;
     auto tableGroup = getTableGroup();
-    if (tableGroup == nullptr)
+    if (tableGroup == nullptr ||
+        !hasValidLayout())
         return;
+    // Note: A single row table has no border, the new border then splits the whole table.
     qan::TableBorder* prevBorder = _horizontalBorders.empty() ? nullptr : _horizontalBorders.back();
-    if (prevBorder == nullptr)
-        return;
     const auto height = container->height();
     auto border = createBorder();
-    if (border != nullptr) {
-        border->setOrientation(Qt::Horizontal);
-        border->setPrevBorder(prevBorder);
-        _horizontalBorders.push_back(border);
+    if (border == nullptr)
+        return;
+    border->setOrientation(Qt::Horizontal);
+    border->setPrevBorder(prevBorder);
+    _horizontalBorders.push_back(border);
+    if (prevBorder != nullptr)
         prevBorder->setNextBorder(border);
-        const auto y = prevBorder->y() + ((height - prevBorder->y()) / 2.0);
-        border->setY(y);
-        border->setSy(y / height);
-        border->setWidth(prevBorder->width());
-        border->setHeight(3);
-    }
+    const auto prevY = prevBorder != nullptr ? prevBorder->y() : 0.;
+    const auto y = prevY + ((height - prevY) / 2.0);
+    border->setY(y);
+    border->setSy(y / height);
+    border->setWidth(container->width());
+    border->setHeight(3);
 
     // Update the _cells array, be very carefull there is a mapping from
     // old table layout to new layout. Done in 2 phase: copy old cells
@@ -397,6 +418,85 @@ void    TableGroupItem::insertRow()
     // Initialize links between border and cells, then layout cells with valid size
     initializeCellsLinks();
     layoutCells();
+}
+
+bool    TableGroupItem::removeColumn()
+{
+    // Algorithm:
+    // 1. Ungroup any node left in the last column cells, then hide and destroy them.
+    // 2. Remove the last vertical border: the previous column takes its space.
+    // 3. Update the _cells array, there is a mapping from old table layout to new layout.
+    // 4. Rebuild links between borders and cells, then layout cells.
+    auto tableGroup = getTableGroup();
+    if (getContainer() == nullptr ||
+        tableGroup == nullptr)
+        return false;
+    const auto oldCols = tableGroup->getCols();
+    const auto rows = tableGroup->getRows();
+    if (oldCols <= 1 ||
+        !hasValidLayout())
+        return false;
+    const auto newCols = oldCols - 1;
+    Cells_t newCells;
+    Cells_t removedCells;
+    for (auto r = 0; r < rows; r++)
+        for (auto c = 0; c < oldCols; c++)
+            (c < newCols ? newCells : removedCells).push_back(_cells[(r * oldCols) + c]);
+    removeCells(removedCells);              // 1.
+    removeLastBorder(_verticalBorders);     // 2.
+    _cells = newCells;                      // 3.
+    tableGroup->setCols(newCols);
+    initializeCellsLinks();                 // 4.
+    layoutCells();
+    return true;
+}
+
+bool    TableGroupItem::removeRow()
+{
+    // Algorithm: See removeColumn(), there is no mapping since the last row cells are the last cells.
+    auto tableGroup = getTableGroup();
+    if (getContainer() == nullptr ||
+        tableGroup == nullptr)
+        return false;
+    const auto cols = tableGroup->getCols();
+    const auto oldRows = tableGroup->getRows();
+    if (oldRows <= 1 ||
+        !hasValidLayout())
+        return false;
+    const auto newRows = oldRows - 1;
+    removeCells(Cells_t(_cells.cbegin() + (newRows * cols), _cells.cend()));
+    removeLastBorder(_horizontalBorders);
+    _cells.resize(newRows * cols);
+    tableGroup->setRows(newRows);
+    initializeCellsLinks();
+    layoutCells();
+    return true;
+}
+
+void    TableGroupItem::removeCells(const Cells_t& cells)
+{
+    for (const auto cell: cells) {
+        // Note: A node removed from the graph leaves its item in the cell until the item is
+        // actually deleted, with a null node: only ungroup live nodes.
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(cell->getItem());
+        const auto node = nodeItem != nullptr ? nodeItem->getNode() : nullptr;
+        if (node != nullptr &&
+            getGraph() != nullptr)
+            getGraph()->ungroupNode(node, getTableGroup());
+        cell->setItem(nullptr);
+        cell->setVisible(false);
+        cell->deleteLater();
+    }
+}
+
+void    TableGroupItem::removeLastBorder(Borders_t& borders)
+{
+    const auto border = borders.back();
+    borders.pop_back();
+    if (!borders.empty())   // Note: Do not rely on QPointer, it is reset only when border is destroyed
+        borders.back()->setNextBorder(nullptr);
+    border->setVisible(false);
+    border->deleteLater();
 }
 
 auto TableGroupItem::createFromComponent(QQmlComponent& component) -> QQuickItem*

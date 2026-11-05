@@ -124,6 +124,18 @@ void    TableGroup::insertRow()
         tableGroupItem->insertRow();
 }
 
+bool    TableGroup::removeColumn()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    return tableGroupItem != nullptr ? tableGroupItem->removeColumn() : false;
+}
+
+bool    TableGroup::removeRow()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    return tableGroupItem != nullptr ? tableGroupItem->removeRow() : false;
+}
+
 bool    TableGroup::setRows(int rows)
 {
     if (rows != _rows) {

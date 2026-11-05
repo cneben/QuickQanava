@@ -135,6 +135,11 @@ void    TableBorder::addNextCell(qan::TableCell* nextCell)
     if (nextCell != nullptr)
         _nextCells.push_back(nextCell);
 }
+void    TableBorder::clearCells()
+{
+    _prevCells.clear();
+    _nextCells.clear();
+}
 
 void    TableBorder::onHorizontalMove() { layoutCells(); }
 void    TableBorder::onVerticalMove() { layoutCells(); }

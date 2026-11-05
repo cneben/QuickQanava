@@ -88,7 +88,7 @@ public:
     void        initializeCells(int cellsCount);
     void        initializeBorders(int verticalBordersCount, int horizontalBordersCount);
 protected:
-    //! Initialize the links between .
+    //! Initialize the links between borders and cells, existing links are cleared.
     void        initializeCellsLinks();
 
 protected:
@@ -105,10 +105,30 @@ private:
     inline static QQmlComponent* _cellComponent = nullptr;
 
 public:
-    //! Insert (append) a column.
+    /*! \brief Return true when cells and borders match table columns and rows count.
+     *
+     * A valid layout has `cols * rows` cells, `cols - 1` vertical borders and `rows - 1`
+     * horizontal borders, all non nullptr. Columns and rows can't be inserted or removed
+     * in an invalid layout.
+     */
+    bool        hasValidLayout() const;
+
+    //! Insert (append) a column, it takes half of the last column space.
     void        insertColumn();
-    //! Insert (append) a row.
+    //! Insert (append) a row, it takes half of the last row space.
     void        insertRow();
+
+    /*! \brief Remove the last column, the previous column takes its space (inverse of insertColumn()).
+     *
+     * Nodes still in the removed cells are ungrouped, they are not removed from the graph.
+     * As for insertColumn(), qan::Graph::tableModified() is not emitted, except when
+     * ungrouping a node.
+     *
+     * \return false when nothing was removed: table has a single column or an invalid layout.
+     */
+    bool        removeColumn();
+    //! Remove the last row, the previous row takes its space, see removeColumn().
+    bool        removeRow();
 
 protected:
     auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
@@ -136,6 +156,11 @@ public:
     const Borders_t&    getVerticalBorders() const  { return _verticalBorders; };
     const Borders_t&    getHorizontalBorders() const  { return _horizontalBorders; };
 private:
+    //! Ungroup any node left in non nullptr \c cells, then hide and destroy them.
+    void        removeCells(const Cells_t& cells);
+    //! Hide and destroy last border in non empty \c borders, previous border becomes the last one.
+    void        removeLastBorder(Borders_t& borders);
+
     Cells_t     _cells;
     Borders_t   _verticalBorders;
     Borders_t   _horizontalBorders;

@@ -111,6 +111,12 @@ public:
     //! Insert (append) a new row in table.
     Q_INVOKABLE void    insertRow();
 
+    //! Remove the last column of table, see qan::TableGroupItem::removeColumn().
+    Q_INVOKABLE bool    removeColumn();
+
+    //! Remove the last row of table, see qan::TableGroupItem::removeRow().
+    Q_INVOKABLE bool    removeRow();
+
 public:
     //! \copydoc getRows()
     Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)

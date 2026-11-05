@@ -194,6 +194,20 @@ ApplicationWindow {
                     contextMenu.group.insertRow()
                 }
             }
+            MenuItem {
+                text: "Remove last column"
+                enabled: contextMenu.group?.isTable || false
+                onClicked: {
+                    contextMenu.group.removeColumn()
+                }
+            }
+            MenuItem {
+                text: "Remove last row"
+                enabled: contextMenu.group?.isTable || false
+                onClicked: {
+                    contextMenu.group.removeRow()
+                }
+            }
             MenuSeparator { }
             MenuItem {
                 text: "Send to front"
