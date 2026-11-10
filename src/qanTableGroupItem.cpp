@@ -789,6 +789,31 @@ qan::TableGroup*        TableGroupItem::getTableGroup() { return qobject_cast<qa
 
 
 /* TableGroupItem DnD Management *///------------------------------------------
+qan::TableCell* TableGroupItem::cellAt(const QPointF& containerPos) const
+{
+    for (const auto& cell: _cells) {
+        if (cell == nullptr)
+            continue;
+        const auto cellBr = cell->boundingRect().translated(cell->position());
+        if (cellBr.contains(containerPos))
+            return cell;
+    }
+    return nullptr;
+}
+
+bool    TableGroupItem::canGroupNodeItem(const qan::NodeItem* nodeItem) const
+{
+    if (nodeItem == nullptr ||
+        getContainer() == nullptr)
+        return false;
+    // Note: Same mapping as groupNodeItem().
+    const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
+    const auto cell = cellAt(getContainer()->mapFromGlobal(globalPos));
+    return cell != nullptr &&
+           (cell->getItem() == nullptr ||
+            cell->getItem() == nodeItem);
+}
+
 void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell, bool transform)
 {
     //qWarning() << "qan::TableGroupItem::groupNodeItem(): nodeItem=" << nodeItem << "  groupCell=" << groupCell;
@@ -812,15 +837,10 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* g
             qWarning() << "qan::TableGroupItem::groupNodeItem(): Internal error, groupCell could not be found in internal cells.";
     } else {
         // Find cell at groupPos and attach node to cell
-        for (const auto& cell: _cells) {
-            if (cell == nullptr)
-                continue;
-            const auto cellBr = cell->boundingRect().translated(cell->position());
-            if (cellBr.contains(groupPos)) {
-                cell->setItem(nodeItem);
-                nodeItem->getNode()->setCell(cell);
-                break;
-            }
+        const auto cell = cellAt(groupPos);
+        if (cell != nullptr) {
+            cell->setItem(nodeItem);
+            nodeItem->getNode()->setCell(cell);
         }
     }
 

@@ -1070,6 +1070,14 @@ bool    qan::Graph::groupNode(qan::Group* group, qan::Node* node, qan::TableCell
         qWarning() << "qan::Graph::groupNode(): Error, can't group a group in itself.";
         return false;
     }
+    // A table cell displays one node: without an explicit cell, refuse a node that would go
+    // in an occupied cell, or in no cell (table padding, spacing between cells).
+    const auto tableGroupItem = qobject_cast<const qan::TableGroupItem*>(group->getGroupItem());
+    if (groupCell == nullptr &&
+        tableGroupItem != nullptr &&
+        node->getItem() != nullptr &&
+        !tableGroupItem->canGroupNodeItem(node->getItem()))
+        return false;
     try {
         super_t::group_node(node, group);
         if (node->get_group() == group &&  // Check that group insertion succeed
@@ -1110,8 +1118,7 @@ bool    qan::Graph::tryGroupNodeAt(qan::Node* target, qan::NodeItem* targetItem)
         group->getLocked())
         return false;
 
-    groupNode(group, target);
-    return true;
+    return groupNode(group, target);    // Note: A table refuses an occupied cell, or no cell
 }
 
 bool    qan::Graph::ungroupNode(qan::Node* node, qan::Group* group, bool transform) noexcept

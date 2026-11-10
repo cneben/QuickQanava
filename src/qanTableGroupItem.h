@@ -191,7 +191,22 @@ private:
     /*! \name Dragging Support Management *///---------------------------------
     //@{
 public:
+    /*! \brief Return the cell whose rectangle contains \c containerPos (in container CS).
+     *
+     * \return nullptr when \c containerPos is in no cell: table padding, spacing between cells or outside the table.
+     */
+    qan::TableCell* cellAt(const QPointF& containerPos) const;
+
+    /*! \brief Return true when \c nodeItem can be grouped in this table without an explicit cell.
+     *
+     * The cell under \c nodeItem top-left corner must be empty or already display \c nodeItem: a cell displays
+     * one node. qan::Graph::groupNode() refuses the grouping otherwise.
+     */
+    bool            canGroupNodeItem(const qan::NodeItem* nodeItem) const;
+
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
+     *
+     * Without \c groupCell, \c nodeItem goes in the cell under its top-left corner, see cellAt() and canGroupNodeItem().
      */
     virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell = nullptr, bool transform = true) override;
 

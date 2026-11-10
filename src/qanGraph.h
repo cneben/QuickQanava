@@ -641,6 +641,9 @@ public:
      * manually position node item (usefull when programmatically grouping node for persistence for example).
      *
      * `groupCell` might be used to request grouping in a specific cell when `group` is a `qan::TableGroup`.
+     * Without `groupCell`, the node goes in the cell under its top-left corner: grouping is refused (false is
+     * returned) when that cell already displays another node, or when there is no cell there (see
+     * qan::TableGroupItem::canGroupNodeItem()).
      *
      * \sa gtpo::GenGraph::groupNode()
      */
@@ -655,8 +658,8 @@ public:
      * Factored out of DraggableCtrl::endDragMove() so the auto-grouping logic can be reused
      * (for example after a paste) without the other endDragMove() side effects (z reset,
      * drag flag clearing, notify). Has no effect if \c target is protected or locked, if
-     * \c targetItem is not droppable, or if no suitable drop-target group is found under
-     * \c targetItem.
+     * \c targetItem is not droppable, if no suitable drop-target group is found under
+     * \c targetItem, or if that group refuses \c target (see groupNode(), a table cell displays one node).
      *
      * \return true if \c target was grouped, false otherwise.
      */

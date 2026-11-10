@@ -117,6 +117,13 @@ public:
     //! Remove the last row of table, see qan::TableGroupItem::removeRow().
     Q_INVOKABLE bool    removeRow();
 
+    /*! \brief Return true when \c pos (in graph container CS) is in an empty cell of this table.
+     *
+     * A node whose top-left corner is at \c pos can then be grouped in this table, see
+     * qan::TableGroupItem::canGroupNodeItem().
+     */
+    Q_INVOKABLE bool    hasFreeCellAt(QPointF pos) const;
+
 public:
     //! \copydoc getRows()
     Q_PROPERTY(int rows READ getRows WRITE setRows NOTIFY rowsChanged FINAL)
