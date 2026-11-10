@@ -113,21 +113,31 @@ public:
      */
     bool        hasValidLayout() const;
 
-    //! Insert (append) a column, it takes half of the last column space.
-    void        insertColumn();
-    //! Insert (append) a row, it takes half of the last row space.
-    void        insertRow();
+    /*! \brief Insert (append) a column, it takes half of the last column space.
+     *
+     * qan::Graph::tableModified() is not emitted.
+     *
+     * \return false when nothing was inserted: table is locked or protected, has an invalid layout, or
+     * a cell or border could not be created.
+     */
+    bool        insertColumn();
+    //! Insert (append) a row, it takes half of the last row space, see insertColumn().
+    bool        insertRow();
 
-    /*! \brief Remove the last column, the previous column takes its space (inverse of insertColumn()).
+    /*! \brief Remove the last column, the previous column takes its space.
      *
-     * Nodes still in the removed cells are ungrouped, they are not removed from the graph.
-     * As for insertColumn(), qan::Graph::tableModified() is not emitted, except when
-     * ungrouping a node.
+     * Removing a column just inserted with insertColumn() gives back the previous layout.
      *
-     * \return false when nothing was removed: table has a single column or an invalid layout.
+     * Nodes still in the removed cells, including nodes under the cell item (see qan::TableCell::getNodes()),
+     * are ungrouped and moved just right of the table, they are not removed from the graph.
+     * As for insertColumn(), qan::Graph::tableModified() is not emitted, except by
+     * qan::Graph::ungroupNode() for each ungrouped node, once the table has its new layout.
+     *
+     * \return false when nothing was removed: table has a single column, is locked or protected, or
+     * has an invalid layout.
      */
     bool        removeColumn();
-    //! Remove the last row, the previous row takes its space, see removeColumn().
+    //! Remove the last row, the previous row takes its space, see removeColumn() (ungrouped nodes go below the table).
     bool        removeRow();
 
 protected:
@@ -156,8 +166,18 @@ public:
     const Borders_t&    getVerticalBorders() const  { return _verticalBorders; };
     const Borders_t&    getHorizontalBorders() const  { return _horizontalBorders; };
 private:
-    //! Ungroup any node left in non nullptr \c cells, then hide and destroy them.
-    void        removeCells(const Cells_t& cells);
+    //! True when columns and rows can be inserted or removed: table is neither locked nor protected, with a valid layout.
+    bool        isLayoutEditable() const;
+    //! Create \c count cells, return an empty vector (and destroy the cells already created) if one can't be created.
+    auto        createCells(int count) -> Cells_t;
+    /*! \brief Ungroup the nodes displayed in non nullptr \c cells, then hide and destroy them.
+     *
+     * \c cells must be out of the table layout. Ungrouped nodes are moved right of the table for
+     * Qt::Vertical \c orientation (a column was removed), below it for Qt::Horizontal (a row).
+     */
+    void        releaseCells(const Cells_t& cells, Qt::Orientation orientation);
+    //! Hide and destroy non nullptr \c cells, their content is not ungrouped.
+    void        destroyCells(const Cells_t& cells);
     //! Hide and destroy last border in non empty \c borders, previous border becomes the last one.
     void        removeLastBorder(Borders_t& borders);
 

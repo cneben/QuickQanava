@@ -97,6 +97,18 @@ void    TableCell::setItem(QQuickItem* item)
     }
 }
 
+std::vector<qan::Node*> TableCell::getNodes() const
+{
+    std::vector<qan::Node*> nodes;
+    for (const auto child: childItems()) {
+        const auto nodeItem = qobject_cast<qan::NodeItem*>(child);
+        const auto node = nodeItem != nullptr ? nodeItem->getNode() : nullptr;
+        if (node != nullptr)
+            nodes.push_back(node);
+    }
+    return nodes;
+}
+
 void    TableCell::restoreCache(qan::NodeItem* nodeItem) const
 {
     if (nodeItem != nullptr) {

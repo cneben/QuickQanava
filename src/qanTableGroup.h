@@ -105,11 +105,11 @@ public:
     //! Initialize a "default" layout.
     Q_INVOKABLE void    initializeLayout();
 
-    //! Insert (append) a new column in table.
-    Q_INVOKABLE void    insertColumn();
+    //! Insert (append) a new column in table, see qan::TableGroupItem::insertColumn().
+    Q_INVOKABLE bool    insertColumn();
 
-    //! Insert (append) a new row in table.
-    Q_INVOKABLE void    insertRow();
+    //! Insert (append) a new row in table, see qan::TableGroupItem::insertRow().
+    Q_INVOKABLE bool    insertRow();
 
     //! Remove the last column of table, see qan::TableGroupItem::removeColumn().
     Q_INVOKABLE bool    removeColumn();

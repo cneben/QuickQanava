@@ -110,18 +110,16 @@ void    TableGroup::initializeLayout()
         tableGroupItem->initializeTableLayout();
 }
 
-void    TableGroup::insertColumn()
+bool    TableGroup::insertColumn()
 {
     auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
-    if (tableGroupItem)
-        tableGroupItem->insertColumn();
+    return tableGroupItem != nullptr ? tableGroupItem->insertColumn() : false;
 }
 
-void    TableGroup::insertRow()
+bool    TableGroup::insertRow()
 {
     auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
-    if (tableGroupItem)
-        tableGroupItem->insertRow();
+    return tableGroupItem != nullptr ? tableGroupItem->insertRow() : false;
 }
 
 bool    TableGroup::removeColumn()
