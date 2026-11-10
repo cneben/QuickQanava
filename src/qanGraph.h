@@ -643,9 +643,9 @@ public:
      * manually position node item (usefull when programmatically grouping node for persistence for example).
      *
      * `groupCell` might be used to request grouping in a specific cell when `group` is a `qan::TableGroup`.
-     * Without `groupCell`, the node goes in the cell under its top-left corner: grouping is refused (false is
-     * returned) when that cell already displays another node, or when there is no cell there (see
-     * qan::TableGroupItem::canGroupNodeItem()).
+     * Without `groupCell`, a node already displayed in a cell of the table keeps it, any other node goes in the cell
+     * under its top-left corner: grouping is refused (false is returned) when that cell already displays another
+     * node, or when there is no cell there (see qan::TableGroupItem::canGroupNodeItem()).
      *
      * \sa gtpo::GenGraph::groupNode()
      */

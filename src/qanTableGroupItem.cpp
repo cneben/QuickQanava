@@ -801,11 +801,26 @@ qan::TableCell* TableGroupItem::cellAt(const QPointF& containerPos) const
     return nullptr;
 }
 
+qan::TableCell* TableGroupItem::cellDisplaying(const qan::NodeItem* nodeItem) const
+{
+    if (nodeItem == nullptr)
+        return nullptr;
+    for (const auto& cell: _cells)
+        if (cell != nullptr &&
+            cell->getItem() == nodeItem)
+            return cell;
+    return nullptr;
+}
+
 bool    TableGroupItem::canGroupNodeItem(const qan::NodeItem* nodeItem) const
 {
     if (nodeItem == nullptr ||
         getContainer() == nullptr)
         return false;
+    // Note: A node displayed in a cell is on the cell left edge (see qan::TableCell::setItem()): its position mapped
+    // from global coordinates might be a fraction of unit left of the cell, never test it.
+    if (cellDisplaying(nodeItem) != nullptr)
+        return true;
     // Note: Same mapping as groupNodeItem().
     const auto globalPos = nodeItem->mapToGlobal(QPointF{0., 0.});
     const auto cell = cellAt(getContainer()->mapFromGlobal(globalPos));
@@ -836,8 +851,10 @@ void    TableGroupItem::groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* g
         } else
             qWarning() << "qan::TableGroupItem::groupNodeItem(): Internal error, groupCell could not be found in internal cells.";
     } else {
-        // Find cell at groupPos and attach node to cell
-        const auto cell = cellAt(groupPos);
+        // Find cell at groupPos and attach node to cell, a node already displayed in a cell keeps it (see canGroupNodeItem())
+        auto cell = cellDisplaying(nodeItem);
+        if (cell == nullptr)
+            cell = cellAt(groupPos);
         if (cell != nullptr) {
             cell->setItem(nodeItem);
             nodeItem->getNode()->setCell(cell);

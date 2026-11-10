@@ -197,16 +197,21 @@ public:
      */
     qan::TableCell* cellAt(const QPointF& containerPos) const;
 
+    //! Return the cell whose item is \c nodeItem, nullptr when no cell of this table displays it.
+    qan::TableCell* cellDisplaying(const qan::NodeItem* nodeItem) const;
+
     /*! \brief Return true when \c nodeItem can be grouped in this table without an explicit cell.
      *
-     * The cell under \c nodeItem top-left corner must be empty or already display \c nodeItem: a cell displays
-     * one node. qan::Graph::groupNode() refuses the grouping otherwise.
+     * A node already displayed in a cell of this table can, whatever its position. Otherwise, the cell under
+     * \c nodeItem top-left corner must be empty: a cell displays one node. qan::Graph::groupNode() refuses the
+     * grouping otherwise.
      */
     bool            canGroupNodeItem(const qan::NodeItem* nodeItem) const;
 
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
      *
-     * Without \c groupCell, \c nodeItem goes in the cell under its top-left corner, see cellAt() and canGroupNodeItem().
+     * Without \c groupCell, \c nodeItem keeps the cell that already displays it, or goes in the cell under its
+     * top-left corner, see cellDisplaying(), cellAt() and canGroupNodeItem().
      */
     virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell = nullptr, bool transform = true) override;
 
