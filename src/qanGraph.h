@@ -478,6 +478,8 @@ signals:
     //! \brief Emitted _after_ a group has been resized.
     void            groupResized(qan::Group* group);
 
+    //! \brief Emitted immediately _before_ a node (or a group...) label is changed by its setLabel() method.
+    void            nodeLabelAboutToBeChanged(qan::Node* node);
     //! Emitted when a node setLabel() method is called.
     void            nodeLabelChanged(qan::Node* node);
     //-------------------------------------------------------------------------
