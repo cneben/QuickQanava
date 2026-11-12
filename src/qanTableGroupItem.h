@@ -88,7 +88,7 @@ public:
     void        initializeCells(int cellsCount);
     void        initializeBorders(int verticalBordersCount, int horizontalBordersCount);
 protected:
-    //! Initialize the links between .
+    //! Initialize the links between borders and cells, existing links are cleared.
     void        initializeCellsLinks();
 
 protected:
@@ -105,10 +105,40 @@ private:
     inline static QQmlComponent* _cellComponent = nullptr;
 
 public:
-    //! Insert (append) a column.
-    void        insertColumn();
-    //! Insert (append) a row.
-    void        insertRow();
+    /*! \brief Return true when cells and borders match table columns and rows count.
+     *
+     * A valid layout has `cols * rows` cells, `cols - 1` vertical borders and `rows - 1`
+     * horizontal borders, all non nullptr. Columns and rows can't be inserted or removed
+     * in an invalid layout.
+     */
+    bool        hasValidLayout() const;
+
+    /*! \brief Insert (append) a column, it takes half of the last column space.
+     *
+     * qan::Graph::tableModified() is not emitted.
+     *
+     * \return false when nothing was inserted: table is locked or protected, has an invalid layout, or
+     * a cell or border could not be created.
+     */
+    bool        insertColumn();
+    //! Insert (append) a row, it takes half of the last row space, see insertColumn().
+    bool        insertRow();
+
+    /*! \brief Remove the last column, the previous column takes its space.
+     *
+     * Removing a column just inserted with insertColumn() gives back the previous layout.
+     *
+     * Nodes still in the removed cells, including nodes under the cell item (see qan::TableCell::getNodes()),
+     * are ungrouped and moved just right of the table, they are not removed from the graph.
+     * As for insertColumn(), qan::Graph::tableModified() is not emitted, except by
+     * qan::Graph::ungroupNode() for each ungrouped node, once the table has its new layout.
+     *
+     * \return false when nothing was removed: table has a single column, is locked or protected, or
+     * has an invalid layout.
+     */
+    bool        removeColumn();
+    //! Remove the last row, the previous row takes its space, see removeColumn() (ungrouped nodes go below the table).
+    bool        removeRow();
 
 protected:
     auto        createFromComponent(QQmlComponent& component) -> QQuickItem*;
@@ -136,6 +166,21 @@ public:
     const Borders_t&    getVerticalBorders() const  { return _verticalBorders; };
     const Borders_t&    getHorizontalBorders() const  { return _horizontalBorders; };
 private:
+    //! True when columns and rows can be inserted or removed: table is neither locked nor protected, with a valid layout.
+    bool        isLayoutEditable() const;
+    //! Create \c count cells, return an empty vector (and destroy the cells already created) if one can't be created.
+    auto        createCells(int count) -> Cells_t;
+    /*! \brief Ungroup the nodes displayed in non nullptr \c cells, then hide and destroy them.
+     *
+     * \c cells must be out of the table layout. Ungrouped nodes are moved right of the table for
+     * Qt::Vertical \c orientation (a column was removed), below it for Qt::Horizontal (a row).
+     */
+    void        releaseCells(const Cells_t& cells, Qt::Orientation orientation);
+    //! Hide and destroy non nullptr \c cells, their content is not ungrouped.
+    void        destroyCells(const Cells_t& cells);
+    //! Hide and destroy last border in non empty \c borders, previous border becomes the last one.
+    void        removeLastBorder(Borders_t& borders);
+
     Cells_t     _cells;
     Borders_t   _verticalBorders;
     Borders_t   _horizontalBorders;
@@ -146,7 +191,27 @@ private:
     /*! \name Dragging Support Management *///---------------------------------
     //@{
 public:
+    /*! \brief Return the cell whose rectangle contains \c containerPos (in container CS).
+     *
+     * \return nullptr when \c containerPos is in no cell: table padding, spacing between cells or outside the table.
+     */
+    qan::TableCell* cellAt(const QPointF& containerPos) const;
+
+    //! Return the cell whose item is \c nodeItem, nullptr when no cell of this table displays it.
+    qan::TableCell* cellDisplaying(const qan::NodeItem* nodeItem) const;
+
+    /*! \brief Return true when \c nodeItem can be grouped in this table without an explicit cell.
+     *
+     * A node already displayed in a cell of this table can, whatever its position. Otherwise, the cell under
+     * \c nodeItem top-left corner must be empty: a cell displays one node. qan::Graph::groupNode() refuses the
+     * grouping otherwise.
+     */
+    bool            canGroupNodeItem(const qan::NodeItem* nodeItem) const;
+
     /*! \brief Configure \c nodeItem in this group item (modify target item parenthcip, but keep same visual position).
+     *
+     * Without \c groupCell, \c nodeItem keeps the cell that already displays it, or goes in the cell under its
+     * top-left corner, see cellDisplaying(), cellAt() and canGroupNodeItem().
      */
     virtual void    groupNodeItem(qan::NodeItem* nodeItem, qan::TableCell* groupCell = nullptr, bool transform = true) override;
 

@@ -40,6 +40,8 @@
 // QuickQanava headers
 #include "./qanTableGroup.h"
 #include "./qanTableGroupItem.h"
+#include "./qanTableCell.h"
+#include "./qanGraph.h"
 
 namespace qan { // ::qan
 
@@ -110,18 +112,42 @@ void    TableGroup::initializeLayout()
         tableGroupItem->initializeTableLayout();
 }
 
-void    TableGroup::insertColumn()
+bool    TableGroup::insertColumn()
 {
     auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
-    if (tableGroupItem)
-        tableGroupItem->insertColumn();
+    return tableGroupItem != nullptr ? tableGroupItem->insertColumn() : false;
 }
 
-void    TableGroup::insertRow()
+bool    TableGroup::insertRow()
 {
     auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
-    if (tableGroupItem)
-        tableGroupItem->insertRow();
+    return tableGroupItem != nullptr ? tableGroupItem->insertRow() : false;
+}
+
+bool    TableGroup::removeColumn()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    return tableGroupItem != nullptr ? tableGroupItem->removeColumn() : false;
+}
+
+bool    TableGroup::removeRow()
+{
+    auto tableGroupItem = qobject_cast<qan::TableGroupItem*>(getItem());
+    return tableGroupItem != nullptr ? tableGroupItem->removeRow() : false;
+}
+
+bool    TableGroup::hasFreeCellAt(QPointF pos) const
+{
+    const auto tableGroupItem = qobject_cast<const qan::TableGroupItem*>(getGroupItem());
+    const auto graph = getGraph();
+    const auto graphContainer = graph != nullptr ? graph->getContainerItem() : nullptr;
+    if (tableGroupItem == nullptr ||
+        tableGroupItem->getContainer() == nullptr ||
+        graphContainer == nullptr)
+        return false;
+    const auto cell = tableGroupItem->cellAt(graphContainer->mapToItem(tableGroupItem->getContainer(), pos));
+    return cell != nullptr &&
+           cell->getItem() == nullptr;
 }
 
 bool    TableGroup::setRows(int rows)

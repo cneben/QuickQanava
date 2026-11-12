@@ -168,6 +168,8 @@ void    Node::installBehaviour(std::unique_ptr<qan::NodeBehaviour> behaviour)
 bool    Node::setLabel(const QString& label)
 {
     if (label != _label) {
+        if (auto graph = getGraph())
+            emit graph->nodeLabelAboutToBeChanged(this);
         _label = label;
         emit labelChanged();
         if (auto graph = getGraph())

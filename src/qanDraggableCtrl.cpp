@@ -36,6 +36,7 @@
 #include "./qanDraggableCtrl.h"
 #include "./qanNodeItem.h"
 #include "./qanGraph.h"
+#include "./qanTableGroupItem.h"
 
 namespace qan { // ::qan
 
@@ -389,6 +390,11 @@ void    DraggableCtrl::dragMove(const QPointF& sceneDragPos, bool dragSelection,
         qan::Group* group = graph->groupAt(_targetItem->mapToItem(graphContainerItem, QPointF{0., 0.}),
                                            {_targetItem->width(), _targetItem->height()},
                                            _targetItem /* except _targetItem */);
+        const auto tableGroupItem = group != nullptr ? qobject_cast<const qan::TableGroupItem*>(group->getGroupItem()) :
+                                                       nullptr;
+        if (tableGroupItem != nullptr &&                            // Do not propose a drop that the table refuses:
+            !tableGroupItem->canGroupNodeItem(_targetItem.data()))  // an occupied cell or no cell, see Graph::groupNode()
+            group = nullptr;
         if (group != nullptr &&
             !group->getLocked() &&
             group->getItem() != nullptr &&
@@ -441,6 +447,17 @@ void    DraggableCtrl::endDragMove(bool dragSelection, bool notify)
     //qWarning() << "  notify=" << notify;
 
     const bool nodeGrouped = graph->tryGroupNodeAt(_target.data(), _targetItem.data());
+    if (!nodeGrouped &&             // A table refuses a node dropped over an occupied cell, or over no cell (see
+        !_target->isGroup()) {      // Graph::groupNode()): the node stays where it is dropped, keep it over the table.
+        const auto graphContainerItem = graph->getContainerItem();
+        const auto group = graphContainerItem != nullptr ? graph->groupAt(_targetItem->mapToItem(graphContainerItem, QPointF{0., 0.}),
+                                                                          {_targetItem->width(), _targetItem->height()},
+                                                                          _targetItem.data()) :
+                                                           nullptr;
+        if (group != nullptr &&
+            group->isTable())
+            _targetItem->setZ(graph->nextMaxZ());
+    }
 
     _targetItem->setDragged(false);
 

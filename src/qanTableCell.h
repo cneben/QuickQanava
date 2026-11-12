@@ -34,6 +34,9 @@
 
 #pragma once
 
+// Std headers
+#include <vector>
+
 // Qt headers
 #include <QQuickItem>
 
@@ -41,6 +44,7 @@ namespace qan { // ::qan
 
 class Graph;
 class TableGroup;
+class Node;
 class NodeItem;
 
 class TableCell : public QQuickItem
@@ -89,6 +93,14 @@ protected:
 signals:
     //! \copydoc setItem()
     void                    itemChanged();
+
+public:
+    /*! \brief Return the nodes displayed in this cell, `getItem()` node and any node item still parented to this cell.
+     *
+     * `setItem()` does not release a previous item: a cell can display more than one node, only the last one is
+     * `getItem()`. Nodes already removed from the graph (an item whose node is nullptr) are not returned.
+     */
+    std::vector<qan::Node*> getNodes() const;
 
 public:
     //! Restore the cache initialized in `setItem()`.

@@ -139,6 +139,8 @@ public:
     using Cells_t = std::vector<qan::TableCell*>;
     void            addPrevCell(qan::TableCell* prevCell);
     void            addNextCell(qan::TableCell* nextCell);
+    //! Clear links to prev and next cells (cells are not owned, they are not destroyed).
+    void            clearCells();
     const Cells_t&  getPrevCells() const { return _prevCells; };
     const Cells_t&  getNextCells() const { return _nextCells; };
 protected:

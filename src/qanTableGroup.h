@@ -105,11 +105,24 @@ public:
     //! Initialize a "default" layout.
     Q_INVOKABLE void    initializeLayout();
 
-    //! Insert (append) a new column in table.
-    Q_INVOKABLE void    insertColumn();
+    //! Insert (append) a new column in table, see qan::TableGroupItem::insertColumn().
+    Q_INVOKABLE bool    insertColumn();
 
-    //! Insert (append) a new row in table.
-    Q_INVOKABLE void    insertRow();
+    //! Insert (append) a new row in table, see qan::TableGroupItem::insertRow().
+    Q_INVOKABLE bool    insertRow();
+
+    //! Remove the last column of table, see qan::TableGroupItem::removeColumn().
+    Q_INVOKABLE bool    removeColumn();
+
+    //! Remove the last row of table, see qan::TableGroupItem::removeRow().
+    Q_INVOKABLE bool    removeRow();
+
+    /*! \brief Return true when \c pos (in graph container CS) is in an empty cell of this table.
+     *
+     * A node whose top-left corner is at \c pos can then be grouped in this table, see
+     * qan::TableGroupItem::canGroupNodeItem().
+     */
+    Q_INVOKABLE bool    hasFreeCellAt(QPointF pos) const;
 
 public:
     //! \copydoc getRows()

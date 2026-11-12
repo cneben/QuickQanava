@@ -135,6 +135,8 @@ ApplicationWindow {
             id: contextMenu
             property var node: undefined
             property var group: undefined
+            // Columns and rows can't be inserted or removed in a locked or protected table
+            readonly property bool tableEditable: (group?.isTable ?? false) && !group.locked && !group.isProtected
             MenuItem {
                 text: "Insert Node"
                 enabled: contextMenu.node === undefined
@@ -182,16 +184,30 @@ ApplicationWindow {
             MenuSeparator { }
             MenuItem {
                 text: "Append column"
-                enabled: contextMenu.group?.isTable || false
+                enabled: contextMenu.tableEditable
                 onClicked: {
                     contextMenu.group.insertColumn()
                 }
             }
             MenuItem {
                 text: "Append row"
-                enabled: contextMenu.group?.isTable || false
+                enabled: contextMenu.tableEditable
                 onClicked: {
                     contextMenu.group.insertRow()
+                }
+            }
+            MenuItem {
+                text: "Remove last column"
+                enabled: contextMenu.tableEditable && contextMenu.group.cols > 1
+                onClicked: {
+                    contextMenu.group.removeColumn()
+                }
+            }
+            MenuItem {
+                text: "Remove last row"
+                enabled: contextMenu.tableEditable && contextMenu.group.rows > 1
+                onClicked: {
+                    contextMenu.group.removeRow()
                 }
             }
             MenuSeparator { }
